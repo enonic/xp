@@ -63,6 +63,8 @@ public class ApplicationServiceImplTest
 
     private AppFilterService appFilterService;
 
+    private VirtualAppService virtualAppService;
+
     @BeforeEach
     public void initService()
     {
@@ -73,7 +75,7 @@ public class ApplicationServiceImplTest
         this.eventPublisher = mock( EventPublisher.class );
         this.appFilterService = mock( AppFilterService.class );
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( true );
-        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService );
+        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService );
     }
 
     @Test

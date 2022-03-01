@@ -6,6 +6,9 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -54,10 +57,13 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
+    private final VirtualAppService virtualAppService;
+
     @Activate
     public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService )
+                                   @Reference final AppFilterService appFilterService,
+                                   @Reference final VirtualAppService virtualAppService )
     {
         this.context = context;
         this.registry = applicationRegistry;
@@ -65,6 +71,7 @@ public final class ApplicationServiceImpl
         this.eventPublisher = eventPublisher;
         this.applicationLoader = new ApplicationLoader( eventPublisher::publish );
         this.appFilterService = appFilterService;
+        this.virtualAppService = virtualAppService;
     }
 
     @Deactivate
@@ -83,6 +90,13 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    public Application getApplication( final ApplicationKey key )
+    {
+        final Application installedApplication = this.registry.get( key );
+        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+    }
+
+    @Override
     public ApplicationKeys getInstalledApplicationKeys()
     {
         return getInstalledApplications().getApplicationKeys();
@@ -92,6 +106,14 @@ public final class ApplicationServiceImpl
     public Applications getInstalledApplications()
     {
         return Applications.from( this.registry.getAll() );
+    }
+
+    @Override
+    public Applications getAllApplications()
+    {
+        return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
+                               .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
+                               .values() );
     }
 
     @Override
@@ -140,9 +162,7 @@ public final class ApplicationServiceImpl
     @Deprecated
     public Application installStoredApplication( final NodeId nodeId )
     {
-        final ApplicationInstallationParams params = ApplicationInstallationParams.create().
-            triggerEvent( false ).
-            build();
+        final ApplicationInstallationParams params = ApplicationInstallationParams.create().triggerEvent( false ).build();
         return installStoredApplication( nodeId, params );
     }
 
