@@ -88,7 +88,7 @@ public class HazelcastObjectsReporter
                             {
                                 totalRuns = future.getStats().getTotalRuns();
                                 isDone = future.isDone();
-                                isCancelled = future.isCancelled();
+                                //isCancelled = future.isCancelled();
                                 delaySeconds = future.getDelay( TimeUnit.SECONDS);
                             }
                             catch ( Exception e )

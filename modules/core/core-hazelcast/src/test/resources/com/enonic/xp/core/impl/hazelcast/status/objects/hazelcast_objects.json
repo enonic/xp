@@ -31,7 +31,7 @@
           "totalRuns": 3,
           "delaySeconds": 123,
           "done": true,
-          "cancelled": false
+          "cancelled": null
         }
       ]
     }
