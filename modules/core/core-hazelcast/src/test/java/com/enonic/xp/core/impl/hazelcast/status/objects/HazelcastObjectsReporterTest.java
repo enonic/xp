@@ -84,7 +84,7 @@ class HazelcastObjectsReporterTest
         when( stats.getTotalRuns() ).thenReturn( 3L );
         when( scheduledFuture.getDelay( TimeUnit.SECONDS ) ).thenReturn( 123L );
         when( scheduledFuture.isDone(  ) ).thenReturn( true );
-        when( scheduledFuture.isCancelled(  ) ).thenReturn( false );
+        //when( scheduledFuture.isCancelled(  ) ).thenReturn( false );
 
         final ITopic<?> topic = mock( ITopic.class );
         when( topic.getName() ).thenReturn( "topic" );
