@@ -45,43 +45,37 @@ public final class TextRenderer
     @Override
     public PortalResponse render( final TextComponent textComponent, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( portalRequest );
+        final RenderMode renderMode = portalRequest.getMode();
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
 
         portalResponseBuilder.contentType( MediaType.create( "text", "html" ) ).postProcess( false );
 
         if ( textComponent.getText().isEmpty() )
         {
-            renderEmptyTextComponent( textComponent, portalRequest, portalResponseBuilder );
+            renderEmptyTextComponent( textComponent, renderMode, portalResponseBuilder );
         }
         else
         {
-            switch ( renderMode )
+            if ( renderMode == RenderMode.EDIT )
             {
-                case EDIT:
-                    portalResponseBuilder.body(
-                        MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
-                    break;
-
-                case LIVE:
-                case PREVIEW:
-                case INLINE:
-                default:
-                    ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
-                    final String processedHtml = removeEmptyFigCaptionTags( service.processHtml( params ) );
-                    portalResponseBuilder.body(
-                        MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
-                    break;
+                portalResponseBuilder.body(
+                    MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
+            }
+            else
+            {
+                ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
+                final String processedHtml = removeEmptyFigCaptionTags( service.processHtml( params ) );
+                portalResponseBuilder.body(
+                    MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
             }
         }
 
         return portalResponseBuilder.build();
     }
 
-    private void renderEmptyTextComponent( final TextComponent textComponent, final PortalRequest portalRequest,
+    private void renderEmptyTextComponent( final TextComponent textComponent, final RenderMode renderMode,
                                            final PortalResponse.Builder portalResponseBuilder )
     {
-        final RenderMode renderMode = getRenderingMode( portalRequest );
         switch ( renderMode )
         {
             case EDIT:
@@ -93,15 +87,10 @@ public final class TextRenderer
                 portalResponseBuilder.body( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
                 break;
 
-            case LIVE:
+            default:
                 portalResponseBuilder.body( "" );
                 break;
         }
-    }
-
-    private RenderMode getRenderingMode( final PortalRequest portalRequest )
-    {
-        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 
     private String removeEmptyFigCaptionTags( final String text )

@@ -122,10 +122,9 @@ public class PageResolver
                     // we can render default empty page in Live-Edit, for selecting controller when page customized
                     return null;
                 case INLINE:
-                case PREVIEW:
                     throw new WebException( HttpStatus.IM_A_TEAPOT, message );
                 default:
-                    throw new WebException( HttpStatus.INTERNAL_SERVER_ERROR, message );
+                    throw new WebException( HttpStatus.NOT_FOUND, message );
             }
         }
         else

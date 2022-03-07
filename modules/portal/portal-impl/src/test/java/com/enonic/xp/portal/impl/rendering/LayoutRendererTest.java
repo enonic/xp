@@ -27,7 +27,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -105,7 +104,9 @@ public class LayoutRendererTest
     @Test
     public void emptyComponentNoMode()
     {
-        assertThrows(DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ));
+        String response = this.configureEmptyComponent( RenderMode.ADMIN );
+        String result = "<div data-portal-component-type=\"layout\"></div>";
+        assertEquals( result, response );
     }
 
     @Test

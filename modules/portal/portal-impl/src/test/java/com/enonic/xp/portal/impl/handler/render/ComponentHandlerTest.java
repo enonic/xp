@@ -132,7 +132,7 @@ public class ComponentHandlerTest
 
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
-        assertAll( () -> assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() ),
+        assertAll( () -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ),
                    () -> assertEquals( "No default template found for content", e.getMessage() ));
     }
 
