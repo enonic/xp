@@ -45,7 +45,7 @@ public final class FragmentRenderer
 
     public PortalResponse render( final FragmentComponent component, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( portalRequest );
+        final RenderMode renderMode = portalRequest.getMode();
         final String type = component.getType().toString();
 
         if ( component.getFragment() == null )
@@ -141,10 +141,5 @@ public final class FragmentRenderer
             postProcess( false ).
             body( html ).
             build();
-    }
-
-    private RenderMode getRenderingMode( final PortalRequest portalRequest )
-    {
-        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
     }
 }

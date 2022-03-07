@@ -191,7 +191,7 @@ public class PageHandlerTest
 
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
         assertEquals( "Template [my-page] is missing and no default template found for content", e.getMessage() );
     }
 

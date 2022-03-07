@@ -44,7 +44,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
         catch ( Exception e )
         {
-            final RenderMode renderMode = getRenderingMode( portalRequest );
+            final RenderMode renderMode = portalRequest.getMode();
             if ( renderMode == RenderMode.EDIT )
             {
                 return renderErrorComponentPlaceHolder( component, e.getMessage() );
@@ -74,7 +74,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             portalRequest.setApplicationKey( descriptor.getKey().getApplicationKey() );
             final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
-            final RenderMode renderMode = getRenderingMode( portalRequest );
+            final RenderMode renderMode = portalRequest.getMode();
             final MediaType contentType = portalResponse.getContentType();
             if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().type().equals( "text" ) )
             {
@@ -104,19 +104,14 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     private PortalResponse renderEmptyComponent( final DescriptorBasedComponent component, final PortalRequest portalRequest )
     {
-        final RenderMode renderMode = getRenderingMode( portalRequest );
-        switch ( renderMode )
+        final RenderMode renderMode = portalRequest.getMode();
+        if ( renderMode == RenderMode.EDIT )
         {
-            case EDIT:
-                return renderEmptyComponentEditMode( component );
-
-            case PREVIEW:
-            case INLINE:
-            case LIVE:
-                return renderEmptyComponentPreviewMode( component );
-
-            default:
-                throw new DescriptorNotFoundException( component.getDescriptor() );
+            return renderEmptyComponentEditMode( component );
+        }
+        else
+        {
+            return renderEmptyComponentPreviewMode( component );
         }
     }
 
@@ -158,11 +153,6 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     }
 
     protected abstract ComponentDescriptor getComponentDescriptor( DescriptorKey descriptorKey );
-
-    private RenderMode getRenderingMode( final PortalRequest portalRequest )
-    {
-        return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
-    }
 
     public void setControllerScriptFactory( final ControllerScriptFactory value )
     {

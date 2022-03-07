@@ -186,7 +186,7 @@ public final class ImageRenderer
         {
             LOG.warn( "Image content could not be found. ContentId: " + component.getImage().toString() );
 
-            final RenderMode renderMode = getRenderingMode();
+            final RenderMode renderMode = portalRequest.getMode();
 
             if ( renderMode == RenderMode.EDIT )
             {
@@ -200,7 +200,7 @@ public final class ImageRenderer
 
         private PortalResponse renderResponseNoImage()
         {
-            final RenderMode renderMode = getRenderingMode();
+            final RenderMode renderMode = portalRequest.getMode();
 
             if ( renderMode == RenderMode.EDIT )
             {
@@ -210,11 +210,6 @@ public final class ImageRenderer
             }
 
             return renderOkResponse( "" );
-        }
-
-        private RenderMode getRenderingMode()
-        {
-            return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
         }
 
         private PortalResponse renderErrorResponse()

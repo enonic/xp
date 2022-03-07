@@ -149,7 +149,7 @@ public class PageResolverTest
 
         final WebException webExceptionInLive =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, webExceptionInLive.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
         assertEquals( webExceptionInLive.getMessage(), "No default template found for content" );
 
         final WebException webExceptionInInline =
@@ -158,7 +158,7 @@ public class PageResolverTest
 
         final WebException webExceptionInPreview =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInPreview.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
         final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
 
@@ -184,7 +184,7 @@ public class PageResolverTest
 
         final WebException webExceptionInLive =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, webExceptionInLive.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
         assertEquals( webExceptionInLive.getMessage(), "Content page has neither template nor descriptor" );
 
         final WebException webExceptionInInline =
@@ -193,7 +193,7 @@ public class PageResolverTest
 
         final WebException webExceptionInPreview =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInPreview.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
         final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
 
@@ -373,7 +373,7 @@ public class PageResolverTest
 
         final WebException webExceptionInLive =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, webExceptionInLive.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
         assertEquals( webExceptionInLive.getMessage(), "Template [t-not-exists] is missing and no default template found for content" );
 
         final WebException webExceptionInInline =
@@ -382,7 +382,7 @@ public class PageResolverTest
 
         final WebException webExceptionInPreview =
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInPreview.getStatus() );
+        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
         final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
 
