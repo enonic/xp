@@ -11,7 +11,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
@@ -24,8 +23,6 @@ import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 final class PageHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -41,8 +38,6 @@ final class PageHandlerWorker
     PageResolver pageResolver;
 
     PageDescriptorService pageDescriptorService;
-
-    String previewContentSecurityPolicy;
 
     PageHandlerWorker( final PortalRequest request )
     {
@@ -82,31 +77,7 @@ final class PageHandlerWorker
             trace.put( "type", "page" );
         }
 
-        final PortalResponse response = rendererDelegate.render( effectiveContent, this.request );
-        final RenderMode mode = request.getMode();
-
-        if ( mode == RenderMode.LIVE )
-        {
-            return response;
-        }
-
-        final PortalResponse.Builder builder = PortalResponse.create( response );
-
-        if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
-        {
-            builder.header( "X-Frame-Options", "SAMEORIGIN" );
-        }
-
-        if ( mode == RenderMode.EDIT )
-        {
-            builder.removeHeader( "Content-Security-Policy" );
-        }
-        else if ( !nullToEmpty( previewContentSecurityPolicy ).isBlank() &&
-            !response.getHeaders().containsKey( "Content-Security-Policy" ) )
-        {
-            builder.header( "Content-Security-Policy", previewContentSecurityPolicy );
-        }
-        return builder.build();
+        return rendererDelegate.render( effectiveContent, this.request );
     }
 
     private PortalResponse renderShortcut( final Content content )

@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
@@ -21,8 +20,6 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 final class MappingHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
@@ -33,8 +30,6 @@ final class MappingHandlerWorker
     ControllerMappingDescriptor mappingDescriptor;
 
     RendererDelegate rendererDelegate;
-
-    String previewContentSecurityPolicy;
 
     MappingHandlerWorker( final PortalRequest request )
     {
@@ -54,7 +49,9 @@ final class MappingHandlerWorker
             trace.put( "type", "mapping" );
         }
 
-        final PortalResponse portalResponse = renderController( controllerScript );
+        this.request.setControllerScript( controllerScript );
+
+        final PortalResponse portalResponse = rendererDelegate.render( mappingDescriptor, this.request );
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
@@ -65,37 +62,6 @@ final class MappingHandlerWorker
             webSocketContext.apply( webSocketEndpoint );
         }
         return portalResponse;
-    }
-
-    private PortalResponse renderController( final ControllerScript controllerScript )
-    {
-        this.request.setControllerScript( controllerScript );
-
-        final PortalResponse response = rendererDelegate.render( mappingDescriptor, this.request );
-        final RenderMode mode = request.getMode();
-
-        if ( mode == RenderMode.LIVE )
-        {
-            return response;
-        }
-
-        final PortalResponse.Builder builder = PortalResponse.create( response );
-
-        if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
-        {
-            builder.header( "X-Frame-Options", "SAMEORIGIN" );
-        }
-
-        if ( mode == RenderMode.EDIT )
-        {
-            builder.removeHeader( "Content-Security-Policy" );
-        }
-        else if ( !nullToEmpty( previewContentSecurityPolicy ).isBlank() &&
-            !response.getHeaders().containsKey( "Content-Security-Policy" ) )
-        {
-            builder.header( "Content-Security-Policy", previewContentSecurityPolicy );
-        }
-        return builder.build();
     }
 
     private ControllerScript getScript()
