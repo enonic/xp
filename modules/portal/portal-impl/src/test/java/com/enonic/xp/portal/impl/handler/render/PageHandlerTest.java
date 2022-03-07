@@ -18,7 +18,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -36,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PageHandlerTest
@@ -54,7 +52,6 @@ public class PageHandlerTest
         this.handler.setPageTemplateService( this.pageTemplateService );
         this.handler.setRendererDelegate( this.rendererDelegate );
         this.handler.setPortalUrlService( this.portalUrlService );
-        this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );

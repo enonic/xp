@@ -54,7 +54,7 @@ public final class PortalResponse
 
     public static Builder create( final WebResponse source )
     {
-        return new Builder( source );
+        return source instanceof PortalResponse ? new Builder( (PortalResponse) source ) : new Builder( source );
     }
 
     public static Builder create( final PortalResponse source )

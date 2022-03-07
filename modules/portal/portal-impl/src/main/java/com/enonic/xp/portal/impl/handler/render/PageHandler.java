@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
@@ -12,7 +10,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.trace.Trace;
@@ -37,18 +34,9 @@ public final class PageHandler
 
     private PortalUrlService portalUrlService;
 
-    private volatile String previewContentSecurityPolicy;
-
     public PageHandler()
     {
         super( 50 );
-    }
-
-    @Activate
-    @Modified
-    public void activate( final PortalConfig config )
-    {
-        previewContentSecurityPolicy = config.page_previewContentSecurityPolicy();
     }
 
     @Override
@@ -69,7 +57,6 @@ public final class PageHandler
         worker.pageResolver = new PageResolver( pageTemplateService );
         worker.pageDescriptorService = pageDescriptorService;
         worker.portalUrlService = portalUrlService;
-        worker.previewContentSecurityPolicy = previewContentSecurityPolicy;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {

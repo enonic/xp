@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class AdminSiteHandlerTest
     extends BaseHandlerTest
@@ -39,6 +40,7 @@ public class AdminSiteHandlerTest
         this.handler = new AdminSiteHandler();
         this.handler.setExceptionMapper( exceptionMapper );
         this.handler.setExceptionRenderer( exceptionRenderer );
+        this.handler.activate( mock( AdminConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
 
