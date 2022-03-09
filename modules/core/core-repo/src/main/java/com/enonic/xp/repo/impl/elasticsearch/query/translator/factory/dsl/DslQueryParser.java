@@ -11,14 +11,13 @@ import com.enonic.xp.data.PropertySet;
 public class DslQueryParser
 {
     private static final Map<String, Function<PropertySet, QueryBuilder>> QUERY_BUILDERS =
-        Map.of( BooleanQueryBuilder.NAME, ( set -> new BooleanQueryBuilder( set ).create() ), TermQueryBuilder.NAME,
-                ( set -> new TermQueryBuilder( set ).create() ), InQueryBuilder.NAME, ( set -> new InQueryBuilder( set ).create() ),
-                LikeQueryBuilder.NAME, ( set -> new LikeQueryBuilder( set ).create() ), FulltextQueryBuilder.NAME,
-                ( set -> new FulltextQueryBuilder( set ).create() ), NgramQueryBuilder.NAME,
-                ( set -> new NgramQueryBuilder( set ).create() ), StemmedQueryBuilder.NAME,
-                ( set -> new StemmedQueryBuilder( set ).create() ), RangeQueryBuilder.NAME,
-                ( set -> new RangeQueryBuilder( set ).create() ), PathMatchQueryBuilder.NAME,
-                ( set -> new PathMatchQueryBuilder( set ).create() ) );
+        Map.of( BooleanQueryBuilder.NAME, set -> new BooleanQueryBuilder( set ).create(), TermQueryBuilder.NAME,
+                set -> new TermQueryBuilder( set ).create(), InQueryBuilder.NAME, set -> new InQueryBuilder( set ).create(),
+                LikeQueryBuilder.NAME, set -> new LikeQueryBuilder( set ).create(), FulltextQueryBuilder.NAME,
+                set -> new FulltextQueryBuilder( set ).create(), NgramQueryBuilder.NAME, ( set -> new NgramQueryBuilder( set ).create() ),
+                StemmedQueryBuilder.NAME, set -> new StemmedQueryBuilder( set ).create(), RangeQueryBuilder.NAME,
+                set -> new RangeQueryBuilder( set ).create(), PathMatchQueryBuilder.NAME, set -> new PathMatchQueryBuilder( set ).create(),
+                MatchAllQueryBuilder.NAME, set -> new MatchAllQueryBuilder( set ).create() );
 
     private DslQueryParser()
     {
@@ -33,4 +32,5 @@ public class DslQueryParser
         }
         return builder.apply( property.getValue().asData() );
     }
+
 }

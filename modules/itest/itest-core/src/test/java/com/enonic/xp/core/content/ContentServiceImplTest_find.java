@@ -314,6 +314,24 @@ public class ContentServiceImplTest_find
 
     }
 
+    @Test
+    public void dsl_match_all_query()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        createContent( site.getPath(), "d" );
+        createContent( site.getPath(), "c" );
+        createContent( site.getPath(), "b" );
+
+        final PropertyTree request = new PropertyTree();
+        final PropertySet fulltext = new PropertySet();
+        request.addSet( "matchAll", fulltext );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 4, contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getTotalHits() );
+    }
+
     private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )
         throws Exception
     {
