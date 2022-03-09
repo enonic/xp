@@ -3,7 +3,7 @@
     "fields": [
       "displayName"
     ],
-    "query": "fisk",
+    "searchString": "fisk",
     "operator": "AND",
     "boost": 0.3
   }

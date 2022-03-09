@@ -3,7 +3,7 @@
     "fields": [
       "displayName^5"
     ],
-    "query": "apple",
+    "searchString": "apple",
     "language": "ru"
   }
 }

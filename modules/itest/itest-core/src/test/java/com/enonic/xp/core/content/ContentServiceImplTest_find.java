@@ -214,7 +214,7 @@ public class ContentServiceImplTest_find
         final PropertyTree request = new PropertyTree();
         final PropertySet fulltext = new PropertySet();
         fulltext.addStrings( "fields", "displayName" );
-        fulltext.addString( "query", "c" );
+        fulltext.addString( "searchString", "c" );
 
         request.addSet( "fulltext", fulltext );
 

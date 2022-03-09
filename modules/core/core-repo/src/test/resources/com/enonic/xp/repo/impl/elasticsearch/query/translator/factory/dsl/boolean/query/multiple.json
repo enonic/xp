@@ -13,7 +13,7 @@
           "fields": [
             "displayName"
           ],
-          "query": "fisk"
+          "searchString": "fisk"
         }
       },
       {
@@ -34,7 +34,7 @@
           "fields": [
             "displayName"
           ],
-          "query": "apple",
+          "searchString": "apple",
           "language": "en"
         }
       }

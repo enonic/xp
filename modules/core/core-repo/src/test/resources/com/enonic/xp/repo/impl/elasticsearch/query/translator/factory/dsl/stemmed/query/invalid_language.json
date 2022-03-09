@@ -1,7 +1,7 @@
 {
   "stemmed": {
     "field": "displayName",
-    "query": "apple",
+    "searchString": "apple",
     "language": "rr"
   }
 }

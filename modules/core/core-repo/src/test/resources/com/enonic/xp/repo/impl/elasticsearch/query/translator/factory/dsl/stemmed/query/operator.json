@@ -3,7 +3,7 @@
     "fields": [
       "displayName"
     ],
-    "query": "apple",
+    "searchString": "apple",
     "language": "no",
     "operator": "AND"
   }

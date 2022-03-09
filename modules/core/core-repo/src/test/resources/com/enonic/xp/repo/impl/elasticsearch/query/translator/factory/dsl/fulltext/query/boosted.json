@@ -5,7 +5,7 @@
       "_name",
       "custom"
     ],
-    "query": "fisk",
+    "searchString": "fisk",
     "boost": 1.3
   }
 }

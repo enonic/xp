@@ -21,7 +21,7 @@ class FulltextQueryBuilder
 
     public QueryBuilder create()
     {
-        if ( nullToEmpty( query ).isBlank() )
+        if ( nullToEmpty( searchString ).isBlank() )
         {
             return new MatchAllQueryBuilder();
         }

@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 abstract class SimpleQueryStringBuilder
     extends DslQueryBuilder
 {
-    protected final String query;
+    protected final String searchString;
 
     protected final String operator;
 
@@ -23,7 +23,7 @@ abstract class SimpleQueryStringBuilder
     {
         super( expression );
 
-        this.query = getString( "query" );
+        this.searchString = getString( "searchString" );
         this.operator = getString( "operator" );
         this.fields = WeightedQueryFieldNames.from( getStrings( "fields" ) );
 
@@ -33,7 +33,7 @@ abstract class SimpleQueryStringBuilder
     public QueryBuilder create()
     {
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
-            new org.elasticsearch.index.query.SimpleQueryStringBuilder( query ).analyzeWildcard( true );
+            new org.elasticsearch.index.query.SimpleQueryStringBuilder( searchString ).analyzeWildcard( true );
 
         if ( !nullToEmpty( operator ).isBlank() )
         {
