@@ -37,7 +37,7 @@ public class AdminSiteHandler
     @Modified
     public void activate( final AdminConfig config )
     {
-        previewContentSecurityPolicy = config.site_previewContentSecurityPolicy();
+        previewContentSecurityPolicy = config.site_preview_contentSecurityPolicy();
     }
 
     @Override
