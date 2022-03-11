@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.asset;
 
 import com.google.common.net.HttpHeaders;
-import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.HexCoder;
@@ -54,8 +53,8 @@ final class AssetHandlerWorker
 
         final Resource resource = resolveResource( resourceKey );
 
-        final String type = MediaTypes.instance().fromFile( resource.getKey().getName() ).toString();
-        final PortalResponse.Builder portalResponse = PortalResponse.create().body( resource ).contentType( MediaType.parse( type ) );
+        final PortalResponse.Builder portalResponse =
+            PortalResponse.create().contentType( MediaTypes.instance().fromFile( resource.getKey().getName() ) ).body( resource );
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() && !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
             RunMode.get() != RunMode.DEV && resourceKey.getPath().equals( assetPath ) && fingerprintMatches( fingerprint ) )

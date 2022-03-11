@@ -35,6 +35,10 @@ public final class AttachmentHandler
 
     private volatile String publicCacheControlHeaderConfig;
 
+    private volatile String contentSecurityPolicy;
+
+    private volatile String contentSecurityPolicySvg;
+
     @Activate
     public AttachmentHandler( @Reference final ContentService contentService )
     {
@@ -48,6 +52,8 @@ public final class AttachmentHandler
     {
         privateCacheControlHeaderConfig = config.media_private_cacheControl();
         publicCacheControlHeaderConfig = config.media_public_cacheControl();
+        contentSecurityPolicy = config.media_contentSecurityPolicy();
+        contentSecurityPolicySvg = config.media_contentSecurityPolicy_svg();
     }
 
     @Override
@@ -70,14 +76,15 @@ public final class AttachmentHandler
             throw WebException.notFound( "Not a valid attachment url pattern" );
         }
 
-        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest );
-        worker.contentService = this.contentService;
+        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest, this.contentService );
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );
         worker.fingerprint = matcher.group( 3 );
         worker.name = matcher.group( 4 );
         worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
+        worker.contentSecurityPolicy = this.contentSecurityPolicy;
+        worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
         return worker.execute();
     }
 

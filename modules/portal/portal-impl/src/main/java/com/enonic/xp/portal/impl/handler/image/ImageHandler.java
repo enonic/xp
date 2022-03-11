@@ -43,6 +43,10 @@ public final class ImageHandler
 
     private volatile String publicCacheControlHeaderConfig;
 
+    private volatile String contentSecurityPolicy;
+
+    private volatile String contentSecurityPolicySvg;
+
     public ImageHandler()
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
@@ -54,6 +58,8 @@ public final class ImageHandler
     {
         privateCacheControlHeaderConfig = config.media_private_cacheControl();
         publicCacheControlHeaderConfig = config.media_public_cacheControl();
+        contentSecurityPolicy = config.media_contentSecurityPolicy();
+        contentSecurityPolicySvg = config.media_contentSecurityPolicy_svg();
     }
 
     @Override
@@ -76,20 +82,19 @@ public final class ImageHandler
             throw WebException.notFound( "Not a valid image url pattern" );
         }
 
-        final ImageHandlerWorker worker = new ImageHandlerWorker( (PortalRequest) webRequest );
-        worker.contentId = ContentId.from( matcher.group( 1 ) );
+        final ImageHandlerWorker worker =
+            new ImageHandlerWorker( (PortalRequest) webRequest, this.contentService, this.imageService, this.mediaInfoService );
+        worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
         worker.name = matcher.group( 4 );
-        worker.imageService = this.imageService;
-        worker.contentService = this.contentService;
-        worker.mediaInfoService = this.mediaInfoService;
         worker.filterParam = getParameter( webRequest, "filter" );
         worker.qualityParam = getParameter( webRequest, "quality" );
         worker.backgroundParam = getParameter( webRequest, "background" );
         worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
-
+        worker.contentSecurityPolicy = this.contentSecurityPolicy;
+        worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
         return worker.execute();
     }
 
