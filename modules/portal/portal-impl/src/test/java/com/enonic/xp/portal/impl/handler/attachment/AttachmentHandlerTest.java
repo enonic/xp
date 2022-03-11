@@ -13,6 +13,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -216,6 +218,8 @@ class AttachmentHandlerTest
     void idNotFound()
         throws Exception
     {
+        when( this.contentService.getById( any() ) ).thenThrow( new ContentNotFoundException( ContentPath.ROOT, null) );
+
         this.request.setEndpointPath( "/_/attachment/download/1/logo.png" );
 
         try
@@ -409,5 +413,15 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
 
         assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
+    }
+
+    @Test
+    void contentSecurityPolicy()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'", res.getHeaders().get( "Content-Security-Policy" ) );
     }
 }

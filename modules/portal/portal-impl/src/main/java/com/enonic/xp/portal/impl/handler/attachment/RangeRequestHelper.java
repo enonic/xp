@@ -28,9 +28,11 @@ public final class RangeRequestHelper
                                     final MediaType contentType )
         throws IOException
     {
+        response.contentType( contentType );
         response.header( "Accept-Ranges", "bytes" );
         if ( !request.getHeaders().containsKey( "Range" ) )
         {
+            response.body( body );
             return;
         }
 

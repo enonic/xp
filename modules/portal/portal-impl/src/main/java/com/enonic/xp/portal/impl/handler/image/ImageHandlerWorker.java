@@ -1,18 +1,16 @@
 package com.enonic.xp.portal.impl.handler.image;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.exception.ThrottlingException;
@@ -23,227 +21,150 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.util.MediaTypes;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
 final class ImageHandlerWorker
-    extends PortalHandlerWorker<PortalRequest>
+    extends AbstractAttachmentHandlerWorker<Media>
 {
     private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
 
     private static final int DEFAULT_QUALITY = 85;
 
-    protected String name;
+    private final ImageService imageService;
 
-    protected ContentId contentId;
+    private final MediaInfoService mediaInfoService;
 
-    protected String filterParam;
+    String filterParam;
 
-    protected String qualityParam;
+    String qualityParam;
 
-    protected String backgroundParam;
+    String backgroundParam;
 
-    protected ScaleParams scaleParams;
+    ScaleParams scaleParams;
 
-    protected ImageService imageService;
-
-    protected ContentService contentService;
-
-    protected MediaInfoService mediaInfoService;
-
-    protected String fingerprint;
-
-    protected String privateCacheControlHeaderConfig;
-
-    protected String publicCacheControlHeaderConfig;
-
-    ImageHandlerWorker( final PortalRequest request )
+    ImageHandlerWorker( final PortalRequest request, final ContentService contentService, final ImageService imageService,
+                        final MediaInfoService mediaInfoService )
     {
-        super( request );
+        super( request, contentService );
+        this.imageService = imageService;
+        this.mediaInfoService = mediaInfoService;
     }
 
     @Override
-    public PortalResponse execute()
-        throws Exception
+    protected Attachment resolveAttachment( final Content content, final String name )
     {
-        final Media content = getImage( this.contentId );
-        final String contentName = content.getName().toString();
-
-        final boolean contentNameEquals = contentName.equals( this.name );
-
-        if ( !( contentNameEquals || contentName.equals( Files.getNameWithoutExtension( this.name ) ) ) )
-        {
-            throw WebException.notFound( String.format( "Image [%s] not found for content [%s]", this.name, this.contentId ) );
-        }
-
-        final Attachment attachment = content.getMediaAttachment();
+        final Attachment attachment = ( (Media) content ).getMediaAttachment();
         if ( attachment == null )
         {
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
         }
-
-        final BinaryReference binaryReference = attachment.getBinaryReference();
-
-        final ByteSource binary = this.contentService.getBinary( this.contentId, binaryReference );
-        if ( binary == null )
-        {
-            throw WebException.notFound( String.format( "Binary [%s] not found for content [%s]", binaryReference, this.contentId ) );
-        }
-
-        if ( request.getMethod() == HttpMethod.OPTIONS )
-        {
-            // it will be handled by default OPTIONS handler in BaseWebHandler
-            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        }
-
-        final String attachmentMimeType = attachment.getMimeType();
-
-        final PortalResponse.Builder portalResponse = PortalResponse.create();
-
-        if ( "svgz".equals( attachment.getExtension() ) )
-        {
-            portalResponse.contentType( MediaType.SVG_UTF_8.withoutParameters() );
-            portalResponse.header( "Content-Encoding", "gzip" );
-            portalResponse.body( binary );
-        }
-        else if ( attachmentMimeType.equals( "image/svg+xml" ) || attachmentMimeType.equals( "image/gif" ) )
-        {
-            portalResponse.contentType( MediaType.parse( attachmentMimeType ) );
-            portalResponse.body( binary );
-        }
-        else
-        {
-            final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(),
-                                                                                     () -> Objects.requireNonNullElse(
-                                                                                         mediaInfoService.getImageOrientation( binary ),
-                                                                                         ImageOrientation.TopLeft ) );
-
-            final MediaType mimeType =
-                contentNameEquals ? MediaType.parse( attachmentMimeType ) : MediaTypes.instance().fromFile( this.name );
-
-            portalResponse.contentType( mimeType );
-
-            try
-            {
-                final ReadImageParams readImageParams = ReadImageParams.newImageParams()
-                    .contentId( this.contentId )
-                    .binaryReference( binaryReference )
-                    .cropping( content.getCropping() )
-                    .scaleParams( this.scaleParams )
-                    .focalPoint( content.getFocalPoint() )
-                    .filterParam( this.filterParam )
-                    .backgroundColor( getBackgroundColor() )
-                    .mimeType( mimeType.toString() )
-                    .quality( getImageQuality() )
-                    .orientation( imageOrientation )
-                    .build();
-
-                portalResponse.body( this.imageService.readImage( readImageParams ) );
-            }
-            catch ( IllegalArgumentException e )
-            {
-                throw new WebException( HttpStatus.BAD_REQUEST, "Invalid parameters", e );
-            }
-            catch ( ThrottlingException e )
-            {
-                throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
-            }
-        }
-
-        if ( !nullToEmpty( this.fingerprint ).isBlank() )
-        {
-            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
-            final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
-
-            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() && this.fingerprint.equals( resolveHash( content ) ) )
-            {
-                portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
-            }
-        }
-
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", content.getPath() );
-            trace.put( "type", "image" );
-        }
-
-        return portalResponse.build();
+        return attachment;
     }
 
-    private int getImageQuality()
+    @Override
+    protected boolean shouldConvert( final Content content, final String name )
     {
-        if ( nullToEmpty( this.qualityParam ).isEmpty() )
+        final String contentName = content.getName().toString();
+        final boolean result = !contentName.equals( name );
+        if ( result && !contentName.equals( Files.getNameWithoutExtension( name ) ) )
         {
-            return DEFAULT_QUALITY;
+            throw WebException.notFound( String.format( "Image [%s] not found for content [%s]", name, content.getId() ) );
         }
-
-        return Integer.parseInt( this.qualityParam );
+        return result;
     }
 
-    private int getBackgroundColor()
+    protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
     {
-        if ( nullToEmpty( this.backgroundParam ).isEmpty() )
-        {
-            return DEFAULT_BACKGROUND;
-        }
-
-        final String color = this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam;
-
-        return Integer.parseInt( color, 16 );
+        portalResponse.contentType( contentType );
+        portalResponse.body( body );
     }
 
-    private String resolveHash( final Media media )
+    @Override
+    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
+                                    final MediaType contentType )
+        throws IOException
     {
-        final String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
+        final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(), () -> Objects.requireNonNullElse(
+            mediaInfoService.getImageOrientation( binary ), ImageOrientation.TopLeft ) );
+
+        final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
+
+        final int backgroundColor = nullToEmpty( this.backgroundParam ).isEmpty()
+            ? DEFAULT_BACKGROUND
+            : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
+        try
+        {
+            final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+                .contentId( content.getId() )
+                .binaryReference( binaryReference )
+                .cropping( content.getCropping() )
+                .focalPoint( content.getFocalPoint() )
+                .orientation( imageOrientation )
+                .scaleParams( this.scaleParams )
+                .filterParam( this.filterParam )
+                .backgroundColor( backgroundColor )
+                .quality( imageQuality )
+                .mimeType( contentType.toString() )
+                .build();
+
+            return this.imageService.readImage( readImageParams );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new WebException( HttpStatus.BAD_REQUEST, "Invalid parameters", e );
+        }
+        catch ( ThrottlingException e )
+        {
+            throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
+        }
+    }
+
+    @Override
+    protected String resolveHash( final Media content, final BinaryReference binaryReference )
+    {
+        final String binaryKey = super.resolveHash( content, binaryReference );
         return Hashing.sha1()
             .newHasher()
             .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( content.getFocalPoint() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( content.getCropping() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( content.getOrientation() ), StandardCharsets.UTF_8 )
             .hash()
             .toString();
     }
 
-    private Media getImage( final ContentId contentId )
+    @Override
+    protected Media cast( final Content content )
     {
-        final Content content = getContentById( contentId );
-
         if ( !( content instanceof Media ) )
         {
-            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", contentId ) );
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
 
         final Media media = (Media) content;
         if ( !media.isImage() )
         {
-            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", contentId ) );
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
 
         return media;
     }
 
-    private Content getContentById( final ContentId contentId )
+    @Override
+    protected void addTrace( final Media content )
     {
-        try
+        final Trace trace = Tracer.current();
+        if ( trace != null )
         {
-            return this.contentService.getById( contentId );
-        }
-        catch ( final Exception e )
-        {
-            throw WebException.notFound( String.format( "Content with id [%s] not found", contentId ) );
+            trace.put( "contentPath", content.getPath() );
+            trace.put( "type", "image" );
         }
     }
 }

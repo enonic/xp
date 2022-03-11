@@ -412,6 +412,7 @@ class ImageHandlerTest
         assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
+        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'", res.getHeaders().get( "Content-Security-Policy" ) );
     }
 
     @Test
@@ -429,6 +430,7 @@ class ImageHandlerTest
         assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
         assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
+        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'", res.getHeaders().get( "Content-Security-Policy" ) );
     }
 
     @Test
