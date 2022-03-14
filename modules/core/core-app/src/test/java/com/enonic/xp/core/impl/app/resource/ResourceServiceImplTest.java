@@ -154,7 +154,7 @@ class ResourceServiceImplTest
         final Instant timestamp = Instant.parse( "2021-12-03T10:15:30.00Z" );
 
         final PropertyTree data = new PropertyTree();
-        data.addXml( "resourceValue", "<xml><my-xml hello='world'/></xml>" );
+        data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
 
         final Node partSchemaNode = createNode( "my-part.xml", NodePath.create( "/schemas/site/parts/my-part" ).build(), timestamp, data );
 
@@ -191,7 +191,7 @@ class ResourceServiceImplTest
         assertEquals( timestamp.toEpochMilli(), resource.getTimestamp() );
 
         final String bytes = new String( resource.getBytes().read(), StandardCharsets.UTF_8 );
-        assertEquals( data.getString( "resourceValue" ), bytes );
+        assertEquals( data.getString( "resource" ), bytes );
         assertEquals( 34, resource.getSize() );
 
         final String value = processResource( "segment1", "site/parts/my-part/my-part.xml", "1" );
