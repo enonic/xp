@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class SchemaNodePropertyNames
 {
-    public static final String RESOURCE_VALUE = "resourceValue";
+    public static final String RESOURCE = "resource";
 
     private SchemaNodePropertyNames()
     {
