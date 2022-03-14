@@ -24,7 +24,7 @@ public final class NodeValueResource
         super( key );
 
         this.timestamp = node.getTimestamp();
-        this.value = ByteSource.wrap( node.data().getValue( SchemaNodePropertyNames.RESOURCE_VALUE ).asString().getBytes() );
+        this.value = ByteSource.wrap( node.data().getValue( SchemaNodePropertyNames.RESOURCE ).asString().getBytes() );
     }
 
     @Override
