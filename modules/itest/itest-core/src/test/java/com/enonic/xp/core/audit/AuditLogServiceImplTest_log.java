@@ -8,13 +8,12 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogContext;
-import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AuditLogServiceImplTest_log
     extends AbstractAuditLogServiceTest
@@ -30,10 +29,11 @@ public class AuditLogServiceImplTest_log
                 user( User.ANONYMOUS ).
                 build() ).build();
 
-        assertThrows( NodeAccessException.class, () -> context.runWith( () -> {
+        context.runWith( () -> {
             LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
-            auditLogService.log( params );
-        } ) );
+
+            assertNull( auditLogService.log( params ) );
+        } );
     }
 
     @Test

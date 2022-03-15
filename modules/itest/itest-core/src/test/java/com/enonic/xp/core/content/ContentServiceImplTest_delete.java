@@ -705,9 +705,15 @@ public class ContentServiceImplTest_delete
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
         this.contentService.deleteWithoutFetch( deleteContentParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.delete" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
 
         final Iterable<String> deletedContents = logResultSet.getStrings( "deletedContents" );
         assertEquals( 2, StreamSupport.stream( deletedContents.spliterator(), false ).count() );

@@ -60,24 +60,26 @@ public class AuditLogServiceImpl
             return null;
         }
 
-        AuditLog result = CreateAuditLogCommand.create().
-            nodeService( nodeService ).
-            params( params ).
-            build().
-            execute();
-
-        if ( this.config.isOutputLogs() )
+        try
         {
-            logAuditLog( result );
+            AuditLog result = CreateAuditLogCommand.create().
+                nodeService( nodeService ).
+                params( params ).
+                build().
+                execute();
+
+            if ( this.config.isOutputLogs() )
+            {
+                LOG.info( "{} {}", result.getType(), result.getSource() );
+            }
+
+            return result;
         }
-
-        return result;
-    }
-
-    private void logAuditLog( final AuditLog auditLog )
-    {
-        final String message = String.format( "%s %s", auditLog.getType(), auditLog.getSource() );
-        LOG.info( message );
+        catch ( Throwable th )
+        {
+            LOG.error( "Could not log into auditLog", th );
+            return null;
+        }
     }
 
     @Override

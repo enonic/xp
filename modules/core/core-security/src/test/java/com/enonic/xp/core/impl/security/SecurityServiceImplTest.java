@@ -6,8 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.audit.AuditLogServiceImpl;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
@@ -156,7 +159,19 @@ public class SecurityServiceImplTest
         indexService.setNodeSearchService( searchService );
         indexService.setIndexServiceInternal( this.indexServiceInternal );
 
-        securityService = new SecurityServiceImpl( this.nodeService, indexService );
+        AuditLogConfig auditLogConfig = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );
+        Mockito.when( auditLogConfig.isOutputLogs() ).thenReturn( true );
+
+        AuditLogService auditLogService = new AuditLogServiceImpl( auditLogConfig, indexService, repositoryService, nodeService );
+
+        SecurityConfig securityConfig = Mockito.mock( SecurityConfig.class );
+        Mockito.when( securityConfig.auditlog_enabled() ).thenReturn( true );
+
+        SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+        securityAuditLogSupport.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, indexService, securityAuditLogSupport );
 
         runAsAdmin( () -> securityService.initialize() );
 

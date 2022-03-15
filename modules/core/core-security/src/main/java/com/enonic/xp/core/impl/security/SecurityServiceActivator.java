@@ -18,19 +18,23 @@ public class SecurityServiceActivator
 
     private final NodeService nodeService;
 
+    private final SecurityAuditLogSupport securityAuditLogSupport;
+
     private ServiceRegistration<SecurityService> service;
 
     @Activate
-    public SecurityServiceActivator( @Reference final NodeService nodeService, @Reference final IndexService indexService )
+    public SecurityServiceActivator( @Reference final NodeService nodeService, @Reference final IndexService indexService,
+                                     @Reference final SecurityAuditLogSupport securityAuditLogSupport )
     {
         this.indexService = indexService;
         this.nodeService = nodeService;
+        this.securityAuditLogSupport = securityAuditLogSupport;
     }
 
     @Activate
     public void activate( final BundleContext context )
     {
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService );
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
         securityService.initialize();
         service = context.registerService( SecurityService.class, securityService, null );
     }

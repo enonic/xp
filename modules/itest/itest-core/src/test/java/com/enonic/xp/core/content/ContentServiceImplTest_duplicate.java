@@ -178,9 +178,15 @@ public class ContentServiceImplTest_duplicate
 
         final Content duplicatedContent = doDuplicateContent( rootContent );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.duplicate" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
 
         final Iterable<String> ids = logResultSet.getStrings( "duplicatedContents" );
 
