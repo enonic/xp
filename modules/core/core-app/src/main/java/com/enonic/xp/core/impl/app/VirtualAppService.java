@@ -130,7 +130,7 @@ public class VirtualAppService
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/*/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" );
+        likeExpression.addString( "value", "/*/" + VirtualAppConstants.SITE_ROOT_NAME );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
@@ -150,7 +150,7 @@ public class VirtualAppService
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" );
+        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
