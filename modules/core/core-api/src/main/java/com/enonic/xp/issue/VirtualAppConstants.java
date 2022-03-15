@@ -18,6 +18,10 @@ public final class VirtualAppConstants
 
     public static final String WIDGET_ROOT_NAME = "widgets";
 
+    public static final String MIXIN_ROOT_NAME = "mixins";
+
+    public static final String X_DATA_ROOT_NAME = "x-data";
+
     public static final String SITE_ROOT_NAME = "site";
 
     public static final String CONTENT_TYPE_ROOT_NAME = "content-types";
