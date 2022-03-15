@@ -120,14 +120,18 @@ public final class SecurityServiceImpl
 
     private final IndexService indexService;
 
+    private final SecurityAuditLogSupport securityAuditLogSupport;
+
     private String suPasswordHashing;
 
     private String suPasswordValue;
 
-    public SecurityServiceImpl( final NodeService nodeService, final IndexService indexService )
+    public SecurityServiceImpl( final NodeService nodeService, final IndexService indexService,
+                                final SecurityAuditLogSupport securityAuditLogSupport )
     {
         this.nodeService = nodeService;
         this.indexService = indexService;
+        this.securityAuditLogSupport = securityAuditLogSupport;
         this.clock = Clock.systemUTC();
     }
 
@@ -219,6 +223,8 @@ public final class SecurityServiceImpl
 
             this.nodeService.refresh( RefreshMode.SEARCH );
 
+            securityAuditLogSupport.addRelationship( relationship );
+
             return null;
         } );
     }
@@ -232,6 +238,8 @@ public final class SecurityServiceImpl
 
             this.nodeService.refresh( RefreshMode.SEARCH );
 
+            securityAuditLogSupport.removeRelationship(relationship);
+
             return null;
         } );
     }
@@ -242,6 +250,9 @@ public final class SecurityServiceImpl
         callWithContext( () -> {
             doRemoveRelationships( from );
             this.nodeService.refresh( RefreshMode.SEARCH );
+
+            securityAuditLogSupport.removeRelationships( from );
+
             return null;
         } );
     }
@@ -393,8 +404,8 @@ public final class SecurityServiceImpl
         if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
         {
             UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
-            return (usernamePasswordAuthToken.getIdProvider() == null ||
-                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() )) &&
+            return ( usernamePasswordAuthToken.getIdProvider() == null ||
+                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
                 SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() );
         }
         return false;
@@ -633,6 +644,8 @@ public final class SecurityServiceImpl
 
             final Node updatedNode = nodeService.update( updateNodeParams );
 
+            securityAuditLogSupport.setPassword( key );
+
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
     }
@@ -660,6 +673,8 @@ public final class SecurityServiceImpl
             {
                 return setPassword( user.getKey(), createUser.getPassword() );
             }
+
+            securityAuditLogSupport.createUser( createUser );
 
             return PrincipalNodeTranslator.userFromNode( node );
         }
@@ -710,6 +725,8 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
 
             this.nodeService.refresh( RefreshMode.SEARCH );
+
+            securityAuditLogSupport.updateUser( UpdateUserParams.create( userToUpdate ).build() );
 
             return PrincipalNodeTranslator.userFromNode( updatedNode );
         } );
@@ -787,6 +804,8 @@ public final class SecurityServiceImpl
                 return createdNode;
             } );
 
+            securityAuditLogSupport.createGroup( createGroup );
+
             return PrincipalNodeTranslator.groupFromNode( node );
         }
         catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
@@ -814,6 +833,8 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
 
             this.nodeService.refresh( RefreshMode.SEARCH );
+
+            securityAuditLogSupport.updateGroup( UpdateGroupParams.create( groupToUpdate ).build() );
 
             return PrincipalNodeTranslator.groupFromNode( updatedNode );
         } );
@@ -847,6 +868,8 @@ public final class SecurityServiceImpl
                 return createdNode;
             } );
 
+            securityAuditLogSupport.createRole( createRole );
+
             return PrincipalNodeTranslator.roleFromNode( node );
         }
         catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
@@ -874,6 +897,8 @@ public final class SecurityServiceImpl
             final Node updatedNode = nodeService.update( updateNodeParams );
 
             this.nodeService.refresh( RefreshMode.SEARCH );
+
+            securityAuditLogSupport.updateRole( UpdateRoleParams.create( roleToUpdate ).build() );
 
             return PrincipalNodeTranslator.roleFromNode( updatedNode );
         } );
@@ -951,6 +976,7 @@ public final class SecurityServiceImpl
         {
             throw new IdProviderNotFoundException( idProviderKey );
         }
+        securityAuditLogSupport.removeIdProvider( idProviderKey );
     }
 
     @Override
@@ -977,6 +1003,8 @@ public final class SecurityServiceImpl
         {
             throw new PrincipalNotFoundException( principalKey );
         }
+
+        securityAuditLogSupport.removePrincipal( principalKey );
     }
 
     @Override
@@ -1080,6 +1108,8 @@ public final class SecurityServiceImpl
                 return idProviderNode;
             } );
 
+            securityAuditLogSupport.createIdProvider( createIdProviderParams );
+
             return IdProviderNodeTranslator.fromNode( node );
         }
         catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
@@ -1152,6 +1182,8 @@ public final class SecurityServiceImpl
             }
 
             this.nodeService.refresh( RefreshMode.SEARCH );
+
+            securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
 
             return IdProviderNodeTranslator.fromNode( idProviderNode );
         } );

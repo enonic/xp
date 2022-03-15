@@ -168,6 +168,7 @@ public interface SecurityService
 
     void removeRelationship( PrincipalRelationship relationship );
 
+    @Deprecated
     void removeRelationships( PrincipalKey from );
 
 }

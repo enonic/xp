@@ -33,6 +33,8 @@ import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
+import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.core.internal.concurrent.RecurringJob;
@@ -134,7 +136,15 @@ public abstract class AbstractContentSynchronizerTest
     private void setUpProjectService()
     {
         adminContext().runWith( () -> {
-            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, indexService );
+            SecurityConfig securityConfig = mock( SecurityConfig.class );
+            when( securityConfig.auditlog_enabled() ).thenReturn( true );
+
+            AuditLogService auditLogService = mock( AuditLogService.class );
+
+            final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+            securityAuditLogSupport.activate( securityConfig );
+
+            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, indexService, securityAuditLogSupport );
 
             securityService.initialize();
 

@@ -490,9 +490,15 @@ public class ContentServiceImplTest_publish
             includeDependencies( false ).
             build() );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 16 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.publish" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
 
         assertEquals( content.getId().toString(), logResultSet.getStrings( "pushedContents" ).iterator().next() );
         assertFalse( logResultSet.getStrings( "deletedContents" ).iterator().hasNext() );

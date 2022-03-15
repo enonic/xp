@@ -57,6 +57,8 @@ import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
+import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
@@ -109,6 +111,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -273,10 +276,10 @@ public class AbstractContentServiceTest
         nodeService.setRepositoryService( repositoryService );
         nodeService.initialize();
 
-        mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        mixinService = mock( MixinService.class );
+        when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        xDataService = Mockito.mock( XDataService.class );
+        xDataService = mock( XDataService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
@@ -285,32 +288,39 @@ public class AbstractContentServiceTest
             metadata( metadata ).
             build();
 
-        final BinaryExtractor extractor = Mockito.mock( BinaryExtractor.class );
-        Mockito.when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
+        final BinaryExtractor extractor = mock( BinaryExtractor.class );
+        when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
             thenReturn( extractedData );
 
         mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );
 
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        final ResourceService resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
         contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
-        PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        auditLogService = Mockito.mock( AuditLogService.class );
+        PageDescriptorService pageDescriptorService = mock( PageDescriptorService.class );
+        PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
+        LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
+        auditLogService = mock( AuditLogService.class );
 
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
-        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        final ContentConfig contentConfig = mock( ContentConfig.class );
+        when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
 
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class );
+        when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+
+        final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+        securityAuditLogSupport.activate( securityConfig );
+
+        final SecurityServiceImpl securityService =
+            new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
         securityService.initialize();
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();

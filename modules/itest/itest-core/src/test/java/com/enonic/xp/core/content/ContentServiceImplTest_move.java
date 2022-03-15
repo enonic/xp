@@ -111,9 +111,16 @@ public class ContentServiceImplTest_move
 
         final MoveContentsResult result = this.contentService.move( params );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.move" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
+
         assertEquals( child1.getId().toString(), logResultSet.getStrings( "movedContents" ).iterator().next() );
     }
 

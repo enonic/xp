@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -21,6 +21,8 @@ import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
+import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -65,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ProjectServiceImplTest
@@ -147,7 +150,15 @@ class ProjectServiceImplTest
     {
         super.setUpNode();
 
-        securityService = new SecurityServiceImpl( this.nodeService, indexService );
+        SecurityConfig securityConfig = mock( SecurityConfig.class );
+        when( securityConfig.auditlog_enabled() ).thenReturn( true );
+
+        AuditLogService auditLogService = mock( AuditLogService.class );
+
+        SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+        securityAuditLogSupport.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, indexService, securityAuditLogSupport );
 
         adminContext().runWith( () -> {
             securityService.initialize();
@@ -223,7 +234,7 @@ class ProjectServiceImplTest
     @Test
     void create_in_non_master_node()
     {
-        IndexServiceInternal indexServiceInternalMock = Mockito.mock( IndexServiceInternal.class );
+        IndexServiceInternal indexServiceInternalMock = mock( IndexServiceInternal.class );
         when( indexServiceInternalMock.waitForYellowStatus() ).thenReturn( true );
 
         indexService.setIndexServiceInternal( indexServiceInternalMock );
@@ -351,11 +362,8 @@ class ProjectServiceImplTest
                 assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isAllowedAll() );
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isAllowedAll() );
-                assertTrue(
-                    rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isAllowed( Permission.READ,
-                                                                                                                           Permission.CREATE,
-                                                                                                                           Permission.MODIFY,
-                                                                                                                           Permission.DELETE ) );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.author" ) )
+                                .isAllowed( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ) );
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).
                     isAllowed( Permission.READ ) );
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).
@@ -582,8 +590,8 @@ class ProjectServiceImplTest
 
                 assertEquals( 5, projectService.list().getSize() );
                 assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
-                assertTrue( projects.stream().anyMatch(
-                    project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
+                assertTrue( projects.stream()
+                                .anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
             } );
     }
 

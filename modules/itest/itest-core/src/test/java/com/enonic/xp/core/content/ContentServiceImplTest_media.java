@@ -184,9 +184,15 @@ public class ContentServiceImplTest_media
 
         final Content content = this.contentService.create( createMediaParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 1 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 15 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.create" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
 
         assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
         assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );

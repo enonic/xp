@@ -135,9 +135,15 @@ public class ContentServiceImplTest_unpublish
             unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        final PropertySet logResultSet = captor.getAllValues()
+            .stream()
+            .filter( log -> log.getType().equals( "system.content.unpublishContent" ) )
+            .findFirst()
+            .get()
+            .getData()
+            .getSet( "result" );
 
         assertEquals( content.getId().toString(), logResultSet.getStrings( "unpublishedContents" ).iterator().next() );
     }
