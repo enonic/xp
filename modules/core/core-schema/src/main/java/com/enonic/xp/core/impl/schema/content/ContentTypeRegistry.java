@@ -51,7 +51,7 @@ final class ContentTypeRegistry
 
     public ContentTypes getAll()
     {
-        final ApplicationKeys applicationKeys = applicationService.getAllApplications().getApplicationKeys();
+        final ApplicationKeys applicationKeys = applicationService.list().getApplicationKeys();
         return ContentTypes.from(
             Stream.concat( builtInTypes.getAll().stream(), applicationKeys.stream().flatMap( this::loadByApplication ) ).iterator() );
     }

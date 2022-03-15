@@ -37,7 +37,7 @@ public abstract class ApplicationTestSupport
         when( this.applicationService.getInstalledApplication( any() ) ).then(
             invocationOnMock -> apps.get( invocationOnMock.getArgument( 0 ) ) );
         when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
-        when( this.applicationService.getAllApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
+        when( this.applicationService.list() ).then( invocationOnMock -> Applications.from( apps.values() ) );
 
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
         when( applicationFactoryService.findActiveApplication( any() ) ).then(
