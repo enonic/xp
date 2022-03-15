@@ -6,7 +6,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.CreateDynamicSchemaParams;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.DynamicSchemaType;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -36,7 +35,7 @@ public class CreateDynamicSchemaHandler
         this.resource = resource;
     }
 
-    public Resource execute()
+    public String execute()
     {
         final CreateDynamicSchemaParams params = CreateDynamicSchemaParams.create()
             .descriptorKey( DescriptorKey.from( key ) )
@@ -44,7 +43,7 @@ public class CreateDynamicSchemaHandler
             .resource( resource )
             .build();
 
-        return dynamicSchemaServiceSupplier.get().create( params );
+        return dynamicSchemaServiceSupplier.get().create( params ).readString();
     }
 
     @Override
