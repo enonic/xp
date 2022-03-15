@@ -94,7 +94,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application getApplication( final ApplicationKey key )
+    public Application get( final ApplicationKey key )
     {
         final Application installedApplication = this.registry.get( key );
         return installedApplication != null ? installedApplication : virtualAppService.get( key );
@@ -113,7 +113,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Applications getAllApplications()
+    public Applications list()
     {
         return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
                                .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
