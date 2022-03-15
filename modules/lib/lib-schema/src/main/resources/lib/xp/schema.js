@@ -26,12 +26,12 @@ function required(params, name) {
  * @param {string} params.type schema type.
  * @param {string} [params.resource] Schema resource value.
  *
- * @returns {object} created resource.
+ * @returns {string} created resource.
  */
 exports.create = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.CreateDynamicSchemaHandler');
-    bean.setKey(required(params.key));
-    bean.setType(required(params.type));
+    bean.setKey(required(params, 'key'));
+    bean.setType(required(params, 'type'));
     bean.setResource(__.nullOrValue(params.resource));
     return bean.execute();
 };
@@ -43,12 +43,12 @@ exports.create = function (params) {
  * @param {string} params.key schema resource descriptor key.
  * @param {string} params.type schema type.
  *
- * @returns {object} fetched resource.
+ * @returns {string} fetched resource.
  */
 exports.get = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicSchemaHandler');
-    bean.setKey(required(params.key));
-    bean.setType(required(params.type));
+    bean.setKey(required(params, 'key'));
+    bean.setType(required(params, 'type'));
     return bean.execute();
 };
 
@@ -63,9 +63,9 @@ exports.get = function (params) {
  */
 exports.delete = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.DeleteDynamicSchemaHandler');
-    bean.setKey(required(params.key));
-    bean.setType(required(params.type));
-    return bean.execute();
+    bean.setKey(required(params, 'key'));
+    bean.setType(required(params, 'type'));
+    return __.toNativeObject(bean.execute());
 };
 
 
