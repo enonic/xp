@@ -52,7 +52,7 @@ public final class GetDynamicSchemaParams
         private void validate()
         {
             Preconditions.checkNotNull( key, "key must be set" );
-            Preconditions.checkNotNull( key, "type must be set" );
+            Preconditions.checkNotNull( type, "type must be set" );
         }
 
         public GetDynamicSchemaParams build()

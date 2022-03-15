@@ -6,7 +6,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.DynamicSchemaType;
 import com.enonic.xp.resource.GetDynamicSchemaParams;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -29,12 +28,12 @@ public class GetDynamicSchemaHandler
         this.type = type;
     }
 
-    public Resource execute()
+    public String execute()
     {
         final GetDynamicSchemaParams params =
             GetDynamicSchemaParams.create().descriptorKey( DescriptorKey.from( key ) ).type( DynamicSchemaType.valueOf( type ) ).build();
 
-        return dynamicSchemaServiceSupplier.get().get( params );
+        return dynamicSchemaServiceSupplier.get().get( params ).readString();
     }
 
     @Override

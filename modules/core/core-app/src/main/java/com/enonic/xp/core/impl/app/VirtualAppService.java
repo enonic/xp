@@ -80,8 +80,10 @@ public class VirtualAppService
         final NodeId partNodeId = initPartNode( siteRoot.path() );
         final NodeId layoutNodeId = initLayoutNode( siteRoot.path() );
         final NodeId pageNodeId = initPageNode( siteRoot.path() );
+        final NodeId mixinNodeId = initMixinNode( siteRoot.path() );
+        final NodeId xDataNodeId = initXDataNode( siteRoot.path() );
 
-        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId );
+        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId );
     }
 
     private NodeId initContentTypeNode( final NodePath parent )
@@ -120,6 +122,26 @@ public class VirtualAppService
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
                                        .name( VirtualAppConstants.PAGE_ROOT_NAME )
+                                       .parent( parent )
+                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .build() ).id();
+    }
+
+    private NodeId initMixinNode( final NodePath parent )
+    {
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( VirtualAppConstants.MIXIN_ROOT_NAME )
+                                       .parent( parent )
+                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .build() ).id();
+    }
+
+    private NodeId initXDataNode( final NodePath parent )
+    {
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( VirtualAppConstants.X_DATA_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();

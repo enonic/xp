@@ -1,5 +1,4 @@
 dependencies {
-    compile project( ':lib:lib-common' )
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
 
