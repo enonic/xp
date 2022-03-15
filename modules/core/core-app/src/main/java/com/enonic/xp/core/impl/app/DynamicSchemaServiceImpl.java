@@ -24,11 +24,15 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
+import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
+import com.enonic.xp.xml.parser.XmlXDataParser;
 
 @Component(immediate = true, service = DynamicSchemaService.class)
 public class DynamicSchemaServiceImpl
@@ -117,6 +121,12 @@ public class DynamicSchemaServiceImpl
             case CONTENT_TYPE:
                 validateContentTypeDescriptor( params.getKey(), params.getResource() );
                 break;
+            case MIXIN:
+                validateMixinDescriptor( params.getKey(), params.getResource() );
+                break;
+            case X_DATA:
+                validateXDataDescriptor( params.getKey(), params.getResource() );
+                break;
             default:
                 throw new IllegalArgumentException( String.format( "unknown schema type: '%s'", params.getType() ) );
         }
@@ -185,7 +195,7 @@ public class DynamicSchemaServiceImpl
 
     private void validateWidgetDescriptor( final DescriptorKey key, final String resource )
     {
-
+        //TODO: to discuss
     }
 
     private void validateContentTypeDescriptor( final DescriptorKey key, final String resource )
@@ -198,6 +208,29 @@ public class DynamicSchemaServiceImpl
         parser.builder( builder );
         parser.parse();
     }
+
+    private void validateMixinDescriptor( final DescriptorKey key, final String resource )
+    {
+        final Mixin.Builder builder = Mixin.create();
+
+        final XmlMixinParser parser = new XmlMixinParser();
+        parser.currentApplication( key.getApplicationKey() );
+        parser.source( resource );
+        parser.builder( builder );
+        parser.parse();
+    }
+
+    private void validateXDataDescriptor( final DescriptorKey key, final String resource )
+    {
+        final XData.Builder builder = XData.create();
+
+        final XmlXDataParser parser = new XmlXDataParser();
+        parser.currentApplication( key.getApplicationKey() );
+        parser.source( resource );
+        parser.builder( builder );
+        parser.parse();
+    }
+
 
     private String getResourceRootName( final DynamicSchemaType type )
     {
@@ -213,6 +246,10 @@ public class DynamicSchemaServiceImpl
                 return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
             case WIDGET:
                 return VirtualAppConstants.WIDGET_ROOT_NAME;
+            case MIXIN:
+                return VirtualAppConstants.MIXIN_ROOT_NAME;
+            case X_DATA:
+                return VirtualAppConstants.X_DATA_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid resource type: " + type );
         }
