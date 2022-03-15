@@ -13,14 +13,14 @@ public interface ApplicationService
     Application getInstalledApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
-    Application getApplication( ApplicationKey key );
+    Application get( ApplicationKey key );
 
     @Deprecated
     ApplicationKeys getInstalledApplicationKeys();
 
     Applications getInstalledApplications();
 
-    Applications getAllApplications();
+    Applications list();
 
     boolean isLocalApplication( ApplicationKey key );
 
