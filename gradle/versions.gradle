@@ -1,12 +1,12 @@
 ext {
-    slf4jVersion = '1.7.32' // When updated also change version in system.properties 'internal.osgi.system.packages'
+    slf4jVersion = '1.7.36' // When updated also change version in system.properties 'internal.osgi.system.packages'
     osgiVersion = '8.0.0'
     osgiCmpnVersion = '7.0.0'
     felixVersion = '7.0.3'
     jettyVersion = '9.4.45.v20220203'
-    jacksonVersion = '2.13.1'
+    jacksonVersion = '2.13.2'
     junitJupiterVersion = '5.8.2'
-    dropwizardMetricsVersion = '4.2.8'
+    dropwizardMetricsVersion = '4.2.9'
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.11.0'
     commonsCompressVersion = '1.21'
@@ -17,6 +17,6 @@ ext {
     resteasyVersion = '5.0.2.Final'
     hazelcastVersion = '3.12.12'
     hazelcastK8sVersion = '1.5.6'
-    mockitoVersion = '4.3.1'
+    mockitoVersion = '4.4.0'
     cronUtilsVersion = '9.1.6'
 }
