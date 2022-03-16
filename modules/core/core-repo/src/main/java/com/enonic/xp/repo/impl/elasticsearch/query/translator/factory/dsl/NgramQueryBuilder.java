@@ -20,7 +20,7 @@ class NgramQueryBuilder
     {
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
             ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzer(
-                NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER );
+                NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER ).analyzeWildcard( true );
 
         fields.forEach( field -> {
             final String resolvedName = nameResolver.resolve( field.getBaseFieldName(), IndexValueType.NGRAM );
