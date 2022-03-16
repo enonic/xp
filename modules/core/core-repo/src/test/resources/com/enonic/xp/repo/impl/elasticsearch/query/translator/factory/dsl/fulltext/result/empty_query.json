@@ -1,3 +1,7 @@
 {
-  "match_all": {}
+  "simple_query_string": {
+    "query": null,
+    "analyzer": "fulltext_search_default",
+    "analyze_wildcard": true
+  }
 }
