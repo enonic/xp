@@ -21,11 +21,13 @@ import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
@@ -74,11 +76,14 @@ public class ApplicationServiceTest
         ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext );
         applicationFactoryService.activate();
 
+        ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
+        applicationAuditLogSupport.activate( appConfig );
+
         this.applicationService = new ApplicationServiceImpl( bundleContext,
                                                               new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
-                                                              new AppFilterServiceImpl( appConfig ) );
+                                                              new AppFilterServiceImpl( appConfig ), applicationAuditLogSupport );
     }
 
     @AfterEach
