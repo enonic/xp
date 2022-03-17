@@ -65,9 +65,13 @@ public class ContentNodeTranslator
             {
                 contents.add( doTranslate( node, nodeHasChildren.hasChild( node.id() ) ) );
             }
+            catch ( final ContentNotFoundException e )
+            {
+                LOG.debug( "Failed to translate node '{}' [{}] to content", node.path(), node.id(), e );
+            }
             catch ( final Exception e )
             {
-                LOG.error( "Failed to translate node '" + node.path() + "' [" + node.id().toString() + "] to content", e );
+                LOG.error( "Failed to translate node '{}' [{}] to content", node.path(), node.id(), e );
             }
         }
 
