@@ -22,6 +22,7 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
@@ -72,8 +73,17 @@ public class ApplicationServiceImplTest
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), new ApplicationFactoryServiceMock() );
         this.eventPublisher = mock( EventPublisher.class );
         this.appFilterService = mock( AppFilterService.class );
+
+        AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        AuditLogService auditLogService = mock( AuditLogService.class );
+
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( true );
-        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService );
+
+        final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
+        auditLogSupport.activate( appConfig );
+
+        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
+                                                   auditLogSupport );
     }
 
     @Test

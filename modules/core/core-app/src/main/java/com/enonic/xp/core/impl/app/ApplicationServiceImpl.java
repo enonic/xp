@@ -54,10 +54,13 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
+    private final ApplicationAuditLogSupport applicationAuditLogSupport;
+
     @Activate
     public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService )
+                                   @Reference final AppFilterService appFilterService,
+                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.context = context;
         this.registry = applicationRegistry;
@@ -65,6 +68,7 @@ public final class ApplicationServiceImpl
         this.eventPublisher = eventPublisher;
         this.applicationLoader = new ApplicationLoader( eventPublisher::publish );
         this.appFilterService = appFilterService;
+        this.applicationAuditLogSupport = applicationAuditLogSupport;
     }
 
     @Deactivate
@@ -103,13 +107,29 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        ApplicationHelper.runWithContext( () -> doStartApplication( key, triggerEvent && !localApplicationSet.contains( key ), true ) );
+        ApplicationHelper.runWithContext( () -> {
+            final boolean isTriggerEvent = triggerEvent && !localApplicationSet.contains( key );
+            doStartApplication( key, isTriggerEvent, true );
+
+            if ( isTriggerEvent )
+            {
+                applicationAuditLogSupport.startApplication( key );
+            }
+        } );
     }
 
     @Override
     public void stopApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        ApplicationHelper.runWithContext( () -> doStopApplication( key, triggerEvent && !localApplicationSet.contains( key ) ) );
+        ApplicationHelper.runWithContext( () -> {
+            final boolean isTriggerEvent = triggerEvent && !localApplicationSet.contains( key );
+            doStopApplication( key, isTriggerEvent );
+
+            if ( isTriggerEvent )
+            {
+                applicationAuditLogSupport.stopApplication( key );
+            }
+        } );
     }
 
     @Override
@@ -121,13 +141,21 @@ public final class ApplicationServiceImpl
     @Override
     public Application installGlobalApplication( final URL url, final byte[] sha512 )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( applicationLoader.load( url, sha512 ) ) );
+        return ApplicationHelper.callWithContext( () -> {
+            final Application application = doInstallGlobalApplication( applicationLoader.load( url, sha512 ) );
+            applicationAuditLogSupport.installApplication( application.getKey(), url );
+            return application;
+        } );
     }
 
     @Override
     public Application installGlobalApplication( final ByteSource byteSource, final String applicationName )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( byteSource ) );
+        return ApplicationHelper.callWithContext( () -> {
+            final Application application = doInstallGlobalApplication( byteSource );
+            applicationAuditLogSupport.installApplication( application.getKey() );
+            return application;
+        } );
     }
 
     @Override
@@ -168,7 +196,11 @@ public final class ApplicationServiceImpl
     @Override
     public void uninstallApplication( final ApplicationKey key, final boolean triggerEvent )
     {
-        ApplicationHelper.runWithContext( () -> doUninstallApplication( key, triggerEvent ) );
+        ApplicationHelper.runWithContext( () -> {
+            doUninstallApplication( key, triggerEvent );
+
+            applicationAuditLogSupport.uninstallApplication( key );
+        } );
     }
 
     @Override
