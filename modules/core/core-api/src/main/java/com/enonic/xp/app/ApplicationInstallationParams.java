@@ -11,7 +11,7 @@ public class ApplicationInstallationParams
     private ApplicationInstallationParams( final Builder builder )
     {
         start = builder.start;
-        triggerEvent = builder.triggerEvent;
+        triggerEvent = false;
     }
 
     public boolean isStart()
@@ -54,8 +54,6 @@ public class ApplicationInstallationParams
     {
         private boolean start = true;
 
-        private boolean triggerEvent = true;
-
         private Builder()
         {
         }
@@ -66,9 +64,9 @@ public class ApplicationInstallationParams
             return this;
         }
 
+        @Deprecated
         public Builder triggerEvent( final boolean triggerEvent )
         {
-            this.triggerEvent = triggerEvent;
             return this;
         }
 
