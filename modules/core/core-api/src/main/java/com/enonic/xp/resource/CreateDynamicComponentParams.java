@@ -4,16 +4,19 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.page.DescriptorKey;
 
-public final class DeleteDynamicSchemaParams
+public final class CreateDynamicComponentParams
 {
     private final DescriptorKey key;
 
-    private final DynamicSchemaType type;
+    private final DynamicComponentType type;
 
-    public DeleteDynamicSchemaParams( final Builder builder )
+    private final String resource;
+
+    public CreateDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;
+        this.resource = builder.resource;
     }
 
     public static Builder create()
@@ -26,7 +29,12 @@ public final class DeleteDynamicSchemaParams
         return key;
     }
 
-    public DynamicSchemaType getType()
+    public String getResource()
+    {
+        return resource;
+    }
+
+    public DynamicComponentType getType()
     {
         return type;
     }
@@ -35,7 +43,9 @@ public final class DeleteDynamicSchemaParams
     {
         private DescriptorKey key;
 
-        private DynamicSchemaType type;
+        private DynamicComponentType type;
+
+        private String resource;
 
         public Builder descriptorKey( final DescriptorKey key )
         {
@@ -43,7 +53,13 @@ public final class DeleteDynamicSchemaParams
             return this;
         }
 
-        public Builder type( final DynamicSchemaType type )
+        public Builder resource( final String resource )
+        {
+            this.resource = resource;
+            return this;
+        }
+
+        public Builder type( final DynamicComponentType type )
         {
             this.type = type;
             return this;
@@ -55,10 +71,10 @@ public final class DeleteDynamicSchemaParams
             Preconditions.checkNotNull( type, "type must be set" );
         }
 
-        public DeleteDynamicSchemaParams build()
+        public CreateDynamicComponentParams build()
         {
             validate();
-            return new DeleteDynamicSchemaParams( this );
+            return new CreateDynamicComponentParams( this );
         }
     }
 }
