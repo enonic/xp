@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -58,6 +61,7 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -170,7 +174,8 @@ public class ProjectContentEventListenerTest
 
         final ContentId duplicatedContentId = targetContext.callWith(
             () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
-                .getDuplicatedContents().first() );
+                .getDuplicatedContents()
+                .first() );
 
         targetContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
@@ -819,6 +824,22 @@ public class ProjectContentEventListenerTest
                              .build() );
 
         return Page.create().template( PageTemplateKey.from( "mypagetemplate" ) ).regions( regions ).build();
+    }
+
+    @Test
+    public void repoIsNotProject()
+        throws Exception
+    {
+        eventPublisher.publish( Event.create( "node.created" )
+                                    .value( "nodes", List.of( ImmutableMap.builder()
+                                                                  .put( "id", "123" )
+                                                                  .put( "path", "/content/something" )
+                                                                  .put( "branch", "draft" )
+                                                                  .put( "repo", "not-a-project" )
+                                                                  .build() ) )
+                                    .build() );
+
+        assertDoesNotThrow( this::handleEvents );
     }
 
     private void handleEvents()
