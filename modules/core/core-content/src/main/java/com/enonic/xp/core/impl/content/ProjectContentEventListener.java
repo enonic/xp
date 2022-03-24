@@ -112,20 +112,21 @@ public final class ProjectContentEventListener
             final List<ContentId> contentIds =
                 nodes.stream().map( map -> ContentId.from( map.get( "id" ) ) ).collect( Collectors.toList() );
 
-            final List<ProjectName> projectNames = nodes.stream()
-                .map( map -> map.get( "repo" ) )
-                .distinct()
-                .map( repo -> ProjectName.from( RepositoryId.from( repo ) ) )
-                .collect( Collectors.toList() );
+            final List<String> repoNames = nodes.stream().map( map -> map.get( "repo" ) ).distinct().collect( Collectors.toList() );
 
-            if ( projectNames.size() != 1 )
+            if ( repoNames.size() != 1 )
             {
-                throw new IllegalArgumentException( projectNames.size() > 1
+                throw new IllegalArgumentException( repoNames.size() > 1
                                                         ? "An event cannot contain nodes from different repositories"
                                                         : "An event must contain 'repo' property" );
             }
 
-            final ProjectName currentProjectName = projectNames.get( 0 );
+            final ProjectName currentProjectName = ProjectName.from( RepositoryId.from( repoNames.get( 0 ) ) );
+
+            if ( currentProjectName == null )
+            {
+                return;
+            }
 
             final Project sourceProject = this.projectService.list()
                 .stream()
@@ -133,9 +134,7 @@ public final class ProjectContentEventListener
                 .findAny()
                 .orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
 
-            this.projectService.list()
-                .stream()
-                .filter( project -> currentProjectName.equals( project.getParent() ) )
+            this.projectService.list().stream().filter( project -> currentProjectName.equals( project.getParent() ) )
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
@@ -184,7 +183,8 @@ public final class ProjectContentEventListener
                 this.projectService.list()
                     .stream()
                     .filter( project -> project.getName().equals( sourceProject.getParent() ) )
-                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create().addContentIds( contentIds )
+                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create()
+                                                                             .addContentIds( contentIds )
                                                                              .sourceProject( parentProject.getName() )
                                                                              .targetProject( sourceProject.getName() )
                                                                              .build() )
@@ -197,21 +197,18 @@ public final class ProjectContentEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            authInfo( authInfo ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( User.create().
-                key( PrincipalKey.ofSuperUser() ).
-                login( PrincipalKey.ofSuperUser().getId() ).
-                build() ).
-            build();
+        return AuthenticationInfo.create()
+            .principals( RoleKeys.ADMIN )
+            .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+            .build();
     }
 }
