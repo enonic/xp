@@ -4,235 +4,208 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.issue.VirtualAppConstants;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.region.LayoutDescriptor;
-import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.resource.CreateDynamicSchemaParams;
-import com.enonic.xp.resource.DeleteDynamicSchemaParams;
+import com.enonic.xp.region.ComponentDescriptor;
+import com.enonic.xp.resource.CreateDynamicComponentParams;
+import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.DeleteDynamicComponentParams;
+import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
+import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.DynamicSchemaType;
-import com.enonic.xp.resource.GetDynamicSchemaParams;
-import com.enonic.xp.resource.NodeValueResource;
+import com.enonic.xp.resource.GetDynamicComponentParams;
+import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.SchemaNodePropertyNames;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlContentTypeParser;
-import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
-import com.enonic.xp.xml.parser.XmlMixinParser;
-import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
-import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
-import com.enonic.xp.xml.parser.XmlXDataParser;
+import com.enonic.xp.resource.UpdateDynamicComponentParams;
+import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
+import com.enonic.xp.resource.UpdateDynamicSiteParams;
+import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.schema.BaseSchemaName;
+import com.enonic.xp.site.SiteDescriptor;
 
-@Component(immediate = true, service = DynamicSchemaService.class)
+@Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
 public class DynamicSchemaServiceImpl
-    implements DynamicSchemaService
+    implements DynamicSchemaService, DynamicSchemaServiceInternal
 {
-    private final NodeService nodeService;
+    private final DynamicResourceManager dynamicResourceManager;
+
+    private final DynamicResourceParser dynamicResourceParser;
 
     @Activate
     public DynamicSchemaServiceImpl( @Reference final NodeService nodeService )
     {
-        this.nodeService = nodeService;
+        this.dynamicResourceManager = new DynamicResourceManager( nodeService );
+        this.dynamicResourceParser = new DynamicResourceParser();
     }
 
     @Override
-    public Resource create( final CreateDynamicSchemaParams params )
+    public ComponentDescriptor createComponent( final CreateDynamicComponentParams params )
     {
-        validate( params );
+        final ComponentDescriptor descriptor =
+            dynamicResourceParser.parseComponent( params.getKey(), params.getType(), params.getResource() );
 
-        final String resourceRootName = getResourceRootName( params.getType() );
+        final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
+        dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getApplicationKey(), params.getKey().getName(),
+                                               params.getResource() );
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return descriptor;
 
-            final NodePath resourceFolderPath = createResourceFolderPath( params.getKey(), resourceRootName );
-
-            final Node resourceFolder = nodeService.create(
-                CreateNodeParams.create().name( resourceFolderPath.getName() ).parent( resourceFolderPath.getParentPath() ).build() );
-
-            final PropertyTree resourceData = new PropertyTree();
-            if ( params.getResource() != null )
-            {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, params.getResource() );
-            }
-
-            final Node schemaNode = nodeService.create( CreateNodeParams.create()
-                                                            .parent( resourceFolder.path() )
-                                                            .name( params.getKey().getName() + ".xml" )
-                                                            .data( resourceData )
-                                                            .build() );
-
-            return new NodeValueResource( ResourceKey.from( params.getKey().getApplicationKey(), schemaNode.path().toString() ),
-                                          schemaNode );
-        } );
     }
 
     @Override
-    public Resource get( final GetDynamicSchemaParams params )
+    public ComponentDescriptor updateComponent( final UpdateDynamicComponentParams params )
     {
-        final String resourceRootName = getResourceRootName( params.getType() );
-        final NodePath resourceFolderPath = createResourceFolderPath( params.getKey(), resourceRootName );
+        final ComponentDescriptor descriptor =
+            dynamicResourceParser.parseComponent( params.getKey(), params.getType(), params.getResource() );
 
-        final NodePath resourceNodePath = NodePath.create( resourceFolderPath, params.getKey().getName() + ".xml" ).build();
+        final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
+        dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getApplicationKey(), params.getKey().getName(),
+                                               params.getResource() );
 
-        return VirtualAppContext.createContext().callWith( () -> {
-            final Node schemaNode = nodeService.getByPath( resourceNodePath );
+        return descriptor;
+    }
 
-            return new NodeValueResource( ResourceKey.from( params.getKey().getApplicationKey(), schemaNode.path().toString() ),
-                                          schemaNode );
-        } );
+
+    @Override
+    public BaseSchema<?> createContentSchema( final CreateDynamicContentSchemaParams params )
+    {
+        final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
+
+        final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
+        dynamicResourceManager.createResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName(),
+                                               params.getResource() );
+
+        return schema;
     }
 
     @Override
-    public boolean delete( final DeleteDynamicSchemaParams params )
+    public BaseSchema<?> updateContentSchema( final UpdateDynamicContentSchemaParams params )
     {
-        final String resourceRootName = getResourceRootName( params.getType() );
-        final NodePath resourceFolderPath = createResourceFolderPath( params.getKey(), resourceRootName );
+        final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
 
-        return VirtualAppContext.createContext().callWith( () -> nodeService.deleteByPath( resourceFolderPath ).isNotEmpty() );
+        final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
+        dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName(),
+                                               params.getResource() );
+        return schema;
     }
 
-    private void validate( final CreateDynamicSchemaParams params )
+    @Override
+    public SiteDescriptor createSite( final ApplicationKey key, final String resource )
     {
-        switch ( params.getType() )
-        {
-            case PAGE:
-                validatePageDescriptor( params.getKey(), params.getResource() );
-                break;
-            case PART:
-                validatePartDescriptor( params.getKey(), params.getResource() );
-                break;
-            case LAYOUT:
-                validateLayoutDescriptor( params.getKey(), params.getResource() );
-                break;
-            case WIDGET:
-                validateWidgetDescriptor( params.getKey(), params.getResource() );
-                break;
-            case CONTENT_TYPE:
-                validateContentTypeDescriptor( params.getKey(), params.getResource() );
-                break;
-            case MIXIN:
-                validateMixinDescriptor( params.getKey(), params.getResource() );
-                break;
-            case X_DATA:
-                validateXDataDescriptor( params.getKey(), params.getResource() );
-                break;
-            default:
-                throw new IllegalArgumentException( String.format( "unknown schema type: '%s'", params.getType() ) );
-        }
+        final SiteDescriptor site = dynamicResourceParser.parseSite( key, resource );
+
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        dynamicResourceManager.createResource( resourceFolderPath, key, VirtualAppConstants.SITE_ROOT_NAME, resource, false );
+
+        return site;
     }
 
-    private NodePath createResourceFolderPath( final DescriptorKey key, final String resourceRootName )
+    @Override
+    public SiteDescriptor updateSite( final UpdateDynamicSiteParams params )
     {
+        final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.SITE_ROOT_NAME,
+                                               params.getResource() );
+
+        return site;
+    }
+
+    @Override
+    public ComponentDescriptor getComponent( final GetDynamicComponentParams params )
+    {
+        final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
+        final Resource resource =
+            dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getApplicationKey(), params.getKey().getName() );
+
+        return dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
+    }
+
+    @Override
+    public BaseSchema<?> getContentSchema( final GetDynamicContentSchemaParams params )
+    {
+        final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
+        final Resource resource =
+            dynamicResourceManager.getResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName() );
+
+        return dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
+    }
+
+    @Override
+    public SiteDescriptor getSite( final ApplicationKey key )
+    {
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, key, VirtualAppConstants.SITE_ROOT_NAME );
+
+        return dynamicResourceParser.parseSite( key, resource.readString() );
+    }
+
+    @Override
+    public boolean deleteComponent( final DeleteDynamicComponentParams params )
+    {
+        final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+    }
+
+    @Override
+    public boolean deleteContentSchema( final DeleteDynamicContentSchemaParams params )
+    {
+        final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
+    }
+
+    @Override
+    public boolean deleteSite( final ApplicationKey key )
+    {
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
+    }
+
+    private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )
+    {
+        final String resourceRootName = getComponentRootName( dynamicType );
+
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
                                 "/" + key.getApplicationKey() + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" + resourceRootName + "/" +
                                     key.getName() ).build();
     }
 
-    private void validatePageDescriptor( final DescriptorKey key, final String resource )
+    private NodePath createSchemaFolderPath( final BaseSchemaName key, final DynamicContentSchemaType dynamicType )
     {
-        final PageDescriptor.Builder builder = PageDescriptor.create().key( key );
-        try
-        {
-            final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            builder.key( key );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load page descriptor [" + key + "]: " + e.getMessage() );
-        }
+        final String resourceRootName = getSchemaRootName( dynamicType );
+
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
+                                "/" + key.getApplicationKey() + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" + resourceRootName + "/" +
+                                    key.getLocalName() ).build();
     }
 
-    private void validatePartDescriptor( final DescriptorKey key, final String resource )
+    private NodePath createSiteFolderPath( final ApplicationKey key )
     {
-        final PartDescriptor.Builder builder = PartDescriptor.create();
-        builder.key( key );
-        try
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
+                                "/" + key.getName() + "/" + VirtualAppConstants.SITE_ROOT_NAME ).build();
+    }
+
+    private String getSchemaRootName( final DynamicContentSchemaType type )
+    {
+        switch ( type )
         {
-            final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse part descriptor [" + key + "]: " + e.getMessage() );
+            case CONTENT_TYPE:
+                return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
+            case MIXIN:
+                return VirtualAppConstants.MIXIN_ROOT_NAME;
+            case X_DATA:
+                return VirtualAppConstants.X_DATA_ROOT_NAME;
+            default:
+                throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
         }
     }
 
-    private void validateLayoutDescriptor( final DescriptorKey key, final String resource )
-    {
-        final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
-        builder.key( key );
-        try
-        {
-            final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse layout descriptor [" + key + "]: " + e.getMessage() );
-        }
-    }
-
-    private void validateWidgetDescriptor( final DescriptorKey key, final String resource )
-    {
-        //TODO: to discuss
-    }
-
-    private void validateContentTypeDescriptor( final DescriptorKey key, final String resource )
-    {
-        final ContentType.Builder builder = ContentType.create();
-
-        final XmlContentTypeParser parser = new XmlContentTypeParser();
-        parser.currentApplication( key.getApplicationKey() );
-        parser.source( resource );
-        parser.builder( builder );
-        parser.parse();
-    }
-
-    private void validateMixinDescriptor( final DescriptorKey key, final String resource )
-    {
-        final Mixin.Builder builder = Mixin.create();
-
-        final XmlMixinParser parser = new XmlMixinParser();
-        parser.currentApplication( key.getApplicationKey() );
-        parser.source( resource );
-        parser.builder( builder );
-        parser.parse();
-    }
-
-    private void validateXDataDescriptor( final DescriptorKey key, final String resource )
-    {
-        final XData.Builder builder = XData.create();
-
-        final XmlXDataParser parser = new XmlXDataParser();
-        parser.currentApplication( key.getApplicationKey() );
-        parser.source( resource );
-        parser.builder( builder );
-        parser.parse();
-    }
-
-
-    private String getResourceRootName( final DynamicSchemaType type )
+    private String getComponentRootName( final DynamicComponentType type )
     {
         switch ( type )
         {
@@ -242,16 +215,8 @@ public class DynamicSchemaServiceImpl
                 return VirtualAppConstants.PART_ROOT_NAME;
             case LAYOUT:
                 return VirtualAppConstants.LAYOUT_ROOT_NAME;
-            case CONTENT_TYPE:
-                return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
-            case WIDGET:
-                return VirtualAppConstants.WIDGET_ROOT_NAME;
-            case MIXIN:
-                return VirtualAppConstants.MIXIN_ROOT_NAME;
-            case X_DATA:
-                return VirtualAppConstants.X_DATA_ROOT_NAME;
             default:
-                throw new IllegalArgumentException( "invalid resource type: " + type );
+                throw new IllegalArgumentException( "invalid dynamic component type: " + type );
         }
     }
 }

@@ -2,19 +2,18 @@ package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.DynamicSchemaType;
-import com.enonic.xp.resource.GetDynamicSchemaParams;
+import com.enonic.xp.resource.UpdateDynamicSiteParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public class GetDynamicSchemaHandler
+public final class CreateDynamicSiteHandler
     implements ScriptBean
 {
     private String key;
 
-    private String type;
+    private String resource;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
@@ -23,17 +22,17 @@ public class GetDynamicSchemaHandler
         this.key = key;
     }
 
-    public void setType( final String type )
+    public void setResource( final String resource )
     {
-        this.type = type;
+        this.resource = resource;
     }
 
-    public String execute()
+    public Object execute()
     {
-        final GetDynamicSchemaParams params =
-            GetDynamicSchemaParams.create().descriptorKey( DescriptorKey.from( key ) ).type( DynamicSchemaType.valueOf( type ) ).build();
+        final UpdateDynamicSiteParams params =
+            UpdateDynamicSiteParams.create().key( ApplicationKey.from( key ) ).resource( resource ).build();
 
-        return dynamicSchemaServiceSupplier.get().get( params ).readString();
+        return dynamicSchemaServiceSupplier.get().updateSite( params );
     }
 
     @Override

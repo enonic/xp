@@ -23,7 +23,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
 @Component(immediate = true, service = VirtualAppService.class)
@@ -35,13 +34,17 @@ public class VirtualAppService
 
     private final NodeService nodeService;
 
+    private final DynamicSchemaServiceInternal dynamicResourceService;
+
     @Activate
     public VirtualAppService( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
-                              @Reference final NodeService nodeService )
+                              @Reference final NodeService nodeService,
+                              @Reference final DynamicSchemaServiceInternal dynamicResourceService )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
         this.nodeService = nodeService;
+        this.dynamicResourceService = dynamicResourceService;
     }
 
     @Activate
@@ -50,32 +53,17 @@ public class VirtualAppService
         VirtualAppRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
-//    @Override
-//    public void create( final CreateVirtualAppParams params )
-//    {
-//        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params.getRepositoryId() ) );
-//    }
-
-    private void initVirtualAppNode( final RepositoryId repositoryId )
-    {
-        final Node virtualAppNode = nodeService.create( CreateNodeParams.create()
-                                                            .data( new PropertyTree() )
-                                                            .name( repositoryId.toString() )
-                                                            .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-                                                            .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
-                                                            .build() );
-        initSiteNodes( virtualAppNode.path() );
-    }
-
-    private NodeIds initSiteNodes( final NodePath parent )
+    private NodeIds initSiteNodes( final NodePath parent, final ApplicationKey key )
     {
         final Node siteRoot = nodeService.create( CreateNodeParams.create()
                                                       .data( new PropertyTree() )
                                                       .name( VirtualAppConstants.SITE_ROOT_NAME )
                                                       .parent( parent )
                                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
-
                                                       .build() );
+
+        this.dynamicResourceService.createSite( key, "<site></site>" );
+
         final NodeId contentTypeNodeId = initContentTypeNode( siteRoot.path() );
         final NodeId partNodeId = initPartNode( siteRoot.path() );
         final NodeId layoutNodeId = initLayoutNode( siteRoot.path() );
@@ -186,5 +174,33 @@ public class VirtualAppService
                 return null;
             }
         } );
+    }
+
+    public void create( final ApplicationKey key )
+    {
+        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( key ) );
+    }
+
+    public boolean delete( final ApplicationKey key )
+    {
+        return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
+    }
+
+    private void initVirtualAppNode( final ApplicationKey key )
+    {
+        final Node virtualAppNode;
+        virtualAppNode = nodeService.create( CreateNodeParams.create()
+                                                 .data( new PropertyTree() )
+                                                 .name( key.toString() )
+                                                 .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+                                                 .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                                 .build() );
+        initSiteNodes( virtualAppNode.path(), key );
+    }
+
+    private boolean deleteVirtualAppNode( final ApplicationKey key )
+    {
+        return nodeService.deleteByPath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
+            .isNotEmpty();
     }
 }
