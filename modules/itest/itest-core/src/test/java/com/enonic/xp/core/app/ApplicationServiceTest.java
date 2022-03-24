@@ -31,6 +31,7 @@ import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
+import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
 import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
@@ -75,12 +76,15 @@ public class ApplicationServiceTest
         ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
+        DynamicSchemaServiceImpl dynamicResourceService = new DynamicSchemaServiceImpl( nodeService );
+
         this.applicationService = new ApplicationServiceImpl( bundleContext,
                                                               new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ),
-                                                              new VirtualAppService( indexService, repositoryService, nodeService ) );
+                                                              new VirtualAppService( indexService, repositoryService, nodeService,
+                                                                                     dynamicResourceService ) );
     }
 
     @AfterEach

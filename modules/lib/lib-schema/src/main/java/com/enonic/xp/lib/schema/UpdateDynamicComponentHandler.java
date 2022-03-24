@@ -3,18 +3,20 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.DeleteDynamicSchemaParams;
+import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.DynamicSchemaType;
+import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public class DeleteDynamicSchemaHandler
+public final class UpdateDynamicComponentHandler
     implements ScriptBean
 {
     private String key;
 
     private String type;
+
+    private String resource;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
@@ -28,12 +30,21 @@ public class DeleteDynamicSchemaHandler
         this.type = type;
     }
 
-    public boolean execute()
+    public void setResource( final String resource )
     {
-        final DeleteDynamicSchemaParams params =
-            DeleteDynamicSchemaParams.create().descriptorKey( DescriptorKey.from( key ) ).type( DynamicSchemaType.valueOf( type ) ).build();
+        this.resource = resource;
+    }
 
-        return dynamicSchemaServiceSupplier.get().delete( params );
+    public Object execute()
+    {
+        final UpdateDynamicComponentParams params = UpdateDynamicComponentParams.create()
+            .descriptorKey( DescriptorKey.from( key ) )
+            .type( DynamicComponentType.valueOf( type ) )
+            .resource( resource )
+            .build();
+
+        //TODO: return mappers
+        return dynamicSchemaServiceSupplier.get().updateComponent( params );
     }
 
     @Override

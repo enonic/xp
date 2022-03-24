@@ -3,20 +3,18 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.CreateDynamicSchemaParams;
+import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.DynamicSchemaType;
+import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public class CreateDynamicSchemaHandler
+public final class GetDynamicComponentHandler
     implements ScriptBean
 {
     private String key;
 
     private String type;
-
-    private String resource;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
@@ -30,20 +28,14 @@ public class CreateDynamicSchemaHandler
         this.type = type;
     }
 
-    public void setResource( final String resource )
+    public Object execute()
     {
-        this.resource = resource;
-    }
-
-    public String execute()
-    {
-        final CreateDynamicSchemaParams params = CreateDynamicSchemaParams.create()
+        final GetDynamicComponentParams params = GetDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( key ) )
-            .type( DynamicSchemaType.valueOf( type ) )
-            .resource( resource )
+            .type( DynamicComponentType.valueOf( type ) )
             .build();
 
-        return dynamicSchemaServiceSupplier.get().create( params ).readString();
+        return dynamicSchemaServiceSupplier.get().getComponent( params );
     }
 
     @Override
