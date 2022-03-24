@@ -4,15 +4,15 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.page.DescriptorKey;
 
-public final class CreateDynamicSchemaParams
+public final class UpdateDynamicComponentParams
 {
     private final DescriptorKey key;
 
-    private final DynamicSchemaType type;
+    private final DynamicComponentType type;
 
     private final String resource;
 
-    public CreateDynamicSchemaParams( final Builder builder )
+    public UpdateDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;
@@ -34,7 +34,7 @@ public final class CreateDynamicSchemaParams
         return resource;
     }
 
-    public DynamicSchemaType getType()
+    public DynamicComponentType getType()
     {
         return type;
     }
@@ -43,7 +43,7 @@ public final class CreateDynamicSchemaParams
     {
         private DescriptorKey key;
 
-        private DynamicSchemaType type;
+        private DynamicComponentType type;
 
         private String resource;
 
@@ -59,7 +59,7 @@ public final class CreateDynamicSchemaParams
             return this;
         }
 
-        public Builder type( final DynamicSchemaType type )
+        public Builder type( final DynamicComponentType type )
         {
             this.type = type;
             return this;
@@ -71,10 +71,10 @@ public final class CreateDynamicSchemaParams
             Preconditions.checkNotNull( type, "type must be set" );
         }
 
-        public CreateDynamicSchemaParams build()
+        public UpdateDynamicComponentParams build()
         {
             validate();
-            return new CreateDynamicSchemaParams( this );
+            return new UpdateDynamicComponentParams( this );
         }
     }
 }
