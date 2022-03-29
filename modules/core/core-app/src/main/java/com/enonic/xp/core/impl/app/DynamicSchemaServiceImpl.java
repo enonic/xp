@@ -12,6 +12,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicComponentType;
@@ -23,9 +24,11 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicSiteParams;
+import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.style.StyleDescriptor;
 
 @Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
 public class DynamicSchemaServiceImpl
@@ -117,6 +120,29 @@ public class DynamicSchemaServiceImpl
     }
 
     @Override
+    public StyleDescriptor createStyles( final CreateDynamicStylesParams params )
+    {
+        final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        dynamicResourceManager.createResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME, params.getResource(),
+                                               false );
+
+        return styles;
+    }
+
+    @Override
+    public StyleDescriptor updateStyles( final UpdateDynamicStylesParams params )
+    {
+        final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME, params.getResource() );
+
+        return styles;
+    }
+
+    @Override
     public ComponentDescriptor getComponent( final GetDynamicComponentParams params )
     {
         final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
@@ -146,6 +172,15 @@ public class DynamicSchemaServiceImpl
     }
 
     @Override
+    public StyleDescriptor getStyles( final ApplicationKey key )
+    {
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, key, VirtualAppConstants.STYLES_NAME );
+
+        return dynamicResourceParser.parseStyles( key, resource.readString() );
+    }
+
+    @Override
     public boolean deleteComponent( final DeleteDynamicComponentParams params )
     {
         final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
@@ -164,6 +199,13 @@ public class DynamicSchemaServiceImpl
     {
         final NodePath resourceFolderPath = createSiteFolderPath( key );
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
+    }
+
+    @Override
+    public boolean deleteStyles( final ApplicationKey key )
+    {
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 
     private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )

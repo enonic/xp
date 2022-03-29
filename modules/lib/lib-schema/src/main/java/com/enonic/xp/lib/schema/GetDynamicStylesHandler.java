@@ -4,16 +4,13 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.UpdateDynamicSiteParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public final class CreateDynamicSiteHandler
+public final class GetDynamicStylesHandler
     implements ScriptBean
 {
     private String key;
-
-    private String resource;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
@@ -22,17 +19,9 @@ public final class CreateDynamicSiteHandler
         this.key = key;
     }
 
-    public void setResource( final String resource )
-    {
-        this.resource = resource;
-    }
-
     public Object execute()
     {
-        final UpdateDynamicSiteParams params =
-            UpdateDynamicSiteParams.create().key( ApplicationKey.from( key ) ).resource( resource ).build();
-
-        return dynamicSchemaServiceSupplier.get().updateSite( params );
+        return dynamicSchemaServiceSupplier.get().getStyles( ApplicationKey.from( key ) );
     }
 
     @Override
