@@ -4,13 +4,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 
-public final class UpdateDynamicSiteParams
+public final class UpdateDynamicStylesParams
 {
     private final ApplicationKey key;
 
     private final String resource;
 
-    private UpdateDynamicSiteParams( final Builder builder )
+    private UpdateDynamicStylesParams( final Builder builder )
     {
         this.key = builder.key;
         this.resource = builder.resource;
@@ -55,10 +55,10 @@ public final class UpdateDynamicSiteParams
             Preconditions.checkNotNull( resource, "resource must be set" );
         }
 
-        public UpdateDynamicSiteParams build()
+        public UpdateDynamicStylesParams build()
         {
             validate();
-            return new UpdateDynamicSiteParams( this );
+            return new UpdateDynamicStylesParams( this );
         }
     }
 }
