@@ -14,6 +14,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
@@ -21,6 +22,7 @@ import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
+import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class DynamicResourceParser
@@ -58,6 +60,11 @@ final class DynamicResourceParser
     SiteDescriptor parseSite( final ApplicationKey applicationKey, final String resource )
     {
         return parseSiteDescriptor( applicationKey, resource );
+    }
+
+    StyleDescriptor parseStyles( final ApplicationKey applicationKey, final String resource )
+    {
+        return parseStylesDescriptor( applicationKey, resource );
     }
 
 
@@ -189,6 +196,24 @@ final class DynamicResourceParser
         catch ( Exception e )
         {
             throw new XmlException( e, "Could not parse dynamic site descriptor, application key: [" + applicationKey + "] " );
+        }
+        return builder.build();
+    }
+
+    private StyleDescriptor parseStylesDescriptor( final ApplicationKey applicationKey, final String resource )
+    {
+        final StyleDescriptor.Builder builder = StyleDescriptor.create();
+        try
+        {
+            final XmlStyleDescriptorParser parser = new XmlStyleDescriptorParser();
+            parser.currentApplication( applicationKey );
+            parser.source( resource );
+            parser.styleDescriptorBuilder( builder );
+            parser.parse();
+        }
+        catch ( Exception e )
+        {
+            throw new XmlException( e, "Could not parse dynamic style descriptor, application key: [" + applicationKey + "] " );
         }
         return builder.build();
     }
