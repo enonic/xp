@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -29,7 +30,7 @@ final class GetContentByIdCommand
             final Node node = nodeService.getById( nodeId );
             content = filter( translator.fromNode( node, true ) );
         }
-        catch ( NodeNotFoundException e )
+        catch ( NodeNotFoundException | ContentNotFoundException e )
         {
             return null;
         }
