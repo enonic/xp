@@ -32,6 +32,8 @@ public final class VirtualAppConstants
 
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
+    public static final String STYLES_NAME = "styles";
+
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
 
     public static final Branch VIRTUAL_APP_BRANCH = Branch.from( "master" );
