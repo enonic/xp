@@ -55,7 +55,18 @@ public class VirtualHostHandlerTest
     @Test
     public void testGetVirtualHosts()
     {
-        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( virtualHost ) );
+        VirtualHost virtualHost2 = Mockito.mock( VirtualHost.class );
+
+        Mockito.when( virtualHost2.getName() ).thenReturn( "b" );
+        Mockito.when( virtualHost2.getSource() ).thenReturn( "/b" );
+        Mockito.when( virtualHost2.getTarget() ).thenReturn( "/other/b" );
+        Mockito.when( virtualHost2.getHost() ).thenReturn( "localhost" );
+
+        final IdProviderKey defaultIdProviderKey = IdProviderKey.from( "default" );
+        Mockito.when( virtualHost2.getDefaultIdProviderKey() ).thenReturn( defaultIdProviderKey );
+        Mockito.when( virtualHost2.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( defaultIdProviderKey ) );
+
+        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( virtualHost, virtualHost2 ) );
 
         runFunction( "/com/enonic/xp/lib/vhost/vhost-test.js", "testGetVirtualHosts" );
     }
