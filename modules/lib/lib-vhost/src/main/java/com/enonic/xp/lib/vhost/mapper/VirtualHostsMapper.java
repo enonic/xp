@@ -24,9 +24,11 @@ public class VirtualHostsMapper
 
         if ( virtualHosts != null )
         {
-            gen.map();
-            virtualHosts.forEach( virtualHost -> new VirtualHostMapper( virtualHost ).serialize( gen ) );
-            gen.end();
+            virtualHosts.forEach( virtualHost -> {
+                gen.map();
+                new VirtualHostMapper( virtualHost ).serialize( gen );
+                gen.end();
+            } );
         }
 
         gen.end();

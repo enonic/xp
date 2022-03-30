@@ -18,6 +18,13 @@ exports.testGetVirtualHosts = function () {
             'host': 'localhost',
             'defaultIdProviderKey': 'default',
             'idProviderKeys': [{'idProviderKey': 'default'}]
+        },{
+            'name': 'b',
+            'source': '/b',
+            'target': '/other/b',
+            'host': 'localhost',
+            'defaultIdProviderKey': 'default',
+            'idProviderKeys': [{'idProviderKey': 'default'}]
         }]
     }), JSON.stringify(result));
 };
