@@ -66,7 +66,7 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
 
     Eclipse Jetty
     Apache License 2.0
-    https://www.eclipse.org/jetty/licenses.html
+    https://github.com/eclipse/jetty.project/
 
     ElasticSearch
     Apache License 2.0
@@ -144,6 +144,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/FasterXML/jackson-jaxrs-providers
 
+    Jackson Modules (JAXB)
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-modules-base
+
     Jakarta Activation
     Eclipse Public License 2.0
     https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt
@@ -172,23 +176,14 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/fusesource/jansi/blob/master/license.txt
 
-    Java Assist
-    Apache License 2.0
-    http://www.javassist.org
-
-    Java Native Access
-    Apache License 2.0
-    https://github.com/java-native-access/jna/blob/master/LICENSE
+    Javax WebSocket Client and Server
+    Apache License 2.0 and Eclipse Public License 2.0
+    https://github.com/eclipse/jetty.project/
 
     JAXB
     Common Development and Distribution License 1.1:
     https://github.com/javaee/jaxb-v2/blob/master/LICENSE
     Source code: https://github.com/javaee/jaxb-v2
-
-    JAX-RS API
-    Common Development and Distribution License 1.1:
-    https://github.com/jax-rs/api/blob/master/LICENSE.txt
-    Source code: https://github.com/eclipse-ee4j/jaxrs-api
 
     JBoss Logging
     Apache License 2.0
@@ -243,10 +238,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
-
-    SlickGrid
-    MIT License
-    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
 
     Snake YAML
     Apache License 2.0
