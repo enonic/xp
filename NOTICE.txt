@@ -176,14 +176,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/fusesource/jansi/blob/master/license.txt
 
-    Java Assist
-    Apache License 2.0
-    http://www.javassist.org
-
-    Java Native Access
-    Apache License 2.0
-    https://github.com/java-native-access/jna/blob/master/LICENSE
-
     Javax WebSocket Client and Server
     Apache License 2.0 and Eclipse Public License 2.0
     https://github.com/eclipse/jetty.project/
@@ -246,10 +238,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     SLF4J Libraries
     MIT License
     http://slf4j.org/license.html
-
-    SlickGrid
-    MIT License
-    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
 
     Snake YAML
     Apache License 2.0
