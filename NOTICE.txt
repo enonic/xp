@@ -180,6 +180,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0 and Eclipse Public License 2.0
     https://github.com/eclipse/jetty.project/
 
+    Javax WebSocket Client and Server
+    Apache License 2.0 and Eclipse Public License 2.0
+    https://github.com/eclipse/jetty.project/
+
     JAXB
     Common Development and Distribution License 1.1:
     https://github.com/javaee/jaxb-v2/blob/master/LICENSE
