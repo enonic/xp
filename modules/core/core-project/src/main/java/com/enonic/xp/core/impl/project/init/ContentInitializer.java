@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
+import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryService;
@@ -73,8 +74,15 @@ public final class ContentInitializer
     @Override
     protected boolean isInitialized()
     {
-        return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith(
-            () -> repositoryService.isInitialized( repositoryId ) && nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+        try
+        {
+            return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith( () -> repositoryService.isInitialized( repositoryId ) &&
+                nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+        }
+        catch ( BranchNotFoundException e )
+        {
+            return false;
+        }
     }
 
     @Override
