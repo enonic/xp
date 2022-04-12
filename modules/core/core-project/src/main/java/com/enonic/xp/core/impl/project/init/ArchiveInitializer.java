@@ -15,6 +15,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 
@@ -42,8 +43,15 @@ public final class ArchiveInitializer
     @Override
     public boolean isInitialized()
     {
-        return createAdminContext( ContentConstants.BRANCH_DRAFT ).
-            callWith( () -> nodeService.getByPath( ArchiveConstants.ARCHIVE_ROOT_PATH ) != null );
+        try
+        {
+            return createAdminContext( ContentConstants.BRANCH_DRAFT ).callWith(
+                () -> nodeService.getByPath( ArchiveConstants.ARCHIVE_ROOT_PATH ) != null );
+        }
+        catch ( BranchNotFoundException e )
+        {
+            return false;
+        }
     }
 
     @Override
