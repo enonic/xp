@@ -46,6 +46,10 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
+        if ( key.getApplicationKey().toString().equals( "com.enonic.app.features" ) )
+        {
+            int o = 0;
+        }
         return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.findResource( key.getPath() ) )
             .orElse( new UrlResource( key, null ) );
     }
