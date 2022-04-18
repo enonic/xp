@@ -33,6 +33,7 @@ import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
 import com.enonic.xp.core.impl.app.VirtualAppService;
+import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -76,7 +77,9 @@ public class ApplicationServiceTest
         ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        DynamicSchemaServiceImpl dynamicResourceService = new DynamicSchemaServiceImpl( nodeService );
+        ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
+
+        DynamicSchemaServiceImpl dynamicResourceService = new DynamicSchemaServiceImpl( nodeService, resourceService );
 
         this.applicationService = new ApplicationServiceImpl( bundleContext,
                                                               new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
