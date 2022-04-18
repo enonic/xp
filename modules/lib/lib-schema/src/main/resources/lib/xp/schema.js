@@ -184,5 +184,37 @@ exports.updateSite = function (params) {
     return bean.execute();
 };
 
+/**
+ * Fetches dynamic component resources.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Virtual application key.
+ * @param {string} params.type Component type.
+ *
+ * @returns {string} fetched resources.
+ */
+exports.listComponents = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
+    bean.setKey(required(params, 'key'));
+    bean.setType(required(params, 'type'));
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Fetches dynamic content schemas resources.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Virtual application key.
+ * @param {string} params.type Content schema type.
+ *
+ * @returns {string} fetched resources.
+ */
+exports.listSchemas = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
+    bean.setKey(required(params, 'key'));
+    bean.setType(required(params, 'type'));
+    return __.toNativeObject(bean.execute());
+};
+
 
 
