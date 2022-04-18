@@ -1,12 +1,19 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.resource.NodeValueResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -76,6 +83,22 @@ final class DynamicResourceManager
             final Node schemaNode = nodeService.getByPath( resourceNodePath );
 
             return new NodeValueResource( ResourceKey.from( applicationKey, schemaNode.path().toString() ), schemaNode );
+        } );
+    }
+
+    List<Resource> listResources( final NodePath resourceRootPath )
+    {
+        final QueryExpr expression = QueryParser.parse( "_path like '" + resourceRootPath + "/" + "*/*.xml'" );
+
+        return VirtualAppContext.createContext().callWith( () -> {
+            final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( expression ).size( -1 ).build() );
+
+            return nodeService.getByIds( result.getNodeHits().getNodeIds() )
+                .stream()
+                .map( node -> new NodeValueResource(
+                    ResourceKey.from( ApplicationKey.from( node.path().getElementAsString( 1 ) ), node.path().toString() ), node ) )
+                .collect( Collectors.toList() );
+//            return new NodeValueResource( ResourceKey.from( applicationKey, schemaNode.path().toString() ), schemaNode );
         } );
     }
 

@@ -11,8 +11,11 @@ import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
@@ -47,11 +50,11 @@ final class DynamicResourceParser
         switch ( type )
         {
             case CONTENT_TYPE:
-                return parseContentTypeDescriptor( name, resource );
+                return parseContentTypeDescriptor( (ContentTypeName) name, resource );
             case MIXIN:
-                return parseMixinDescriptor( name, resource );
-            case X_DATA:
-                return parseXDataDescriptor( name, resource );
+                return parseMixinDescriptor( (MixinName) name, resource );
+            case XDATA:
+                return parseXDataDescriptor( (XDataName) name, resource );
             default:
                 throw new IllegalArgumentException( String.format( "unknown dynamic schema type: '%s'", type ) );
         }
@@ -126,7 +129,7 @@ final class DynamicResourceParser
         return builder.build();
     }
 
-    private ContentType parseContentTypeDescriptor( final BaseSchemaName name, final String resource )
+    private ContentType parseContentTypeDescriptor( final ContentTypeName name, final String resource )
     {
         final ContentType.Builder builder = ContentType.create();
         try
@@ -141,10 +144,16 @@ final class DynamicResourceParser
         {
             throw new XmlException( e, "Could not parse dynamic content type [" + name + "]: " );
         }
+
+//        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+//        builder.modifiedTime( modifiedTime );
+//        builder.createdTime( modifiedTime );
+        builder.name( name );
+
         return builder.build();
     }
 
-    private Mixin parseMixinDescriptor( final BaseSchemaName name, final String resource )
+    private Mixin parseMixinDescriptor( final MixinName name, final String resource )
     {
         final Mixin.Builder builder = Mixin.create();
         try
@@ -160,10 +169,12 @@ final class DynamicResourceParser
             throw new XmlException( e, "Could not parse dynamic mixin descriptor [" + name + "]: " );
         }
 
+        builder.name( name );
+
         return builder.build();
     }
 
-    private XData parseXDataDescriptor( final BaseSchemaName name, final String resource )
+    private XData parseXDataDescriptor( final XDataName name, final String resource )
     {
         final XData.Builder builder = XData.create();
         try
@@ -178,6 +189,8 @@ final class DynamicResourceParser
         {
             throw new XmlException( e, "Could not parse dynamic xdata descriptor [" + name + "]: " );
         }
+
+        builder.name( name );
 
         return builder.build();
     }

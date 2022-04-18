@@ -50,7 +50,7 @@ public class CreateDynamicContentSchemaHandler
             case CONTENT_TYPE:
                 schemaName = ContentTypeName.from( name );
                 break;
-            case X_DATA:
+            case XDATA:
                 schemaName = XDataName.from( name );
                 break;
             default:
