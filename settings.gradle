@@ -111,6 +111,7 @@ include 'lib:lib-vhost'
 include 'lib:lib-scheduler'
 include 'lib:lib-export'
 include 'lib:lib-schema'
+include 'lib:lib-app'
 include 'lib:lib-grid'
 
 include 'launcher:launcher-api'
