@@ -2,5 +2,5 @@ package com.enonic.xp.resource;
 
 public enum DynamicContentSchemaType
 {
-    CONTENT_TYPE, MIXIN, X_DATA
+    CONTENT_TYPE, MIXIN, XDATA
 }
