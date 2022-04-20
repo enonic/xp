@@ -1,0 +1,40 @@
+apply plugin: 'com.github.node-gradle.node'
+
+node {
+    download = true
+    distBaseUrl = null
+    version = '16.15.0'
+    workDir = file("${rootProject.projectDir}/.gradle/nodejs")
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Lint TS, JS, and JSON'
+    args = [ 'run', 'lint:quiet' ]
+    outputs.upToDateWhen { false }
+}
+
+task typescript( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
+    description = 'Transpile TS code into JS'
+    args = [ 'run', 'build:js' ]
+}
+
+task copyDefinitions( type: Copy ) {
+    from "$projectDir/src/main/resources/lib/xp/"
+    into projectDir
+    include "*.d.ts"
+}
+
+task definitions( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
+    description = 'Create DTS files for project'
+    args = [ 'run', 'build:types' ]
+    finalizedBy copyDefinitions
+}
+
+test {
+    dependsOn typescript
+}
+
+jar {
+    exclude '**/*.ts'
+    dependsOn typescript
+}
