@@ -5,6 +5,7 @@ plugins {
     id "com.github.ben-manes.versions"
     id "com.enonic.defaults"
     id 'biz.aQute.bnd.builder' apply false
+    id 'com.github.node-gradle.node' apply false
     id 'maven-publish'
 }
 
@@ -29,6 +30,8 @@ configure( rootProject ) {
     apply from: "$rootDir/gradle/ci.gradle"
     apply from: "$rootDir/gradle/tools.gradle"
 }
+
+// TODO: Configure all lib projects here, applying "$rootDir/gradle/typescript.gradle", when moved to TS
 
 task javadoc( type: Javadoc, group: 'documentation' ) {
     title = "Enonic XP API ${version}"

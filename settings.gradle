@@ -5,6 +5,7 @@ pluginManagement {
         id 'com.github.jk1.dependency-license-report' version '1.16'
         id 'com.github.ben-manes.versions' version '0.42.0'
         id 'com.enonic.defaults' version '2.0.1'
+        id 'com.github.node-gradle.node' version '3.2.1'
     }
 }
 
@@ -15,6 +16,28 @@ plugins {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+        mavenCentral()
+        // Node.js download repository
+        ivy {
+            name = "Node.js"
+            setUrl("https://nodejs.org/dist/")
+            patternLayout {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+            content {
+                includeModule("org.nodejs", "node")
+            }
+        }
     }
 }
 
