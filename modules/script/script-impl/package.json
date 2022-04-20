@@ -1,0 +1,34 @@
+{
+  "name": "base",
+  "version": "0.1.0",
+  "description": "Type definitions for XP js global objects.",
+  "types": "index.d.ts",
+  "files": [
+    "index.d.ts",
+    "global.d.ts"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enonic/xp.git#master"
+  },
+  "keywords": [
+    "enonic",
+    "enonic-xp",
+    "global",
+    "types",
+    "typescript"
+  ],
+  "author": {
+    "name": "Mikita Taukachou",
+    "email": "edloidas@gmail.com",
+    "url": "https://edloidas.github.io/"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/enonic/xp/issues"
+  },
+  "homepage": "https://github.com/enonic/xp/tree/master#readme"
+}
