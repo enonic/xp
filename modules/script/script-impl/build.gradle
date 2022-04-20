@@ -13,4 +13,5 @@ dependencies {
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Script - Impl',
          'Import-Package': 'jdk.nashorn.api.scripting;resolution:=optional,org.graalvm.polyglot.*;resolution:=optional,*')
+    exclude '**/*.ts'
 }

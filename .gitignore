@@ -20,3 +20,5 @@ generated-java
 classes/
 out/
 .xp/
+modules/lib/lib-*/*.ts
+modules/lib/lib-*/src/main/resources/lib/xp/*.js
