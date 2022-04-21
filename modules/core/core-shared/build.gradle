@@ -1,0 +1,11 @@
+dependencies {
+    implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
+    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
+
+    testImplementation( testFixtures( project(":core:core-internal") ) )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Map')
+}

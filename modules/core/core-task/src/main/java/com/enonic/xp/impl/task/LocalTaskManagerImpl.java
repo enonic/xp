@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.core.internal.Local;
 import com.enonic.xp.core.internal.concurrent.RecurringJob;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
