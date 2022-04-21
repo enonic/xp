@@ -8,6 +8,7 @@ import java.time.Instant;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 
@@ -24,7 +25,10 @@ public final class NodeValueResource
         super( key );
 
         this.timestamp = node.getTimestamp();
-        this.value = ByteSource.wrap( node.data().getValue( SchemaNodePropertyNames.RESOURCE ).asString().getBytes() );
+
+        final Value resource = node.data().getValue( SchemaNodePropertyNames.RESOURCE );
+        this.value = resource != null ? ByteSource.wrap( resource.asString().getBytes() ) : ByteSource.empty();
+
     }
 
     @Override

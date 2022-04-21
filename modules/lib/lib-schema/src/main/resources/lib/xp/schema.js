@@ -55,6 +55,22 @@ exports.createComponent = function (params) {
 };
 
 /**
+ * Creates dynamic styles schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ * @param {string} [params.resource] Styles resource value.
+ *
+ * @returns {string} created resource.
+ */
+exports.createStyles = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.CreateDynamicStylesHandler');
+    bean.setKey(required(params, 'key'));
+    bean.setResource(__.nullOrValue(params.resource));
+    return bean.execute();
+};
+
+/**
  * Fetches dynamic content schema resource.
  *
  * @param {object} params JSON with the parameters.
@@ -90,12 +106,26 @@ exports.getComponent = function (params) {
  * Fetches dynamic site schema resource.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Virtual application key.
+ * @param {string} params.key Application key.
  *
  * @returns {string} fetched resource.
  */
 exports.getSite = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicSiteHandler');
+    bean.setKey(required(params, 'key'));
+    return bean.execute();
+};
+
+/**
+ * Fetches dynamic styles schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key application key.
+ *
+ * @returns {string} fetched resource.
+ */
+exports.getStyles = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicStylesHandler');
     bean.setKey(required(params, 'key'));
     return bean.execute();
 };
@@ -129,6 +159,20 @@ exports.deleteComponent = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
     bean.setKey(required(params, 'key'));
     bean.setType(required(params, 'type'));
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Removes dynamic styles schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+exports.deleteStyles = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.DeleteDynamicStylesHandler');
+    bean.setKey(required(params, 'key'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -172,7 +216,7 @@ exports.updateComponent = function (params) {
  * Updates dynamic site schema resource.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Virtual application key.
+ * @param {string} params.key Application key.
  * @param {string} [params.resource] Site schema resource value.
  *
  * @returns {string} created resource.
@@ -185,10 +229,26 @@ exports.updateSite = function (params) {
 };
 
 /**
+ * Updates dynamic styles schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ * @param {string} [params.resource] Styles schema resource value.
+ *
+ * @returns {string} created resource.
+ */
+exports.updateStyles = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.schema.UpdateDynamicStylesHandler');
+    bean.setKey(required(params, 'key'));
+    bean.setResource(__.nullOrValue(params.resource));
+    return bean.execute();
+};
+
+/**
  * Fetches dynamic component resources.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Virtual application key.
+ * @param {string} params.key Application key.
  * @param {string} params.type Component type.
  *
  * @returns {string} fetched resources.
@@ -204,7 +264,7 @@ exports.listComponents = function (params) {
  * Fetches dynamic content schemas resources.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Virtual application key.
+ * @param {string} params.key Application key.
  * @param {string} params.type Content schema type.
  *
  * @returns {string} fetched resources.
