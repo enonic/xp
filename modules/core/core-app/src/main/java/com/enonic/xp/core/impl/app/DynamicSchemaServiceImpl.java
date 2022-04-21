@@ -86,26 +86,26 @@ public class DynamicSchemaServiceImpl
 
 
     @Override
-    public BaseSchema<?> createContentSchema( final CreateDynamicContentSchemaParams params )
+    public DynamicSchemaResult<BaseSchema<?>> createContentSchema( final CreateDynamicContentSchemaParams params )
     {
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType(), true );
-        dynamicResourceManager.createResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName(),
-                                               params.getResource() );
+        final Resource resource = dynamicResourceManager.createResource( resourceFolderPath, params.getName().getApplicationKey(),
+                                                                         params.getName().getLocalName(), params.getResource() );
 
-        return schema;
+        return new DynamicSchemaResult<>( schema, resource );
     }
 
     @Override
-    public BaseSchema<?> updateContentSchema( final UpdateDynamicContentSchemaParams params )
+    public DynamicSchemaResult<BaseSchema<?>> updateContentSchema( final UpdateDynamicContentSchemaParams params )
     {
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType(), true );
-        dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName(),
-                                               params.getResource() );
-        return schema;
+        final Resource resource = dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getApplicationKey(),
+                                                                         params.getName().getLocalName(), params.getResource() );
+        return new DynamicSchemaResult<>( schema, resource );
     }
 
     @Override
@@ -113,45 +113,49 @@ public class DynamicSchemaServiceImpl
     {
         final SiteDescriptor site = dynamicResourceParser.parseSite( key, resource );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createSiteFolderPath( key, true );
         dynamicResourceManager.createResource( resourceFolderPath, key, VirtualAppConstants.SITE_ROOT_NAME, resource, false );
 
         return site;
     }
 
     @Override
-    public SiteDescriptor updateSite( final UpdateDynamicSiteParams params )
+    public DynamicSchemaResult<SiteDescriptor> updateSite( final UpdateDynamicSiteParams params )
     {
         final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
-        dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.SITE_ROOT_NAME,
-                                               params.getResource() );
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey(), true );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.SITE_ROOT_NAME,
+                                                   params.getResource() );
 
-        return site;
+        return new DynamicSchemaResult<>( site, resource );
     }
 
     @Override
-    public StyleDescriptor createStyles( final CreateDynamicStylesParams params )
+    public DynamicSchemaResult<StyleDescriptor> createStyles( final CreateDynamicStylesParams params )
     {
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
-        dynamicResourceManager.createResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME, params.getResource(),
-                                               false );
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey(), true );
+        final Resource resource =
+            dynamicResourceManager.createResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME,
+                                                   params.getResource(), false );
 
-        return styles;
+        return new DynamicSchemaResult<>( styles, resource );
     }
 
     @Override
-    public StyleDescriptor updateStyles( final UpdateDynamicStylesParams params )
+    public DynamicSchemaResult<StyleDescriptor> updateStyles( final UpdateDynamicStylesParams params )
     {
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
-        dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME, params.getResource() );
+        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey(), true );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getKey(), VirtualAppConstants.STYLES_NAME,
+                                                   params.getResource() );
 
-        return styles;
+        return new DynamicSchemaResult<>( styles, resource );
     }
 
     @Override
@@ -161,16 +165,18 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getApplicationKey(), params.getKey().getName() );
 
-        final ComponentDescriptor descriptor =
-            dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
-        return new DynamicSchemaResult<>( descriptor, resource );
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final ComponentDescriptor descriptor =
+                dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
+            return new DynamicSchemaResult<>( descriptor, resource );
+        }
+        return null;
     }
 
     @Override
     public List<DynamicSchemaResult<ComponentDescriptor>> listComponents( final ListDynamicComponentsParams params )
     {
-//        final NodePath componentRootPath = createComponentRootPath( params.getKey(), params.getType(), false );
-
         return dynamicResourceManager.listResources( params.getKey(), createComponentRootPath( params.getKey(), params.getType(), false ) )
             .stream()
             .map( resource -> {
@@ -185,31 +191,48 @@ public class DynamicSchemaServiceImpl
 
 
     @Override
-    public BaseSchema<?> getContentSchema( final GetDynamicContentSchemaParams params )
+    public DynamicSchemaResult<BaseSchema<?>> getContentSchema( final GetDynamicContentSchemaParams params )
     {
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType(), false );
         final Resource resource =
             dynamicResourceManager.getResource( resourceFolderPath, params.getName().getApplicationKey(), params.getName().getLocalName() );
 
-        return dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
+            return new DynamicSchemaResult<>( schema, resource );
+        }
+
+        return null;
     }
 
     @Override
-    public SiteDescriptor getSite( final ApplicationKey key )
+    public DynamicSchemaResult<SiteDescriptor> getSite( final ApplicationKey key )
     {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createSiteFolderPath( key, false );
+
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, key, VirtualAppConstants.SITE_ROOT_NAME );
 
-        return dynamicResourceParser.parseSite( key, resource.readString() );
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final SiteDescriptor siteDescriptor = dynamicResourceParser.parseSite( key, resource.readString() );
+            return new DynamicSchemaResult<>( siteDescriptor, resource );
+        }
+        return null;
     }
 
     @Override
-    public StyleDescriptor getStyles( final ApplicationKey key )
+    public DynamicSchemaResult<StyleDescriptor> getStyles( final ApplicationKey key )
     {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createSiteFolderPath( key, false );
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, key, VirtualAppConstants.STYLES_NAME );
 
-        return dynamicResourceParser.parseStyles( key, resource.readString() );
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final StyleDescriptor descriptor = dynamicResourceParser.parseStyles( key, resource.readString() );
+            return new DynamicSchemaResult<>( descriptor, resource );
+        }
+        return null;
     }
 
     @Override
@@ -259,14 +282,14 @@ public class DynamicSchemaServiceImpl
     @Override
     public boolean deleteSite( final ApplicationKey key )
     {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createSiteFolderPath( key, true );
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
     }
 
     @Override
     public boolean deleteStyles( final ApplicationKey key )
     {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createSiteFolderPath( key, true );
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 
@@ -300,10 +323,11 @@ public class DynamicSchemaServiceImpl
     }
 
 
-    private NodePath createSiteFolderPath( final ApplicationKey key )
+    private NodePath createSiteFolderPath( final ApplicationKey key, final boolean absolute )
     {
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
-                                "/" + key.getName() + "/" + VirtualAppConstants.SITE_ROOT_NAME ).build();
+        return NodePath.create( absolute
+                                    ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key.getName() + "/" )
+                                    : "" + VirtualAppConstants.SITE_ROOT_NAME ).build();
     }
 
     private String getSchemaRootName( final DynamicContentSchemaType type )
