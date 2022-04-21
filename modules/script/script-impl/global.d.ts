@@ -8,5 +8,5 @@ you need to add types for there libraries, where those interfaces are redefined.
 interface XpEventLibrary {}
 
 interface XpLibraries {
-    'lib/xp/lib-event': XpEventLibrary;
+    '/lib/xp/event': XpEventLibrary;
 }
