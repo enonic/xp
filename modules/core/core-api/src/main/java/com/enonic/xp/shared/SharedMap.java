@@ -1,0 +1,69 @@
+package com.enonic.xp.shared;
+
+import java.util.function.Function;
+
+/**
+ * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
+ *
+ * WARNING: SharedMap has no guarantees for value mutability or immutability. Make sure you don't modify the values in-place.
+ * @param <K> the type of keys maintained by this map. Can only be standard Java classes.
+ * @param <V> the type of values maintained by this map. Can only be standard Java classes.
+ */
+public interface SharedMap<K, V>
+{
+    /**
+     * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
+    V get( K key );
+
+    /**
+     * Removes the mapping for the key from this map if it is present.
+     *
+     * @param key the key whose associated value is to be removed
+     */
+    void delete( K key );
+
+    /**
+     * Equivalent of calling {@link #set(Object, Object, int)}  set(k, v, -1)}
+     *
+     * @param key   key of the entry
+     * @param value value of the entry
+     */
+    void set( K key, V value );
+
+    /**
+     * Puts an entry into this map with a given time to live (TTL).
+     * If value is null, the existing entry will be removed
+     *
+     * @param key        key of the entry
+     * @param value      value of the entry
+     * @param ttlSeconds maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
+     */
+    void set( K key, V value, int ttlSeconds );
+
+    /**
+     * Equivalent of calling {@link #modify(Object, Function, int)}  modify(k, f, -1)}
+     *
+     * @param key      key of the entry
+     * @param modifier mapping function that accepts the existing mapped value (or null, if there is no associated mapping).
+     *                 The returned value replaces the existing mapped value for the specified key.
+     *                 If returned value is null then the value is removed from the map
+     * @return the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
+     */
+    V modify( K key, Function<V, V> modifier );
+
+    /**
+     * Attempts to compute a mapping for the specified key and its current mapped value.
+     * The mapping is done atomically with other {@code modify} calls.
+     *
+     * @param key      key of the entry
+     * @param modifier mapping function that accepts the existing mapped value (or null, if there is no associated mapping).
+     *                 The returned value replaces the existing mapped value for the specified key.
+     *                 If returned value is null then the value is removed from the map
+     * @return the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
+     */
+    V modify( K key, Function<V, V> modifier, int ttlSeconds );
+}

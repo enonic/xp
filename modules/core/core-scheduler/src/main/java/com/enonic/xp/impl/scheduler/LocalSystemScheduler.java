@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.core.internal.Local;
 import com.enonic.xp.core.internal.concurrent.ThreadFactoryImpl;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTaskImpl;
