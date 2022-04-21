@@ -216,6 +216,7 @@ final class DynamicResourceParser
     private StyleDescriptor parseStylesDescriptor( final ApplicationKey applicationKey, final String resource )
     {
         final StyleDescriptor.Builder builder = StyleDescriptor.create();
+        builder.application( applicationKey );
         try
         {
             final XmlStyleDescriptorParser parser = new XmlStyleDescriptorParser();
