@@ -20,25 +20,25 @@ public interface DynamicSchemaService
 
     boolean deleteComponent( DeleteDynamicComponentParams params );
 
-    BaseSchema<?> createContentSchema( CreateDynamicContentSchemaParams params );
+    DynamicSchemaResult<BaseSchema<?>> createContentSchema( CreateDynamicContentSchemaParams params );
 
-    BaseSchema<?> updateContentSchema( UpdateDynamicContentSchemaParams params );
+    DynamicSchemaResult<BaseSchema<?>> updateContentSchema( UpdateDynamicContentSchemaParams params );
 
-    BaseSchema<?> getContentSchema( GetDynamicContentSchemaParams params );
+    DynamicSchemaResult<BaseSchema<?>> getContentSchema( GetDynamicContentSchemaParams params );
 
     List<DynamicSchemaResult<BaseSchema<?>>> listSchemas( ListDynamicSchemasParams params );
 
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
 
-    SiteDescriptor updateSite( UpdateDynamicSiteParams params );
+    DynamicSchemaResult<SiteDescriptor> updateSite( UpdateDynamicSiteParams params );
 
-    SiteDescriptor getSite( ApplicationKey key );
+    DynamicSchemaResult<SiteDescriptor> getSite( ApplicationKey key );
 
-    StyleDescriptor createStyles( CreateDynamicStylesParams params );
+    DynamicSchemaResult<StyleDescriptor> createStyles( CreateDynamicStylesParams params );
 
-    StyleDescriptor updateStyles( UpdateDynamicStylesParams params );
+    DynamicSchemaResult<StyleDescriptor> updateStyles( UpdateDynamicStylesParams params );
 
-    StyleDescriptor getStyles( ApplicationKey key );
+    DynamicSchemaResult<StyleDescriptor> getStyles( ApplicationKey key );
 
     boolean deleteStyles( ApplicationKey key );
 
