@@ -79,20 +79,17 @@ final class DynamicResourceManager
     {
         final NodePath resourceRelativePath = NodePath.create( folderRelativePath, name + ".xml" ).build();
 
-        return VirtualAppContext.createContext().callWith( () -> {
-            return resourceService.getResource( ResourceKey.from( applicationKey, resourceRelativePath.toString() ) );
-        } );
+        return VirtualAppContext.createContext()
+            .callWith( () -> resourceService.getResource( ResourceKey.from( applicationKey, resourceRelativePath.toString() ) ) );
     }
 
     List<Resource> listResources( final ApplicationKey applicationKey, final NodePath resourceRootPath )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
-
-            return resourceService.findFiles( applicationKey, resourceRootPath + "/" + ".+/.+\\.xml" )
+        return VirtualAppContext.createContext()
+            .callWith( () -> resourceService.findFiles( applicationKey, resourceRootPath + "/" + ".+/.+\\.xml" )
                 .stream()
                 .map( resourceService::getResource )
-                .collect( Collectors.toList() );
-        } );
+                .collect( Collectors.toList() ) );
     }
 
     boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
