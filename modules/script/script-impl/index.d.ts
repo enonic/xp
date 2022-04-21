@@ -7,6 +7,7 @@ declare const app: {
 };
 
 declare const log: {
+    debug: (...args: unknown[]) => void;
     info: (...args: unknown[]) => void;
     warning: (...args: unknown[]) => void;
     error: (...args: unknown[]) => void;
