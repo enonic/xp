@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.map;
+package com.enonic.xp.impl.shared;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.map;
+package com.enonic.xp.impl.shared;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

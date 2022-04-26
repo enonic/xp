@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.map;
+package com.enonic.xp.impl.shared;
 
 import java.time.Clock;
 import java.time.Instant;
