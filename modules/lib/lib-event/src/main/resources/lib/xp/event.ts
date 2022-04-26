@@ -2,7 +2,7 @@ export interface ListenerParams<EventData extends object = EnonicEventData> {
     /**
      * Event type pattern
      */
-    type?: EnonicEventTypes | string;
+    type: EnonicEventTypes;
 
     /**
      * Callback event listener
@@ -19,7 +19,7 @@ export interface SendParams {
     /**
      * Event type
      */
-    type?: EnonicEventTypes | string;
+    type: EnonicEventTypes;
 
     /**
      * `true` if it should be distributed in cluster
@@ -53,7 +53,10 @@ export interface EnonicEventDataNode {
     readonly newPath?: string; // for type='node.moved', type='node.renamed'
 }
 
+type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
 export type EnonicEventTypes =
+    LiteralUnion<
     | 'node.*'
     | 'node.created'
     | 'node.deleted'
@@ -64,7 +67,8 @@ export type EnonicEventTypes =
     | 'node.renamed'
     | 'node.sorted'
     | 'node.stateUpdated'
-    | 'node.permissionsUpdated';
+    | 'node.permissionsUpdated'
+    >;
 
 /**
  * Event functions.
@@ -116,11 +120,4 @@ export function send(event: SendParams): void {
     }
 
     helper.send();
-}
-
-declare global {
-    interface XpEventLibrary {
-        listener: typeof listener;
-        send: typeof send;
-    }
 }
