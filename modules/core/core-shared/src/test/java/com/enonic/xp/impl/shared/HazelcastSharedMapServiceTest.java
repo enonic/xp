@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.map;
+package com.enonic.xp.impl.shared;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
