@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -58,6 +58,16 @@ public class AdminSiteHandlerTest
     }
 
     @Test
+    public void testCanHandleRootContent()
+    {
+        this.request.setRawPath( "/admin/site/repo/master" );
+        assertTrue( this.handler.canHandle( this.request ) );
+
+        this.request.setRawPath( "/admin/site/repo/master/" );
+        assertTrue( this.handler.canHandle( this.request ) );
+    }
+
+    @Test
     public void testCannotHandle()
     {
         this.request.setRawPath( "/admin/repo/master/content/1" );
@@ -68,7 +78,7 @@ public class AdminSiteHandlerTest
     public void testCreatePortalRequestWithoutMode()
     {
         this.request.setRawPath( "/admin/site/repo/master/content/1" );
-        assertThrows(WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ));
+        assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
     }
 
     @Test
@@ -94,18 +104,32 @@ public class AdminSiteHandlerTest
         assertEquals( "com.enonic.cms.repo", portalRequest.getRepositoryId().toString() );
         assertEquals( "draft", portalRequest.getBranch().toString() );
         assertEquals( "/", portalRequest.getContentPath().toString() );
-        assertEquals( "inline", portalRequest.getMode().toString() );
+        assertEquals( RenderMode.INLINE, portalRequest.getMode() );
+    }
+
+    @Test
+    public void testCreatePortalRequestRootContentPath()
+    {
+        this.request.setRawPath( "/admin/site/edit/repo/master" );
+        PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
+
+        assertEquals( "/admin/site/edit", portalRequest.getBaseUri() );
+        assertEquals( "com.enonic.cms.repo", portalRequest.getRepositoryId().toString() );
+        assertEquals( "master", portalRequest.getBranch().toString() );
+        assertEquals( "/", portalRequest.getContentPath().toString() );
+        assertEquals( RenderMode.EDIT, portalRequest.getMode() );
     }
 
     @Test
     public void testCreatePortalRequestEmptyContentPath()
     {
         this.request.setRawPath( "/admin/site/edit/repo/master/" );
-        WebException exception = assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
-        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
+        PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
 
-        this.request.setRawPath( "/admin/site/edit/repo/master" );
-        exception = assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
-        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
+        assertEquals( "/admin/site/edit", portalRequest.getBaseUri() );
+        assertEquals( "com.enonic.cms.repo", portalRequest.getRepositoryId().toString() );
+        assertEquals( "master", portalRequest.getBranch().toString() );
+        assertEquals( "/", portalRequest.getContentPath().toString() );
+        assertEquals( RenderMode.EDIT, portalRequest.getMode() );
     }
 }
