@@ -7,14 +7,11 @@ public class StoreMovedNodeParams
 {
     private final Node node;
 
-    private final boolean updateMetadataOnly;
-
     private final NodeVersionId nodeVersionId;
 
     private StoreMovedNodeParams( Builder builder )
     {
         node = builder.node;
-        updateMetadataOnly = builder.updateMetadataOnly;
         nodeVersionId = builder.nodeVersionId;
     }
 
@@ -28,12 +25,6 @@ public class StoreMovedNodeParams
         return node;
     }
 
-
-    public boolean isUpdateMetadataOnly()
-    {
-        return updateMetadataOnly;
-    }
-
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
@@ -42,8 +33,6 @@ public class StoreMovedNodeParams
     public static final class Builder
     {
         private Node node;
-
-        private boolean updateMetadataOnly = false;
 
         private NodeVersionId nodeVersionId;
 
@@ -54,12 +43,6 @@ public class StoreMovedNodeParams
         public Builder node( Node node )
         {
             this.node = node;
-            return this;
-        }
-
-        public Builder updateMetadataOnly( boolean updateMetadataOnly )
-        {
-            this.updateMetadataOnly = updateMetadataOnly;
             return this;
         }
 
