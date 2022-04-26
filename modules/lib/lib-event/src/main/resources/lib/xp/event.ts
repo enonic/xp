@@ -1,3 +1,16 @@
+import * as Lib from './event';
+
+/*
+ * Global library definitions for require and __non_webpack_import__
+ */
+
+type LibType = typeof Lib;
+
+declare global {
+    interface XpEventLibrary extends LibType {}
+}
+
+
 export interface ListenerParams<EventData extends object = EnonicEventData> {
     /**
      * Event type pattern
@@ -42,7 +55,7 @@ export interface EnonicEvent<EventData extends object = EnonicEventData> {
 
 export interface EnonicEventData {
     readonly nodes: ReadonlyArray<EnonicEventDataNode>;
-    readonly state?: string; // for type='node.stateUpdated'
+    readonly state?: string; // event type <'node.stateUpdated'>
 }
 
 export interface EnonicEventDataNode {
@@ -50,7 +63,7 @@ export interface EnonicEventDataNode {
     readonly path: string;
     readonly branch: string;
     readonly repo: string;
-    readonly newPath?: string; // for type='node.moved', type='node.renamed'
+    readonly newPath?: string; // event type <'node.moved' | 'node.renamed'>
 }
 
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
