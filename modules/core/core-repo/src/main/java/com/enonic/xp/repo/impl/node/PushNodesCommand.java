@@ -204,7 +204,6 @@ public class PushNodesCommand
                     execute();
 
                 this.nodeStorageService.move( StoreMovedNodeParams.create().
-                    updateMetadataOnly( true ).
                     nodeVersionId( child.getVersionId() ).
                     node( childNode ).
                     build(), InternalContext.from( targetContext ) );

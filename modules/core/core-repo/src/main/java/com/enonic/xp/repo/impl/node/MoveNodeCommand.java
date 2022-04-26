@@ -191,13 +191,9 @@ public class MoveNodeCommand
             {
                 updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
             }
+        }
 
-            movedNode = doStore( nodeToMoveBuilder.build(), false );
-        }
-        else
-        {
-            movedNode = doStore( nodeToMoveBuilder.build(), true );
-        }
+        movedNode = doStore( nodeToMoveBuilder.build() );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
@@ -247,12 +243,10 @@ public class MoveNodeCommand
         return updateManualOrderValue;
     }
 
-    private Node doStore( final Node movedNode, final boolean metadataOnly )
+    private Node doStore( final Node movedNode )
     {
-        return this.nodeStorageService.move( StoreMovedNodeParams.create().
-            node( movedNode ).
-            updateMetadataOnly( metadataOnly ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.move( StoreMovedNodeParams.create().node( movedNode ).build(),
+                                             InternalContext.from( ContextAccessor.current() ) );
     }
 
     private NodeName getNodeName( final NodeBranchEntry nodeBranchEntry )
