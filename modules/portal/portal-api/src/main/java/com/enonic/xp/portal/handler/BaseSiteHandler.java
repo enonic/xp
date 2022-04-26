@@ -55,12 +55,7 @@ public abstract class BaseSiteHandler
         final String repoSubPath = findPathAfterRepository( baseSubPath );
         final int index = repoSubPath.indexOf( '/' );
 
-        if ( index < 0 || index == repoSubPath.length() - 1 )
-        {
-            throw WebException.notFound( "Path must be set." );
-        }
-
-        return repoSubPath.substring( index );
+        return index >= 0 ? repoSubPath.substring( index ) : "";
     }
 
     protected PortalRequest doCreatePortalRequest( final WebRequest webRequest, final String baseUri, final String baseSubPath )
