@@ -118,8 +118,9 @@ export function send(event: SendParams): void {
     helper.send();
 }
 
-
-export default interface XpEventLibrary {
-    listener: typeof listener;
-    send: typeof send;
+declare global {
+    interface XpEventLibrary {
+        listener: typeof listener;
+        send: typeof send;
+    }
 }
