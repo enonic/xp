@@ -98,8 +98,8 @@ export type EnonicEventTypes =
 export function listener<EventData extends object = EnonicEventData>(params: ListenerParams<EventData>): void {
     const helper = __.newBean<any>('com.enonic.xp.lib.event.EventListenerHelper');
 
-    helper.setType(params.type || '');
-    helper.setLocalOnly(params.localOnly || false);
+    helper.setType(params.type ?? '');
+    helper.setLocalOnly(params.localOnly === true);
     helper.setListener((event: EnonicEvent<EventData>) => params.callback(__.toNativeObject(event)));
 
     helper.register();
@@ -118,8 +118,8 @@ export function listener<EventData extends object = EnonicEventData>(params: Lis
 export function send(event: SendParams): void {
     const helper = __.newBean<any>('com.enonic.xp.lib.event.EventSenderHelper');
 
-    helper.setType(event.type || 'test');
-    helper.setDistributed(event.distributed || false);
+    helper.setType(event.type ?? 'test');
+    helper.setDistributed(event.distributed === true);
 
     if (event.data) {
         helper.setData(__.toScriptValue(event.data));
