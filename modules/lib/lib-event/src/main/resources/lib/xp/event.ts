@@ -1,15 +1,8 @@
-import * as Lib from './event';
-
-/*
- * Global library definitions for require and __non_webpack_import__
- */
-
-type LibType = typeof Lib;
-
 declare global {
-    interface XpEventLibrary extends LibType {}
+    interface XpLibraries {
+        '/lib/xp/event': typeof import('./event'),
+    }
 }
-
 
 export interface ListenerParams<EventData extends object = EnonicEventData> {
     /**
