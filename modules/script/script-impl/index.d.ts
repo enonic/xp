@@ -3,7 +3,7 @@
 declare const app: {
     name: string;
     version: string;
-    config: Record<string, string>;
+    config: Record<string, string | undefined>;
 };
 
 declare const log: {
