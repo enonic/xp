@@ -16,12 +16,12 @@ declare const log: {
 declare const __: {
     newBean: <T = unknown>(bean: string) => T;
     toNativeObject: <T = unknown>(beanResult: T) => T;
-    toScriptValue: <T = Object>(value: T) => T;
+    toScriptValue: <T = object>(value: T) => T;
     disposer: (callback: (...args: unknown[]) => unknown) => void;
 };
 
-declare const require: <Key extends keyof XpLibraries | string = string>(path: Key) =>
+type Require = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : any;
 
-declare const __non_webpack_require__: <Key extends keyof XpLibraries | string = string>(path: Key) =>
-    Key extends keyof XpLibraries ? XpLibraries[Key] : any;
+declare const require: Require;
+declare const __non_webpack_require__: Require;
