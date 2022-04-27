@@ -10,6 +10,7 @@
     "build:js": "tsc",
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir ./",
     "build": "npm run build:js & npm run build:types",
+    "watch": "tsc --declaration --emitDeclarationOnly --outDir ./ --watch",
     "packlist": "npx npm-packlist"
   },
   "repository": {
