@@ -31,7 +31,7 @@ jobs:
           PREVIOS_RELEASE_TAG: ${{ steps.get_previous_release_tag.outputs.previous_release_tag }}
           OUTPUT_FILE: changelog.md
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: changelog
           path: changelog.md
