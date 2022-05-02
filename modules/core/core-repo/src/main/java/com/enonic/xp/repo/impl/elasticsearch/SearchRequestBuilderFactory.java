@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.util.Objects;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -61,12 +63,11 @@ public class SearchRequestBuilderFactory
 
         searchRequestBuilder.setExplain( query.isExplain() )
             .setSearchType(
-                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT );
+                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT )
+            .setPreference( Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL ).getName() );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
-
-        searchRequestBuilder.setPreference( searchPreference != null ? searchPreference.toString() : SearchPreference.LOCAL.toString() );
 
         return searchRequestBuilder;
     }
