@@ -30,7 +30,7 @@ class CountExecutor
                 .setTypes( query.getIndexTypes() )
                 .setQuery( query.getQuery() )
                 .setSearchType( SearchType.COUNT )
-                .setPreference( SearchPreference.LOCAL.toString() );
+                .setPreference( SearchPreference.LOCAL.getName() );
 
         return doSearchRequest( searchRequestBuilder );
     }
