@@ -1,6 +1,6 @@
 {
-  "name": "script-impl",
-  "version": "1.0.0",
+  "name": "base",
+  "version": "0.1.0",
   "description": "Type definitions for XP js global objects.",
   "types": "index.d.ts",
   "files": [
