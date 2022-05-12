@@ -1,5 +1,5 @@
 {
-  "name": "script-impl",
+  "name": "base",
   "version": "1.0.0",
   "description": "Type definitions for XP js global objects.",
   "types": "index.d.ts",
@@ -19,7 +19,8 @@
     "enonic-xp",
     "global",
     "types",
-    "typescript"
+    "typescript",
+    "base"
   ],
   "author": {
     "name": "Mikita Taukachou",
