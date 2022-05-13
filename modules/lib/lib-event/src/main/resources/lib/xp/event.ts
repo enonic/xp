@@ -1,6 +1,6 @@
 declare global {
     interface XpLibraries {
-        '/lib/xp/event': typeof import('./event'),
+        '/lib/xp/event': typeof import('./event');
     }
 }
 

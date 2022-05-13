@@ -1,6 +1,6 @@
 {
   "name": "lib-event",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Type definitions for lib-event.",
   "types": "event.d.ts",
   "files": [
@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/enonic/xp/tree/master#readme",
   "devDependencies": {
-    "script-impl": "file:../../script/script-impl",
-    "typescript": "^4.6.3"
+    "base": "file:../../script/script-impl",
+    "typescript": "^4.6.4"
   }
 }
