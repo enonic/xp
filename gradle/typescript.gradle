@@ -7,25 +7,27 @@ node {
     workDir = file("${rootProject.projectDir}/.gradle/nodejs")
 }
 
-task typescript( type: NpmTask, dependsOn: npmInstall ) {
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Lint TS, JS, and JSON'
+    args = [ 'run', 'lint:quiet' ]
+    outputs.upToDateWhen { false }
+}
+
+task typescript( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
     description = 'Transpile TS code into JS'
     args = [ 'run', 'build:js' ]
 }
 
-task definitions( type: NpmTask, dependsOn: npmInstall ) {
-    description = 'Create DTS files for project'
-    args = [ 'run', 'build:types' ]
+task copyDefinitions( type: Copy ) {
+    from "$projectDir/src/main/resources/lib/xp/"
+    into projectDir
+    include "*.d.ts"
 }
 
-task lint( type: NpmTask, dependsOn: npmInstall ) {
-    args = [ 'run', 'lint:quiet' ]
-    // inputs.files fileTree( dir: 'modules', include: '**/src/main/**.*' )
-    inputs.files fileTree( dir: 'src', include: '**/*.ts' )
-    inputs.files fileTree( dir: 'src', include: '**/*.js' )
-    inputs.file 'package.json'
-    inputs.file 'tsconfig.json'
-    inputs.file '.eslintrc.js'
-    // outputs.upToDateWhen { false }
+task definitions( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
+    description = 'Create DTS files for project'
+    args = [ 'run', 'build:types' ]
+    finalizedBy copyDefinitions
 }
 
 test {
