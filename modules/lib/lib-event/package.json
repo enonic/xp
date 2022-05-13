@@ -11,6 +11,9 @@
     "build:types": "tsc --declaration --emitDeclarationOnly --outDir ./",
     "build": "npm run build:js & npm run build:types",
     "watch": "tsc --declaration --emitDeclarationOnly --outDir ./ --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:quiet": "eslint src/**/*.ts --quiet",
+    "fix": "eslint --fix src/**/*.ts",
     "packlist": "npx npm-packlist"
   },
   "repository": {
@@ -36,7 +39,10 @@
   },
   "homepage": "https://github.com/enonic/xp/tree/master#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "base": "file:../../script/script-impl",
+    "eslint": "^8.15.0",
     "typescript": "^4.6.4"
   }
 }
