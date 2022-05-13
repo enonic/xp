@@ -1,13 +1,30 @@
 apply plugin: 'com.github.node-gradle.node'
 
-task typescript( type: NpmTask, dependsOn: [ npmInstall ] ) {
+node {
+    download = true
+    version = '16.15.0'
+    workDir = file("${rootProject.projectDir}/.gradle/nodejs")
+}
+
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Transpile TS code into JS'
     args = [ 'run', 'build:js' ]
 }
 
-task definitions( type: NpmTask, dependsOn: [ npmInstall ] ) {
+task definitions( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create DTS files for project'
     args = [ 'run', 'build:types' ]
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = [ 'run', 'lint:quiet' ]
+    // inputs.files fileTree( dir: 'modules', include: '**/src/main/**.*' )
+    inputs.files fileTree( dir: 'src', include: '**/*.ts' )
+    inputs.files fileTree( dir: 'src', include: '**/*.js' )
+    inputs.file 'package.json'
+    inputs.file 'tsconfig.json'
+    inputs.file '.eslintrc.js'
+    // outputs.upToDateWhen { false }
 }
 
 test {

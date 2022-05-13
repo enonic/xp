@@ -76,6 +76,20 @@ export type EnonicEventTypes =
     | 'node.permissionsUpdated'
     >;
 
+interface EventSenderHelper {
+    setType(type: string): void;
+    setDistributed(distributed: boolean): void;
+    setData(value: object): void;
+    send(): void;
+}
+
+interface EventListenerHelper {
+    setType(type: string): void;
+    setListener<T = unknown>(callback: (event: T) => void): void;
+    setLocalOnly(localOnly: boolean): void;
+    register(): void;
+}
+
 /**
  * Event functions.
  *

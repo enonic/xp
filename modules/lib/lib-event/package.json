@@ -1,48 +1,48 @@
 {
-  "name": "lib-event",
-  "version": "0.1.0",
-  "description": "Type definitions for lib-event.",
-  "types": "event.d.ts",
-  "files": [
-    "event.d.ts"
-  ],
-  "scripts": {
-    "build:js": "tsc",
-    "build:types": "tsc --declaration --emitDeclarationOnly --outDir ./",
-    "build": "npm run build:js & npm run build:types",
-    "watch": "tsc --declaration --emitDeclarationOnly --outDir ./ --watch",
-    "lint": "eslint src/**/*.ts",
-    "lint:quiet": "eslint src/**/*.ts --quiet",
-    "fix": "eslint --fix src/**/*.ts",
-    "packlist": "npx npm-packlist"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/enonic/xp.git#master"
-  },
-  "keywords": [
-    "enonic",
-    "enonic-xp",
-    "lib-event",
-    "event",
-    "types",
-    "typescript"
-  ],
-  "author": {
-    "name": "Mikita Taukachou",
-    "email": "edloidas@gmail.com",
-    "url": "https://edloidas.github.io/"
-  },
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/enonic/xp/issues"
-  },
-  "homepage": "https://github.com/enonic/xp/tree/master#readme",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
-    "base": "file:../../script/script-impl",
-    "eslint": "^8.15.0",
-    "typescript": "^4.6.4"
-  }
+    "name": "lib-event",
+    "version": "0.1.0",
+    "description": "Type definitions for lib-event.",
+    "types": "event.d.ts",
+    "files": [
+        "event.d.ts"
+    ],
+    "scripts": {
+        "build:js": "tsc",
+        "build:types": "tsc --declaration --emitDeclarationOnly --outDir ./",
+        "build": "npm run build:js & npm run build:types",
+        "watch": "tsc --declaration --emitDeclarationOnly --outDir ./ --watch",
+        "lint": "eslint --ext=.ts,.js,.json .",
+        "lint:quiet": "eslint --quiet --ext=.ts,.js,.json .",
+        "fix": "eslint --fix --ext=.ts,.js,.json .",
+        "packlist": "npx npm-packlist"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/enonic/xp.git#master"
+    },
+    "keywords": [
+        "enonic",
+        "enonic-xp",
+        "lib-event",
+        "event",
+        "types",
+        "typescript"
+    ],
+    "author": {
+        "name": "Mikita Taukachou",
+        "email": "edloidas@gmail.com",
+        "url": "https://edloidas.github.io/"
+    },
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/enonic/xp/issues"
+    },
+    "homepage": "https://github.com/enonic/xp/tree/master#readme",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.23.0",
+        "@typescript-eslint/parser": "^5.23.0",
+        "base": "file:../../script/script-impl",
+        "eslint": "^8.15.0",
+        "typescript": "^4.6.4"
+    }
 }
