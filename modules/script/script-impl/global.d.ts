@@ -14,3 +14,5 @@
  * }
 */
 interface XpLibraries {}
+
+interface XpBeans {}

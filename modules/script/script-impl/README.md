@@ -34,6 +34,8 @@ libraries are also added to your `tsconfig.json`.
 
 ## Configuration
 
+### Require
+
 To add support for type resolution for the custom libraries via `require` or `__non_webpack_require__`, you can redeclare the `XpLibraries` interface in global scope, wich will lead to declaration merging:
 
 ```ts
@@ -42,4 +44,36 @@ declare global {
         '/lib/custom/mylib': typeof import('./mylib');
     }
 }
+```
+
+### Beans
+
+To create a new bean, a `__.newBean()` function must be used. Making it return a proper type can be done in two ways. Say you have create an interface for that been somewhere in your project:
+
+```ts
+interface SomeHelper {
+  help(text: string): void;
+}
+```
+
+__Option 1__
+
+You can pass the type argument explicitly. This option is a bit cleaner.
+
+```ts
+const helper = __.newBean<SomeHelper>('com.me.project.SomeHelper');
+```
+
+__Option 2__
+
+Or you can map the bean name to bean interface. It may be a preferable way to do it, if the bean is used across multiple files:
+
+```ts
+declare global {
+    interface XpBeans {
+        'com.me.project.SomeHelper': SomeHelper;
+    }
+}
+
+const helper = __.newBean('com.me.project.SomeHelper');
 ```
