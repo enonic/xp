@@ -76,6 +76,7 @@ module.exports = {
     'ignorePatterns': [
         'package-lock.json',
         'build',
+        '*.d.ts',
         'src/main/resources/lib/xp/*.js',
     ],
     'env': {
