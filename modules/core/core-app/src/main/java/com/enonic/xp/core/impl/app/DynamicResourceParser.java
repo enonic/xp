@@ -187,7 +187,7 @@ final class DynamicResourceParser
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic xdata descriptor [" + name + "]: " );
+            throw new XmlException( e, "Could not parse dynamic xdata descriptor [" + name + "]" );
         }
 
         builder.name( name );

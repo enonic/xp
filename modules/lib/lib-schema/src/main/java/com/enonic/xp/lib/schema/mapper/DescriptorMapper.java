@@ -23,7 +23,6 @@ public abstract class DescriptorMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "key", descriptor.getKey() );
-        gen.value( "name", descriptor.getName() );
         gen.value( "displayName", descriptor.getDisplayName() );
         gen.value( "displayNameI18nKey", descriptor.getDisplayNameI18nKey() );
         gen.value( "description", descriptor.getDescription() );

@@ -33,7 +33,7 @@ exports.createSchema = function (params) {
     bean.setName(required(params, 'name'));
     bean.setType(required(params, 'type'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -51,7 +51,7 @@ exports.createComponent = function (params) {
     bean.setKey(required(params, 'key'));
     bean.setType(required(params, 'type'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -67,7 +67,7 @@ exports.createStyles = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.CreateDynamicStylesHandler');
     bean.setKey(required(params, 'key'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -83,7 +83,7 @@ exports.getSchema = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
     bean.setName(required(params, 'name'));
     bean.setType(required(params, 'type'));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -99,7 +99,7 @@ exports.getComponent = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicComponentHandler');
     bean.setKey(required(params, 'key'));
     bean.setType(required(params, 'type'));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -113,7 +113,7 @@ exports.getComponent = function (params) {
 exports.getSite = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicSiteHandler');
     bean.setKey(required(params, 'key'));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -127,7 +127,7 @@ exports.getSite = function (params) {
 exports.getStyles = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.GetDynamicStylesHandler');
     bean.setKey(required(params, 'key'));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -191,7 +191,7 @@ exports.updateSchema = function (params) {
     bean.setName(required(params, 'name'));
     bean.setType(required(params, 'type'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -209,7 +209,7 @@ exports.updateComponent = function (params) {
     bean.setKey(required(params, 'key'));
     bean.setType(required(params, 'type'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -225,7 +225,7 @@ exports.updateSite = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.UpdateDynamicSiteHandler');
     bean.setKey(required(params, 'key'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**
@@ -241,7 +241,7 @@ exports.updateStyles = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.schema.UpdateDynamicStylesHandler');
     bean.setKey(required(params, 'key'));
     bean.setResource(__.nullOrValue(params.resource));
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 /**

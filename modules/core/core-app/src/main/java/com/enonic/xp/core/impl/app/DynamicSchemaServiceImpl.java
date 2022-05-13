@@ -7,6 +7,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.NodePath;
@@ -27,6 +29,7 @@ import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicSchemasParams;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
@@ -181,7 +184,7 @@ public class DynamicSchemaServiceImpl
             .stream()
             .map( resource -> {
                 final ComponentDescriptor descriptor =
-                    dynamicResourceParser.parseComponent( DescriptorKey.from( params.getKey(), resource.getKey().getName() ),
+                    dynamicResourceParser.parseComponent( DescriptorKey.from( params.getKey(), getResourceName( resource.getKey() ) ),
                                                           params.getType(), resource.readString() );
 
                 return new DynamicSchemaResult<>( descriptor, resource );
@@ -257,7 +260,7 @@ public class DynamicSchemaServiceImpl
         return dynamicResourceManager.listResources( params.getKey(), componentRootPath ).stream().map( resource -> {
 
             final BaseSchema<?> schema =
-                dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), resource.getKey().getName() ),
+                dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ),
                                                    params.getType(), resource.readString() );
 
             return new DynamicSchemaResult<BaseSchema<?>>( schema, resource );
@@ -276,6 +279,18 @@ public class DynamicSchemaServiceImpl
                 return XDataName.from( applicationKey, name );
             default:
                 throw new IllegalArgumentException( "invalid schema type: " + type );
+        }
+    }
+
+    private String getResourceName( final ResourceKey resourceKey )
+    {
+        if ( Strings.isNullOrEmpty( resourceKey.getExtension() ) )
+        {
+            return resourceKey.getName();
+        }
+        else
+        {
+            return resourceKey.getName().substring( 0, resourceKey.getName().lastIndexOf( "." + resourceKey.getExtension() ) );
         }
     }
 
@@ -302,9 +317,9 @@ public class DynamicSchemaServiceImpl
     private NodePath createComponentRootPath( final ApplicationKey key, final DynamicComponentType dynamicType, final boolean absolute )
     {
         final String resourceRootName = getComponentRootName( dynamicType );
-        return NodePath.create( absolute
-                                    ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" )
-                                    : "" + VirtualAppConstants.SITE_ROOT_NAME + "/" + resourceRootName ).build();
+        return NodePath.create(
+            ( absolute ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" ) : "" ) + VirtualAppConstants.SITE_ROOT_NAME +
+                "/" + resourceRootName ).build();
     }
 
     private NodePath createSchemaFolderPath( final BaseSchemaName key, final DynamicContentSchemaType dynamicType, final boolean absolute )
@@ -317,17 +332,16 @@ public class DynamicSchemaServiceImpl
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType, final boolean absolute )
     {
         final String resourceRootName = getSchemaRootName( dynamicType );
-        return NodePath.create( absolute
-                                    ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" )
-                                    : "" + VirtualAppConstants.SITE_ROOT_NAME + "/" + resourceRootName ).build();
+        return NodePath.create(
+            ( absolute ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" ) : "" ) + VirtualAppConstants.SITE_ROOT_NAME +
+                "/" + resourceRootName ).build();
     }
 
 
     private NodePath createSiteFolderPath( final ApplicationKey key, final boolean absolute )
     {
-        return NodePath.create( absolute
-                                    ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key.getName() + "/" )
-                                    : "" + VirtualAppConstants.SITE_ROOT_NAME ).build();
+        return NodePath.create( ( absolute ? ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key.getName() + "/" ) : "" ) +
+                                    VirtualAppConstants.SITE_ROOT_NAME ).build();
     }
 
     private String getSchemaRootName( final DynamicContentSchemaType type )
