@@ -8,7 +8,7 @@ exports.testListener = function () {
         localOnly: false,
         callback(e) {
             event = e;
-        }
+        },
     });
 
     testInstance.fireEvent();
@@ -21,8 +21,8 @@ exports.testListener = function () {
             'localOrigin': true,
             'distributed': false,
             'data': {
-                'a': 1
-            }
+                'a': 1,
+            },
         }, event);
 };
 
@@ -32,8 +32,8 @@ exports.testSend = function () {
         distributed: true,
         data: {
             a: 1,
-            b: 2
-        }
+            b: 2,
+        },
     });
 
     testInstance.checkPublishedEvent();
