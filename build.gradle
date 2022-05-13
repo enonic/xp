@@ -5,6 +5,7 @@ plugins {
     id "com.github.ben-manes.versions"
     id "com.enonic.defaults"
     id 'biz.aQute.bnd.builder' apply false
+    id 'com.github.node-gradle.node' apply false
     id 'maven-publish'
 }
 

@@ -6,7 +6,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "types": [
-      "script-impl"
+      "base"
     ],
     "sourceMap": false,
     "esModuleInterop": true,
@@ -15,6 +15,6 @@
     "skipLibCheck": true
   },
   "exclude": [
-    "./*.ts"
+    "./*.d.ts"
   ]
 }
