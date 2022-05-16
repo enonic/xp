@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "lib": ["es6"],
+        "lib": ["es5"],
         "removeComments": false,
         "target": "es5",
         "module": "commonjs",
