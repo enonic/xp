@@ -23,8 +23,7 @@ declare const __: {
     disposer: (callback: (...args: unknown[]) => unknown) => void;
 };
 
-type Require = <Key extends keyof XpLibraries | string = string>(path: Key) =>
+declare type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
 
-declare const require: Require;
-declare const __non_webpack_require__: Require;
+declare const require: XpRequire;

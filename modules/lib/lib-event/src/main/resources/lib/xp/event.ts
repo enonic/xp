@@ -59,6 +59,8 @@ export interface EnonicEventDataNode {
     readonly newPath?: string; // event type <'node.moved' | 'node.renamed'>
 }
 
+// Code suggestions improvement. Using string will lead some code editors to
+// omit the more narrow types, if just the | operator is used.
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
 export type EnonicEventTypes =
@@ -72,6 +74,7 @@ export type EnonicEventTypes =
     | 'node.moved'
     | 'node.renamed'
     | 'node.sorted'
+    | 'node.manualOrderUpdated'
     | 'node.stateUpdated'
     | 'node.permissionsUpdated'
     >;
