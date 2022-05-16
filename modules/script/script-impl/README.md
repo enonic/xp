@@ -29,14 +29,14 @@ After that, all the global XP variables will be typed.
 
 Adding not `"types": [...]` but `"typeRoots"` will allow to discover types for every other enonic library, that will be installed later.
 
-Import functions, such as `require` and `__non_webpack_require__`, will return typed objects if the corresponding types for imported
+Import functions, such as `require`, will return typed objects if the corresponding types for imported
 libraries are also added to your `tsconfig.json`.
 
 ## Configuration
 
 ### Require
 
-To add support for type resolution for the custom libraries via `require` or `__non_webpack_require__`, you can redeclare the `XpLibraries` interface in global scope, wich will lead to declaration merging:
+To add support for type resolution for the custom libraries via `require`, you can redeclare the `XpLibraries` interface in global scope, wich will lead to declaration merging:
 
 ```ts
 declare global {
@@ -44,6 +44,13 @@ declare global {
         '/lib/custom/mylib': typeof import('./mylib');
     }
 }
+```
+
+__Other imports__
+
+If you want to use custom import functions, like `__non_webpack_require__` with Webpack, just use global `XpRequire` type for this:
+```ts
+declare const __non_webpack_require__: XpRequire;
 ```
 
 ### Beans
