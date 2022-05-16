@@ -11,7 +11,6 @@
         "build:types": "tsc --declaration --emitDeclarationOnly",
         "build": "npm run build:js & npm run build:types",
         "copyDTS": "node -e \"require('fs').copyFile('src/main/resources/lib/xp/event.d.ts', 'event.d.ts', (e) => {if (e) {throw e;}});\"",
-        "watch": "tsc --declaration --emitDeclarationOnly --outDir ./ --watch",
         "lint": "eslint --ext=.ts,.js,.json .",
         "lint:quiet": "eslint --quiet --ext=.ts,.js,.json .",
         "fix": "eslint --fix --ext=.ts,.js,.json .",
@@ -38,7 +37,7 @@
         "email": "edloidas@gmail.com",
         "url": "https://edloidas.github.io/"
     },
-    "license": "GPL-3.0",
+    "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/enonic/xp/issues"
     },

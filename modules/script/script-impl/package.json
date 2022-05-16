@@ -1,7 +1,7 @@
 {
   "name": "base",
   "version": "0.1.0",
-  "description": "Type definitions for XP js global objects.",
+  "description": "Type definitions for XP JavaScript global object properties.",
   "types": "index.d.ts",
   "files": [
     "index.d.ts",
@@ -26,7 +26,7 @@
     "email": "edloidas@gmail.com",
     "url": "https://edloidas.github.io/"
   },
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/enonic/xp/issues"
   },
