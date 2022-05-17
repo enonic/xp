@@ -1,30 +1,39 @@
 package com.enonic.xp.lib.app;
 
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationDescriptorService;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.lib.app.mapper.ApplicationMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public final class ListApplicationsHandler
+public final class CreateVirtualApplicationHandler
     implements ScriptBean
 {
+    private String key;
+
+    private String displayName;
+
     private Supplier<ApplicationService> applicationServiceSupplier;
 
     private Supplier<ApplicationDescriptorService> applicationDescriptorServiceSupplier;
 
-
-    public List<ApplicationMapper> execute()
+    public void setKey( final String key )
     {
-        return applicationServiceSupplier.get()
-            .list()
-            .stream()
-            .map( app -> new ApplicationMapper( app, applicationDescriptorServiceSupplier.get().get( app.getKey() ) ) )
-            .collect( Collectors.toList() );
+        this.key = key;
+    }
+
+    public ApplicationMapper execute()
+    {
+        final ApplicationKey key = ApplicationKey.from( this.key );
+
+        final CreateVirtualApplicationParams params = CreateVirtualApplicationParams.create().key( key ).build();
+
+        return new ApplicationMapper( applicationServiceSupplier.get().createVirtualApplication( params ),
+                                      applicationDescriptorServiceSupplier.get().get( key ) );
     }
 
     @Override

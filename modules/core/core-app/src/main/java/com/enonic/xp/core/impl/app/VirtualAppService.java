@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -157,6 +158,43 @@ public class VirtualAppService
 
     public Application get( final ApplicationKey applicationKey )
     {
+        return doGet( applicationKey );
+    }
+
+    public Application create( final CreateVirtualApplicationParams params )
+    {
+        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params.getKey() ) );
+
+        return VirtualAppFactory.create( params.getKey(), nodeService );
+    }
+
+    public boolean delete( final ApplicationKey key )
+    {
+        return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
+    }
+
+    private Node initVirtualAppNode( final ApplicationKey key )
+    {
+        final Node virtualAppNode = nodeService.create( CreateNodeParams.create()
+                                                            .data( new PropertyTree() )
+                                                            .name( key.toString() )
+                                                            .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+                                                            .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                                            .build() );
+        initSiteNodes( virtualAppNode.path(), key );
+
+        return virtualAppNode;
+    }
+
+    private boolean deleteVirtualAppNode( final ApplicationKey key )
+    {
+        return nodeService.deleteByPath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
+            .isNotEmpty();
+    }
+
+    private Application doGet( final ApplicationKey applicationKey )
+    {
+
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
@@ -174,33 +212,5 @@ public class VirtualAppService
                 return null;
             }
         } );
-    }
-
-    public void create( final ApplicationKey key )
-    {
-        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( key ) );
-    }
-
-    public boolean delete( final ApplicationKey key )
-    {
-        return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
-    }
-
-    private void initVirtualAppNode( final ApplicationKey key )
-    {
-        final Node virtualAppNode;
-        virtualAppNode = nodeService.create( CreateNodeParams.create()
-                                                 .data( new PropertyTree() )
-                                                 .name( key.toString() )
-                                                 .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-                                                 .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
-                                                 .build() );
-        initSiteNodes( virtualAppNode.path(), key );
-    }
-
-    private boolean deleteVirtualAppNode( final ApplicationKey key )
-    {
-        return nodeService.deleteByPath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
-            .isNotEmpty();
     }
 }

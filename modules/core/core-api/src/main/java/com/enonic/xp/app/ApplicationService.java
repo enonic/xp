@@ -57,4 +57,8 @@ public interface ApplicationService
 
     void installAllStoredApplications( ApplicationInstallationParams params );
 
+    Application createVirtualApplication( CreateVirtualApplicationParams params );
+
+    boolean deleteVirtualApplication( ApplicationKey key );
+
 }

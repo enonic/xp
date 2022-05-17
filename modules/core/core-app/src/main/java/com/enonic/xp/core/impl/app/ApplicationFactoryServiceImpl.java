@@ -81,7 +81,7 @@ public class ApplicationFactoryServiceImpl
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" );
+        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/site.xml" );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(

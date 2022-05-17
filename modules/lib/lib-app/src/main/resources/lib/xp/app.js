@@ -18,9 +18,42 @@ function required(params, name) {
     return value;
 }
 
+/**
+ * Creates virtual application.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ *
+ * @returns {object} created application.
+ */
+exports.createVirtualApplication = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
+    bean.setKey(required(params, 'key'));
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Deletes virtual application.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ *
+ * @returns {boolean} deletion result.
+ */
+exports.deleteVirtualApplication = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
+    bean.setKey(required(params, 'key'));
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Fetches both static and virtual applications.
+ *
+ * @returns {object[]} applications list.
+ */
 exports.list = function () {
     const bean = __.newBean('com.enonic.xp.lib.app.ListApplicationsHandler');
-    return bean.execute();
+    return __.toNativeObject(bean.execute());
 };
 
 
