@@ -29,6 +29,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
@@ -241,6 +242,18 @@ public final class ApplicationServiceImpl
     @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
+    }
+
+    @Override
+    public Application createVirtualApplication( final CreateVirtualApplicationParams params )
+    {
+        return this.virtualAppService.create( params );
+    }
+
+    @Override
+    public boolean deleteVirtualApplication( final ApplicationKey key )
+    {
+        return this.virtualAppService.delete( key );
     }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
