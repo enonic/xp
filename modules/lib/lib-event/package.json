@@ -9,7 +9,7 @@
     "scripts": {
         "build:js": "tsc",
         "build:types": "tsc --declaration --emitDeclarationOnly",
-        "build": "npm run build:js & npm run build:types",
+        "build": "tsc --declaration && npm run copyDTS",
         "copyDTS": "node -e \"require('fs').copyFile('src/main/resources/lib/xp/event.d.ts', 'event.d.ts', (e) => {if (e) {throw e;}});\"",
         "lint": "eslint --ext=.ts,.js,.json .",
         "lint:quiet": "eslint --quiet --ext=.ts,.js,.json .",
