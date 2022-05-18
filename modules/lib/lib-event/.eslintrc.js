@@ -1,5 +1,4 @@
 module.exports = {
-    // TODO: Replace all with 'plugin:@enonic/eslint-recommended'
     'extends': [
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
@@ -11,7 +10,6 @@ module.exports = {
             'plugin:@typescript-eslint/recommended',
             'plugin:@typescript-eslint/recommended-requiring-type-checking',
         ],
-
         'parserOptions': {
             'ecmaVersion': 2021,
             'project': 'tsconfig.json',

@@ -1,5 +1,3 @@
-apply plugin: 'com.github.node-gradle.node'
-
 node {
     download = true
     distBaseUrl = null
@@ -13,7 +11,7 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
     outputs.upToDateWhen { false }
 }
 
-task typescript( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Transpile TS code into JS'
     args = [ 'run', 'build:js' ]
 }
@@ -24,10 +22,14 @@ task copyDefinitions( type: Copy ) {
     include "*.d.ts"
 }
 
-task definitions( type: NpmTask, dependsOn: [ npmInstall, lint ] ) {
+task definitions( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create DTS files for project'
     args = [ 'run', 'build:types' ]
     finalizedBy copyDefinitions
+}
+
+check {
+    dependsOn lint
 }
 
 test {
