@@ -43,7 +43,7 @@
     },
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
     "devDependencies": {
-        "@enonic/eslint-config": "../../../../enonic-npm-modules/packages/eslint-config",
+        "@enonic/eslint-config": "^0.1.0",
         "@enonic-types/global": "../typescript",
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
