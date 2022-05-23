@@ -13,7 +13,7 @@
         "copyDTS": "node -e \"require('fs').copyFile('src/main/resources/lib/xp/event.d.ts', 'event.d.ts', (e) => {if (e) {throw e;}});\"",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
-        "fix": "eslint --fix --ext=.ts,.js,.json .",
+        "fix": "eslint --fix .",
         "pre": "npm run lint && npm run build:types && npm run copyDTS",
         "prepublishOnly": "npm run pre",
         "prepack": "npm run pre",
@@ -44,9 +44,9 @@
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
     "devDependencies": {
         "@enonic/eslint-config": "../../../../enonic-npm-modules/packages/eslint-config",
+        "@enonic-types/global": "../typescript",
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
-        "base": "../../script/script-impl",
         "eslint": "^8.15.0",
         "typescript": "^4.6.4"
     }

@@ -1,5 +1,5 @@
 {
-  "name": "base",
+  "name": "@enonic-types/global",
   "version": "0.1.0",
   "description": "Type definitions for XP JavaScript global object properties.",
   "types": "index.d.ts",
@@ -7,9 +7,6 @@
     "index.d.ts",
     "global.d.ts"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/enonic/xp.git#master"
