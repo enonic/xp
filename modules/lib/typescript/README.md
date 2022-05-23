@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic-types/base
+npm i --save-dev @enonic-types/global
 ```
 
 ## Use

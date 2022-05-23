@@ -5,8 +5,8 @@
         "target": "es5",
         "module": "commonjs",
         "moduleResolution": "node",
-        "types": [
-            "base"
+        "typeRoots": [
+            "node_modules/@enonic-types"
         ],
         "sourceMap": false,
         "esModuleInterop": true,
