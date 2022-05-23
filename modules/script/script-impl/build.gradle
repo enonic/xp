@@ -7,5 +7,4 @@ dependencies {
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Script - Impl' )
-    exclude '**/*.ts'
 }
