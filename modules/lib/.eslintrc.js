@@ -13,9 +13,11 @@ module.exports = {
         },
     ],
     ignorePatterns: [
-        'package-lock.json',
-        'build',
+        '**/build',
+        '**/out',
         '*.d.ts',
-        'src/main/resources/lib/xp/*.js',
+        '**/src/main/resources/lib/xp/*.js',
+        '**/src/test/**/*.js',
+        '**/src/main/resources/lib/xp/examples/**/*.js',
     ],
 };

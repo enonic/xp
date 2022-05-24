@@ -1,0 +1,38 @@
+{
+    "name": "lib",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Root package for libs development.",
+    "scripts": {
+        "build:js": "tsc",
+        "build:types": "tsc --declaration --emitDeclarationOnly",
+        "build": "tsc --declaration && npm run copyDTS",
+        "lint": "eslint .",
+        "lint:quiet": "eslint --quiet .",
+        "fix": "eslint --fix .",
+        "pre": "npm run lint && npm run build:types"
+
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/enonic/xp.git#master"
+    },
+    "author": {
+        "name": "Mikita Taukachou",
+        "email": "edloidas@gmail.com",
+        "url": "https://edloidas.github.io/"
+    },
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/enonic/xp/issues"
+    },
+    "homepage": "https://github.com/enonic/xp/tree/master#readme",
+    "devDependencies": {
+        "@enonic/eslint-config": "^0.1.0",
+        "@enonic-types/global": "./typescript",
+        "@typescript-eslint/eslint-plugin": "^5.23.0",
+        "@typescript-eslint/parser": "^5.23.0",
+        "eslint": "^8.15.0",
+        "typescript": "^4.6.4"
+    }
+}
