@@ -7,18 +7,10 @@
         "common.d.ts"
     ],
     "scripts": {
-        "build:js": "tsc",
-        "build:types": "tsc --declaration --emitDeclarationOnly",
-        "build": "tsc --declaration && npm run copyDTS",
-        "copyDTS": "node -e \"require('fs').copyFile('src/main/resources/lib/xp/common.d.ts', 'common.d.ts', (e) => {if (e) {throw e;}});\"",
-        "lint": "eslint .",
-        "lint:quiet": "eslint --quiet .",
-        "fix": "eslint --fix .",
-        "pre": "npm run lint && npm run build:types && npm run copyDTS",
+        "pre": "npm run --prefix ../ pre",
         "prepublishOnly": "npm run pre",
         "prepack": "npm run pre",
         "packlist": "npx npm-packlist"
-
     },
     "repository": {
         "type": "git",
@@ -41,13 +33,5 @@
     "bugs": {
         "url": "https://github.com/enonic/xp/issues"
     },
-    "homepage": "https://github.com/enonic/xp/tree/master#readme",
-    "devDependencies": {
-        "@enonic/eslint-config": "^0.1.0",
-        "@enonic-types/global": "../typescript",
-        "@typescript-eslint/eslint-plugin": "^5.23.0",
-        "@typescript-eslint/parser": "^5.23.0",
-        "eslint": "^8.15.0",
-        "typescript": "^4.6.4"
-    }
+    "homepage": "https://github.com/enonic/xp/tree/master#readme"
 }
