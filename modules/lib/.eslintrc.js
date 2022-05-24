@@ -14,7 +14,6 @@ module.exports = {
     ],
     ignorePatterns: [
         '**/build',
-        '**/out',
         '*.d.ts',
         '**/src/main/resources/lib/xp/*.js',
         '**/src/test/**/*.js',
