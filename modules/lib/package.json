@@ -4,14 +4,15 @@
     "version": "1.0.0",
     "description": "Root package for libs development.",
     "scripts": {
-        "build:js": "tsc",
+        "build:js": "npm run copy && tsc --project tsconfig.build.json",
         "build:types": "tsc --declaration --emitDeclarationOnly",
-        "build": "tsc --declaration && npm run copyDTS",
+        "build": "npm run build:js && npm run build:types",
+        "copy": "node copy.js",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
         "fix": "eslint --fix .",
-        "pre": "npm run lint && npm run build:types"
-
+        "pre": "npm run lint && npm run build:types",
+        "show": "node ./entry.js"
     },
     "repository": {
         "type": "git",
@@ -28,11 +29,14 @@
     },
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
     "devDependencies": {
-        "@enonic/eslint-config": "^0.1.0",
         "@enonic-types/global": "./typescript",
+        "@enonic/eslint-config": "^0.1.0",
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
+        "cp-file": "^9.1.0",
         "eslint": "^8.15.0",
+        "glob": "^8.0.3",
+        "ts-loader": "^9.3.0",
         "typescript": "^4.6.4"
     }
 }

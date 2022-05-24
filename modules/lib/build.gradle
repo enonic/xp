@@ -1,0 +1,32 @@
+plugins {
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    download = true
+    version = '16.15.0'
+    workDir = file("${rootProject.projectDir}/.gradle/nodejs")
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Lint TS, JS, and JSON'
+    args = [ 'run', 'lint:quiet' ]
+
+    outputs.upToDateWhen { false }
+}
+
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Create JS files from TS'
+    args = [ 'run', 'build:js' ]
+
+    outputs.cacheIf { true }
+
+    inputs.files(fileTree(project.projectDir).matching {
+        include "lib-*/src/main/resources/**/*.ts"
+    })
+
+    outputs.files(fileTree(project.projectDir).matching {
+        include "lib-*/build/resources/main/**/*.js"
+        include "lib-*/build/resources/main/**/*.ts"
+    })
+}
