@@ -15,8 +15,6 @@
         "skipLibCheck": true
     },
     "exclude": [
-        "./*.d.ts",
-        "./*/types.d.ts",
-        "./build"
+        "./**/build"
     ]
 }

@@ -30,8 +30,6 @@ configure( rootProject ) {
     apply from: "$rootDir/gradle/tools.gradle"
 }
 
-// TODO: Configure all lib projects here, applying "$rootDir/gradle/typescript.gradle", when moved to TS
-
 task javadoc( type: Javadoc, group: 'documentation' ) {
     title = "Enonic XP API ${version}"
 
@@ -62,7 +60,7 @@ task javadocZip( type: Zip ) {
 
 publishing.publications {
     mavenJava( MavenPublication ) {
-        artifact( javadocZip )  {
+        artifact( javadocZip ) {
             artifactId = 'docs'
         }
     }

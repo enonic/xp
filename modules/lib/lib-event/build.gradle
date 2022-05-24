@@ -1,8 +1,4 @@
-plugins {
-    id 'com.github.node-gradle.node'
-}
-
-apply from: "$rootDir/gradle/typescript.gradle"
+apply from: "$rootDir/gradle/npm.gradle"
 
 dependencies {
     compileOnly project( ':core:core-api' )
