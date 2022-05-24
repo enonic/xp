@@ -1,3 +1,13 @@
+declare global {
+    interface XpLibraries {
+        '/lib/xp/common': typeof import('./common');
+    }
+}
+
+interface NamePrettyfier {
+    create(text: string): string;
+}
+
 /**
  * Common functions.
  *
@@ -7,7 +17,7 @@
  * @module common
  */
 
-var NamePrettyfier = Java.type('com.enonic.xp.name.NamePrettyfier');
+const NamePrettyfier = Java.type<NamePrettyfier>('com.enonic.xp.name.NamePrettyfier');
 
 /**
  * Transform a text string so that it can be safely used in cases where the range of accepted characters is restricted.
@@ -27,9 +37,9 @@ var NamePrettyfier = Java.type('com.enonic.xp.name.NamePrettyfier');
  * @param {string} text Text string to sanitize.
  * @returns {string} Sanitized text.
  */
-exports.sanitize = function (text) {
+ export function sanitize(text: string): string {
     if (text == null || text === '') {
         return '';
     }
     return NamePrettyfier.create(text);
-};
+}
