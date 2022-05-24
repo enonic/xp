@@ -21,5 +21,6 @@ classes/
 out/
 .xp/
 modules/lib/lib-*/*.ts
+modules/lib/lib-*/package-lock.json
 modules/lib/lib-*/src/main/resources/lib/xp/*.js
 modules/lib/lib-*/src/main/resources/lib/xp/*.d.ts
