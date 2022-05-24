@@ -39,7 +39,7 @@ export interface SendParams {
 }
 
 export interface EnonicEvent<EventData extends object = EnonicEventData> {
-    readonly type: EnonicEventTypes | string;
+    readonly type: EnonicEventTypes;
     readonly timestamp: number;
     readonly localOrigin: boolean;
     readonly distributed: boolean;
@@ -63,21 +63,8 @@ export interface EnonicEventDataNode {
 // omit the more narrow types, if just the | operator is used.
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
-export type EnonicEventTypes =
-    LiteralUnion<
-    | 'node.*'
-    | 'node.created'
-    | 'node.deleted'
-    | 'node.pushed'
-    | 'node.duplicated'
-    | 'node.updated'
-    | 'node.moved'
-    | 'node.renamed'
-    | 'node.sorted'
-    | 'node.manualOrderUpdated'
-    | 'node.stateUpdated'
-    | 'node.permissionsUpdated'
-    >;
+// <string> can be replaced with a particular string values of well-known events, like `node.*`
+export type EnonicEventTypes = LiteralUnion<string>;
 
 interface EventSenderHelper {
     setType(type: string): void;
