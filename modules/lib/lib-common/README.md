@@ -1,11 +1,11 @@
-# Enonic XP lib-event TS types
+# Enonic XP lib-common TS types
 
-> TypeScript definitions for `lib-event` library of Enonic XP
+> TypeScript definitions for `lib-common` library of Enonic XP
 
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-event
+npm i --save-dev @enonic/lib-common
 ```
 
 ## Use
@@ -17,7 +17,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-event"
+      "@enonic-types/lib-common"
     ]
   }
 }
@@ -33,7 +33,7 @@ To make `require` work out of box, you must install and add the `@enonic-types/g
   "compilerOptions": {
     "types": [
 +     "@enonic-types/global"
-      "@enonic-types/lib-event"
+      "@enonic-types/lib-common"
     ]
   }
 }
@@ -41,7 +41,7 @@ To make `require` work out of box, you must install and add the `@enonic-types/g
 
 `example.ts`
 ```ts
-const {listener} = require('/lib/xp/event');
+const {sanitize} = require('/lib/xp/common');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be found [here](https://github.com/enonic/xp/tree/master/modules/lib/typescript/README.md).
@@ -55,11 +55,11 @@ If you are planning to use `import` in your code and transpile it with the defau
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-event"
+      "@enonic-types/lib-common"
     ]
 +   "baseUrl": "./",
 +   "paths": {
-+     "/lib/xp/event": ["node_modules/@enonic-types/lib-event"],
++     "/lib/xp/common": ["node_modules/@enonic-types/lib-common"],
 +   }
   }
 }
@@ -67,7 +67,7 @@ If you are planning to use `import` in your code and transpile it with the defau
 
 `example.ts`
 ```ts
-import {listener, EnonicEvent} from '/lib/xp/event';
+import {sanitize} from '/lib/xp/common';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
