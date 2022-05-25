@@ -13,10 +13,6 @@ declare const log: {
     error: (...args: unknown[]) => void;
 };
 
-declare const Java: {
-    type: <T = unknown>(typeClass: string) => T;
-};
-
 type NewBean = <T = unknown, Bean extends keyof XpBeans | string = string>(bean: Bean) =>
     Bean extends keyof XpBeans ? XpBeans[Bean] : T;
 
