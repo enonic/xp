@@ -1,5 +1,7 @@
 package com.enonic.xp.issue;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
@@ -13,10 +15,6 @@ public final class VirtualAppConstants
 
     public static final AccessControlList VIRTUAL_APP_REPO_DEFAULT_ACL =
         AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
-
-    public static final String ADMIN_ROOT_NAME = "admin";
-
-    public static final String WIDGET_ROOT_NAME = "widgets";
 
     public static final String MIXIN_ROOT_NAME = "mixins";
 
@@ -37,6 +35,10 @@ public final class VirtualAppConstants
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
 
     public static final Branch VIRTUAL_APP_BRANCH = Branch.from( "master" );
+
+    public static final String SITE_RESOURCE_PATH = "/" + SITE_ROOT_NAME + "/" + SITE_ROOT_NAME + ".xml";
+
+    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE = ByteSource.wrap( "<site></site>".getBytes() );
 
     private VirtualAppConstants()
     {

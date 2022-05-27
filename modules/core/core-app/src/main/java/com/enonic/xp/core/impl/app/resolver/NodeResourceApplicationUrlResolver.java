@@ -68,6 +68,15 @@ public final class NodeResourceApplicationUrlResolver
             .callWith( () -> nodeService.getByPath(
                 NodePath.create( NodePath.create( applicationKey.toString() ).build(), path ).build().asAbsolute() ) );
 
-        return resourceNode != null ? new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode ) : null;
+        if ( resourceNode != null )
+        {
+            return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
+        }
+        else if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
+        {
+            return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE );
+        }
+
+        return null;
     }
 }
