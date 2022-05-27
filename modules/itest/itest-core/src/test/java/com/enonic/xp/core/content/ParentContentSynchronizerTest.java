@@ -715,7 +715,10 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertThrows( IllegalArgumentException.class, () -> syncDeleted( targetContent.getId() ) );
+        final boolean result = syncDeleted( targetContent.getId() );
+
+        assertFalse( result );
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( targetContent.getId() ) ) );
     }
 
     @Test

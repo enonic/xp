@@ -48,7 +48,8 @@ final class DeletedEventSyncCommand
 
     private boolean needToDelete( final ContentToSync content )
     {
-        return content.getSourceContext().callWith( () -> !contentService.contentExists( content.getTargetContent().getId() ) ) &&
+        return content.getSourceContent() == null &&
+            content.getSourceContext().callWith( () -> !contentService.contentExists( content.getTargetContent().getId() ) ) &&
             contentService.getDependencies( content.getTargetContent().getId() ).getInbound().isEmpty() &&
             !contentService.getById( content.getTargetContent().getId() ).hasChildren();
     }
@@ -59,8 +60,6 @@ final class DeletedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() == null ),
-                                         "sourceContent must be null." );
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent must be set." );
         }
