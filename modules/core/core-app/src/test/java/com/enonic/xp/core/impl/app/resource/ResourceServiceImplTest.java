@@ -156,6 +156,8 @@ class ResourceServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
 
+        final Node appNode = createNode( "myapp", NodePath.create( "/myapp" ).build(), timestamp, new PropertyTree() );
+
         final Node partSchemaNode = createNode( "my-part.xml", NodePath.create( "/schemas/site/parts/my-part" ).build(), timestamp, data );
 
         final ApplicationAdaptor application = mock( ApplicationAdaptor.class );
@@ -175,6 +177,7 @@ class ResourceServiceImplTest
                 .build();
         } );
 
+        when( nodeService.nodeExists( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( true );
         when( nodeService.getByPath( NodePath.create( "myapp/site/parts/my-part/my-part.xml" ).build().asAbsolute() ) ).thenReturn(
             partSchemaNode );
 
