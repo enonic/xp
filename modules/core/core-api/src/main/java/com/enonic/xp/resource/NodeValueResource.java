@@ -28,6 +28,14 @@ public final class NodeValueResource
 
         final Value resource = node.data().getValue( SchemaNodePropertyNames.RESOURCE );
         this.value = resource != null ? ByteSource.wrap( resource.asString().getBytes() ) : ByteSource.empty();
+    }
+
+    public NodeValueResource( final ResourceKey key, final ByteSource resource )
+    {
+        super( key );
+
+        this.timestamp = Instant.now();
+        this.value = resource;
 
     }
 
@@ -66,5 +74,11 @@ public final class NodeValueResource
     public ByteSource getBytes()
     {
         return value;
+    }
+
+    @Override
+    public boolean isVirtual()
+    {
+        return true;
     }
 }
