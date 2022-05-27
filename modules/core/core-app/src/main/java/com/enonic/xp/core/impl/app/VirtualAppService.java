@@ -35,17 +35,13 @@ public class VirtualAppService
 
     private final NodeService nodeService;
 
-    private final DynamicSchemaServiceInternal dynamicResourceService;
-
     @Activate
     public VirtualAppService( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
-                              @Reference final NodeService nodeService,
-                              @Reference final DynamicSchemaServiceInternal dynamicResourceService )
+                              @Reference final NodeService nodeService )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
         this.nodeService = nodeService;
-        this.dynamicResourceService = dynamicResourceService;
     }
 
     @Activate
@@ -54,7 +50,7 @@ public class VirtualAppService
         VirtualAppRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
-    private NodeIds initSiteNodes( final NodePath parent, final ApplicationKey key )
+    private NodeIds initSiteNodes( final NodePath parent )
     {
         final Node siteRoot = nodeService.create( CreateNodeParams.create()
                                                       .data( new PropertyTree() )
@@ -62,8 +58,6 @@ public class VirtualAppService
                                                       .parent( parent )
                                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                       .build() );
-
-        this.dynamicResourceService.createSite( key, "<site></site>" );
 
         final NodeId contentTypeNodeId = initContentTypeNode( siteRoot.path() );
         final NodeId partNodeId = initPartNode( siteRoot.path() );
@@ -181,7 +175,7 @@ public class VirtualAppService
                                                             .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
-        initSiteNodes( virtualAppNode.path(), key );
+        initSiteNodes( virtualAppNode.path() );
 
         return virtualAppNode;
     }

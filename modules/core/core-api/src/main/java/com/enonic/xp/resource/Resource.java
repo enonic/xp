@@ -33,4 +33,6 @@ public interface Resource
     List<String> readLines();
 
     ByteSource getBytes();
+
+    boolean isVirtual();
 }
