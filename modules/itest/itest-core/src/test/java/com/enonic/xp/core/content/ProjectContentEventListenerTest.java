@@ -468,6 +468,33 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testArchiveAndCreateChild()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+
+        handleEvents();
+
+        assertEquals( "/content/child",
+                      targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
+
+        targetContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        assertEquals( "/content/child",
+                      targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
+    }
+
+    @Test
     public void testRestored()
         throws InterruptedException
     {
