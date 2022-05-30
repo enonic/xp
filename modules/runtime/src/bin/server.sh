@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIRNAME=`dirname "$0"`
-PROGNAME=`basename "$0"`
+DIRNAME=$(dirname "$0")
+PROGNAME=$(basename "$0")
 ARG1=$1
 ARGS=("$@")
 
@@ -18,19 +18,6 @@ die() {
 
 warn() {
     echo "${PROGNAME}: $*"
-}
-
-detectOS() {
-    cygwin=false;
-    darwin=false;
-    case "`uname`" in
-        CYGWIN*)
-            cygwin=true
-            ;;
-        Darwin*)
-            darwin=true
-            ;;
-    esac
 }
 
 locateJava() {
@@ -50,9 +37,9 @@ locateJava() {
 }
 
 setupDefaults() {
-    DEFAULT_JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch"
+    DEFAULT_JAVA_OPTS="-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch"
     DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
-    CONSTANT_XP_OPTS="-Dfile.encoding=UTF8 -Dnashorn.args=\"--no-deprecation-warning\" -Dmapper.allow_dots_in_name=true --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
+    CONSTANT_XP_OPTS=(-Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" -Dmapper.allow_dots_in_name=true --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED)
 }
 
 setupOptions() {
@@ -73,14 +60,13 @@ setupDebugOptions() {
 }
 
 locateInstallDir() {
-    XP_INSTALL=`cd "$DIRNAME/.."; pwd`
+    XP_INSTALL=$(cd "$DIRNAME/.." || exit; pwd)
     if [ ! -d "$XP_INSTALL" ]; then
         die "XP_INSTALL is not valid: $XP_INSTALL"
     fi
 }
 
 init() {
-    detectOS
     locateJava
     setupDefaults
     setupOptions
@@ -89,7 +75,7 @@ init() {
 }
 
 run() {
-    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" $XP_OPTS $CONSTANT_XP_OPTS -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "${ARGS[@]}"
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" $XP_OPTS "${CONSTANT_XP_OPTS[@]}" -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "${ARGS[@]}"
 }
 
 main() {
