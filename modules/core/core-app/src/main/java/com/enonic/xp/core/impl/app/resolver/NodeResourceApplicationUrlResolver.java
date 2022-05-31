@@ -64,6 +64,15 @@ public final class NodeResourceApplicationUrlResolver
             return null;
         }
 
+        final boolean applicationNodeExists = VirtualAppContext.createContext()
+            .callWith( () -> nodeService.nodeExists(
+                NodePath.create( NodePath.create( applicationKey.toString() ).build() ).build().asAbsolute() ) );
+
+        if ( !applicationNodeExists )
+        {
+            return null;
+        }
+
         final Node resourceNode = VirtualAppContext.createContext()
             .callWith( () -> nodeService.getByPath(
                 NodePath.create( NodePath.create( applicationKey.toString() ).build(), path ).build().asAbsolute() ) );
