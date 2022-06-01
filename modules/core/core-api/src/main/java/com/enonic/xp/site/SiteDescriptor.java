@@ -1,6 +1,8 @@
 package com.enonic.xp.site;
 
 
+import java.time.Instant;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
@@ -21,10 +23,13 @@ public final class SiteDescriptor
 
     private final ControllerMappingDescriptors mappingDescriptors;
 
+    private final Instant modifiedTime;
+
     private SiteDescriptor( final Builder builder )
     {
         this.form = builder.form;
         this.xDataMappings = builder.xDataMappings;
+        this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = builder.responseProcessors != null ? builder.responseProcessors : ResponseProcessorDescriptors.empty();
         this.mappingDescriptors = builder.mappingDescriptors != null ? builder.mappingDescriptors : ControllerMappingDescriptors.empty();
     }
@@ -37,6 +42,11 @@ public final class SiteDescriptor
     public XDataMappings getXDataMappings()
     {
         return xDataMappings;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public ResponseProcessorDescriptors getResponseProcessors()
@@ -70,6 +80,8 @@ public final class SiteDescriptor
 
         private XDataMappings xDataMappings;
 
+        private Instant modifiedTime;
+
         private ResponseProcessorDescriptors responseProcessors;
 
         private ControllerMappingDescriptors mappingDescriptors;
@@ -82,6 +94,7 @@ public final class SiteDescriptor
         {
             this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
             this.xDataMappings = siteDescriptor.xDataMappings;
+            this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
         }
@@ -95,6 +108,12 @@ public final class SiteDescriptor
         public Builder xDataMappings( final XDataMappings xDataMappings )
         {
             this.xDataMappings = xDataMappings;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return this;
         }
 

@@ -99,15 +99,16 @@ public class ContentTypeHandlerTest
         final Instant ts = LocalDateTime.of( 2016, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
         Icon schemaIcon = Icon.from( data, "image/png", ts );
 
-        return ContentType.create().
-            name( "com.enonic.myapp:person" ).
-            displayName( "Person" ).
-            description( "Person content type" ).
-            superType( ContentTypeName.structured() ).
-            displayNameExpression( "${name}" ).
-            icon( schemaIcon ).
-            form( getExampleForm() ).
-            build();
+        return ContentType.create()
+            .name( "com.enonic.myapp:person" )
+            .displayName( "Person" )
+            .description( "Person content type" )
+            .superType( ContentTypeName.structured() )
+            .displayNameExpression( "${name}" )
+            .icon( schemaIcon )
+            .form( getExampleForm() )
+            .modifiedTime( Instant.parse( "2022-05-25T10:00:00.00Z" ) )
+            .build();
     }
 
     private ContentType testContentType()

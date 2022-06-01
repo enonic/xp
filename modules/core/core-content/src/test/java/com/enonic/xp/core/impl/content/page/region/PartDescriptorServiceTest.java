@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -11,6 +13,7 @@ import com.enonic.xp.region.PartDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PartDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -32,7 +35,9 @@ public class PartDescriptorServiceTest
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypart" );
         final PartDescriptor descriptor = this.service.getByKey( key );
+
         assertNotNull( descriptor );
+        assertTrue( Instant.now().isAfter( descriptor.getModifiedTime() ) );
     }
 
     @Test
