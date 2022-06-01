@@ -30,11 +30,11 @@ public final class NodeValueResource
         this.value = resource != null ? ByteSource.wrap( resource.asString().getBytes() ) : ByteSource.empty();
     }
 
-    public NodeValueResource( final ResourceKey key, final ByteSource resource )
+    public NodeValueResource( final ResourceKey key, final ByteSource resource, final Instant timestamp )
     {
         super( key );
 
-        this.timestamp = Instant.now();
+        this.timestamp = timestamp;
         this.value = resource;
 
     }
