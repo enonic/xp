@@ -64,11 +64,11 @@ public final class NodeResourceApplicationUrlResolver
             return null;
         }
 
-        final boolean applicationNodeExists = VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists(
+        Node applicationNode = VirtualAppContext.createContext()
+            .callWith( () -> nodeService.getByPath(
                 NodePath.create( NodePath.create( applicationKey.toString() ).build() ).build().asAbsolute() ) );
 
-        if ( !applicationNodeExists )
+        if ( applicationNode == null )
         {
             return null;
         }
@@ -83,7 +83,8 @@ public final class NodeResourceApplicationUrlResolver
         }
         else if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
         {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE );
+            return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
+                                          applicationNode.getTimestamp() );
         }
 
         return null;

@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.macro;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -163,8 +164,14 @@ public final class MacroDescriptorServiceImpl
     private MacroDescriptor loadDescriptor( final MacroKey key, final Resource resource )
     {
         final MacroDescriptor.Builder builder = MacroDescriptor.create();
+
         parseXml( resource, builder );
+
         builder.key( key ).icon( IconLoader.loadIcon( key, this.resourceService, PATH ) );
+
+        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+        builder.modifiedTime( modifiedTime );
+
         return builder.build();
     }
 

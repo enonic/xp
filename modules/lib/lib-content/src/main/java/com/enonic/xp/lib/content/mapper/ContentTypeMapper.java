@@ -42,6 +42,7 @@ public final class ContentTypeMapper
         gen.value( "final", contentType.isFinal() );
         gen.value( "allowChildContent", contentType.allowChildContent() );
         gen.value( "displayNameExpression", contentType.getDisplayNameExpression() );
+        gen.value( "modifiedTime", contentType.getModifiedTime() );
         serializeIcon( gen, contentType.getIcon() );
         serializeForm( gen, contentType.getForm() );
     }

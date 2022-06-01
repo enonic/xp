@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.site;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -9,6 +11,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SiteServiceImplTest
     extends ApplicationTestSupport
@@ -42,6 +45,7 @@ public class SiteServiceImplTest
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
         assertEquals( 20, siteDescriptor.getResponseProcessors().get( 1 ).getOrder() );
+        assertTrue( Instant.now().isAfter( siteDescriptor.getModifiedTime() ) );
     }
 
     @Test
