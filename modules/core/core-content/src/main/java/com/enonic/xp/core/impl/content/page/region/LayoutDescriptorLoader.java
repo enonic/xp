@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.time.Instant;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -85,6 +87,10 @@ public class LayoutDescriptorLoader
             parser.builder( builder );
             parser.currentApplication( resource.getKey().getApplicationKey() );
             parser.source( resource.readString() );
+
+            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+            builder.modifiedTime( modifiedTime );
+
             parser.parse();
         }
         catch ( final Exception e )

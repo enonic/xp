@@ -1,5 +1,7 @@
 package com.enonic.xp.region;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -21,6 +23,8 @@ public abstract class ComponentDescriptor
 
     private final String descriptionI18nKey;
 
+    protected final Instant modifiedTime;
+
     private final Form config;
 
     private final InputTypeConfig schemaConfig;
@@ -34,6 +38,7 @@ public abstract class ComponentDescriptor
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
+        this.modifiedTime = builder.modifiedTime;
         this.config = builder.config;
         this.schemaConfig = builder.schemaConfig.build();
     }
@@ -56,6 +61,11 @@ public abstract class ComponentDescriptor
     public String getDescriptionI18nKey()
     {
         return descriptionI18nKey;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public final Form getConfig()
@@ -84,6 +94,8 @@ public abstract class ComponentDescriptor
 
         protected String descriptionI18nKey;
 
+        protected Instant modifiedTime;
+
         protected Form config;
 
         private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
@@ -100,6 +112,7 @@ public abstract class ComponentDescriptor
             this.displayNameI18nKey = descriptor.getDisplayNameI18nKey();
             this.description = descriptor.getDescription();
             this.descriptionI18nKey = descriptor.getDescriptionI18nKey();
+            this.modifiedTime = descriptor.getModifiedTime();
             this.config = descriptor.getConfig();
             if ( descriptor.schemaConfig != null )
             {
@@ -134,6 +147,12 @@ public abstract class ComponentDescriptor
         public final T descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return typecastToBuilder( this );
+        }
+
+        public final T modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return typecastToBuilder( this );
         }
 

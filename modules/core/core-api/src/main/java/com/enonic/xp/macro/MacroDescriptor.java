@@ -1,5 +1,7 @@
 package com.enonic.xp.macro;
 
+import java.time.Instant;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
@@ -24,6 +26,8 @@ public final class MacroDescriptor
 
     private final Icon icon;
 
+    private final Instant modifiedTime;
+
     private MacroDescriptor( final Builder builder )
     {
         this.key = builder.key;
@@ -33,6 +37,7 @@ public final class MacroDescriptor
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.form = builder.form == null ? Form.create().build() : builder.form;
         this.icon = builder.icon;
+        this.modifiedTime = builder.modifiedTime;
     }
 
     public MacroKey getKey()
@@ -75,6 +80,11 @@ public final class MacroDescriptor
         return icon;
     }
 
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
     public ResourceKey toDescriptorResourceKey()
     {
         return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
@@ -115,6 +125,8 @@ public final class MacroDescriptor
         private Form form;
 
         private Icon icon;
+
+        private Instant modifiedTime;
 
         private Builder()
         {
@@ -165,6 +177,12 @@ public final class MacroDescriptor
         public Builder icon( final Icon icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return this;
         }
 

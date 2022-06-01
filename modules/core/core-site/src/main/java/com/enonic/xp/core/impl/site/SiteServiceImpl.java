@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.site;
 
+import java.time.Instant;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -53,6 +55,10 @@ public class SiteServiceImpl
     {
         final SiteDescriptor.Builder builder = SiteDescriptor.create();
         parseXml( resource, builder );
+
+        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+        builder.modifiedTime( modifiedTime );
+
         return builder.build();
     }
 

@@ -89,6 +89,10 @@ public class PartDescriptorLoader
             parser.builder( builder );
             parser.currentApplication( resource.getKey().getApplicationKey() );
             parser.source( resource.readString() );
+
+            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+            builder.modifiedTime( modifiedTime );
+
             parser.parse();
         }
         catch ( final Exception e )

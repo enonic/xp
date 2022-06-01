@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.macro;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -36,6 +38,7 @@ public class MacroDescriptorServiceTest
         final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "myapp1" ), "macro1" );
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
         assertNotNull( descriptor );
+        assertTrue( Instant.now().isAfter( descriptor.getModifiedTime() ) );
         assertTrue( descriptor.getKey().equals( macroKey ) );
     }
 
