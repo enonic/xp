@@ -72,6 +72,30 @@ public class ValueCountAggregationTest
         verifyValueCount( bucketIterator.next(), "c3", 1d );
     }
 
+    @Test
+    public void testCountAggregation()
+    {
+        createNode( "c1", "n1", NodePath.ROOT );
+        createNode( "c2", "n2", NodePath.ROOT );
+        createNode( "c3", "n3", NodePath.ROOT );
+        createNode( null, "n4", NodePath.ROOT );
+
+        NodeQuery query = NodeQuery.create().
+            addAggregationQuery( ValueCountAggregationQuery.create( "testCountAgg" ).fieldName( "category" ).build() ).
+            build();
+
+        FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getAggregations().getSize() );
+
+        Aggregation agg = result.getAggregations().get( "testCountAgg" );
+        assertTrue( agg instanceof SingleValueMetricAggregation );
+
+        SingleValueMetricAggregation categoryAgg = (SingleValueMetricAggregation) agg;
+
+        assertEquals( 3, categoryAgg.getValue() );
+    }
+
     private void verifyValueCount( final Bucket parentBucket, String parentBucketKey, double value )
     {
         assertEquals( parentBucketKey, parentBucket.getKey(), "Wrong parent bucket key" );
