@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,6 +12,7 @@ import com.enonic.xp.page.PageDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageDescriptorServiceTest
     extends AbstractDescriptorServiceTest
@@ -33,7 +36,9 @@ public class PageDescriptorServiceTest
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypage" );
         final PageDescriptor descriptor = this.service.getByKey( key );
+
         assertNotNull( descriptor );
+        assertTrue( Instant.now().isAfter( descriptor.getModifiedTime() ) );
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +118,10 @@ public final class PageDescriptorServiceImpl
             parser.builder( builder );
             parser.currentApplication( resource.getKey().getApplicationKey() );
             parser.source( resource.readString() );
+
+            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+            builder.modifiedTime( modifiedTime );
+
             parser.parse();
         }
         catch ( final Exception e )

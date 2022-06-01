@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.style;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -11,6 +13,7 @@ import com.enonic.xp.style.StyleDescriptors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StyleDescriptorServiceImplTest
     extends ApplicationTestSupport
@@ -37,6 +40,7 @@ public class StyleDescriptorServiceImplTest
         final StyleDescriptor descriptor = this.service.getByApplication( appKey );
         assertNotNull( descriptor );
         assertEquals( descriptor.getApplicationKey(), appKey );
+        assertTrue( Instant.now().isAfter( descriptor.getModifiedTime() ) );
     }
 
     @Test
