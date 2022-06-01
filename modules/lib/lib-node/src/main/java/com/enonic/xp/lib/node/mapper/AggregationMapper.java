@@ -7,6 +7,7 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
+import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -41,6 +42,10 @@ final class AggregationMapper
             {
                 final StatsAggregation statsAggregation = ( (StatsAggregation) aggregation );
                 serializeStatsAggregation( gen, statsAggregation );
+            }
+            else if ( aggregation instanceof SingleValueMetricAggregation )
+            {
+                gen.value( "value", ( (SingleValueMetricAggregation) aggregation ).getValue() );
             }
             gen.end();
         }
