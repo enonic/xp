@@ -1,5 +1,6 @@
 package com.enonic.xp.style;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -19,12 +20,15 @@ public final class StyleDescriptor
 
     private final ImmutableList<ElementStyle> elements;
 
+    private final Instant modifiedTime;
+
     private StyleDescriptor( final Builder builder )
     {
         Preconditions.checkNotNull( builder.application, "applicationKey cannot be null" );
         this.applicationKey = builder.application;
         this.cssPath = builder.cssPath;
         this.elements = builder.elements.build();
+        this.modifiedTime = builder.modifiedTime;
     }
 
     public ApplicationKey getApplicationKey()
@@ -40,6 +44,11 @@ public final class StyleDescriptor
     public ImmutableList<ElementStyle> getElements()
     {
         return elements;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
@@ -60,23 +69,24 @@ public final class StyleDescriptor
         }
         final StyleDescriptor that = (StyleDescriptor) o;
         return Objects.equals( applicationKey, that.applicationKey ) && Objects.equals( cssPath, that.cssPath ) &&
-            Objects.equals( elements, that.elements );
+            Objects.equals( elements, that.elements ) && Objects.equals( modifiedTime, that.modifiedTime );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( applicationKey, cssPath, elements );
+        return Objects.hash( applicationKey, cssPath, elements, modifiedTime );
     }
 
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "applicationKey", applicationKey ).
-            add( "cssPath", cssPath ).
-            add( "elements", elements ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "applicationKey", applicationKey )
+            .add( "cssPath", cssPath )
+            .add( "elements", elements )
+            .add( "modifiedTime", modifiedTime )
+            .toString();
     }
 
     public static Builder create()
@@ -89,6 +99,8 @@ public final class StyleDescriptor
         private ApplicationKey application;
 
         private String cssPath;
+
+        private Instant modifiedTime;
 
         private final ImmutableList.Builder<ElementStyle> elements;
 
@@ -109,6 +121,12 @@ public final class StyleDescriptor
         public Builder cssPath( final String cssPath )
         {
             this.cssPath = cssPath;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return this;
         }
 

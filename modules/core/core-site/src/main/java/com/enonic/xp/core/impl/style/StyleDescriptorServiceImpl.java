@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.style;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -80,6 +81,9 @@ public class StyleDescriptorServiceImpl
         try
         {
             parseXml( resource, builder );
+
+            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+            builder.modifiedTime( modifiedTime );
         }
         catch ( XmlException e )
         {
