@@ -1,6 +1,10 @@
 package com.enonic.xp.lib.schema.mapper;
 
+import java.time.Instant;
+import java.util.Optional;
+
 import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -11,12 +15,12 @@ public abstract class SchemaMapper
 {
     private final BaseSchema<? extends BaseSchemaName> descriptor;
 
-    private final String resource;
+    private final Resource resource;
 
     SchemaMapper( final DynamicSchemaResult<? extends BaseSchema<?>> descriptor )
     {
         this.descriptor = descriptor.getSchema();
-        this.resource = descriptor.getResource().readString();
+        this.resource = descriptor.getResource();
     }
 
     public void serialize( final MapGenerator gen )
@@ -28,9 +32,10 @@ public abstract class SchemaMapper
         gen.value( "descriptionI18nKey", descriptor.getDescriptionI18nKey() );
         gen.value( "createdTime", descriptor.getCreatedTime() );
         gen.value( "creator", descriptor.getCreator() );
-        gen.value( "modifiedTime", descriptor.getModifiedTime() );
+        gen.value( "modifiedTime",
+                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
         gen.value( "modifier", descriptor.getModifier() );
-        gen.value( "resource", resource );
+        gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );
 
     }

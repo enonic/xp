@@ -177,7 +177,7 @@ class ResourceServiceImplTest
                 .build();
         } );
 
-        when( nodeService.nodeExists( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( true );
+        when( nodeService.getByPath( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( appNode );
         when( nodeService.getByPath( NodePath.create( "myapp/site/parts/my-part/my-part.xml" ).build().asAbsolute() ) ).thenReturn(
             partSchemaNode );
 
@@ -189,7 +189,7 @@ class ResourceServiceImplTest
         doReturn( Optional.of( application ) ).when( applicationFactoryService ).findActiveApplication( ApplicationKey.from( "myapp" ) );
 
         final Resource resource =
-            resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "site/parts/my-part/my-part.xml" ) );
+            resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/site/parts/my-part/my-part.xml" ) );
 
         assertEquals( timestamp.toEpochMilli(), resource.getTimestamp() );
 
