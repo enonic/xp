@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.lib.project.command.ApplyProjectLanguageCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.CreateProjectParams;
@@ -33,6 +34,8 @@ public final class CreateProjectHandler
 
     private ProjectPermissions permissions;
 
+    private ApplicationKeys applications;
+
     private boolean isPublic;
 
     @Override
@@ -41,44 +44,47 @@ public final class CreateProjectHandler
         final CreateProjectParams params = createProjectParams();
         final Project project = this.projectService.create( params );
 
-        final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create().
-            projectName( this.id ).
-            language( this.language ).
-            contentService( this.contentService ).
-            build().
-            execute() : null;
+        final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create()
+            .projectName( this.id )
+            .language( this.language )
+            .contentService( this.contentService )
+            .build()
+            .execute() : null;
 
         final ProjectPermissions modifiedPermissions = this.permissions != null
             ? this.projectService.modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
-        return ProjectMapper.create().
-            setProject( project ).
-            setLanguage( modifiedLanguage ).
-            setProjectPermissions( modifiedPermissions ).
-            setIsPublic( isPublic ).
-            build();
+        return ProjectMapper.create()
+            .setProject( project )
+            .setLanguage( modifiedLanguage )
+            .setProjectPermissions( modifiedPermissions )
+            .setIsPublic( isPublic )
+            .build();
     }
 
     private CreateProjectParams createProjectParams()
     {
-        final CreateProjectParams.Builder builder = CreateProjectParams.create().
-            name( this.id ).
-            displayName( this.displayName ).
-            description( this.description ).
-            parent( this.parent ).
-            forceInitialization( true );
+        final CreateProjectParams.Builder builder = CreateProjectParams.create()
+            .name( this.id )
+            .displayName( this.displayName )
+            .description( this.description )
+            .parent( this.parent )
+            .forceInitialization( true );
 
-        if (isPublic) {
-            builder.permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( RoleKeys.EVERYONE ).
-                    allow( Permission.READ ).
-                    build() ).build() );
+        if ( isPublic )
+        {
+            builder.permissions( AccessControlList.create()
+                                     .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                                     .build() );
         }
 
-        return builder.
-            build();
+        if ( applications != null )
+        {
+            applications.stream().forEach( builder::addApplication );
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -120,5 +126,10 @@ public final class CreateProjectHandler
     public void setParent( final String value )
     {
         this.parent = value != null ? ProjectName.from( value ) : null;
+    }
+
+    public void setApplications( final String[] value )
+    {
+        this.applications = value != null ? ApplicationKeys.from( value ) : null;
     }
 }
