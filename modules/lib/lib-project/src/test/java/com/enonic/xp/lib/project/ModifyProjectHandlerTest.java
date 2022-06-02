@@ -33,4 +33,11 @@ public class ModifyProjectHandlerTest
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyLanguage" );
     }
 
+    @Test
+    public void modifyProjectApplications()
+        throws Exception
+    {
+        runFunction( "/test/ModifyProjectHandlerTest.js", "modifyApplications" );
+    }
+
 }

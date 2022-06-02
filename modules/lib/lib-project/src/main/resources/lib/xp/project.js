@@ -29,9 +29,10 @@ function required(params, name) {
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
  * @param {string} params.parent Parent project id.
+ * @param {string[]} params.applications - Array of connected applications.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
- * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
- * @param {string[]} params.permissions.principals - Array of principals
+ * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`).
+ * @param {string[]} params.permissions.principals - Array of principals.
  * @param {Object<string, boolean>} [params.readAccess] Read access settings.
  * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
  *
@@ -46,6 +47,7 @@ exports.create = function (params) {
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     bean.setParent(__.nullOrValue(params.parent));
+    bean.setApplications(__.nullOrValue(params.applications));
     return __.toNativeObject(bean.execute());
 };
 
@@ -60,6 +62,7 @@ exports.create = function (params) {
  * @param {string} [params.displayName] Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
+ * @param {string[]} params.applications - Array of connected applications.
  *
  * @returns {Object} Modified project.
  */
@@ -69,6 +72,7 @@ exports.modify = function (params) {
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
+    bean.setApplications(__.nullOrValue(params.applications));
     return __.toNativeObject(bean.execute());
 };
 

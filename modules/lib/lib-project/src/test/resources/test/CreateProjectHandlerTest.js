@@ -27,21 +27,23 @@ exports.createProject = function () {
         description: 'project description',
         language: 'no',
         readAccess: {public: true},
-        permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
+        permissions: {
+            owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']
+        }
     });
 
     assert.assertJsonEquals(createProjectExpected, result);
 };
 
 var createProjectWithParentExpected = {
-    'id': 'myproject',
-    'displayName': 'project display name',
-    'description': 'project description',
-    'parent': 'testparent',
-    'language': 'no',
-    'permissions': {},
-    'readAccess': {
-        'public': true
+    id: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    parent: 'testparent',
+    language: 'no',
+    permissions: {},
+    readAccess: {
+        public: true
     }
 };
 
@@ -129,4 +131,33 @@ exports.createProjectWithoutReadAccess = function () {
     } catch (e) {
         assert.assertEquals('Invalid value for readAccess.', e.getMessage());
     }
+};
+
+var createProjectWithApplicationsExpected = {
+    id: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    applications: [
+        'myapp1',
+        'myapp2'
+    ],
+    permissions: {},
+    readAccess: {
+        public: true
+    }
+};
+
+exports.createProjectWithApplications = function () {
+    var result = project.create({
+        id: 'myproject',
+        displayName: 'project display name',
+        description: 'project description',
+        readAccess: {public: true},
+        applications: [
+            'myapp1',
+            'myapp2'
+        ]
+    });
+
+    assert.assertJsonEquals(createProjectWithApplicationsExpected, result);
 };

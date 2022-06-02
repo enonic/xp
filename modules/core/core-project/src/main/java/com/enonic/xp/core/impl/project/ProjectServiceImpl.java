@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -447,6 +448,12 @@ public class ProjectServiceImpl
         {
             projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
         }
+        if ( !params.getApplications().isEmpty() )
+        {
+            projectData.addStrings( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY,
+                                    params.getApplications().stream().map( ApplicationKey::getName ).collect( Collectors.toList() ) );
+        }
+
         return data;
     }
 
@@ -461,6 +468,10 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+
+        projectData.removeProperties( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY );
+        projectData.addStrings( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY,
+                                params.getApplications().stream().map( ApplicationKey::getName ).collect( Collectors.toList() ) );
 
         return data;
     }

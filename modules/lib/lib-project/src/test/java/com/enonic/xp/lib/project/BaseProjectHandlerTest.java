@@ -106,6 +106,8 @@ public abstract class BaseProjectHandlerTest
         builder.displayName( params.getDisplayName() );
         builder.description( params.getDescription() );
 
+        params.getApplications().forEach( builder::addApplication );
+
         return builder.build();
     }
 
@@ -116,6 +118,8 @@ public abstract class BaseProjectHandlerTest
         builder.displayName( params.getDisplayName() );
         builder.description( params.getDescription() );
         builder.parent( params.getParent() );
+
+        params.getApplications().forEach( builder::addApplication );
 
         return builder.build();
     }
