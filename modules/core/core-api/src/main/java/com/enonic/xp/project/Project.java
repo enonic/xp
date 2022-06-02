@@ -3,8 +3,11 @@ package com.enonic.xp.project;
 import java.util.Iterator;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -25,6 +28,8 @@ public final class Project
 
     private final Attachment icon;
 
+    private final ApplicationKeys applications;
+
     private Project( Builder builder )
     {
         this.name = builder.name;
@@ -32,6 +37,7 @@ public final class Project
         this.description = builder.description;
         this.parent = builder.parent;
         this.icon = builder.icon;
+        this.applications = ApplicationKeys.from( builder.applications.build() );
     }
 
     public static Builder create()
@@ -67,6 +73,7 @@ public final class Project
             displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildParents( project, projectData );
+        buildApplications( project, projectData );
         buildIcon( project, projectData );
 
         return project.build();
@@ -97,6 +104,14 @@ public final class Project
         }
     }
 
+    private static void buildApplications( final Project.Builder project, final PropertySet projectData )
+    {
+        for ( final String s : projectData.getStrings( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY ) )
+        {
+            project.addApplication( ApplicationKey.from( s ) );
+        }
+    }
+
     public ProjectName getName()
     {
         return name;
@@ -122,6 +137,11 @@ public final class Project
         return parent;
     }
 
+    public ApplicationKeys getApplications()
+    {
+        return applications;
+    }
+
     public static final class Builder
     {
 
@@ -134,6 +154,8 @@ public final class Project
         private ProjectName parent;
 
         private Attachment icon;
+
+        private final ImmutableList.Builder<ApplicationKey> applications = ImmutableList.builder();
 
         private Builder()
         {
@@ -166,6 +188,12 @@ public final class Project
         public Builder parent( final ProjectName parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder addApplication( final ApplicationKey application )
+        {
+            this.applications.add( application );
             return this;
         }
 

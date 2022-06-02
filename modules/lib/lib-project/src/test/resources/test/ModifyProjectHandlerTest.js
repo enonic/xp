@@ -6,6 +6,10 @@ var modifyProjectExpected = {
     displayName: 'new display name',
     description: 'new description',
     language: 'fr',
+    applications: [
+        'app1',
+        'app2'
+    ],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -27,7 +31,8 @@ exports.modifyProject = function () {
         id: 'myproject',
         displayName: 'new display name',
         description: 'new description',
-        language: 'fr'
+        language: 'fr',
+        applications: ['app1', 'app2']
     });
 
 
@@ -111,6 +116,27 @@ var modifyLanguageExpected = {
     }
 };
 
+var modifyApplicationsExpected = {
+    id: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    applications: [
+        'com.enonic.app.myapp1'
+    ],
+    permissions: {
+        owner: [
+            'user:system:owner2',
+            'user:system:owner1'
+        ],
+        viewer: [
+            'user:system:viewer1'
+        ]
+    },
+    readAccess: {
+        public: true
+    }
+};
+
 exports.modifyLanguage = function () {
     createProject();
 
@@ -120,6 +146,17 @@ exports.modifyLanguage = function () {
     });
 
     assert.assertJsonEquals(modifyLanguageExpected, result);
+};
+
+exports.modifyApplications = function () {
+    createProject();
+
+    var result = project.modify({
+        id: 'myproject',
+        applications: ['com.enonic.app.myapp1']
+    });
+
+    assert.assertJsonEquals(modifyApplicationsExpected, result);
 };
 
 function createProject() {

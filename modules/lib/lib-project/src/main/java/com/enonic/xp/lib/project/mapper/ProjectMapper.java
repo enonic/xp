@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -47,6 +48,7 @@ public final class ProjectMapper
         gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
+        serializeApplications( gen );
         serializePermissions( gen );
         serializeReadAccess( gen );
     }
@@ -61,9 +63,21 @@ public final class ProjectMapper
         new ProjectReadAccessMapper( isPublic ).serialize( gen );
     }
 
+    private void serializeApplications( final MapGenerator gen )
+    {
+        if ( !project.getApplications().isEmpty() )
+        {
+            gen.array( "applications" );
+            for ( final ApplicationKey application : project.getApplications() )
+            {
+                gen.value( application.getName() );
+            }
+            gen.end();
+        }
+    }
+
     public static final class Builder
     {
-
         private Project project;
 
         private ProjectPermissions permissions;
