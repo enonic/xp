@@ -1,8 +1,11 @@
 package com.enonic.xp.project;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
@@ -18,6 +21,8 @@ public final class CreateProjectParams
 
     private final AccessControlList permissions;
 
+    private final ApplicationKeys applications;
+
     private final boolean forceInitialization;
 
     private CreateProjectParams( final Builder builder )
@@ -26,6 +31,7 @@ public final class CreateProjectParams
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.parent = builder.parent;
+        this.applications = ApplicationKeys.from( builder.applications.build() );
         this.forceInitialization = builder.forceInitialization;
         this.permissions = builder.permissions;
     }
@@ -55,6 +61,11 @@ public final class CreateProjectParams
         return parent;
     }
 
+    public ApplicationKeys getApplications()
+    {
+        return applications;
+    }
+
     public AccessControlList getPermissions()
     {
         return permissions;
@@ -79,6 +90,8 @@ public final class CreateProjectParams
         private AccessControlList permissions;
 
         private boolean forceInitialization = false;
+
+        private final ImmutableList.Builder<ApplicationKey> applications = ImmutableList.builder();
 
         private Builder()
         {
@@ -117,6 +130,12 @@ public final class CreateProjectParams
         public Builder forceInitialization( final boolean forceInitialization )
         {
             this.forceInitialization = forceInitialization;
+            return this;
+        }
+
+        public Builder addApplication( final ApplicationKey application )
+        {
+            this.applications.add( application );
             return this;
         }
 
