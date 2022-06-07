@@ -110,6 +110,7 @@ include 'lib:lib-project'
 include 'lib:lib-vhost'
 include 'lib:lib-scheduler'
 include 'lib:lib-export'
+include 'lib:lib-grid'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
