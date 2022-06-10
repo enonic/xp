@@ -26,7 +26,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
-    testImplementation "org.assertj:assertj-core:3.22.0"
+    testImplementation "org.assertj:assertj-core:3.23.1"
     testImplementation "nl.jqno.equalsverifier:equalsverifier:3.10"
     testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
 }
