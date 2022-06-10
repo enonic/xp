@@ -25,15 +25,17 @@ public class ImmutableFilesHelper
 
         final Lock lock = FILE_LOCKS.get( path );
         lock.lock();
+
         try
         {
             if ( !Files.exists( path ) )
             {
                 Files.createDirectories( path.getParent() );
 
+                Boolean written = false;
                 try
                 {
-                    final Boolean written = consumer.apply( MoreFiles.asByteSink( path ) );
+                    written = consumer.apply( MoreFiles.asByteSink( path ) );
                     if ( !Boolean.TRUE.equals( written ) )
                     {
                         return null;
@@ -42,6 +44,13 @@ public class ImmutableFilesHelper
                 catch ( UncheckedIOException e )
                 {
                     throw e.getCause();
+                }
+                finally
+                {
+                    if ( !Boolean.TRUE.equals( written ) )
+                    {
+                        Files.deleteIfExists( path );
+                    }
                 }
             }
         }

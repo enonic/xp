@@ -156,7 +156,8 @@ public class ImageServiceImpl
 
                     final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
                     final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
-                    final boolean toAddBackground = !"png".equals( readImageParams.getFormat() ) && originalColorModel.hasAlpha();
+                    final boolean toAddBackground =
+                        !"png".equals( readImageParams.getFormat() ) && ( originalColorModel.hasAlpha() || toApplyFilters );
                     final boolean toScale = readImageParams.getScaleParams() != null;
                     final boolean toCrop = readImageParams.getCropping() != null;
 
