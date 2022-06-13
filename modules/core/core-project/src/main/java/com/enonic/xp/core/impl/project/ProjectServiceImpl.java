@@ -8,23 +8,25 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -128,12 +130,12 @@ public class ProjectServiceImpl
             }
             final Project result = doInitRootNodes( params );
 
-            CreateProjectRolesCommand.create().
-                securityService( securityService ).
-                projectName( params.getName() ).
-                projectDisplayName( params.getDisplayName() ).
-                build().
-                execute();
+            CreateProjectRolesCommand.create()
+                .securityService( securityService )
+                .projectName( params.getName() )
+                .projectDisplayName( params.getDisplayName() )
+                .build()
+                .execute();
 
             eventPublisher.publish( ProjectEvents.created( params.getName() ) );
 
@@ -154,7 +156,11 @@ public class ProjectServiceImpl
             .accessControlList( CreateProjectRootAccessListCommand.create()
                                     .projectName( params.getName() )
                                     .permissions( params.getPermissions() )
-                                    .build().execute() ).forceInitialization( params.isForceInitialization() ).build().initialize();
+                                    .build()
+                                    .execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
 
         IssueInitializer.create()
             .setIndexService( indexService )
@@ -190,21 +196,21 @@ public class ProjectServiceImpl
 
     private Project doModify( final ModifyProjectParams params )
     {
-        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
-            repositoryId( params.getName().getRepoId() ).
-            editor( editableRepository -> modifyProjectData( params, editableRepository.data ) ).
-            build();
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create()
+            .repositoryId( params.getName().getRepoId() )
+            .editor( editableRepository -> modifyProjectData( params, editableRepository.data ) )
+            .build();
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
         {
-            UpdateProjectRoleNamesCommand.create().
-                securityService( securityService ).
-                projectName( params.getName() ).
-                projectDisplayName( params.getDisplayName() ).
-                build().
-                execute();
+            UpdateProjectRoleNamesCommand.create()
+                .securityService( securityService )
+                .projectName( params.getName() )
+                .projectDisplayName( params.getDisplayName() )
+                .build()
+                .execute();
         }
 
         return Project.from( updatedRepository );
@@ -223,9 +229,8 @@ public class ProjectServiceImpl
 
     private void doModifyIcon( final ModifyProjectIconParams params )
     {
-        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
-            repositoryId( params.getName().getRepoId() ).
-            editor( editableRepository -> {
+        final UpdateRepositoryParams updateParams =
+            UpdateRepositoryParams.create().repositoryId( params.getName().getRepoId() ).editor( editableRepository -> {
 
                 if ( params.getIcon() != null )
                 {
@@ -241,8 +246,7 @@ public class ProjectServiceImpl
 
                 final PropertySet projectData = editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
                 setIconData( projectData, params.getIcon() );
-            } ).
-            build();
+            } ).build();
 
         repositoryService.updateRepository( updateParams );
     }
@@ -255,11 +259,11 @@ public class ProjectServiceImpl
 
     private ByteSource doGetIcon( final ProjectName projectName )
     {
-        return Optional.ofNullable( doGet( projectName ) ).
-            map( Project::getIcon ).
-            map( Attachment::getBinaryReference ).
-            map( binaryReference -> repositoryService.getBinary( projectName.getRepoId(), binaryReference ) ).
-            orElse( null );
+        return Optional.ofNullable( doGet( projectName ) )
+            .map( Project::getIcon )
+            .map( Attachment::getBinaryReference )
+            .map( binaryReference -> repositoryService.getBinary( projectName.getRepoId(), binaryReference ) )
+            .orElse( null );
     }
 
     @Override
@@ -270,20 +274,38 @@ public class ProjectServiceImpl
         return callWithListContext( () -> {
             final Projects projects = this.doList();
 
-            return Projects.create().
-                addAll( projects.stream().
-                    filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
-                        ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                            ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
-                            : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
-                                                                                  EnumSet.allOf( ProjectRole.class ) ) ) ).
-                    collect( Collectors.toSet() ) ).
-                build();
+            return Projects.create()
+                .addAll( projects.stream()
+                             .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
+                                 ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
+                                     ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
+                                     : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
+                                                                                           EnumSet.allOf( ProjectRole.class ) ) ) )
+                             .collect( Collectors.toSet() ) )
+                .build();
         } );
     }
 
     @Override
+    public ApplicationKeys getAvailableApplications( final ProjectName projectName )
+    {
+        final Project project = doGet( projectName );
+
+        final List<ApplicationKey> projectApps = project.getApplications() != null ? project.getApplications().getList() : List.of();
+
+        return ApplicationKeys.from(
+            Stream.concat( projectApps.stream(), doGetParents( project ).stream().flatMap( parent -> parent.getApplications().stream() ) )
+                .distinct()
+                .collect( Collectors.toList() ) );
+    }
+
+    @Override
     public ProjectGraph graph( final ProjectName projectName )
+    {
+        return doGraph( projectName );
+    }
+
+    private ProjectGraph doGraph( final ProjectName projectName )
     {
         final ProjectGraph.Builder graph = ProjectGraph.create();
         final Project targetProject;
@@ -302,46 +324,43 @@ public class ProjectServiceImpl
             throw new ProjectNotFoundException( e.getProjectName() );
         }
 
-        final Projects projects = adminContext().callWith( this::doList );
-
-        Project project = targetProject;
-
-        final List<Project> parents = new ArrayList<>();
-
-        while ( project.getParent() != null )
-        {
-            project = getProject( projects, project.getParent() );
-            parents.add( project );
-        }
-
-        Collections.reverse( parents );
-
-        parents.add( targetProject );
-
-        parents.forEach( p -> graph.add( ProjectGraphEntry.create().
-            name( p.getName() ).
-            parent( p.getParent() ).
-            build() ) );
+        Stream.concat( Lists.reverse( doGetParents( targetProject ) ).stream(), Stream.of( targetProject ) )
+            .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() ) );
 
         final Queue<Project> children = new ArrayDeque<>();
         children.add( targetProject );
 
+        final Projects projects = adminContext().callWith( this::doList );
+
         while ( !children.isEmpty() )
         {
             final Project current = children.poll();
-            projects.stream().
-                filter( p -> current.getName().equals( p.getParent() ) ).
-                forEach( p -> {
-                    children.offer( p );
-                    graph.add( ProjectGraphEntry.create().
-                        name( p.getName() ).
-                        parent( p.getParent() ).
-                        build() );
-                } );
+            projects.stream().filter( p -> current.getName().equals( p.getParent() ) ).forEach( p -> {
+                children.offer( p );
+                graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() );
+            } );
         }
 
         return graph.build();
     }
+
+    private List<Project> doGetParents( final Project project )
+    {
+        ImmutableList.Builder<Project> result = ImmutableList.builder();
+
+        Project currentProject = project;
+
+        while ( currentProject.getParent() != null )
+        {
+            final Project parentProject = doGet( currentProject.getParent() );
+            result.add( parentProject );
+
+            currentProject = parentProject;
+        }
+
+        return result.build();
+    }
+
 
     private Projects doList()
     {
@@ -377,11 +396,7 @@ public class ProjectServiceImpl
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
-            DeleteProjectRolesCommand.create().
-                securityService( securityService ).
-                projectName( projectName ).
-                build().
-                execute();
+            DeleteProjectRolesCommand.create().securityService( securityService ).projectName( projectName ).build().execute();
         }
 
         return deletedRepositoryId != null;
@@ -400,11 +415,7 @@ public class ProjectServiceImpl
 
     private ProjectPermissions doGetPermissions( final ProjectName projectName )
     {
-        return GetProjectRolesCommand.create().
-            securityService( securityService ).
-            projectName( projectName ).
-            build().
-            execute();
+        return GetProjectRolesCommand.create().securityService( securityService ).projectName( projectName ).build().execute();
     }
 
     @Override
@@ -428,12 +439,12 @@ public class ProjectServiceImpl
 
     private ProjectPermissions doModifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
     {
-        return UpdateProjectRolesCommand.create().
-            projectName( projectName ).
-            permissions( projectPermissions ).
-            securityService( securityService ).
-            build().
-            execute();
+        return UpdateProjectRolesCommand.create()
+            .projectName( projectName )
+            .permissions( projectPermissions )
+            .securityService( securityService )
+            .build()
+            .execute();
     }
 
     private PropertyTree createProjectData( final CreateProjectParams params )
@@ -539,10 +550,10 @@ public class ProjectServiceImpl
 
     private Project getProject( final Projects projects, final ProjectName name )
     {
-        return projects.stream().
-            filter( project -> project.getName().equals( name ) ).
-            findFirst().
-            orElseThrow( () -> new ProjectNotFoundException( name ) );
+        return projects.stream()
+            .filter( project -> project.getName().equals( name ) )
+            .findFirst()
+            .orElseThrow( () -> new ProjectNotFoundException( name ) );
     }
 
     private <T> T callWithCreateContext( final Callable<T> runnable )
@@ -572,11 +583,10 @@ public class ProjectServiceImpl
 
     private Context adminContext()
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.
-                copyOf( ContextAccessor.current().getAuthInfo() ).
-                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+                           .principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN )
+                           .build() )
+            .build();
     }
 }
