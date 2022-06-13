@@ -9,10 +9,14 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,5 +75,27 @@ class ApplicationFactoryServiceImplTest
 
         bundle.stop();
         assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
+    }
+
+    @Test
+    void findVirtualApplication()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create()
+                                                                                  .addNodeHit( NodeHit.create()
+                                                                                                   .nodeId( NodeId.from( "123" ) )
+                                                                                                   .nodePath(
+                                                                                                       NodePath.create( "/app1" ).build() )
+                                                                                                   .build() )
+                                                                                  .totalHits( 1 )
+                                                                                  .hits( 1 )
+                                                                                  .build() );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
     }
 }
