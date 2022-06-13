@@ -914,6 +914,34 @@ class ProjectServiceImplTest
                               tuple( project4.getName(), project2.getName() ), tuple( project5.getName(), project4.getName() ) );
     }
 
+    @Test
+    void get_available_applications()
+    {
+        final RepositoryId parentRepoId = RepositoryId.from( "com.enonic.cms.parent" );
+        final RepositoryId childRepoId = RepositoryId.from( "com.enonic.cms.child" );
+
+        final ApplicationKeys parentApps = ApplicationKeys.from( "app1", "app2" );
+        final ApplicationKeys childApps = ApplicationKeys.from( "app2", "app3" );
+
+        final Project parent = adminContext().callWith( () -> doCreateProject( ProjectName.from( parentRepoId ), parentApps ) );
+        final Project child =
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( childRepoId ), parent.getName(), childApps ) );
+
+        final ApplicationKeys parentAvailableApplications =
+            adminContext().callWith( () -> projectService.getAvailableApplications( parent.getName() ) );
+        final ApplicationKeys childAvailableApplications =
+            adminContext().callWith( () -> projectService.getAvailableApplications( child.getName() ) );
+
+        assertEquals( 2, parentAvailableApplications.getSize() );
+        assertEquals( "app1", parentAvailableApplications.get( 0 ).toString() );
+        assertEquals( "app2", parentAvailableApplications.get( 1 ).toString() );
+
+        assertEquals( 3, childAvailableApplications.getSize() );
+        assertEquals( "app2", childAvailableApplications.get( 0 ).toString() );
+        assertEquals( "app3", childAvailableApplications.get( 1 ).toString() );
+        assertEquals( "app1", childAvailableApplications.get( 2 ).toString() );
+    }
+
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
         return adminContext().callWith( () -> doCreateProject( name ) );
@@ -975,6 +1003,11 @@ class ProjectServiceImplTest
         }
 
         return project;
+    }
+
+    private Project doCreateProject( final ProjectName name, final ProjectName parent, final ApplicationKeys applications )
+    {
+        return this.doCreateProject( name, null, false, parent, null, applications );
     }
 
     private Project doCreateProject( final ProjectName name, final ApplicationKeys applications )
