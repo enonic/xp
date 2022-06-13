@@ -3,6 +3,7 @@ package com.enonic.xp.project;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.app.ApplicationKeys;
 
 @PublicApi
 public interface ProjectService
@@ -14,6 +15,8 @@ public interface ProjectService
     void modifyIcon( ModifyProjectIconParams params );
 
     ByteSource getIcon( ProjectName projectName );
+
+    ApplicationKeys getAvailableApplications( ProjectName projectName );
 
     Projects list();
 
