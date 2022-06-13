@@ -135,13 +135,12 @@ public class VirtualAppService
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/*/" + VirtualAppConstants.SITE_ROOT_NAME );
+        likeExpression.addString( "value", "/*" );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
                 NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
-            return nodes.getNodeHits()
-                .stream()
+            return nodes.getNodeHits().stream().filter( nodeHit -> nodeHit.getNodePath().elementCount() == 1 )
                 .map( nodeHit -> nodeHit.getNodePath().getElementAsString( 0 ) )
                 .map( ApplicationKey::from )
                 .distinct()
