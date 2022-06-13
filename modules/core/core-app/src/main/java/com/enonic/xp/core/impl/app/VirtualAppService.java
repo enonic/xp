@@ -15,6 +15,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -22,6 +24,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repository.RepositoryService;
@@ -132,19 +135,15 @@ public class VirtualAppService
 
     public List<Application> list()
     {
-        PropertyTree request = new PropertyTree();
-        final PropertySet likeExpression = request.addSet( "like" );
-        likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/*/" + VirtualAppConstants.SITE_ROOT_NAME );
-
         return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
-                NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
-            return nodes.getNodeHits()
-                .stream()
-                .map( nodeHit -> nodeHit.getNodePath().getElementAsString( 0 ) )
+            final FindNodesByParentResult result =
+                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).size( -1 ).build() );
+
+            final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
+
+            return nodes.stream()
+                .map( node -> node.path().getElementAsString( 0 ) )
                 .map( ApplicationKey::from )
-                .distinct()
                 .map( key -> VirtualAppFactory.create( key, nodeService ) )
                 .collect( Collectors.toList() );
         } );
@@ -192,7 +191,7 @@ public class VirtualAppService
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME );
+        likeExpression.addString( "value", "/" + applicationKey );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(

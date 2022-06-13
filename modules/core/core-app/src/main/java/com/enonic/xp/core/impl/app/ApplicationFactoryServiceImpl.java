@@ -19,7 +19,6 @@ import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -81,7 +80,7 @@ public class ApplicationFactoryServiceImpl
         PropertyTree request = new PropertyTree();
         final PropertySet likeExpression = request.addSet( "like" );
         likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/site.xml" );
+        likeExpression.addString( "value", "/" + applicationKey );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
