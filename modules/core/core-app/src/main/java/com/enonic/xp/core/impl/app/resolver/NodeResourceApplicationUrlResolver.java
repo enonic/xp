@@ -18,6 +18,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.resource.NodeValueResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 public final class NodeResourceApplicationUrlResolver
     implements ApplicationUrlResolver
@@ -77,16 +78,15 @@ public final class NodeResourceApplicationUrlResolver
             .callWith( () -> nodeService.getByPath(
                 NodePath.create( NodePath.create( applicationKey.toString() ).build(), path ).build().asAbsolute() ) );
 
-        if ( resourceNode != null )
+        if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
         {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
-        }
-        else if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
-        {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
-                                          applicationNode.getTimestamp() );
+            if ( resourceNode == null || resourceNode.data().getValue( SchemaNodePropertyNames.RESOURCE ) == null )
+            {
+                return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
+                                              applicationNode.getTimestamp() );
+            }
         }
 
-        return null;
+        return resourceNode != null ? new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode ) : null;
     }
 }
