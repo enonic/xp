@@ -105,6 +105,17 @@ public class SharedMapHandlerTest
     }
 
     @Test
+    public void testSetWithNullValue()
+    {
+        doNothing().when( sharedMap ).set( "key", null, -1 );
+
+        runFunction( "/test/grid-test.js", "testSetWithNullValue" );
+
+        verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
+        verify( sharedMap, times( 1 ) ).set( "key", null, -1 );
+    }
+
+    @Test
     public void testModifyWithoutKey()
     {
         runFunction( "/test/grid-test.js", "testModifyWithoutKey" );
