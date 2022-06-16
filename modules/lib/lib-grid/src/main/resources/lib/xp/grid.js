@@ -8,7 +8,9 @@ function requireNotNull(value, parameterName) {
 }
 
 function convertValue(value) {
-    if (Array.isArray(value)) {
+    if (typeof value === 'undefined' || value === null) {
+        return null;
+    } else if (Array.isArray(value)) {
         return __.toScriptValue(value).getList();
     } else if (typeof value === 'object') {
         return __.toScriptValue(value).getMap();
