@@ -93,9 +93,9 @@ SharedMap.prototype.modify = function (params) {
     };
 
     if (ttlSeconds === null) {
-        return this.map.modify(key, modifierFn);
+        return __.toNativeObject(this.map.modify(key, modifierFn));
     } else {
-        return this.map.modify(key, modifierFn, ttlSeconds);
+        return __.toNativeObject(this.map.modify(key, modifierFn, ttlSeconds));
     }
 };
 
