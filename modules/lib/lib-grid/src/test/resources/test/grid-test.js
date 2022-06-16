@@ -57,6 +57,16 @@ exports.testSet = function () {
     });
 };
 
+exports.testSetWithNullValue = function () {
+    var sharedMap = gridLib.getMap('mapId');
+
+    sharedMap.set({
+        key: 'key',
+        value: null,
+        ttlSeconds: -1
+    });
+};
+
 exports.testModifyWithoutKey = function () {
     var sharedMap = gridLib.getMap('mapId');
     try {
