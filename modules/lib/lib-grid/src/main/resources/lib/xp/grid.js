@@ -18,15 +18,15 @@ function convertValue(value) {
 }
 
 /**
- * Creates an instance of Shared Memory (Shared Map) which are shared across all applications and even cluster nodes.
+ * Creates an instance of SharedMap which are shared across all applications and even cluster nodes.
  *
  * WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used. Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons. The developer is also responsible for not modifying shared objects (keys and values) in place.
  *
  * @param mapId - map identifier
  * @constructor
  */
-function SharedMemory(mapId) {
-    var bean = __.newBean('com.enonic.xp.lib.grid.MemoryGridHandler');
+function SharedMap(mapId) {
+    var bean = __.newBean('com.enonic.xp.lib.grid.SharedMapHandler');
     this.map = bean.getMap(mapId);
 }
 
@@ -36,7 +36,7 @@ function SharedMemory(mapId) {
  * @param {string} key - key the key whose associated value is to be returned
  * @returns {string|number|boolean|JSON|null} the value to which the specified key is mapped, or null if this map contains no mapping for the key
  */
-SharedMemory.prototype.get = function (key) {
+SharedMap.prototype.get = function (key) {
     return __.toNativeObject(this.map.get(requireNotNull(key, 'key')));
 };
 
@@ -49,7 +49,7 @@ SharedMemory.prototype.get = function (key) {
  * @param {string|number|boolean|JSON|null} params.value value of the entry
  * @param {number} [params.ttlSeconds] maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
  */
-SharedMemory.prototype.set = function (params) {
+SharedMap.prototype.set = function (params) {
     var key = requireNotNull(params.key, 'key');
     var ttlSeconds = __.nullOrValue(params.ttlSeconds);
     var value = convertValue(params.value);
@@ -65,7 +65,7 @@ SharedMemory.prototype.set = function (params) {
  *
  * @param {string} key the key whose associated value is to be removed
  */
-SharedMemory.prototype.delete = function (key) {
+SharedMap.prototype.delete = function (key) {
     this.map.delete(requireNotNull(key, 'key'));
 };
 
@@ -80,7 +80,7 @@ SharedMemory.prototype.delete = function (key) {
  * @param {number} [params.ttlSeconds] maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
  * @returns the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
  */
-SharedMemory.prototype.modify = function (params) {
+SharedMap.prototype.modify = function (params) {
     var key = requireNotNull(params.key, 'key');
     var func = requireNotNull(params.func, 'func');
     if (typeof func !== 'function') {
@@ -100,11 +100,11 @@ SharedMemory.prototype.modify = function (params) {
 };
 
 /**
- * Returns an instance of Shared Memory (Shared Map) by the specified map identifier.
+ * Returns an instance of SharedMap by the specified map identifier.
  *
  * @param {string} mapId map identifier
- * @returns {SharedMemory} an instance of Shared Memory (Shared Map)
+ * @returns {SharedMap} an instance of SharedMap
  */
 exports.getMap = function (mapId) {
-    return new SharedMemory(requireNotNull(mapId, 'mapId'));
+    return new SharedMap(requireNotNull(mapId, 'mapId'));
 };
