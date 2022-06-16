@@ -7,7 +7,7 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
-public class MemoryGridHandler
+public class SharedMapHandler
     implements ScriptBean
 {
     private Supplier<SharedMapService> sharedMapService;

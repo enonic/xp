@@ -2,55 +2,55 @@ var gridLib = require('/lib/xp/grid');
 var assert = require('/lib/xp/testing');
 
 exports.testGetWithoutKey = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.get();
+        sharedMap.get();
     } catch (e) {
         assert.assertEquals('Parameter "key" is required', e);
     }
 };
 
 exports.testGet = function () {
-    var memoryGrid = gridLib.getMap('mapId');
-    assert.assertEquals('value', memoryGrid.get('key'));
+    var sharedMap = gridLib.getMap('mapId');
+    assert.assertEquals('value', sharedMap.get('key'));
 };
 
 exports.testDeleteWithoutKey = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.delete();
+        sharedMap.delete();
     } catch (e) {
         assert.assertEquals('Parameter "key" is required', e);
     }
 };
 
 exports.testDelete = function () {
-    var memoryGrid = gridLib.getMap('mapId');
-    memoryGrid.delete('key');
+    var sharedMap = gridLib.getMap('mapId');
+    sharedMap.delete('key');
 };
 
 exports.testSetWithoutKey = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.set({});
+        sharedMap.set({});
     } catch (e) {
         assert.assertEquals('Parameter "key" is required', e);
     }
 };
 
 exports.testSetWithoutTtlSeconds = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
 
-    memoryGrid.set({
+    sharedMap.set({
         key: 'key',
         value: 'value'
     });
 };
 
 exports.testSet = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
 
-    memoryGrid.set({
+    sharedMap.set({
         key: 'key',
         value: 'value',
         ttlSeconds: 2 * 60 * 1000
@@ -58,18 +58,18 @@ exports.testSet = function () {
 };
 
 exports.testModifyWithoutKey = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.modify({});
+        sharedMap.modify({});
     } catch (e) {
         assert.assertEquals('Parameter "key" is required', e);
     }
 };
 
 exports.testModifyWithoutFunc = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.modify({
+        sharedMap.modify({
             key: 'key'
         });
     } catch (e) {
@@ -78,9 +78,9 @@ exports.testModifyWithoutFunc = function () {
 };
 
 exports.testModifyWithWrongArgumentFunc = function () {
-    var memoryGrid = gridLib.getMap('mapId');
+    var sharedMap = gridLib.getMap('mapId');
     try {
-        memoryGrid.modify({
+        sharedMap.modify({
             key: 'key',
             func: 1
         });
