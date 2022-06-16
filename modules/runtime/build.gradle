@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id 'distribution'
     id 'maven-publish'
@@ -154,7 +152,7 @@ def getOrCreateBundleConfig( level )
 
     def config = configurations.findByName( name )
 
-    if (config == null)
+    if ( config == null )
     {
         config = configurations.create( name )
         config.transitive = false
@@ -171,37 +169,18 @@ def getOrCreateBundleConfig( level )
 distributions {
     main {
         contents {
-            into('/system') {
+            into( '/system' ) {
                 with( bundleCopySpecs as CopySpec[] )
             }
             into( '/lib' ) {
                 from( configurations.lib )
             }
-            into( '/bin' ) {
-                from( 'src/bin' ) {
-                    include '*.sh'
-                    fileMode 0755
-                }
-            }
-            into( '/service' ) {
-                from( 'src/service' ) {
-                    include '*.sh'
-                    fileMode 0755
-                    filter( ReplaceTokens, tokens: [version: version] )
-                }
-            }
-            into( '/service/init.d' ) {
-                from( 'src/service/init.d' ) {
-                    include 'xp'
-                    fileMode 0755
-                }
-            }
-            into('/') {
+            into( '/' ) {
                 from( 'src' ) {
-                    include 'README.txt'
-                    expand project.properties
+                    filesMatching( '**/*.sh' ) {
+                        mode = 0755
+                    }
                 }
-                from( 'src' )
                 from( rootDir ) {
                     include 'LICENSE.txt'
                     include 'NOTICE.txt'
@@ -214,37 +193,10 @@ distributions {
 tasks.distTar.enabled = false
 
 installDist {
-    destinationDir = file("$buildDir/install")
+    destinationDir = file( "$buildDir/install" )
 }
 
 build.dependsOn installDist
-
-task run( type: Exec, dependsOn: 'installDist' ) {
-    description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
-    group = 'Dist'
-    workingDir "$buildDir/install/bin"
-
-    doFirst {
-        if ( System.getProperty( "os.name" ).startsWith( 'Windows' ) )
-        {
-            commandLine 'cmd', '/c', 'server.bat'
-        }
-        else
-        {
-            commandLine './server.sh'
-        }
-
-        if ( project.hasProperty( 'dev' ) )
-        {
-            commandLine += 'dev'
-        }
-
-        if ( project.hasProperty( 'debug' ) )
-        {
-            commandLine += 'debug'
-        }
-    }
-}
 
 publishing.publications {
     mavenJava( MavenPublication ) {
