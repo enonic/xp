@@ -14,6 +14,8 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
+import com.enonic.xp.lib.common.ObjectToValueMapper;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
@@ -28,6 +30,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 public abstract class BaseProjectHandlerTest
@@ -37,16 +40,19 @@ public abstract class BaseProjectHandlerTest
 
     protected ProjectService projectService;
 
+    protected PropertyTreeMarshallerService propertyTreeMarshallerService;
+
     protected void mockRootContent()
     {
-        final Content.Builder contentRoot = Content.create().id( ContentId.from( "123" ) ).
-            name( ContentName.from( "root" ) ).
-            parentPath( ContentPath.ROOT ).
-            permissions( AccessControlList.create()
-                             .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-                             .build() ).
-            data( new PropertyTree() ).
-            extraDatas( ExtraDatas.empty() );
+        final Content.Builder contentRoot = Content.create()
+            .id( ContentId.from( "123" ) )
+            .name( ContentName.from( "root" ) )
+            .parentPath( ContentPath.ROOT )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                              .build() )
+            .data( new PropertyTree() )
+            .extraDatas( ExtraDatas.empty() );
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer( mock -> {
@@ -99,6 +105,22 @@ public abstract class BaseProjectHandlerTest
         } );
     }
 
+    protected void mockMarshaller()
+    {
+        when( this.propertyTreeMarshallerService.marshal( isA( Map.class ) ) ).thenAnswer( mock -> {
+
+            final Map<String, ?> map = (Map<String, ?>) mock.getArguments()[0];
+            final PropertyTree tree = new PropertyTree();
+
+            for ( String key : map.keySet() )
+            {
+                tree.addProperty( key, ObjectToValueMapper.map( map.get( key ) ) );
+            }
+
+            return tree;
+        } );
+    }
+
     private Project createProject( final ModifyProjectParams params )
     {
         final Project.Builder builder = Project.create();
@@ -106,7 +128,7 @@ public abstract class BaseProjectHandlerTest
         builder.displayName( params.getDisplayName() );
         builder.description( params.getDescription() );
 
-        params.getApplications().forEach( builder::addApplication );
+        params.getSiteConfigs().forEach( builder::addSiteConfig );
 
         return builder.build();
     }
@@ -119,7 +141,7 @@ public abstract class BaseProjectHandlerTest
         builder.description( params.getDescription() );
         builder.parent( params.getParent() );
 
-        params.getApplications().forEach( builder::addApplication );
+        params.getSiteConfigs().forEach( builder::addSiteConfig );
 
         return builder.build();
     }
@@ -133,11 +155,13 @@ public abstract class BaseProjectHandlerTest
 
         this.contentService = Mockito.mock( ContentService.class );
         this.projectService = Mockito.mock( ProjectService.class );
+        this.propertyTreeMarshallerService = Mockito.mock( PropertyTreeMarshallerService.class );
         addService( ContentService.class, this.contentService );
         addService( ProjectService.class, this.projectService );
+        addService( PropertyTreeMarshallerService.class, this.propertyTreeMarshallerService );
 
         mockProject();
         mockRootContent();
-
+        mockMarshaller();
     }
 }
