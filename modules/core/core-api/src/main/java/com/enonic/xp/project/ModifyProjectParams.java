@@ -1,11 +1,10 @@
 package com.enonic.xp.project;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @PublicApi
 public final class ModifyProjectParams
@@ -16,14 +15,14 @@ public final class ModifyProjectParams
 
     private final String description;
 
-    private final ApplicationKeys applications;
+    private final SiteConfigs siteConfigs;
 
     private ModifyProjectParams( final Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.applications = ApplicationKeys.from( builder.applications.build() );
+        this.siteConfigs = builder.siteConfigs.build();
     }
 
     public static Builder create()
@@ -55,9 +54,9 @@ public final class ModifyProjectParams
         return description;
     }
 
-    public ApplicationKeys getApplications()
+    public SiteConfigs getSiteConfigs()
     {
-        return applications;
+        return siteConfigs;
     }
 
     public static final class Builder
@@ -68,7 +67,7 @@ public final class ModifyProjectParams
 
         private String description;
 
-        private final ImmutableList.Builder<ApplicationKey> applications = ImmutableList.builder();
+        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
 
         private Builder()
         {
@@ -92,9 +91,9 @@ public final class ModifyProjectParams
             return this;
         }
 
-        public Builder addApplication( final ApplicationKey application )
+        public Builder addSiteConfig( final SiteConfig siteConfig )
         {
-            this.applications.add( application );
+            this.siteConfigs.add( siteConfig );
             return this;
         }
 

@@ -15,12 +15,12 @@ public final class ModifyProjectReadAccessHandler
     @Override
     protected ProjectReadAccessMapper doExecute()
     {
-        final Boolean result = ApplyProjectReadAccessCommand.create().
-            setPublic( this.isPublic ).
-            contentService( this.contentService ).
-            projectName( this.id ).
-            build().
-            execute();
+        final Boolean result = ApplyProjectReadAccessCommand.create()
+            .setPublic( this.isPublic )
+            .contentService( this.contentService.get() )
+            .projectName( this.id )
+            .build()
+            .execute();
 
         return new ProjectReadAccessMapper( result );
     }
