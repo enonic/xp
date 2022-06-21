@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.project;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.lib.project.command.ApplyProjectLanguageCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.CreateProjectParams;
@@ -16,6 +16,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -34,7 +36,7 @@ public final class CreateProjectHandler
 
     private ProjectPermissions permissions;
 
-    private ApplicationKeys applications;
+    private SiteConfigs siteConfigs;
 
     private boolean isPublic;
 
@@ -42,17 +44,17 @@ public final class CreateProjectHandler
     protected ProjectMapper doExecute()
     {
         final CreateProjectParams params = createProjectParams();
-        final Project project = this.projectService.create( params );
+        final Project project = this.projectService.get().create( params );
 
         final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create()
             .projectName( this.id )
             .language( this.language )
-            .contentService( this.contentService )
+            .contentService( this.contentService.get() )
             .build()
             .execute() : null;
 
         final ProjectPermissions modifiedPermissions = this.permissions != null
-            ? this.projectService.modifyPermissions( this.id, this.permissions )
+            ? this.projectService.get().modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
         return ProjectMapper.create()
@@ -79,9 +81,9 @@ public final class CreateProjectHandler
                                      .build() );
         }
 
-        if ( applications != null )
+        if ( siteConfigs != null )
         {
-            applications.stream().forEach( builder::addApplication );
+            siteConfigs.forEach( builder::addSiteConfig );
         }
 
         return builder.build();
@@ -128,8 +130,9 @@ public final class CreateProjectHandler
         this.parent = value != null ? ProjectName.from( value ) : null;
     }
 
-    public void setApplications( final String[] value )
+    public void setSiteConfig( final ScriptValue value )
     {
-        this.applications = value != null ? ApplicationKeys.from( value ) : null;
+        final List<SiteConfig> configs = buildSiteConfigs( value );
+        this.siteConfigs = configs != null ? SiteConfigs.from( configs ) : null;
     }
 }

@@ -1,12 +1,11 @@
 package com.enonic.xp.project;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @PublicApi
 public final class CreateProjectParams
@@ -21,7 +20,7 @@ public final class CreateProjectParams
 
     private final AccessControlList permissions;
 
-    private final ApplicationKeys applications;
+    private final SiteConfigs siteConfigs;
 
     private final boolean forceInitialization;
 
@@ -31,7 +30,7 @@ public final class CreateProjectParams
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.parent = builder.parent;
-        this.applications = ApplicationKeys.from( builder.applications.build() );
+        this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
         this.permissions = builder.permissions;
     }
@@ -61,9 +60,9 @@ public final class CreateProjectParams
         return parent;
     }
 
-    public ApplicationKeys getApplications()
+    public SiteConfigs getSiteConfigs()
     {
-        return applications;
+        return siteConfigs;
     }
 
     public AccessControlList getPermissions()
@@ -91,7 +90,7 @@ public final class CreateProjectParams
 
         private boolean forceInitialization = false;
 
-        private final ImmutableList.Builder<ApplicationKey> applications = ImmutableList.builder();
+        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
 
         private Builder()
         {
@@ -133,9 +132,9 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder addApplication( final ApplicationKey application )
+        public Builder addSiteConfig( final SiteConfig siteConfig )
         {
-            this.applications.add( application );
+            this.siteConfigs.add( siteConfig );
             return this;
         }
 

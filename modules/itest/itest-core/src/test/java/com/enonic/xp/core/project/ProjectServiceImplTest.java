@@ -2,6 +2,7 @@ package com.enonic.xp.core.project;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,6 +60,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -418,13 +421,26 @@ class ProjectServiceImplTest
     void create_with_applications()
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
-        final ApplicationKeys applications = ApplicationKeys.from( "app1", "app2" );
 
-        final Project project = adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), applications ) );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "a", "value" );
+        config.addBoolean( "b", true );
+        config.addSet( "c", new PropertySet() );
 
-        assertEquals( 2, project.getApplications().getSize() );
-        assertEquals( ApplicationKey.from( "app1" ), project.getApplications().get( 0 ) );
-        assertEquals( ApplicationKey.from( "app2" ), project.getApplications().get( 1 ) );
+        config.getSet( "c" ).addInstant( "d", Instant.parse( "2022-12-03T10:15:30.00Z" ) );
+
+        final SiteConfigs siteConfigs = SiteConfigs.create()
+            .add( SiteConfig.create().application( ApplicationKey.from( "app1" ) ).config( config ).build() )
+            .add( SiteConfig.create().application( ApplicationKey.from( "app2" ) ).config( new PropertyTree() ).build() )
+            .build();
+
+        final Project project = adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), siteConfigs ) );
+
+        assertEquals( 2, project.getSiteConfigs().getSize() );
+        assertEquals( ApplicationKey.from( "app1" ), project.getSiteConfigs().get( 0 ).getApplicationKey() );
+        assertEquals( ApplicationKey.from( "app2" ), project.getSiteConfigs().get( 1 ).getApplicationKey() );
+        assertEquals( config, project.getSiteConfigs().get( 0 ).getConfig() );
+        assertEquals( new PropertyTree(), project.getSiteConfigs().get( 1 ).getConfig() );
     }
 
     @Test
@@ -805,20 +821,31 @@ class ProjectServiceImplTest
     void modify_with_applications()
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
-        final ApplicationKeys applications = ApplicationKeys.from( "app1" );
 
-        adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), applications ) );
+        final PropertyTree config1 = new PropertyTree();
+        config1.addString( "a", "value1" );
 
-        final Project project = adminContext().callWith( () ->
+        final PropertyTree config2 = new PropertyTree();
+        config1.addString( "a", "value2" );
 
-                                                             projectService.modify( ModifyProjectParams.create()
-                                                                                        .name( ProjectName.from( "test-project" ) )
-                                                                                        .displayName( "project name" )
-                                                                                        .addApplication( ApplicationKey.from( "app2" ) )
-                                                                                        .build() ) );
+        adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), SiteConfigs.from(
+            SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( config1 ).build() ) ) );
 
-        assertEquals( 1, project.getApplications().getSize() );
-        assertTrue( project.getApplications().contains( ApplicationKey.from( "app2" ) ) );
+        final Project project = adminContext().callWith( () -> projectService.modify( ModifyProjectParams.create()
+                                                                                          .name( ProjectName.from( "test-project" ) )
+                                                                                          .displayName( "project name" )
+                                                                                          .addSiteConfig( SiteConfig.create()
+                                                                                                              .application(
+                                                                                                                  ApplicationKey.from(
+                                                                                                                      "app" ) )
+                                                                                                              .config( config2 )
+                                                                                                              .build() )
+                                                                                          .build() ) );
+
+        assertEquals( 1, project.getSiteConfigs().getSize() );
+        assertTrue(
+            project.getSiteConfigs().stream().anyMatch( config -> config.getApplicationKey().equals( ApplicationKey.from( "app" ) ) ) );
+        assertEquals( config2, project.getSiteConfigs().get( ApplicationKey.from( "app" ) ).getConfig() );
     }
 
     @Test
@@ -920,12 +947,20 @@ class ProjectServiceImplTest
         final RepositoryId parentRepoId = RepositoryId.from( "com.enonic.cms.parent" );
         final RepositoryId childRepoId = RepositoryId.from( "com.enonic.cms.child" );
 
-        final ApplicationKeys parentApps = ApplicationKeys.from( "app1", "app2" );
-        final ApplicationKeys childApps = ApplicationKeys.from( "app2", "app3" );
+        final Project parent = adminContext().callWith( () -> doCreateProject( ProjectName.from( parentRepoId ), SiteConfigs.from(
+            SiteConfig.create().application( ApplicationKey.from( "app1" ) ).config( new PropertyTree() ).build(),
+            SiteConfig.create().application( ApplicationKey.from( "app2" ) ).config( new PropertyTree() ).build() ) ) );
 
-        final Project parent = adminContext().callWith( () -> doCreateProject( ProjectName.from( parentRepoId ), parentApps ) );
-        final Project child =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( childRepoId ), parent.getName(), childApps ) );
+        final Project child = adminContext().callWith( () -> doCreateProject( ProjectName.from( childRepoId ), parent.getName(),
+                                                                              SiteConfigs.from( SiteConfig.create()
+                                                                                                    .application(
+                                                                                                        ApplicationKey.from( "app2" ) )
+                                                                                                    .config( new PropertyTree() )
+                                                                                                    .build(), SiteConfig.create()
+                                                                                                    .application(
+                                                                                                        ApplicationKey.from( "app3" ) )
+                                                                                                    .config( new PropertyTree() )
+                                                                                                    .build() ) ) );
 
         final ApplicationKeys parentAvailableApplications =
             adminContext().callWith( () -> projectService.getAvailableApplications( parent.getName() ) );
@@ -980,7 +1015,7 @@ class ProjectServiceImplTest
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
-                                     final ProjectName parent, final AccessControlList permissions, final ApplicationKeys applications )
+                                     final ProjectName parent, final AccessControlList permissions, final SiteConfigs siteConfigs )
     {
         final CreateProjectParams.Builder params = CreateProjectParams.create()
             .name( name )
@@ -990,9 +1025,9 @@ class ProjectServiceImplTest
             .permissions( permissions )
             .forceInitialization( forceInitialization );
 
-        if ( applications != null )
+        if ( siteConfigs != null )
         {
-            applications.forEach( params::addApplication );
+            siteConfigs.forEach( params::addSiteConfig );
         }
 
         final Project project = projectService.create( params.build() );
@@ -1005,14 +1040,14 @@ class ProjectServiceImplTest
         return project;
     }
 
-    private Project doCreateProject( final ProjectName name, final ProjectName parent, final ApplicationKeys applications )
+    private Project doCreateProject( final ProjectName name, final ProjectName parent, final SiteConfigs siteConfigs )
     {
-        return this.doCreateProject( name, null, false, parent, null, applications );
+        return this.doCreateProject( name, null, false, parent, null, siteConfigs );
     }
 
-    private Project doCreateProject( final ProjectName name, final ApplicationKeys applications )
+    private Project doCreateProject( final ProjectName name, final SiteConfigs siteConfigs )
     {
-        return this.doCreateProject( name, null, false, null, null, applications );
+        return this.doCreateProject( name, null, false, null, null, siteConfigs );
     }
 
     private void assertProjectEquals( final Project p1, final Project p2 )

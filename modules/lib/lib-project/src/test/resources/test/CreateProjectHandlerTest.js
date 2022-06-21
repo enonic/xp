@@ -137,9 +137,20 @@ var createProjectWithApplicationsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    applications: [
-        'myapp1',
-        'myapp2'
+    siteConfig: [
+        {
+            applicationKey: 'appKey1',
+            config: {
+                a: 'a',
+                b: true
+            }
+        },
+        {
+            applicationKey: 'appKey2',
+            config: {
+                c: 4
+            }
+        }
     ],
     permissions: {},
     readAccess: {
@@ -153,10 +164,18 @@ exports.createProjectWithApplications = function () {
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},
-        applications: [
-            'myapp1',
-            'myapp2'
-        ]
+        siteConfig: [
+            {
+                applicationKey: 'appKey1',
+                config: {
+                    a: 'a', b: true
+                }
+            }, {
+                applicationKey: 'appKey2',
+                config: {
+                    c: 4, d: null
+                }
+            }]
     });
 
     assert.assertJsonEquals(createProjectWithApplicationsExpected, result);

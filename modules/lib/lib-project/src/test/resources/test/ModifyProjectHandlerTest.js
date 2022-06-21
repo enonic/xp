@@ -6,9 +6,20 @@ var modifyProjectExpected = {
     displayName: 'new display name',
     description: 'new description',
     language: 'fr',
-    applications: [
-        'app1',
-        'app2'
+    siteConfig: [
+        {
+            applicationKey: 'appKey1',
+            config: {
+                a: 'a',
+                b: true
+            }
+        },
+        {
+            applicationKey: 'appKey2',
+            config: {
+                c: 4
+            }
+        }
     ],
     permissions: {
         owner: [
@@ -32,7 +43,21 @@ exports.modifyProject = function () {
         displayName: 'new display name',
         description: 'new description',
         language: 'fr',
-        applications: ['app1', 'app2']
+        siteConfig: [
+            {
+                applicationKey: 'appKey1',
+                config: {
+                    a: 'a',
+                    b: true
+                }
+            },
+            {
+                applicationKey: 'appKey2',
+                config: {
+                    c: 4
+                }
+            }
+        ]
     });
 
 
@@ -120,8 +145,13 @@ var modifyApplicationsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    applications: [
-        'com.enonic.app.myapp1'
+    siteConfig: [
+        {
+            applicationKey: 'appKey2',
+            config: {
+                c: 4
+            }
+        }
     ],
     permissions: {
         owner: [
@@ -153,7 +183,14 @@ exports.modifyApplications = function () {
 
     var result = project.modify({
         id: 'myproject',
-        applications: ['com.enonic.app.myapp1']
+        siteConfig: [
+            {
+                applicationKey: 'appKey2',
+                config: {
+                    c: 4
+                }
+            }
+        ]
     });
 
     assert.assertJsonEquals(modifyApplicationsExpected, result);
