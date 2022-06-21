@@ -1,13 +1,9 @@
 package com.enonic.xp.lib.project;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.lib.project.command.ApplyProjectLanguageCommand;
 import com.enonic.xp.lib.project.command.GetProjectLanguageCommand;
 import com.enonic.xp.lib.project.command.GetProjectReadAccessCommand;
@@ -16,6 +12,8 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.site.SiteConfigs;
 
 public final class ModifyProjectHandler
     extends BaseProjectHandler
@@ -28,15 +26,15 @@ public final class ModifyProjectHandler
 
     private Locale language;
 
-    private ApplicationKeys applications;
+    private SiteConfigs siteConfigs;
 
     @Override
     protected ProjectMapper doExecute()
     {
-        final Project projectBeforeUpdate = this.projectService.get( this.id );
+        final Project projectBeforeUpdate = this.projectService.get().get( this.id );
         final ModifyProjectParams params = modifyProjectParams( projectBeforeUpdate );
 
-        final Project project = this.projectService.modify( params );
+        final Project project = this.projectService.get().modify( params );
 
         Locale projectLanguage;
         if ( this.language != null )
@@ -44,20 +42,20 @@ public final class ModifyProjectHandler
             projectLanguage = ApplyProjectLanguageCommand.create()
                 .projectName( this.id )
                 .language( this.language )
-                .contentService( this.contentService )
+                .contentService( this.contentService.get() )
                 .build()
                 .execute();
         }
         else
         {
             projectLanguage =
-                GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService ).build().execute();
+                GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
         }
 
         final Boolean isPublic =
-            GetProjectReadAccessCommand.create().projectName( this.id ).contentService( this.contentService ).build().execute();
+            GetProjectReadAccessCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
 
-        final ProjectPermissions projectPermissions = this.projectService.getPermissions( this.id );
+        final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( this.id );
 
         return ProjectMapper.create()
             .setProject( project )
@@ -74,11 +72,9 @@ public final class ModifyProjectHandler
             .displayName( this.displayName != null ? this.displayName : projectBeforeUpdate.getDisplayName() )
             .description( this.description != null ? this.description : projectBeforeUpdate.getDescription() );
 
-        final List<ApplicationKey> applications = this.applications != null
-            ? this.applications.stream().collect( Collectors.toList() )
-            : projectBeforeUpdate.getApplications().getList();
+        final SiteConfigs siteConfigs = this.siteConfigs != null ? this.siteConfigs : projectBeforeUpdate.getSiteConfigs();
 
-        applications.forEach( params::addApplication );
+        siteConfigs.forEach( params::addSiteConfig );
 
         return params.build();
     }
@@ -109,8 +105,8 @@ public final class ModifyProjectHandler
         this.language = buildLanguage( value );
     }
 
-    public void setApplications( final String[] value )
+    public void setSiteConfig( final ScriptValue value )
     {
-        this.applications = value != null ? ApplicationKeys.from( value ) : null;
+        this.siteConfigs = value != null ? SiteConfigs.from( buildSiteConfigs( value ) ) : null;
     }
 }

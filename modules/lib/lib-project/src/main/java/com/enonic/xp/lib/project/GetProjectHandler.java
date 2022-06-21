@@ -18,33 +18,32 @@ public final class GetProjectHandler
     @Override
     protected ProjectMapper doExecute()
     {
-        final Project project = this.projectService.get( this.id );
+        final Project project = this.projectService.get().get( this.id );
 
         if ( project == null )
         {
             return null;
         }
 
-        final ProjectPermissions projectPermissions = !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-            ? this.projectService.getPermissions( project.getName() )
-            : null;
+        final ProjectPermissions projectPermissions =
+            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? this.projectService.get()
+                .getPermissions( project.getName() ) : null;
 
-        final Boolean readAccess =
-            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? GetProjectReadAccessCommand.create().contentService(
-                this.contentService ).projectName( project.getName() ).build().execute() : null;
+        final Boolean readAccess = !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? GetProjectReadAccessCommand.create()
+            .contentService( this.contentService.get() )
+            .projectName( project.getName() )
+            .build()
+            .execute() : null;
 
-        final Locale language = GetProjectLanguageCommand.create().
-            projectName( this.id ).
-            contentService( this.contentService ).
-            build().
-            execute();
+        final Locale language =
+            GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
 
-        return ProjectMapper.create().
-            setProject( project ).
-            setLanguage( language ).
-            setProjectPermissions( projectPermissions ).
-            setIsPublic( readAccess ).
-            build();
+        return ProjectMapper.create()
+            .setProject( project )
+            .setLanguage( language )
+            .setProjectPermissions( projectPermissions )
+            .setIsPublic( readAccess )
+            .build();
     }
 
     public void setId( final String value )

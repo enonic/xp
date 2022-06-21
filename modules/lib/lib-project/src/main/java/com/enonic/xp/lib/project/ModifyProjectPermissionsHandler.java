@@ -15,11 +15,12 @@ public abstract class ModifyProjectPermissionsHandler
     @Override
     protected ProjectPermissionsMapper doExecute()
     {
-        final ProjectPermissions permissionsBeforeUpdate = this.projectService.getPermissions( this.id );
+        final ProjectPermissions permissionsBeforeUpdate = this.projectService.get().getPermissions( this.id );
 
         final ProjectPermissions projectPermissions = this.permissions != null
-            ? this.projectService.modifyPermissions( this.id, merge( permissionsBeforeUpdate, this.permissions ) )
-            : this.projectService.getPermissions( this.id );
+            ? this.projectService.get()
+            .modifyPermissions( this.id, merge( permissionsBeforeUpdate, this.permissions ) )
+            : this.projectService.get().getPermissions( this.id );
 
         return new ProjectPermissionsMapper( projectPermissions );
     }

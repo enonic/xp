@@ -10,7 +10,7 @@ public final class DeleteProjectHandler
     @Override
     protected Boolean doExecute()
     {
-        return this.projectService.delete( this.id );
+        return this.projectService.get().delete( this.id );
     }
 
     public void setId( final String value )
