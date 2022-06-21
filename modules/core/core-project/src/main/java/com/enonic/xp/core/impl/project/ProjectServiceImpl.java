@@ -8,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -65,12 +66,15 @@ import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
 
 public class ProjectServiceImpl
     implements ProjectService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
+
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private final RepositoryService repositoryService;
 
@@ -291,12 +295,10 @@ public class ProjectServiceImpl
     {
         final Project project = doGet( projectName );
 
-        final List<ApplicationKey> projectApps = project.getApplications() != null ? project.getApplications().getList() : List.of();
+        final Collection<ApplicationKey> projectApps = project.getSiteConfigs().getApplicationKeys();
 
-        return ApplicationKeys.from(
-            Stream.concat( projectApps.stream(), doGetParents( project ).stream().flatMap( parent -> parent.getApplications().stream() ) )
-                .distinct()
-                .collect( Collectors.toList() ) );
+        return ApplicationKeys.from( Stream.concat( projectApps.stream(), doGetParents( project ).stream()
+            .flatMap( parent -> parent.getSiteConfigs().getApplicationKeys().stream() ) ).distinct().collect( Collectors.toList() ) );
     }
 
     @Override
@@ -459,10 +461,9 @@ public class ProjectServiceImpl
         {
             projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
         }
-        if ( !params.getApplications().isEmpty() )
+        if ( !params.getSiteConfigs().getApplicationKeys().isEmpty() )
         {
-            projectData.addStrings( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY,
-                                    params.getApplications().stream().map( ApplicationKey::getName ).collect( Collectors.toList() ) );
+            SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), projectData );
         }
 
         return data;
@@ -480,9 +481,8 @@ public class ProjectServiceImpl
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
 
-        projectData.removeProperties( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY );
-        projectData.addStrings( ProjectConstants.PROJECT_APPLICATIONS_PROPERTY,
-                                params.getApplications().stream().map( ApplicationKey::getName ).collect( Collectors.toList() ) );
+        projectData.removeProperties( ProjectConstants.PROJECT_SITE_CONFIG_PROPERTY );
+        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), projectData );
 
         return data;
     }

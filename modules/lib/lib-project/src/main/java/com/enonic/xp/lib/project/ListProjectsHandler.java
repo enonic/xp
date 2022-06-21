@@ -17,33 +17,34 @@ public final class ListProjectsHandler
     @Override
     protected List<ProjectMapper> doExecute()
     {
-        final Projects projects = this.projectService.list();
+        final Projects projects = this.projectService.get().list();
 
         return projects.stream().
             map( project -> {
-                final ProjectPermissions projectPermissions =
-                    !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? this.projectService.getPermissions(
-                        project.getName() ) : null;
+            final ProjectPermissions projectPermissions =
+                !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? this.projectService.get()
+                    .getPermissions( project.getName() ) : null;
 
-                final Boolean readAccess = !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                    ? GetProjectReadAccessCommand.create().contentService( this.contentService ).projectName(
-                    project.getName() ).build().execute()
-                    : null;
+            final Boolean readAccess =
+                !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? GetProjectReadAccessCommand.create()
+                    .contentService( this.contentService.get() )
+                    .projectName( project.getName() )
+                    .build()
+                    .execute() : null;
 
-                final Locale language = GetProjectLanguageCommand.create().
-                    projectName( project.getName() ).
-                    contentService( this.contentService ).
-                    build().
-                    execute();
+            final Locale language = GetProjectLanguageCommand.create()
+                .projectName( project.getName() )
+                .contentService( this.contentService.get() )
+                .build()
+                .execute();
 
-                return ProjectMapper.create().
-                    setProject( project ).
-                    setLanguage( language ).
-                    setProjectPermissions( projectPermissions ).
-                    setIsPublic( readAccess ).
-                    build();
+            return ProjectMapper.create()
+                .setProject( project )
+                .setLanguage( language )
+                .setProjectPermissions( projectPermissions )
+                .setIsPublic( readAccess )
+                .build();
 
-            } ).
-            collect( Collectors.toList() );
+        } ).collect( Collectors.toList() );
     }
 }

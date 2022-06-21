@@ -23,7 +23,7 @@ public final class ProjectConstants
 
     public static final String PROJECT_PARENTS_PROPERTY = "parents";
 
-    public static final String PROJECT_APPLICATIONS_PROPERTY = "applications";
+    public static final String PROJECT_SITE_CONFIG_PROPERTY = "siteConfig";
 
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
 

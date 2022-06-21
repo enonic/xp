@@ -4,11 +4,12 @@ import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.site.SiteConfig;
 
 public final class ProjectMapper
     implements MapSerializable
@@ -48,7 +49,7 @@ public final class ProjectMapper
         gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
-        serializeApplications( gen );
+        serializeSiteConfigs( gen );
         serializePermissions( gen );
         serializeReadAccess( gen );
     }
@@ -63,14 +64,21 @@ public final class ProjectMapper
         new ProjectReadAccessMapper( isPublic ).serialize( gen );
     }
 
-    private void serializeApplications( final MapGenerator gen )
+    private void serializeSiteConfigs( final MapGenerator gen )
     {
-        if ( !project.getApplications().isEmpty() )
+        if ( !project.getSiteConfigs().isEmpty() )
         {
-            gen.array( "applications" );
-            for ( final ApplicationKey application : project.getApplications() )
+            gen.array( "siteConfig" );
+            for ( final SiteConfig siteConfig : project.getSiteConfigs() )
             {
-                gen.value( application.getName() );
+                gen.map();
+                gen.value( "applicationKey", siteConfig.getApplicationKey() );
+
+                gen.map( "config" );
+                new PropertyTreeMapper( siteConfig.getConfig() ).serialize( gen );
+                gen.end();
+
+                gen.end();
             }
             gen.end();
         }
