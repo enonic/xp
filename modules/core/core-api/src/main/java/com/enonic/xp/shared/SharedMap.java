@@ -4,11 +4,12 @@ import java.util.function.Function;
 
 /**
  * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
+ * Due to distributed nature of Shared Map it is recommended to use only Standard Serializable Java classes as keys and values. Other types may not work as expected.
  * <p>
  * WARNING: SharedMap has no guarantees for value mutability or immutability. Make sure you don't modify the values in-place.
  *
- * @param <K> the type of keys maintained by this map. Can only be standard Java classes.
- * @param <V> the type of values maintained by this map. Can only be standard Java classes.
+ * @param <K> the type of keys maintained by this map.
+ * @param <V> the type of values maintained by this map.
  */
 public interface SharedMap<K, V>
 {
@@ -41,7 +42,7 @@ public interface SharedMap<K, V>
      *
      * @param key        key of the entry
      * @param value      value of the entry
-     * @param ttlSeconds maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
+     * @param ttlSeconds maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map provider (for instance Hazelcast) default or infinite if map provider does not have own TTL setting)
      */
     void set( K key, V value, int ttlSeconds );
 
@@ -64,7 +65,7 @@ public interface SharedMap<K, V>
      * @param modifier   mapping function that accepts the existing mapped value (or null, if there is no associated mapping).
      *                   The returned value replaces the existing mapped value for the specified key.
      *                   If returned value is null then the value is removed from the map
-     * @param ttlSeconds maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
+     * @param ttlSeconds maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map provider (for instance Hazelcast) default or infinite if map provider does not have own TTL setting)
      * @return the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
      */
     V modify( K key, Function<V, V> modifier, int ttlSeconds );
