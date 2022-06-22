@@ -15,6 +15,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
@@ -191,5 +193,26 @@ public final class TestDataFixtures
     public static IdProvider newIdProvider()
     {
         return IdProvider.create().key( IdProviderKey.from( "myidprovider" ) ).displayName( "My id provider" ).build();
+    }
+
+    public static Project.Builder newDefaultProject()
+    {
+        final PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "long", 42L );
+        siteConfigConfig.addBoolean( "boolean", true );
+        siteConfigConfig.setString( "string", "my-string" );
+
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
+
+        final Project.Builder project = Project.create();
+
+        project.name( ProjectName.from( "default" ) );
+        project.displayName( "My Default Project" );
+        project.description( "Project Description" );
+
+        project.addSiteConfig( siteConfig );
+
+        return project;
     }
 }
