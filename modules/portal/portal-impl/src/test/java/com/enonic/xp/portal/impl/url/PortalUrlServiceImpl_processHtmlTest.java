@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,11 +23,9 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_processHtmlTest
@@ -402,6 +398,79 @@ public class PortalUrlServiceImpl_processHtmlTest
                 media.getId() +
                 ":8cf45815bba82c9711c673c9bb7304039a790026/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"/><figcaption>Caption text</figcaption></figure></p>",
             processedHtml );
+    }
+
+    @Test
+    public void processHtml_content_queryParams()
+    {
+        final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpg" ).build();
+
+        final Content content = Content.create( ContentFixtures.newContent() ).build();
+
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash" );
+
+        // test without query params
+        ProcessHtmlParams params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "\">Text</a></p>\n" );
+
+        String processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "\">Text</a></p>\n", processedHtml );
+
+        String queryParam = "query=k1%3Dv1%26k2%3Dv2"; // k1=v1&k2=v2
+        String fragmentParam = "fragment=some-fragment";
+
+        // test with query and fragment
+        params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) + "\">Text</a></p>\n" );
+
+        processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "?k1=v1&amp;k2=v2#some-fragment\">Text</a></p>\n",
+                      processedHtml );
+
+        // test only with query
+        params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
+
+        processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "?k1=v1&amp;k2=v2\">Text</a></p>\n",
+                      processedHtml );
+
+        // test only with fragment
+        params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "?" + fragmentParam + "\">Text</a></p>\n" );
+
+        processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "#some-fragment\">Text</a></p>\n",
+                      processedHtml );
+
+        // test with unsupported symbols in query and fragment
+        queryParam = "query=k%3Dh%C3%A5ndkl%C3%A6r"; // query=k=håndklær
+        fragmentParam = "fragment=h%C3%A5ndkl%C3%A6r"; // fragment=håndklær
+
+        // test with query and fragment
+        params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) + "\">Text</a></p>\n" );
+
+        processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "\">Text</a></p>\n", processedHtml );
+
+        // try to pass håndklær, where `å` and `æ` are encoded twice
+        // query=encodeFn('k=h' + encodeFn('å') + 'ndkl' + encodeFn('æ') + 'r'), where å = %25C3%25A5  æ = %25C3%25A6
+        queryParam = "query=k%3Dh%25C3%25A5ndkl%25C3%25A6r";
+
+        // test with query and fragment
+        params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
+
+        processedHtml = this.service.processHtml( params );
+        assertEquals( "<p><a href=\"/site/default/draft" + content.getPath() + "?k=h%C3%A5ndkl%C3%A6r\">Text</a></p>\n", processedHtml );
     }
 
     private void assertProcessHtml( String inputName, String expectedOutputName )
