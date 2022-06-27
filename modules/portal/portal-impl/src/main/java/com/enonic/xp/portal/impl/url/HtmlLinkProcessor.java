@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +15,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -28,6 +32,9 @@ import com.enonic.xp.style.StyleDescriptors;
 public class HtmlLinkProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
+    private static final int[] QUERY_OR_FRAGMENT_ALLOWED_CHARACTERS =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?/:@-._~!$&'()*+,;=%".chars().sorted().toArray();
 
     /*
      * Pattern Constants
@@ -122,7 +129,9 @@ public class HtmlLinkProcessor
                             type( urlType ).
                             id( id ).
                             portalRequest( portalRequest );
-                        final String pageUrl = portalUrlService.pageUrl( pageUrlParams );
+                        final String pageUrl = HtmlEscapers.htmlEscaper()
+                            .escape( addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString ) );
+
                         processedHtml = processedHtml.replaceFirst( Pattern.quote( attrValue ), "\"" + pageUrl + "\"" );
                         break;
                     case IMAGE_TYPE:
@@ -278,4 +287,33 @@ public class HtmlLinkProcessor
             split( query.replace( "&amp;", "&" ) );
     }
 
+    private String addQueryParamsIfPresent( final String url, final String urlQuery )
+    {
+        if ( urlQuery == null )
+        {
+            return url;
+        }
+        final String query = urlQuery.startsWith( "?" ) ? urlQuery.substring( 1 ) : urlQuery;
+
+        final StringBuilder urlSuffix = new StringBuilder();
+        final Map<String, String> queryParamsAsMap = extractUrlParams( query );
+
+        addComponentToUrlIfValid( queryParamsAsMap.get( "query" ), "?", urlSuffix );
+        addComponentToUrlIfValid( queryParamsAsMap.get( "fragment" ), "#", urlSuffix );
+
+        return url + urlSuffix.toString();
+    }
+
+    private void addComponentToUrlIfValid( final String value, final String mark, final StringBuilder builder )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+        final String decodedValue = URLDecoder.decode( value, StandardCharsets.UTF_8 );
+        if ( decodedValue.chars().allMatch( ch -> Arrays.binarySearch( QUERY_OR_FRAGMENT_ALLOWED_CHARACTERS, ch ) >= 0 ) )
+        {
+            builder.append( mark ).append( decodedValue );
+        }
+    }
 }
