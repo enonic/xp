@@ -73,7 +73,7 @@ public class TextRendererTest
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
         // verify
-        assertEquals( "<div data-portal-component-type=\"text\"><section></section></div>", portalResponse.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getAsString() );
     }
 
     @Test
@@ -105,7 +105,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getAsString() );
     }
 
 
@@ -155,7 +155,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getAsString() );
     }
 
     private static class MockMacroService
