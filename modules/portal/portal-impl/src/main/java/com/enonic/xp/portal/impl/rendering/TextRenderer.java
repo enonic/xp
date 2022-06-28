@@ -21,17 +21,9 @@ import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMP
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
-
     PortalUrlService service;
 
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
-        "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section></section></div>";
-
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></section>";
-
-    private static final String COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section>{1}</section></div>";
-
-    private static final String COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
+    private static final String COMPONENT_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
 
     @Override
     public Class<TextComponent> getType()
@@ -47,21 +39,21 @@ public final class TextRenderer
 
         portalResponseBuilder.contentType( MediaType.HTML_UTF_8 ).postProcess( false );
 
-        if ( textComponent.getText().isEmpty() )
+        final String text = textComponent.getText();
+        if ( renderMode == RenderMode.EDIT )
         {
-            renderEmptyTextComponent( textComponent, renderMode, portalResponseBuilder );
+            portalResponseBuilder.body( MessageFormat.format( COMPONENT_HTML, textComponent.getType().toString(), text ) );
         }
         else
         {
-            if ( renderMode == RenderMode.EDIT )
+            if ( text.isEmpty() )
             {
-                portalResponseBuilder.body(
-                    MessageFormat.format( COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString(), textComponent.getText() ) );
+                portalResponseBuilder.body( "" );
             }
             else
             {
                 ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).
-                    value( textComponent.getText() ).
+                    value( text ).
                     customHtmlProcessor( processor -> {
                         processor.processDefault();
                         processor.getDocument().select( "figcaption:empty" ).
@@ -70,32 +62,11 @@ public final class TextRenderer
                     } );
 
                 final String processedHtml = service.processHtml( params );
-                portalResponseBuilder.body(
-                    MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
+                portalResponseBuilder.body( MessageFormat.format( COMPONENT_HTML, textComponent.getType().toString(), processedHtml ) );
             }
         }
 
         return portalResponseBuilder.build();
-    }
-
-    private void renderEmptyTextComponent( final TextComponent textComponent, final RenderMode renderMode,
-                                           final PortalResponse.Builder portalResponseBuilder )
-    {
-        switch ( renderMode )
-        {
-            case EDIT:
-                portalResponseBuilder.body( MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, textComponent.getType().toString() ) );
-                break;
-
-            case PREVIEW:
-            case INLINE:
-                portalResponseBuilder.body( MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString() ) );
-                break;
-
-            default:
-                portalResponseBuilder.body( "" );
-                break;
-        }
     }
 
     @Reference
