@@ -1,10 +1,11 @@
-# Enonic XP lib-cluster TS types
+# Enonic XP lib-i18n TS types
 
-> TypeScript definitions for `lib-cluster` library of Enonic XP
+> TypeScript definitions for `lib-i18n` library of Enonic XP
+
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-cluster
+npm i --save-dev @enonic/lib-i18n
 ```
 
 ## Use
@@ -16,7 +17,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-cluster"
+      "@enonic-types/lib-i18n"
     ]
   }
 }
@@ -32,7 +33,7 @@ To make `require` work out of box, you must install and add the `@enonic-types/g
   "compilerOptions": {
     "types": [
 +     "@enonic-types/global"
-      "@enonic-types/lib-cluster"
+      "@enonic-types/lib-i18n"
     ]
   }
 }
@@ -40,7 +41,7 @@ To make `require` work out of box, you must install and add the `@enonic-types/g
 
 `example.ts`
 ```ts
-const {isMaster} = require('/lib/xp/cluster');
+const {localize, getPhrases, getSupportedLocales} = require('/lib/xp/i18n');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be found [here](https://github.com/enonic/xp/tree/master/modules/lib/typescript/README.md).
@@ -54,11 +55,11 @@ If you are planning to use `import` in your code and transpile it with the defau
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-cluster"
+      "@enonic-types/lib-i18n"
     ]
 +   "baseUrl": "./",
 +   "paths": {
-+     "/lib/xp/cluster": ["node_modules/@enonic-types/lib-cluster"],
++     "/lib/xp/i18n": ["node_modules/@enonic-types/lib-i18n"],
 +   }
   }
 }
@@ -66,7 +67,7 @@ If you are planning to use `import` in your code and transpile it with the defau
 
 `example.ts`
 ```ts
-import {isMaster} from '/lib/xp/cluster';
+import {localize, getPhrases, getSupportedLocales} from '/lib/xp/i18n';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
