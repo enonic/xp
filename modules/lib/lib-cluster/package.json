@@ -1,0 +1,32 @@
+{
+  "name": "lib-cluster",
+  "version": "0.1.0",
+  "description": "Type definitions for lib-cluster.",
+  "types": "cluster.d.ts",
+  "files": [
+    "cluster.d.ts"
+  ],
+  "scripts": {
+    "pre": "npm run --prefix ../ pre",
+    "prepublishOnly": "npm run pre",
+    "prepack": "npm run pre",
+    "packlist": "npx npm-packlist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enonic/xp.git#master"
+  },
+  "keywords": [
+    "enonic",
+    "enonic-xp",
+    "lib-cluster",
+    "cluster",
+    "types",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/enonic/xp/issues"
+  },
+  "homepage": "https://github.com/enonic/xp/tree/master#readme"
+}

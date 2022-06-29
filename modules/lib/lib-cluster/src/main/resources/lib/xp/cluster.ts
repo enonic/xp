@@ -1,3 +1,13 @@
+declare global {
+    interface XpLibraries {
+        '/lib/xp/cluster': typeof import('./cluster');
+    }
+}
+
+interface ClusterIsMasterHandler {
+    isMaster(): boolean;
+}
+
 /**
  * Cluster related functions.
  *
@@ -6,7 +16,6 @@
  *
  * @module cluster
  */
-/* global __*/
 
 /**
  * Tests whether the current node is the master node in the cluster.
@@ -15,7 +24,7 @@
  *
  * @returns {boolean} true if the current node is master; false otherwise.
  */
-exports.isMaster = function () {
-    var bean = __.newBean('com.enonic.xp.lib.cluster.ClusterIsMasterHandler');
+export function isMaster(): boolean {
+    const bean = __.newBean<ClusterIsMasterHandler>('com.enonic.xp.lib.cluster.ClusterIsMasterHandler');
     return __.toNativeObject(bean.isMaster());
-};
+}
