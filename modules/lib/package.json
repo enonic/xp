@@ -4,10 +4,11 @@
     "version": "1.0.0",
     "description": "Root package for libs development.",
     "scripts": {
-        "build:js": "npm run copy && tsc --project tsconfig.build.json",
+        "build:js": "npm run copy:resources && tsc --project tsconfig.build.json",
         "build:types": "tsc --declaration --emitDeclarationOnly",
         "build": "npm run build:js && npm run build:types",
-        "copy": "node copy.js",
+        "copy:package": "node utils/copyPackage.js",
+        "copy:resources": "node utils/copyResources.js",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
         "fix": "eslint --fix .",
@@ -18,11 +19,9 @@
         "type": "git",
         "url": "git+https://github.com/enonic/xp.git#master"
     },
-    "author": {
-        "name": "Mikita Taukachou",
-        "email": "edloidas@gmail.com",
-        "url": "https://edloidas.github.io/"
-    },
+    "contributors": [
+        "Mikita Taukachou <edloidas@gmail.com> (https://edloidas.github.io/)"
+    ],
     "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/enonic/xp/issues"

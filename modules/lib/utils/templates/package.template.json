@@ -1,10 +1,10 @@
 {
-    "name": "lib-common",
-    "version": "0.1.0",
-    "description": "Type definitions for lib-common.",
-    "types": "common.d.ts",
+    "name": "lib-%NAME%",
+    "version": "%VERSION%",
+    "description": "Type definitions for lib-%NAME%.",
+    "types": "%NAME%.d.ts",
     "files": [
-        "common.d.ts"
+        "%NAME%.d.ts"
     ],
     "scripts": {
         "pre": "npm run --prefix ../ pre",
@@ -19,16 +19,14 @@
     "keywords": [
         "enonic",
         "enonic-xp",
-        "lib-common",
-        "common",
+        "lib-%NAME%",
+        "%NAME%",
         "types",
         "typescript"
     ],
-    "author": {
-        "name": "Mikita Taukachou",
-        "email": "edloidas@gmail.com",
-        "url": "https://edloidas.github.io/"
-    },
+    "contributors": [
+        "Mikita Taukachou <edloidas@gmail.com> (https://edloidas.github.io/)"
+    ],
     "license": "Apache-2.0",
     "bugs": {
         "url": "https://github.com/enonic/xp/issues"
