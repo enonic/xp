@@ -21,6 +21,7 @@ declare const __: {
     toNativeObject: <T = unknown>(beanResult: T) => T;
     toScriptValue: <T = object>(value: T) => T;
     disposer: (callback: (...args: unknown[]) => unknown) => void;
+    nullOrValue: <T = object>(value: T) => T | null | undefined;
 };
 
 declare type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
