@@ -1,6 +1,6 @@
 {
     "name": "lib-%NAME%",
-    "version": "0.1.0",
+    "version": "%VERSION%",
     "description": "Type definitions for lib-%NAME%.",
     "types": "%NAME%.d.ts",
     "files": [
