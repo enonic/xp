@@ -105,7 +105,7 @@ public class UnpublishContentCommand
             {
                 params.getPublishContentListener().contentPushed( 1 );
             }
-            contentsBuilder.add( ContentId.from( nodes.first().toString() ) );
+            contentsBuilder.add( ContentId.from( nodes.first() ) );
         }
     }
 

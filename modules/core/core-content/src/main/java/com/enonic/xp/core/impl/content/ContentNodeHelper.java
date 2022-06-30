@@ -72,7 +72,7 @@ class ContentNodeHelper
 
     public static ContentIds toContentIds( final NodeIds nodeIds )
     {
-        return ContentIds.from( nodeIds.stream().map( nodeId -> ContentId.from( nodeId.toString() ) ).collect( Collectors.toList() ) );
+        return ContentIds.from( nodeIds.stream().map( ContentId::from ).collect( Collectors.toList() ) );
     }
 
     public static NodePath getContentRoot()

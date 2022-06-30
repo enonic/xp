@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -41,13 +40,8 @@ final class GetContentByIdsCommand
 
     private NodeIds getAsNodeIds( final ContentIds contentIds )
     {
-        final List<NodeId> nodeIds = new ArrayList<>();
-
-        contentIds.forEach( contentId -> nodeIds.add( NodeId.from( contentId ) ) );
-
-        return NodeIds.from( nodeIds );
+        return NodeIds.from( contentIds.stream().map( NodeId::from ).collect( Collectors.toList() ) );
     }
-
 
     public static Builder create( final GetContentByIdsParams params )
     {

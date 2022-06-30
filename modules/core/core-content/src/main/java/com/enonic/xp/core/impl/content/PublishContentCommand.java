@@ -112,7 +112,7 @@ public class PublishContentCommand
         }
 
         final ContentIds pushContentsIds = ContentIds.from( pushNodesIds.build().stream().
-            map( ( n ) -> ContentId.from( n.toString() ) ).
+            map( ContentId::from ).
             toArray( ContentId[]::new ) );
 
         final boolean validContents = checkIfAllContentsValid( pushContentsIds );

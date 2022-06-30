@@ -44,7 +44,7 @@ final class FindContentIdsByQueryCommand
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
         result.getNodeHits().forEach( nodeHit -> {
-            final ContentId contentId = ContentId.from( nodeHit.getNodeId().toString() );
+            final ContentId contentId = ContentId.from( nodeHit.getNodeId() );
 
             scoreValues.put( contentId, nodeHit.getScore() );
 

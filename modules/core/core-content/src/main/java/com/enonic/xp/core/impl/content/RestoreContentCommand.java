@@ -104,7 +104,7 @@ final class RestoreContentCommand
 
         commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
 
-        result.addRestored( ContentId.from( movedNode.id().toString() ) )
+        result.addRestored( ContentId.from( movedNode.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
 
         return result.build();

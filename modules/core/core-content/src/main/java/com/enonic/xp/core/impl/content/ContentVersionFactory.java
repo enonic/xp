@@ -37,7 +37,7 @@ class ContentVersionFactory
 
     public ContentVersions create( final NodeId nodeId, final NodeVersionsMetadata nodeVersionsMetadata )
     {
-        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().contentId( ContentId.from( nodeId.toString() ) );
+        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().contentId( ContentId.from( nodeId ) );
 
         for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
         {

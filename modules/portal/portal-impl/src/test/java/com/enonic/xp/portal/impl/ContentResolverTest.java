@@ -177,6 +177,29 @@ class ContentResolverTest
     }
 
     @Test
+    void resolve_path_in_edit_mode()
+    {
+        // CS should stop sending paths in EDIT mode.
+        // But for now we support it.
+        final Content content = newContent();
+        final Site site = newSite();
+
+        final PortalRequest request = new PortalRequest();
+        request.setMode( RenderMode.EDIT );
+
+        request.setContentPath( ContentPath.from( "/mysite/landing-page" ) );
+
+        when( this.contentService.getByPath( ContentPath.from( "/mysite/landing-page" ) ) ).thenReturn( content );
+        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertSame( content, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page", result.getSiteRelativePath() );
+    }
+
+    @Test
     void resolve_self_in_live_mode()
     {
         final Site site = newSite();
