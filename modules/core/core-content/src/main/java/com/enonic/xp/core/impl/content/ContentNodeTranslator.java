@@ -95,7 +95,7 @@ public class ContentNodeTranslator
 
     private Content doTranslate( final Node node, final boolean hasChildren, final boolean allowAltRootPath )
     {
-        final ContentId contentId = ContentId.from( node.id().toString() );
+        final ContentId contentId = ContentId.from( node.id() );
 
         if ( !allowAltRootPath && !( node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) ||
             node.path().equals( ContentNodeHelper.getContentRoot() ) ) )

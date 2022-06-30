@@ -44,7 +44,7 @@ final class FindContentByQueryCommand
 
         final Map<ContentId, HighlightedProperties> highlight = result.getNodeHits().stream().
             filter( nodeHit -> nodeHit.getHighlight() != null && nodeHit.getHighlight().size() > 0 ).
-            collect( Collectors.toMap( hit -> ContentId.from( hit.getNodeId().toString() ), NodeHit::getHighlight ) );
+            collect( Collectors.toMap( hit -> ContentId.from( hit.getNodeId() ), NodeHit::getHighlight ) );
 
         final Nodes foundNodes = this.nodeService.getByIds( nodeIds );
 

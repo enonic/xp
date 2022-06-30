@@ -66,7 +66,7 @@ public class ResolveRequiredDependenciesCommand
 
                 if ( !CompareStatus.NEWER.equals( comparison.getCompareStatus() ) )
                 {
-                    return ContentId.from( comparison.getNodeId().toString() );
+                    return ContentId.from( comparison.getNodeId() );
                 }
                 return null;
             } ).

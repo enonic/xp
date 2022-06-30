@@ -132,7 +132,7 @@ final class DeleteContentCommand
                 nodeState( NodeState.PENDING_DELETE ).
                 build() );
 
-            result.addPending( ContentId.from( nodeToDelete.toString() ) );
+            result.addPending( ContentId.from( nodeToDelete ) );
             this.nodesDeleted( 1 );
 
             final NodeIds children = getDirectChildren( nodeToDelete );
@@ -192,7 +192,7 @@ final class DeleteContentCommand
             filter( id -> !masterNodes.contains( id ) ).
             forEach( id -> {
                 deleteNodeInContext( id, masterContext );
-                result.addUnpublished( ContentId.from( id.toString() ) );
+                result.addUnpublished( ContentId.from( id ) );
             } );
     }
 

@@ -32,9 +32,4 @@ public final class NodeId
     {
         return new NodeId( object );
     }
-
-    public static NodeId from( final UUID object )
-    {
-        return new NodeId( object );
-    }
 }

@@ -12,9 +12,9 @@ public final class ContentId extends UUID
         super(id);
     }
 
-    private ContentId( final UUID id )
+    private ContentId( final Object id )
     {
-        super(id);
+        super( id );
     }
 
     @Override
@@ -36,6 +36,11 @@ public final class ContentId extends UUID
     }
 
     public static ContentId from( final String id )
+    {
+        return new ContentId( id );
+    }
+
+    public static ContentId from( final Object id )
     {
         return new ContentId( id );
     }

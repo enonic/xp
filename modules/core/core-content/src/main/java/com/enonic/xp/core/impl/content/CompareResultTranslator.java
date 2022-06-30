@@ -27,7 +27,7 @@ class CompareResultTranslator
 
     private static CompareContentResult doTranslate( final NodeComparison nodeComparison )
     {
-        return new CompareContentResult( nodeComparison.getCompareStatus(), ContentId.from( nodeComparison.getNodeId().toString() ) );
+        return new CompareContentResult( nodeComparison.getCompareStatus(), ContentId.from( nodeComparison.getNodeId() ) );
     }
 
 }

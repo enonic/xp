@@ -53,18 +53,29 @@ public class ContentResolver
 
     private ContentResolverResult resolveInEditMode( final ContentPath contentPath )
     {
-        final ContentId contentId = ContentId.from( contentPath.toString().substring( 1 ) );
+        final String contentPathString = contentPath.toString();
 
-        final Content content = Optional.ofNullable( getContentById( contentId ) ).orElseGet( () -> getContentByPath( contentPath ) );
+        ContentId contentId;
+
+        try
+        {
+            contentId = ContentId.from( contentPathString.substring( 1 ) );
+        }
+        catch ( Exception e )
+        {
+            contentId = null;
+        }
+
+        final Content content =
+            Optional.ofNullable( contentId ).map( this::getContentById ).orElseGet( () -> getContentByPath( contentPath ) );
 
         final boolean contentExists = content != null || contentExistsById( contentId ) || contentExistsByPath( contentPath );
 
         final Site site = content != null ? callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) ) : null;
 
         return new ContentResolverResult( content, contentExists, site,
-                                          siteRelativePath( site, content == null ? null : content.getPath() ), contentPath.toString() );
+                                          siteRelativePath( site, content == null ? null : content.getPath() ), contentPathString );
     }
-
     private Content getContentById( final ContentId contentId )
     {
         try

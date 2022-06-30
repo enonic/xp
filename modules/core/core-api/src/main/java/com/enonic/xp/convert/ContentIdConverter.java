@@ -19,6 +19,6 @@ final class ContentIdConverter
             return (ContentId) value;
         }
 
-        return ContentId.from( value.toString() );
+        return ContentId.from( value );
     }
 }
