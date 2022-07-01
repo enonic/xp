@@ -1,3 +1,9 @@
+declare global {
+    interface XpLibraries {
+        '/lib/xp/admin': typeof import('./admin');
+    }
+}
+
 /**
  * Admin related functions.
  *
@@ -6,80 +12,101 @@
  *
  * @module admin
  */
-/* global __*/
 
-var i18n = require('/lib/xp/i18n');
-var portal = require('/lib/xp/portal');
-var helper = __.newBean('com.enonic.xp.lib.admin.AdminLibHelper');
+const i18n = require('/lib/xp/i18n');
+const portal = require('/lib/xp/portal');
 
+const helper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
 
-var adminToolsUriPrefix = '/admin/tool';
+interface AdminLibHelper {
+    getHomeAppName(): string;
+
+    generateAdminToolUri(application: string, adminTool: string): string;
+
+    getAssetsUri(): string;
+
+    getBaseUri(): string;
+
+    getHomeToolUri(): string;
+
+    getInstallation(): string;
+
+    getLauncherToolUrl(): string;
+
+    getLocale(): string;
+
+    getLocales(): string[];
+
+    getPhrases(): string;
+
+    getVersion(): string;
+}
 
 /**
  * Returns the admin base uri.
  *
  * @returns {string} Admin base uri.
  */
-exports.getBaseUri = function () {
+export function getBaseUri(): string {
     return helper.getBaseUri();
-};
+}
 
 /**
  * Returns the admin assets uri.
  *
  * @returns {string} Assets uri.
  */
-exports.getAssetsUri = function () {
+export function getAssetsUri(): string {
     return helper.getAssetsUri();
-};
+}
 
 /**
  * Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
  *
  * @returns {string} Current locale.
  */
-exports.getLocale = function () {
+export function getLocale(): string {
     return helper.getLocale();
-};
+}
 
 /**
  * Returns the list of preferred locales based on the current HTTP request, or the server default locale if none is specified.
  *
  * @returns {string[]} Current locales in order of preference.
  */
-exports.getLocales = function () {
+export function getLocales(): string[] {
     return __.toNativeObject(helper.getLocales());
-};
+}
 
 /**
  * Returns all i18n phrases.
  *
  * @returns {object} JSON object with phrases.
  */
-exports.getPhrases = function () {
-    return JSON.stringify(i18n.getPhrases(exports.getLocales(), ['i18n/common', 'i18n/phrases']));
-};
+export function getPhrases(): string {
+    return JSON.stringify(i18n.getPhrases(getLocales(), ['i18n/common', 'i18n/phrases']));
+}
 
 /**
  * Returns the URL for launcher panel.
  *
  * @returns {string} URL.
  */
-exports.getLauncherUrl = function () {
+export function getLauncherUrl(): string {
     return helper.getLauncherToolUrl();
-};
+}
 
 /**
  * Returns the URL for launcher javascript.
  *
  * @returns {string} Path.
  */
-exports.getLauncherPath = function () {
+export function getLauncherPath(): string {
     return portal.assetUrl({
         application: helper.getHomeAppName(),
         path: '/js/launcher/bundle.js'
     });
-};
+}
 
 /**
  * Returns the URL for an admin tool of specific application.
@@ -88,13 +115,13 @@ exports.getLauncherPath = function () {
  *
  * @returns {string} URL.
  */
-exports.getToolUrl = function (application, tool) {
+export function getToolUrl(application: string, tool: string) {
     if (application) {
         return helper.generateAdminToolUri(application, tool);
     }
 
-    return helper.generateHomeToolUri();
-};
+    return helper.getHomeToolUri();
+}
 
 /**
  * Returns the URL for the Home admin tool.
@@ -103,27 +130,33 @@ exports.getToolUrl = function (application, tool) {
  *
  * @returns {string} URL.
  */
-exports.getHomeToolUrl = function (params) {
+export function getHomeToolUrl(params: GetHomeToolUrlParams) {
     return portal.url({
-        path: adminToolsUriPrefix,
-        type: params && params.type
+        path: '/admin/tool',
+        type: params?.type,
     });
-};
+}
+
+export interface GetHomeToolUrlParams {
+    type: HomeToolUrlType;
+}
+
+export type HomeToolUrlType = 'server' | 'absolute';
 
 /**
  * Returns installation name.
  *
  * @returns {string} Installation name.
  */
-exports.getInstallation = function () {
+export function getInstallation(): string {
     return helper.getInstallation();
-};
+}
 
 /**
  * Returns version of XP installation.
  *
  * @returns {string} Version.
  */
-exports.getVersion = function () {
+export function getVersion(): string {
     return helper.getVersion();
-};
+}

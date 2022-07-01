@@ -15,7 +15,7 @@ export interface LocalizeParams {
 interface LocaleScriptBean {
     localize(key: string, locales: string[], values: string[], bundles?: string[] | null): string;
 
-    getPhrases(locale: string[], bundles: string[]): object;
+    getPhrases(locale: string[], bundles: string[]): Record<string, string>;
 
     getSupportedLocales(bundles: string[]): string[];
 
@@ -72,7 +72,7 @@ export function localize(params: LocalizeParams): string {
  * @example
  * i18nLib.getPhrases('en', ['i18n/phrases'])
  */
-export function getPhrases(locale: string | string[], bundles: string[]): object {
+export function getPhrases(locale: string | string[], bundles: string[]): Record<string, string> {
     const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
     const locales: string[] = ([] as string[]).concat(locale);
     return __.toNativeObject(bean.getPhrases(locales, bundles));
