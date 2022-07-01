@@ -1,6 +1,9 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
+    implementation 'org.osgi:org.osgi.service.cm:1.6.1'
+
+    implementation "commons-io:commons-io:${commonsIoVersion}"
 }
 
 jar {

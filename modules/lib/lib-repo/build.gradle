@@ -1,8 +1,8 @@
 dependencies {
-    compile project( ':lib:lib-common' )
-    compile project( ':lib:lib-value' )
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
+    implementation project( ':lib:lib-common' )
+    implementation project( ':lib:lib-value' )
 
     testImplementation project( ':tools:testing' )
 }

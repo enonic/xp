@@ -3,8 +3,8 @@ dependencies {
     compileOnly project( ':admin:admin-api' )
     compileOnly project( ':script:script-api' )
     compileOnly project( ':portal:portal-api' )
-    compile project( ':lib:lib-i18n' )
-    compile project( ':lib:lib-portal' )
+    implementation project( ':lib:lib-i18n' )
+    implementation project( ':lib:lib-portal' )
 
     testImplementation project( ':tools:testing' )
 }

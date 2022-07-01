@@ -21,43 +21,58 @@ check.dependsOn lint
 
 /* Configure & Build */
 
-def globalNpmDirPath = "$buildDir/npm"
-
 task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create JS and DTS files from TS'
     args = [ 'run', 'build' ]
 
-    inputs.files( fileTree( project.projectDir ).matching {
-        include "lib-*/src/main/resources/**/*.ts"
-        include "lib-*/build/resources/main/lib/xp/*.js"
-        include "lib-*/build/resources/main/lib/xp/*.ts"
-    })
+    inputs.files( subprojects.buildDir.collect { fileTree("$it/typescript/lib/xp/").matching {
+        include "**/*.ts"
+    }} )
+    inputs.file "global.d.ts"
 
-    outputs.files( fileTree( project.projectDir ).matching {
-        include "lib-*/build/resources/main/lib/xp/*.js"
-        include "lib-*/build/resources/main/lib/xp/*.ts"
-    })
+    inputs.file "tsconfig.build.json"
+    inputs.file "tsconfig.json"
+
+    outputs.files( subprojects.buildDir.collect { fileTree("$it/typescript/lib/xp/").matching {
+        include "**/*.js"
+    }} )
 }
 
 task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
     into "$buildDir/js"
-    from projectDir
-    include "lib-*/build/resources/main/lib/xp/**/*.js"
+    into("") {
+        from projectDir
+        include "lib-*/build/typescript/lib/xp/*.js"
+        eachFile { fcd ->
+            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(3))
+        }
+
+    }
+    into ("examples") {
+        from projectDir
+        include "lib-*/src/main/resources/lib/xp/examples/**/*.js"
+        eachFile { fcd ->
+            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(5))
+        }
+    }
+    includeEmptyDirs = false
 }
 
 task jsdoc(type: NpmTask, dependsOn: prepareToJsdoc) {
     description = 'Build JSDoc for libraries.'
     args = ['run', 'jsdoc']
-    copy {
-        from 'jsdoc/template/jsdoc-main.css'
-        into "$buildDir/resources/main/jsdoc/styles"
+    doFirst {
+        copy {
+            from 'jsdoc/template/jsdoc-main.css'
+            into "$buildDir/resources/main/jsdoc/styles"
+        }
     }
 }
 
 /* Publish */
 
 task prepareToPublish( type: Copy ) {
-    into globalNpmDirPath
+    into "$buildDir/npm"
 
     from 'README.md'
     from 'global.d.ts'
@@ -77,10 +92,10 @@ task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish, npmInstall ] ) 
     onlyIf { !version.endsWith('-SNAPSHOT') }
 
     args = [ 'publish' ]
-    workingDir = file( globalNpmDirPath )
+    workingDir = prepareToPublish.destinationDir
 }
 
-task packageJsdoc(type: Jar, dependsOn: 'jsdoc') {
+task packageJsdoc(type: Jar, dependsOn: jsdoc) {
     from "$buildDir/resources/main/jsdoc"
     classifier = 'jsdoc'
 }
@@ -102,23 +117,33 @@ publishing.publications {
 }
 
 subprojects {
-    if ( !isTsProject( project ) )
-    {
-        return
-    }
-
     apply plugin: 'com.github.node-gradle.node'
 
-    def npmDirPath = "$buildDir/npm"
+    task prepareToTypescript( type: Copy ) {
+        from ("src/main/resources") {
+            include '**/*.ts'
+            includeEmptyDirs = false
+        }
+        into "$buildDir/typescript"
+    }
 
-    task prepareToPublish( type: Copy, dependsOn: [ processResources, parent.typescript ] ) {
+    parent.typescript.dependsOn prepareToTypescript
+
+    processResources {
+        from( "$buildDir/typescript" ) {
+            include '**/*.js'
+        }
+        dependsOn parent.typescript
+    }
+
+    task prepareToPublish( type: Copy, dependsOn: processResources ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
 
-        into npmDirPath
+        into "$buildDir/npm"
 
         from( 'README.md' )
-        from( "$buildDir/resources/main/lib/xp/" ) {
+        from( "$buildDir/typescript/lib/xp/" ) {
             include '*.d.ts'
         }
 
@@ -133,30 +158,17 @@ subprojects {
         }
     }
 
-    task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish ] ) {
+    task publishToNpm( type: NpmTask, dependsOn: prepareToPublish ) {
         onlyIf { !version.endsWith('-SNAPSHOT') }
         args = [ 'publish' ]
-        workingDir = file( npmDirPath )
+        workingDir = prepareToPublish.destinationDir
     }
 
     publish.dependsOn publishToNpm
 
     check.dependsOn parent.lint
 
-    parent.typescript.dependsOn processResources
-
-    test {
-        dependsOn parent.typescript
-    }
-
     jar {
         exclude '**/*.ts'
-        dependsOn parent.typescript
     }
-}
-
-def isTsProject( Project p ) {
-    return fileTree("${p.projectDir}/src/main/resources/lib/xp").matching {
-        include { FileTreeElement details -> details.file.isFile() && details.file.name.endsWith( '.ts' ) }
-    }.size() > 0
 }

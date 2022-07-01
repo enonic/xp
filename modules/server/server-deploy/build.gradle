@@ -2,6 +2,8 @@ dependencies {
     implementation project( ':core:core-api' )
     //TODO Temporary fix. See issue xp#7003
     implementation project( ':admin:admin-api' )
+
+    implementation "commons-io:commons-io:${commonsIoVersion}"
 }
 
 jar {

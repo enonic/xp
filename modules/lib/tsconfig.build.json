@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig",
     "include": [
-        "./lib-*/build/resources/main/",
+      "./lib-*/build/typescript/",
       "./global.d.ts"
     ],
     "exclude": [

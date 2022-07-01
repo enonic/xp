@@ -1,7 +1,7 @@
 dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
-    compile project( ':lib:lib-common' )
+    implementation project( ':lib:lib-common' )
 
     testImplementation project( ':tools:testing' )
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
