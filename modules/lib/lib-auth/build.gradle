@@ -2,8 +2,8 @@ dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
     compileOnly project( ':portal:portal-api' )
-    compile project( ':lib:lib-common' )
-    compile project( ':lib:lib-value' )
+    implementation project( ':lib:lib-common' )
+    implementation project( ':lib:lib-value' )
 
     testImplementation( testFixtures( project( ':core:core-api' ) ) )
     testImplementation project( ':tools:testing' )
