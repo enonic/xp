@@ -1,11 +1,11 @@
-# Enonic XP lib-admin TS types
+# Enonic XP lib-auth TS types
 
-> TypeScript definitions for `lib-admin` library of Enonic XP
+> TypeScript definitions for `lib-auth` library of Enonic XP
 
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-admin
+npm i --save-dev @enonic/lib-auth
 ```
 
 ## Use
@@ -18,7 +18,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-admin"
+      "@enonic-types/lib-auth"
     ]
   }
 }
@@ -36,7 +36,7 @@ objects, e.g. `log`, `app`, `__`, etc, requiring library by the default path wil
   "compilerOptions": {
     "types": [
 +     "@enonic-types/global"
-      "@enonic-types/lib-admin"
+      "@enonic-types/lib-auth"
     ]
   }
 }
@@ -45,7 +45,7 @@ objects, e.g. `log`, `app`, `__`, etc, requiring library by the default path wil
 `example.ts`
 
 ```ts
-const {getBaseUri, getAssetsUri, getHomeToolUrl, HomeToolUrlType} = require('/lib/xp/admin');
+const {login, logout, getUser, generatePassword} = require('/lib/xp/auth');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be
@@ -62,11 +62,11 @@ types mapping to your configuration.
 {
   "compilerOptions": {
     "types": [
-      "@enonic-types/lib-admin"
+      "@enonic-types/lib-auth"
     ]
 +   "baseUrl": "./",
 +   "paths": {
-+     "/lib/xp/admin": ["node_modules/@enonic-types/lib-admin"],
++     "/lib/xp/auth": ["node_modules/@enonic-types/lib-auth"],
 +   }
   }
 }
@@ -75,7 +75,7 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {getBaseUri, getAssetsUri, getHomeToolUrl, HomeToolUrlType} from '/lib/xp/admin';
+import {login, logout, getUser, generatePassword} from '/lib/xp/auth';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
