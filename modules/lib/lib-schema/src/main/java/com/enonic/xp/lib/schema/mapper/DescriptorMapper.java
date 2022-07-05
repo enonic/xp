@@ -3,7 +3,6 @@ package com.enonic.xp.lib.schema.mapper;
 import java.time.Instant;
 import java.util.Optional;
 
-import com.enonic.xp.form.Form;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
@@ -37,13 +36,8 @@ public abstract class DescriptorMapper
         gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );
 
-        serializeConfig( gen );
     }
 
     protected abstract String getType();
 
-    private void serializeConfig( final MapGenerator gen )
-    {
-        final Form config = descriptor.getConfig();
-    }
 }

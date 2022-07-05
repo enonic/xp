@@ -1,4 +1,4 @@
-/**
+var value = params[name]/**
  * Application related functions.
  *
  * @example
@@ -10,7 +10,7 @@
 /* global __*/
 
 function required(params, name) {
-    var value = params[name];
+    var value = params[String(name)];
     if (value === undefined) {
         throw 'Parameter \'' + name + '\' is required';
     }

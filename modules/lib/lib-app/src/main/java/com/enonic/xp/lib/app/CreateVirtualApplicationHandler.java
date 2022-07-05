@@ -15,8 +15,6 @@ public final class CreateVirtualApplicationHandler
 {
     private String key;
 
-    private String displayName;
-
     private Supplier<ApplicationService> applicationServiceSupplier;
 
     private Supplier<ApplicationDescriptorService> applicationDescriptorServiceSupplier;
