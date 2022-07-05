@@ -1,16 +1,16 @@
 {
-    "myRangeQuery": {
-        "dateRange": {
-            "field": "myfield._datetime",
-            "ranges": [
-                {
-                    "from": "1975-08-01T12:04:00.000Z"
-                },
-                {
-                    "key": "toeternity",
-                    "to": "2055-01-01T12:00:00.000Z"
-                }
-            ]
+  "myRangeQuery": {
+    "dateRange": {
+      "field": "myfield._datetime",
+      "ranges": [
+        {
+          "from": "1975-08-01T12:04:00.000Z"
+        },
+        {
+          "key": "toeternity",
+          "to": "2055-01-01T12:00:00.000Z"
         }
+      ]
     }
+  }
 }

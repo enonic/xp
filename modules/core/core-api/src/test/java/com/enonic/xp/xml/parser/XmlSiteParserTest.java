@@ -41,10 +41,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -62,10 +61,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -83,10 +81,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -122,10 +119,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -152,10 +148,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -173,10 +168,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 
@@ -194,10 +188,9 @@ public class XmlSiteParserTest
         final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
         ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        this.parser.source( xml ).
-            currentApplication( applicationKey ).
-            siteDescriptorBuilder( siteDescriptorBuilder ).
-            parse();
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
 
         SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
 

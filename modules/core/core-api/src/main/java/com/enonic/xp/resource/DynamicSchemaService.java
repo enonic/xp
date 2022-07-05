@@ -10,23 +10,23 @@ import com.enonic.xp.style.StyleDescriptor;
 
 public interface DynamicSchemaService
 {
-    DynamicSchemaResult<ComponentDescriptor> createComponent( CreateDynamicComponentParams params );
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( CreateDynamicComponentParams params );
 
-    DynamicSchemaResult<ComponentDescriptor> updateComponent( UpdateDynamicComponentParams params );
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( UpdateDynamicComponentParams params );
 
-    DynamicSchemaResult<ComponentDescriptor> getComponent( GetDynamicComponentParams params );
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> getComponent( GetDynamicComponentParams params );
 
-    List<DynamicSchemaResult<ComponentDescriptor>> listComponents( ListDynamicComponentsParams params );
+    <T extends ComponentDescriptor> List<DynamicSchemaResult<T>> listComponents( ListDynamicComponentsParams params );
 
     boolean deleteComponent( DeleteDynamicComponentParams params );
 
-    DynamicSchemaResult<BaseSchema<?>> createContentSchema( CreateDynamicContentSchemaParams params );
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( CreateDynamicContentSchemaParams params );
 
-    DynamicSchemaResult<BaseSchema<?>> updateContentSchema( UpdateDynamicContentSchemaParams params );
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( UpdateDynamicContentSchemaParams params );
 
-    DynamicSchemaResult<BaseSchema<?>> getContentSchema( GetDynamicContentSchemaParams params );
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> getContentSchema( GetDynamicContentSchemaParams params );
 
-    List<DynamicSchemaResult<BaseSchema<?>>> listSchemas( ListDynamicSchemasParams params );
+    <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( ListDynamicContentSchemasParams params );
 
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
 

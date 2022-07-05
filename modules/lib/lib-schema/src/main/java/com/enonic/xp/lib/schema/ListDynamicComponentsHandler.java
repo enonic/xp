@@ -16,15 +16,15 @@ import com.enonic.xp.script.bean.ScriptBean;
 public final class ListDynamicComponentsHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private String type;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public void setType( final String type )
@@ -35,7 +35,7 @@ public final class ListDynamicComponentsHandler
     public List<DescriptorMapper> execute()
     {
         final ListDynamicComponentsParams params = ListDynamicComponentsParams.create()
-            .applicationKey( ApplicationKey.from( key ) )
+            .applicationKey( ApplicationKey.from( application ) )
             .type( DynamicComponentType.valueOf( type ) )
             .build();
 

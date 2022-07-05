@@ -2,6 +2,7 @@ package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
@@ -54,7 +55,7 @@ public class GetDynamicContentSchemaHandler
         final GetDynamicContentSchemaParams params =
             GetDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).build();
 
-        return dynamicSchemaServiceSupplier.get().getContentSchema( params );
+        return SchemaConverter.convert( dynamicSchemaServiceSupplier.get().getContentSchema( params ) );
     }
 
     @Override

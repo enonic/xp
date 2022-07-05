@@ -14,6 +14,6 @@ public final class XDataMapper
     @Override
     protected String getType()
     {
-        return "XData";
+        return "XDATA";
     }
 }

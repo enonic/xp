@@ -85,7 +85,7 @@ final class DynamicResourceParser
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load dynamic page descriptor [" + key + "]: " );
+            throw new XmlException( e, "Could not parse dynamic page descriptor [" + key + "]" );
         }
         return builder.build();
     }
@@ -104,7 +104,7 @@ final class DynamicResourceParser
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic part descriptor [" + key + "]: " );
+            throw new XmlException( e, "Could not parse dynamic part descriptor [" + key + "]" );
         }
 
         return builder.build();
@@ -124,7 +124,7 @@ final class DynamicResourceParser
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic layout descriptor [" + key + "]: " );
+            throw new XmlException( e, "Could not parse dynamic layout descriptor [" + key + "]" );
         }
         return builder.build();
     }
@@ -142,7 +142,7 @@ final class DynamicResourceParser
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic content type [" + name + "]: " );
+            throw new XmlException( e, "Could not parse dynamic content type [" + name + "]" );
         }
 
 //        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
@@ -166,7 +166,7 @@ final class DynamicResourceParser
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic mixin descriptor [" + name + "]: " );
+            throw new XmlException( e, "Could not parse dynamic mixin [" + name + "]" );
         }
 
         builder.name( name );
@@ -187,7 +187,7 @@ final class DynamicResourceParser
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic xdata descriptor [" + name + "]" );
+            throw new XmlException( e, "Could not parse dynamic xdata [" + name + "]" );
         }
 
         builder.name( name );
@@ -205,10 +205,12 @@ final class DynamicResourceParser
             parser.source( resource );
             parser.siteDescriptorBuilder( builder );
             parser.parse();
+
+            builder.applicationKey( applicationKey );
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic site descriptor, application key: [" + applicationKey + "] " );
+            throw new XmlException( e, "Could not parse dynamic site descriptor, application key: [" + applicationKey + "]" );
         }
         return builder.build();
     }
@@ -227,7 +229,7 @@ final class DynamicResourceParser
         }
         catch ( Exception e )
         {
-            throw new XmlException( e, "Could not parse dynamic style descriptor, application key: [" + applicationKey + "] " );
+            throw new XmlException( e, "Could not parse dynamic style descriptor, application key: [" + applicationKey + "]" );
         }
         return builder.build();
     }

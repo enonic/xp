@@ -27,6 +27,7 @@ public class UrlResourceTest
         assertTrue( resource.getTimestamp() > 0 );
         assertTrue( resource.exists() );
         assertEquals( resourceUrl, resource.getUrl() );
+        assertFalse( resource.isVirtual() );
 
         resource.requireExists();
         assertNotNull( resource.openStream() );

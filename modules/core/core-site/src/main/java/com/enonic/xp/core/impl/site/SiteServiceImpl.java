@@ -54,6 +54,8 @@ public class SiteServiceImpl
     private SiteDescriptor loadDescriptor( final Resource resource )
     {
         final SiteDescriptor.Builder builder = SiteDescriptor.create();
+        builder.applicationKey( resource.getKey().getApplicationKey() );
+
         parseXml( resource, builder );
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );

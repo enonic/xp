@@ -8,6 +8,11 @@ import com.enonic.xp.schema.xdata.XData;
 
 public class SchemaConverter
 {
+    private SchemaConverter()
+    {
+
+    }
+
     public static SchemaMapper convert( final DynamicSchemaResult<? extends BaseSchema<?>> result )
     {
         final Object dynamicSchema = result.getSchema();

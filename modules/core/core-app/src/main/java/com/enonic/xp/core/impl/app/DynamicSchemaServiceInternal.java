@@ -1,11 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.site.SiteDescriptor;
 
 public interface DynamicSchemaServiceInternal
 {
-    SiteDescriptor createSite( ApplicationKey key, String resource );
+    DynamicSchemaResult<SiteDescriptor> createSite( CreateDynamicSiteParams params );
 
     boolean deleteSite( ApplicationKey applicationKey );
 }
