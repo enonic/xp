@@ -7,15 +7,66 @@
  * @module project
  */
 
-/* global __ */
-
-function required(params, name) {
-    var value = params[name];
-    if (value === undefined) {
-        throw 'Parameter \'' + name + '\' is required';
+declare global {
+    interface XpLibraries {
+        '/lib/xp/project': typeof import('./project');
     }
+}
 
-    return value;
+function checkRequired<T extends Object>(obj: T, name: keyof T): void {
+    if (obj == null || obj[name] === undefined) {
+        throw `Parameter \'${String(name)}\' is required`;
+    }
+}
+
+export type ProjectRole = 'owner' | 'editor' | 'author' | 'contributor' | 'viewer';
+
+export type ProjectPermission = Record<ProjectRole, string[]>;
+
+export interface ProjectPermissions {
+    permissions?: Record<ProjectRole, string[]>;
+}
+
+export interface ProjectReadAccess {
+    public: boolean;
+}
+
+export interface CreateProjectParams {
+    id: string;
+    displayName: string;
+    description?: string;
+    language?: string;
+    parent?: string;
+    permissions?: ProjectPermission;
+    readAccess?: ProjectReadAccess;
+}
+
+export interface Project {
+    id: string;
+    displayName: string;
+    description: string;
+    parent: string;
+    language?: string;
+    permissions?: ProjectPermission;
+    readAccess?: ProjectPermission;
+}
+
+interface CreateProjectHandler {
+    setId(value: string): void;
+
+    setDisplayName(value: string): void;
+
+    setDescription(value?: string | null): void;
+
+    setLanguage(value?: string | null): void;
+
+    setPermissions(value?: ProjectPermission | null): void;
+
+    setReadAccess(value?: ProjectReadAccess | null): void;
+
+    setParent(value?: string | null): void;
+
+    execute(): Project;
 }
 
 /**
@@ -37,17 +88,40 @@ function required(params, name) {
  *
  * @returns {Object} Created project.
  */
-exports.create = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.CreateProjectHandler');
-    bean.setId(required(params, 'id'));
-    bean.setDisplayName(required(params, 'displayName'));
+export function create(params: CreateProjectParams): Project {
+    checkRequired(params, 'id');
+    checkRequired(params, 'displayName');
+
+    const bean = __.newBean<CreateProjectHandler>('com.enonic.xp.lib.project.CreateProjectHandler');
+    bean.setId(params.id);
+    bean.setDisplayName(params.displayName);
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     bean.setParent(__.nullOrValue(params.parent));
+
     return __.toNativeObject(bean.execute());
-};
+}
+
+export interface ModifyProjectParams {
+    id: string;
+    displayName: string;
+    description?: string;
+    language?: string;
+}
+
+interface ModifyProjectHandler {
+    setId(value: string): void;
+
+    setDisplayName(value?: string | null): void;
+
+    setDescription(value?: string | null): void;
+
+    setLanguage(value?: string | null): void;
+
+    execute(): Project;
+}
 
 /**
  * Modifies an existing Content Project.
@@ -63,14 +137,27 @@ exports.create = function (params) {
  *
  * @returns {Object} Modified project.
  */
-exports.modify = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectHandler');
-    bean.setId(required(params, 'id'));
+export function modify(params: ModifyProjectParams): Project {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<ModifyProjectHandler>('com.enonic.xp.lib.project.ModifyProjectHandler');
+    bean.setId(params.id);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
+
     return __.toNativeObject(bean.execute());
-};
+}
+
+export interface DeleteProjectParams {
+    id: string;
+}
+
+interface DeleteProjectHandler {
+    setId(value: string): void;
+
+    execute(): boolean;
+}
 
 /**
  * Deletes an existing Content Project. This will delete all of the data inside the project repository.
@@ -83,11 +170,29 @@ exports.modify = function (params) {
  *
  * @returns {boolean} `true` if the project was successfully deleted.
  */
-exports.delete = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.DeleteProjectHandler');
-    bean.setId(required(params, 'id'));
+export function _delete(params: DeleteProjectParams): boolean {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<DeleteProjectHandler>('com.enonic.xp.lib.project.DeleteProjectHandler');
+
+    bean.setId(params.id);
+
     return __.toNativeObject(bean.execute());
-};
+}
+
+export {
+    _delete as delete
+}
+
+export interface GetProjectParams {
+    id: string;
+}
+
+interface GetProjectHandler {
+    setId(value: string): void;
+
+    execute(): Project | null;
+}
 
 /**
  * Returns an existing Content Project.
@@ -95,16 +200,22 @@ exports.delete = function (params) {
  *
  * @example-ref examples/project/get.js
  *
- * @param {Object} params JSON with the parameters.
+ * @param {GetProjectParams} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
  *
- * @returns {Object} Content Project object or `null` if not found.
+ * @returns {Project} Content Project object or `null` if not found.
  */
-exports.get = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.GetProjectHandler');
-    bean.setId(required(params, 'id'));
+export function get(params: GetProjectParams): Project | null {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<GetProjectHandler>('com.enonic.xp.lib.project.GetProjectHandler');
+    bean.setId(params.id);
     return __.toNativeObject(bean.execute());
-};
+}
+
+interface ListProjectsHandler {
+    execute(): Project[];
+}
 
 /**
  * Returns all Content Projects.
@@ -113,12 +224,26 @@ exports.get = function (params) {
  *
  * @example-ref examples/project/list.js
  *
- * @returns {Object[]} Array of Content Project objects.
+ * @returns {Project[]} Array of Content Project objects.
  */
-exports.list = function () {
-    var bean = __.newBean('com.enonic.xp.lib.project.ListProjectsHandler');
+export function list() {
+    const bean = __.newBean<ListProjectsHandler>('com.enonic.xp.lib.project.ListProjectsHandler');
     return __.toNativeObject(bean.execute());
-};
+}
+
+export interface AddProjectPermissionsParams {
+    id: string;
+    permissions?: ProjectPermission;
+}
+
+interface AddProjectPermissionsHandler {
+    setId(value: string): void;
+
+    setPermissions(value?: ProjectPermission): void;
+
+    execute(): ProjectPermissions | null;
+}
+
 
 /**
  * Adds permissions to an existing Content Project.
@@ -135,12 +260,27 @@ exports.list = function () {
  *
  * @returns {Object} All current project permissions.
  */
-exports.addPermissions = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
-    bean.setId(required(params, 'id'));
+export function addPermissions(params: AddProjectPermissionsParams): ProjectPermissions | null {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<AddProjectPermissionsHandler>('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
+    bean.setId(params.id);
     bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
-};
+}
+
+export interface RemoveProjectPermissionsParams {
+    id: string;
+    permissions?: ProjectPermission;
+}
+
+interface RemoveProjectPermissionsHandler {
+    setId(value: string): void;
+
+    setPermissions(value?: ProjectPermission): void;
+
+    execute(): ProjectPermissions | null;
+}
 
 /**
  * Removes permissions from an existing Content Project.
@@ -156,12 +296,28 @@ exports.addPermissions = function (params) {
  *
  * @returns {Object} All current project permissions.
  */
-exports.removePermissions = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
-    bean.setId(required(params, 'id'));
+export function removePermissions(params: RemoveProjectPermissionsParams): ProjectPermissions | null {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<RemoveProjectPermissionsHandler>('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
+    bean.setId(params.id);
     bean.setPermissions(__.toScriptValue(params.permissions));
+
     return __.toNativeObject(bean.execute());
-};
+}
+
+export interface ModifyProjectReadAccessParams {
+    id: string;
+    readAccess?: ProjectReadAccess;
+}
+
+interface ModifyProjectReadAccessHandler {
+    setId(value: string): void;
+
+    setReadAccess(value?: ProjectReadAccess): void;
+
+    execute(): ProjectReadAccess | null;
+}
 
 /**
  * Toggles public/private READ access for an existing Content Project.
@@ -177,10 +333,11 @@ exports.removePermissions = function (params) {
  *
  * @returns {Object<string, boolean>} Current state of READ access.
  */
-exports.modifyReadAccess = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
-    bean.setId(required(params, 'id'));
+export function modifyReadAccess(params: ModifyProjectReadAccessParams): ProjectReadAccess | null {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<ModifyProjectReadAccessHandler>('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
+    bean.setId(params.id);
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     return __.toNativeObject(bean.execute());
-};
-
+}
