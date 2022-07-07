@@ -287,7 +287,7 @@ interface GetMembershipsHandler {
  *
  * @param {string} principalKey Principal key to retrieve memberships for.
  * @param {boolean} [transitive=false] Retrieve transitive memberships.
- * @returns {User[] | Group[] | Role[]} Returns the list of principals.
+ * @returns {(User | Group | Role)[]} Returns the list of principals.
  */
 export function getMemberships(principalKey: string, transitive: boolean): (User | Group | Role)[] {
     const bean = __.newBean<GetMembershipsHandler>('com.enonic.xp.lib.auth.GetMembershipsHandler');
@@ -310,7 +310,7 @@ interface GetMembersHandler {
  * @example-ref examples/auth/getMembers.js
  *
  * @param {string} principalKey Principal key to retrieve members for.
- * @returns {User[] | Group[] | Role[]} Returns the list of principals.
+ * @returns {(User | Group | Role)[]} Returns the list of principals.
  */
 export function getMembers(principalKey: string): (User | Group | Role)[] {
     const bean = __.newBean<GetMembersHandler>('com.enonic.xp.lib.auth.GetMembersHandler');
