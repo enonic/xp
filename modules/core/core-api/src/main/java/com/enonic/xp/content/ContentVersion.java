@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
@@ -20,6 +21,8 @@ public final class ContentVersion
 
     private final Instant timestamp;
 
+    private final ChildOrder childOrder;
+
     private final String comment;
 
     private final ContentVersionPublishInfo publishInfo;
@@ -33,6 +36,7 @@ public final class ContentVersion
         this.modified = builder.modified;
         this.comment = builder.comment;
         this.timestamp = builder.timestamp;
+        this.childOrder = builder.childOrder;
         this.id = builder.id;
         this.publishInfo = builder.publishInfo;
         this.workflowInfo = builder.workflowInfo;
@@ -61,6 +65,11 @@ public final class ContentVersion
     public Instant getTimestamp()
     {
         return timestamp;
+    }
+
+    public ChildOrder getChildOrder()
+    {
+        return childOrder;
     }
 
     public ContentVersionId getId()
@@ -114,14 +123,15 @@ public final class ContentVersion
         final ContentVersion that = (ContentVersion) o;
         return Objects.equals( id, that.id ) && Objects.equals( modifier, that.modifier ) &&
             Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
-            Objects.equals( timestamp, that.timestamp ) && Objects.equals( comment, that.comment ) &&
-            Objects.equals( publishInfo, that.publishInfo ) && Objects.equals( workflowInfo, that.workflowInfo );
+            Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
+            Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
+            Objects.equals( workflowInfo, that.workflowInfo );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, comment, publishInfo, workflowInfo );
+        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo );
     }
 
     public static final class Builder
@@ -133,6 +143,8 @@ public final class ContentVersion
         private Instant modified;
 
         private Instant timestamp;
+
+        private ChildOrder childOrder;
 
         private String comment;
 
@@ -173,6 +185,12 @@ public final class ContentVersion
         public Builder timestamp( Instant timestamp )
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder childOrder( ChildOrder childOrder )
+        {
+            this.childOrder = childOrder;
             return this;
         }
 
