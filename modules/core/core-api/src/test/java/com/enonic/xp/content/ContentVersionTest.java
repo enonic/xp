@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,6 +45,7 @@ public class ContentVersionTest
             .id( ContentVersionId.from( "a" ) )
             .modified( now1 )
             .timestamp( now2 )
+            .childOrder( ChildOrder.manualOrder() )
             .modifier( PrincipalKey.ofAnonymous() )
             .displayName( "contentVersion" )
             .comment( "comment" )
@@ -59,6 +61,7 @@ public class ContentVersionTest
         assertEquals( "contentVersion", version.getDisplayName() );
         assertEquals( publishInfo, version.getPublishInfo() );
         assertEquals( workflowInfo, version.getWorkflowInfo() );
+        assertEquals( ChildOrder.manualOrder(), version.getChildOrder() );
     }
 
     @Test
