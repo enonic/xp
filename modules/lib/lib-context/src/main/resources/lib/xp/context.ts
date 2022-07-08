@@ -6,9 +6,81 @@
  *
  * @module context
  */
-/* global __*/
 
-var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
+declare global {
+    interface XpLibraries {
+        '/lib/xp/context': typeof import('./context');
+    }
+}
+
+export interface Principal {
+    type: string;
+    key: string;
+    displayName: string;
+    modifiedTime: string;
+}
+
+export interface User
+    extends Principal {
+    disabled?: boolean;
+    email?: string;
+    login?: string;
+    idProvider: string;
+    profile?: Record<string, unknown>;
+}
+
+export interface AuthInfo {
+    user?: User | null;
+    principals?: string[] | null;
+}
+
+export type ContextAttributes = Record<string, number | string | boolean | Record<string, unknown>>;
+
+export interface Context {
+    branch: string;
+    repository: string;
+    authInfo?: AuthInfo;
+    attributes: ContextAttributes;
+}
+
+export interface ContextUserParams {
+    login: string;
+    idProvider?: string;
+}
+
+export interface ContextParams {
+    repository?: string;
+    branch?: string;
+    user?: ContextUserParams;
+    principals?: string[];
+    attributes?: ContextAttributes;
+}
+
+interface ContextRunParams {
+    setRepository(value: string): void;
+
+    setBranch(value: string): void;
+
+    setUsername(value: string): void;
+
+    setIdProvider(value: string): void;
+
+    setPrincipals(value: string[]): void;
+
+    setAttributes(value: ContextAttributes): void;
+
+    setCallback<T>(fn: () => T): void;
+}
+
+interface ContextHandler {
+    get(): Context;
+
+    run<T>(params: ContextRunParams): T;
+
+    newRunParams(): ContextRunParams;
+}
+
+const bean = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandlerBean');
 
 /**
  * Runs a function within a specified context.
@@ -26,8 +98,8 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  * @param {function} callback Function to execute.
  * @returns {object} Result of the function execution.
  */
-exports.run = function (context, callback) {
-    var params = bean.newRunParams();
+export function run<T>(context: ContextParams, callback: () => T): T {
+    const params = bean.newRunParams();
     params.setCallback(callback);
 
     if (context.repository) {
@@ -54,9 +126,8 @@ exports.run = function (context, callback) {
         params.setAttributes(__.toScriptValue(context.attributes));
     }
 
-    var result = bean.run(params);
-    return __.toNativeObject(result);
-};
+    return __.toNativeObject(bean.run(params));
+}
 
 /**
  * Returns the current context.
@@ -65,7 +136,8 @@ exports.run = function (context, callback) {
  *
  * @returns {object} Return the current context as JSON object.
  */
-exports.get = function () {
-    var result = bean.get();
+export function get(): Context {
+    const result = bean.get();
     return __.toNativeObject(result);
-};
+}
+
