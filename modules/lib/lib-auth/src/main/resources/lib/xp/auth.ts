@@ -372,7 +372,7 @@ export interface ModifyUserParams {
 interface ModifyUserHandler {
     setPrincipalKey(value: string): void;
 
-    setEditor(value: EditorFn<User>): void;
+    setEditor(value: ScriptValue): void;
 
     modifyUser(): User | null;
 }
@@ -451,7 +451,7 @@ export interface ModifyGroupParams {
 interface ModifyGroupHandler {
     setPrincipalKey(value: string): void;
 
-    setEditor(value: EditorFn<Group>): void;
+    setEditor(value: ScriptValue): void;
 
     modifyGroup(): Group | null;
 }
@@ -677,7 +677,7 @@ interface ModifyProfileHandler {
 
     setScope(value?: string | null): void;
 
-    setEditor(value: EditorFn<User>): void;
+    setEditor(value: ScriptValue): void;
 
     execute(): Record<string, unknown> | null;
 }
@@ -806,7 +806,7 @@ export interface ModifyRoleParams {
 interface ModifyRoleHandler {
     setPrincipalKey(value: string): void;
 
-    setEditor(value: EditorFn<Role>): void;
+    setEditor(value: ScriptValue): void;
 
     modifyRole(): Role | null;
 }
