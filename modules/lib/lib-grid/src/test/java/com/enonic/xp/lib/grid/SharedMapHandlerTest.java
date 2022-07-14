@@ -97,6 +97,7 @@ public class SharedMapHandlerTest
     public void testSet()
     {
         doNothing().when( sharedMap ).set( "key", "value", 2 * 60 * 1000 );
+        when( sharedMap.get( "key" ) ).thenReturn( "value" );
 
         runFunction( "/test/grid-test.js", "testSet" );
 

@@ -55,6 +55,8 @@ exports.testSet = function () {
         value: 'value',
         ttlSeconds: 2 * 60 * 1000
     });
+
+    assert.assertEquals('value', sharedMap.get('key'));
 };
 
 exports.testSetWithNullValue = function () {

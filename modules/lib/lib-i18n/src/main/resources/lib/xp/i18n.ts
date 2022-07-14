@@ -13,7 +13,7 @@ export interface LocalizeParams {
 }
 
 interface LocaleScriptBean {
-    localize(key: string, locales: string[], values: string[], bundles?: string[] | null): string;
+    localize(key: string, locales: string[], values: ScriptValue, bundles?: string[] | null): string;
 
     getPhrases(locale: string[], bundles: string[]): Record<string, string>;
 
