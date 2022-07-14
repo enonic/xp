@@ -47,9 +47,9 @@ interface CreateAuditLogHandler {
 
     setUser(user?: string | null): void;
 
-    setObjectUris(objectUris?: string[] | null): void;
+    setObjectUris(objectUris?: ScriptValue): void;
 
-    setData(data?: Record<string, unknown> | null): void;
+    setData(data?: ScriptValue): void;
 
     execute(): AuditLog;
 }
@@ -136,7 +136,7 @@ interface FindAuditLogHandler {
 
     setCount(count: number): void;
 
-    setIds(ids?: string[] | null): void;
+    setIds(ids?: ScriptValue): void;
 
     setFrom(from?: string | null): void;
 
@@ -146,9 +146,9 @@ interface FindAuditLogHandler {
 
     setSource(source?: string | null): void;
 
-    setUsers(users?: string[] | null): void;
+    setUsers(users?: ScriptValue): void;
 
-    setObjectUris(objectUris?: string[] | null): void;
+    setObjectUris(objectUris?: ScriptValue): void;
 
     execute(): AuditLogs;
 }

@@ -60,9 +60,9 @@ interface CreateProjectHandler {
 
     setLanguage(value?: string | null): void;
 
-    setPermissions(value?: ProjectPermission | null): void;
+    setPermissions(value?: ScriptValue): void;
 
-    setReadAccess(value?: ProjectReadAccess | null): void;
+    setReadAccess(value?: ScriptValue): void;
 
     setParent(value?: string | null): void;
 
@@ -239,7 +239,7 @@ export interface AddProjectPermissionsParams {
 interface AddProjectPermissionsHandler {
     setId(value: string): void;
 
-    setPermissions(value?: ProjectPermission): void;
+    setPermissions(value?: ScriptValue): void;
 
     execute(): ProjectPermissions | null;
 }
@@ -277,7 +277,7 @@ export interface RemoveProjectPermissionsParams {
 interface RemoveProjectPermissionsHandler {
     setId(value: string): void;
 
-    setPermissions(value?: ProjectPermission): void;
+    setPermissions(value?: ScriptValue): void;
 
     execute(): ProjectPermissions | null;
 }
@@ -314,7 +314,7 @@ export interface ModifyProjectReadAccessParams {
 interface ModifyProjectReadAccessHandler {
     setId(value: string): void;
 
-    setReadAccess(value?: ProjectReadAccess): void;
+    setReadAccess(value?: ScriptValue): void;
 
     execute(): ProjectReadAccess | null;
 }

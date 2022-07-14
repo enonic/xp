@@ -127,7 +127,7 @@ export interface ModifyScheduledJobParams {
 interface ModifyScheduledJobHandler {
     setName(value: string): void;
 
-    setEditor(value: EditorFn<ScheduleJob>): void;
+    setEditor(value: ScriptValue): void;
 
     execute(): ScheduleJob;
 }
