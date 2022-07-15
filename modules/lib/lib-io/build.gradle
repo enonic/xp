@@ -1,3 +1,5 @@
+apply from: "$rootDir/gradle/npm.gradle"
+
 dependencies {
     compileOnly project( ':script:script-api' )
 
