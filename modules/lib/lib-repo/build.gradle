@@ -1,5 +1,3 @@
-apply from: "$rootDir/gradle/npm.gradle"
-
 dependencies {
     compile project( ':lib:lib-common' )
     compile project( ':lib:lib-value' )

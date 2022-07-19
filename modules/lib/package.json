@@ -5,15 +5,15 @@
     "description": "Root package for libs development.",
     "scripts": {
         "build:js": "npm run copy:resources && tsc --project tsconfig.build.json",
-        "build:types": "tsc --declaration --emitDeclarationOnly",
+        "build:types": "tsc --declaration --emitDeclarationOnly && npm run copy:dts",
         "build": "npm run build:js && npm run build:types",
         "copy:package": "node utils/copyPackage.js",
         "copy:resources": "node utils/copyResources.js",
+        "copy:dts": "node utils/copyDts.js",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
         "fix": "eslint --fix .",
-        "pre": "npm run lint && npm run build:types",
-        "show": "node ./entry.js"
+        "pre": "npm run copy:package && npm run build:types"
     },
     "repository": {
         "type": "git",
