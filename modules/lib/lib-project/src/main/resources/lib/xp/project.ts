@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-function checkRequired<T extends Object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 
@@ -181,8 +181,8 @@ export function _delete(params: DeleteProjectParams): boolean {
 }
 
 export {
-    _delete as delete
-}
+    _delete as delete,
+};
 
 export interface GetProjectParams {
     id: string;
@@ -226,7 +226,7 @@ interface ListProjectsHandler {
  *
  * @returns {Project[]} Array of Content Project objects.
  */
-export function list() {
+export function list(): Project[] {
     const bean = __.newBean<ListProjectsHandler>('com.enonic.xp.lib.project.ListProjectsHandler');
     return __.toNativeObject(bean.execute());
 }
