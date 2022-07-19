@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-function checkRequired<T extends Object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 
@@ -135,7 +135,7 @@ interface SubmitTaskHandler {
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-export function submitNamed(params: SubmitNamedTaskParams) {
+export function submitNamed(params: SubmitNamedTaskParams): string {
     checkRequired(params, 'name');
 
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');

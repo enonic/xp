@@ -13,15 +13,15 @@ declare global {
     }
 }
 
-function checkRequiredValue<T extends Object>(value: T, name: string) {
+function checkRequiredValue(value: unknown, name: string): void {
     if (value == null) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 
-function checkRequired<T extends Object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 
@@ -183,7 +183,7 @@ function _delete(id: string): boolean {
 }
 
 export {
-    _delete as delete
+    _delete as delete,
 };
 
 interface ListRepositoriesHandler {
