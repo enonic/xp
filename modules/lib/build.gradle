@@ -8,6 +8,8 @@ node {
     workDir = file("${rootProject.projectDir}/.gradle/nodejs")
 }
 
+/* Test */
+
 task lint( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Lint TS, JS, and JSON'
     args = [ 'run', 'lint:quiet' ]
@@ -15,7 +17,15 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
     outputs.upToDateWhen { false }
 }
 
-task typescript( type: NpmTask, dependsOn: npmInstall ) {
+/* Configure & Build */
+
+task copyPackage( type: NpmTask, dependsOn: npmInstall ) {
+    args = [ 'run', 'copy:package' ]
+
+    outputs.upToDateWhen { false }
+}
+
+task typescript( type: NpmTask, dependsOn: copyPackage ) {
     description = 'Create JS files from TS'
     args = [ 'run', 'build:js' ]
 
@@ -29,4 +39,61 @@ task typescript( type: NpmTask, dependsOn: npmInstall ) {
         include "lib-*/build/resources/main/**/*.js"
         include "lib-*/build/resources/main/**/*.ts"
     })
+}
+
+task dts( type: NpmTask, dependsOn: copyPackage ) {
+    args = [ 'run', 'build:types' ]
+
+    outputs.upToDateWhen { false }
+}
+
+/* Publish */
+
+task publishGlobalToNpm( type: NpmTask, dependsOn: copyPackage ) {
+    args = [ 'publish' ]
+    workingDir = file( "${project.projectDir}/typescript" )
+
+    outputs.upToDateWhen { false }
+}
+
+task publishToNpm {
+    finalizedBy publishGlobalToNpm
+}
+
+subprojects {
+    if ( !isTsProject( project ) )
+    {
+        return
+    }
+
+    apply plugin: 'com.github.node-gradle.node'
+
+    task publishLibToNpm( type: NpmTask, dependsOn: parent.dts ) {
+        args = [ 'publish' ]
+
+        outputs.upToDateWhen { false }
+    }
+
+    publishToNpm {
+        finalizedBy publishLibToNpm
+    }
+
+    check {
+        dependsOn parent.lint
+    }
+
+    test {
+        dependsOn parent.typescript
+    }
+
+    jar {
+        exclude '**/*.ts'
+        dependsOn parent.typescript
+    }
+}
+
+def isTsProject( Project p ) {
+    return fileTree("${p.projectDir}/src/main/resources/lib/xp").matching {
+        include { FileTreeElement details -> details.file.isFile() && details.file.name.endsWith( '.ts' ) }
+    }.size() > 0
 }
