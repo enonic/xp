@@ -4,5 +4,8 @@
         "./lib-*/build/resources/main/",
         "./global.d.ts"
     ],
-    "exclude": []
+    "exclude": [
+        "./**/out",
+        "./lib-*/*.d.ts"
+    ]
 }

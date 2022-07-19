@@ -58,7 +58,12 @@ export function localize(params: LocalizeParams): string {
 
     const locales = ([] as string[]).concat(locale);
     bean.setApplication(__.nullOrValue(application));
-    return bean.localize(key, locales, __.toScriptValue(values), __.nullOrValue(bundles));
+    return bean.localize(
+        key,
+        locales,
+        __.toScriptValue(values),
+        __.nullOrValue(bundles),
+    );
 }
 
 /**

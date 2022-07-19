@@ -1,15 +1,12 @@
 {
-    "name": "@enonic-types/lib-%NAME%",
+    "name": "@enonic-types/global",
     "version": "%VERSION%",
-    "description": "Type definitions for lib-%NAME%.",
-    "types": "%NAME%.d.ts",
+    "description": "Type definitions for XP JavaScript global object properties.",
+    "types": "index.d.ts",
     "files": [
-        "%NAME%.d.ts"
+        "index.d.ts",
+        "global.d.ts"
     ],
-    "scripts": {
-        "pre": "npm run --prefix ../ pre",
-        "packlist": "npx npm-packlist"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/enonic/xp.git#master"
@@ -17,8 +14,7 @@
     "keywords": [
         "enonic",
         "enonic-xp",
-        "lib-%NAME%",
-        "%NAME%",
+        "global",
         "types",
         "typescript"
     ],
