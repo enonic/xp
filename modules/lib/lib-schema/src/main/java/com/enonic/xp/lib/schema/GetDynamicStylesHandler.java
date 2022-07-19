@@ -13,20 +13,20 @@ import com.enonic.xp.style.StyleDescriptor;
 public final class GetDynamicStylesHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public StyleDescriptorMapper execute()
     {
-        final DynamicSchemaResult<StyleDescriptor> result = dynamicSchemaServiceSupplier.get().getStyles( ApplicationKey.from( this.key ) );
-        return result != null ? new StyleDescriptorMapper( result.getSchema(), result.getResource().getKey().getApplicationKey(),
-                                                           result.getResource().readString() ) : null;
+        final DynamicSchemaResult<StyleDescriptor> result =
+            dynamicSchemaServiceSupplier.get().getStyles( ApplicationKey.from( this.application ) );
+        return result != null ? new StyleDescriptorMapper( result.getSchema(), result.getResource() ) : null;
     }
 
     @Override

@@ -14,6 +14,6 @@ public final class MixinMapper
     @Override
     protected String getType()
     {
-        return "Mixin";
+        return "MIXIN";
     }
 }

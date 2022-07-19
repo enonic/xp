@@ -14,6 +14,6 @@ public final class LayoutDescriptorMapper
     @Override
     protected String getType()
     {
-        return "Layout";
+        return "LAYOUT";
     }
 }

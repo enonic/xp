@@ -50,7 +50,7 @@ public final class NodeResourceApplicationUrlResolver
                 .stream()
                 .map( nodeHit -> nodeHit.getNodePath()
                     .removeFromBeginning( NodePath.create( applicationKey.toString() ).build() )
-                    .asRelative()
+                    .asAbsolute()
                     .toString() )
                 .collect( Collectors.toSet() );
         } );

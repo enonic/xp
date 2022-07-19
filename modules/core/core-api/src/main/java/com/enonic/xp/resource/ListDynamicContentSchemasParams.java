@@ -4,13 +4,13 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 
-public final class ListDynamicSchemasParams
+public final class ListDynamicContentSchemasParams
 {
     private final ApplicationKey key;
 
     private final DynamicContentSchemaType type;
 
-    public ListDynamicSchemasParams( final Builder builder )
+    public ListDynamicContentSchemasParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;
@@ -55,10 +55,10 @@ public final class ListDynamicSchemasParams
             Preconditions.checkNotNull( type, "type must be set" );
         }
 
-        public ListDynamicSchemasParams build()
+        public ListDynamicContentSchemasParams build()
         {
             validate();
-            return new ListDynamicSchemasParams( this );
+            return new ListDynamicContentSchemasParams( this );
         }
     }
 }

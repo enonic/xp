@@ -13,20 +13,20 @@ import com.enonic.xp.site.SiteDescriptor;
 public final class GetDynamicSiteHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public SiteDescriptorMapper execute()
     {
-        final DynamicSchemaResult<SiteDescriptor> result = dynamicSchemaServiceSupplier.get().getSite( ApplicationKey.from( this.key ) );
-        return result != null ? new SiteDescriptorMapper( result.getSchema(), result.getResource().getKey().getApplicationKey(),
-                                                          result.getResource().readString() ) : null;
+        final DynamicSchemaResult<SiteDescriptor> result =
+            dynamicSchemaServiceSupplier.get().getSite( ApplicationKey.from( this.application ) );
+        return result != null ? new SiteDescriptorMapper( result.getSchema(), result.getResource() ) : null;
     }
 
     @Override

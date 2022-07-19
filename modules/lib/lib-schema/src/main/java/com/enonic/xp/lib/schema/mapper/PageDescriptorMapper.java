@@ -14,6 +14,6 @@ public final class PageDescriptorMapper
     @Override
     protected String getType()
     {
-        return "Page";
+        return "PAGE";
     }
 }

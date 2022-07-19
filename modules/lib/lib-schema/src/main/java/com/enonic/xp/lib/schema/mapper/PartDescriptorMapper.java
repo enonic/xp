@@ -14,6 +14,6 @@ public final class PartDescriptorMapper
     @Override
     protected String getType()
     {
-        return "Part";
+        return "PART";
     }
 }

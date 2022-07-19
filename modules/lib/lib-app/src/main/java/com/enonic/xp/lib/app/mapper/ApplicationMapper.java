@@ -33,13 +33,13 @@ public class ApplicationMapper
         gen.value( "minSystemVersion", application.getMinSystemVersion() );
         gen.value( "maxSystemVersion", application.getMaxSystemVersion() );
         gen.value( "modifiedTime", application.getModifiedTime() );
+        gen.value( "started", application.isStarted() );
         gen.value( "description", descriptor != null ? descriptor.getDescription() : null );
         gen.value( "icon", getApplicationIcon() );
     }
 
     private String getApplicationIcon()
     {
-//        ApplicationDescriptor applicationDescriptor = applicationDescriptorServiceSupplier.get().get( applicationKey );
         final Icon icon = descriptor != null ? descriptor.getIcon() : null;
 
         if ( icon != null && icon.getMimeType() != null )
@@ -49,16 +49,4 @@ public class ApplicationMapper
 
         return null;
     }
-
-//    private byte[] getDefaultApplicationIcon()
-//    {
-//        try (InputStream in = getClass().getResourceAsStream( "application.svg" ))
-//        {
-//            return in.readAllBytes();
-//        }
-//        catch ( IOException e )
-//        {
-//            return null;
-//        }
-//    }
 }

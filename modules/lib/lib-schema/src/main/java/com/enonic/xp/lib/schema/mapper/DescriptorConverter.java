@@ -8,6 +8,10 @@ import com.enonic.xp.resource.DynamicSchemaResult;
 
 public class DescriptorConverter
 {
+    private DescriptorConverter()
+    {
+    }
+
     public static DescriptorMapper convert( final DynamicSchemaResult<? extends ComponentDescriptor> descriptor )
     {
         final Object dynamicSchema = descriptor.getSchema();
