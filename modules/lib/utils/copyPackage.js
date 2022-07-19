@@ -6,15 +6,16 @@ const glob = require('glob');
 const XP_VERSION = '0.1.0';
 
 const PACKAGE_TEMPLATE = fs.readFileSync(path.resolve(__dirname, 'templates/package.template.json')).toString();
+const GLOBAL_PACKAGE_TEMPLATE = fs.readFileSync(path.resolve(__dirname, 'templates/package.global.template.json')).toString();
 
 // eslint-disable-next-line no-unused-vars
 function xpVersion() {
     const properties = fs.readFileSync(path.resolve('../../gradle.properties')).toString();
-    const [, version] = /^version\s*=\s*(.+)$/m.exec(properties) ?? [];
+    const [, version] = /^version\s*=\s*(.+)$/m.exec(properties) || [];
     return version;
 }
 
-void function copyPackages() {
+function copyPackages() {
     glob.sync('lib-*').forEach(async (libPath) => {
         const libName = libPath.substr(4);
 
@@ -29,4 +30,18 @@ void function copyPackages() {
 
         fs.writeFileSync(path.join(libPath, 'package.json'), packageData);
     });
+}
+
+function copyGlobalPackage() {
+    glob.sync('typescript').forEach(async (libPath) => {
+        const packageData = GLOBAL_PACKAGE_TEMPLATE
+            .replaceAll(/%VERSION%/g, XP_VERSION);
+
+        fs.writeFileSync(path.join(libPath, 'package.json'), packageData);
+    });
+}
+
+void function () {
+    copyGlobalPackage();
+    copyPackages();
 }();
