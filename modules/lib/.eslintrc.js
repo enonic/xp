@@ -10,9 +10,13 @@ module.exports = {
                 tsconfigRootDir: __dirname,
                 project: './tsconfig.json',
             },
+            rules: {
+                '@typescript-eslint/no-var-requires': ['off'],
+            },
         },
     ],
     ignorePatterns: [
+        '**/out',
         '**/build',
         '*.d.ts',
         '**/src/main/resources/lib/xp/*.js',

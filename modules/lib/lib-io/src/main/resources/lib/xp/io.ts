@@ -12,6 +12,8 @@ declare global {
     }
 }
 
+const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
+
 interface IResource {
     getSize(): number;
 
@@ -40,7 +42,7 @@ export class Resource {
      */
     getSize(): number {
         return this.res.getSize();
-    };
+    }
 
     /**
      * Returns the resource stream.
@@ -49,7 +51,7 @@ export class Resource {
      */
     getStream(): object {
         return this.res.getBytes();
-    };
+    }
 
     /**
      * Returns true if the resource exists.
@@ -58,7 +60,7 @@ export class Resource {
      */
     exists(): boolean {
         return this.res.exists();
-    };
+    }
 }
 
 export type ProcessLinesFn = (value: string) => object;
@@ -78,8 +80,6 @@ interface IOHandlerBean {
 
     getResource(key: string): IResource;
 }
-
-const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
 
 /**
  * Read text from a stream.

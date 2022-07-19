@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-export type SharedMapValueType = string | number | boolean | Object | null;
+export type SharedMapValueType = string | number | boolean | object | null;
 
 export type SharedMapModifierFn = (oldValue: SharedMapValueType) => SharedMapValueType;
 
@@ -110,7 +110,7 @@ export class SharedMap {
 
         const ttlSeconds = __.nullOrValue(params.ttlSeconds);
 
-        const modifierFn = (oldValue: SharedMapValueType) => {
+        const modifierFn = (oldValue: SharedMapValueType): SharedMapValueType => {
             return convertValue(func.call(this, __.toNativeObject(oldValue)));
         };
 

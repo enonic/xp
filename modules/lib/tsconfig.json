@@ -15,6 +15,7 @@
         "skipLibCheck": true
     },
     "exclude": [
-        "./**/build"
+        "./**/build",
+        "./**/out"
     ]
 }

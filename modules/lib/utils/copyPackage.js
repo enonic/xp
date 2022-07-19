@@ -7,6 +7,7 @@ const XP_VERSION = '0.1.0';
 
 const PACKAGE_TEMPLATE = fs.readFileSync(path.resolve(__dirname, 'templates/package.template.json')).toString();
 
+// eslint-disable-next-line no-unused-vars
 function xpVersion() {
     const properties = fs.readFileSync(path.resolve('../../gradle.properties')).toString();
     const [, version] = /^version\s*=\s*(.+)$/m.exec(properties) ?? [];
