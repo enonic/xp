@@ -10,18 +10,18 @@ import com.enonic.xp.script.bean.ScriptBean;
 public class DeleteDynamicStylesHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public boolean execute()
     {
-        return dynamicSchemaServiceSupplier.get().deleteStyles( ApplicationKey.from( key ) );
+        return dynamicSchemaServiceSupplier.get().deleteStyles( ApplicationKey.from( application ) );
     }
 
     @Override

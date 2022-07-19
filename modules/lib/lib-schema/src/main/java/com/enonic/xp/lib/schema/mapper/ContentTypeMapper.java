@@ -14,6 +14,6 @@ public final class ContentTypeMapper
     @Override
     protected String getType()
     {
-        return "Content_Type";
+        return "CONTENT_TYPE";
     }
 }

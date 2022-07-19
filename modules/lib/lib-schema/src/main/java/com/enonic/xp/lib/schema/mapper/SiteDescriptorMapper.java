@@ -1,6 +1,9 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import com.enonic.xp.app.ApplicationKey;
+import java.time.Instant;
+import java.util.Optional;
+
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.SiteDescriptor;
@@ -10,21 +13,20 @@ public class SiteDescriptorMapper
 {
     private final SiteDescriptor descriptor;
 
-    private final ApplicationKey applicationKey;
+    private final Resource resource;
 
-    private final String resource;
-
-    public SiteDescriptorMapper( final SiteDescriptor descriptor, final ApplicationKey applicationKey, final String resource )
+    public SiteDescriptorMapper( final SiteDescriptor descriptor, final Resource resource )
     {
         this.descriptor = descriptor;
-        this.applicationKey = applicationKey;
         this.resource = resource;
     }
 
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "key", applicationKey );
-        gen.value( "resource", resource );
+        gen.value( "application", descriptor.getApplicationKey() );
+        gen.value( "resource", resource.readString() );
+        gen.value( "modifiedTime",
+                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
     }
 }

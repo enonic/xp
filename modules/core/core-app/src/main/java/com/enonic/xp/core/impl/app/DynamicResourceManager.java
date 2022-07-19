@@ -28,19 +28,17 @@ final class DynamicResourceManager
         this.resourceService = resourceService;
     }
 
-    Resource createResource( final NodePath folderPath, final ApplicationKey applicationKey, final String name, final String resource )
-    {
-        return this.createResource( folderPath, applicationKey, name, resource, true );
-    }
-
-    Resource createResource( final NodePath folderPath, final ApplicationKey applicationKey, final String name, final String resource,
-                             final boolean createFolder )
+    Resource createResource( final NodePath folderPath, final String name, final String resource )
     {
         return VirtualAppContext.createContext().callWith( () -> {
 
-            final Node resourceFolder = createFolder
-                ? nodeService.create( CreateNodeParams.create().name( folderPath.getName() ).parent( folderPath.getParentPath() ).build() )
-                : nodeService.getByPath( folderPath );
+            Node resourceFolder = nodeService.getByPath( folderPath );
+            if ( resourceFolder == null )
+            {
+                resourceFolder = nodeService.create(
+                    CreateNodeParams.create().name( folderPath.getName() ).parent( folderPath.getParentPath() ).build() );
+            }
+
             final PropertyTree resourceData = new PropertyTree();
 
             if ( resource != null )
@@ -51,11 +49,15 @@ final class DynamicResourceManager
             final Node schemaNode = nodeService.create(
                 CreateNodeParams.create().parent( resourceFolder.path() ).name( name + ".xml" ).data( resourceData ).build() );
 
-            return new NodeValueResource( ResourceKey.from( applicationKey, schemaNode.path().toString() ), schemaNode );
+            final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
+            final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
+            final NodePath resourceKeyPath = schemaNode.path().removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
+
+            return new NodeValueResource( ResourceKey.from( applicationKey, resourceKeyPath.toString() ), schemaNode );
         } );
     }
 
-    Resource updateResource( final NodePath folderPath, final ApplicationKey applicationKey, final String name, final String resource )
+    Resource updateResource( final NodePath folderPath, final String name, final String resource )
     {
         return VirtualAppContext.createContext().callWith( () -> {
 
@@ -71,22 +73,34 @@ final class DynamicResourceManager
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .build() );
 
-            return new NodeValueResource( ResourceKey.from( applicationKey, schemaNode.path().toString() ), schemaNode );
+            final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
+            final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
+            final NodePath resourceKeyPath = schemaNode.path().removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
+
+            return new NodeValueResource( ResourceKey.from( applicationKey, resourceKeyPath.toString() ), schemaNode );
         } );
     }
 
-    Resource getResource( final NodePath folderRelativePath, final ApplicationKey applicationKey, final String name )
+    Resource getResource( final NodePath folderPath, final String name )
     {
-        final NodePath resourceRelativePath = NodePath.create( folderRelativePath, name + ".xml" ).build();
+        final String applicationKeyAsString = folderPath.getElementAsString( 0 );
+        final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
+        final NodePath resourceFolderPath = folderPath.removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
+
+        final NodePath resourcePath = NodePath.create( resourceFolderPath, name + ".xml" ).build();
 
         return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.getResource( ResourceKey.from( applicationKey, resourceRelativePath.toString() ) ) );
+            .callWith( () -> resourceService.getResource( ResourceKey.from( applicationKey, resourcePath.toString() ) ) );
     }
 
-    List<Resource> listResources( final ApplicationKey applicationKey, final NodePath resourceRootPath )
+    List<Resource> listResources( final NodePath resourceRootPath )
     {
+        final String applicationKeyAsString = resourceRootPath.getElementAsString( 0 );
+        final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
+        final NodePath resourceFolderPath = resourceRootPath.removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
+
         return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.findFiles( applicationKey, resourceRootPath + "/" + ".+/.+\\.xml" )
+            .callWith( () -> resourceService.findFiles( applicationKey, resourceFolderPath + "/" + ".+/.+\\.xml" )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );

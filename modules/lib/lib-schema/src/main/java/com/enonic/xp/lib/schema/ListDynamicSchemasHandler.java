@@ -9,22 +9,22 @@ import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.lib.schema.mapper.SchemaMapper;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.ListDynamicSchemasParams;
+import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
 public final class ListDynamicSchemasHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private String type;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public void setType( final String type )
@@ -34,13 +34,13 @@ public final class ListDynamicSchemasHandler
 
     public List<SchemaMapper> execute()
     {
-        final ListDynamicSchemasParams params = ListDynamicSchemasParams.create()
-            .applicationKey( ApplicationKey.from( key ) )
+        final ListDynamicContentSchemasParams params = ListDynamicContentSchemasParams.create()
+            .applicationKey( ApplicationKey.from( application ) )
             .type( DynamicContentSchemaType.valueOf( type ) )
             .build();
 
         return dynamicSchemaServiceSupplier.get()
-            .listSchemas( params )
+            .listContentSchemas( params )
             .stream()
             .map( SchemaConverter::convert )
             .collect( Collectors.toList() );

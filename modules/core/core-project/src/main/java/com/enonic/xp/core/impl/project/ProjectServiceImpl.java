@@ -548,14 +548,6 @@ public class ProjectServiceImpl
         return ImageHelper.getScaledInstance( source, newWidth.intValue(), newHeight.intValue() );
     }
 
-    private Project getProject( final Projects projects, final ProjectName name )
-    {
-        return projects.stream()
-            .filter( project -> project.getName().equals( name ) )
-            .findFirst()
-            .orElseThrow( () -> new ProjectNotFoundException( name ) );
-    }
-
     private <T> T callWithCreateContext( final Callable<T> runnable )
     {
         return projectPermissionsContextManager.initCreateContext().callWith( runnable );

@@ -3,23 +3,26 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.lib.schema.mapper.StyleDescriptorMapper;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.style.StyleDescriptor;
 
 public final class UpdateDynamicStylesHandler
     implements ScriptBean
 {
-    private String key;
+    private String application;
 
     private String resource;
 
     private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
 
-    public void setKey( final String key )
+    public void setApplication( final String application )
     {
-        this.key = key;
+        this.application = application;
     }
 
     public void setResource( final String resource )
@@ -30,9 +33,11 @@ public final class UpdateDynamicStylesHandler
     public Object execute()
     {
         final UpdateDynamicStylesParams params =
-            UpdateDynamicStylesParams.create().key( ApplicationKey.from( key ) ).resource( resource ).build();
+            UpdateDynamicStylesParams.create().key( ApplicationKey.from( application ) ).resource( resource ).build();
 
-        return dynamicSchemaServiceSupplier.get().updateStyles( params );
+        final DynamicSchemaResult<StyleDescriptor> result = dynamicSchemaServiceSupplier.get().updateStyles( params );
+
+        return new StyleDescriptorMapper( result.getSchema(), result.getResource() );
     }
 
     @Override

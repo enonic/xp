@@ -1,4 +1,4 @@
-var value = params[name];/**
+/**
  * Application related functions.
  *
  * @example
