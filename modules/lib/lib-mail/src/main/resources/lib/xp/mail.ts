@@ -13,9 +13,9 @@ declare global {
  * @module mail
  */
 
-function checkRequired<T extends Object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 

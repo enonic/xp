@@ -13,9 +13,9 @@ declare global {
  * @module audit
  */
 
-function required<T extends Object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter \'${String(name)}\' is required`;
+        throw `Parameter '${String(name)}' is required`;
     }
 }
 
@@ -72,7 +72,7 @@ interface CreateAuditLogHandler {
  * @returns {object} Audit log created as JSON.
  */
 export function log(params: AuditLogParams): AuditLog {
-    required(params, 'type');
+    checkRequired(params, 'type');
 
     const bean = __.newBean<CreateAuditLogHandler>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.setType(params.type);
@@ -106,7 +106,7 @@ interface GetAuditLogHandler {
  * @returns {object} Audit log as JSON.
  */
 export function get(params: GetAuditLogParams): AuditLog | null {
-    required(params, 'id');
+    checkRequired(params, 'id');
 
     const bean = __.newBean<GetAuditLogHandler>('com.enonic.xp.lib.audit.GetAuditLogHandler');
     bean.setId(params.id);

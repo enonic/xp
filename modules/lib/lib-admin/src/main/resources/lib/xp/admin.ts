@@ -104,7 +104,7 @@ export function getLauncherUrl(): string {
 export function getLauncherPath(): string {
     return portal.assetUrl({
         application: helper.getHomeAppName(),
-        path: '/js/launcher/bundle.js'
+        path: '/js/launcher/bundle.js',
     });
 }
 
@@ -115,7 +115,7 @@ export function getLauncherPath(): string {
  *
  * @returns {string} URL.
  */
-export function getToolUrl(application: string, tool: string) {
+export function getToolUrl(application: string, tool: string): string {
     if (application) {
         return helper.generateAdminToolUri(application, tool);
     }
@@ -130,7 +130,7 @@ export function getToolUrl(application: string, tool: string) {
  *
  * @returns {string} URL.
  */
-export function getHomeToolUrl(params: GetHomeToolUrlParams) {
+export function getHomeToolUrl(params: GetHomeToolUrlParams): string {
     return portal.url({
         path: '/admin/tool',
         type: params?.type,
