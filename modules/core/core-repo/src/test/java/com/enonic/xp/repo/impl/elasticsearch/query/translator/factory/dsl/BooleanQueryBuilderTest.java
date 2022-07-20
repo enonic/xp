@@ -33,6 +33,13 @@ public class BooleanQueryBuilderTest
     }
 
     @Test
+    public void filter()
+        throws Exception
+    {
+        test( "filter" );
+    }
+
+    @Test
     public void multiple()
         throws Exception
     {

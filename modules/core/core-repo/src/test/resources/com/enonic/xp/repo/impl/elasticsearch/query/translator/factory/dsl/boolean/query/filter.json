@@ -1,0 +1,19 @@
+{
+  "boolean": {
+    "filter": [
+      {
+        "range": {
+          "field": "date_field",
+          "type": "dateTime",
+          "gt": "2017-09-11T09:00:00Z"
+        }
+      },
+      {
+        "like": {
+          "field": "displayName",
+          "value": "fol*der"
+        }
+      }
+    ]
+  }
+}

@@ -41,6 +41,9 @@ class BooleanQueryBuilder
                         case "mustNot":
                             builder.mustNot( query );
                             break;
+                        case "filter":
+                            builder.filter( query );
+                            break;
                         default:
                             throw new IllegalArgumentException( "Invalid boolean expression: " + booleanProperty.getName() );
                     }
