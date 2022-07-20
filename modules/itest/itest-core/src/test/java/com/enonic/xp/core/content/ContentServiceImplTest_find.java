@@ -3,6 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
@@ -17,6 +18,7 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -287,31 +289,34 @@ public class ContentServiceImplTest_find
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
-        final Content child3 = createContent( site.getPath(), "d" );
-        final Content child2 = createContent( site.getPath(), "c" );
-        final Content child1 = createContent( site.getPath(), "b" );
+        final PropertyTree data1 = new PropertyTree();
+        data1.addLong( "mylong", 5L );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addLong( "mylong", 7L );
+
+        final PropertyTree data3 = new PropertyTree();
+        data2.addLong( "mylong", 9L );
+
+        createContent( site.getPath(), "d", data1 );
+        final Content child2 = createContent( site.getPath(), "c", data2 );
+        createContent( site.getPath(), "b", data3 );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet like = new PropertySet();
-        request.addSet( "like", like );
-        like.addString( "field", "_path" );
-        like.addString( "value", "*a/*" );
+        final PropertySet range = new PropertySet();
+        request.addSet( "range", range );
+        range.addString( "field", "data.mylong" );
+        range.addLong( "gte", 7L );
+        range.addLong( "lt", 9L );
 
         PropertyTree order = new PropertyTree();
         order.addString( "field", "displayName" );
         order.addString( "direction", "DESC" );
 
-        ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
+        final ContentQuery queryDsl =
+            ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child3, child2, child1 );
-
-        order = new PropertyTree();
-        order.addString( "field", "displayName" );
-
-        queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
-
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child1, child2, child3 );
-
+        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child2 );
     }
 
     @Test
@@ -330,6 +335,145 @@ public class ContentServiceImplTest_find
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
         assertEquals( 4, contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getTotalHits() );
+    }
+
+    @Test
+    public void dsl_filter_range()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+
+        final PropertyTree data1 = new PropertyTree();
+        data1.addInstant( "datetime", Instant.parse( "2020-01-01T01:00:00Z" ) );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addInstant( "datetime", Instant.parse( "2021-01-01T01:00:00Z" ) );
+
+        final PropertyTree data3 = new PropertyTree();
+        data3.addInstant( "datetime", Instant.parse( "2022-01-01T01:00:00Z" ) );
+
+        final Content child1 = createContent( site.getPath(), "b", data1 );
+        final Content child2 = createContent( site.getPath(), "c", data2 );
+        createContent( site.getPath(), "d", data3 );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet booleanSet = request.addSet( "boolean" );
+        final PropertySet filterSet = booleanSet.addSet( "filter" );
+        final PropertySet range = filterSet.addSet( "range" );
+
+        range.addString( "field", "data.datetime" );
+        range.addString( "type", "dateTime" );
+        range.addString( "lte", "2021-01-01T01:00:00Z" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( range.getTree() ) ) ).build();
+
+        Assertions.assertThat(
+                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
+            .hasSize( 2 )
+            .containsExactlyInAnyOrder( child1, child2 );
+    }
+
+    @Test
+    public void dsl_filter_and_query()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+
+        final PropertyTree data1 = new PropertyTree();
+        data1.addInstant( "datetime", Instant.parse( "2020-01-01T01:00:00Z" ) );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addInstant( "datetime", Instant.parse( "2021-01-01T01:00:00Z" ) );
+
+        final PropertyTree data3 = new PropertyTree();
+        data3.addInstant( "datetime", Instant.parse( "2022-01-01T01:00:00Z" ) );
+
+        createContent( site.getPath(), "b", data1 );
+        final Content child2 = createContent( site.getPath(), "c", data2 );
+        createContent( site.getPath(), "d", data3 );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet booleanSet = request.addSet( "boolean" );
+
+        final PropertySet must = booleanSet.addSet( "must" );
+        final PropertySet in = must.addSet( "in" );
+
+        final PropertySet filter = booleanSet.addSet( "filter" );
+        final PropertySet range = filter.addSet( "range" );
+
+        range.addString( "field", "data.datetime" );
+        range.addString( "type", "dateTime" );
+        range.addString( "lte", "2021-01-01T01:00:00Z" );
+
+        in.addString( "field", "displayName" );
+        in.addStrings( "values", "c", "d" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( range.getTree() ) ) ).build();
+
+        Assertions.assertThat(
+                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
+            .hasSize( 1 )
+            .containsExactly( child2 );
+    }
+
+    @Test
+    public void dsl_filter_in_and_out()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+
+        final PropertyTree data1 = new PropertyTree();
+        data1.addInstant( "datetime", Instant.parse( "2020-01-01T01:00:00Z" ) );
+
+        final PropertyTree data2 = new PropertyTree();
+        data2.addInstant( "datetime", Instant.parse( "2021-01-01T01:00:00Z" ) );
+
+        final PropertyTree data3 = new PropertyTree();
+        data3.addInstant( "datetime", Instant.parse( "2022-01-01T01:00:00Z" ) );
+
+        final Content child1 = createContent( site.getPath(), "b", data1 );
+        createContent( site.getPath(), "c", data2 );
+        final Content child3 = createContent( site.getPath(), "d", data3 );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet booleanSet = request.addSet( "boolean" );
+
+        final ValueFilter outFilter = ValueFilter.create()
+            .fieldName( ContentPropertyNames.DISPLAY_NAME )
+            .addValues( ValueFactory.newString( child1.getDisplayName() ), ValueFactory.newString( child3.getDisplayName() ) )
+            .build();
+
+        ContentQuery queryDsl =
+            ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( booleanSet.getTree() ) ) ).queryFilter( outFilter ).build();
+
+        Assertions.assertThat(
+                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
+            .hasSize( 2 )
+            .containsExactlyInAnyOrder( child1, child3 );
+
+        final PropertySet filter = booleanSet.addSet( "filter" );
+        final PropertySet range = filter.addSet( "range" );
+
+        range.addString( "field", "data.datetime" );
+        range.addString( "type", "dateTime" );
+        range.addString( "lte", "2021-01-01T01:00:00Z" );
+
+        queryDsl =
+            ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( booleanSet.getTree() ) ) ).queryFilter( outFilter ).build();
+
+        Assertions.assertThat(
+                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
+            .hasSize( 1 )
+            .containsExactly( child1 );
     }
 
     private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )

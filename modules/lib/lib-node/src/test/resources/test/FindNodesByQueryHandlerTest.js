@@ -131,3 +131,35 @@ exports.sortInvalid = function () {
     throw {message: 'Expected exception'};
 };
 
+exports.filterInQuery = function () {
+    var result = repo.query({
+        'start': 0,
+        'count': 100,
+        'query':
+            {
+                boolean: {
+                    filter: [{
+                        term: {
+                            name: 'type',
+                            value: 'article'
+                        }
+
+                    }, {
+                        fulltext: {
+                            field: 'displayName',
+                            query: 'fisk',
+                            operator: 'AND'
+                        }
+                    }],
+                    must: {
+                        term: {
+                            name: 'type',
+                            value: 'non-article'
+                        }
+                    }
+                }
+            }
+    });
+    assert.assertJsonEquals(expectedSortJson, result);
+};
+
