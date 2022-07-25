@@ -5,7 +5,7 @@ module.exports = {
     ],
     overrides: [
         {
-            files: ['*.ts', '*.tsx'],
+            files: ['*.ts'],
             parserOptions: {
                 tsconfigRootDir: __dirname,
                 project: './tsconfig.json',
@@ -14,11 +14,23 @@ module.exports = {
                 '@typescript-eslint/no-var-requires': ['off'],
             },
         },
+        {
+            files: ['*.d.ts'],
+            parserOptions: {
+                tsconfigRootDir: __dirname,
+                project: './tsconfig.json',
+            },
+            rules: {
+                '@typescript-eslint/triple-slash-reference': ['off'],
+                '@typescript-eslint/no-empty-interface': ['off'],
+                'spaced-comment': ['error', 'always', {'markers': ['/']}],
+            },
+        },
     ],
     ignorePatterns: [
         '**/out',
         '**/build',
-        '*.d.ts',
+        'lib-*/**/*.d.ts',
         '**/src/main/resources/lib/xp/*.js',
         '**/src/test/**/*.js',
         '**/src/main/resources/lib/xp/examples/**/*.js',
