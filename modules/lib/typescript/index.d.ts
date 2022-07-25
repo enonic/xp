@@ -32,7 +32,7 @@ declare interface ScriptValue {
 
     getArray(): ScriptValue[];
 
-    getMap(): Record<String, unknown>;
+    getMap(): Record<string, unknown>;
 
     getList(): object[];
 }
