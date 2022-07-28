@@ -15,9 +15,14 @@ function xpVersion() {
     return version;
 }
 
-function copyGlobalPackage() {
+function copyPackages() {
     glob.sync('lib-*').forEach(async (libPath) => {
         const libName = libPath.substr(4);
+
+        const hasTs = fs.existsSync(path.join(libPath, `src/main/resources/lib/xp/${libName}.ts`));
+        if (!hasTs) {
+            return;
+        }
 
         const packageData = PACKAGE_TEMPLATE
             .replaceAll(/%VERSION%/g, XP_VERSION)
@@ -27,7 +32,7 @@ function copyGlobalPackage() {
     });
 }
 
-function copyPackages() {
+function copyGlobalPackage() {
     glob.sync('typescript').forEach(async (libPath) => {
         const packageData = GLOBAL_PACKAGE_TEMPLATE
             .replaceAll(/%VERSION%/g, XP_VERSION);
