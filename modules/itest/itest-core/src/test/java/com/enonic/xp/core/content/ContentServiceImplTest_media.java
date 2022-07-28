@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.schema.content.ContentType;
@@ -118,9 +119,7 @@ public class ContentServiceImplTest_media
         throws Exception
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
 
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
@@ -128,14 +127,16 @@ public class ContentServiceImplTest_media
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
-            content( content.getId() ).
-            name( "dart-small" ).
-            byteSource( loadImage( "darth-small.jpg" ) );
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().content( content.getId() ).name( "dart-small" ).byteSource( loadImage( "darth-small.jpg" ) );
+
+        assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
 
         this.contentService.update( updateMediaParams );
 
         final Content updatedContent = this.contentService.getById( storedContent.getId() );
+
+        assertEquals( WorkflowState.IN_PROGRESS, updatedContent.getWorkflowInfo().getState() );
 
         final Attachments attachments = updatedContent.getAttachments();
 
