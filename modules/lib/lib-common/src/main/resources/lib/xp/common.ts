@@ -17,7 +17,7 @@ interface NamePrettyfier {
  * @module common
  */
 
-const NamePrettyfier = Java.type<NamePrettyfier>('com.enonic.xp.name.NamePrettyfier');
+const NamePrettyfier = __.newBean<NamePrettyfier>('com.enonic.xp.lib.common.NamePrettyfierHandler');
 
 /**
  * Transform a text string so that it can be safely used in cases where the range of accepted characters is restricted.
@@ -37,7 +37,7 @@ const NamePrettyfier = Java.type<NamePrettyfier>('com.enonic.xp.name.NamePrettyf
  * @param {string} text Text string to sanitize.
  * @returns {string} Sanitized text.
  */
- export function sanitize(text: string): string {
+export function sanitize(text: string): string {
     if (text == null || text === '') {
         return '';
     }
