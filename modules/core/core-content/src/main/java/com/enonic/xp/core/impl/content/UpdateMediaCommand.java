@@ -7,6 +7,8 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
@@ -80,42 +82,48 @@ final class UpdateMediaCommand
         Preconditions.checkArgument( existingContent.getType().equals( type ),
                                      "Updated content must be of type: " + existingContent.getType() );
 
-        final CreateAttachment mediaAttachment = CreateAttachment.create().
-            name( params.getName() ).
-            mimeType( params.getMimeType() ).
-            label( "source" ).
-            byteSource( params.getByteSource() ).
-            text( type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
-            build();
+        final CreateAttachment mediaAttachment = CreateAttachment.create()
+            .name( params.getName() )
+            .mimeType( params.getMimeType() )
+            .label( "source" )
+            .byteSource( params.getByteSource() )
+            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
+            .build();
 
-        final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().
-            type( type ).
-            attachment( params.getName() ).
-            focalX( params.getFocalX() ).
-            focalY( params.getFocalY() ).
-            caption( params.getCaption() ).
-            artist( params.getArtist() ).
-            copyright( params.getCopyright() ).
-            tags( params.getTags() );
+        final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
+            .attachment( params.getName() )
+            .focalX( params.getFocalX() )
+            .focalY( params.getFocalY() )
+            .caption( params.getCaption() )
+            .artist( params.getArtist() )
+            .copyright( params.getCopyright() )
+            .tags( params.getTags() );
 
-        final UpdateContentParams updateParams = new UpdateContentParams().
-            contentId( params.getContent() ).
-            clearAttachments( true ).
-            createAttachments( CreateAttachments.from( mediaAttachment ) ).
-            editor( editable -> mediaFormBuilder.build( editable.data ) );
+        final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
+            .clearAttachments( true )
+            .createAttachments( CreateAttachments.from( mediaAttachment ) )
+            .editor( editable -> {
+                mediaFormBuilder.build( editable.data );
 
-        return UpdateContentCommand.create( this ).
-            params( updateParams ).
-            mediaInfo( mediaInfo ).
-            contentTypeService( this.contentTypeService ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build().
-            execute();
+                if ( WorkflowState.READY == editable.workflowInfo.getState() )
+                {
+                    editable.workflowInfo =
+                        WorkflowInfo.create().checks( editable.workflowInfo.getChecks() ).state( WorkflowState.IN_PROGRESS ).build();
+                }
+            } );
+
+        return UpdateContentCommand.create( this )
+            .params( updateParams )
+            .mediaInfo( mediaInfo )
+            .contentTypeService( this.contentTypeService )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build()
+            .execute();
     }
 
     public static class Builder
