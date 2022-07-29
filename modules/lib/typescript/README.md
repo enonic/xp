@@ -23,7 +23,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 }
 ```
 
-> The paths to the `node_mosules` assume that your `tsconfig.json` is placed under your project root.
+> The paths to the `node_modules` assume that your `tsconfig.json` is placed under your project root.
 
 After that, all the global XP variables will be typed.
 
@@ -36,7 +36,8 @@ libraries are also added to your `tsconfig.json`.
 
 ### Require
 
-To add support for type resolution for the custom libraries via `require`, you can redeclare the `XpLibraries` interface in global scope, wich will lead to declaration merging:
+To add support for type resolution for the custom libraries via `require`, you can redeclare the `XpLibraries` interface in global scope,
+which will lead to declaration merging:
 
 ```ts
 declare global {
