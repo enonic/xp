@@ -1,15 +1,11 @@
 {
-    "name": "@enonic-types/lib-%NAME%",
+    "name": "@enonic-types/%FULL_NAME%",
     "version": "%VERSION%",
-    "description": "Type definitions for lib-%NAME%.",
-    "types": "%NAME%.d.ts",
+    "description": "Type definitions for %FULL_NAME%.",
+    "types": "index.d.ts",
     "files": [
-        "%NAME%.d.ts"
+        "index.d.ts"
     ],
-    "scripts": {
-        "pre": "npm run --prefix ../ pre",
-        "packlist": "npx npm-packlist"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/enonic/xp.git#master"
@@ -17,8 +13,8 @@
     "keywords": [
         "enonic",
         "enonic-xp",
-        "lib-%NAME%",
-        "%NAME%",
+        "%FULL_NAME%",
+        "%SHORT_NAME%",
         "types",
         "typescript"
     ],
