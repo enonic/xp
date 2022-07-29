@@ -23,7 +23,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 }
 ```
 
-> The paths to the `node_mosules` assume that your `tsconfig.json` is placed under your project root.
+> The paths to the `node_modules` assume that your `tsconfig.json` is placed under your project root.
 
 After that, all the global XP variables will be typed.
 
@@ -36,7 +36,8 @@ libraries are also added to your `tsconfig.json`.
 
 ### Require
 
-To add support for type resolution for the custom libraries via `require`, you can redeclare the `XpLibraries` interface in global scope, wich will lead to declaration merging:
+To add support for type resolution for the custom libraries via `require`, you can redeclare the `XpLibraries` interface in global scope,
+which will lead to declaration merging:
 
 ```ts
 declare global {
@@ -46,9 +47,10 @@ declare global {
 }
 ```
 
-__Other imports__
+#### Other imports
 
 If you want to use custom import functions, like `__non_webpack_require__` with Webpack, just use global `XpRequire` type for this:
+
 ```ts
 declare const __non_webpack_require__: XpRequire;
 ```
@@ -63,7 +65,7 @@ interface SomeHelper {
 }
 ```
 
-__Option 1__
+#### Option 1
 
 You can pass the type argument explicitly. This option is a bit cleaner.
 
@@ -71,7 +73,7 @@ You can pass the type argument explicitly. This option is a bit cleaner.
 const helper = __.newBean<SomeHelper>('com.me.project.SomeHelper');
 ```
 
-__Option 2__
+#### Option 2
 
 Or you can map the bean name to bean interface. It may be a preferable way to do it, if the bean is used across multiple files:
 

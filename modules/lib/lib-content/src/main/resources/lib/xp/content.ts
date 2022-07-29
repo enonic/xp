@@ -14,17 +14,14 @@ declare global {
 
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
-interface ArchiveConstants {
-    ARCHIVE_ROOT_PATH: string;
-}
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
+declare const Java: any;
 
-interface ContentConstants {
-    CONTENT_ROOT_PATH: string;
-}
+export const ARCHIVE_ROOT_PATH = Java.type('com.enonic.xp.archive.ArchiveConstants').ARCHIVE_ROOT_PATH as string;
 
-export const ARCHIVE_ROOT_PATH = Java.type<ArchiveConstants>('com.enonic.xp.archive.ArchiveConstants').ARCHIVE_ROOT_PATH;
+export const CONTENT_ROOT_PATH = Java.type('com.enonic.xp.content.ContentConstants').CONTENT_ROOT_PATH as string;
 
-export const CONTENT_ROOT_PATH = Java.type<ContentConstants>('com.enonic.xp.content.ContentConstants').CONTENT_ROOT_PATH;
+/* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
