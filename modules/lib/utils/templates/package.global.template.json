@@ -4,8 +4,7 @@
     "description": "Type definitions for XP JavaScript global object properties.",
     "types": "index.d.ts",
     "files": [
-        "index.d.ts",
-        "global.d.ts"
+        "index.d.ts"
     ],
     "repository": {
         "type": "git",
