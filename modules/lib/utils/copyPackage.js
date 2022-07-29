@@ -6,7 +6,6 @@ const glob = require('glob');
 const XP_VERSION = '0.1.0';
 
 const PACKAGE_TEMPLATE = fs.readFileSync(path.resolve(__dirname, 'templates/package.template.json')).toString();
-const GLOBAL_PACKAGE_TEMPLATE = fs.readFileSync(path.resolve(__dirname, 'templates/package.global.template.json')).toString();
 
 // eslint-disable-next-line no-unused-vars
 function xpVersion() {
@@ -15,29 +14,30 @@ function xpVersion() {
     return version;
 }
 
+function createData(version, fullName, shortName) {
+    return PACKAGE_TEMPLATE
+        .replaceAll(/%VERSION%/g, XP_VERSION)
+        .replaceAll(/%FULL_NAME%/g, fullName)
+        .replaceAll(/%SHORT_NAME%/g, shortName);
+}
+
 function copyPackages() {
     glob.sync('lib-*').forEach(async (libPath) => {
-        const libName = libPath.substr(4);
+        const shortName = libPath.substr(4);
+        const fullName = `lib-${shortName}`;
 
-        const hasTs = fs.existsSync(path.join(libPath, `src/main/resources/lib/xp/${libName}.ts`));
+        const hasTs = fs.existsSync(path.join(libPath, `src/main/resources/lib/xp/${shortName}.ts`));
         if (!hasTs) {
             return;
         }
 
-        const packageData = PACKAGE_TEMPLATE
-            .replaceAll(/%VERSION%/g, XP_VERSION)
-            .replaceAll(/%NAME%/g, libName);
-
-        fs.writeFileSync(path.join(libPath, 'package.json'), packageData);
+        fs.writeFileSync(path.join(libPath, 'package.json'), createData(XP_VERSION, fullName, shortName));
     });
 }
 
 function copyGlobalPackage() {
     glob.sync('typescript').forEach(async (libPath) => {
-        const packageData = GLOBAL_PACKAGE_TEMPLATE
-            .replaceAll(/%VERSION%/g, XP_VERSION);
-
-        fs.writeFileSync(path.join(libPath, 'package.json'), packageData);
+        fs.writeFileSync(path.join(libPath, 'package.json'), createData(XP_VERSION, 'global', 'common'));
     });
 }
 
