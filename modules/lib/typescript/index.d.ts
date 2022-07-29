@@ -1,4 +1,6 @@
-/// <reference path='global.d.ts' />
+interface XpLibraries {}
+
+interface XpBeans {}
 
 declare const app: {
     name: string;
