@@ -2,10 +2,10 @@
     "extends": "./tsconfig",
     "include": [
         "./lib-*/build/resources/main/",
-        "./global.d.ts"
+        "./typescript/global.d.ts"
     ],
     "exclude": [
         "./**/out",
-        "./lib-*/*.d.ts"
+      "./lib-*/*.ts"
     ]
 }

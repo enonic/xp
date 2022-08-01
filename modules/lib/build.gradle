@@ -5,7 +5,7 @@ plugins {
 node {
     download = true
     version = '16.15.0'
-    workDir = file("${rootProject.projectDir}/.gradle/nodejs")
+    workDir = file( "${rootProject.projectDir}/.gradle/nodejs" )
 }
 
 /* Test */
@@ -19,44 +19,62 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
 
 /* Configure & Build */
 
-task copyPackage( type: NpmTask, dependsOn: npmInstall ) {
-    args = [ 'run', 'copy:package' ]
+def globalDirPath = "${project.projectDir}/typescript"
+def globalNpmDirPath = "$globalDirPath/npm"
 
-    outputs.upToDateWhen { false }
-}
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Create JS and DTS files from TS'
+    args = [ 'run', 'build' ]
 
-task typescript( type: NpmTask, dependsOn: copyPackage ) {
-    description = 'Create JS files from TS'
-    args = [ 'run', 'build:js' ]
-
-    outputs.cacheIf { true }
-
-    inputs.files(fileTree(project.projectDir).matching {
+    inputs.files( fileTree( project.projectDir ).matching {
         include "lib-*/src/main/resources/**/*.ts"
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
     })
 
-    outputs.files(fileTree(project.projectDir).matching {
-        include "lib-*/build/resources/main/**/*.js"
-        include "lib-*/build/resources/main/**/*.ts"
+    outputs.files( fileTree( project.projectDir ).matching {
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
     })
+
+    shouldRunAfter lint
 }
 
-task dts( type: NpmTask, dependsOn: copyPackage ) {
-    args = [ 'run', 'build:types' ]
-
-    outputs.upToDateWhen { false }
+task clean( type: Delete ) {
+    delete globalNpmDirPath
 }
 
 /* Publish */
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: copyPackage ) {
-    args = [ 'publish' ]
-    workingDir = file( "${project.projectDir}/typescript" )
+task prepareGlobalToPublish( type: Copy ) {
+    into globalNpmDirPath
 
-    outputs.upToDateWhen { false }
+    from( globalDirPath ) {
+        include "*.*"
+    }
+
+    from( './utils' ) {
+        include 'package.template.json'
+        filter {
+            line -> line
+                .replaceAll('%VERSION%', version )
+                .replaceAll('%FULL_NAME%|%FILE_NAME%', 'global' )
+                .replaceAll('%SHORT_NAME%', 'common' )
+        }
+        rename '.+', 'package.json'
+    }
+}
+
+task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npmInstall ] ) {
+    args = [ 'publish' ]
+    workingDir = file( globalNpmDirPath )
 }
 
 task publishToNpm {
+    finalizedBy publishGlobalToNpm
+}
+
+task publish {
     finalizedBy publishGlobalToNpm
 }
 
@@ -68,10 +86,41 @@ subprojects {
 
     apply plugin: 'com.github.node-gradle.node'
 
-    task publishLibToNpm( type: NpmTask, dependsOn: parent.dts ) {
-        args = [ 'publish' ]
+    def npmDirPath = "$buildDir/npm"
 
-        outputs.upToDateWhen { false }
+    parent.typescript {
+        shouldRunAfter processResources
+    }
+
+    task prepareLibToPublish( type: Copy, dependsOn: [ processResources, parent.typescript ] ) {
+        def fullName = project.name
+        def shortName = project.name.substring( 4 )
+
+        into npmDirPath
+
+        from( './' ) {
+            include 'README.md'
+        }
+
+        from( "$buildDir/resources/main/lib/xp/" ) {
+            include '*.d.ts'
+        }
+
+        from( '../utils' ) {
+            include 'package.template.json'
+            filter {
+                line -> line
+                    .replaceAll('%VERSION%', version )
+                    .replaceAll('%FULL_NAME%', fullName )
+                    .replaceAll('%SHORT_NAME%|%FILE_NAME%', shortName )
+            }
+            rename '.+', 'package.json'
+        }
+    }
+
+    task publishLibToNpm( type: NpmTask, dependsOn: [ prepareLibToPublish, parent.npmInstall ] ) {
+        args = [ 'publish' ]
+        workingDir = file( npmDirPath )
     }
 
     publishToNpm {
@@ -83,12 +132,17 @@ subprojects {
     }
 
     test {
+        dependsOn processResources
         dependsOn parent.typescript
     }
 
     jar {
         exclude '**/*.ts'
         dependsOn parent.typescript
+    }
+
+    publish {
+        dependsOn publishLibToNpm
     }
 }
 

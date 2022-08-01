@@ -2,9 +2,9 @@
     "name": "@enonic-types/%FULL_NAME%",
     "version": "%VERSION%",
     "description": "Type definitions for %FULL_NAME%.",
-    "types": "index.d.ts",
+    "types": "%FILE_NAME%.d.ts",
     "files": [
-        "index.d.ts"
+        "%FILE_NAME%.d.ts"
     ],
     "repository": {
         "type": "git",
