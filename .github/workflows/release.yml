@@ -69,6 +69,9 @@ jobs:
         if: steps.publish_vars.outputs.release != 'true'
         run: exit 1
 
+      - name: Set NPM token
+        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
       - name: Publish
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 

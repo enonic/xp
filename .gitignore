@@ -20,10 +20,4 @@ generated-java
 classes/
 out/
 .xp/
-modules/lib/lib-*/*.ts
-modules/lib/lib-*/package.json
-modules/lib/lib-*/package-lock.json
-modules/lib/typescript/package.json
-modules/lib/typescript/package-lock.json
-modules/lib/lib-*/src/main/resources/lib/xp/*.js
-modules/lib/lib-*/src/main/resources/lib/xp/*.d.ts
+modules/lib/typescript/npm
