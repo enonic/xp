@@ -4,16 +4,10 @@
     "version": "1.0.0",
     "description": "Root package for libs development.",
     "scripts": {
-        "build:js": "npm run copy:resources && tsc --project tsconfig.build.json",
-        "build:types": "tsc --declaration --emitDeclarationOnly && npm run copy:dts",
-        "build": "npm run build:js && npm run build:types",
-        "copy:package": "node utils/copyPackage.js",
-        "copy:resources": "node utils/copyResources.js",
-        "copy:dts": "node utils/copyDts.js",
+        "build": "tsc --declaration --project tsconfig.build.json",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
-        "fix": "eslint --fix .",
-        "pre": "npm run copy:package && npm run build:types"
+        "fix": "eslint --fix ."
     },
     "repository": {
         "type": "git",

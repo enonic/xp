@@ -1,11 +1,10 @@
 {
     "extends": "./tsconfig",
     "include": [
-        "./lib-*/build/resources/main/",
-        "./global.d.ts"
+        "./lib-*/build/resources/main/"
     ],
     "exclude": [
         "./**/out",
-        "./lib-*/*.d.ts"
+      "./lib-*/*.ts"
     ]
 }
