@@ -24,17 +24,19 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
 def globalDirPath = "${project.projectDir}/typescript"
 def globalNpmDirPath = "$globalDirPath/npm"
 
-task typescript( type: NpmTask ) {
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create JS and DTS files from TS'
     args = [ 'run', 'build' ]
 
-    inputs.files(fileTree(project.projectDir).matching {
+    inputs.files( fileTree( project.projectDir ).matching {
         include "lib-*/src/main/resources/**/*.ts"
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
     })
 
-    outputs.files(fileTree(project.projectDir).matching {
-        include "lib-*/build/resources/main/**/*.js"
-        include "lib-*/build/resources/main/**/*.ts"
+    outputs.files( fileTree( project.projectDir ).matching {
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
     })
 }
 
@@ -63,7 +65,7 @@ task prepareGlobalToPublish( type: Copy ) {
     }
 }
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: prepareGlobalToPublish ) {
+task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npmInstall ] ) {
     args = [ 'publish' ]
     workingDir = file( globalNpmDirPath )
 }
@@ -112,7 +114,7 @@ subprojects {
         }
     }
 
-    task publishLibToNpm( type: NpmTask, dependsOn: prepareLibToPublish ) {
+    task publishLibToNpm( type: NpmTask, dependsOn: [ prepareLibToPublish, parent.npmInstall ] ) {
         args = [ 'publish' ]
         workingDir = file( npmDirPath )
     }
@@ -126,6 +128,7 @@ subprojects {
     }
 
     test {
+        dependsOn processResources
         dependsOn parent.typescript
     }
 
