@@ -8,8 +8,6 @@ node {
     workDir = file( "${rootProject.projectDir}/.gradle/nodejs" )
 }
 
-def packageVersion = '0.1.0'
-
 /* Test */
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
@@ -38,6 +36,8 @@ task typescript( type: NpmTask, dependsOn: npmInstall ) {
         include "lib-*/build/resources/main/lib/xp/*.js"
         include "lib-*/build/resources/main/lib/xp/*.ts"
     })
+
+    shouldRunAfter lint
 }
 
 task clean( type: Delete ) {
@@ -57,7 +57,7 @@ task prepareGlobalToPublish( type: Copy ) {
         include 'package.template.json'
         filter {
             line -> line
-                .replaceAll('%VERSION%', packageVersion )
+                .replaceAll('%VERSION%', version )
                 .replaceAll('%FULL_NAME%|%FILE_NAME%', 'global' )
                 .replaceAll('%SHORT_NAME%', 'common' )
         }
@@ -71,6 +71,10 @@ task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npm
 }
 
 task publishToNpm {
+    finalizedBy publishGlobalToNpm
+}
+
+task publish {
     finalizedBy publishGlobalToNpm
 }
 
@@ -106,7 +110,7 @@ subprojects {
             include 'package.template.json'
             filter {
                 line -> line
-                    .replaceAll('%VERSION%', packageVersion )
+                    .replaceAll('%VERSION%', version )
                     .replaceAll('%FULL_NAME%', fullName )
                     .replaceAll('%SHORT_NAME%|%FILE_NAME%', shortName )
             }
@@ -135,6 +139,10 @@ subprojects {
     jar {
         exclude '**/*.ts'
         dependsOn parent.typescript
+    }
+
+    publish {
+        dependsOn publishLibToNpm
     }
 }
 
