@@ -14,4 +14,6 @@ public interface BeanContext
     <T> Supplier<T> getBinding( Class<T> type );
 
     <T> Supplier<T> getService( Class<T> type );
+
+    <T> Supplier<T> getService( Class<T> type, String filter );
 }

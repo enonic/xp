@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.processor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -25,12 +26,15 @@ import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.impl.url.HtmlLinkProcessor;
+import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.region.AbstractRegions;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
@@ -69,6 +73,8 @@ public class HtmlAreaContentProcessor
 
     private LayoutDescriptorService layoutDescriptorService;
 
+    private HtmlSanitizer htmlSanitizer;
+
     @Override
     public boolean supports( final ContentType contentType )
     {
@@ -87,10 +93,7 @@ public class HtmlAreaContentProcessor
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
 
-        return new ProcessCreateResult( CreateContentParams.
-            create( createContentParams ).
-            addProcessedIds( processedIds.build() ).
-            build() );
+        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).addProcessedIds( processedIds.build() ).build() );
     }
 
     @Override
@@ -107,7 +110,7 @@ public class HtmlAreaContentProcessor
 
             processContentData( editable.data, contentType, processedIds );
             processExtraData( editable.extraDatas, processedIds );
-            processPageData( editable.page, processedIds );
+            editable.page = processPageData( editable.page, processedIds );
 
             if ( editable instanceof EditableSite )
             {
@@ -136,11 +139,11 @@ public class HtmlAreaContentProcessor
         } );
     }
 
-    private void processPageData( final Page page, final ContentIds.Builder processedIds )
+    private Page processPageData( final Page page, final ContentIds.Builder processedIds )
     {
         if ( page == null )
         {
-            return;
+            return null;
         }
 
         if ( page.hasDescriptor() )
@@ -153,29 +156,51 @@ public class HtmlAreaContentProcessor
 
         if ( page.hasRegions() )
         {
-            processRegionsData( page.getRegions(), processedIds );
+            final PageRegions pageRegions = processRegionsData( page.getRegions(), processedIds );
+            return Page.create( page ).regions( pageRegions ).build();
         }
+
+        return page;
     }
 
-    private void processRegionsData( final AbstractRegions regions, final ContentIds.Builder processedIds )
+    private PageRegions processRegionsData( final AbstractRegions regions, final ContentIds.Builder processedIds )
     {
-        regions.forEach( ( region ) -> this.processRegionData( region, processedIds ) );
+        final PageRegions.Builder result = PageRegions.create();
+        for ( final Region region : regions )
+        {
+            final Region processedRegion = this.processRegionData( region, processedIds );
+
+            result.add( processedRegion );
+        }
+
+        return result.build();
     }
 
-    private void processRegionData( final Region region, final ContentIds.Builder processedIds )
+    private Region processRegionData( final Region region, final ContentIds.Builder processedIds )
     {
-        region.getComponents().
-            forEach( component -> {
-                if ( component instanceof TextComponent )
-                {
-                    processString( ( (TextComponent) component ).getText(), processedIds );
-                }
+        final List<com.enonic.xp.region.Component> processedComponents = region.getComponents().stream().map( component -> {
+            if ( component instanceof TextComponent )
+            {
+                final String processedText = processString( ( (TextComponent) component ).getText(), processedIds );
+                return TextComponent.create( (TextComponent) component ).text( processedText ).build();
+            }
 
-                if ( component instanceof DescriptorBasedComponent )
-                {
-                    processComponent( (DescriptorBasedComponent) component, processedIds );
-                }
-            } );
+            if ( component instanceof DescriptorBasedComponent )
+            {
+                processComponent( (DescriptorBasedComponent) component, processedIds );
+            }
+
+            return component;
+        } ).collect( Collectors.toList() );
+
+        final Region.Builder processedRegion = Region.create( region );
+
+        for ( int i = 0; i < processedComponents.size(); i++ )
+        {
+            processedRegion.set( i, processedComponents.get( i ) );
+        }
+
+        return processedRegion.build();
     }
 
     private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
@@ -187,11 +212,6 @@ public class HtmlAreaContentProcessor
             if ( xDatas.getSize() > 0 )
             {
                 xDatas.forEach( xData -> {
-                    if ( extraDatas == null )
-                    {
-                        return;
-                    }
-
                     final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
                     if ( extraData != null )
                     {
@@ -218,12 +238,11 @@ public class HtmlAreaContentProcessor
             return Collections.emptyList();
         }
 
-        return paths.
-            stream().
-            map( data::getProperty ).
-            filter( Objects::nonNull ).
-            filter( Property::hasNotNullValue ).
-            collect( Collectors.toList() );
+        return paths.stream()
+            .map( data::getProperty )
+            .filter( Objects::nonNull )
+            .filter( Property::hasNotNullValue )
+            .collect( Collectors.toList() );
     }
 
     private Set<String> getPaths( final FormItems formItems )
@@ -236,9 +255,14 @@ public class HtmlAreaContentProcessor
 
     private void processDataTree( final Collection<Property> properties, final ContentIds.Builder processedIds )
     {
-        properties.stream().
-            map( Property::getString ).
-            forEach( value -> processString( value, processedIds ) );
+        properties.forEach( property -> {
+            final String processedValue = processString( property.getString(), processedIds );
+
+            if ( !property.getString().equals( processedValue ) )
+            {
+                property.setValue( ValueFactory.newString( processedValue ) );
+            }
+        } );
     }
 
     private void processComponent( final DescriptorBasedComponent component, final ContentIds.Builder processedIds )
@@ -274,11 +298,11 @@ public class HtmlAreaContentProcessor
         }
     }
 
-    private void processString( final String value, final ContentIds.Builder processedIds )
+    private String processString( final String value, final ContentIds.Builder processedIds )
     {
         if ( nullToEmpty( value ).isBlank() )
         {
-            return;
+            return null;
         }
 
         final Matcher contentMatcher = HtmlLinkProcessor.CONTENT_PATTERN.matcher( value );
@@ -292,6 +316,8 @@ public class HtmlAreaContentProcessor
                 processedIds.add( contentId );
             }
         }
+
+        return htmlSanitizer.sanitizeHtml( value );
     }
 
     private void processComponentDescriptor( final DescriptorBasedComponent component, final ComponentDescriptor componentDescriptor,
@@ -335,5 +361,11 @@ public class HtmlAreaContentProcessor
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
+    }
+
+    @Reference(target = "(type=processor)")
+    public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
+    {
+        this.htmlSanitizer = htmlSanitizer;
     }
 }

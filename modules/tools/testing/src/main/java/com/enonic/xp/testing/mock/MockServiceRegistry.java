@@ -9,7 +9,7 @@ import com.enonic.xp.script.impl.service.ServiceRegistry;
 public final class MockServiceRegistry
     implements ServiceRegistry
 {
-    private final Map<Class, ServiceRef> map;
+    private final Map<String, ServiceRef> map;
 
     public MockServiceRegistry()
     {
@@ -20,7 +20,14 @@ public final class MockServiceRegistry
     @SuppressWarnings("unchecked")
     public <T> ServiceRef<T> getService( final Class<T> type )
     {
-        final ServiceRef ref = this.map.get( type );
+        return getService( type, null );
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> ServiceRef<T> getService( final Class<T> type, final String filter )
+    {
+        final ServiceRef ref = this.map.get( getRegistryKey( type, filter ) );
         if ( ref != null )
         {
             return (ServiceRef<T>) ref;
@@ -31,10 +38,15 @@ public final class MockServiceRegistry
         };
     }
 
-    public <T> void register( final Class<T> type, final T instance )
+    public <T> void register( final Class<T> type, final String filter, final T instance )
     {
         final ServiceRef<T> ref = toServiceRef( instance );
-        this.map.put( type, ref );
+        this.map.put( getRegistryKey( type, filter ), ref );
+    }
+
+    private <T> String getRegistryKey( final Class<T> type, final String filter )
+    {
+        return filter == null ? type.getName() : type.getName() + ":" + filter;
     }
 
     private <T> ServiceRef<T> toServiceRef( final T instance )

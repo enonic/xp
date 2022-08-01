@@ -69,7 +69,7 @@ public class ApplicationDeployerManager
         //Needed to ensure startup-order
     }
 
-    @Reference
+    @Reference(target = "(type=function)")
     public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
     {
         //Needed to ensure startup-order

@@ -54,13 +54,19 @@ public final class MockBeanContext
         return this.serviceRegistry.getService( type );
     }
 
+    @Override
+    public <T> Supplier<T> getService( final Class<T> type, final String filter )
+    {
+        return this.serviceRegistry.getService( type, filter );
+    }
+
     public <T> void addBinding( final Class<T> type, final T instance )
     {
         this.bindings.put( type, () -> instance );
     }
 
-    public <T> void addService( final Class<T> type, final T instance )
+    public <T> void addService( final Class<T> type, final String filter, final T instance )
     {
-        this.serviceRegistry.register( type, instance );
+        this.serviceRegistry.register( type, filter, instance );
     }
 }

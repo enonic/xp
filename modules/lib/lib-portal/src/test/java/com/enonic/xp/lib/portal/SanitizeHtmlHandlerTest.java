@@ -19,7 +19,7 @@ public class SanitizeHtmlHandlerTest
         super.initialize();
 
         this.htmlSanitizer = Mockito.mock( HtmlSanitizer.class );
-        addService( HtmlSanitizer.class, this.htmlSanitizer );
+        addService( HtmlSanitizer.class, "(type=function)", this.htmlSanitizer );
     }
 
     @Test

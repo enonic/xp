@@ -17,6 +17,6 @@ public final class SanitizeHtmlHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.htmlSanitizer = context.getService( HtmlSanitizer.class ).get();
+        this.htmlSanitizer = context.getService( HtmlSanitizer.class, "(type=function)" ).get();
     }
 }

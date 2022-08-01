@@ -33,6 +33,12 @@ public final class BeanContextImpl
     }
 
     @Override
+    public <T> Supplier<T> getService( final Class<T> type, final String filter )
+    {
+        return this.executor.getServiceRegistry().getService( type, filter );
+    }
+
+    @Override
     public <T> Supplier<T> getBinding( final Class<T> type )
     {
         final Supplier<T> supplier = this.executor.getScriptSettings().getBinding( type );

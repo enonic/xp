@@ -127,9 +127,14 @@ public abstract class ScriptTestSupport
         this.executor = createExecutor();
     }
 
+    protected final <T> void addService( final Class<T> type, final String filter, final T instance )
+    {
+        this.serviceRegistry.register( type, filter, instance );
+    }
+
     protected final <T> void addService( final Class<T> type, final T instance )
     {
-        this.serviceRegistry.register( type, instance );
+        this.serviceRegistry.register( type, null, instance );
     }
 
     protected final <T> void addBinding( final Class<T> type, final T instance )

@@ -1,6 +1,9 @@
 package com.enonic.xp.script.impl.service;
 
+import java.util.Collection;
+
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 final class ServiceRefImpl<T>
@@ -10,10 +13,13 @@ final class ServiceRefImpl<T>
 
     private final BundleContext bundleContext;
 
-    ServiceRefImpl( final Class<T> type, final BundleContext bundleContext )
+    private final String filter;
+
+    ServiceRefImpl( final Class<T> type, final BundleContext bundleContext, final String filter )
     {
         this.type = type;
         this.bundleContext = bundleContext;
+        this.filter = filter;
     }
 
     @Override
@@ -28,14 +34,24 @@ final class ServiceRefImpl<T>
         throw new IllegalArgumentException( "Service [" + this.type.getName() + "] not found" );
     }
 
+
     private T findService()
     {
-        final ServiceReference<T> ref = this.bundleContext.getServiceReference( this.type );
-        if ( ref == null )
+        final Collection<ServiceReference<T>> refs;
+        try
+        {
+            refs = this.bundleContext.getServiceReferences( this.type, filter );
+        }
+        catch ( InvalidSyntaxException e )
         {
             return null;
         }
 
-        return this.bundleContext.getService( ref );
+        if ( refs.isEmpty() )
+        {
+            return null;
+        }
+
+        return this.bundleContext.getService( refs.stream().findAny().get() );
     }
 }

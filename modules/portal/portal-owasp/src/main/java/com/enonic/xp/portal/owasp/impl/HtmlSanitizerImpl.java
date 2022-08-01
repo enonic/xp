@@ -6,7 +6,7 @@ import org.owasp.html.PolicyFactory;
 
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
 
-@Component(immediate = true)
+@Component(immediate = true, property = "type=function")
 public final class HtmlSanitizerImpl
     implements HtmlSanitizer
 {

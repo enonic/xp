@@ -15,6 +15,14 @@ public final class ServiceRegistryImpl
     @Override
     public <T> ServiceRef<T> getService( final Class<T> type )
     {
-        return new ServiceRefImpl<>( type, this.bundleContext );
+        return new ServiceRefImpl<>( type, this.bundleContext, null );
     }
+
+    @Override
+    public <T> ServiceRef<T> getService( final Class<T> type, final String filter )
+    {
+        return new ServiceRefImpl<>( type, this.bundleContext, filter );
+    }
+
+
 }
