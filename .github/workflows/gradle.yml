@@ -59,7 +59,7 @@ jobs:
     needs: [ publish_vars, build ]
     strategy:
       matrix:
-        repo: ["enonic/app-admin-home", "enonic/app-applications", "enonic/app-users", "enonic/app-standardidprovider" ]
+        repo: ["enonic/app-admin-home", "enonic/app-applications", "enonic/app-users", "enonic/app-standardidprovider", "enonic/app-xp-welcome" ]
     runs-on: ubuntu-latest
     if: needs.publish_vars.outputs.publish == 'true'
     steps:
