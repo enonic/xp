@@ -1,38 +1,41 @@
 package com.enonic.xp.portal.owasp.impl;
 
 import org.osgi.service.component.annotations.Component;
-import org.owasp.html.HtmlPolicyBuilder;
-import org.owasp.html.PolicyFactory;
 
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
+import com.enonic.xp.portal.owasp.SanitizeType;
 
 @Component(immediate = true)
 public final class HtmlSanitizerImpl
     implements HtmlSanitizer
 {
+    private final HtmlStrictSanitizer htmlStrictSanitizer;
 
-    private final PolicyFactory htmlSanitizePolicy;
+    private final HtmlRichTextSanitizer htmlRichTextSanitizer;
 
     public HtmlSanitizerImpl()
     {
-        this.htmlSanitizePolicy = new HtmlPolicyBuilder().
-            allowCommonBlockElements().
-            allowCommonInlineFormattingElements().
-            allowElements( "a", "img", "pre" ).
-            allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" ).
-            allowElements( "figure", "figcaption" ).
-            allowAttributes( "href" ).onElements( "a" ).
-            allowAttributes( "src" ).onElements( "img" ).
-            allowAttributes( "checked", "class", "id", "target", "title", "type" ).globally().
-            allowAttributes( "scope" ).onElements( "td", "th" ).
-            allowStandardUrlProtocols().
-            allowStyling().
-            toFactory();
+        this.htmlStrictSanitizer = new HtmlStrictSanitizer();
+        this.htmlRichTextSanitizer = new HtmlRichTextSanitizer();
     }
 
     @Override
     public String sanitizeHtml( final String html )
     {
-        return htmlSanitizePolicy.sanitize( html ).replace( "\u00A0", "&nbsp;" );
+        return htmlStrictSanitizer.sanitize( html );
+    }
+
+    @Override
+    public String sanitizeHtml( final String html, final SanitizeType type )
+    {
+        switch ( type )
+        {
+            case STRICT:
+                return htmlStrictSanitizer.sanitize( html );
+            case RICH_TEXT:
+                return htmlRichTextSanitizer.sanitize( html );
+            default:
+                return html;
+        }
     }
 }
