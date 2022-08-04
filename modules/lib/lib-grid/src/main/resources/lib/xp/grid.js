@@ -1,3 +1,11 @@
+/**
+ * Grid related functions.
+ *
+ * @example
+ * var gridLib = require('/lib/xp/grid');
+ *
+ * @module grid
+ */
 /* global __ */
 
 function requireNotNull(value, parameterName) {
