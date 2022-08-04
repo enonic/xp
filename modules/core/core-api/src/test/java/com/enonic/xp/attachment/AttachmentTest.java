@@ -2,6 +2,8 @@ package com.enonic.xp.attachment;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -101,4 +103,9 @@ public class AttachmentTest
         assertFalse( a1.equals( a2Builder.size( 2048 ).build() ) );
     }
 
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( Attachment.class ).verify();
+    }
 }

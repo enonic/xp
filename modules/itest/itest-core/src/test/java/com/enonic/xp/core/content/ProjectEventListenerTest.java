@@ -33,7 +33,7 @@ public class ProjectEventListenerTest
     {
         super.setUpNode();
 
-        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService, mediaInfoService );
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
         listener = new ProjectEventListener( this.projectService, this.taskService, synchronizer );
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
