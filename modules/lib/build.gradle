@@ -1,11 +1,11 @@
 plugins {
+    id 'base'
     id 'com.github.node-gradle.node'
 }
 
 node {
     download = true
     version = '16.15.0'
-    workDir = file( "${rootProject.projectDir}/.gradle/nodejs" )
 }
 
 /* Test */
@@ -17,10 +17,11 @@ task lint( type: NpmTask, dependsOn: npmInstall ) {
     outputs.upToDateWhen { false }
 }
 
+check.dependsOn lint
+
 /* Configure & Build */
 
-def globalDirPath = "${project.projectDir}/typescript"
-def globalNpmDirPath = "$globalDirPath/npm"
+def globalNpmDirPath = "$buildDir/npm"
 
 task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create JS and DTS files from TS'
@@ -36,25 +37,32 @@ task typescript( type: NpmTask, dependsOn: npmInstall ) {
         include "lib-*/build/resources/main/lib/xp/*.js"
         include "lib-*/build/resources/main/lib/xp/*.ts"
     })
-
-    shouldRunAfter lint
 }
 
-task clean( type: Delete ) {
-    delete globalNpmDirPath
+task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
+    into "$buildDir/js"
+    from projectDir
+    include "lib-*/build/resources/main/lib/xp/**/*.js"
+}
+
+task jsdoc(type: NpmTask, dependsOn: prepareToJsdoc) {
+    description = 'Build JSDoc for libraries.'
+    args = ['run', 'jsdoc']
+    copy {
+        from 'jsdoc/template/jsdoc-main.css'
+        into "$buildDir/resources/main/jsdoc/styles"
+    }
 }
 
 /* Publish */
 
-task prepareGlobalToPublish( type: Copy ) {
+task prepareToPublish( type: Copy ) {
     into globalNpmDirPath
 
-    from( globalDirPath ) {
-        include "*.*"
-    }
+    from 'README.md'
+    from 'global.d.ts'
 
-    from( './utils' ) {
-        include 'package.template.json'
+    from( 'package.template.json' ) {
         filter {
             line -> line
                 .replaceAll('%VERSION%', version )
@@ -65,17 +73,30 @@ task prepareGlobalToPublish( type: Copy ) {
     }
 }
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npmInstall ] ) {
+task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish, npmInstall ] ) {
     args = [ 'publish' ]
     workingDir = file( globalNpmDirPath )
 }
 
-task publishToNpm {
-    finalizedBy publishGlobalToNpm
+task packageJsdoc(type: Jar, dependsOn: 'jsdoc') {
+    from "$buildDir/resources/main/jsdoc"
+    classifier = 'jsdoc'
 }
 
 task publish {
-    finalizedBy publishGlobalToNpm
+    dependsOn publishToNpm
+}
+
+artifacts {
+    archives packageJsdoc
+}
+
+publishing.publications {
+    mavenJava( MavenPublication ) {
+        artifact( packageJsdoc ) {
+            artifactId = 'docs'
+        }
+    }
 }
 
 subprojects {
@@ -88,26 +109,18 @@ subprojects {
 
     def npmDirPath = "$buildDir/npm"
 
-    parent.typescript {
-        shouldRunAfter processResources
-    }
-
-    task prepareLibToPublish( type: Copy, dependsOn: [ processResources, parent.typescript ] ) {
+    task prepareToPublish( type: Copy, dependsOn: [ processResources, parent.typescript ] ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
 
         into npmDirPath
 
-        from( './' ) {
-            include 'README.md'
-        }
-
+        from( 'README.md' )
         from( "$buildDir/resources/main/lib/xp/" ) {
             include '*.d.ts'
         }
 
-        from( '../utils' ) {
-            include 'package.template.json'
+        from( '../package.template.json' ) {
             filter {
                 line -> line
                     .replaceAll('%VERSION%', version )
@@ -118,31 +131,24 @@ subprojects {
         }
     }
 
-    task publishLibToNpm( type: NpmTask, dependsOn: [ prepareLibToPublish, parent.npmInstall ] ) {
+    task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish ] ) {
         args = [ 'publish' ]
         workingDir = file( npmDirPath )
     }
 
-    publishToNpm {
-        finalizedBy publishLibToNpm
-    }
+    publish.dependsOn publishToNpm
 
-    check {
-        dependsOn parent.lint
-    }
+    check.dependsOn parent.lint
+
+    parent.typescript.dependsOn processResources
 
     test {
-        dependsOn processResources
         dependsOn parent.typescript
     }
 
     jar {
         exclude '**/*.ts'
         dependsOn parent.typescript
-    }
-
-    publish {
-        dependsOn publishLibToNpm
     }
 }
 

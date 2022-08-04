@@ -6,6 +6,7 @@
  *
  * @module content
  */
+
 declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
@@ -28,24 +29,6 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
         throw `Parameter '${String(name)}' is required`;
     }
 }
-
-/**
- * @typedef ContentType
- * @type Object
- * @property {string} name Name of the content type.
- * @property {string} displayName Display name of the content type.
- * @property {string} description Description of the content type.
- * @property {string} superType Name of the super type, or null if it has no super type.
- * @property {boolean} abstract Whether or not content of this type may be instantiated.
- * @property {boolean} final Whether or not it may be used as super type of other content types.
- * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
- * @property {string} displayNameExpression ES6 string template for generating the content name based on values in the content form.
- * @property {object} [icon] Icon of the content type.
- * @property {object} [icon.data] Stream with the binary data for the icon.
- * @property {string} [icon.mimeType] Mime type of the icon image.
- * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
- * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
- */
 
 export interface GetContentParams {
     key: string;
@@ -577,7 +560,7 @@ export function get(params: GetContentParams): Content | null {
  * This function returns a content attachments.
  *
  * @example-ref examples/content/getAttachments.js
- *e
+ *
  * @param {string} key Path or id to the content.
  *
  * @returns {object} An object with all the attachments that belong to the content, where the key is the attachment name. Or null if the content cannot be found.
@@ -1489,6 +1472,23 @@ export interface Icon {
     modifiedTime: string;
 }
 
+/**
+ * @typedef ContentType
+ * @type Object
+ * @property {string} name Name of the content type.
+ * @property {string} displayName Display name of the content type.
+ * @property {string} description Description of the content type.
+ * @property {string} superType Name of the super type, or null if it has no super type.
+ * @property {boolean} abstract Whether or not content of this type may be instantiated.
+ * @property {boolean} final Whether or not it may be used as super type of other content types.
+ * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
+ * @property {string} displayNameExpression ES6 string template for generating the content name based on values in the content form.
+ * @property {object} [icon] Icon of the content type.
+ * @property {object} [icon.data] Stream with the binary data for the icon.
+ * @property {string} [icon.mimeType] Mime type of the icon image.
+ * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
+ * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
+ */
 export interface ContentType {
     name: string;
     displayName: string;
