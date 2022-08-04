@@ -26,7 +26,6 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.PrincipalKey;
@@ -46,7 +45,7 @@ public final class ParentContentSynchronizer
     private final ContentService contentService;
 
     @Activate
-    public ParentContentSynchronizer( @Reference final ContentService contentService, @Reference final MediaInfoService mediaInfoService )
+    public ParentContentSynchronizer( @Reference final ContentService contentService )
     {
         this.contentService = contentService;
 
@@ -66,7 +65,6 @@ public final class ParentContentSynchronizer
             .build() );
         syncCommandCreators.put( ContentSyncEventType.UPDATED, params -> UpdatedEventSyncCommand.create()
             .contentService( contentService )
-            .mediaInfoService( mediaInfoService )
             .params( params )
             .build() );
         syncCommandCreators.put( ContentSyncEventType.DELETED,
