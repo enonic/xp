@@ -26,12 +26,10 @@ public abstract class DslQueryBuilder
 
     protected String getString( final String name )
     {
-        return Optional.ofNullable( expression.getProperty( name ) ).map( Property::getString ).orElse( null );
-    }
-
-    protected boolean getBoolean( final String name )
-    {
-        return Optional.ofNullable( expression.getProperty( name ) ).map( Property::getBoolean ).orElse( false );
+        return Optional.ofNullable( expression.getProperty( name ) )
+            .filter( property -> property.getValue().isString() )
+            .map( Property::getString )
+            .orElse( null );
     }
 
     protected Long getLong( final String name, final Long defaultValue )

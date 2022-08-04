@@ -1,0 +1,6 @@
+{
+  "exists": {
+    "field": "displayname",
+    "_name": "displayname"
+  }
+}

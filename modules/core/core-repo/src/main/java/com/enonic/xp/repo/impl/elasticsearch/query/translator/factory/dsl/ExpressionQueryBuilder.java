@@ -69,6 +69,11 @@ abstract class ExpressionQueryBuilder
 
     protected String getFieldName( final Object value )
     {
+        if ( nullToEmpty( field ).isBlank() )
+        {
+            return null;
+        }
+
         if ( nullToEmpty( type ).isBlank() )
         {
             if ( value instanceof Number )
