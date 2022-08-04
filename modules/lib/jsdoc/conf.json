@@ -1,0 +1,33 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": [
+      "jsdoc",
+      "closure"
+    ]
+  },
+  "source": {
+    "include": [
+      "jsdoc/global.js",
+      "build/js"
+    ]
+  },
+  "plugins": [
+    "plugins/example",
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": false,
+      "outputSourcePath": false,
+      "layoutFile": "jsdoc/template/jsdoc.tmpl"
+    }
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "build/resources/main/jsdoc",
+    "readme": "jsdoc/index.md"
+  }
+}

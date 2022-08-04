@@ -6,6 +6,7 @@
  *
  * @module websocket
  */
+
 declare global {
     interface XpLibraries {
         '/lib/xp/websocket': typeof import('./websocket');

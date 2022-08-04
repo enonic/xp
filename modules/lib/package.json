@@ -7,7 +7,8 @@
         "build": "tsc --declaration --project tsconfig.build.json",
         "lint": "eslint .",
         "lint:quiet": "eslint --quiet .",
-        "fix": "eslint --fix ."
+        "fix": "eslint --fix .",
+        "jsdoc": "jsdoc --configure jsdoc/conf.json"
     },
     "repository": {
         "type": "git",
@@ -29,6 +30,7 @@
         "eslint": "^8.15.0",
         "glob": "^8.0.3",
         "ts-loader": "^9.3.0",
-        "typescript": "^4.6.4"
+        "typescript": "^4.6.4",
+        "jsdoc": "^3.6.11"
     }
 }
