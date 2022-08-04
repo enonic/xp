@@ -6,6 +6,7 @@
  *
  * @module io
  */
+
 declare global {
     interface XpLibraries {
         '/lib/xp/io': typeof import('./io');

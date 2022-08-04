@@ -1,9 +1,3 @@
-declare global {
-    interface XpLibraries {
-        '/lib/xp/portal': typeof import('./portal');
-    }
-}
-
 /**
  * Functions to access portal functionality.
  *
@@ -12,6 +6,12 @@ declare global {
  *
  * @module portal
  */
+
+declare global {
+    interface XpLibraries {
+        '/lib/xp/portal': typeof import('./portal');
+    }
+}
 
 export interface AssetUrlParams {
     path: string;

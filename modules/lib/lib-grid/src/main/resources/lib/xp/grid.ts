@@ -43,18 +43,17 @@ export interface ModifyParams {
     ttlSeconds?: number;
 }
 
+/**
+ * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
+
+ WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used. Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons. The developer is also responsible for not modifying shared objects (keys and values) in place.
+ * @param mapId - map identifier
+ * @constructor
+ */
 export class SharedMap {
 
     private map: ISharedMap;
 
-    /**
-     * Creates an instance of SharedMap which are shared across all applications and even cluster nodes.
-     *
-     * WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used. Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons. The developer is also responsible for not modifying shared objects (keys and values) in place.
-     *
-     * @param mapId - map identifier
-     * @constructor
-     */
     constructor(mapId: string) {
         const bean = __.newBean<SharedMapHandler>('com.enonic.xp.lib.grid.SharedMapHandler');
         this.map = bean.getMap(mapId);

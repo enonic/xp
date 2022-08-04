@@ -30,6 +30,7 @@ module.exports = {
     ignorePatterns: [
         '**/out',
         '**/build',
+        'jsdoc/global.js',
         'lib-*/**/*.d.ts',
         '**/src/main/resources/lib/xp/*.js',
         '**/src/test/**/*.js',
