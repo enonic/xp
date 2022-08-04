@@ -41,7 +41,7 @@ public class SyncContentServiceImplTest
     {
         super.setUpNode();
 
-        synchronizer = new ParentContentSynchronizer( contentService, mediaInfoService );
+        synchronizer = new ParentContentSynchronizer( contentService );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
