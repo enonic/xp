@@ -46,4 +46,19 @@ public class HtmlRichTextSanitizerTest
 
         assertEquals( "<div style=\"background-color:powderblue\"></div>", sanitized );
     }
+
+    @Test
+    public void testUrlProtocols()
+        throws Exception
+    {
+        String sanitized =
+            new HtmlRichTextSanitizer().sanitize( "<p><a href=\"content://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>" );
+        assertEquals( "<p><a href=\"content://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>", sanitized );
+
+        sanitized = new HtmlRichTextSanitizer().sanitize( "<p><a href=\"media://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>" );
+        assertEquals( "<p><a href=\"media://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>", sanitized );
+
+        sanitized = new HtmlRichTextSanitizer().sanitize( "<p><a href=\"image://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>" );
+        assertEquals( "<p><a href=\"image://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>", sanitized );
+    }
 }
