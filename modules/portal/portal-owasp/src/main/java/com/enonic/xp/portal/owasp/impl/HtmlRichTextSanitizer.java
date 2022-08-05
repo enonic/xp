@@ -24,8 +24,8 @@ final class HtmlRichTextSanitizer
         this.htmlSanitizePolicy = htmlPolicyBuilder.allowElements( ALLOWED_ELEMENTS )
             .allowElements( getImgElementPolicy(), "img" )
             .allowAttributes( "class" )
-            .globally().//classes to everyone
-                allowAttributes( "start" )
+            .globally()//classes to everyone
+            .allowAttributes( "start" )
             .onElements( "ol" )
             .allowAttributes( "value" )
             .onElements( "li" )
@@ -41,6 +41,7 @@ final class HtmlRichTextSanitizer
             .allowAttributes( "scope" )
             .onElements( "td", "th", "tr" )
             .allowStandardUrlProtocols()
+            .allowUrlProtocols( "content", "media", "image" )
             .allowStyling();
     }
 
