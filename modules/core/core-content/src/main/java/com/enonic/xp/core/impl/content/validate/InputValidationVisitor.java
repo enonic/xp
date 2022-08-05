@@ -26,7 +26,7 @@ final class InputValidationVisitor
         final Property property = propertyTree.getProperty( input.getPath().toString() );
         if ( property != null )
         {
-            checkValidity( input, property );
+            property.getParent().getProperties( input.getName() ).forEach( prop -> checkValidity( input, prop ) );
         }
     }
 
