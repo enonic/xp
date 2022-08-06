@@ -24,7 +24,22 @@ assert.assertJsonEquals([
         componentPath: 'myapp:/site/parts/part1',
         modifiedTime: '2021-02-25T10:44:33.170079900Z',
         resource: '<part><some-data></some-data></part>',
-        type: 'PART'
+        type: 'PART',
+        form: [
+            {
+                'formItemType': 'Input',
+                'name': 'width',
+                'label': 'width',
+                'maximize': true,
+                'inputType': 'Double',
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
+                },
+                'config': {}
+            }
+        ],
+        config: {}
     },
     {
         key: 'myapp:part2',
@@ -32,7 +47,9 @@ assert.assertJsonEquals([
         componentPath: 'myapp:/site/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: '<part><some-other-data></some-other-data></part>',
-        type: 'PART'
+        type: 'PART',
+        form: [],
+        config: {}
     }
 ], result);
 

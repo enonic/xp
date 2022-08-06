@@ -5,11 +5,11 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Create virtual app.
-var result = appLib.createVirtualApplication({
+var result = appLib.get({
     key: 'my-app',
 });
 
-log.info('Created app: ' + result.key);
+log.info('Fetched app: ' + result.key);
 
 // END
 
@@ -21,10 +21,11 @@ assert.assertJsonEquals({
     vendorUrl: 'https://vendor.url',
     url: 'https://myapp.url',
     version: '1.0.0',
+    systemVersion: '4.2.3-SNAPSHOT',
     minSystemVersion: '2.0.0',
     maxSystemVersion: '3.0.0',
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
-    system: false
+    system: true
 }, result);
 

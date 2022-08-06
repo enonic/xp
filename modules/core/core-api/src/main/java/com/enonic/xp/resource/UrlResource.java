@@ -15,10 +15,20 @@ public final class UrlResource
 {
     private final URL url;
 
+    private final ResourceResolver resolver;
+
     public UrlResource( final ResourceKey key, final URL url )
     {
         super( key );
         this.url = url;
+        this.resolver = null;
+    }
+
+    public UrlResource( final ResourceKey key, final URL url, final ResourceResolver resourceResolver )
+    {
+        super( key );
+        this.url = url;
+        this.resolver = resourceResolver;
     }
 
     @Override
@@ -96,5 +106,11 @@ public final class UrlResource
     {
         requireExists();
         return Resources.asByteSource( this.url );
+    }
+
+    @Override
+    public ResourceResolver getResolver()
+    {
+        return resolver;
     }
 }

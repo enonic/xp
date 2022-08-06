@@ -8,8 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.enonic.xp.issue.VirtualAppConstants;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceResolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -75,7 +76,7 @@ class MultiApplicationUrlResolverTest
     {
         final Resource first = mock( Resource.class );
 
-        when( first.isVirtual() ).thenReturn( true );
+        when( first.getResolver() ).thenReturn( ResourceResolver.NODE );
         when( first.getBytes() ).thenReturn( VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE );
 
         when( this.delegate1.findResource( "/site/site.xml" ) ).thenReturn( first );
@@ -85,11 +86,11 @@ class MultiApplicationUrlResolverTest
 
         assertSame( second, this.resolver.findResource( "/site/site.xml" ) );
 
-        when( first.isVirtual() ).thenReturn( false );
+        when( first.getResolver() ).thenReturn( ResourceResolver.BUNDLE );
 
         assertSame( first, this.resolver.findResource( "/site/site.xml" ) );
 
-        when( first.isVirtual() ).thenReturn( true );
+        when( first.getResolver() ).thenReturn( ResourceResolver.NODE );
         when( this.delegate2.findResource( "/site/site.xml" ) ).thenReturn( null );
 
         assertSame( first, this.resolver.findResource( "/site/site.xml" ) );

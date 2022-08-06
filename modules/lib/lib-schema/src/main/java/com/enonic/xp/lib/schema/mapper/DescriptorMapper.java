@@ -9,14 +9,14 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public abstract class DescriptorMapper
+public abstract class DescriptorMapper<T extends ComponentDescriptor>
     implements MapSerializable
 {
-    private final ComponentDescriptor descriptor;
+    protected final T descriptor;
 
     private final Resource resource;
 
-    DescriptorMapper( final DynamicSchemaResult<? extends ComponentDescriptor> descriptor )
+    DescriptorMapper( final DynamicSchemaResult<T> descriptor )
     {
         this.descriptor = descriptor.getSchema();
         this.resource = descriptor.getResource();
@@ -36,6 +36,8 @@ public abstract class DescriptorMapper
         gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );
 
+        DynamicSchemaSerializer.serializeForm( gen, descriptor.getConfig() );
+        DynamicSchemaSerializer.serializeConfig( gen, descriptor.getSchemaConfig() );
     }
 
     protected abstract String getType();

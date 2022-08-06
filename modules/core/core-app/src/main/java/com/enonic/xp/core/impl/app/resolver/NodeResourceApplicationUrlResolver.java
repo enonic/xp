@@ -4,10 +4,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;

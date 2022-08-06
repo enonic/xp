@@ -23,6 +23,24 @@ assert.assertJsonEquals({
     componentPath: 'myapp:/site/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: '<page><some-data></some-data></page>',
-    type: 'PAGE'
+    type: 'PAGE',
+    form: [
+        {
+            'formItemType': 'Input',
+            'name': 'width',
+            'label': 'width',
+            'maximize': true,
+            'inputType': 'Double',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
+            },
+            'config': {}
+        }
+    ],
+    config: {},
+    regions: [
+        'region-one'
+    ]
 }, result);
 

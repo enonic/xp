@@ -3,8 +3,9 @@ package com.enonic.xp.core.impl.app.resolver;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.issue.VirtualAppConstants;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceResolver;
 
 public final class MultiApplicationUrlResolver
     implements ApplicationUrlResolver
@@ -40,7 +41,7 @@ public final class MultiApplicationUrlResolver
             {
                 resourceToReturn = resource;
 
-                if ( !resourceToReturn.isVirtual() || !VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) ||
+                if ( ResourceResolver.NODE != resourceToReturn.getResolver() || !VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) ||
                     !VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE.equals( resourceToReturn.getBytes() ) )
                 {
                     return resourceToReturn;

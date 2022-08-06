@@ -77,8 +77,8 @@ public final class NodeValueResource
     }
 
     @Override
-    public boolean isVirtual()
+    public ResourceResolver getResolver()
     {
-        return true;
+        return ResourceResolver.NODE;
     }
 }

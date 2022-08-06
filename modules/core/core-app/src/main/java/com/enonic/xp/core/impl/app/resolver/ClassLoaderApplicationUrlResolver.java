@@ -15,6 +15,7 @@ import com.google.common.reflect.ClassPath;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceResolver;
 import com.enonic.xp.resource.UrlResource;
 
 public final class ClassLoaderApplicationUrlResolver
@@ -67,7 +68,7 @@ public final class ClassLoaderApplicationUrlResolver
             {
                 return null;
             }
-            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url, ResourceResolver.FILE );
         }
         else if ( url.getPath().endsWith( "/" ) )
         {
@@ -75,7 +76,7 @@ public final class ClassLoaderApplicationUrlResolver
         }
         else
         {
-            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url, ResourceResolver.FILE );
         }
     }
 

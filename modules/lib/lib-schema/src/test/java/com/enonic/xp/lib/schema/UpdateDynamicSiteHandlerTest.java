@@ -18,7 +18,7 @@ public class UpdateDynamicSiteHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testStyles()
+    public void testSite()
     {
         when( dynamicSchemaService.updateSite( isA( UpdateDynamicSiteParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicSiteParams siteParams = params.getArgument( 0, UpdateDynamicSiteParams.class );

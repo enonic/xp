@@ -47,6 +47,20 @@ exports.deleteVirtualApplication = function (params) {
 };
 
 /**
+ * Fetches application by key.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ *
+ * @returns {object} fetched application.
+ */
+exports.get = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.app.GetApplicationHandler');
+    bean.setKey(required(params, 'key'));
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * Fetches both static and virtual applications.
  *
  * @returns {object[]} applications list.
@@ -56,5 +70,18 @@ exports.list = function () {
     return __.toNativeObject(bean.execute());
 };
 
+/**
+ * Fetches application descriptor by key.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Application key.
+ *
+ * @returns {object} fetched application descriptor.
+ */
+exports.getDescriptor = function (params) {
+    const bean = __.newBean('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
+    bean.setKey(required(params, 'key'));
+    return __.toNativeObject(bean.execute());
+};
 
 

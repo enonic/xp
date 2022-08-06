@@ -23,6 +23,20 @@ assert.assertJsonEquals({
     creator: 'user:system:anonymous',
     modifiedTime: '2010-01-01T10:00:00Z',
     resource: '<mixin><some-data></some-data></mixin>',
-    type: 'MIXIN'
+    type: 'MIXIN',
+    form: [
+        {
+            'formItemType': 'Input',
+            'name': 'inputToBeMixedIn',
+            'label': 'Mixed in',
+            'maximize': true,
+            'inputType': 'TextLine',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
+            },
+            'config': {}
+        }
+    ]
 }, result);
 

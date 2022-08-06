@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceResolver;
 import com.enonic.xp.resource.UrlResource;
 
 public final class BundleApplicationUrlResolver
@@ -55,6 +56,6 @@ public final class BundleApplicationUrlResolver
         final URL url = this.bundle.getResource( path );
         return ( url == null || url.getPath().endsWith( "/" ) )
             ? null
-            : new UrlResource( ResourceKey.from( ApplicationKey.from( bundle ), path ), url );
+            : new UrlResource( ResourceKey.from( ApplicationKey.from( bundle ), path ), url, ResourceResolver.BUNDLE );
     }
 }

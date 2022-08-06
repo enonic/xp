@@ -21,6 +21,7 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'media.cameraInfo.displayName',
     modifiedTime: '1970-01-01T00:00:00Z',
     resource: '<x-data><some-data></some-data></x-data>',
-    type: 'XDATA'
+    type: 'XDATA',
+    form: []
 }, result);
 

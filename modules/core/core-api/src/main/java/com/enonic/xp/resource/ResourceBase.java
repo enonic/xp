@@ -105,12 +105,6 @@ public abstract class ResourceBase
         }
     }
 
-    @Override
-    public boolean isVirtual()
-    {
-        return false;
-    }
-
     protected final RuntimeException handleError( final IOException e )
     {
         if ( e instanceof FileNotFoundException )

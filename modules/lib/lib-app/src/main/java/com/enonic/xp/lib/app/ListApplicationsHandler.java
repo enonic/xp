@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.lib.app.mapper.ApplicationMapper;
 import com.enonic.xp.script.bean.BeanContext;
@@ -15,22 +14,15 @@ public final class ListApplicationsHandler
 {
     private Supplier<ApplicationService> applicationServiceSupplier;
 
-    private Supplier<ApplicationDescriptorService> applicationDescriptorServiceSupplier;
-
 
     public List<ApplicationMapper> execute()
     {
-        return applicationServiceSupplier.get()
-            .list()
-            .stream()
-            .map( app -> new ApplicationMapper( app, applicationDescriptorServiceSupplier.get().get( app.getKey() ) ) )
-            .collect( Collectors.toList() );
+        return applicationServiceSupplier.get().list().stream().map( ApplicationMapper::new ).collect( Collectors.toList() );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
         applicationServiceSupplier = context.getService( ApplicationService.class );
-        applicationDescriptorServiceSupplier = context.getService( ApplicationDescriptorService.class );
     }
 }

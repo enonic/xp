@@ -13,7 +13,6 @@ import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
