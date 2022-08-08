@@ -23,7 +23,7 @@ public class ListDynamicSchemasHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testParts()
+    public void listSchemas()
     {
         when( dynamicSchemaService.listContentSchemas( isA( ListDynamicContentSchemasParams.class ) ) ).thenAnswer( params -> {
             final ListDynamicContentSchemasParams schemasParams = params.getArgument( 0, ListDynamicContentSchemasParams.class );

@@ -65,8 +65,7 @@ public final class ApplicationServiceImpl
     @Activate
     public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService,
-                                   @Reference final VirtualAppService virtualAppService,
+                                   @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.context = context;
@@ -117,8 +116,8 @@ public final class ApplicationServiceImpl
     public Applications list()
     {
         return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
-                               .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
-                               .values() );
+                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
+                                      .values() );
     }
 
     @Override
@@ -255,6 +254,19 @@ public final class ApplicationServiceImpl
     {
         return this.virtualAppService.delete( key );
     }
+
+    @Override
+    public boolean hasVirtual( final ApplicationKey applicationKey )
+    {
+        return this.virtualAppService.get( applicationKey ) != null;
+    }
+
+    @Override
+    public boolean hasReal( final ApplicationKey applicationKey )
+    {
+        return this.registry.get( applicationKey ) != null;
+    }
+
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {

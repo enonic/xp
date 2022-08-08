@@ -34,5 +34,5 @@ public interface Resource
 
     ByteSource getBytes();
 
-    boolean isVirtual();
+    String getResolverName();
 }

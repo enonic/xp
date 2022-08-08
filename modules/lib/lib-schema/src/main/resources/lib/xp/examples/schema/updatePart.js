@@ -3,30 +3,22 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version="1.0" encoding="UTF-8"?>
-                <part xmlns="urn:enonic:xp:model:1.0">
-                  <display-name i18n="key.display-name">Virtual Part</display-name>
-                  <description i18n="key.description">My Part Description</description>
+let resource = `<?xml version='1.0' encoding='UTF-8'?>
+                <part xmlns='urn:enonic:xp:model:1.0'>
+                  <display-name i18n='key.display-name'>Virtual Part</display-name>
+                  <description i18n='key.description'>My Part Description</description>
                   <form>
-                    <input type="Double" name="width">
-                      <label i18n="key.label">Column width</label>
+                    <input type='Double' name='width'>
+                      <label i18n='key.label'>Column width</label>
                       <immutable>false</immutable>
                       <indexed>false</indexed>
-                      <help-text i18n="key.help-text"/>
-                      <occurrences minimum="0" maximum="1"/>
+                      <help-text i18n='key.help-text'/>
+                      <occurrences minimum='0' maximum='1'/>
                     </input>
-                
-                    <mixin name="myapplication:link-urls"/>
-                
+                    <mixin name='myapplication:link-urls'/>
                   </form>
                   <config>
-                    <input type="Double" name="width">
-                      <label i18n="key.label">Column width</label>
-                      <immutable>false</immutable>
-                      <indexed>false</indexed>
-                      <help-text i18n="key.help-text"/>
-                      <occurrences minimum="0" maximum="1"/>
-                    </input>
+                    <input type='Double' name='width'><label i18n='key.label'>Column width</label><immutable>false</immutable><indexed>false</indexed><help-text i18n='key.help-text'/><occurrences minimum='0' maximum='1'/></input>
                   </config>
                 </part>
                 `;
@@ -34,9 +26,7 @@ let resource = `<?xml version="1.0" encoding="UTF-8"?>
 // BEGIN
 // Update virtual part.
 var result = schemaLib.updateComponent({
-    key: 'myapp:mypart',
-    type: 'PART',
-    resource
+    key: 'myapp:mypart', type: 'PART', resource
 
 });
 
@@ -53,33 +43,27 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n' +
-              '                <part xmlns=\"urn:enonic:xp:model:1.0\">\n' +
-              '                  <display-name i18n=\"key.display-name\">Virtual Part</display-name>\n' +
-              '                  <description i18n=\"key.description\">My Part Description</description>\n' +
-              '                  <form>\n' +
-              '                    <input type=\"Double\" name=\"width\">\n' +
-              '                      <label i18n=\"key.label\">Column width</label>\n' +
-              '                      <immutable>false</immutable>\n' +
-              '                      <indexed>false</indexed>\n' +
-              '                      <help-text i18n=\"key.help-text\"/>\n' +
-              '                      <occurrences minimum=\"0\" maximum=\"1\"/>\n' +
-              '                    </input>\n' +
-              '                \n' +
-              '                    <mixin name=\"myapplication:link-urls\"/>\n' +
-              '                \n' +
-              '                  </form>\n' +
-              '                  <config>\n' +
-              '                    <input type=\"Double\" name=\"width\">\n' +
-              '                      <label i18n=\"key.label\">Column width</label>\n' +
-              '                      <immutable>false</immutable>\n' +
-              '                      <indexed>false</indexed>\n' +
-              '                      <help-text i18n=\"key.help-text\"/>\n' +
-              '                      <occurrences minimum=\"0\" maximum=\"1\"/>\n' +
-              '                    </input>\n' +
-              '                  </config>\n' +
-              '                </part>\n' +
-              '                ',
-    type: 'PART'
+    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n                <part xmlns=\'urn:enonic:xp:model:1.0\'>\n                  <display-name i18n=\'key.display-name\'>Virtual Part</display-name>\n                  <description i18n=\'key.description\'>My Part Description</description>\n                  <form>\n                    <input type=\'Double\' name=\'width\'>\n                      <label i18n=\'key.label\'>Column width</label>\n                      <immutable>false</immutable>\n                      <indexed>false</indexed>\n                      <help-text i18n=\'key.help-text\'/>\n                      <occurrences minimum=\'0\' maximum=\'1\'/>\n                    </input>\n                    <mixin name=\'myapplication:link-urls\'/>\n                  </form>\n                  <config>\n                    <input type=\'Double\' name=\'width\'><label i18n=\'key.label\'>Column width</label><immutable>false</immutable><indexed>false</indexed><help-text i18n=\'key.help-text\'/><occurrences minimum=\'0\' maximum=\'1\'/></input>\n                  </config>\n                </part>\n                ',
+    type: 'PART',
+    form: [{
+        'formItemType': 'Input',
+        'name': 'width',
+        'label': 'Column width',
+        'helpText': 'key.help-text',
+        'maximize': true,
+        'inputType': 'Double',
+        'occurrences': {
+            'maximum': 1, 'minimum': 0
+        },
+        'config': {},
+    }, {
+        formItemType: 'InlineMixin',
+        name: 'myapplication:link-urls'
+    }],
+    config: {
+        'input': [{
+            'value': '', '@name': 'width', '@type': 'Double'
+        }]
+    }
 }, result);
 

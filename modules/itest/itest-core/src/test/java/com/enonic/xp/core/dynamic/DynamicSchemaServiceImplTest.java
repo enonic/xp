@@ -293,7 +293,7 @@ public class DynamicSchemaServiceImplTest
         assertTrue( contentType.isFinal() );
         assertTrue( contentType.getXData().contains( XDataName.from( "myapplication:metadata" ) ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -348,7 +348,7 @@ public class DynamicSchemaServiceImplTest
         assertTrue( contentType.isFinal() );
         assertTrue( contentType.getXData().contains( XDataName.from( "myapplication:metadata" ) ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -392,7 +392,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 2, mixin.getForm().size() );
         assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getMixinName().toString() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -445,7 +445,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 2, mixin.getForm().size() );
         assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getMixinName().toString() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -488,7 +488,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "X-data description", xdata.getDescription() );
         assertEquals( 1, xdata.getForm().size() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -539,7 +539,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "X-data description", xdata.getDescription() );
         assertEquals( 1, xdata.getForm().size() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -587,7 +587,7 @@ public class DynamicSchemaServiceImplTest
 
         assertEquals( 1, partDescriptor.getSchemaConfig().getSize() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -644,7 +644,7 @@ public class DynamicSchemaServiceImplTest
 
         assertEquals( 1, partDescriptor.getSchemaConfig().getSize() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -691,7 +691,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 2, layoutDescriptor.getConfig().size() );
         assertEquals( 3, layoutDescriptor.getRegions().numberOfRegions() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -746,7 +746,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 2, layoutDescriptor.getConfig().size() );
         assertEquals( 3, layoutDescriptor.getRegions().numberOfRegions() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -793,7 +793,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 1, pageDescriptor.getConfig().size() );
         assertEquals( 3, pageDescriptor.getRegions().numberOfRegions() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -848,7 +848,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 1, pageDescriptor.getConfig().size() );
         assertEquals( 3, pageDescriptor.getRegions().numberOfRegions() );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -881,7 +881,7 @@ public class DynamicSchemaServiceImplTest
                 RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
             .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -924,7 +924,38 @@ public class DynamicSchemaServiceImplTest
                 RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
             .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
+        assertTrue( result.getResource().exists() );
+        assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
+        assertEquals( resource, result.getResource().readString() );
+        assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
+        assertEquals( 946, result.getResource().getSize() );
+
+        final Node resourceNode = VirtualAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/site.xml" ).build() ) );
+
+        assertEquals( resource, resourceNode.data().getString( "resource" ) );
+    }
+
+    @Test
+    public void updateNotCreatedSite()
+        throws Exception
+    {
+        final String resource = readResource( "_site.xml" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
+            () -> dynamicSchemaService.updateSite( UpdateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
+
+        final SiteDescriptor siteDescriptor = result.getSchema();
+
+        createAdminContext().runWith( () -> assertThat( siteDescriptor ).usingRecursiveComparison(
+                RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
+            .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
+
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -990,7 +1021,7 @@ public class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> assertThat( styleDescriptor ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getStyles( applicationKey ).getSchema() ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
@@ -1023,7 +1054,7 @@ public class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> assertThat( styleDescriptor ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getStyles( applicationKey ).getSchema() ) );
 
-        assertTrue( result.getResource().isVirtual() );
+        assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );

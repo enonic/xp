@@ -61,4 +61,7 @@ public interface ApplicationService
 
     boolean deleteVirtualApplication( ApplicationKey key );
 
+    boolean hasReal( ApplicationKey applicationKey );
+
+    boolean hasVirtual( ApplicationKey applicationKey );
 }

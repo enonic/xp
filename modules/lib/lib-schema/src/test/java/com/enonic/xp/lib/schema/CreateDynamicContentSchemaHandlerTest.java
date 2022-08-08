@@ -1,9 +1,12 @@
 package com.enonic.xp.lib.schema;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
@@ -13,6 +16,7 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
@@ -32,7 +36,7 @@ public class CreateDynamicContentSchemaHandlerTest
 
             final XmlContentTypeParser parser = new XmlContentTypeParser();
 
-            ContentType.Builder builder = ContentType.create();
+            final ContentType.Builder builder = ContentType.create();
 
             final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
             builder.modifiedTime( modifiedTime );
@@ -48,6 +52,13 @@ public class CreateDynamicContentSchemaHandlerTest
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );
+
+            byte[] data = new byte[]{1, 2, 3, 4, 5, 6};
+            final Instant ts = LocalDateTime.of( 2016, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
+            Icon icon = Icon.from( data, "image/png", ts );
+
+            builder.icon( icon );
+            builder.creator( PrincipalKey.ofAnonymous() );
 
             return new DynamicSchemaResult<ContentType>( builder.build(), resource );
         } );
@@ -128,4 +139,6 @@ public class CreateDynamicContentSchemaHandlerTest
     {
         runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchema" );
     }
+
+
 }
