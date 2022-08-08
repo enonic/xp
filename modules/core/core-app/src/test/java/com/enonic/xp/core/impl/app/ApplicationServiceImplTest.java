@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -898,6 +899,62 @@ public class ApplicationServiceImplTest
         applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
 
         verify( mock, times( 1 ) ).invalidate( eq( key ), eq( ApplicationInvalidationLevel.FULL ) );
+    }
+
+
+    @Test
+    public void has_virtual()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        assertFalse( service.hasReal( applicationKey ) );
+
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.installApplication( bundle );
+
+        assertTrue( service.hasReal( applicationKey ) );
+    }
+
+    @Test
+    public void has_real()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        assertFalse( service.hasReal( applicationKey ) );
+
+        final List<String> appNodeNames = List.of( "site", "content-types", "mixins", "x-data", "parts", "layouts", "pages" );
+
+        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
+            final CreateNodeParams createNodeParams = params.getArgument( 0 );
+
+            if ( applicationKey.toString().equals( createNodeParams.getName() ) )
+            {
+
+                when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create()
+                    .addNodeHit( NodeHit.create().nodeId( NodeId.from( createNodeParams.getName() ) ).build() )
+                    .totalHits( 1 )
+                    .hits( 1 )
+                    .build() );
+
+                return Node.create().id( NodeId.from( createNodeParams.getName() ) ).parentPath( NodePath.ROOT ).build();
+
+            }
+            if ( appNodeNames.contains( createNodeParams.getName() ) )
+            {
+                return Node.create()
+                    .id( NodeId.from( createNodeParams.getName() ) )
+                    .parentPath( NodePath.create( "/app1" ).build() )
+                    .build();
+            }
+
+            return null;
+        } );
+
+        virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() );
+
+        assertTrue( service.hasVirtual( applicationKey ) );
     }
 
     private void verifyInstalledEvents( final Node node, final VerificationMode never )

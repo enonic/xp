@@ -118,6 +118,37 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
+    public void updateWithForm()
+    {
+        when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+            final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
+
+            final XmlContentTypeParser parser = new XmlContentTypeParser();
+
+            ContentType.Builder builder = ContentType.create();
+
+            final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
+            builder.modifiedTime( modifiedTime );
+            builder.createdTime( modifiedTime );
+
+            builder.name( ContentTypeName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
+
+            parser.builder( builder );
+            parser.source( schemaParams.getResource() );
+            parser.currentApplication( schemaParams.getName().getApplicationKey() );
+
+            parser.parse();
+
+            final Resource resource = mock( Resource.class );
+            when( resource.readString() ).thenReturn( schemaParams.getResource() );
+
+            return new DynamicSchemaResult<ContentType>( builder.build(), resource );
+        } );
+
+        runFunction( "/test/UpdateDynamicContentSchemaHandlerTest.js", "updateWithForm" );
+    }
+
+    @Test
     public void testInvalidContentSchemaType()
     {
         runFunction( "/test/UpdateDynamicContentSchemaHandlerTest.js", "updateInvalidContentSchemaType" );

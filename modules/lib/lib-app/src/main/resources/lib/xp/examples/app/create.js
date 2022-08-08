@@ -25,7 +25,6 @@ assert.assertJsonEquals({
     maxSystemVersion: '3.0.0',
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
-    description: 'my app description',
-    icon: 'data:image/png;base64, AAE='
+    system: false
 }, result);
 

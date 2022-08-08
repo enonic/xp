@@ -35,6 +35,7 @@ public class ListVirtualApplicationHandlerTest
             when( application1.isStarted() ).thenReturn( true );
             when( application1.getMinSystemVersion() ).thenReturn( "2.0.0" );
             when( application1.getMaxSystemVersion() ).thenReturn( "3.0.0" );
+            when( application1.getSystemVersion() ).thenReturn( "1.21.3" );
             when( application1.getModifiedTime() ).thenReturn( Instant.parse( "2020-09-25T10:00:00.00Z" ) );
 
             when( applicationDescriptorService.get( application1.getKey() ) ).thenAnswer( descParams -> ApplicationDescriptor.create()
@@ -52,9 +53,11 @@ public class ListVirtualApplicationHandlerTest
             when( application2.getVendorUrl() ).thenReturn( "https://vendor2.url" );
             when( application2.getUrl() ).thenReturn( "https://myapp2.url" );
             when( application2.getVersion() ).thenReturn( Version.parseVersion( "4.1.2" ) );
+            when( application2.getSystemVersion() ).thenReturn( "1.2.33-SNAPSHOT" );
             when( application2.getMinSystemVersion() ).thenReturn( "5.3.11" );
             when( application2.getMaxSystemVersion() ).thenReturn( "3.0.6" );
             when( application2.getModifiedTime() ).thenReturn( Instant.parse( "2021-09-25T10:00:00.00Z" ) );
+            when( application2.isSystem() ).thenReturn( true );
 
             when( applicationDescriptorService.get( application2.getKey() ) ).thenAnswer( descParams -> ApplicationDescriptor.create()
                 .key( application2.getKey() )

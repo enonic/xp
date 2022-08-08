@@ -67,7 +67,7 @@ public final class ClassLoaderApplicationUrlResolver
             {
                 return null;
             }
-            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url, "file" );
         }
         else if ( url.getPath().endsWith( "/" ) )
         {
@@ -75,7 +75,7 @@ public final class ClassLoaderApplicationUrlResolver
         }
         else
         {
-            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url, "file" );
         }
     }
 

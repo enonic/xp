@@ -2,7 +2,6 @@ package com.enonic.xp.lib.app;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
@@ -17,8 +16,6 @@ public final class CreateVirtualApplicationHandler
 
     private Supplier<ApplicationService> applicationServiceSupplier;
 
-    private Supplier<ApplicationDescriptorService> applicationDescriptorServiceSupplier;
-
     public void setKey( final String key )
     {
         this.key = key;
@@ -30,14 +27,12 @@ public final class CreateVirtualApplicationHandler
 
         final CreateVirtualApplicationParams params = CreateVirtualApplicationParams.create().key( key ).build();
 
-        return new ApplicationMapper( applicationServiceSupplier.get().createVirtualApplication( params ),
-                                      applicationDescriptorServiceSupplier.get().get( key ) );
+        return new ApplicationMapper( applicationServiceSupplier.get().createVirtualApplication( params ) );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
         applicationServiceSupplier = context.getService( ApplicationService.class );
-        applicationDescriptorServiceSupplier = context.getService( ApplicationDescriptorService.class );
     }
 }

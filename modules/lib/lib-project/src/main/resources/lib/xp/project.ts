@@ -70,6 +70,10 @@ interface CreateProjectHandler {
 
     setParent(value?: string | null): void;
 
+    setSiteConfig(value?: ScriptValue): void;
+
+    setApplications(value?: string[]): void;
+
     execute(): Project;
 }
 
@@ -129,6 +133,10 @@ interface ModifyProjectHandler {
     setDescription(value?: string | null): void;
 
     setLanguage(value?: string | null): void;
+
+    setSiteConfig(value?: ScriptValue): void;
+
+    setApplications(value?: string[]): void;
 
     execute(): Project;
 }

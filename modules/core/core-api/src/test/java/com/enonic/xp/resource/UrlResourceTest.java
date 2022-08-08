@@ -20,14 +20,14 @@ public class UrlResourceTest
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
         final URL resourceUrl = applicationsDir.resolve( "myapplication/a/b.txt" ).toUri().toURL();
 
-        final Resource resource = new UrlResource( key, resourceUrl );
+        final Resource resource = new UrlResource( key, resourceUrl, "bundle" );
         assertNotNull( resource );
         assertEquals( key, resource.getKey() );
         assertEquals( 7, resource.getSize() );
         assertTrue( resource.getTimestamp() > 0 );
         assertTrue( resource.exists() );
         assertEquals( resourceUrl, resource.getUrl() );
-        assertFalse( resource.isVirtual() );
+        assertEquals( "bundle", resource.getResolverName() );
 
         resource.requireExists();
         assertNotNull( resource.openStream() );
