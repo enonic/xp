@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryService;
 

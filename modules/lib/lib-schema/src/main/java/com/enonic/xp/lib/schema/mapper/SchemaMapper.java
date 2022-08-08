@@ -10,14 +10,14 @@ import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public abstract class SchemaMapper
+public abstract class SchemaMapper<T extends BaseSchema<? extends BaseSchemaName>>
     implements MapSerializable
 {
-    private final BaseSchema<? extends BaseSchemaName> descriptor;
+    protected final T descriptor;
 
     private final Resource resource;
 
-    SchemaMapper( final DynamicSchemaResult<? extends BaseSchema<?>> descriptor )
+    SchemaMapper( final DynamicSchemaResult<T> descriptor )
     {
         this.descriptor = descriptor.getSchema();
         this.resource = descriptor.getResource();
@@ -38,6 +38,7 @@ public abstract class SchemaMapper
         gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );
 
+        DynamicSchemaSerializer.serializeIcon( gen, descriptor.getIcon() );
     }
 
     protected abstract String getType();

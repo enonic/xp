@@ -81,6 +81,12 @@ final class DynamicResourceManager
         } );
     }
 
+    boolean resourceNodeExists( final NodePath folderPath, final String name )
+    {
+        return VirtualAppContext.createContext()
+            .callWith( () -> nodeService.nodeExists( NodePath.create( folderPath, name + ".xml" ).build() ) );
+    }
+
     Resource getResource( final NodePath folderPath, final String name )
     {
         final String applicationKeyAsString = folderPath.getElementAsString( 0 );

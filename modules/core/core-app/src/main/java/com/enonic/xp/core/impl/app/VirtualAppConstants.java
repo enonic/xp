@@ -1,4 +1,4 @@
-package com.enonic.xp.issue;
+package com.enonic.xp.core.impl.app;
 
 import com.google.common.io.ByteSource;
 

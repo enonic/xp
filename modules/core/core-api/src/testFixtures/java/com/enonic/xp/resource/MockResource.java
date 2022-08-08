@@ -59,4 +59,10 @@ public class MockResource
         return ByteSource.wrap( this.bytes );
     }
 
+    @Override
+    public String getResolverName()
+    {
+        return "test";
+    }
+
 }

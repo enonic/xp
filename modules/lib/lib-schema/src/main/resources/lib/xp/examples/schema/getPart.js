@@ -23,6 +23,21 @@ assert.assertJsonEquals({
     componentPath: 'myapp:/site/parts/mypart',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: '<part><some-data></some-data></part>',
-    type: 'PART'
+    type: 'PART',
+    form: [
+        {
+            'formItemType': 'Input',
+            'name': 'width',
+            'label': 'width',
+            'maximize': true,
+            'inputType': 'Double',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
+            },
+            'config': {}
+        }
+    ],
+    config: {}
 }, result);
 

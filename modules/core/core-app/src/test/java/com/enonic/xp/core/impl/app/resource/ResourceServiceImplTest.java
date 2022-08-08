@@ -17,10 +17,10 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -38,7 +38,6 @@ import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_PROJECT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -192,7 +191,7 @@ class ResourceServiceImplTest
         final Resource resource =
             resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/site/parts/my-part/my-part.xml" ) );
 
-        assertTrue( resource.isVirtual() );
+        assertEquals( "node", resource.getResolverName() );
 
         assertEquals( timestamp.toEpochMilli(), resource.getTimestamp() );
 

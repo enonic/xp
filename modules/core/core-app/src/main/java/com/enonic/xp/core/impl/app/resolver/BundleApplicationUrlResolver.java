@@ -55,6 +55,6 @@ public final class BundleApplicationUrlResolver
         final URL url = this.bundle.getResource( path );
         return ( url == null || url.getPath().endsWith( "/" ) )
             ? null
-            : new UrlResource( ResourceKey.from( ApplicationKey.from( bundle ), path ), url );
+            : new UrlResource( ResourceKey.from( ApplicationKey.from( bundle ), path ), url, "bundle" );
     }
 }

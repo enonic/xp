@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.issue.VirtualAppConstants;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
@@ -127,8 +126,10 @@ public class DynamicSchemaServiceImpl
         final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
-        final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
+
+        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME )
+            ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() )
+            : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>( site, resource );
     }
