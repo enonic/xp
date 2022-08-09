@@ -157,4 +157,22 @@ public class ServletRequestUrlHelperTest
         assertEquals( "wss://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
     }
 
+    @Test
+    public void rewriteUri_vhost_outOfScope()
+    {
+        final VirtualHost vhost = mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
+
+        when( vhost.getTarget() ).thenReturn( "/site/default/draft/enonic" );
+        when( vhost.getSource() ).thenReturn( "/no" );
+
+        UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/site/default/draft/enonic-en" );
+        assertEquals( "/site/default/draft/enonic-en", rewritingResult.getRewrittenUri() );
+        assertTrue( rewritingResult.isOutOfScope() );
+
+        rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/site/default/draft/enonic" );
+        assertEquals( "/no", rewritingResult.getRewrittenUri() );
+        assertFalse( rewritingResult.isOutOfScope() );
+    }
+
 }
