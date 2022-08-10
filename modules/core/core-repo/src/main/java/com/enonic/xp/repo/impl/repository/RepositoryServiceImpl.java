@@ -150,11 +150,9 @@ public class RepositoryServiceImpl
     public Branch createBranch( final CreateBranchParams createBranchParams )
     {
         requireAdminRole();
-        final RepositoryId repositoryId = ContextAccessor.current().
-            getRepositoryId();
 
-        repositoryMap.compute( repositoryId,
-                               ( key, previousRepository ) -> doCreateBranch( createBranchParams, repositoryId, previousRepository ) );
+        repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
+                               ( repositoryId, previousRepository ) -> doCreateBranch( createBranchParams, repositoryId, previousRepository ) );
 
         return createBranchParams.getBranch();
     }
@@ -245,10 +243,9 @@ public class RepositoryServiceImpl
     public Branch deleteBranch( final DeleteBranchParams params )
     {
         requireAdminRole();
-        final RepositoryId repositoryId = ContextAccessor.current().
-            getRepositoryId();
 
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> doDeleteBranch( params, repositoryId, previousRepository ) );
+        repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
+                               ( repositoryId, previousRepository ) -> doDeleteBranch( params, repositoryId, previousRepository ) );
 
         invalidatePathCache();
 

@@ -178,9 +178,9 @@ public final class DuplicateNodeCommand
 
     private void attachBinaries( final Node node, final CreateNodeParams.Builder paramsBuilder )
     {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
-            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
             paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), this.binaryService.get( repositoryId, attachedBinary ) );
         }
     }

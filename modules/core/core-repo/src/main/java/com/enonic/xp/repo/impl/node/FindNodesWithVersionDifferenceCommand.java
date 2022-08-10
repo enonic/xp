@@ -63,7 +63,7 @@ public class FindNodesWithVersionDifferenceCommand
             excludes( excludeEntries ).
             size( this.size ).
             batchSize( BATCH_SIZE ).
-            build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
+            build(), SingleRepoStorageSource.create( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
 
         return NodeVersionDiffResultFactory.create( result );
     }

@@ -114,6 +114,7 @@ public final class CreateNodeCommand
 
         final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         for ( final Property binaryRef : binaryReferences )
         {
             final BinaryAttachment binaryAttachment = this.params.getBinaryAttachments().get( binaryRef.getBinaryReference() );
@@ -123,7 +124,6 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
             final AttachedBinary attachedBinary = this.binaryService.store(repositoryId, binaryAttachment );
             builder.add( attachedBinary );
         }
