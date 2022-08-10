@@ -108,6 +108,8 @@ public final class SecurityServiceImpl
     private static final Pattern SU_PASSWORD_PATTERN =
         Pattern.compile( "(?:\\{(sha1|sha256|sha512|md5)\\})?(\\S+)", Pattern.CASE_INSENSITIVE );
 
+    private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
+
     private final Clock clock;
 
     private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
@@ -138,12 +140,12 @@ public final class SecurityServiceImpl
     public void initialize()
     {
         initializeSuPassword();
-        SecurityInitializer.create().
-            setIndexService( indexService ).
-            setSecurityService( this ).
-            setNodeService( nodeService ).
-            build().
-            initialize();
+        SecurityInitializer.create()
+            .setIndexService( indexService )
+            .setSecurityService( this )
+            .setNodeService( nodeService )
+            .build()
+            .initialize();
     }
 
     private void initializeSuPassword()
@@ -164,8 +166,8 @@ public final class SecurityServiceImpl
     @Override
     public IdProviders getIdProviders()
     {
-        final FindNodesByParentParams findByParent = FindNodesByParentParams.create().
-            parentPath( IdProviderNodeTranslator.getIdProvidersParentPath() ).build();
+        final FindNodesByParentParams findByParent =
+            FindNodesByParentParams.create().parentPath( IdProviderNodeTranslator.getIdProvidersParentPath() ).build();
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByParentResult result = this.nodeService.findByParent( findByParent );
             return this.nodeService.getByIds( result.getNodeIds() );
@@ -232,13 +234,18 @@ public final class SecurityServiceImpl
     @Override
     public void removeRelationship( final PrincipalRelationship relationship )
     {
+        if ( RoleKeys.ADMIN.equals( relationship.getFrom() ) && PrincipalKey.ofSuperUser().equals( relationship.getTo() ) )
+        {
+            throw new IllegalArgumentException( "Super user cannot be removed from the administrator role" );
+        }
+
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
 
             this.nodeService.refresh( RefreshMode.SEARCH );
 
-            securityAuditLogSupport.removeRelationship(relationship);
+            securityAuditLogSupport.removeRelationship( relationship );
 
             return null;
         } );
@@ -320,13 +327,16 @@ public final class SecurityServiceImpl
         try
         {
             final Nodes nodes = callWithContext( () -> {
-                final FindNodesByQueryResult result = this.nodeService.findByQuery( NodeQuery.create().
-                    addQueryFilter( ValueFilter.create().
-                        fieldName( PrincipalPropertyNames.MEMBER_KEY ).
-                        addValue( ValueFactory.newString( member.toString() ) ).
-                        build() ).
-                    size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
-                    build() );
+                final FindNodesByQueryResult result = this.nodeService.findByQuery( NodeQuery.create()
+                                                                                        .addQueryFilter( ValueFilter.create()
+                                                                                                             .fieldName(
+                                                                                                                 PrincipalPropertyNames.MEMBER_KEY )
+                                                                                                             .addValue(
+                                                                                                                 ValueFactory.newString(
+                                                                                                                     member.toString() ) )
+                                                                                                             .build() )
+                                                                                        .size( NodeQuery.ALL_RESULTS_SIZE_FLAG )
+                                                                                        .build() );
                 return this.nodeService.getByIds( result.getNodeIds() );
             } );
             return PrincipalKeyNodeTranslator.fromNodes( nodes );
@@ -341,10 +351,7 @@ public final class SecurityServiceImpl
     @Deprecated
     public Principals findPrincipals( final IdProviderKey idProvider, final List<PrincipalType> types, final String query )
     {
-        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
-            getAll().
-            includeTypes( types ).
-            searchText( query );
+        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().getAll().includeTypes( types ).searchText( query );
         if ( idProvider != null )
         {
             principalQuery.idProvider( idProvider );
@@ -416,15 +423,15 @@ public final class SecurityServiceImpl
         final String hashedTokenPassword = hashSuPassword( token.getPassword() );
         if ( this.suPasswordValue.equals( hashedTokenPassword ) )
         {
-            final User admin = User.create().
-                key( SecurityInitializer.SUPER_USER ).
-                login( SecurityInitializer.SUPER_USER.getId() ).
-                displayName( "Super User" ).
-                build();
-            return AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
-                user( admin ).
-                build();
+            final User admin = User.create()
+                .key( SecurityInitializer.SUPER_USER )
+                .login( SecurityInitializer.SUPER_USER.getId() )
+                .displayName( "Super User" )
+                .build();
+            return AuthenticationInfo.create()
+                .principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
+                .user( admin )
+                .build();
         }
         else
         {
@@ -458,10 +465,7 @@ public final class SecurityServiceImpl
                 throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
         }
 
-        return hashFunction.newHasher().
-            putString( plainPassword, Charset.defaultCharset() ).
-            hash().
-            toString();
+        return hashFunction.newHasher().putString( plainPassword, Charset.defaultCharset() ).hash().toString();
     }
 
     private void addRandomDelay()
@@ -557,9 +561,11 @@ public final class SecurityServiceImpl
     private AuthenticationInfo createAuthInfo( final User user )
     {
         final PrincipalKeys principals = resolveMemberships( user.getKey() );
-        return AuthenticationInfo.create().principals( principals ).
-            principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
-            user( user ).build();
+        return AuthenticationInfo.create()
+            .principals( principals )
+            .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
+            .user( user )
+            .build();
     }
 
     private boolean passwordMatch( final User user, final String password )
@@ -636,9 +642,7 @@ public final class SecurityServiceImpl
 
             final String authenticationHash = this.passwordEncoder.encodePassword( password );
 
-            final User userToUpdate = User.create( user ).
-                authenticationHash( authenticationHash ).
-                build();
+            final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
 
@@ -652,13 +656,13 @@ public final class SecurityServiceImpl
 
     private User doCreateUser( final CreateUserParams createUser )
     {
-        final User user = User.create().
-            key( createUser.getKey() ).
-            login( createUser.getLogin() ).
-            email( createUser.getEmail() ).
-            displayName( createUser.getDisplayName() ).
-            modifiedTime( Instant.now( clock ) ).
-            build();
+        final User user = User.create()
+            .key( createUser.getKey() )
+            .login( createUser.getLogin() )
+            .email( createUser.getEmail() )
+            .displayName( createUser.getDisplayName() )
+            .modifiedTime( Instant.now( clock ) )
+            .build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         try
@@ -788,12 +792,12 @@ public final class SecurityServiceImpl
     @Override
     public Group createGroup( final CreateGroupParams createGroup )
     {
-        final Group group = Group.create().
-            key( createGroup.getKey() ).
-            displayName( createGroup.getDisplayName() ).
-            modifiedTime( Instant.now( clock ) ).
-            description( createGroup.getDescription() ).
-            build();
+        final Group group = Group.create()
+            .key( createGroup.getKey() )
+            .displayName( createGroup.getDisplayName() )
+            .modifiedTime( Instant.now( clock ) )
+            .description( createGroup.getDescription() )
+            .build();
 
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         try
@@ -852,12 +856,12 @@ public final class SecurityServiceImpl
     @Override
     public Role createRole( final CreateRoleParams createRole )
     {
-        final Role role = Role.create().
-            key( createRole.getKey() ).
-            displayName( createRole.getDisplayName() ).
-            modifiedTime( Instant.now( clock ) ).
-            description( createRole.getDescription() ).
-            build();
+        final Role role = Role.create()
+            .key( createRole.getKey() )
+            .displayName( createRole.getDisplayName() )
+            .modifiedTime( Instant.now( clock ) )
+            .description( createRole.getDescription() )
+            .build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         try
@@ -982,6 +986,11 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
+        if ( NON_REMOVABLE_PRINCIPLES.contains( principalKey ) )
+        {
+            throw new IllegalArgumentException( String.format( "[%s] principal cannot be removed", principalKey ) );
+        }
+
         final NodeIds deletedNodes;
         try
         {
@@ -1017,10 +1026,7 @@ public final class SecurityServiceImpl
             final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
-            return PrincipalQueryResult.create().
-                addPrincipals( principals ).
-                totalSize( Ints.checkedCast( result.getTotalHits() ) ).
-                build();
+            return PrincipalQueryResult.create().addPrincipals( principals ).totalSize( Ints.checkedCast( result.getTotalHits() ) ).build();
         }
         catch ( NodeNotFoundException e )
         {
@@ -1038,10 +1044,7 @@ public final class SecurityServiceImpl
             final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
-            return UserQueryResult.create().
-                addUsers( principals ).
-                totalSize( Ints.checkedCast( result.getTotalHits() ) ).
-                build();
+            return UserQueryResult.create().addUsers( principals ).totalSize( Ints.checkedCast( result.getTotalHits() ) ).build();
         }
         catch ( NodeNotFoundException e )
         {
@@ -1079,28 +1082,26 @@ public final class SecurityServiceImpl
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
-                final Node idProviderNode = nodeService.create( CreateNodeParams.create().
-                    parent( IdProviderNodeTranslator.getIdProvidersParentPath() ).
-                    name( createIdProviderParams.getKey().toString() ).
-                    data( data ).
-                    permissions( idProviderNodePermissions ).
-                    build() );
+                final Node idProviderNode = nodeService.create( CreateNodeParams.create()
+                                                                    .parent( IdProviderNodeTranslator.getIdProvidersParentPath() )
+                                                                    .name( createIdProviderParams.getKey().toString() )
+                                                                    .data( data )
+                                                                    .permissions( idProviderNodePermissions )
+                                                                    .build() );
 
-                nodeService.create( CreateNodeParams.create().
-                    parent( idProviderNode.path() ).
-                    name( IdProviderNodeTranslator.USER_FOLDER_NODE_NAME ).
-                    permissions( usersNodePermissions ).
-                    build() );
-                nodeService.create( CreateNodeParams.create().
-                    parent( idProviderNode.path() ).
-                    name( IdProviderNodeTranslator.GROUP_FOLDER_NODE_NAME ).
-                    permissions( groupsNodePermissions ).
-                    build() );
+                nodeService.create( CreateNodeParams.create()
+                                        .parent( idProviderNode.path() )
+                                        .name( IdProviderNodeTranslator.USER_FOLDER_NODE_NAME )
+                                        .permissions( usersNodePermissions )
+                                        .build() );
+                nodeService.create( CreateNodeParams.create()
+                                        .parent( idProviderNode.path() )
+                                        .name( IdProviderNodeTranslator.GROUP_FOLDER_NODE_NAME )
+                                        .permissions( groupsNodePermissions )
+                                        .build() );
 
-                final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
-                    nodeId( rootNode.id() ).
-                    overwriteChildPermissions( false ).
-                    build();
+                final ApplyNodePermissionsParams applyPermissions =
+                    ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).overwriteChildPermissions( false ).build();
                 nodeService.applyPermissions( applyPermissions );
 
                 this.nodeService.refresh( RefreshMode.SEARCH );
@@ -1174,10 +1175,8 @@ public final class SecurityServiceImpl
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
 
-                final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
-                    nodeId( idProviderNode.id() ).
-                    overwriteChildPermissions( false ).
-                    build();
+                final ApplyNodePermissionsParams applyPermissions =
+                    ApplyNodePermissionsParams.create().nodeId( idProviderNode.id() ).overwriteChildPermissions( false ).build();
                 nodeService.applyPermissions( applyPermissions );
             }
 
@@ -1191,10 +1190,8 @@ public final class SecurityServiceImpl
 
     private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions )
     {
-        final UpdateNodeParams updateParams = UpdateNodeParams.create().
-            id( nodeId ).
-            editor( editableNode -> editableNode.permissions = permissions ).
-            build();
+        final UpdateNodeParams updateParams =
+            UpdateNodeParams.create().id( nodeId ).editor( editableNode -> editableNode.permissions = permissions ).build();
 
         nodeService.update( updateParams );
 
@@ -1210,11 +1207,11 @@ public final class SecurityServiceImpl
     private Context getContext()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return ContextBuilder.create().
-            branch( SecurityConstants.BRANCH_SECURITY ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( authInfo ).
-            build();
+        return ContextBuilder.create()
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     private <T> T callAsAuthenticated( Callable<T> runnable )
@@ -1225,8 +1222,10 @@ public final class SecurityServiceImpl
     private Context getAuthenticatedContext()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.create().
-            branch( SecurityConstants.BRANCH_SECURITY ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).authInfo( authInfo ).build();
+        return ContextBuilder.create()
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 }
