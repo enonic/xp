@@ -183,21 +183,17 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
 
             final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-            final CreateUserParams createUser2 = CreateUserParams.create().
-                userKey( userKey2 ).
-                displayName( "User 2" ).
-                email( "user2@enonic.com" ).
-                login( "user2" ).
-                build();
+            final CreateUserParams createUser2 =
+                CreateUserParams.create().userKey( userKey2 ).displayName( "User 2" ).email( "user2@enonic.com" ).login( "user2" ).build();
 
             final User user1 = securityService.createUser( createUser1 );
             final User user2 = securityService.createUser( createUser2 );
@@ -226,19 +222,19 @@ public class SecurityServiceImplTest
     public void testCreateUserThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
+        assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser1 );
-        } ));
+        } ) );
     }
 
     @Test
@@ -248,21 +244,21 @@ public class SecurityServiceImplTest
         {
             runAsAdmin( () -> {
                 final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-                final CreateUserParams createUser1 = CreateUserParams.create().
-                    userKey( userKey1 ).
-                    displayName( "User 1" ).
-                    email( "same_email@enonic.com" ).
-                    login( "User1" ).
-                    password( "123456" ).
-                    build();
+                final CreateUserParams createUser1 = CreateUserParams.create()
+                    .userKey( userKey1 )
+                    .displayName( "User 1" )
+                    .email( "same_email@enonic.com" )
+                    .login( "User1" )
+                    .password( "123456" )
+                    .build();
 
                 final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-                final CreateUserParams createUser2 = CreateUserParams.create().
-                    userKey( userKey2 ).
-                    displayName( "User 2" ).
-                    email( "same_email@enonic.com" ).
-                    login( "user2" ).
-                    build();
+                final CreateUserParams createUser2 = CreateUserParams.create()
+                    .userKey( userKey2 )
+                    .displayName( "User 2" )
+                    .email( "same_email@enonic.com" )
+                    .login( "user2" )
+                    .build();
 
                 securityService.createUser( createUser1 );
                 securityService.createUser( createUser2 );
@@ -281,19 +277,17 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
 
-            final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).
-                email( "u2@enonic.net" ).
-                build();
+            final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).email( "u2@enonic.net" ).build();
             final User updateUserResult = securityService.updateUser( updateUserParams );
             refresh();
 
@@ -315,28 +309,26 @@ public class SecurityServiceImplTest
         {
             runAsAdmin( () -> {
                 final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-                final CreateUserParams createUser1 = CreateUserParams.create().
-                    userKey( userKey1 ).
-                    displayName( "User 1" ).
-                    email( "same_email@enonic.com" ).
-                    login( "User1" ).
-                    password( "123456" ).
-                    build();
+                final CreateUserParams createUser1 = CreateUserParams.create()
+                    .userKey( userKey1 )
+                    .displayName( "User 1" )
+                    .email( "same_email@enonic.com" )
+                    .login( "User1" )
+                    .password( "123456" )
+                    .build();
 
                 final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-                final CreateUserParams createUser2 = CreateUserParams.create().
-                    userKey( userKey2 ).
-                    displayName( "User 2" ).
-                    email( "same_email@enonic.com" ).
-                    login( "user2" ).
-                    build();
+                final CreateUserParams createUser2 = CreateUserParams.create()
+                    .userKey( userKey2 )
+                    .displayName( "User 2" )
+                    .email( "same_email@enonic.com" )
+                    .login( "user2" )
+                    .build();
 
                 final User user1 = securityService.createUser( createUser1 );
                 securityService.createUser( createUser2 );
 
-                final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).
-                    email( "same_email@enonic.com" ).
-                    build();
+                final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).email( "same_email@enonic.com" ).build();
                 securityService.updateUser( updateUserParams );
                 refresh();
             } );
@@ -356,28 +348,27 @@ public class SecurityServiceImplTest
         {
             runAsAdmin( () -> {
                 final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-                final CreateUserParams createUser1 = CreateUserParams.create().
-                    userKey( userKey1 ).
-                    displayName( "User 1" ).
-                    email( "same_email@enonic.com" ).
-                    login( "User1" ).
-                    password( "123456" ).
-                    build();
+                final CreateUserParams createUser1 = CreateUserParams.create()
+                    .userKey( userKey1 )
+                    .displayName( "User 1" )
+                    .email( "same_email@enonic.com" )
+                    .login( "User1" )
+                    .password( "123456" )
+                    .build();
 
                 final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-                final CreateUserParams createUser2 = CreateUserParams.create().
-                    userKey( userKey2 ).
-                    displayName( "User 2" ).
-                    email( "same_email@enonic.com" ).
-                    login( "user2" ).
-                    build();
+                final CreateUserParams createUser2 = CreateUserParams.create()
+                    .userKey( userKey2 )
+                    .displayName( "User 2" )
+                    .email( "same_email@enonic.com" )
+                    .login( "user2" )
+                    .build();
 
                 final User user1 = securityService.createUser( createUser1 );
                 securityService.createUser( createUser2 );
 
-                final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).
-                    editor( editableUser -> editableUser.email = "same_email@enonic.com" ).
-                    build();
+                final UpdateUserParams updateUserParams =
+                    UpdateUserParams.create( user1 ).editor( editableUser -> editableUser.email = "same_email@enonic.com" ).build();
                 securityService.updateUser( updateUserParams );
                 refresh();
             } );
@@ -396,17 +387,11 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                description( "Group A Description" ).
-                build();
+            final CreateGroupParams createGroup =
+                CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).description( "Group A Description" ).build();
 
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
-            final CreateGroupParams createGroup2 = CreateGroupParams.create().
-                groupKey( groupKey2 ).
-                displayName( "Group B" ).
-                build();
+            final CreateGroupParams createGroup2 = CreateGroupParams.create().groupKey( groupKey2 ).displayName( "Group B" ).build();
 
             final Group group1 = securityService.createGroup( createGroup );
             final Group group2 = securityService.createGroup( createGroup2 );
@@ -431,13 +416,10 @@ public class SecurityServiceImplTest
     public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
+        assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                description( "Group A Description" ).
-                build();
+            final CreateGroupParams createGroup =
+                CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).description( "Group A Description" ).build();
 
             securityService.createGroup( createGroup );
             securityService.createGroup( createGroup );
@@ -449,18 +431,14 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( PrincipalKey.ofGroup( SYSTEM, "Group-a" ) ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup =
+                CreateGroupParams.create().groupKey( PrincipalKey.ofGroup( SYSTEM, "Group-a" ) ).displayName( "Group A" ).build();
 
             final Group group = securityService.createGroup( createGroup );
             refresh();
 
-            final UpdateGroupParams groupUpdate = UpdateGroupParams.create( group ).
-                displayName( "___Group B___" ).
-                description( "description" ).
-                build();
+            final UpdateGroupParams groupUpdate =
+                UpdateGroupParams.create( group ).displayName( "___Group B___" ).description( "description" ).build();
             final Group updatedGroupResult = securityService.updateGroup( groupUpdate );
             refresh();
 
@@ -478,17 +456,11 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
-            final CreateRoleParams createRole = CreateRoleParams.create().
-                roleKey( roleKey1 ).
-                displayName( "Role A" ).
-                description( "Group A Description" ).
-                build();
+            final CreateRoleParams createRole =
+                CreateRoleParams.create().roleKey( roleKey1 ).displayName( "Role A" ).description( "Group A Description" ).build();
 
             final PrincipalKey roleKey2 = PrincipalKey.ofRole( "role-b" );
-            final CreateRoleParams createRole2 = CreateRoleParams.create().
-                roleKey( roleKey2 ).
-                displayName( "Role B" ).
-                build();
+            final CreateRoleParams createRole2 = CreateRoleParams.create().roleKey( roleKey2 ).displayName( "Role B" ).build();
 
             final Role role1 = securityService.createRole( createRole );
             final Role role2 = securityService.createRole( createRole2 );
@@ -512,13 +484,10 @@ public class SecurityServiceImplTest
     public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
+        assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
-            final CreateRoleParams createRole = CreateRoleParams.create().
-                roleKey( roleKey1 ).
-                displayName( "Role A" ).
-                description( "Group A Description" ).
-                build();
+            final CreateRoleParams createRole =
+                CreateRoleParams.create().roleKey( roleKey1 ).displayName( "Role A" ).description( "Group A Description" ).build();
 
             securityService.createRole( createRole );
             securityService.createRole( createRole );
@@ -530,17 +499,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateRoleParams createRole = CreateRoleParams.create().
-                roleKey( PrincipalKey.ofRole( "Role-a" ) ).
-                displayName( "Role A" ).
-                build();
+            final CreateRoleParams createRole =
+                CreateRoleParams.create().roleKey( PrincipalKey.ofRole( "Role-a" ) ).displayName( "Role A" ).build();
 
             final Role role = securityService.createRole( createRole );
 
-            final UpdateRoleParams roleUpdate = UpdateRoleParams.create( role ).
-                displayName( "___Role B___" ).
-                description( "description" ).
-                build();
+            final UpdateRoleParams roleUpdate =
+                UpdateRoleParams.create( role ).displayName( "___Role B___" ).description( "description" ).build();
             final Role updatedRoleResult = securityService.updateRole( roleUpdate );
             refresh();
 
@@ -566,12 +531,12 @@ public class SecurityServiceImplTest
     public void testDeletePrincipalWithoutPermissions()
         throws Exception
     {
-        final CreateUserParams createUser = CreateUserParams.create().
-            userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-            displayName( "User 1" ).
-            email( "user1@enonic.com" ).
-            login( "User1" ).
-            build();
+        final CreateUserParams createUser = CreateUserParams.create()
+            .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+            .displayName( "User 1" )
+            .email( "user1@enonic.com" )
+            .login( "User1" )
+            .build();
 
         runAsAdmin( () -> {
             securityService.createUser( createUser );
@@ -588,25 +553,18 @@ public class SecurityServiceImplTest
         runAsAdmin( () -> {
             // set up
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
             final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-            final CreateUserParams createUser2 = CreateUserParams.create().
-                userKey( userKey2 ).
-                displayName( "User 2" ).
-                email( "user2@enonic.com" ).
-                login( "user2" ).
-                build();
+            final CreateUserParams createUser2 =
+                CreateUserParams.create().userKey( userKey2 ).displayName( "User 2" ).email( "user2@enonic.com" ).login( "user2" ).build();
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup = CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).build();
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser2 );
@@ -636,25 +594,18 @@ public class SecurityServiceImplTest
         runAsAdmin( () -> {
             // set up
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
             final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-            final CreateUserParams createUser2 = CreateUserParams.create().
-                userKey( userKey2 ).
-                displayName( "User 2" ).
-                email( "user2@enonic.com" ).
-                login( "user2" ).
-                build();
+            final CreateUserParams createUser2 =
+                CreateUserParams.create().userKey( userKey2 ).displayName( "User 2" ).email( "user2@enonic.com" ).login( "user2" ).build();
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup = CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).build();
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser2 );
@@ -686,25 +637,18 @@ public class SecurityServiceImplTest
         runAsAdmin( () -> {
             // set up
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
             final PrincipalKey userKey2 = PrincipalKey.ofUser( SYSTEM, "user2" );
-            final CreateUserParams createUser2 = CreateUserParams.create().
-                userKey( userKey2 ).
-                displayName( "User 2" ).
-                email( "user2@enonic.com" ).
-                login( "user2" ).
-                build();
+            final CreateUserParams createUser2 =
+                CreateUserParams.create().userKey( userKey2 ).displayName( "User 2" ).email( "user2@enonic.com" ).login( "user2" ).build();
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup = CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).build();
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser2 );
@@ -729,17 +673,46 @@ public class SecurityServiceImplTest
     }
 
     @Test
+    public void testRemoveSuFromAdmin()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            assertThrows( IllegalArgumentException.class, () -> securityService.removeRelationship(
+                PrincipalRelationship.from( RoleKeys.ADMIN ).to( PrincipalKey.ofSuperUser() ) ) );
+        } );
+    }
+
+    @Test
+    public void testDeleteAdminRole()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            assertThrows( IllegalArgumentException.class, () -> securityService.deletePrincipal( RoleKeys.ADMIN ) );
+        } );
+    }
+
+    @Test
+    public void testDeleteSu()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            assertThrows( IllegalArgumentException.class, () -> securityService.deletePrincipal( PrincipalKey.ofSuperUser() ) );
+        } );
+    }
+
+
+    @Test
     public void testAuthenticateByEmailPwd()
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "password" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "password" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
@@ -760,13 +733,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "fisk" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "fisk" )
+                .build();
 
             securityService.createUser( createUser );
             refresh();
@@ -786,13 +759,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "runar" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "runar" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
@@ -813,13 +786,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "password" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "password" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
@@ -839,13 +812,13 @@ public class SecurityServiceImplTest
         throws Exception
     {
         runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "runar" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "runar" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
@@ -864,13 +837,13 @@ public class SecurityServiceImplTest
     public void testAuthenticateUnsupportedToken()
         throws Exception
     {
-        assertThrows(AuthenticationException.class, () -> runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                build();
+        assertThrows( AuthenticationException.class, () -> runAsAdmin( () -> {
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .build();
 
             final User user = securityService.createUser( createUser );
             refresh();
@@ -889,25 +862,19 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( userKey ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( userKey )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
 
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
-            final CreateGroupParams createGroup1 = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup1 = CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).build();
 
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
-            final CreateGroupParams createGroup2 = CreateGroupParams.create().
-                groupKey( groupKey2 ).
-                displayName( "Group B" ).
-                build();
+            final CreateGroupParams createGroup2 = CreateGroupParams.create().groupKey( groupKey2 ).displayName( "Group B" ).build();
 
             securityService.createUser( createUser );
             securityService.createGroup( createGroup1 );
@@ -931,32 +898,23 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
-            final CreateUserParams createUser = CreateUserParams.create().
-                userKey( userKey ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "user1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( userKey )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "user1" )
+                .password( "123456" )
+                .build();
 
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
-            final CreateGroupParams createGroup1 = CreateGroupParams.create().
-                groupKey( groupKey1 ).
-                displayName( "Group A" ).
-                build();
+            final CreateGroupParams createGroup1 = CreateGroupParams.create().groupKey( groupKey1 ).displayName( "Group A" ).build();
 
             final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
-            final CreateGroupParams createGroup2 = CreateGroupParams.create().
-                groupKey( groupKey2 ).
-                displayName( "Group B" ).
-                build();
+            final CreateGroupParams createGroup2 = CreateGroupParams.create().groupKey( groupKey2 ).displayName( "Group B" ).build();
 
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "role-a" );
-            final CreateRoleParams createRole = CreateRoleParams.create().
-                roleKey( roleKey1 ).
-                displayName( "Role A" ).
-                description( "Group A Description" ).
-                build();
+            final CreateRoleParams createRole =
+                CreateRoleParams.create().roleKey( roleKey1 ).displayName( "Role A" ).description( "Group A Description" ).build();
 
             securityService.createUser( createUser );
             securityService.createGroup( createGroup1 );
@@ -988,16 +946,19 @@ public class SecurityServiceImplTest
 
             final IdProviderAccessControlList permissions =
                 IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
-                                                    ADMINISTRATOR ).build(),
-                                                IdProviderAccessControlEntry.create().principal( groupKey2 ).access(
-                                                    WRITE_USERS ).build() );
-            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
-                key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic Id Provider" ).
-                permissions( permissions ).
-                description( "id provider description" ).
-                build();
+                                                IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey1 )
+                                                    .access( ADMINISTRATOR )
+                                                    .build(), IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey2 )
+                                                    .access( WRITE_USERS )
+                                                    .build() );
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider" )
+                .permissions( permissions )
+                .description( "id provider description" )
+                .build();
 
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
             assertNotNull( idProviderCreated );
@@ -1018,18 +979,18 @@ public class SecurityServiceImplTest
     public void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        assertThrows(IdProviderAlreadyExistsException.class, () -> runAsAdmin( () -> {
+        assertThrows( IdProviderAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
 
             final IdProviderAccessControlList permissions =
                 IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
 
-            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
-                key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic Id Provider" ).
-                permissions( permissions ).
-                description( "id provider description" ).
-                build();
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider" )
+                .permissions( permissions )
+                .description( "id provider description" )
+                .build();
 
             securityService.createIdProvider( createIdProvider );
             securityService.createIdProvider( createIdProvider );
@@ -1049,29 +1010,34 @@ public class SecurityServiceImplTest
 
             final IdProviderAccessControlList permissions =
                 IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
-                                                    ADMINISTRATOR ).build(),
-                                                IdProviderAccessControlEntry.create().principal( groupKey2 ).access(
-                                                    WRITE_USERS ).build() );
-            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
-                key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic Id Provider" ).
-                permissions( permissions ).
-                description( "old id provider description" ).
-                build();
+                                                IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey1 )
+                                                    .access( ADMINISTRATOR )
+                                                    .build(), IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey2 )
+                                                    .access( WRITE_USERS )
+                                                    .build() );
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider" )
+                .permissions( permissions )
+                .description( "old id provider description" )
+                .build();
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
             // exercise
             final IdProviderAccessControlList updatePermissions =
                 IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
-                                                IdProviderAccessControlEntry.create().principal( groupKey1 ).access(
-                                                   ADMINISTRATOR ).build() );
-            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create().
-                key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic Id Provider updated" ).
-                permissions( updatePermissions ).
-                description( "new id provider description" ).
-                build();
+                                                IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey1 )
+                                                    .access( ADMINISTRATOR )
+                                                    .build() );
+            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider updated" )
+                .permissions( updatePermissions )
+                .description( "new id provider description" )
+                .build();
             final IdProvider idProviderUpdated = securityService.updateIdProvider( updateIdProvider );
 
             // verify
@@ -1095,23 +1061,19 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             // setup
-            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create().
-                key( IdProviderKey.from( "enonic" ) ).
-                displayName( "Enonic Id Provider" ).
-                description( "old id provider description" ).
-                build();
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider" )
+                .description( "old id provider description" )
+                .build();
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
             // exercise
-            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create( idProviderCreated ).
-                editor( edit -> {
-                    edit.key = IdProviderKey.from( "newEnonic" );
-                    edit.displayName = "Enonic Id Provider updated";
-                    edit.description = "new id provider description";
-                } ).
-                displayName( "Display name from parameters" ).
-                description( "Description from parameters" ).
-                build();
+            final UpdateIdProviderParams updateIdProvider = UpdateIdProviderParams.create( idProviderCreated ).editor( edit -> {
+                edit.key = IdProviderKey.from( "newEnonic" );
+                edit.displayName = "Enonic Id Provider updated";
+                edit.description = "new id provider description";
+            } ).displayName( "Display name from parameters" ).description( "Description from parameters" ).build();
             final IdProvider idProviderUpdated = securityService.updateIdProvider( updateIdProvider );
 
             // verify
@@ -1128,13 +1090,13 @@ public class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "fisk" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "fisk" )
+                .build();
 
             final User user = securityService.createUser( createUser1 );
             refresh();
@@ -1162,13 +1124,13 @@ public class SecurityServiceImplTest
         runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
 
-            final CreateUserParams createUser1 = CreateUserParams.create().
-                userKey( userKey1 ).
-                displayName( "User 1" ).
-                email( "user1@enonic.com" ).
-                login( "User1" ).
-                password( "123456" ).
-                build();
+            final CreateUserParams createUser1 = CreateUserParams.create()
+                .userKey( userKey1 )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "123456" )
+                .build();
 
             refresh();
 
@@ -1204,11 +1166,11 @@ public class SecurityServiceImplTest
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build();
 
-        return ContextBuilder.create().
-            authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SecurityConstants.BRANCH_SECURITY ).
-            build();
+        return ContextBuilder.create()
+            .authInfo( authInfo )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .build();
     }
 
     private static class CustomAuthenticationToken
