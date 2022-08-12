@@ -16,6 +16,7 @@ public interface VirtualFilePath
 
     String getName();
 
+    @Deprecated
     VirtualFilePath join( VirtualFilePathImpl... paths );
 
     VirtualFilePath join( String... elements );

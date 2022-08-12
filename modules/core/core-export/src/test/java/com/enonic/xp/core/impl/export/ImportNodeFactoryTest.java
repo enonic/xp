@@ -26,7 +26,6 @@ public class ImportNodeFactoryTest
         final Node importNode = ImportNodeFactory.create().
             serializedNode( serializedNode ).
             importPath( NodePath.create( "/test" ).build() ).
-            processNodeSettings( ProcessNodeSettings.create().build() ).
             build().
             execute();
 
