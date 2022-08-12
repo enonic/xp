@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.export;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -15,7 +14,7 @@ public class ImportNodeFactory
 
     private final NodePath nodeImportPath;
 
-    private final ProcessNodeSettings processNodeSettings;
+    private final Long manualOrderValue;
 
     private final boolean importNodeIds;
 
@@ -25,7 +24,7 @@ public class ImportNodeFactory
     {
         this.serializedNode = builder.serializedNode;
         this.nodeImportPath = builder.importPath;
-        this.processNodeSettings = builder.processNodeSettings;
+        this.manualOrderValue = builder.manualOrderValue;
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
     }
@@ -42,7 +41,7 @@ public class ImportNodeFactory
             return Node.create( serializedNode ).
                 inheritPermissions( false ).
                 permissions( importPermissions ? serializedNode.getPermissions() : RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
-                manualOrderValue( getManualOrderValue() ).
+                manualOrderValue( manualOrderValue ).
                 build();
         }
         else
@@ -53,7 +52,7 @@ public class ImportNodeFactory
                 inheritPermissions( !importPermissions || serializedNode.inheritsPermissions() ).
                 permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
                 id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
-                manualOrderValue( getManualOrderValue() ).
+                manualOrderValue( manualOrderValue ).
                 timestamp( serializedNode.getTimestamp() ).
                 build();
         }
@@ -64,28 +63,13 @@ public class ImportNodeFactory
         return this.nodeImportPath.getLastElement().toString();
     }
 
-    private Long getManualOrderValue()
-    {
-        final InsertManualStrategy insertManualStrategy = this.processNodeSettings.getInsertManualStrategy();
-
-        if ( insertManualStrategy != null )
-        {
-            if ( insertManualStrategy.equals( InsertManualStrategy.MANUAL ) )
-            {
-                return this.processNodeSettings.getManualOrderValue();
-            }
-        }
-
-        return null;
-    }
-
     public static final class Builder
     {
         private Node serializedNode;
 
         private NodePath importPath;
 
-        private ProcessNodeSettings processNodeSettings;
+        private Long manualOrderValue;
 
         private boolean importNodeIds = true;
 
@@ -101,15 +85,15 @@ public class ImportNodeFactory
             return this;
         }
 
-        public Builder importPath( NodePath importPath )
+        public Builder importPath( final NodePath importPath )
         {
             this.importPath = importPath;
             return this;
         }
 
-        public Builder processNodeSettings( ProcessNodeSettings processNodeSettings )
+        public Builder manualOrderValue( final Long manualOrderValue )
         {
-            this.processNodeSettings = processNodeSettings;
+            this.manualOrderValue = manualOrderValue;
             return this;
         }
 
@@ -128,14 +112,13 @@ public class ImportNodeFactory
 
         private void validate()
         {
-
-            Preconditions.checkNotNull( this.processNodeSettings, "ProcessNodeSettings cannot be null" );
             Preconditions.checkNotNull( this.importPath, "Importpath cannot be null" );
             Preconditions.checkNotNull( this.serializedNode, "Serialized node cannot be null" );
         }
 
         public ImportNodeFactory build()
         {
+            validate();
             return new ImportNodeFactory( this );
         }
     }

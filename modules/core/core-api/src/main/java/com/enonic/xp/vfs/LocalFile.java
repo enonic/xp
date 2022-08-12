@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
+import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.util.Exceptions;
 
@@ -95,7 +96,7 @@ final class LocalFile
             return null;
         }
 
-        return com.google.common.io.Files.asCharSource( this.path.toFile(), StandardCharsets.UTF_8 );
+        return MoreFiles.asCharSource( this.path, StandardCharsets.UTF_8 );
     }
 
     @Override
@@ -106,13 +107,13 @@ final class LocalFile
             return null;
         }
 
-        return com.google.common.io.Files.asByteSource( this.path.toFile() );
+        return MoreFiles.asByteSource( this.path );
     }
 
     @Override
     public boolean exists()
     {
-        return path.toFile().exists();
+        return Files.exists( path );
     }
 
     @Override
