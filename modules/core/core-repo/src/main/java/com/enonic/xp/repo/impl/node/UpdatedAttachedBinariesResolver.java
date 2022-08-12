@@ -92,11 +92,13 @@ class UpdatedAttachedBinariesResolver
 
     private void updateAttachedBinaries( final Map<BinaryReference, AttachedBinary> resolved )
     {
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         for ( final BinaryAttachment binaryAttachment : this.binaryAttachments )
         {
             if ( this.currentBinaryReferences.contains( binaryAttachment.getReference() ) )
             {
-                storeAndAttachBinary( resolved, binaryAttachment );
+                final AttachedBinary attachedBinary = binaryService.store( repositoryId, binaryAttachment );
+                resolved.put( binaryAttachment.getReference(), attachedBinary );
             }
             else
             {
@@ -122,13 +124,6 @@ class UpdatedAttachedBinariesResolver
                 resolved.put( unchangedReference, existingAttachedBinary );
             }
         }
-    }
-
-    private void storeAndAttachBinary( final Map<BinaryReference, AttachedBinary> resolved, final BinaryAttachment newBinaryAttachment )
-    {
-        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        final AttachedBinary attachedBinary = binaryService.store( repositoryId, newBinaryAttachment );
-        resolved.put( newBinaryAttachment.getReference(), attachedBinary );
     }
 
     static Builder create()

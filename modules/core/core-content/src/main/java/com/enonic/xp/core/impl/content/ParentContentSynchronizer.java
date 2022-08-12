@@ -26,9 +26,8 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -46,7 +45,7 @@ public final class ParentContentSynchronizer
     private final ContentService contentService;
 
     @Activate
-    public ParentContentSynchronizer( @Reference final ContentService contentService, @Reference final MediaInfoService mediaInfoService )
+    public ParentContentSynchronizer( @Reference final ContentService contentService )
     {
         this.contentService = contentService;
 
@@ -66,62 +65,52 @@ public final class ParentContentSynchronizer
             .build() );
         syncCommandCreators.put( ContentSyncEventType.UPDATED, params -> UpdatedEventSyncCommand.create()
             .contentService( contentService )
-            .mediaInfoService( mediaInfoService )
             .params( params )
             .build() );
         syncCommandCreators.put( ContentSyncEventType.DELETED,
                                  params -> DeletedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
     }
 
-    private Context initContext( final ProjectName projectName, final NodePath root )
-    {
-        return ContextBuilder.from( ContextAccessor.current() )
-            .repositoryId( projectName.getRepoId() )
-            .branch( BRANCH_DRAFT )
-            .authInfo( adminAuthInfo() )
-            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, root )
-            .build();
-    }
-
     @Override
     public void sync( final ContentSyncParams params )
     {
-        final Map<NodePath, Context> sourceContexts = initContexts( params.getSourceProject() );
-        final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject() );
+        final Map<NodePath, Context> sourceContexts = initContexts( params.getSourceProject().getRepoId() );
+        final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject().getRepoId() );
 
         if ( params.getContentIds().isEmpty() )
         {
-            sourceContexts.forEach( ( root, context ) -> this.doSyncWithChildren( context.callWith( () -> List.of( ContentToSync.create()
-                                                                                                                       .sourceContent(
-                                                                                                                           contentService.getByPath(
-                                                                                                                               ContentPath.ROOT ) )
-                                                                                                                       .sourceContext(
-                                                                                                                           context )
-                                                                                                                       .targetContext(
-                                                                                                                           targetContexts.get(
-                                                                                                                               root ) )
-                                                                                                                       .build() ) ) ) );
-            return;
-        }
+            sourceContexts.forEach( ( root, sourceContext ) -> {
+                final Content rootContent = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-        final List<ContentToSync> contentsToSync =
-            createContentsToSync( params.getContentIds(), params.getSourceProject(), params.getTargetProject() );
+                final Context targetContext = targetContexts.get( root );
+                final List<ContentToSync> contentsToSync = List.of( ContentToSync.create()
+                                        .sourceContent( rootContent )
+                                        .sourceContext( sourceContext )
+                                        .targetContext( targetContext )
+                                        .build() );
 
-        if ( params.isIncludeChildren() )
-        {
-            this.doSyncWithChildren( contentsToSync );
-        }
-        else
-        {
-            this.doSync( contentsToSync );
+                this.doSyncWithChildren( contentsToSync, targetContexts );
+            } );
+        } else {
+            final List<ContentToSync> contentsToSync = createContentsToSync( params.getContentIds(), sourceContexts, targetContexts );
+
+            if ( params.isIncludeChildren() )
+            {
+                this.doSyncWithChildren( contentsToSync, targetContexts );
+            }
+            else
+            {
+                this.doSync( contentsToSync );
+            }
         }
     }
 
     @Override
     public void sync( final ContentEventsSyncParams params )
     {
-        final List<ContentToSync> contents =
-            createContentsToSync( params.getContentIds(), params.getSourceProject(), params.getTargetProject() );
+        final Map<NodePath, Context> sourceContexts = initContexts( params.getSourceProject().getRepoId() );
+        final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject().getRepoId() );
+        final List<ContentToSync> contents = createContentsToSync( params.getContentIds(), sourceContexts, targetContexts );
 
         final ContentEventSyncCommandParams commandParams = createEventCommandParams( contents );
         final AbstractContentEventSyncCommand command = createEventCommand( commandParams, params.getSyncType() );
@@ -129,12 +118,9 @@ public final class ParentContentSynchronizer
         command.sync();
     }
 
-    private void doSyncWithChildren( final Collection<ContentToSync> sourceContents )
+    private void doSyncWithChildren( final List<ContentToSync> sourceContents, final Map<NodePath, Context> targetContexts )
     {
         final Queue<ContentToSync> queue = new ArrayDeque<>( sourceContents );
-
-        final Map<NodePath, Context> targetContexts = !sourceContents.isEmpty() ? initContexts(
-            ProjectName.from( sourceContents.stream().findAny().get().getTargetContext().getRepositoryId() ) ) : Map.of();
 
         final List<ContentToSync> contentsToSync = sourceContents.stream().filter( sourceContent -> {
 
@@ -237,12 +223,9 @@ public final class ParentContentSynchronizer
         } ).forEach( AbstractContentEventSyncCommand::sync );
     }
 
-    private List<ContentToSync> createContentsToSync( final List<ContentId> contentIds, final ProjectName sourceProject,
-                                                      final ProjectName targetProject )
+    private List<ContentToSync> createContentsToSync( final List<ContentId> contentIds, final Map<NodePath, Context> sourceContexts,
+                                                      final Map<NodePath, Context> targetContexts )
     {
-        final Map<NodePath, Context> sourceContexts = initContexts( sourceProject );
-        final Map<NodePath, Context> targetContexts = initContexts( targetProject );
-
         return contentIds.stream().map( contentId -> {
             Context actualSourceContext = getActualContext( contentId, sourceContexts.values() );
             Context actualTargetContext = getActualContext( contentId, targetContexts.values() );
@@ -317,13 +300,22 @@ public final class ParentContentSynchronizer
         } );
     }
 
-    private Map<NodePath, Context> initContexts( final ProjectName projectName )
+    private Context initContext( final RepositoryId repositoryId, final NodePath root )
     {
-        final Context contentContext = initContext( projectName, ContentConstants.CONTENT_ROOT_PATH );
-        final Context archiveContext = initContext( projectName, ArchiveConstants.ARCHIVE_ROOT_PATH );
+        return ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repositoryId )
+            .branch( BRANCH_DRAFT )
+            .authInfo( adminAuthInfo() )
+            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, root )
+            .build();
+    }
 
-        return Map.of( (NodePath) contentContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ), contentContext,
-                       (NodePath) archiveContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ), archiveContext );
+    private Map<NodePath, Context> initContexts( final RepositoryId repositoryId )
+    {
+        final Context contentContext = initContext( repositoryId, ContentConstants.CONTENT_ROOT_PATH );
+        final Context archiveContext = initContext( repositoryId, ArchiveConstants.ARCHIVE_ROOT_PATH );
+
+        return Map.of( ContentConstants.CONTENT_ROOT_PATH, contentContext, ArchiveConstants.ARCHIVE_ROOT_PATH, archiveContext );
     }
 
     private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )

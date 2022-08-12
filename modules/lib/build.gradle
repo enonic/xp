@@ -1,0 +1,159 @@
+plugins {
+    id 'base'
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    download = true
+    version = '16.15.0'
+}
+
+/* Test */
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Lint TS, JS, and JSON'
+    args = [ 'run', 'lint:quiet' ]
+
+    outputs.upToDateWhen { false }
+}
+
+check.dependsOn lint
+
+/* Configure & Build */
+
+def globalNpmDirPath = "$buildDir/npm"
+
+task typescript( type: NpmTask, dependsOn: npmInstall ) {
+    description = 'Create JS and DTS files from TS'
+    args = [ 'run', 'build' ]
+
+    inputs.files( fileTree( project.projectDir ).matching {
+        include "lib-*/src/main/resources/**/*.ts"
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
+    })
+
+    outputs.files( fileTree( project.projectDir ).matching {
+        include "lib-*/build/resources/main/lib/xp/*.js"
+        include "lib-*/build/resources/main/lib/xp/*.ts"
+    })
+}
+
+task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
+    into "$buildDir/js"
+    from projectDir
+    include "lib-*/build/resources/main/lib/xp/**/*.js"
+}
+
+task jsdoc(type: NpmTask, dependsOn: prepareToJsdoc) {
+    description = 'Build JSDoc for libraries.'
+    args = ['run', 'jsdoc']
+    copy {
+        from 'jsdoc/template/jsdoc-main.css'
+        into "$buildDir/resources/main/jsdoc/styles"
+    }
+}
+
+/* Publish */
+
+task prepareToPublish( type: Copy ) {
+    into globalNpmDirPath
+
+    from 'README.md'
+    from 'global.d.ts'
+
+    from( 'package.template.json' ) {
+        filter {
+            line -> line
+                .replaceAll('%VERSION%', version )
+                .replaceAll('%FULL_NAME%|%FILE_NAME%', 'global' )
+                .replaceAll('%SHORT_NAME%', 'common' )
+        }
+        rename '.+', 'package.json'
+    }
+}
+
+task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish, npmInstall ] ) {
+    args = [ 'publish' ]
+    workingDir = file( globalNpmDirPath )
+}
+
+task packageJsdoc(type: Jar, dependsOn: 'jsdoc') {
+    from "$buildDir/resources/main/jsdoc"
+    classifier = 'jsdoc'
+}
+
+task publish {
+    dependsOn publishToNpm
+}
+
+artifacts {
+    archives packageJsdoc
+}
+
+publishing.publications {
+    mavenJava( MavenPublication ) {
+        artifact( packageJsdoc ) {
+            artifactId = 'docs'
+        }
+    }
+}
+
+subprojects {
+    if ( !isTsProject( project ) )
+    {
+        return
+    }
+
+    apply plugin: 'com.github.node-gradle.node'
+
+    def npmDirPath = "$buildDir/npm"
+
+    task prepareToPublish( type: Copy, dependsOn: [ processResources, parent.typescript ] ) {
+        def fullName = project.name
+        def shortName = project.name.substring( 4 )
+
+        into npmDirPath
+
+        from( 'README.md' )
+        from( "$buildDir/resources/main/lib/xp/" ) {
+            include '*.d.ts'
+        }
+
+        from( '../package.template.json' ) {
+            filter {
+                line -> line
+                    .replaceAll('%VERSION%', version )
+                    .replaceAll('%FULL_NAME%', fullName )
+                    .replaceAll('%SHORT_NAME%|%FILE_NAME%', shortName )
+            }
+            rename '.+', 'package.json'
+        }
+    }
+
+    task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish ] ) {
+        args = [ 'publish' ]
+        workingDir = file( npmDirPath )
+    }
+
+    publish.dependsOn publishToNpm
+
+    check.dependsOn parent.lint
+
+    parent.typescript.dependsOn processResources
+
+    test {
+        dependsOn parent.typescript
+    }
+
+    jar {
+        exclude '**/*.ts'
+        dependsOn parent.typescript
+    }
+}
+
+def isTsProject( Project p ) {
+    return fileTree("${p.projectDir}/src/main/resources/lib/xp").matching {
+        include { FileTreeElement details -> details.file.isFile() && details.file.name.endsWith( '.ts' ) }
+    }.size() > 0
+}

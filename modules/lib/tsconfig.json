@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "lib": ["es5"],
+        "removeComments": false,
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "typeRoots": [
+            "node_modules/@enonic-types"
+        ],
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "noImplicitUseStrict": true
+    },
+    "exclude": [
+        "./**/build",
+        "./**/out",
+        "./lib-*/*.d.ts"
+    ]
+}

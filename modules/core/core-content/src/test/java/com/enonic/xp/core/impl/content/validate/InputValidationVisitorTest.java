@@ -1,17 +1,24 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InputValidationVisitorTest
@@ -166,5 +173,47 @@ public class InputValidationVisitorTest
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
         validationVisitor.traverse( form );
+    }
+
+    @Test
+    public void testInputTextLineWithInfiniteOccurrences()
+    {
+        FormItemSet myFormItemSet = FormItemSet.create().
+            name( "myFormItemSet" ).
+            label( "My form item set" ).
+            addFormItem( Input.create().
+                name( "url" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                label( "URL" ).
+                occurrences( 0, 0 ).
+                inputTypeConfig( InputTypeConfig.
+                    create().
+                    property( InputTypeProperty.
+                        create( "regexp",
+                                "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
+                                  .build() ).
+                    build() ).
+                build() ).
+            build();
+
+        Form form = Form.create().
+            addFormItem( myFormItemSet ).
+            build();
+
+        List<String> stringValues = new ArrayList<>();
+        stringValues.add( "https://www.oslo.kommune.no/barnehage/finn-barnehage-i-oslo" );
+        stringValues.add(
+            "https://www.oslo.kommune.no/barnehage/finn-barnehage-i-oslo/#!c%7Cf_preschool_type_student/c.f_preschool_type_student//m.list" );
+
+        PropertyTree propertyTree = new PropertyTree();
+        PropertySet propertySet = propertyTree.addSet( "myFormItemSet" );
+        propertySet.addStrings( "url", stringValues );
+
+        InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
+        InputTypeValidationException exception =
+            assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
+        assertEquals(
+            "Invalid value in [url: https://www.oslo.kommune.no/barnehage/finn-barnehage-i-oslo/#!c%7Cf_preschool_type_student/c.f_preschool_type_student//m.list]: Value does not match with regular expression",
+            exception.getMessage() );
     }
 }

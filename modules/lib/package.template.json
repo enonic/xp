@@ -1,0 +1,32 @@
+{
+    "name": "@enonic-types/%FULL_NAME%",
+    "version": "%VERSION%",
+    "description": "Type definitions for %FULL_NAME%.",
+    "types": "%FILE_NAME%.d.ts",
+    "files": [
+        "%FILE_NAME%.d.ts"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/enonic/xp.git#master"
+    },
+    "keywords": [
+        "enonic",
+        "enonic-xp",
+        "%FULL_NAME%",
+        "%SHORT_NAME%",
+        "types",
+        "typescript"
+    ],
+    "contributors": [
+        "Mikita Taukachou <edloidas@gmail.com> (https://edloidas.github.io/)"
+    ],
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/enonic/xp/issues"
+    },
+    "homepage": "https://github.com/enonic/xp/tree/master#readme",
+    "publishConfig": {
+        "access": "public"
+    }
+}

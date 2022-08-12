@@ -11,13 +11,17 @@ import com.enonic.xp.data.PropertySet;
 public class DslQueryParser
 {
     private static final Map<String, Function<PropertySet, QueryBuilder>> QUERY_BUILDERS =
-        Map.of( BooleanQueryBuilder.NAME, set -> new BooleanQueryBuilder( set ).create(), TermQueryBuilder.NAME,
-                set -> new TermQueryBuilder( set ).create(), InQueryBuilder.NAME, set -> new InQueryBuilder( set ).create(),
-                LikeQueryBuilder.NAME, set -> new LikeQueryBuilder( set ).create(), FulltextQueryBuilder.NAME,
-                set -> new FulltextQueryBuilder( set ).create(), NgramQueryBuilder.NAME, ( set -> new NgramQueryBuilder( set ).create() ),
-                StemmedQueryBuilder.NAME, set -> new StemmedQueryBuilder( set ).create(), RangeQueryBuilder.NAME,
-                set -> new RangeQueryBuilder( set ).create(), PathMatchQueryBuilder.NAME, set -> new PathMatchQueryBuilder( set ).create(),
-                MatchAllQueryBuilder.NAME, set -> new MatchAllQueryBuilder( set ).create() );
+        Map.ofEntries( Map.entry( BooleanQueryBuilder.NAME, set -> new BooleanQueryBuilder( set ).create() ),
+                       Map.entry( TermQueryBuilder.NAME, set -> new TermQueryBuilder( set ).create() ),
+                       Map.entry( InQueryBuilder.NAME, set -> new InQueryBuilder( set ).create() ),
+                       Map.entry( LikeQueryBuilder.NAME, set -> new LikeQueryBuilder( set ).create() ),
+                       Map.entry( FulltextQueryBuilder.NAME, set -> new FulltextQueryBuilder( set ).create() ),
+                       Map.entry( NgramQueryBuilder.NAME, set -> new NgramQueryBuilder( set ).create() ),
+                       Map.entry( StemmedQueryBuilder.NAME, set -> new StemmedQueryBuilder( set ).create() ),
+                       Map.entry( RangeQueryBuilder.NAME, set -> new RangeQueryBuilder( set ).create() ),
+                       Map.entry( PathMatchQueryBuilder.NAME, set -> new PathMatchQueryBuilder( set ).create() ),
+                       Map.entry( MatchAllQueryBuilder.NAME, set -> new MatchAllQueryBuilder( set ).create() ),
+                       Map.entry( ExistsQueryBuilder.NAME, set -> new ExistsQueryBuilder( set ).create() ) );
 
     private DslQueryParser()
     {

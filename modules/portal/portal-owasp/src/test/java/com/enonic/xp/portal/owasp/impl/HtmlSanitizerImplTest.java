@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.portal.owasp.SanitizeType;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HtmlSanitizerImplTest
@@ -16,8 +18,12 @@ public class HtmlSanitizerImplTest
     {
         final String html = readHtml( "a_onclick" );
         final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+        final String sanitizedFunction = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.STRICT );
+        final String sanitizedProcessor = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.RICH_TEXT );
 
         assertHtml( "a_onclick", sanitized );
+        assertHtml( "a_onclick", sanitizedFunction );
+        assertEquals( "<p><a href=\"http://example.com/\" onclick=\"stealCookies()\">Link</a></p>", sanitizedProcessor );
     }
 
     @Test
@@ -26,8 +32,12 @@ public class HtmlSanitizerImplTest
     {
         final String html = readHtml( "scripts" );
         final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+        final String sanitizedFunction = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.STRICT );
+        final String sanitizedProcessor = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.RICH_TEXT );
 
         assertHtml( "scripts", sanitized );
+        assertHtml( "scripts", sanitizedFunction );
+        assertHtml( "scripts", sanitizedProcessor );
     }
 
     @Test
@@ -36,68 +46,12 @@ public class HtmlSanitizerImplTest
     {
         final String html = readHtml( "img_mouseover" );
         final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
+        final String sanitizedFunction = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.STRICT );
+        final String sanitizedProcessor = new HtmlSanitizerImpl().sanitizeHtml( html, SanitizeType.RICH_TEXT );
 
         assertHtml( "img_mouseover", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlImgOnError()
-        throws Exception
-    {
-        final String html = readHtml( "img_onerror" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "img_onerror", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlIframe()
-        throws Exception
-    {
-        final String html = readHtml( "iframe" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "iframe", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlTable()
-        throws Exception
-    {
-        final String html = readHtml( "table" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "table", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlBlockTags()
-        throws Exception
-    {
-        final String html = readHtml( "block" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "block", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlInlineTags()
-        throws Exception
-    {
-        final String html = readHtml( "inline" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "inline", sanitized );
-    }
-
-    @Test
-    public void testSanitizeHtmlFigureTags()
-        throws Exception
-    {
-        final String html = readHtml( "figure_tag" );
-        final String sanitized = new HtmlSanitizerImpl().sanitizeHtml( html );
-
-        assertHtml( "figure_tag", sanitized );
+        assertHtml( "img_mouseover", sanitizedFunction );
+        assertHtml( "img_mouseover", sanitizedProcessor );
     }
 
     private void assertHtml( final String name, final String html )

@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -223,6 +224,97 @@ public class ContentServiceImplTest_find
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
         assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child2 );
+    }
+
+    @Test
+    public void dsl_exists_string()
+        throws Exception
+    {
+        PropertyTree siteData = new PropertyTree();
+        siteData.setString( "myField", "stringValue" );
+        final Content site = createContent( ContentPath.ROOT, "a", siteData );
+
+        PropertyTree cData = new PropertyTree();
+        cData.setString( "myField", null );
+        final Content child1 = createContent( site.getPath(), "c", cData );
+
+        PropertyTree dData = new PropertyTree();
+        dData.setString( "myField", "" );
+        final Content child2 = createContent( site.getPath(), "b", dData );
+
+        testExists( site.getId() );
+        // child2 with empty string was not found by request because of legacy behavior in indexing, which removes such strings
+    }
+
+    @Test
+    public void dsl_exists_long()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setLong( "myField", 2L );
+        final Content content1 = createContent( ContentPath.ROOT, "displayName", data );
+
+        data = new PropertyTree();
+        data.setLong( "myField", null );
+        final Content content2 = createContent( ContentPath.ROOT, "a", data );
+
+        data = new PropertyTree();
+        data.setLong( "myField", 0L );
+        final Content content3 = createContent( ContentPath.ROOT, "b", data );
+
+        testExists( content1.getId(), content3.getId() );
+    }
+
+    @Test
+    public void dsl_exists_boolean()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setBoolean( "myField", true );
+        final Content content1 = createContent( ContentPath.ROOT, "displayName", data );
+
+        data = new PropertyTree();
+        data.setBoolean( "myField", false );
+        final Content content2 = createContent( ContentPath.ROOT, "a", data );
+
+        data = new PropertyTree();
+        data.setBoolean( "myField", null );
+        final Content content3 = createContent( ContentPath.ROOT, "b", data );
+
+        testExists( content1.getId(), content2.getId() );
+    }
+
+    @Test
+    public void dsl_exists_set()
+        throws Exception
+    {
+        PropertyTree data = new PropertyTree();
+        data.setSet( "myField", new PropertySet() );
+        final Content content1 = createContent( ContentPath.ROOT, "displayName", data );
+
+        data = new PropertyTree();
+        PropertySet set = new PropertySet();
+        set.addString( "sd", "sd" );
+
+        data.setSet( "myField", set );
+        final Content content2 = createContent( ContentPath.ROOT, "a", data );
+
+        testExists( content2.getId() );
+    }
+
+    private void testExists( final ContentId... existedContents )
+    {
+        final PropertyTree request = new PropertyTree();
+        final PropertySet exists = new PropertySet();
+        exists.addStrings( "field", "data.myField" );
+
+        request.addSet( "exists", exists );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        Assertions.assertThat(
+                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getIds() )
+            .containsExactly( existedContents );
     }
 
     @Test

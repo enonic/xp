@@ -30,6 +30,7 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
@@ -62,7 +63,7 @@ public class ParentContentSynchronizerTest
     {
         super.setUpNode();
 
-        synchronizer = new ParentContentSynchronizer( this.contentService, this.mediaInfoService );
+        synchronizer = new ParentContentSynchronizer( this.contentService );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
@@ -308,10 +309,8 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        sourceContext.runWith( () -> {
-            contentService.update(
-                new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) );
-        } );
+        sourceContext.callWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
 
         final Content targetContentUpdated = syncUpdated( sourceContent.getId() );
 
@@ -326,17 +325,17 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = sourceContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        sourceContext.runWith( () -> {
+        sourceContext.callWith( () -> {
             try
             {
-                contentService.update( new UpdateMediaParams().content( sourceContent.getId() )
-                                           .name( "new name" )
-                                           .byteSource( loadImage( "darth-small.jpg" ) )
-                                           .mimeType( "image/jpeg" )
-                                           .artist( "artist" )
-                                           .copyright( "copy" )
-                                           .tags( "my new tags" )
-                                           .caption( "caption" ) );
+                return contentService.update( new UpdateMediaParams().content( sourceContent.getId() )
+                                                  .name( "new name" )
+                                                  .byteSource( loadImage( "darth-small.jpg" ) )
+                                                  .mimeType( "image/jpeg" )
+                                                  .artist( "artist" )
+                                                  .copyright( "copy" )
+                                                  .tags( "my new tags" )
+                                                  .caption( "caption" ) );
             }
             catch ( IOException e )
             {
@@ -344,7 +343,14 @@ public class ParentContentSynchronizerTest
             }
         } );
 
-        final Content targetContentUpdated = syncUpdated( sourceContent.getId() );
+        Content targetContentUpdated = syncUpdated( sourceContent.getId() );
+
+        assertEquals( targetContent, targetContentUpdated );
+
+        sourceContext.runWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.workflowInfo = WorkflowInfo.ready() ) ) );
+
+        targetContentUpdated = syncUpdated( sourceContent.getId() );
 
         assertNotEquals( targetContent.getAttachments().first().getBinaryReference(),
                          targetContentUpdated.getAttachments().first().getBinaryReference() );
@@ -353,6 +359,60 @@ public class ParentContentSynchronizerTest
         assertEquals( "caption", targetContentUpdated.getData().getString( "caption" ) );
         assertEquals( "copy", targetContentUpdated.getData().getString( "copyright" ) );
         assertEquals( "my new tags", targetContentUpdated.getData().getString( "tags" ) );
+    }
+
+
+    @Test
+    public void updateAttachmentsChanged()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
+        syncCreated( sourceContent.getId() );
+
+        Content sourceContentUpdated = sourceContext.callWith( () -> {
+            try
+            {
+                return contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                                  .createAttachments( CreateAttachments.create()
+                                                                          .add( CreateAttachment.create()
+                                                                                    .name( "new name" )
+                                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                                    .mimeType( "image/jpeg" )
+                                                                                    .build() )
+                                                                          .build() ) );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
+        } );
+
+        Content targetContentUpdated = syncUpdated( sourceContent.getId() );
+
+        assertEquals( sourceContentUpdated.getAttachments(), targetContentUpdated.getAttachments() );
+
+        sourceContentUpdated = sourceContext.callWith( () -> {
+            try
+            {
+                return contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                                  .clearAttachments( true )
+                                                  .createAttachments( CreateAttachments.create()
+                                                                          .add( CreateAttachment.create()
+                                                                                    .name( "new name 1" )
+                                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                                    .mimeType( "image/jpeg" )
+                                                                                    .build() )
+                                                                          .build() ) );
+            }
+            catch ( IOException e )
+            {
+                throw new RuntimeException( e );
+            }
+        } );
+
+        targetContentUpdated = syncUpdated( sourceContent.getId() );
+
+        assertEquals( sourceContentUpdated.getAttachments(), targetContentUpdated.getAttachments() );
     }
 
     @Test

@@ -117,7 +117,7 @@ public final class TaskServiceImpl
             .setBranch( userContext.getBranch() )
             .setRepo( userContext.getRepositoryId() )
             .setAuthInfo( userContext.getAuthInfo() )
-            .setContentRootPath( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
+            .setContentRootPath( (NodePath) userContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
             .build();
     }
 

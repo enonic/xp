@@ -60,7 +60,7 @@ task javadocZip( type: Zip ) {
 
 publishing.publications {
     mavenJava( MavenPublication ) {
-        artifact( javadocZip )  {
+        artifact( javadocZip ) {
             artifactId = 'docs'
         }
     }

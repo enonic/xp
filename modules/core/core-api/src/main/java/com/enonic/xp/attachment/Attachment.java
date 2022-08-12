@@ -87,13 +87,14 @@ public final class Attachment
         }
         final Attachment that = (Attachment) o;
         return Objects.equals( this.name, that.name ) && Objects.equals( this.mimeType, that.mimeType ) &&
-            Objects.equals( this.label, that.label ) && Objects.equals( this.size, that.size );
+            Objects.equals( this.label, that.label ) && Objects.equals( this.size, that.size ) &&
+            Objects.equals( this.textContent, that.textContent );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, mimeType, label, size );
+        return Objects.hash( name, mimeType, label, size, textContent );
     }
 
     @Override
