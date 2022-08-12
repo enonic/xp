@@ -32,18 +32,6 @@ let resource = `<?xml version='1.0' encoding='UTF-8'?>
                           <indexed>false</indexed>
                           <occurrences minimum='0' maximum='1'/>
                         </input>
-                        <field-set>
-                          <label>My field set</label>
-                          <items>
-                            <input type='TextLine' name='fieldSetItem'>
-                              <label i18n='key2.label'>Field set Item</label>
-                              <immutable>false</immutable>
-                              <indexed>false</indexed>
-                              <help-text i18n='key2.help-text'/>
-                              <occurrences minimum='0' maximum='1'/>
-                            </input>
-                          </items>
-                        </field-set>
                       </items>
                     </item-set>
                   </form>
@@ -105,18 +93,6 @@ assert.assertJsonEquals({
               '                          <indexed>false</indexed>\n' +
               '                          <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
               '                        </input>\n' +
-              '                        <field-set>\n' +
-              '                          <label>My field set</label>\n' +
-              '                          <items>\n' +
-              '                            <input type=\'TextLine\' name=\'fieldSetItem\'>\n' +
-              '                              <label i18n=\'key2.label\'>Field set Item</label>\n' +
-              '                              <immutable>false</immutable>\n' +
-              '                              <indexed>false</indexed>\n' +
-              '                              <help-text i18n=\'key2.help-text\'/>\n' +
-              '                              <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                            </input>\n' +
-              '                          </items>\n' +
-              '                        </field-set>\n' +
               '                      </items>\n                    </item-set>\n' +
               '                  </form>\n                  <regions>\n' +
               '                    <region name=\'header\'/>\n' +
@@ -172,26 +148,6 @@ assert.assertJsonEquals({
                         'minimum': 0
                     },
                     'config': {}
-                },
-                {
-                    'formItemType': 'Layout',
-                    'name': 'fieldSet2',
-                    'label': 'My field set',
-                    'items': [
-                        {
-                            'formItemType': 'Input',
-                            'name': 'fieldSetItem',
-                            'label': 'Field set Item',
-                            'helpText': 'key2.help-text',
-                            'maximize': true,
-                            'inputType': 'TextLine',
-                            'occurrences': {
-                                'maximum': 1,
-                                'minimum': 0
-                            },
-                            'config': {}
-                        }
-                    ]
                 }
             ]
         }

@@ -72,8 +72,6 @@ interface CreateProjectHandler {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    setApplications(value?: string[]): void;
-
     execute(): Project;
 }
 
@@ -89,7 +87,6 @@ interface CreateProjectHandler {
  * @param {string} [params.language] Default project language.
  * @param {string} params.parent Parent project id.
  * @param {object} [params.siteConfig] Connected applications config.
- * @param {string[]} [params.applications] - Array of connected applications.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
  * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`).
  * @param {string[]} params.permissions.principals - Array of principals.
@@ -111,7 +108,6 @@ export function create(params: CreateProjectParams): Project {
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     bean.setParent(__.nullOrValue(params.parent));
     bean.setSiteConfig(__.toScriptValue(params.siteConfig));
-    bean.setApplications(__.nullOrValue(params.applications));
 
     return __.toNativeObject(bean.execute());
 }
@@ -136,8 +132,6 @@ interface ModifyProjectHandler {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    setApplications(value?: string[]): void;
-
     execute(): Project;
 }
 
@@ -153,7 +147,6 @@ interface ModifyProjectHandler {
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
  * @param {object} params.siteConfig Connected applications config.
- * @param {string[]} [params.applications] - Array of connected applications.
  *
  * @returns {Object} Modified project.
  */
@@ -166,7 +159,6 @@ export function modify(params: ModifyProjectParams): Project {
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setSiteConfig(__.toScriptValue(params.siteConfig));
-    bean.setApplications(__.nullOrValue(params.applications));
 
     return __.toNativeObject(bean.execute());
 }
