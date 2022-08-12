@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,11 @@ import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 import com.enonic.xp.xml.XmlException;
+
+import static com.enonic.xp.core.impl.export.ExportConstants.BINARY_FOLDER;
+import static com.enonic.xp.core.impl.export.ExportConstants.NODE_XML_EXPORT_NAME;
+import static com.enonic.xp.core.impl.export.ExportConstants.ORDER_EXPORT_NAME;
+import static com.enonic.xp.core.impl.export.ExportConstants.SYSTEM_FOLDER_NAME;
 
 public final class NodeImporter
 {
@@ -86,8 +92,9 @@ public final class NodeImporter
     {
         this.result.dryRun( this.dryRun );
 
-        if (nodeImportListener != null) {
-            nodeImportListener.nodeResolved( exportReader.getNodeFileCount(exportRoot) );
+        if ( nodeImportListener != null )
+        {
+            nodeImportListener.nodeResolved( exportReader.getNodeFileCount( exportRoot ) );
         }
 
         if ( !isNodeFolder( this.exportRoot ) )
@@ -99,7 +106,7 @@ public final class NodeImporter
             // Export root contains a node definition - should be created as the node
             // given as importRoot
             verifyImportRoot();
-            processNodeFolder( this.exportRoot, ProcessNodeSettings.create() );
+            processNodeFolder( this.exportRoot, ProcessNodeSettings.create().build() );
         }
 
         nodeService.refresh( RefreshMode.ALL );
@@ -111,7 +118,7 @@ public final class NodeImporter
     {
         final Stream<VirtualFile> children = this.exportReader.getChildren( parentFolder );
 
-        children.forEach( ( child ) -> processNodeFolder( child, ProcessNodeSettings.create() ) );
+        children.forEach( ( child ) -> processNodeFolder( child, ProcessNodeSettings.create().build() ) );
     }
 
     private void importFromManualOrder( final VirtualFile nodeFolder )
@@ -122,7 +129,6 @@ public final class NodeImporter
         {
             final List<String> relativeChildNames = processBinarySource( nodeFolder );
             childNames = getChildrenAbsolutePaths( nodeFolder, relativeChildNames );
-
         }
         catch ( Exception e )
         {
@@ -137,9 +143,10 @@ public final class NodeImporter
         {
             final VirtualFile child = nodeFolder.resolve( VirtualFilePaths.from( childName, "/" ) );
 
-            final ProcessNodeSettings.Builder processNodeSettings = ProcessNodeSettings.create().
-                insertManualStrategy( InsertManualStrategy.MANUAL ).
-                manualOrderValue( currentManualOrderValue );
+            final ProcessNodeSettings processNodeSettings = ProcessNodeSettings.create()
+                .insertManualStrategy( InsertManualStrategy.MANUAL )
+                .manualOrderValue( currentManualOrderValue )
+                .build();
 
             if ( child != null && child.exists() )
             {
@@ -163,7 +170,7 @@ public final class NodeImporter
         return children;
     }
 
-    private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
+    private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings processNodeSettings )
     {
         Node node = null;
         try
@@ -188,7 +195,7 @@ public final class NodeImporter
         }
         catch ( Exception e )
         {
-            result.addError( "Error when parsing children of " + node.path(), e );
+            result.addError( "Error when parsing children of " + nodeFolder.getPath(), e );
         }
 
     }
@@ -198,9 +205,14 @@ public final class NodeImporter
         return folder.resolve( folder.getPath().join( "_" ) ).exists();
     }
 
-    private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
+    private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings settings )
     {
-        final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
+        final VirtualFile nodeSource = nodeFolder.resolve( nodeFolder.getPath().join( SYSTEM_FOLDER_NAME, NODE_XML_EXPORT_NAME ) );
+
+        if ( !nodeSource.exists() )
+        {
+            throw new ImportNodeException( "Missing node source, expected at: " + nodeSource.getPath() );
+        }
 
         final CharSource nodeCharSource;
         try
@@ -231,9 +243,9 @@ public final class NodeImporter
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
-        final ImportNodeResult importNodeResult = importNode( nodeFolder, processNodeSettings, newNode, importNodePath );
+        final ImportNodeResult importNodeResult = importNode( nodeFolder, settings, newNode, importNodePath );
 
-        if (nodeImportListener != null)
+        if ( nodeImportListener != null )
         {
             nodeImportListener.nodeImported( 1L );
         }
@@ -249,29 +261,30 @@ public final class NodeImporter
         return importNodeResult.getNode();
     }
 
-    private ImportNodeResult importNode( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings,
+    private ImportNodeResult importNode( final VirtualFile nodeFolder, final ProcessNodeSettings processNodeSettings,
                                          final Node serializedNode, final NodePath importNodePath )
     {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
-        final ProcessNodeSettings settings = processNodeSettings.build();
-        final Node importNode = ImportNodeFactory.create().
-            importNodeIds( this.importNodeIds ).
-            importPermissions( this.importPermissions ).
-            serializedNode( serializedNode ).
-            importPath( importNodePath ).
-            processNodeSettings( settings ).
-            build().
-            execute();
+        final Node importNode = ImportNodeFactory.create()
+            .importNodeIds( this.importNodeIds )
+            .importPermissions( this.importPermissions )
+            .serializedNode( serializedNode )
+            .importPath( importNodePath )
+            .manualOrderValue( processNodeSettings.getInsertManualStrategy() == InsertManualStrategy.MANUAL
+                                   ? processNodeSettings.getManualOrderValue()
+                                   : null )
+            .build()
+            .execute();
 
-        final ImportNodeParams importNodeParams = ImportNodeParams.create().
-            importNode( importNode ).
-            binaryAttachments( binaryAttachments ).
-            insertManualStrategy( settings.getInsertManualStrategy() ).
-            dryRun( this.dryRun ).
-            importPermissions( this.importPermissions ).
-            importPermissionsOnCreate( this.importPermissions ).
-            build();
+        final ImportNodeParams importNodeParams = ImportNodeParams.create()
+            .importNode( importNode )
+            .binaryAttachments( binaryAttachments )
+            .insertManualStrategy( processNodeSettings.getInsertManualStrategy() )
+            .dryRun( this.dryRun )
+            .importPermissions( this.importPermissions )
+            .importPermissionsOnCreate( this.importPermissions )
+            .build();
 
         return this.nodeService.importNode( importNodeParams );
     }
@@ -279,7 +292,12 @@ public final class NodeImporter
     private List<String> processBinarySource( final VirtualFile nodeFolder )
         throws Exception
     {
-        final VirtualFile orderFile = this.exportReader.getOrderSource( nodeFolder );
+        final VirtualFile orderFile = nodeFolder.resolve( nodeFolder.getPath().join( SYSTEM_FOLDER_NAME, ORDER_EXPORT_NAME ) );
+        if ( !orderFile.exists() )
+        {
+            throw new ImportNodeException( "Parent has manual ordering of children, expected at:" + orderFile.getPath() );
+        }
+
         return orderFile.getCharSource().readLines();
     }
 
@@ -310,7 +328,8 @@ public final class NodeImporter
 
         try
         {
-            final VirtualFile binary = exportReader.getBinarySource( nodeFile, binaryReference.toString() );
+            final VirtualFile binary = tryFindBinaryFile( nodeFile, binaryReference );
+
             builder.add( new BinaryAttachment( binaryReference, binary.getByteSource() ) );
 
             result.addBinary( binary.getPath().getPath(), binaryReference );
@@ -319,6 +338,30 @@ public final class NodeImporter
         {
             result.addError( "Error processing binary, skip", e );
         }
+    }
+
+    private VirtualFile tryFindBinaryFile( final VirtualFile nodeFile, final BinaryReference binaryReference )
+    {
+        final String binaryReferenceAsString = binaryReference.toString();
+        final VirtualFile binaryOriginal =
+            nodeFile.resolve( nodeFile.getPath().join( SYSTEM_FOLDER_NAME, BINARY_FOLDER, binaryReferenceAsString ) );
+
+        if ( binaryOriginal.exists() )
+        {
+            return binaryOriginal;
+        }
+
+        // There is a chance that binaryReference is stored with UTF-8-MAC encoding (NFD-ish),
+        // but export contains corresponding file with NFC coded filename
+        final VirtualFile binaryNfc = nodeFile.resolve( nodeFile.getPath()
+                                                            .join( SYSTEM_FOLDER_NAME, BINARY_FOLDER,
+                                                                   Normalizer.normalize( binaryReferenceAsString, Normalizer.Form.NFC ) ) );
+        if ( binaryNfc.exists() )
+        {
+            return binaryNfc;
+        }
+
+        throw new ImportNodeException( "Missing binary source, expected at: " + binaryOriginal.getPath() );
     }
 
     private void verifyImportRoot()
