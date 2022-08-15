@@ -42,7 +42,7 @@ public class ApplicationFactoryServiceImpl
         this.nodeService = nodeService;
         bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,
-                                 new Customizer() );
+                                 new Customizer( nodeService ) );
     }
 
     @Activate
@@ -96,10 +96,15 @@ public class ApplicationFactoryServiceImpl
         } );
     }
 
-    private class Customizer
+    private static class Customizer
         implements BundleTrackerCustomizer<ApplicationAdaptor>
     {
-        private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService );
+        private final ApplicationFactory factory;
+
+        public Customizer( final NodeService nodeService )
+        {
+            factory = new ApplicationFactory( RunMode.get(), nodeService );
+        }
 
         @Override
         public ApplicationImpl addingBundle( final Bundle bundle, final BundleEvent event )

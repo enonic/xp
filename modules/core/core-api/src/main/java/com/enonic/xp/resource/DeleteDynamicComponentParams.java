@@ -2,8 +2,10 @@ package com.enonic.xp.resource;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.page.DescriptorKey;
 
+@PublicApi
 public final class DeleteDynamicComponentParams
 {
     private final DescriptorKey key;

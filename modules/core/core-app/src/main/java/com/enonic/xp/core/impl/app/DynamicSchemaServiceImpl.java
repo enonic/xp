@@ -335,8 +335,8 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createSiteFolderPath( final ApplicationKey key )
     {
-        return NodePath.create(
-            VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key.getName() + "/" + VirtualAppConstants.SITE_ROOT_NAME ).build();
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" + VirtualAppConstants.SITE_ROOT_NAME )
+            .build();
     }
 
     private String getSchemaRootName( final DynamicContentSchemaType type )

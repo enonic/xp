@@ -2,7 +2,10 @@ package com.enonic.xp.app;
 
 import com.google.common.base.Preconditions;
 
-public class CreateVirtualApplicationParams
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
+public final class CreateVirtualApplicationParams
 {
     private final ApplicationKey key;
 
@@ -35,7 +38,7 @@ public class CreateVirtualApplicationParams
             return this;
         }
 
-        void validate()
+        private void validate()
         {
             Preconditions.checkNotNull( key, "key must be set" );
         }

@@ -1,5 +1,8 @@
 package com.enonic.xp.resource;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class DynamicSchemaResult<T>
 {
     private final T schema;
