@@ -74,6 +74,8 @@ task prepareToPublish( type: Copy ) {
 }
 
 task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish, npmInstall ] ) {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+
     args = [ 'publish' ]
     workingDir = file( globalNpmDirPath )
 }
@@ -132,6 +134,7 @@ subprojects {
     }
 
     task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish ] ) {
+        onlyIf { !version.endsWith('-SNAPSHOT') }
         args = [ 'publish' ]
         workingDir = file( npmDirPath )
     }
