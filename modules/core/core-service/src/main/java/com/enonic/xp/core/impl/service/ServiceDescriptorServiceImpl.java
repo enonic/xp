@@ -108,7 +108,7 @@ public final class ServiceDescriptorServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load service descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load service descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 

@@ -63,10 +63,10 @@ public class ApplicationNameResolverTest
 
     private TinyBundle createBundleWithHeader( final String name, final String version )
     {
-        return TinyBundles.bundle().
-            set( Constants.BUNDLE_SYMBOLICNAME, name ).
-            set( Constants.BUNDLE_VERSION, version ).
-            set( ApplicationHelper.X_BUNDLE_TYPE, "application" );
+        return TinyBundles.bundle()
+            .set( Constants.BUNDLE_SYMBOLICNAME, name )
+            .set( Constants.BUNDLE_VERSION, version )
+            .set( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
     }
 
     private ByteSource wrapBundle( final TinyBundle bundle )

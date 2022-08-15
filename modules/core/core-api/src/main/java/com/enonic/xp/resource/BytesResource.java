@@ -49,4 +49,10 @@ public final class BytesResource
         requireExists();
         return ByteSource.wrap( this.bytes );
     }
+
+    @Override
+    public String getResolverName()
+    {
+        return "bytes";
+    }
 }

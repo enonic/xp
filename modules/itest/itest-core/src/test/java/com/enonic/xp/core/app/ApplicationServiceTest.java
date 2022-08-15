@@ -33,6 +33,7 @@ import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
+import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -50,10 +51,10 @@ import static org.mockito.Mockito.mock;
 public class ApplicationServiceTest
     extends AbstractNodeTest
 {
-    private ApplicationService applicationService;
-
     @TempDir
     public Path felixTempFolder;
+
+    private ApplicationService applicationService;
 
     private Felix felix;
 
@@ -73,7 +74,7 @@ public class ApplicationServiceTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext );
+        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -83,7 +84,9 @@ public class ApplicationServiceTest
                                                               new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
-                                                              new AppFilterServiceImpl( appConfig ), applicationAuditLogSupport );
+                                                              new AppFilterServiceImpl( appConfig ),
+                                                              new VirtualAppService( indexService, repositoryService, nodeService ),
+                                                              applicationAuditLogSupport );
     }
 
     @AfterEach
@@ -139,21 +142,18 @@ public class ApplicationServiceTest
 
     private Context adminContext()
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( User.ANONYMOUS ).
-                build() ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build() )
+            .build();
     }
 
     private Context systemRepoContext()
     {
-        return ContextBuilder.create().
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( ContextAccessor.current().getAuthInfo() ).
-            build();
+        return ContextBuilder.create()
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( ContextAccessor.current().getAuthInfo() )
+            .build();
     }
 
     private ByteSource createByteSource( String appVersion )

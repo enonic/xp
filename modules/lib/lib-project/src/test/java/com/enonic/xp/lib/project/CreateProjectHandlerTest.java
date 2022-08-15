@@ -41,4 +41,11 @@ public class CreateProjectHandlerTest
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithoutReadAccess" );
     }
 
+    @Test
+    public void createProjectWithApplications()
+        throws Exception
+    {
+        runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithApplications" );
+    }
+
 }

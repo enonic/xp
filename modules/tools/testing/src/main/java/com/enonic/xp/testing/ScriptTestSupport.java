@@ -30,6 +30,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.view.ViewFunctionService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -56,6 +57,8 @@ public abstract class ScriptTestSupport
     protected PortalRequest portalRequest;
 
     protected ContentService contentService;
+
+    protected ProjectService projectService;
 
     private ResourceService resourceService;
 
@@ -113,10 +116,12 @@ public abstract class ScriptTestSupport
         this.bundleContext = createBundleContext();
         this.contentService = Mockito.mock( ContentService.class );
         this.resourceService = createResourceService();
+        this.projectService = Mockito.mock( ProjectService.class );
 
         addService( ContentService.class, this.contentService );
         addService( ResourceService.class, this.resourceService );
         addService( ViewFunctionService.class, new MockViewFunctionService() );
+        addService( ProjectService.class, this.projectService );
 
         this.scriptSettings = ScriptSettings.create();
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
@@ -212,13 +217,14 @@ public abstract class ScriptTestSupport
     private Application createApplication()
         throws Exception
     {
+        final Bundle bundle = createBundle();
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
         URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
-        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader ) );
+        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader, ApplicationKey.from( bundle ) ) );
         builder.config( ConfigBuilder.create().build() );
-        builder.bundle( createBundle() );
+        builder.bundle( bundle );
         return builder.build();
     }
 

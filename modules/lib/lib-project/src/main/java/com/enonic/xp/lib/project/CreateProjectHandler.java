@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.project;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.google.common.base.Preconditions;
@@ -15,6 +16,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -33,52 +36,57 @@ public final class CreateProjectHandler
 
     private ProjectPermissions permissions;
 
+    private SiteConfigs siteConfigs;
+
     private boolean isPublic;
 
     @Override
     protected ProjectMapper doExecute()
     {
         final CreateProjectParams params = createProjectParams();
-        final Project project = this.projectService.create( params );
+        final Project project = this.projectService.get().create( params );
 
-        final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create().
-            projectName( this.id ).
-            language( this.language ).
-            contentService( this.contentService ).
-            build().
-            execute() : null;
+        final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create()
+            .projectName( this.id )
+            .language( this.language )
+            .contentService( this.contentService.get() )
+            .build()
+            .execute() : null;
 
         final ProjectPermissions modifiedPermissions = this.permissions != null
-            ? this.projectService.modifyPermissions( this.id, this.permissions )
+            ? this.projectService.get().modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
-        return ProjectMapper.create().
-            setProject( project ).
-            setLanguage( modifiedLanguage ).
-            setProjectPermissions( modifiedPermissions ).
-            setIsPublic( isPublic ).
-            build();
+        return ProjectMapper.create()
+            .setProject( project )
+            .setLanguage( modifiedLanguage )
+            .setProjectPermissions( modifiedPermissions )
+            .setIsPublic( isPublic )
+            .build();
     }
 
     private CreateProjectParams createProjectParams()
     {
-        final CreateProjectParams.Builder builder = CreateProjectParams.create().
-            name( this.id ).
-            displayName( this.displayName ).
-            description( this.description ).
-            parent( this.parent ).
-            forceInitialization( true );
+        final CreateProjectParams.Builder builder = CreateProjectParams.create()
+            .name( this.id )
+            .displayName( this.displayName )
+            .description( this.description )
+            .parent( this.parent )
+            .forceInitialization( true );
 
-        if (isPublic) {
-            builder.permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( RoleKeys.EVERYONE ).
-                    allow( Permission.READ ).
-                    build() ).build() );
+        if ( isPublic )
+        {
+            builder.permissions( AccessControlList.create()
+                                     .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                                     .build() );
         }
 
-        return builder.
-            build();
+        if ( siteConfigs != null )
+        {
+            siteConfigs.forEach( builder::addSiteConfig );
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -120,5 +128,11 @@ public final class CreateProjectHandler
     public void setParent( final String value )
     {
         this.parent = value != null ? ProjectName.from( value ) : null;
+    }
+
+    public void setSiteConfig( final ScriptValue value )
+    {
+        final List<SiteConfig> configs = buildSiteConfigs( value );
+        this.siteConfigs = configs != null ? SiteConfigs.from( configs ) : null;
     }
 }

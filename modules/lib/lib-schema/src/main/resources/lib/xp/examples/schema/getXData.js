@@ -1,0 +1,27 @@
+var schemaLib = require('/lib/xp/schema');
+var assert = require('/lib/xp/testing');
+
+/* global log*/
+
+// BEGIN
+// Fetch virtual x-data type.
+var result = schemaLib.getSchema({
+    name: 'myapp:mydata',
+    type: 'XDATA'
+});
+
+log.info('Fetched x-data: ' + result.name);
+
+// END
+
+
+assert.assertJsonEquals({
+    name: 'media:cameraInfo',
+    displayName: 'Photo Info',
+    displayNameI18nKey: 'media.cameraInfo.displayName',
+    modifiedTime: '1970-01-01T00:00:00Z',
+    resource: '<x-data><some-data></some-data></x-data>',
+    type: 'XDATA',
+    form: []
+}, result);
+

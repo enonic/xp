@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @PublicApi
 public final class CreateProjectParams
@@ -18,6 +20,8 @@ public final class CreateProjectParams
 
     private final AccessControlList permissions;
 
+    private final SiteConfigs siteConfigs;
+
     private final boolean forceInitialization;
 
     private CreateProjectParams( final Builder builder )
@@ -26,6 +30,7 @@ public final class CreateProjectParams
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.parent = builder.parent;
+        this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
         this.permissions = builder.permissions;
     }
@@ -55,6 +60,11 @@ public final class CreateProjectParams
         return parent;
     }
 
+    public SiteConfigs getSiteConfigs()
+    {
+        return siteConfigs;
+    }
+
     public AccessControlList getPermissions()
     {
         return permissions;
@@ -79,6 +89,8 @@ public final class CreateProjectParams
         private AccessControlList permissions;
 
         private boolean forceInitialization = false;
+
+        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
 
         private Builder()
         {
@@ -117,6 +129,12 @@ public final class CreateProjectParams
         public Builder forceInitialization( final boolean forceInitialization )
         {
             this.forceInitialization = forceInitialization;
+            return this;
+        }
+
+        public Builder addSiteConfig( final SiteConfig siteConfig )
+        {
+            this.siteConfigs.add( siteConfig );
             return this;
         }
 

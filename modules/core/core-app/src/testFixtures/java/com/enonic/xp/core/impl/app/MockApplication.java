@@ -16,6 +16,7 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.resource.Resource;
 
 public class MockApplication
     implements ApplicationAdaptor
@@ -34,6 +35,11 @@ public class MockApplication
     public ApplicationKey getKey()
     {
         return this.key;
+    }
+
+    public void setKey( final ApplicationKey key )
+    {
+        this.key = key;
     }
 
     @Override
@@ -119,6 +125,11 @@ public class MockApplication
         return this.started;
     }
 
+    public void setStarted( final boolean started )
+    {
+        this.started = started;
+    }
+
     @Override
     public Set<String> getFiles()
     {
@@ -128,12 +139,8 @@ public class MockApplication
     @Override
     public URL resolveFile( final String path )
     {
-        return this.urlResolver.findUrl( path );
-    }
-
-    public void setKey( final ApplicationKey key )
-    {
-        this.key = key;
+        final Resource resource = this.urlResolver.findResource( path );
+        return resource != null ? resource.getUrl() : null;
     }
 
     public void setResourcePath( final Path resourcePath )
@@ -148,17 +155,13 @@ public class MockApplication
             throw new UncheckedIOException( e );
         }
         final URLClassLoader loader = new URLClassLoader( new URL[]{url}, null );
-        this.urlResolver = new ClassLoaderApplicationUrlResolver( loader );
+        this.urlResolver =
+            new ClassLoaderApplicationUrlResolver( loader, bundle != null ? ApplicationKey.from( bundle ) : ApplicationKey.SYSTEM );
     }
 
     public ApplicationUrlResolver getUrlResolver()
     {
         return this.urlResolver;
-    }
-
-    public void setStarted( final boolean started )
-    {
-        this.started = started;
     }
 
     @Override

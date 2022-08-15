@@ -8,20 +8,26 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
 final class ApplicationFactory
 {
     private final RunMode runMode;
 
-    ApplicationFactory( final RunMode runMode )
+    private final NodeService nodeService;
+
+    ApplicationFactory( final RunMode runMode, final NodeService nodeService )
     {
         this.runMode = runMode;
+        this.nodeService = nodeService;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -41,26 +47,36 @@ final class ApplicationFactory
     ApplicationUrlResolver createUrlResolver( final Bundle bundle )
     {
         final ApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final ApplicationUrlResolver nodeResourceApplicationResolver =
+            new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
+
         if ( this.runMode != RunMode.DEV )
         {
-            return bundleUrlResolver;
+            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
         }
 
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
         if ( sourcePaths.isEmpty() )
         {
-            return bundleUrlResolver;
+            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
         }
 
-        final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( sourcePaths );
+        final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
 
-        return new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver );
+        return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver );
     }
 
-    private ApplicationUrlResolver createClassLoaderUrlResolver( final List<String> paths )
+    private ApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )
     {
-        final List<URL> urls = getSearchPathUrls( paths );
-        return new ClassLoaderApplicationUrlResolver( new URLClassLoader( urls.toArray( URL[]::new ), null ) );
+        final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
+
+        if ( sourcePaths.isEmpty() )
+        {
+            return null;
+        }
+        final List<URL> urls = getSearchPathUrls( sourcePaths );
+        return new ClassLoaderApplicationUrlResolver( new URLClassLoader( urls.toArray( URL[]::new ), null ),
+                                                      ApplicationKey.from( bundle ) );
     }
 
     private List<URL> getSearchPathUrls( final List<String> paths )

@@ -3,6 +3,8 @@ package com.enonic.xp.project;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 @PublicApi
 public final class ModifyProjectParams
@@ -13,11 +15,14 @@ public final class ModifyProjectParams
 
     private final String description;
 
+    private final SiteConfigs siteConfigs;
+
     private ModifyProjectParams( final Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
+        this.siteConfigs = builder.siteConfigs.build();
     }
 
     public static Builder create()
@@ -49,6 +54,11 @@ public final class ModifyProjectParams
         return description;
     }
 
+    public SiteConfigs getSiteConfigs()
+    {
+        return siteConfigs;
+    }
+
     public static final class Builder
     {
         private ProjectName name;
@@ -56,6 +66,8 @@ public final class ModifyProjectParams
         private String displayName;
 
         private String description;
+
+        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
 
         private Builder()
         {
@@ -76,6 +88,12 @@ public final class ModifyProjectParams
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder addSiteConfig( final SiteConfig siteConfig )
+        {
+            this.siteConfigs.add( siteConfig );
             return this;
         }
 

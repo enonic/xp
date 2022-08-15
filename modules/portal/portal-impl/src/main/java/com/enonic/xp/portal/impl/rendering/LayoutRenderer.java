@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,7 +14,15 @@ import com.enonic.xp.region.LayoutDescriptorService;
 public final class LayoutRenderer
     extends DescriptorBasedComponentRenderer<LayoutComponent>
 {
-    protected LayoutDescriptorService layoutDescriptorService;
+    private final LayoutDescriptorService layoutDescriptorService;
+
+    @Activate
+    public LayoutRenderer( @Reference final ControllerScriptFactory controllerScriptFactory,
+                           @Reference final LayoutDescriptorService layoutDescriptorService )
+    {
+        super( controllerScriptFactory );
+        this.layoutDescriptorService = layoutDescriptorService;
+    }
 
     @Override
     public Class<LayoutComponent> getType()
@@ -25,18 +34,5 @@ public final class LayoutRenderer
     protected ComponentDescriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
         return layoutDescriptorService.getByKey( descriptorKey );
-    }
-
-    @Reference
-    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
-    {
-        this.layoutDescriptorService = layoutDescriptorService;
-    }
-
-    @Override
-    @Reference
-    public void setControllerScriptFactory( final ControllerScriptFactory value )
-    {
-        super.setControllerScriptFactory( value );
     }
 }

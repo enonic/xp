@@ -15,6 +15,8 @@ public final class SiteDescriptor
 {
     private static final String SITE_DESCRIPTOR_PATH = "site/site.xml";
 
+    private final ApplicationKey applicationKey;
+
     private final Form form;
 
     private final XDataMappings xDataMappings;
@@ -27,11 +29,17 @@ public final class SiteDescriptor
 
     private SiteDescriptor( final Builder builder )
     {
+        this.applicationKey = builder.applicationKey;
         this.form = builder.form;
         this.xDataMappings = builder.xDataMappings;
         this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = builder.responseProcessors != null ? builder.responseProcessors : ResponseProcessorDescriptors.empty();
         this.mappingDescriptors = builder.mappingDescriptors != null ? builder.mappingDescriptors : ControllerMappingDescriptors.empty();
+    }
+
+    public ApplicationKey getApplicationKey()
+    {
+        return applicationKey;
     }
 
     public Form getForm()
@@ -76,6 +84,8 @@ public final class SiteDescriptor
 
     public static class Builder
     {
+        private ApplicationKey applicationKey;
+
         private Form form;
 
         private XDataMappings xDataMappings;
@@ -92,11 +102,18 @@ public final class SiteDescriptor
 
         private Builder( final SiteDescriptor siteDescriptor )
         {
+            this.applicationKey = siteDescriptor.applicationKey;
             this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
             this.xDataMappings = siteDescriptor.xDataMappings;
             this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
+        }
+
+        public Builder applicationKey( final ApplicationKey applicationKey )
+        {
+            this.applicationKey = applicationKey;
+            return this;
         }
 
         public Builder form( final Form form )

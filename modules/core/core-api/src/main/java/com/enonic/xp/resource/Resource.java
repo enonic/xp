@@ -11,6 +11,7 @@ public interface Resource
 {
     ResourceKey getKey();
 
+    @Deprecated
     URL getUrl();
 
     void requireExists();
@@ -32,4 +33,6 @@ public interface Resource
     List<String> readLines();
 
     ByteSource getBytes();
+
+    String getResolverName();
 }

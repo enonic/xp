@@ -11,10 +11,15 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @PublicApi
 public final class Project
 {
+    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
+
     private final ProjectName name;
 
     private final String displayName;
@@ -25,6 +30,8 @@ public final class Project
 
     private final Attachment icon;
 
+    private final SiteConfigs siteConfigs;
+
     private Project( Builder builder )
     {
         this.name = builder.name;
@@ -32,6 +39,7 @@ public final class Project
         this.description = builder.description;
         this.parent = builder.parent;
         this.icon = builder.icon;
+        this.siteConfigs = builder.siteConfigs.build();
     }
 
     public static Builder create()
@@ -61,12 +69,13 @@ public final class Project
             return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
         }
 
-        final Project.Builder project = Project.create().
-            name( ProjectName.from( repository.getId() ) ).
-            description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) ).
-            displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
+        final Project.Builder project = Project.create()
+            .name( ProjectName.from( repository.getId() ) )
+            .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+            .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildParents( project, projectData );
+        buildSiteConfigs( project, projectData );
         buildIcon( project, projectData );
 
         return project.build();
@@ -78,13 +87,13 @@ public final class Project
 
         if ( iconData != null )
         {
-            project.icon( Attachment.create().
-                name( iconData.getString( ContentPropertyNames.ATTACHMENT_NAME ) ).
-                label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) ).
-                mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) ).
-                size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
-                textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
-                build() );
+            project.icon( Attachment.create()
+                              .name( iconData.getString( ContentPropertyNames.ATTACHMENT_NAME ) )
+                              .label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
+                              .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
+                              .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                              .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
+                              .build() );
         }
     }
 
@@ -95,6 +104,11 @@ public final class Project
         {
             project.parent( ProjectName.from( projectNamesIterator.next() ) );
         }
+    }
+
+    private static void buildSiteConfigs( final Project.Builder project, final PropertySet projectData )
+    {
+        SITE_CONFIGS_DATA_SERIALIZER.fromProperties( projectData ).build().forEach( project::addSiteConfig );
     }
 
     public ProjectName getName()
@@ -122,8 +136,14 @@ public final class Project
         return parent;
     }
 
+    public SiteConfigs getSiteConfigs()
+    {
+        return siteConfigs;
+    }
+
     public static final class Builder
     {
+        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
 
         private ProjectName name;
 
@@ -166,6 +186,12 @@ public final class Project
         public Builder parent( final ProjectName parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder addSiteConfig( final SiteConfig siteConfig )
+        {
+            this.siteConfigs.add( siteConfig );
             return this;
         }
 

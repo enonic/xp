@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.net.URL;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,7 @@ import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.core.impl.app.BundleBasedTest;
+import com.enonic.xp.resource.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,13 +44,13 @@ public class BundleApplicationUrlResolverTest
         final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );
 
-        final URL url1 = this.resolver.findUrl( "/site/site.xml" );
-        assertNotNull( url1 );
+        final Resource resource1 = this.resolver.findResource( "/site/site.xml" );
+        assertNotNull( resource1 );
 
-        final URL url2 = this.resolver.findUrl( "site/site.xml" );
-        assertNotNull( url2 );
+        final Resource resource2 = this.resolver.findResource( "site/site.xml" );
+        assertNotNull( resource2 );
 
-        final URL url3 = this.resolver.findUrl( "site/not-found.txt" );
-        assertNull( url3 );
+        final Resource resource3 = this.resolver.findResource( "site/not-found.txt" );
+        assertNull( resource3 );
     }
 }

@@ -12,6 +12,8 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.site.SiteConfigs;
 
 public final class ModifyProjectHandler
     extends BaseProjectHandler
@@ -24,56 +26,57 @@ public final class ModifyProjectHandler
 
     private Locale language;
 
+    private SiteConfigs siteConfigs;
+
     @Override
     protected ProjectMapper doExecute()
     {
-        final Project projectBeforeUpdate = this.projectService.get( this.id );
+        final Project projectBeforeUpdate = this.projectService.get().get( this.id );
         final ModifyProjectParams params = modifyProjectParams( projectBeforeUpdate );
 
-        final Project project = this.projectService.modify( params );
+        final Project project = this.projectService.get().modify( params );
 
         Locale projectLanguage;
         if ( this.language != null )
         {
-            projectLanguage = ApplyProjectLanguageCommand.create().
-                projectName( this.id ).
-                language( this.language ).
-                contentService( this.contentService ).
-                build().
-                execute();
+            projectLanguage = ApplyProjectLanguageCommand.create()
+                .projectName( this.id )
+                .language( this.language )
+                .contentService( this.contentService.get() )
+                .build()
+                .execute();
         }
         else
         {
-            projectLanguage = GetProjectLanguageCommand.create().
-                projectName( this.id ).
-                contentService( this.contentService ).
-                build().
-                execute();
+            projectLanguage =
+                GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
         }
 
-        final Boolean isPublic = GetProjectReadAccessCommand.create().
-            projectName( this.id ).
-            contentService( this.contentService ).
-            build().
-            execute();
+        final Boolean isPublic =
+            GetProjectReadAccessCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
 
-        final ProjectPermissions projectPermissions = this.projectService.getPermissions( this.id );
+        final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( this.id );
 
-        return ProjectMapper.create().
-            setProject( project ).
-            setLanguage( projectLanguage ).
-            setProjectPermissions( projectPermissions ).
-            setIsPublic( isPublic ).
-            build();
+        return ProjectMapper.create()
+            .setProject( project )
+            .setLanguage( projectLanguage )
+            .setProjectPermissions( projectPermissions )
+            .setIsPublic( isPublic )
+            .build();
     }
 
     private ModifyProjectParams modifyProjectParams( final Project projectBeforeUpdate )
     {
-        return ModifyProjectParams.create().
-            name( this.id ).
-            displayName( this.displayName != null ? this.displayName : projectBeforeUpdate.getDisplayName() ).
-            description( this.description != null ? this.description : projectBeforeUpdate.getDescription() ).
-            build();
+        final ModifyProjectParams.Builder params = ModifyProjectParams.create()
+            .name( this.id )
+            .displayName( this.displayName != null ? this.displayName : projectBeforeUpdate.getDisplayName() )
+            .description( this.description != null ? this.description : projectBeforeUpdate.getDescription() );
+
+        final SiteConfigs siteConfigs = this.siteConfigs != null ? this.siteConfigs : projectBeforeUpdate.getSiteConfigs();
+
+        siteConfigs.forEach( params::addSiteConfig );
+
+        return params.build();
     }
 
     @Override
@@ -100,5 +103,10 @@ public final class ModifyProjectHandler
     public void setLanguage( final String value )
     {
         this.language = buildLanguage( value );
+    }
+
+    public void setSiteConfig( final ScriptValue value )
+    {
+        this.siteConfigs = value != null ? SiteConfigs.from( buildSiteConfigs( value ) ) : null;
     }
 }

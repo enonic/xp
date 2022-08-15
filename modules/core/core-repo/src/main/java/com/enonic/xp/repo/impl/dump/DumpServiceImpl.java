@@ -12,7 +12,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -69,6 +68,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -100,12 +100,9 @@ public class DumpServiceImpl
     private Path basePath = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
 
     @Activate
-    public DumpServiceImpl( final BundleContext context, @Reference EventPublisher eventPublisher )
+    public DumpServiceImpl( @Reference EventPublisher eventPublisher )
     {
-        this.xpVersion = context.
-            getBundle().
-            getVersion().
-            toString();
+        this.xpVersion = VersionInfo.get().getVersion();
         this.eventPublisher = eventPublisher;
     }
 

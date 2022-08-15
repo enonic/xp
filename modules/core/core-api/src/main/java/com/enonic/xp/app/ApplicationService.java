@@ -13,9 +13,14 @@ public interface ApplicationService
     Application getInstalledApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
+    Application get( ApplicationKey key );
+
+    @Deprecated
     ApplicationKeys getInstalledApplicationKeys();
 
     Applications getInstalledApplications();
+
+    Applications list();
 
     boolean isLocalApplication( ApplicationKey key );
 
@@ -51,4 +56,12 @@ public interface ApplicationService
     void installAllStoredApplications();
 
     void installAllStoredApplications( ApplicationInstallationParams params );
+
+    Application createVirtualApplication( CreateVirtualApplicationParams params );
+
+    boolean deleteVirtualApplication( ApplicationKey key );
+
+    boolean hasReal( ApplicationKey applicationKey );
+
+    boolean hasVirtual( ApplicationKey applicationKey );
 }

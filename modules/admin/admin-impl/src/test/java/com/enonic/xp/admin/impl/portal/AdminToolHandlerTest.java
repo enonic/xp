@@ -56,7 +56,7 @@ public class AdminToolHandlerTest
         Mockito.when( controllerScript.execute( Mockito.any( PortalRequest.class ) ) ).thenReturn( this.portalResponse );
 
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        Mockito.when( controllerScriptFactory.fromDir( Mockito.any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+        Mockito.when( controllerScriptFactory.fromScript( Mockito.any( ResourceKey.class ) ) ).thenReturn( controllerScript );
 
         this.handler = new AdminToolHandler();
         this.handler.setAdminToolDescriptorService( this.adminToolDescriptorService );

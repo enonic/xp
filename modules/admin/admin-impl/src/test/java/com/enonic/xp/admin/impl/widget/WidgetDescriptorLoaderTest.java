@@ -1,15 +1,10 @@
 package com.enonic.xp.admin.impl.widget;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
@@ -20,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WidgetDescriptorLoaderTest
     extends ApplicationTestSupport
@@ -32,16 +29,10 @@ public class WidgetDescriptorLoaderTest
     {
         this.loader = new WidgetDescriptorLoader();
         this.loader.setResourceService( this.resourceService );
-        this.loader.setApplicationService( this.applicationService );
 
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        final URL iconUrl = getClass().getResource( "/apps/myapp1/admin/widgets/widget1/widget1.svg" );
-        Mockito.when( bundle.getEntry( "/admin/widgets/widget2/widget2.svg" ) ).thenReturn( null );
-        Mockito.when( bundle.getEntry( "/admin/widgets/widget1/widget1.svg" ) ).thenReturn( iconUrl );
-        Mockito.when( bundle.getResource( "/admin/widgets/widget1/widget1.svg" ) ).thenReturn( iconUrl );
-
-        final MockApplication app = addApplication( "myapp1", "/apps/myapp1" );
-        app.setBundle( bundle );
+        final Resource resource = mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+        addApplication( "myapp1", "/apps/myapp1" );
     }
 
     @Test

@@ -1,8 +1,10 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
+import com.enonic.xp.resource.Resource;
 
 public final class MultiApplicationUrlResolver
     implements ApplicationUrlResolver
@@ -27,17 +29,25 @@ public final class MultiApplicationUrlResolver
     }
 
     @Override
-    public URL findUrl( final String path )
+    public Resource findResource( final String path )
     {
+        Resource resourceToReturn = null;
+
         for ( final ApplicationUrlResolver resolver : this.list )
         {
-            final URL url = resolver.findUrl( path );
-            if ( url != null )
+            final Resource resource = resolver.findResource( path );
+            if ( resource != null )
             {
-                return url;
+                resourceToReturn = resource;
+
+                if ( !"node".equals( resourceToReturn.getResolverName() ) || !VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) ||
+                    !VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE.equals( resourceToReturn.getBytes() ) )
+                {
+                    return resourceToReturn;
+                }
             }
         }
 
-        return null;
+        return resourceToReturn;
     }
 }

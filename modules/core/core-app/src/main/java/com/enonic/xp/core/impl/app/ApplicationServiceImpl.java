@@ -6,6 +6,9 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,6 +29,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
@@ -54,12 +58,14 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
+    private final VirtualAppService virtualAppService;
+
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
     @Activate
     public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService,
+                                   @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.context = context;
@@ -68,15 +74,16 @@ public final class ApplicationServiceImpl
         this.eventPublisher = eventPublisher;
         this.applicationLoader = new ApplicationLoader( eventPublisher::publish );
         this.appFilterService = appFilterService;
+        this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
     }
 
     @Deactivate
     public void deactivate()
     {
-        for ( ApplicationKey applicationKey : registry.getKeys() )
+        for ( Application applicationKey : registry.getAll() )
         {
-            registry.uninstallApplication( applicationKey );
+            registry.uninstallApplication( applicationKey.getKey() );
         }
     }
 
@@ -87,15 +94,30 @@ public final class ApplicationServiceImpl
     }
 
     @Override
+    public Application get( final ApplicationKey key )
+    {
+        final Application installedApplication = this.registry.get( key );
+        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+    }
+
+    @Override
     public ApplicationKeys getInstalledApplicationKeys()
     {
-        return this.registry.getKeys();
+        return getInstalledApplications().getApplicationKeys();
     }
 
     @Override
     public Applications getInstalledApplications()
     {
-        return registry.getAll();
+        return Applications.from( this.registry.getAll() );
+    }
+
+    @Override
+    public Applications list()
+    {
+        return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
+                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
+                                      .values() );
     }
 
     @Override
@@ -168,9 +190,7 @@ public final class ApplicationServiceImpl
     @Deprecated
     public Application installStoredApplication( final NodeId nodeId )
     {
-        final ApplicationInstallationParams params = ApplicationInstallationParams.create().
-            triggerEvent( false ).
-            build();
+        final ApplicationInstallationParams params = ApplicationInstallationParams.create().triggerEvent( false ).build();
         return installStoredApplication( nodeId, params );
     }
 
@@ -222,6 +242,31 @@ public final class ApplicationServiceImpl
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
     }
+
+    @Override
+    public Application createVirtualApplication( final CreateVirtualApplicationParams params )
+    {
+        return this.virtualAppService.create( params );
+    }
+
+    @Override
+    public boolean deleteVirtualApplication( final ApplicationKey key )
+    {
+        return this.virtualAppService.delete( key );
+    }
+
+    @Override
+    public boolean hasVirtual( final ApplicationKey applicationKey )
+    {
+        return this.virtualAppService.get( applicationKey ) != null;
+    }
+
+    @Override
+    public boolean hasReal( final ApplicationKey applicationKey )
+    {
+        return this.registry.get( applicationKey ) != null;
+    }
+
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {
