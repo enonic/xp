@@ -7,8 +7,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -279,14 +277,7 @@ public class DynamicSchemaServiceImpl
 
     private String getResourceName( final ResourceKey resourceKey )
     {
-        if ( Strings.isNullOrEmpty( resourceKey.getExtension() ) )
-        {
-            return resourceKey.getName();
-        }
-        else
-        {
-            return resourceKey.getName().substring( 0, resourceKey.getName().lastIndexOf( "." + resourceKey.getExtension() ) );
-        }
+        return resourceKey.getName().substring( 0, resourceKey.getName().lastIndexOf( "." + resourceKey.getExtension() ) );
     }
 
     @Override
