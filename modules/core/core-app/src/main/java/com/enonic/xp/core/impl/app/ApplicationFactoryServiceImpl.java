@@ -101,7 +101,7 @@ public class ApplicationFactoryServiceImpl
     {
         private final ApplicationFactory factory;
 
-        public Customizer( final NodeService nodeService )
+        private Customizer( final NodeService nodeService )
         {
             factory = new ApplicationFactory( RunMode.get(), nodeService );
         }
