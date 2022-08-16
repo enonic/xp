@@ -293,12 +293,12 @@ public class ProjectServiceImpl
     @Override
     public ApplicationKeys getAvailableApplications( final ProjectName projectName )
     {
-        final Project project = doGet( projectName );
+        final Project project = get( projectName );
 
         final Collection<ApplicationKey> projectApps = project.getSiteConfigs().getApplicationKeys();
 
-        return ApplicationKeys.from( Stream.concat( projectApps.stream(), doGetParents( project ).stream()
-            .flatMap( parent -> parent.getSiteConfigs().getApplicationKeys().stream() ) ).distinct().collect( Collectors.toList() ) );
+        return callWithListContext( () -> ApplicationKeys.from( Stream.concat( projectApps.stream(), doGetParents( project ).stream()
+            .flatMap( parent -> parent.getSiteConfigs().getApplicationKeys().stream() ) ).distinct().collect( Collectors.toList() ) ) );
     }
 
     @Override
@@ -326,22 +326,26 @@ public class ProjectServiceImpl
             throw new ProjectNotFoundException( e.getProjectName() );
         }
 
-        Stream.concat( Lists.reverse( doGetParents( targetProject ) ).stream(), Stream.of( targetProject ) )
-            .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() ) );
+        callWithListContext( () -> {
+            Stream.concat( Lists.reverse( doGetParents( targetProject ) ).stream(), Stream.of( targetProject ) )
+                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() ) );
 
-        final Queue<Project> children = new ArrayDeque<>();
-        children.add( targetProject );
+            final Queue<Project> children = new ArrayDeque<>();
+            children.add( targetProject );
 
-        final Projects projects = adminContext().callWith( this::doList );
+            final Projects projects = adminContext().callWith( this::doList );
 
-        while ( !children.isEmpty() )
-        {
-            final Project current = children.poll();
-            projects.stream().filter( p -> current.getName().equals( p.getParent() ) ).forEach( p -> {
-                children.offer( p );
-                graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() );
-            } );
-        }
+            while ( !children.isEmpty() )
+            {
+                final Project current = children.poll();
+                projects.stream().filter( p -> current.getName().equals( p.getParent() ) ).forEach( p -> {
+                    children.offer( p );
+                    graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() );
+                } );
+            }
+
+            return null;
+        } );
 
         return graph.build();
     }

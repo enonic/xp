@@ -39,6 +39,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectGraph;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
@@ -71,6 +72,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -146,6 +148,15 @@ class ProjectServiceImplTest
             .branch( "master" )
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .authInfo( REPO_TEST_CUSTOM_MANAGER_AUTHINFO )
+            .build();
+    }
+
+    private static Context contextWithAuthInfo( final AuthenticationInfo authenticationInfo )
+    {
+        return ContextBuilder.create()
+            .branch( "master" )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( authenticationInfo )
             .build();
     }
 
@@ -942,6 +953,28 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void graph_without_permissions()
+    {
+        final Project project1 = doCreateProjectAsAdmin( ProjectName.from( "project1" ) );
+
+        assertThrows( ProjectNotFoundException.class, () -> projectService.graph( ProjectName.from( "project1" ) ) );
+
+        final Project project2 =
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
+        final Project project3 =
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
+        final Project project4 =
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
+        final Project project5 =
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
+
+        contextWithAuthInfo( getAccessForProject( ProjectName.from( "project4" ), List.of( ProjectRole.VIEWER ) ) ).runWith( () -> {
+            assertEquals( 4, projectService.graph( ProjectName.from( "project4" ) ).getSize() );
+        } );
+
+    }
+
+    @Test
     void get_available_applications()
     {
         final RepositoryId parentRepoId = RepositoryId.from( "com.enonic.cms.parent" );
@@ -966,6 +999,45 @@ class ProjectServiceImplTest
             adminContext().callWith( () -> projectService.getAvailableApplications( parent.getName() ) );
         final ApplicationKeys childAvailableApplications =
             adminContext().callWith( () -> projectService.getAvailableApplications( child.getName() ) );
+
+        assertEquals( 2, parentAvailableApplications.getSize() );
+        assertEquals( "app1", parentAvailableApplications.get( 0 ).toString() );
+        assertEquals( "app2", parentAvailableApplications.get( 1 ).toString() );
+
+        assertEquals( 3, childAvailableApplications.getSize() );
+        assertEquals( "app2", childAvailableApplications.get( 0 ).toString() );
+        assertEquals( "app3", childAvailableApplications.get( 1 ).toString() );
+        assertEquals( "app1", childAvailableApplications.get( 2 ).toString() );
+    }
+
+    @Test
+    void get_available_applications_without_permissions()
+    {
+        final RepositoryId parentRepoId = RepositoryId.from( "com.enonic.cms.parent" );
+        final RepositoryId childRepoId = RepositoryId.from( "com.enonic.cms.child" );
+
+        final Project parent = adminContext().callWith( () -> doCreateProject( ProjectName.from( parentRepoId ), SiteConfigs.from(
+            SiteConfig.create().application( ApplicationKey.from( "app1" ) ).config( new PropertyTree() ).build(),
+            SiteConfig.create().application( ApplicationKey.from( "app2" ) ).config( new PropertyTree() ).build() ) ) );
+
+        final Project child = adminContext().callWith( () -> doCreateProject( ProjectName.from( childRepoId ), parent.getName(),
+                                                                              SiteConfigs.from( SiteConfig.create()
+                                                                                                    .application(
+                                                                                                        ApplicationKey.from( "app2" ) )
+                                                                                                    .config( new PropertyTree() )
+                                                                                                    .build(), SiteConfig.create()
+                                                                                                    .application(
+                                                                                                        ApplicationKey.from( "app3" ) )
+                                                                                                    .config( new PropertyTree() )
+                                                                                                    .build() ) ) );
+
+        final ApplicationKeys parentAvailableApplications =
+            contextWithAuthInfo( getAccessForProject( parent.getName(), List.of( ProjectRole.VIEWER ) ) ).callWith(
+                () -> projectService.getAvailableApplications( parent.getName() ) );
+
+        final ApplicationKeys childAvailableApplications =
+            contextWithAuthInfo( getAccessForProject( child.getName(), List.of( ProjectRole.VIEWER ) ) ).callWith(
+                () -> projectService.getAvailableApplications( child.getName() ) );
 
         assertEquals( 2, parentAvailableApplications.getSize() );
         assertEquals( "app1", parentAvailableApplications.get( 0 ).toString() );
@@ -1054,6 +1126,18 @@ class ProjectServiceImplTest
     {
         assertAll( () -> assertEquals( p1.getName(), p2.getName() ), () -> assertEquals( p1.getDescription(), p2.getDescription() ),
                    () -> assertEquals( p1.getDisplayName(), p2.getDisplayName() ), () -> assertEquals( p1.getIcon(), p2.getIcon() ) );
+    }
+
+    private AuthenticationInfo getAccessForProject( final ProjectName projectName, final List<ProjectRole> roles )
+    {
+        final AuthenticationInfo.Builder authenticationInfo = AuthenticationInfo.create()
+            .principals( RoleKeys.AUTHENTICATED )
+            .principals( RoleKeys.CONTENT_MANAGER_APP )
+            .user( REPO_TEST_OWNER );
+
+        roles.forEach( role -> authenticationInfo.principals( ProjectAccessHelper.createRoleKey( projectName, role ) ) );
+
+        return authenticationInfo.build();
     }
 
 }
