@@ -175,4 +175,28 @@ public class ServletRequestUrlHelperTest
         assertFalse( rewritingResult.isOutOfScope() );
     }
 
+    @Test
+    void rewriteUri_admin_queryString() {
+        final VirtualHost vhost = mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
+
+        when( vhost.getTarget() ).thenReturn( "/xp/admin" );
+        when( vhost.getSource() ).thenReturn( "/admin" );
+
+
+        UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/xp/admin/rest?a=b" );
+        assertEquals( "/admin/rest?a=b", rewritingResult.getRewrittenUri() );
+    }
+
+    @Test
+    void rewriteUri_queryString() {
+        final VirtualHost vhost = mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
+
+        when( vhost.getSource() ).thenReturn( "/studio" );
+        when( vhost.getTarget() ).thenReturn( "/admin" );
+        final UriRewritingResult uriRewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/admin?a=3" );
+
+        assertEquals( "/studio?a=3", uriRewritingResult.getRewrittenUri() );
+    }
 }
