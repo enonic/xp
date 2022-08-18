@@ -199,8 +199,7 @@ public final class ServletRequestUrlHelper
         }
 
         final String targetPath = vhost.getTarget();
-        if ( uri.equals( targetPath ) || uri.startsWith(
-            "/".equals( targetPath ) ? "/" : uri.contains( "?" ) ? targetPath + uri.substring( uri.indexOf( "?" ) ) : targetPath + "/" ) )
+        if ( needRewrite( uri, targetPath ) )
         {
             final String result = uri.substring( targetPath.length() );
             final String newUri = normalizePath( vhost.getSource() + ( "/".equals( targetPath ) ? "/" : "" ) + result );
@@ -211,6 +210,37 @@ public final class ServletRequestUrlHelper
         }
 
         return resultBuilder.rewrittenUri( normalizePath( uri ) ).outOfScope( true ).build();
+    }
+
+    private static boolean needRewrite( final String uri, final String targetPath )
+    {
+        if ( targetPath.equals( "/" ) )
+        {
+            return uri.startsWith( "/" );
+        }
+        if ( uri.equals( targetPath ) )
+        {
+            return true;
+        }
+
+        final int queryPos = uri.indexOf( '?' );
+
+        if ( queryPos == -1 )
+        {
+            return uri.startsWith( targetPath + "/" );
+        }
+        else
+        {
+            final String uriWithoutQuery = uri.substring( 0, queryPos );
+            if ( uriWithoutQuery.equals( targetPath ) )
+            {
+                return true;
+            }
+            else
+            {
+                return uriWithoutQuery.startsWith( targetPath + "/" );
+            }
+        }
     }
 
     private static String normalizePath( final String value )
