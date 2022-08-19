@@ -1,24 +1,23 @@
 package com.enonic.xp.blob;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 public final class Segment
 {
     public static final int SEGMENT_LEVEL_DEPTH = 2;
 
-    private final ImmutableList<SegmentLevel> levels;
+    private final List<SegmentLevel> levels;
 
     private Segment( final Builder builder )
     {
-        final ImmutableList<SegmentLevel> levels = builder.levels.build();
-        if ( levels.size() != SEGMENT_LEVEL_DEPTH )
+        if ( builder.levels.size() != SEGMENT_LEVEL_DEPTH )
         {
             throw new IllegalArgumentException( "Segment must have " + SEGMENT_LEVEL_DEPTH + " levels" );
         }
-        this.levels = builder.levels.build();
+
+        this.levels = List.copyOf( builder.levels );
     }
 
     public List<SegmentLevel> getLevels()
@@ -40,25 +39,13 @@ public final class Segment
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Segment segment = (Segment) o;
-
-        return levels != null ? levels.equals( segment.levels ) : segment.levels == null;
-
+        return ( o instanceof Segment ) && this.levels.equals( ( (Segment) o ).levels );
     }
 
     @Override
     public int hashCode()
     {
-        return levels != null ? levels.hashCode() : 0;
+        return levels.hashCode();
     }
 
     public static Segment from( final String... levels )
@@ -89,7 +76,7 @@ public final class Segment
 
     public static class Builder
     {
-        private final ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
+        private final ArrayList<SegmentLevel> levels = new ArrayList<>();
 
         public Builder level( SegmentLevel level )
         {
@@ -105,8 +92,7 @@ public final class Segment
 
         public Builder levels( SegmentLevel... levels )
         {
-            Arrays.stream( levels ).
-                forEach( this.levels::add );
+            this.levels.addAll( Arrays.asList( levels ) );
             return this;
         }
 
@@ -120,7 +106,7 @@ public final class Segment
 
         public Builder levels( Iterable<SegmentLevel> levels )
         {
-            this.levels.addAll( levels );
+            levels.forEach( this.levels::add );
             return this;
         }
 

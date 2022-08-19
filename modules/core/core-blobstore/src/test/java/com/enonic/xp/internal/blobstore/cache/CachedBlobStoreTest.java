@@ -1,8 +1,6 @@
 package com.enonic.xp.internal.blobstore.cache;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +15,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -179,8 +178,9 @@ public class CachedBlobStoreTest
         final BlobRecord updatedRecord = this.cachedBlobStore.addRecord( this.segment, source );
 
         // Only single entry added
-        final List<BlobRecord> cached = this.cachedBlobStore.list( this.segment ).collect( Collectors.toList() );
-        assertEquals( 1, cached.size() );
+        try (Stream<BlobRecord> stream = this.cachedBlobStore.list( this.segment )) {
+            assertThat(stream).hasSize(1);
+        }
 
         final BlobRecord retrievedAfterStore = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
         assertNotNull( retrievedAfterStore );

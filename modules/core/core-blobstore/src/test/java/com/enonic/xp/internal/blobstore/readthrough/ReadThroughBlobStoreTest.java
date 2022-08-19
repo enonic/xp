@@ -1,8 +1,6 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +15,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.util.ByteSizeParser;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -133,10 +132,10 @@ public class ReadThroughBlobStoreTest
             store( this.finalStore ).
             build();
 
-        final Stream<BlobRecord> stream = actualBlobStore.list( segment );
-        final List<BlobRecord> records = stream.collect( Collectors.toList() );
-
-        assertTrue( records.contains( record ) );
+        try (Stream<BlobRecord> stream = actualBlobStore.list( segment ))
+        {
+            assertThat( stream ).contains( record );
+        }
     }
 
     @Test

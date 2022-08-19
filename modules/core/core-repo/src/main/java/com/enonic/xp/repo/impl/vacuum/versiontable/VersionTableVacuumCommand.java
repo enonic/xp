@@ -89,18 +89,17 @@ public class VersionTableVacuumCommand
     {
         this.result = VacuumTaskResult.create();
 
-        this.repositoryService.list().
-            forEach( this::processRepository );
+        this.repositoryService.list().forEach( this::processRepository );
         return result;
     }
 
     private void processRepository( final Repository repository )
     {
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repository.getId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build().
-            runWith( () -> doProcessRepository( repository ) );
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repository.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .runWith( () -> doProcessRepository( repository ) );
     }
 
     private void doProcessRepository( final Repository repository )
@@ -148,13 +147,13 @@ public class VersionTableVacuumCommand
 
             versionService.delete( versionsToDelete, InternalContext.from( ContextAccessor.current() ) );
 
-            nodeBlobToCheckSet.stream().
-                filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.NODE_BLOB_KEY ) ).
-                forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.NODE_SEGMENT_LEVEL, blobKey ) );
+            nodeBlobToCheckSet.stream()
+                .filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.NODE_BLOB_KEY ) )
+                .forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.NODE_SEGMENT_LEVEL, blobKey ) );
 
-            binaryBlobToCheckSet.stream().
-                filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.BINARY_BLOB_KEYS ) ).
-                forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.BINARY_SEGMENT_LEVEL, blobKey ) );
+            binaryBlobToCheckSet.stream()
+                .filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.BINARY_BLOB_KEYS ) )
+                .forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.BINARY_SEGMENT_LEVEL, blobKey ) );
 
             query = createQuery( lastVersionId );
             versionsResult = nodeService.findVersions( query );
@@ -169,20 +168,12 @@ public class VersionTableVacuumCommand
 
     private boolean isBlobKeyUsed( final BlobKey blobKey, final IndexPath fieldPath )
     {
-        return IsBlobUsedByVersionCommand.create().
-            nodeService( nodeService ).
-            fieldPath( fieldPath ).
-            blobKey( blobKey ).
-            build().
-            execute();
+        return IsBlobUsedByVersionCommand.create().nodeService( nodeService ).fieldPath( fieldPath ).blobKey( blobKey ).build().execute();
     }
 
     private void removeNodeBlobRecord( final RepositoryId repositoryId, final SegmentLevel blobType, final BlobKey blobKey )
     {
-        if ( LOG.isDebugEnabled() )
-        {
-            LOG.debug( "No other version found using " + blobType.toString() + " blob [" + blobKey + "]" );
-        }
+        LOG.debug( "No other version found using {} blob [{}]", blobType, blobKey );
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, blobType );
         blobStore.removeRecord( segment, blobKey );
     }
@@ -194,16 +185,10 @@ public class VersionTableVacuumCommand
         switch ( findVersionsInBranches( repository, version ) )
         {
             case NO_VERSION_FOUND:
-                if ( LOG.isDebugEnabled() )
-                {
-                    LOG.debug( "No version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
-                }
+                    LOG.debug( "No version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
                 return true;
             case OTHER_VERSION_FOUND:
-                if ( LOG.isDebugEnabled() )
-                {
-                    LOG.debug( "Other version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
-                }
+                    LOG.debug( "Other version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
                 return version.getNodeCommitId() == null;
             default:
                 return false;
@@ -220,10 +205,11 @@ public class VersionTableVacuumCommand
         {
             try
             {
-                final Node node = ContextBuilder.from( ContextAccessor.current() ).
-                    branch( branch ).
-                    repositoryId( repository.getId() ).
-                    build().callWith( () -> this.nodeService.getById( nodeId ) );
+                final Node node = ContextBuilder.from( ContextAccessor.current() )
+                    .branch( branch )
+                    .repositoryId( repository.getId() )
+                    .build()
+                    .callWith( () -> this.nodeService.getById( nodeId ) );
 
                 if ( versionId.equals( node.getNodeVersionId() ) )
                 {
@@ -246,23 +232,20 @@ public class VersionTableVacuumCommand
 
         if ( lastVersionId != null )
         {
-            final RangeFilter versionIdFilter = RangeFilter.create().
-                fieldName( VersionIndexPath.VERSION_ID.getPath() ).
-                gt( ValueFactory.newString( lastVersionId.toString() ) ).
-                build();
+            final RangeFilter versionIdFilter = RangeFilter.create()
+                .fieldName( VersionIndexPath.VERSION_ID.getPath() )
+                .gt( ValueFactory.newString( lastVersionId.toString() ) )
+                .build();
             builder.addQueryFilter( versionIdFilter );
         }
 
-        final RangeFilter mustBeOlderThanFilter = RangeFilter.create().
-            fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
-            to( ValueFactory.newDateTime( until ) ).
-            build();
+        final RangeFilter mustBeOlderThanFilter =
+            RangeFilter.create().fieldName( VersionIndexPath.TIMESTAMP.getPath() ).to( ValueFactory.newDateTime( until ) ).build();
 
-        return builder.
-            addQueryFilter( mustBeOlderThanFilter ).
-            addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) ).
-            size( batchSize ).
-            build();
+        return builder.addQueryFilter( mustBeOlderThanFilter )
+            .addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) )
+            .size( batchSize )
+            .build();
     }
 
     public static final class Builder

@@ -1,6 +1,7 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -14,7 +15,7 @@ public final class BlobKey
 
     private BlobKey( final String key )
     {
-        this.key = key;
+        this.key = Objects.requireNonNull( key );
     }
 
     @Override
@@ -40,21 +41,17 @@ public final class BlobKey
         return new BlobKey( key );
     }
 
-    private static BlobKey from( final byte... key )
-    {
-        return from( HexEncoder.toHex( key ) );
-    }
-
+    @Deprecated
     public static BlobKey from( final HashCode key )
     {
-        return from( key.asBytes() );
+        return from( HexEncoder.toHex( key.asBytes() ) );
     }
 
     public static BlobKey from( final ByteSource in )
     {
         try
         {
-            return from( in.hash( Hashing.sha1() ) );
+            return from( HexEncoder.toHex( in.hash( Hashing.sha1() ).asBytes() ) );
         }
         catch ( final IOException e )
         {

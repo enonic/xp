@@ -70,33 +70,29 @@ public class SegmentVacuumCommand
     public VacuumTaskResult.Builder execute()
     {
         List<Segment> toBeRemoved = new ArrayList<>();
-        blobStore.listSegments().
-            forEach( segment -> {
-                final RepositoryId repositoryId = RepositorySegmentUtils.toRepositoryId( segment );
-                if ( isRepositoryToKeep( repositoryId ) )
-                {
-                    result.inUse();
-                }
-                else
-                {
-                    toBeRemoved.add( segment );
-                }
-                result.processed();
-            } );
+        blobStore.listSegments().forEach( segment -> {
+            final RepositoryId repositoryId = RepositorySegmentUtils.toRepositoryId( segment );
+            if ( isRepositoryToKeep( repositoryId ) )
+            {
+                result.inUse();
+            }
+            else
+            {
+                toBeRemoved.add( segment );
+            }
+            result.processed();
+        } );
 
         toBeRemoved.forEach( segment -> {
             try
             {
-                if ( LOG.isDebugEnabled() )
-                {
-                    LOG.debug( "Deleting segment [" + segment + "]" );
-                }
+                LOG.debug( "Deleting segment [{}]", segment );
                 blobStore.deleteSegment( segment );
                 result.deleted();
             }
             catch ( Exception e )
             {
-                LOG.error( "Failed to delete segment [" + segment + "]", e );
+                LOG.error( "Failed to delete segment [{}]", segment, e );
                 result.failed();
             }
         } );
@@ -107,29 +103,26 @@ public class SegmentVacuumCommand
     private boolean isRepositoryToKeep( final RepositoryId repositoryId )
     {
         return repositoryPresenceMap.computeIfAbsent( repositoryId, key -> {
-            if ( LOG.isDebugEnabled() )
-            {
-                LOG.debug( "Repository [" + repositoryId + "] not found in the list of current repository" );
-            }
+            LOG.debug( "Repository [{}] not found in the list of current repository", repositoryId );
 
             //If repository is not present, find if there is an old version more recent than the threshold
-            final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                branch( SystemConstants.BRANCH_SYSTEM ).
-                build();
+            final Context systemContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+                .branch( SystemConstants.BRANCH_SYSTEM )
+                .build();
             final Instant since = Instant.now().minusMillis( params.getAgeThreshold() );
-            final NodeVersionQuery findRecentVersionsQuery = NodeVersionQuery.create().
-                nodeId( NodeId.from( repositoryId ) ).
-                addQueryFilter( RangeFilter.create().
-                    fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
-                    from( ValueFactory.newDateTime( since ) ).
-                    build() ).
-                size( 0 ).
-                addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
-                build();
+            final NodeVersionQuery findRecentVersionsQuery = NodeVersionQuery.create()
+                .nodeId( NodeId.from( repositoryId ) )
+                .addQueryFilter( RangeFilter.create()
+                                     .fieldName( VersionIndexPath.TIMESTAMP.getPath() )
+                                     .from( ValueFactory.newDateTime( since ) )
+                                     .build() )
+                .size( 0 )
+                .addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) )
+                .build();
             final NodeVersionQueryResult result = systemContext.callWith( () -> nodeService.findVersions( findRecentVersionsQuery ) );
 
-            if ( result.getTotalHits() > 0 && LOG.isDebugEnabled() )
+            if ( result.getTotalHits() > 0 )
             {
                 LOG.debug( "Recent versions of the repository entry found" );
             }
