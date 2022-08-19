@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.vacuum.blob;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +63,12 @@ public abstract class AbstractBlobVacuumCommand
             params.getListener().stepBegin( segment.toString(), null );
         }
 
-        final List<BlobKey> blobToDelete = new ArrayList<>();
-        blobStore.list( segment ).
-            filter( blobRecord -> shouldDelete( segment, blobRecord ) ).
-            forEach( blobRecord -> blobToDelete.add( blobRecord.getKey() ) );
-
+        final List<BlobKey> blobToDelete;
+        try (Stream<BlobRecord> list = blobStore.list( segment ))
+        {
+            blobToDelete = list.filter( blobRecord -> shouldDelete( segment, blobRecord ) )
+                .map( BlobRecord::getKey ).collect( Collectors.toList() );
+        }
         blobToDelete.forEach( blobKey -> blobStore.removeRecord( segment, blobKey ) );
     }
 
@@ -83,14 +85,12 @@ public abstract class AbstractBlobVacuumCommand
             final BlobKey blobKey = blobRecord.getKey();
             if ( !isUsedByVersion( segment, blobKey ) )
             {
-                if ( LOG.isDebugEnabled() )
-                {
-                    LOG.debug( "No version found for " + getFieldIndexPath().toString() + " [" + blobKey + "]" );
-                }
+                LOG.debug( "No version found for {} [{}]", getFieldIndexPath(), blobKey );
                 result.deleted();
                 return true;
+            } else {
+                result.inUse();
             }
-            result.inUse();
         }
 
         return false;

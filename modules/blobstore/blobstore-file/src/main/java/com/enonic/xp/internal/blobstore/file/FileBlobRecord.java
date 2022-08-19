@@ -3,6 +3,7 @@ package com.enonic.xp.internal.blobstore.file;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
@@ -19,8 +20,8 @@ final class FileBlobRecord
 
     FileBlobRecord( final BlobKey key, final Path file )
     {
-        this.key = key;
-        this.file = file;
+        this.key = Objects.requireNonNull( key );
+        this.file = Objects.requireNonNull( file );
     }
 
     @Override
@@ -64,29 +65,19 @@ final class FileBlobRecord
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof FileBlobRecord ) )
         {
             return false;
         }
 
         final FileBlobRecord that = (FileBlobRecord) o;
 
-        if ( key != null ? !key.equals( that.key ) : that.key != null )
-        {
-            return false;
-        }
-        return file != null ? file.equals( that.file ) : that.file == null;
+        return key.equals( that.key ) && file.equals( that.file );
     }
 
     @Override
     public int hashCode()
     {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + ( file != null ? file.hashCode() : 0 );
-        return result;
+        return Objects.hash( key, file );
     }
 }

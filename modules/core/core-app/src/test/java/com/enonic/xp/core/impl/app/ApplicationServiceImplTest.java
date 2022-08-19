@@ -155,7 +155,7 @@ public class ApplicationServiceImplTest
         assertEquals( applicationKey, virtualApp.getKey() );
         assertNull( virtualApp.getUrl() );
         assertEquals( "app1", virtualApp.getDisplayName() );
-        assertTrue( virtualApp.getModifiedTime().isBefore( Instant.now() ) );
+        assertTrue( virtualApp.getModifiedTime().compareTo( Instant.now() ) <= 0 );
     }
 
     @Test

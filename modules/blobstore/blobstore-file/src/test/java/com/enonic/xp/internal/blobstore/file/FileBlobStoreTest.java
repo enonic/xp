@@ -3,7 +3,6 @@ package com.enonic.xp.internal.blobstore.file;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +15,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -56,15 +56,12 @@ public class FileBlobStoreTest
     public void addRecord()
         throws Exception
     {
-        final BlobRecord record = createRecord( "hello" );
-
+        final BlobRecord record = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
         assertNotNull( record );
         assertNotNull( record.getKey() );
         assertEquals( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", record.getKey().toString() );
         assertEquals( 5, record.getLength() );
         assertEquals( "hello", new String( record.getBytes().read() ) );
-
-        this.blobStore.addRecord( this.segment, record );
     }
 
     @Test
@@ -93,10 +90,9 @@ public class FileBlobStoreTest
         stored.add( createRecord( "f5" ) );
         stored.add( createRecord( "f6" ) );
         stored.add( createRecord( "f7" ) );
-        final Stream<BlobRecord> stream = this.blobStore.list( this.segment );
-        final List<BlobRecord> records = stream.collect( Collectors.toList() );
-        assertEquals( 7, records.size() );
-        assertTrue( records.containsAll( stored ) );
+        try (Stream<BlobRecord> stream = this.blobStore.list( this.segment )) {
+            assertThat(stream).containsAll( stored );
+        }
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.dump.writer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -222,11 +221,4 @@ public abstract class AbstractDumpWriter
         }
     }
 
-    private void copySegment( final Segment segment )
-    {
-        try (Stream<BlobRecord> list = blobStore.list( segment ))
-        {
-            list.forEach( blobRecord -> dumpBlobStore.addRecord( segment, blobRecord.getBytes() ) );
-        }
-    }
 }
