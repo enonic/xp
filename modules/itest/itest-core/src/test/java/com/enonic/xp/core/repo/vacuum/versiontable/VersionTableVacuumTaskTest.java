@@ -35,11 +35,8 @@ class VersionTableVacuumTaskTest
     {
         createDefaultRootNode();
 
-        this.task = new VersionTableVacuumTask();
-        this.task.setNodeService( this.nodeService );
-        this.task.setRepositoryService( this.repositoryService );
-        this.task.setVersionService( this.versionService );
-        this.task.setBlobStore( this.blobStore );
+        this.task =
+            new VersionTableVacuumTask( this.nodeService, this.repositoryService, this.versionService, this.branchService, this.blobStore );
     }
 
     @Test

@@ -98,7 +98,7 @@ class NodeStorageServiceImplTest
                     build() ).build() ).
             build();
 
-        when( versionService.getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) ) ).
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( nodeVersionMetadata );
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
 
@@ -107,7 +107,7 @@ class NodeStorageServiceImplTest
         assertNotNull( result );
 
         verify( versionService, times( 1 ) ).
-            getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) );
+            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
         verify( nodeVersionService, times( 1 ) ).
             get( any( NodeVersionKey.class ), any( InternalContext.class ) );
         verifyNoMoreInteractions( versionService, nodeVersionService );
@@ -116,7 +116,7 @@ class NodeStorageServiceImplTest
     @Test
     public void testGetNode_NodeVersionMetadataNotFound()
     {
-        when( versionService.getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) ) ).
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( null );
 
         final Node result = instance.getNode( nodeId, nodeVersionId, context );
@@ -124,14 +124,14 @@ class NodeStorageServiceImplTest
         assertNull( result );
 
         verify( versionService, times( 1 ) ).
-            getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) );
+            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
         verifyNoMoreInteractions( versionService );
     }
 
     @Test
     public void testGetNode_NodeVersionNotFound()
     {
-        when( versionService.getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) ) ).
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( NodeVersionMetadata.create().
                 nodeVersionKey( versionKey ).
                 build() );
@@ -143,7 +143,7 @@ class NodeStorageServiceImplTest
         assertNull( result );
 
         verify( versionService, times( 1 ) ).
-            getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) );
+            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
         verify( nodeVersionService, times( 1 ) ).
             get( any( NodeVersionKey.class ), any( InternalContext.class ) );
 
@@ -174,7 +174,7 @@ class NodeStorageServiceImplTest
             build();
 
         when( branchService.get( any( NodePath.class ), any( InternalContext.class ) ) ).thenReturn( nodeBranchEntry );
-        when( versionService.getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) ) ).
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( nodeVersionMetadata );
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
 
@@ -184,7 +184,7 @@ class NodeStorageServiceImplTest
 
         verify( branchService, times( 1 ) ).get( any( NodePath.class ), any( InternalContext.class ) );
         verify( versionService, times( 1 ) ).
-            getVersion( any( NodeId.class ), any( NodeVersionId.class ), any( InternalContext.class ) );
+            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
         verify( nodeVersionService, times( 1 ) ).
             get( any( NodeVersionKey.class ), any( InternalContext.class ) );
         verifyNoMoreInteractions( branchService, versionService, nodeVersionService );

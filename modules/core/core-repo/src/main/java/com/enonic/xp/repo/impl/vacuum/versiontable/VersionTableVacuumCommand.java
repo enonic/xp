@@ -1,9 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum.versiontable;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,9 +16,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -31,6 +28,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.blob.IsBlobUsedByVersionCommand;
@@ -49,6 +47,8 @@ public class VersionTableVacuumCommand
     private static final Logger LOG = LoggerFactory.getLogger( VersionTableVacuumCommand.class );
 
     private final NodeService nodeService;
+
+    private final BranchService branchService;
 
     private final RepositoryService repositoryService;
 
@@ -75,6 +75,7 @@ public class VersionTableVacuumCommand
         repositoryService = builder.repositoryService;
         versionService = builder.versionService;
         blobStore = builder.blobStore;
+        branchService = builder.branchService;
         until = Instant.now().minusMillis( builder.params.getAgeThreshold() );
         listener = builder.params.getListener();
         batchSize = builder.params.getVersionsBatchSize();
@@ -119,9 +120,10 @@ public class VersionTableVacuumCommand
             listener.stepBegin( repository.getId().toString(), totalHits );
         }
 
+        final InternalContext context = InternalContext.from( ContextAccessor.current() );
+
         while ( hits > 0 )
         {
-            final List<NodeVersionId> versionsToDelete = new ArrayList<>();
             final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
             final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
 
@@ -133,7 +135,7 @@ public class VersionTableVacuumCommand
                 if ( toDelete )
                 {
                     result.deleted();
-                    versionsToDelete.add( version.getNodeVersionId() );
+                    versionService.delete( version.getNodeVersionId(), context );
                     nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
                     binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
                 }
@@ -144,8 +146,6 @@ public class VersionTableVacuumCommand
                 lastVersionId = version.getNodeVersionId();
                 counter++;
             }
-
-            versionService.delete( versionsToDelete, InternalContext.from( ContextAccessor.current() ) );
 
             nodeBlobToCheckSet.stream()
                 .filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.NODE_BLOB_KEY ) )
@@ -203,24 +203,20 @@ public class VersionTableVacuumCommand
         boolean nodeFound = false;
         for ( final Branch branch : repository.getBranches() )
         {
-            try
-            {
-                final Node node = ContextBuilder.from( ContextAccessor.current() )
-                    .branch( branch )
-                    .repositoryId( repository.getId() )
-                    .build()
-                    .callWith( () -> this.nodeService.getById( nodeId ) );
+            final InternalContext context =
+                InternalContext.create( ContextAccessor.current() ).branch( branch ).repositoryId( repository.getId() ).build();
 
-                if ( versionId.equals( node.getNodeVersionId() ) )
+            final NodeBranchEntry node = this.branchService.get( nodeId, context );
+            if ( node != null )
+            {
+                if ( versionId.equals( node.getVersionId() ) )
                 {
                     return BRANCH_CHECK_RESULT.SAME_VERSION_FOUND;
                 }
-
-                nodeFound = true;
-            }
-            catch ( NodeNotFoundException e )
-            {
-                // Ignore
+                else
+                {
+                    nodeFound = true;
+                }
             }
         }
         return nodeFound ? BRANCH_CHECK_RESULT.OTHER_VERSION_FOUND : BRANCH_CHECK_RESULT.NO_VERSION_FOUND;
@@ -258,6 +254,8 @@ public class VersionTableVacuumCommand
 
         private BlobStore blobStore;
 
+        private BranchService branchService;
+
         private VacuumTaskParams params;
 
         private Builder()
@@ -291,6 +289,12 @@ public class VersionTableVacuumCommand
         public Builder params( final VacuumTaskParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder branchService( final BranchService branchService )
+        {
+            this.branchService = branchService;
             return this;
         }
 

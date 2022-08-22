@@ -51,28 +51,13 @@ public class NodeVersionServiceImpl
     @Override
     public NodeVersions get( final NodeVersionKeys nodeVersionKeys, final InternalContext context )
     {
-        return doGetNodeVersions( nodeVersionKeys, context );
+        NodeVersions.Builder builder = NodeVersions.create();
+        nodeVersionKeys.forEach( nodeVersionKey -> builder.add( getFromBlob( nodeVersionKey, context ) ) );
+        return builder.build();
     }
 
     @Override
     public NodeVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context )
-    {
-        return doGetNodeVersion( nodeVersionKey, context );
-    }
-
-    private NodeVersions doGetNodeVersions( final NodeVersionKeys nodeVersionKeys, final InternalContext context )
-    {
-        NodeVersions.Builder builder = NodeVersions.create();
-
-        for ( final NodeVersionKey nodeVersionKey : nodeVersionKeys )
-        {
-            builder.add( doGetNodeVersion( nodeVersionKey, context ) );
-        }
-
-        return builder.build();
-    }
-
-    private NodeVersion doGetNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         return getFromBlob( nodeVersionKey, context );
     }

@@ -207,7 +207,7 @@ public class NodeStorageServiceImpl
     public void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
         //TODO Check
-        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( node.id(), nodeVersionId, context );
+        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( nodeVersionId, context );
 
         if ( nodeVersionMetadata == null )
         {
@@ -277,7 +277,7 @@ public class NodeStorageServiceImpl
         for ( RoutableNodeVersionId routableNodeVersionId : routableNodeVersionIds )
         {
             final NodeVersionMetadata existingVersion =
-                this.versionService.getVersion( routableNodeVersionId.getNodeId(), routableNodeVersionId.getNodeVersionId(), context );
+                this.versionService.getVersion( routableNodeVersionId.getNodeVersionId(), context );
             final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create( existingVersion ).
                 nodeCommitId( nodeCommitId ).
                 build();
@@ -321,7 +321,7 @@ public class NodeStorageServiceImpl
     @Override
     public Node get( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion( nodeId, nodeVersionId, context );
+        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion(  nodeVersionId, context );
 
         if ( nodeVersionMetadata == null )
         {
@@ -366,7 +366,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return this.versionService.getVersion( nodeId, nodeVersionId, context );
+        return this.versionService.getVersion( nodeVersionId, context );
     }
 
     @Override
@@ -425,7 +425,7 @@ public class NodeStorageServiceImpl
     @Override
     public Node getNode( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion( nodeId, nodeVersionId, context );
+        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion( nodeVersionId, context );
 
         if ( nodeVersionMetadata == null )
         {
