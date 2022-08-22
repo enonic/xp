@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.processor;
+package com.enonic.xp.core.impl.content.processor;
 
 import java.util.HashSet;
 import java.util.Set;

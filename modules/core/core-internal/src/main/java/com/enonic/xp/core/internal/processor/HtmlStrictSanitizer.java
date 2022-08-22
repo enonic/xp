@@ -1,13 +1,13 @@
-package com.enonic.xp.portal.owasp.impl;
+package com.enonic.xp.core.internal.processor;
 
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
-final class HtmlStrictSanitizer
+public final class HtmlStrictSanitizer
 {
     private final PolicyFactory htmlSanitizePolicy;
 
-    HtmlStrictSanitizer()
+    public HtmlStrictSanitizer()
     {
         this.htmlSanitizePolicy = new HtmlPolicyBuilder().allowCommonBlockElements()
             .allowCommonInlineFormattingElements()
@@ -27,8 +27,8 @@ final class HtmlStrictSanitizer
             .toFactory();
     }
 
-    String sanitize( final String html )
+    public String sanitize( final String html )
     {
-        return htmlSanitizePolicy.sanitize( html ).replace( "\u00A0", "&nbsp;" );
+        return htmlSanitizePolicy.sanitize( html, null, null ).replace( "\u00A0", "&nbsp;" );
     }
 }

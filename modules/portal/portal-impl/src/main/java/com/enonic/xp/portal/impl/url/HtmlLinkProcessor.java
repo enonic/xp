@@ -29,46 +29,26 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
+import static com.enonic.xp.core.internal.processor.HtmlConstants.ATTR_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.ATTR_VALUE_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.CONTENT_PATTERN;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.CONTENT_TYPE;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.DOWNLOAD_MODE;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.ID_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.IMAGE_TYPE;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.LINK_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.MODE_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.NB_GROUPS;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.PARAMS_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.TAG_NAME_INDEX;
+import static com.enonic.xp.core.internal.processor.HtmlConstants.TYPE_INDEX;
+
 public class HtmlLinkProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     private static final int[] QUERY_OR_FRAGMENT_ALLOWED_CHARACTERS =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?/:@-._~!$&'()*+,;=%".chars().sorted().toArray();
-
-    /*
-     * Pattern Constants
-     */
-
-    private static final int MATCH_INDEX = 1;
-
-    private static final int TAG_NAME_INDEX = MATCH_INDEX + 1;
-
-    private static final int ATTR_INDEX = TAG_NAME_INDEX + 1;
-
-    private static final int ATTR_VALUE_INDEX = ATTR_INDEX + 1;
-
-    private static final int LINK_INDEX = ATTR_VALUE_INDEX + 1;
-
-    private static final int TYPE_INDEX = LINK_INDEX + 1;
-
-    private static final int MODE_INDEX = TYPE_INDEX + 1;
-
-    public static final int ID_INDEX = MODE_INDEX + 1;
-
-    private static final int PARAMS_INDEX = ID_INDEX + 1;
-
-    public static final int NB_GROUPS = ID_INDEX;
-
-    private static final String CONTENT_TYPE = "content";
-
-    private static final String MEDIA_TYPE = "media";
-
-    private static final String IMAGE_TYPE = "image";
-
-    private static final String DOWNLOAD_MODE = "download";
-
-    private static final String INLINE_MODE = "inline";
 
     /*
      * Parameters Keys
@@ -86,9 +66,6 @@ public class HtmlLinkProcessor
 
     private static final int DEFAULT_WIDTH = 768;
 
-    public static final Pattern CONTENT_PATTERN = Pattern.compile(
-        "(<(\\w+)[^>]+?(href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" +
-            INLINE_MODE + ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\"))", Pattern.MULTILINE | Pattern.UNIX_LINES );
 
     private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
 
@@ -125,10 +102,7 @@ public class HtmlLinkProcessor
                 switch ( type )
                 {
                     case CONTENT_TYPE:
-                        PageUrlParams pageUrlParams = new PageUrlParams().
-                            type( urlType ).
-                            id( id ).
-                            portalRequest( portalRequest );
+                        PageUrlParams pageUrlParams = new PageUrlParams().type( urlType ).id( id ).portalRequest( portalRequest );
                         final String pageUrl = HtmlEscapers.htmlEscaper()
                             .escape( addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString ) );
 
@@ -139,12 +113,11 @@ public class HtmlLinkProcessor
 
                         ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
 
-                        ImageUrlParams imageUrlParams = new ImageUrlParams().
-                            type( urlType ).
-                            id( id ).
-                            scale( getScale( imageStyle, urlParams, null ) ).
-                            filter( getFilter( imageStyle ) ).
-                            portalRequest( portalRequest );
+                        ImageUrlParams imageUrlParams = new ImageUrlParams().type( urlType )
+                            .id( id )
+                            .scale( getScale( imageStyle, urlParams, null ) )
+                            .filter( getFilter( imageStyle ) )
+                            .portalRequest( portalRequest );
 
                         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
@@ -154,12 +127,11 @@ public class HtmlLinkProcessor
                         {
                             final String srcsetValues =
                                 Objects.requireNonNullElse( imageWidths, List.<Integer>of() ).stream().map( imageWidth -> {
-                                    final ImageUrlParams imageParams = new ImageUrlParams().
-                                        type( urlType ).
-                                        id( id ).
-                                        scale( getScale( imageStyle, urlParams, imageWidth ) ).
-                                        filter( getFilter( imageStyle ) ).
-                                        portalRequest( portalRequest );
+                                    final ImageUrlParams imageParams = new ImageUrlParams().type( urlType )
+                                        .id( id )
+                                        .scale( getScale( imageStyle, urlParams, imageWidth ) )
+                                        .filter( getFilter( imageStyle ) )
+                                        .portalRequest( portalRequest );
 
                                     return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
                                 } ).collect( Collectors.joining( "," ) );
@@ -178,11 +150,10 @@ public class HtmlLinkProcessor
                         processedHtml = processedHtml.replaceFirst( Pattern.quote( attrValue ), replacement.toString() );
                         break;
                     default:
-                        AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
-                            type( urlType ).
-                            id( id ).
-                            download( DOWNLOAD_MODE.equals( mode ) ).
-                            portalRequest( portalRequest );
+                        AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().type( urlType )
+                            .id( id )
+                            .download( DOWNLOAD_MODE.equals( mode ) )
+                            .portalRequest( portalRequest );
 
                         final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
 
@@ -198,17 +169,17 @@ public class HtmlLinkProcessor
     {
         final ImmutableMap.Builder<String, ImageStyle> imageStyleMap = ImmutableMap.builder();
         final StyleDescriptors styleDescriptors = getStyleDescriptors( portalRequest );
-        styleDescriptors.stream().
-            flatMap( styleDescriptor -> styleDescriptor.getElements().stream() ).
-            filter( elementStyle -> ImageStyle.STYLE_ELEMENT_NAME.equals( elementStyle.getElement() ) ).
-            forEach( elementStyle -> imageStyleMap.put( elementStyle.getName(), (ImageStyle) elementStyle ) );
+        styleDescriptors.stream()
+            .flatMap( styleDescriptor -> styleDescriptor.getElements().stream() )
+            .filter( elementStyle -> ImageStyle.STYLE_ELEMENT_NAME.equals( elementStyle.getElement() ) )
+            .forEach( elementStyle -> imageStyleMap.put( elementStyle.getName(), (ImageStyle) elementStyle ) );
         return imageStyleMap.build();
     }
 
     private StyleDescriptors getStyleDescriptors( final PortalRequest portalRequest )
     {
-        final ImmutableList.Builder<ApplicationKey> applicationKeyList = new ImmutableList.Builder<ApplicationKey>().
-            add( SYSTEM_APPLICATION_KEY );
+        final ImmutableList.Builder<ApplicationKey> applicationKeyList =
+            new ImmutableList.Builder<ApplicationKey>().add( SYSTEM_APPLICATION_KEY );
         if ( portalRequest != null )
         {
             final Site site = portalRequest.getSite();
@@ -281,10 +252,7 @@ public class HtmlLinkProcessor
             return Collections.emptyMap();
         }
         final String query = urlQuery.startsWith( "?" ) ? urlQuery.substring( 1 ) : urlQuery;
-        return Splitter.on( '&' ).
-            trimResults().
-            withKeyValueSeparator( "=" ).
-            split( query.replace( "&amp;", "&" ) );
+        return Splitter.on( '&' ).trimResults().withKeyValueSeparator( "=" ).split( query.replace( "&amp;", "&" ) );
     }
 
     private String addQueryParamsIfPresent( final String url, final String urlQuery )

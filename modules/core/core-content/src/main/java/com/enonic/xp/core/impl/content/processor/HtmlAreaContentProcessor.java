@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.processor;
+package com.enonic.xp.core.impl.content.processor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -24,6 +25,9 @@ import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.core.impl.content.ContentConfig;
+import com.enonic.xp.core.internal.processor.HtmlConstants;
+import com.enonic.xp.core.internal.processor.HtmlRichTextSanitizer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -33,9 +37,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.portal.impl.url.HtmlLinkProcessor;
-import com.enonic.xp.portal.owasp.HtmlSanitizer;
-import com.enonic.xp.portal.owasp.SanitizeType;
 import com.enonic.xp.region.AbstractRegions;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
@@ -58,7 +59,7 @@ import com.enonic.xp.site.SiteService;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Component
+@Component(configurationPid = "com.enonic.xp.admin")
 public class HtmlAreaContentProcessor
     implements ContentProcessor
 {
@@ -74,7 +75,16 @@ public class HtmlAreaContentProcessor
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    private HtmlSanitizer htmlSanitizer;
+    private final HtmlRichTextSanitizer htmlSanitizer;
+
+    private final boolean sanitizingEnabled;
+
+    @Activate
+    public HtmlAreaContentProcessor( final ContentConfig config )
+    {
+        sanitizingEnabled = config.htmlarea_sanitizing_enabled();
+        htmlSanitizer = new HtmlRichTextSanitizer();
+    }
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -303,21 +313,21 @@ public class HtmlAreaContentProcessor
             return null;
         }
 
-        final String sanitizedValue = htmlSanitizer.sanitizeHtml( value, SanitizeType.RICH_TEXT );
+        final String processedValue = sanitizingEnabled ? htmlSanitizer.sanitize( value ) : value;
 
-        final Matcher contentMatcher = HtmlLinkProcessor.CONTENT_PATTERN.matcher( sanitizedValue );
+        final Matcher contentMatcher = HtmlConstants.CONTENT_PATTERN.matcher( processedValue );
 
         while ( contentMatcher.find() )
         {
-            if ( contentMatcher.groupCount() >= HtmlLinkProcessor.NB_GROUPS )
+            if ( contentMatcher.groupCount() >= HtmlConstants.NB_GROUPS )
             {
-                final String id = contentMatcher.group( HtmlLinkProcessor.ID_INDEX );
+                final String id = contentMatcher.group( HtmlConstants.ID_INDEX );
                 final ContentId contentId = ContentId.from( id );
                 processedIds.add( contentId );
             }
         }
 
-        return sanitizedValue;
+        return processedValue;
     }
 
     private void processComponentDescriptor( final DescriptorBasedComponent component, final ComponentDescriptor componentDescriptor,
@@ -361,11 +371,5 @@ public class HtmlAreaContentProcessor
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
-    }
-
-    @Reference
-    public void setHtmlSanitizer( final HtmlSanitizer htmlSanitizer )
-    {
-        this.htmlSanitizer = htmlSanitizer;
     }
 }

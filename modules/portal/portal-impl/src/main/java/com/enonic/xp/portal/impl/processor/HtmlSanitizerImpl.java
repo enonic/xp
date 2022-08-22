@@ -1,7 +1,9 @@
-package com.enonic.xp.portal.owasp.impl;
+package com.enonic.xp.portal.impl.processor;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.core.internal.processor.HtmlRichTextSanitizer;
+import com.enonic.xp.core.internal.processor.HtmlStrictSanitizer;
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.portal.owasp.SanitizeType;
 

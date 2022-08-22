@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.processor;
+package com.enonic.xp.core.impl.content.processor;
 
 import java.io.IOException;
 
@@ -19,6 +19,7 @@ import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
@@ -29,8 +30,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.portal.owasp.HtmlSanitizer;
-import com.enonic.xp.portal.owasp.impl.HtmlSanitizerImpl;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -83,6 +82,8 @@ public class HtmlAreaContentProcessorTest
 
     private ContentType contentType;
 
+    private ContentConfig contentConfig;
+
     @BeforeEach
     public void setUp()
         throws Exception
@@ -111,16 +112,16 @@ public class HtmlAreaContentProcessorTest
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
         Mockito.when( xDataService.getByNames( Mockito.isA( XDataNames.class ) ) ).thenReturn( XDatas.empty() );
 
-        HtmlSanitizer htmlSanitizer = new HtmlSanitizerImpl();
+        contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.htmlarea_sanitizing_enabled() ).thenReturn( true );
 
-        htmlAreaContentProcessor = new HtmlAreaContentProcessor();
+        htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
         htmlAreaContentProcessor.setSiteService( siteService );
         htmlAreaContentProcessor.setXDataService( xDataService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
-        htmlAreaContentProcessor.setHtmlSanitizer( htmlSanitizer );
 
         result = htmlAreaContentProcessor.processUpdate( processUpdateParams );
     }
@@ -479,7 +480,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void component_config_sanitized()
+    public void component_config_sanitized_disabled()
         throws IOException
     {
         final PropertyTree data = new PropertyTree();
@@ -497,9 +498,7 @@ public class HtmlAreaContentProcessorTest
 
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
-            .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
-            .build();
+            .key( DescriptorKey.from( "app:page" ) ).config( Form.create().build() ).build();
         Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
@@ -507,6 +506,21 @@ public class HtmlAreaContentProcessorTest
             .descriptor( pageDescriptor.getKey() )
             .regions( PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
             .build();
+
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
+
+        contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.htmlarea_sanitizing_enabled() ).thenReturn( false );
+
+        htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
+        htmlAreaContentProcessor.setContentTypeService( contentTypeService );
+        htmlAreaContentProcessor.setSiteService( siteService );
+        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
+        htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
+        htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
+
+        result = htmlAreaContentProcessor.processUpdate( processUpdateParams );
 
         final EditableContent editableContent = new EditableContent( Media.create()
                                                                          .name( "myContentName" )
@@ -518,9 +532,10 @@ public class HtmlAreaContentProcessorTest
 
         result.getEditor().edit( editableContent );
 
-        assertEquals( 0, editableContent.processedReferences.build().getSize() );
-        assertEquals( "", ( (PartComponent) editableContent.page.getComponent( ComponentPath.from( "/region/0" ) ) ).getConfig()
-            .getString( "htmlData" ) );
+        assertEquals( 1, editableContent.processedReferences.build().getSize() );
+        assertEquals( "<img data-src=\"image://image-id\" />",
+                      ( (PartComponent) editableContent.page.getComponent( ComponentPath.from( "/region/0" ) ) ).getConfig()
+                          .getString( "htmlData" ) );
     }
 
 

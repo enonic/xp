@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.owasp.impl;
+package com.enonic.xp.core.internal.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.HtmlStreamEventReceiver;
 import org.owasp.html.HtmlStreamEventReceiverWrapper;
 
-final class HtmlRichTextSanitizer
+public final class HtmlRichTextSanitizer
 {
     private static final String[] ALLOWED_ELEMENTS =
         new String[]{"strong", "address", "blockquote", "code", "dd", "dl", "dt", "em", "u", "p", "br", "ol", "li", "ul", "td", "th", "tr",
@@ -17,7 +17,7 @@ final class HtmlRichTextSanitizer
 
     private final HtmlPolicyBuilder htmlSanitizePolicy;
 
-    HtmlRichTextSanitizer()
+    public HtmlRichTextSanitizer()
     {
         final HtmlPolicyBuilder htmlPolicyBuilder = new HtmlPolicyBuilder();
 
@@ -45,7 +45,7 @@ final class HtmlRichTextSanitizer
             .allowStyling();
     }
 
-    String sanitize( final String html )
+    public String sanitize( final String html )
     {
         htmlSanitizePolicy.withPreprocessor( ( HtmlStreamEventReceiver r ) -> {
             return new HtmlStreamEventReceiverWrapper( r )

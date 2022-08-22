@@ -2,6 +2,10 @@ dependencies {
     api "org.osgi:osgi.core:${osgiVersion}"
     implementation "org.osgi:osgi.cmpn:${osgiCmpnVersion}"
     implementation 'org.jsoup:jsoup:1.15.1'
+    implementation( 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1' ) {
+        exclude group: 'com.google.guava'
+    }
+    compileOnly 'com.google.guava:guava:26.0-jre'
 
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
@@ -10,5 +14,5 @@ jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
          'Export-Package': 'com.enonic.xp.core.internal.*',
          'Import-Package': 'javax.annotation.meta;resolution:=optional,*',
-         'Private-Package': 'org.jsoup.*')
+         'Private-Package': 'org.jsoup.*;org.owasp.html.*' )
 }
