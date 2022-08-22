@@ -42,6 +42,7 @@ import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
+import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class BranchServiceImpl
@@ -155,7 +156,7 @@ public class BranchServiceImpl
                                .ids( nodeIds.stream()
                                          .map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() )
                                          .collect( Collectors.toList() ) )
-                               .settings( createStorageSettings( context ) )
+                               .settings( createStorageSettings( context.getRepositoryId() ) )
                                .build() );
     }
 
@@ -348,16 +349,16 @@ public class BranchServiceImpl
     {
         return GetByIdRequest.create()
             .id( new BranchDocumentId( nodeId, context.getBranch() ).toString() )
-            .storageSettings( createStorageSettings( context ) )
+            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
             .returnFields( BRANCH_RETURN_FIELDS )
             .routing( nodeId.toString() )
             .build();
     }
 
-    private StorageSource createStorageSettings( final InternalContext context )
+    private StorageSource createStorageSettings( final RepositoryId repositoryId )
     {
         return StorageSource.create()
-            .storageName( StoreStorageName.from( context.getRepositoryId() ) )
+            .storageName( StoreStorageName.from( repositoryId ) )
             .storageType( StaticStorageType.BRANCH )
             .build();
     }

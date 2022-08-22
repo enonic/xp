@@ -1,10 +1,12 @@
 package com.enonic.xp.repo.impl.vacuum.versiontable;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.version.VersionService;
@@ -19,13 +21,27 @@ public class VersionTableVacuumTask
 
     private static final String NAME = "VersionTableVacuumTask";
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private VersionService versionService;
+    private final VersionService versionService;
 
-    private BlobStore blobStore;
+    private final BranchService branchService;
+
+    private final BlobStore blobStore;
+
+    @Activate
+    public VersionTableVacuumTask( @Reference final NodeService nodeService, @Reference final RepositoryService repositoryService,
+                                   @Reference final VersionService versionService, @Reference final
+                                       BranchService branchService, @Reference final BlobStore blobStore  )
+    {
+        this.nodeService = nodeService;
+        this.repositoryService = repositoryService;
+        this.versionService = versionService;
+        this.blobStore = blobStore;
+        this.branchService = branchService;
+    }
 
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
@@ -37,6 +53,7 @@ public class VersionTableVacuumTask
             repositoryService( repositoryService ).
             nodeService( nodeService ).
             versionService( versionService ).
+            branchService( branchService ).
             blobStore( blobStore ).
             params( params ).
             build().
@@ -55,29 +72,5 @@ public class VersionTableVacuumTask
     public String name()
     {
         return NAME;
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setVersionService( final VersionService versionService )
-    {
-        this.versionService = versionService;
-    }
-
-    @Reference
-    public void setBlobStore( final BlobStore blobStore )
-    {
-        this.blobStore = blobStore;
     }
 }

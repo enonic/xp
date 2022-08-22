@@ -1,12 +1,10 @@
 package com.enonic.xp.repo.impl.version;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -41,22 +39,22 @@ public class VersionServiceImpl
     }
 
     @Override
-    public void delete( final Collection<NodeVersionId> nodeVersionIds, final InternalContext context )
+    public void delete( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        storageDao.delete( DeleteRequests.create().
-            forceRefresh( false ).
-            ids( nodeVersionIds.stream().map( NodeVersionId::toString ).collect( Collectors.toList() ) ).
-            settings( createStorageSettings( context ) ).
-            build() );
+        storageDao.delete( DeleteRequests.create()
+                               .forceRefresh( false )
+                               .ids( List.of( nodeVersionId.toString() ) )
+                               .settings( createStorageSettings( context ) )
+                               .build() );
     }
 
     @Override
-    public NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return doGetById( nodeId, nodeVersionId, context );
+        return doGetById( nodeVersionId, context );
     }
 
-    private NodeVersionMetadata doGetById( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
+    private NodeVersionMetadata doGetById( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( nodeVersionId.toString() ).
