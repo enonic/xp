@@ -7,8 +7,10 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile 'org.jparsec:jparsec:3.1'
     compile "commons-io:commons-io:${commonsIoVersion}" // remove in XP 8
-    api "org.osgi:osgi.core:${osgiVersion}"
-    compile "org.osgi:osgi.cmpn:${osgiCmpnVersion}"
+    api 'org.osgi:osgi.core:8.0.0'
+    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.0'
+    api 'org.osgi:org.osgi.service.component:1.5.0'
+    api 'org.osgi:org.osgi.service.cm:1.6.1'
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"

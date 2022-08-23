@@ -1,8 +1,8 @@
 dependencies {
     implementation project( ':launcher:launcher-api' )
-    implementation "org.osgi:osgi.core:${osgiVersion}"
-    implementation "org.osgi:osgi.cmpn:${osgiCmpnVersion}"
-    implementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
+    implementation ("org.apache.felix:org.apache.felix.framework:${felixVersion}") {
+        exclude group: 'org.codehaus.mojo'
+    }
     implementation 'org.apache.felix:org.apache.felix.utils:1.11.8'
 
     runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.6') {

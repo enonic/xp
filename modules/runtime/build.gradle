@@ -26,12 +26,15 @@ addBundle( 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-osgi:2.3.6', 4 )
 
 // Core bundles
-addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.4', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.6.2', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.24', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.scr:2.2.0', 5 )
+addBundle( 'org.osgi:org.osgi.service.component:1.5.0', 5 )
+addBundle( 'org.osgi:org.osgi.service.cm:1.6.1', 5 )
 addBundle( 'org.osgi:org.osgi.util.promise:1.2.0', 5 )
 addBundle( 'org.osgi:org.osgi.util.function:1.2.0', 5 )
+
+addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.4', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.6.4', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.24', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.2.2', 5 )
 
 //Logging bridges
 addBundle( "org.slf4j:jcl-over-slf4j:${slf4jVersion}", 6 )
