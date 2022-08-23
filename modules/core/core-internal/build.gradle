@@ -1,7 +1,7 @@
 dependencies {
     api "org.osgi:osgi.core:${osgiVersion}"
     implementation "org.osgi:osgi.cmpn:${osgiCmpnVersion}"
-    implementation 'org.jsoup:jsoup:1.15.1'
+    implementation 'org.jsoup:jsoup:1.15.2'
 
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
