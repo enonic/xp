@@ -1,7 +1,7 @@
 dependencies {
     api 'org.osgi:osgi.core:8.0.0'
     compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.0'
-    implementation 'org.jsoup:jsoup:1.15.2'
+    implementation 'org.jsoup:jsoup:1.15.3'
 
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
