@@ -4,5 +4,7 @@ public @interface ContentConfig
 {
     boolean auditlog_enabled() default true;
 
+    boolean htmlarea_sanitizing_enabled() default false;
+
     boolean attachments_allowUnsafeNames() default false;
 }

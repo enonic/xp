@@ -1,6 +1,5 @@
 dependencies {
     implementation project( ':portal:portal-api' )
-    implementation project( ':portal:portal-owasp' )
     implementation project( ':core:core-internal' )
     implementation 'org.attoparser:attoparser:1.3'
 
