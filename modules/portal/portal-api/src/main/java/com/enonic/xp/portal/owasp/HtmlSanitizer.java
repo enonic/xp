@@ -6,6 +6,4 @@ import com.enonic.xp.annotation.PublicApi;
 public interface HtmlSanitizer
 {
     String sanitizeHtml( String html );
-
-    String sanitizeHtml( String html, SanitizeType type );
 }

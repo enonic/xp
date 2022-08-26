@@ -3,12 +3,20 @@ dependencies {
     compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.0'
     implementation 'org.jsoup:jsoup:1.15.3'
 
+    implementation( 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1' ) {
+        exclude group: 'com.google.guava'
+    }
+    compileOnly( 'com.google.guava:guava:26.0-jre' ) {
+        exclude group: 'com.google.code.findbugs'
+    }
+    
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation 'com.google.guava:guava:26.0-jre'
 }
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
          'Export-Package': 'com.enonic.xp.core.internal.*',
          'Import-Package': 'javax.annotation.meta;resolution:=optional,*',
-         'Private-Package': 'org.jsoup.*')
+         'Private-Package': 'org.jsoup.*;org.owasp.html.*')
 }

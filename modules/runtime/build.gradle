@@ -130,7 +130,6 @@ addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
 
 // Portal app
 addBundle( project( ':portal:portal-impl' ), 30 )
-addBundle( project( ':portal:portal-owasp' ), 30 )
 
 // Admin app
 addBundle( project( ':admin:admin-event' ), 30 )
