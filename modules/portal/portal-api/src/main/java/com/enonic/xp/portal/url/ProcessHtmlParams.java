@@ -20,6 +20,14 @@ public final class ProcessHtmlParams
 
     private String imageSizes;
 
+    private HtmlImageProcessor imageProcessor;
+
+    private HtmlLinkProcessor linkProcessor;
+
+    private MacrosProcessor macrosProcessor;
+
+    private HtmlPostProcessor htmlPostProcessor;
+
     public String getValue()
     {
         return this.value;
@@ -50,6 +58,50 @@ public final class ProcessHtmlParams
     public ProcessHtmlParams imageSizes( final String imageSizes )
     {
         this.imageSizes = imageSizes;
+        return this;
+    }
+
+    public HtmlImageProcessor getImageProcessor()
+    {
+        return imageProcessor;
+    }
+
+    public ProcessHtmlParams setImageProcessor( final HtmlImageProcessor imageProcessor )
+    {
+        this.imageProcessor = imageProcessor;
+        return this;
+    }
+
+    public HtmlLinkProcessor getLinkProcessor()
+    {
+        return linkProcessor;
+    }
+
+    public ProcessHtmlParams setLinkProcessor( final HtmlLinkProcessor linkProcessor )
+    {
+        this.linkProcessor = linkProcessor;
+        return this;
+    }
+
+    public MacrosProcessor getMacrosProcessor()
+    {
+        return macrosProcessor;
+    }
+
+    public ProcessHtmlParams setMacrosProcessor( final MacrosProcessor macrosProcessor )
+    {
+        this.macrosProcessor = macrosProcessor;
+        return this;
+    }
+
+    public HtmlPostProcessor getHtmlPostProcessor()
+    {
+        return htmlPostProcessor;
+    }
+
+    public ProcessHtmlParams setHtmlPostProcessor( final HtmlPostProcessor htmlPostProcessor )
+    {
+        this.htmlPostProcessor = htmlPostProcessor;
         return this;
     }
 

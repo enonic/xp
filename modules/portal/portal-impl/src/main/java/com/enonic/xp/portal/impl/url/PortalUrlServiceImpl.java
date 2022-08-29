@@ -94,11 +94,13 @@ public final class PortalUrlServiceImpl
             return "";
         }
 
-        String processedHtml = new HtmlLinkProcessor( styleDescriptorService, this ).
-            process( params.getValue(), params.getType(), params.getPortalRequest(), params.getImageWidths(), params.getImageSizes() );
-        processedHtml = new HtmlMacroProcessor( macroService ).
-            process( processedHtml );
-        return processedHtml;
+        String processedHtml = new HtmlProcessor( styleDescriptorService, this ).process( params );
+
+        if ( params.getMacrosProcessor() != null )
+        {
+            return params.getMacrosProcessor().process( processedHtml );
+        }
+        return new HtmlMacroProcessor( macroService ).process( processedHtml );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
