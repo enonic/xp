@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
@@ -127,14 +128,18 @@ public class ContentServiceImplTest_media
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        final UpdateMediaParams updateMediaParams =
-            new UpdateMediaParams().content( content.getId() ).name( "dart-small" ).byteSource( loadImage( "darth-small.jpg" ) );
-
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
+
+        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().content( content.getId() )
+            .name( "dart-small" )
+            .byteSource( loadImage( "darth-small.jpg" ) )
+            .workflowInfo( WorkflowInfo.inProgress() );
 
         this.contentService.update( updateMediaParams );
 
         final Content updatedContent = this.contentService.getById( storedContent.getId() );
+
+        assertEquals( WorkflowState.IN_PROGRESS, updatedContent.getWorkflowInfo().getState() );
 
         final Attachments attachments = updatedContent.getAttachments();
 

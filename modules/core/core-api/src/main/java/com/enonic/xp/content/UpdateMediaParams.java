@@ -31,6 +31,8 @@ public final class UpdateMediaParams
 
     private String tags;
 
+    private WorkflowInfo workflowInfo;
+
     public UpdateMediaParams content( final ContentId value )
     {
         this.content = value;
@@ -91,6 +93,12 @@ public final class UpdateMediaParams
         return this;
     }
 
+    public UpdateMediaParams workflowInfo( final WorkflowInfo workflowInfo )
+    {
+        this.workflowInfo = workflowInfo;
+        return this;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( this.content, "content to update cannot be null." );
@@ -148,6 +156,11 @@ public final class UpdateMediaParams
         return tags;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -164,12 +177,13 @@ public final class UpdateMediaParams
             Objects.equals( content, params.content ) && Objects.equals( name, params.name ) &&
             Objects.equals( mimeType, params.mimeType ) && Objects.equals( inputStream, params.inputStream ) &&
             Objects.equals( caption, params.caption ) && Objects.equals( artist, params.artist ) &&
-            Objects.equals( copyright, params.copyright ) && Objects.equals( tags, params.tags );
+            Objects.equals( copyright, params.copyright ) && Objects.equals( tags, params.tags ) &&
+            Objects.equals( workflowInfo, params.workflowInfo );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( content, name, mimeType, inputStream, focalX, focalY, caption, artist, copyright, tags );
+        return Objects.hash( content, name, mimeType, inputStream, focalX, focalY, caption, artist, copyright, tags, workflowInfo );
     }
 }
