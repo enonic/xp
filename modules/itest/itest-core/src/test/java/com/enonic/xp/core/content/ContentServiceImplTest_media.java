@@ -136,8 +136,6 @@ public class ContentServiceImplTest_media
 
         final Content updatedContent = this.contentService.getById( storedContent.getId() );
 
-        assertEquals( WorkflowState.IN_PROGRESS, updatedContent.getWorkflowInfo().getState() );
-
         final Attachments attachments = updatedContent.getAttachments();
 
         assertNotNull( attachments );

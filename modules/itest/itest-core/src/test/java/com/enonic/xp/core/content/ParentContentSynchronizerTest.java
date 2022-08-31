@@ -30,7 +30,6 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
@@ -343,14 +342,7 @@ public class ParentContentSynchronizerTest
             }
         } );
 
-        Content targetContentUpdated = syncUpdated( sourceContent.getId() );
-
-        assertEquals( targetContent, targetContentUpdated );
-
-        sourceContext.runWith( () -> contentService.update(
-            new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.workflowInfo = WorkflowInfo.ready() ) ) );
-
-        targetContentUpdated = syncUpdated( sourceContent.getId() );
+        final Content targetContentUpdated = syncUpdated( sourceContent.getId() );
 
         assertNotEquals( targetContent.getAttachments().first().getBinaryReference(),
                          targetContentUpdated.getAttachments().first().getBinaryReference() );
