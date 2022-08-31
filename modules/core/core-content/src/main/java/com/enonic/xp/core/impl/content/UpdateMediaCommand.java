@@ -7,8 +7,6 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.WorkflowInfo;
-import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
@@ -104,12 +102,6 @@ final class UpdateMediaCommand
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
             .editor( editable -> {
                 mediaFormBuilder.build( editable.data );
-
-                if ( WorkflowState.READY == editable.workflowInfo.getState() )
-                {
-                    editable.workflowInfo =
-                        WorkflowInfo.create().checks( editable.workflowInfo.getChecks() ).state( WorkflowState.IN_PROGRESS ).build();
-                }
             } );
 
         return UpdateContentCommand.create( this )
