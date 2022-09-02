@@ -62,8 +62,12 @@ public final class TextRenderer
             {
                 ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).
                     value( textComponent.getText() ).
-                    setHtmlPostProcessor( document -> document.select( "figcaption:empty" ).
-                        forEach( HtmlElement::remove ) );
+                    customHtmlProcessor( processor -> {
+                        processor.processDefault();
+                        processor.getDocument().select( "figcaption:empty" ).
+                            forEach( HtmlElement::remove );
+                        return processor.getDocument().getInnerHtml();
+                    } );
 
                 final String processedHtml = service.processHtml( params );
                 portalResponseBuilder.body(

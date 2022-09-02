@@ -89,18 +89,7 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        if ( params.getValue() == null || params.getValue().isEmpty() )
-        {
-            return "";
-        }
-
-        String processedHtml = new HtmlProcessor( styleDescriptorService, this ).process( params );
-
-        if ( params.getMacrosProcessor() != null )
-        {
-            return params.getMacrosProcessor().process( processedHtml );
-        }
-        return new HtmlMacroProcessor( macroService ).process( processedHtml );
+        return new RichTextProcessor( styleDescriptorService, this, macroService ).process( params );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

@@ -10,6 +10,4 @@ public interface HtmlDocument
     List<HtmlElement> select( String cssSelector );
 
     String getInnerHtml();
-
-    String getInnerHtmlByTagName( String tagName );
 }

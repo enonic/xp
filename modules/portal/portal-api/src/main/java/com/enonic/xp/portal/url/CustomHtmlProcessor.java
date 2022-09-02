@@ -3,7 +3,7 @@ package com.enonic.xp.portal.url;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public interface MacrosProcessor
+public interface CustomHtmlProcessor
 {
-    String process( String html );
+    void process( HtmlProcessorParams params );
 }

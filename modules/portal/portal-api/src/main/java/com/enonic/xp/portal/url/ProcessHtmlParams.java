@@ -2,6 +2,7 @@ package com.enonic.xp.portal.url;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
@@ -20,13 +21,9 @@ public final class ProcessHtmlParams
 
     private String imageSizes;
 
-    private HtmlImageProcessor imageProcessor;
+    private Function<HtmlProcessorParams, String> customHtmlProcessor;
 
-    private HtmlLinkProcessor linkProcessor;
-
-    private MacrosProcessor macrosProcessor;
-
-    private HtmlPostProcessor htmlPostProcessor;
+    private boolean processMacros = true;
 
     public String getValue()
     {
@@ -61,47 +58,25 @@ public final class ProcessHtmlParams
         return this;
     }
 
-    public HtmlImageProcessor getImageProcessor()
+    public Function<HtmlProcessorParams, String> getCustomHtmlProcessor()
     {
-        return imageProcessor;
+        return customHtmlProcessor;
     }
 
-    public ProcessHtmlParams setImageProcessor( final HtmlImageProcessor imageProcessor )
+    public ProcessHtmlParams customHtmlProcessor( final Function<HtmlProcessorParams, String> customHtmlProcessor )
     {
-        this.imageProcessor = imageProcessor;
+        this.customHtmlProcessor = customHtmlProcessor;
         return this;
     }
 
-    public HtmlLinkProcessor getLinkProcessor()
+    public boolean isProcessMacros()
     {
-        return linkProcessor;
+        return processMacros;
     }
 
-    public ProcessHtmlParams setLinkProcessor( final HtmlLinkProcessor linkProcessor )
+    public ProcessHtmlParams processMacros( final boolean processMacros )
     {
-        this.linkProcessor = linkProcessor;
-        return this;
-    }
-
-    public MacrosProcessor getMacrosProcessor()
-    {
-        return macrosProcessor;
-    }
-
-    public ProcessHtmlParams setMacrosProcessor( final MacrosProcessor macrosProcessor )
-    {
-        this.macrosProcessor = macrosProcessor;
-        return this;
-    }
-
-    public HtmlPostProcessor getHtmlPostProcessor()
-    {
-        return htmlPostProcessor;
-    }
-
-    public ProcessHtmlParams setHtmlPostProcessor( final HtmlPostProcessor htmlPostProcessor )
-    {
-        this.htmlPostProcessor = htmlPostProcessor;
+        this.processMacros = processMacros;
         return this;
     }
 

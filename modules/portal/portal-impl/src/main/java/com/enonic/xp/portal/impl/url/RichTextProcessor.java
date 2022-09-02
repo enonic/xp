@@ -4,7 +4,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -18,13 +18,14 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
-import com.enonic.xp.portal.url.HtmlImageProcessorParams;
-import com.enonic.xp.portal.url.HtmlLinkProcessorParams;
+import com.enonic.xp.portal.url.HtmlElementPostProcessor;
+import com.enonic.xp.portal.url.HtmlProcessorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -34,7 +35,7 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-public class HtmlProcessor
+public class RichTextProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
@@ -91,184 +92,91 @@ public class HtmlProcessor
 
     private final PortalUrlService portalUrlService;
 
-    public HtmlProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService )
+    private final MacroService macroService;
+
+    public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
+                              final MacroService macroService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
+        this.macroService = macroService;
     }
 
-    private void defaultAttachmentProcessing( HtmlElement element, String id, String mode, String type, PortalRequest portalRequest )
+    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
     {
-        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
-            type( type ).
-            id( id ).
-            download( DOWNLOAD_MODE.equals( mode ) ).
-            portalRequest( portalRequest );
+        final Matcher contentMatcher = PATTERN.matcher( getLinkValue( element ) );
 
-        final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
+        if ( contentMatcher.find() && contentMatcher.groupCount() >= NB_GROUPS )
+        {
+            final String type = contentMatcher.group( TYPE_INDEX );
+            final String mode = contentMatcher.group( MODE_INDEX );
+            final String id = contentMatcher.group( ID_INDEX );
+            final String urlParamsString = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
 
-        element.setAttribute( getLinkAttribute( element ), attachmentUrl );
+            switch ( type )
+            {
+                case CONTENT_TYPE:
+                {
+                    defaultLinkProcessingForContent( element, params, id, mode, urlParamsString, postProcessor );
+                    break;
+                }
+                case IMAGE_TYPE:
+                {
+                    defaultImageProcessing( element, params, id, mode, urlParamsString, postProcessor );
+                    break;
+                }
+                case MEDIA_TYPE:
+                {
+                    defaultAttachmentProcessing( element, params, id, mode, urlParamsString, postProcessor );
+                    break;
+                }
+                default:
+                {
+                    throw new IllegalStateException( "Unknown type " + type );
+                }
+            }
+        }
+    }
+
+    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
+    {
+        document.select( "[href],[src]" ).forEach( element -> defaultElementProcessing( element, params, postProcessor ) );
     }
 
     public String process( final ProcessHtmlParams params )
     {
-        final HtmlDocument document = HtmlParser.parse( params.getValue() );
-
-        final List<HtmlElement> elements = document.select( "[href],[src]" );
-
-        final ImmutableMap<String, ImageStyle> imageStyleMap = getImageStyleMap( params.getPortalRequest() );
-
-        elements.forEach( element -> {
-            final Matcher contentMatcher = PATTERN.matcher( getLinkValue( element ) );
-
-            if ( contentMatcher.find() && contentMatcher.groupCount() >= NB_GROUPS )
-            {
-                final String type = contentMatcher.group( TYPE_INDEX );
-                final String mode = contentMatcher.group( MODE_INDEX );
-                final String id = contentMatcher.group( ID_INDEX );
-                final String urlParamsString = contentMatcher.groupCount() == PARAMS_INDEX ? contentMatcher.group( PARAMS_INDEX ) : null;
-                final Map<String, String> urlParams = extractUrlParams( urlParamsString );
-
-                switch ( type )
-                {
-                    case CONTENT_TYPE:
-                    {
-                        if ( params.getLinkProcessor() == null && params.getImageProcessor() == null )
-                        {
-                            defaultLinkProcessingForContent( element, params, id, urlParamsString );
-                        }
-                        else
-                        {
-                            if ( "a".equals( element.getTagName() ) )
-                            {
-                                if ( params.getLinkProcessor() == null )
-                                {
-                                    defaultLinkProcessingForContent( element, params, id, urlParamsString );
-                                }
-                                else
-                                {
-                                    params.getLinkProcessor()
-                                        .process( HtmlLinkProcessorParams.create()
-                                                      .setElement( element )
-                                                      .setContentId( id )
-                                                      .setMode( mode )
-                                                      .setQueryParams( urlParams )
-                                                      .setPortalRequest( params.getPortalRequest() )
-                                                      .setType( type )
-                                                      .setDefaultProcessor(
-                                                          () -> defaultLinkProcessingForContent( element, params, id, urlParamsString ) )
-                                                      .build() );
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case IMAGE_TYPE:
-                    {
-                        if ( params.getLinkProcessor() == null && params.getImageProcessor() == null )
-                        {
-                            defaultImageProcessing( element, params, id, urlParamsString, imageStyleMap );
-                        }
-                        else
-                        {
-                            if ( "img".equals( element.getTagName() ) )
-                            {
-                                if ( params.getImageProcessor() == null )
-                                {
-                                    defaultImageProcessing( element, params, id, urlParamsString, imageStyleMap );
-                                }
-                                else
-                                {
-                                    params.getImageProcessor()
-                                        .process( HtmlImageProcessorParams.create()
-                                                      .setElement( element )
-                                                      .setContentId( id )
-                                                      .setType( type )
-                                                      .setMode( mode )
-                                                      .setQueryParams( urlParams )
-                                                      .setImageWidths( params.getImageWidths() )
-                                                      .setImageSizes( params.getImageSizes() )
-                                                      .setPortalRequest( params.getPortalRequest() )
-                                                      .setImageStyle( getImageStyle( imageStyleMap, urlParams ) )
-                                                      .setDefaultProcessor(
-                                                          () -> defaultImageProcessing( element, params, id, urlParamsString,
-                                                                                        imageStyleMap ) )
-                                                      .build() );
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                        if ( params.getLinkProcessor() == null && params.getImageProcessor() == null )
-                        {
-                            defaultAttachmentProcessing( element, id, mode, type, params.getPortalRequest() );
-                        }
-                        else
-                        {
-                            if ( "a".equals( element.getTagName() ) )
-                            {
-                                if ( params.getLinkProcessor() == null )
-                                {
-                                    defaultAttachmentProcessing( element, id, mode, type, params.getPortalRequest() );
-                                }
-                                else
-                                {
-                                    params.getLinkProcessor()
-                                        .process( HtmlLinkProcessorParams.create()
-                                                      .setElement( element )
-                                                      .setContentId( id )
-                                                      .setMode( mode )
-                                                      .setType( type )
-                                                      .setPortalRequest( params.getPortalRequest() )
-                                                      .setQueryParams( urlParams )
-                                                      .setDefaultProcessor( () -> defaultAttachmentProcessing( element, id, mode, type,
-                                                                                                               params.getPortalRequest() ) )
-                                                      .build() );
-                                }
-                            }
-                            if ( "img".equals( element.getTagName() ) )
-                            {
-                                if ( params.getImageProcessor() == null )
-                                {
-                                    defaultAttachmentProcessing( element, id, mode, type, params.getPortalRequest() );
-                                }
-                                else
-                                {
-                                    params.getImageProcessor()
-                                        .process( HtmlImageProcessorParams.create()
-                                                      .setElement( element )
-                                                      .setContentId( id )
-                                                      .setType( type )
-                                                      .setMode( mode )
-                                                      .setQueryParams( urlParams )
-                                                      .setImageWidths( params.getImageWidths() )
-                                                      .setImageSizes( params.getImageSizes() )
-                                                      .setPortalRequest( params.getPortalRequest() )
-                                                      .setImageStyle( imageStyleMap.get( "editor-style-original" ) )
-                                                      .setDefaultProcessor( () -> defaultAttachmentProcessing( element, id, mode, type,
-                                                                                                               params.getPortalRequest() ) )
-                                                      .build() );
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-        } );
-
-        if ( params.getHtmlPostProcessor() != null )
+        if ( params.getValue() == null || params.getValue().isEmpty() )
         {
-            params.getHtmlPostProcessor().process( document );
+            return "";
         }
 
-        return document.getInnerHtml();
+        HtmlDocument document = HtmlParser.parse( params.getValue() );
+        if ( params.getCustomHtmlProcessor() == null )
+        {
+            defaultProcessing( document, params, null );
+        }
+        else
+        {
+            final String html = params.getCustomHtmlProcessor()
+                .apply( HtmlProcessorParams.create()
+                            .htmlDocument( document )
+                            .defaultProcessor( postProcessor -> defaultProcessing( document, params, postProcessor ) )
+                            .defaultElementProcessor(
+                                ( htmlElement, postProcessor ) -> defaultElementProcessing( htmlElement, params, postProcessor ) )
+                            .build() );
+            if ( !params.isProcessMacros() )
+            {
+                return html;
+            }
+        }
+        return new HtmlMacroProcessor( macroService ).process( document.getInnerHtml() );
     }
 
-    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, String id, String urlParamsString )
+    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, String id, String mode,
+                                                  String urlParamsString, HtmlElementPostProcessor postProcessor )
     {
+        final String originalUri = element.getAttribute( getLinkAttribute( element ) );
+
         final PageUrlParams pageUrlParams = new PageUrlParams().
             type( params.getType() ).
             id( id ).
@@ -277,15 +185,28 @@ public class HtmlProcessor
         final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
 
         element.setAttribute( getLinkAttribute( element ), pageUrl );
+
+        if ( postProcessor != null )
+        {
+            Map<String, String> properties = new HashMap<>();
+
+            properties.put( "type", params.getType() );
+            properties.put( "contentId", id );
+            properties.put( "uri", originalUri );
+            properties.put( "mode", mode );
+            properties.put( "queryParams", urlParamsString );
+
+            postProcessor.process( element, properties );
+        }
     }
 
-    private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String urlParamsString,
-                                         ImmutableMap<String, ImageStyle> imageStyleMap )
+    private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String mode, String urlParamsString,
+                                         HtmlElementPostProcessor callback )
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
+        ImmutableMap<String, ImageStyle> imageStyleMap = getImageStyleMap( params.getPortalRequest() );
         ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
-
         ImageUrlParams imageUrlParams = new ImageUrlParams().
             type( params.getType() ).
             id( id ).
@@ -319,6 +240,53 @@ public class HtmlProcessor
             {
                 element.setAttribute( "sizes", params.getImageSizes() );
             }
+        }
+
+        if ( callback != null )
+        {
+            Map<String, String> properties = new HashMap<>();
+
+            properties.put( "type", params.getType() );
+            properties.put( "contentId", id );
+            properties.put( "mode", mode );
+            properties.put( "queryParams", urlParamsString );
+            if ( imageStyle != null )
+            {
+                properties.put( "style:name", imageStyle.getName() );
+                properties.put( "style:aspectRatio", imageStyle.getAspectRatio() );
+                properties.put( "style:filter", imageStyle.getFilter() );
+            }
+
+            callback.process( element, properties );
+        }
+    }
+
+    private void defaultAttachmentProcessing( HtmlElement element, ProcessHtmlParams params, String id, String mode, String urlParamsString,
+                                              HtmlElementPostProcessor callback )
+    {
+        final String originalUri = element.getAttribute( getLinkAttribute( element ) );
+
+        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
+            type( params.getType() ).
+            id( id ).
+            download( DOWNLOAD_MODE.equals( mode ) ).
+            portalRequest( params.getPortalRequest() );
+
+        final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
+
+        element.setAttribute( getLinkAttribute( element ), attachmentUrl );
+
+        if ( callback != null )
+        {
+            Map<String, String> properties = new HashMap<>();
+
+            properties.put( "type", params.getType() );
+            properties.put( "contentId", id );
+            properties.put( "uri", originalUri );
+            properties.put( "mode", mode );
+            properties.put( "queryParams", urlParamsString );
+
+            callback.process( element, properties );
         }
     }
 

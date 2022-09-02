@@ -43,9 +43,9 @@ public class HtmlDocumentInternalImpl
     private static class HtmlElementInternalImpl
         implements HtmlElementInternal
     {
-        private final Element element;
+        final Element element;
 
-        public HtmlElementInternalImpl( final Element element )
+        HtmlElementInternalImpl( final Element element )
         {
             this.element = element;
         }

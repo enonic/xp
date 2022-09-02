@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
+import com.enonic.xp.portal.impl.html.HtmlParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,8 +32,6 @@ public class HtmlParserImplTest
         assertEquals( "value", htmlElement.getAttribute( "data-custom" ) );
 
         assertEquals( "<p><span class=\"upper-case\" data-custom=\"value\">H</span>ello World!</p>", document.getInnerHtml() );
-        assertEquals( "<p><span class=\"upper-case\" data-custom=\"value\">H</span>ello World!</p>",
-                      document.getInnerHtmlByTagName( "body" ) );
 
         htmlElement.removeAttribute( "data-custom" );
 
