@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateAttachmentTest
 {
@@ -15,7 +15,7 @@ public class CreateAttachmentTest
     {
 
         assertEquals( "MyImage", CreateAttachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             byteSource( ByteSource.empty() ).
@@ -73,38 +73,7 @@ public class CreateAttachmentTest
     }
 
     @Test
-    public void serializeAttachment()
-    {
-        Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
-            size( 1024 ).
-            label( "My Image 1" ).
-            name( "MyImage.jpg" ).
-            build();
-
-        assertEquals( "Attachment{name=MyImage.jpg, mimeType=image/jpg, label=My Image 1, size=1024}", a1.toString() );
-
+    void equalsContract() {
+        EqualsVerifier.forClass( CreateAttachment.class ).verify();
     }
-
-    @Test
-    public void compareAttachments()
-    {
-        Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
-            size( 1024 ).
-            label( "My Image 1" ).
-            name( "MyImage.jpg" ).
-            build();
-
-        Attachment.Builder a2Builder = Attachment.create( a1 );
-
-        assertTrue( a1.equals( a1 ) );
-
-        assertTrue( a1.equals( a2Builder.build() ) );
-
-        assertFalse( a1.equals( new Object() ) );
-
-        assertFalse( a1.equals( a2Builder.size( 2048 ).build() ) );
-    }
-
 }

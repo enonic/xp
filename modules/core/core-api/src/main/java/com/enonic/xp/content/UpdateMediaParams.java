@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
@@ -164,26 +161,12 @@ public final class UpdateMediaParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final UpdateMediaParams params = (UpdateMediaParams) o;
-        return Double.compare( params.focalX, focalX ) == 0 && Double.compare( params.focalY, focalY ) == 0 &&
-            Objects.equals( content, params.content ) && Objects.equals( name, params.name ) &&
-            Objects.equals( mimeType, params.mimeType ) && Objects.equals( inputStream, params.inputStream ) &&
-            Objects.equals( caption, params.caption ) && Objects.equals( artist, params.artist ) &&
-            Objects.equals( copyright, params.copyright ) && Objects.equals( tags, params.tags ) &&
-            Objects.equals( workflowInfo, params.workflowInfo );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( content, name, mimeType, inputStream, focalX, focalY, caption, artist, copyright, tags, workflowInfo );
+        return super.hashCode();
     }
 }

@@ -589,7 +589,7 @@ public class CreateContentCommandTest
 
     private CreateContentCommand createContentCommand( CreateContentParams params )
     {
-        final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
+        final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpeg" ).build();
         return CreateContentCommand.create()
             .params( params )
             .contentTypeService( this.contentTypeService )

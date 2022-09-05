@@ -1,9 +1,7 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,8 +13,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @PublicApi
 public final class ContentIds
     extends AbstractImmutableEntitySet<ContentId>
-    implements Iterable<ContentId>
 {
+    private static final ContentIds EMPTY = new ContentIds( ImmutableSet.of() );
+
     private ContentIds( final ImmutableSet<ContentId> set )
     {
         super( set );
@@ -24,38 +23,39 @@ public final class ContentIds
 
     public static ContentIds empty()
     {
-        final ImmutableSet<ContentId> set = ImmutableSet.of();
-        return new ContentIds( set );
+        return EMPTY;
     }
 
     public static ContentIds from( final ContentId... ids )
     {
-        return new ContentIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static ContentIds from( final String... ids )
     {
-        return new ContentIds( parseIds( ids ) );
+        return from( Arrays.asList( ids ) );
     }
 
     public static ContentIds from( final Collection<String> ids )
     {
-        return new ContentIds( doParseIds( ids ) );
+        return fromInternal( ids.stream().map( ContentId::from ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static ContentIds from( final Iterable<ContentId> ids )
     {
-        return new ContentIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
-    private static ImmutableSet<ContentId> parseIds( final String... paths )
+    private static ContentIds fromInternal( final ImmutableSet<ContentId> set )
     {
-        return doParseIds( Arrays.asList( paths ) );
-    }
-
-    private static ImmutableSet<ContentId> doParseIds( final Collection<String> list )
-    {
-        return list.stream().map( ContentId::from ).collect( ImmutableSet.toImmutableSet() );
+        if ( set.isEmpty() )
+        {
+            return EMPTY;
+        }
+        else
+        {
+            return new ContentIds( set );
+        }
     }
 
     public Set<String> asStrings()
@@ -70,7 +70,7 @@ public final class ContentIds
 
     public static class Builder
     {
-        private final List<ContentId> contents = new ArrayList<>();
+        private final ImmutableSet.Builder<ContentId> contents = ImmutableSet.builder();
 
         public Builder add( final ContentId contentId )
         {
@@ -84,10 +84,9 @@ public final class ContentIds
             return this;
         }
 
-
         public ContentIds build()
         {
-            return ContentIds.from( contents );
+            return fromInternal( contents.build() );
         }
     }
 }

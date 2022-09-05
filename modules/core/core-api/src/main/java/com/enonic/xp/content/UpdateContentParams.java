@@ -18,11 +18,11 @@ public final class UpdateContentParams
 
     private PrincipalKey modifier;
 
-    private CreateAttachments createAttachments = null;
+    private CreateAttachments createAttachments = CreateAttachments.empty();
 
-    private BinaryReferences removeAttachments = null;
+    private BinaryReferences removeAttachments = BinaryReferences.empty();
 
-    private boolean clearAttachments = false;
+    private boolean clearAttachments;
 
     private boolean requireValid;
 
@@ -49,7 +49,7 @@ public final class UpdateContentParams
 
     public UpdateContentParams createAttachments( final CreateAttachments value )
     {
-        this.createAttachments = value;
+        this.createAttachments = Objects.requireNonNullElseGet( value, CreateAttachments::empty );
         return this;
     }
 
@@ -61,7 +61,7 @@ public final class UpdateContentParams
 
     public UpdateContentParams removeAttachments( final BinaryReferences removeAttachments )
     {
-        this.removeAttachments = removeAttachments;
+        this.removeAttachments = Objects.requireNonNullElseGet( removeAttachments, BinaryReferences::empty );
         return this;
     }
 
@@ -81,8 +81,6 @@ public final class UpdateContentParams
     public void validate()
     {
         Preconditions.checkNotNull( contentId, "contentId cannot be null" );
-        Preconditions.checkArgument( editor != null || createAttachments != null || removeAttachments != null,
-                                     "editor, removeAttachments and createAttachments cannot be all null" );
     }
 
     public ContentEditor getEditor()

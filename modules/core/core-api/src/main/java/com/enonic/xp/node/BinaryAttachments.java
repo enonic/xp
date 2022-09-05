@@ -20,15 +20,7 @@ public class BinaryAttachments
 
     public BinaryAttachment get( final BinaryReference binaryReference )
     {
-        for ( final BinaryAttachment binaryAttachment : this.set )
-        {
-            if ( binaryAttachment.getReference().equals( binaryReference ) )
-            {
-                return binaryAttachment;
-            }
-        }
-
-        return null;
+        return this.set.stream().filter( ba -> ba.getReference().equals( binaryReference ) ).findAny().orElse( null );
     }
 
     private BinaryAttachments( final Set<BinaryAttachment> set )

@@ -69,7 +69,7 @@ public abstract class AbstractImmutableEntitySet<T>
     @Override
     public boolean equals( final Object o )
     {
-        return this.getClass().isInstance( o ) && this.set.equals( ( (AbstractImmutableEntitySet) o ).set );
+        return this == o || this.getClass().isInstance( o ) && this.set.equals( ( (AbstractImmutableEntitySet) o ).set );
     }
 
     @Override

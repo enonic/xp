@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -17,16 +18,13 @@ public final class ContentPath
 
     private final boolean absolute;
 
-    private final ImmutableList<String> elements;
-
-    private final String refString;
+    private final List<String> elements;
 
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
         this.absolute = builder.absolute;
         this.elements = builder.elements.build();
-        this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
     }
 
     public String getElement( final int index )
@@ -101,7 +99,7 @@ public final class ContentPath
 
     public String getName()
     {
-        return elements.size() == 0 ? null : elements.get( elements.size() - 1 );
+        return elements.isEmpty() ? null : elements.get( elements.size() - 1 );
     }
 
     public boolean isChildOf( final ContentPath possibleParentPath )
@@ -129,31 +127,30 @@ public final class ContentPath
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof ContentPath ) )
         {
             return false;
         }
-
         final ContentPath that = (ContentPath) o;
-
-        return refString.equals( that.refString );
+        return absolute == that.absolute && elements.equals( that.elements );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return Objects.hash( absolute, elements );
     }
 
+    @Deprecated
     public int compareTo( ContentPath contentPath )
     {
-        return refString.compareTo( contentPath.refString );
+        return this.toString().compareTo( contentPath.toString() );
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
     }
 
     public static ContentPath from( final String path )

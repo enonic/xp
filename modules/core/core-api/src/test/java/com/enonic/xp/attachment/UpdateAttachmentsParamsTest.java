@@ -15,7 +15,7 @@ public class UpdateAttachmentsParamsTest
         ContentId id = ContentId.from( "id-1" );
 
         Attachment attachment = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             name( "MyImage.jpg" ).
             build();
 

@@ -162,7 +162,7 @@ public class AbstractIssueServiceTest
         nodeService.initialize();
 
         Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
 
         issueService.setNodeService( nodeService );
 

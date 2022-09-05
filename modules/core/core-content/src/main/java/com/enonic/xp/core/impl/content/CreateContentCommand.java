@@ -44,7 +44,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -187,11 +186,11 @@ final class CreateContentCommand
 
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
-        final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
+        final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent )
+            .creator( getCurrentUser().getKey() )
+            .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
-        populateCreator( builder );
         setChildOrder( builder );
-        builder.owner( getDefaultOwner( processedContent ) );
         populateLanguage( builder );
 
         populateValid( builder );
@@ -298,12 +297,6 @@ final class CreateContentCommand
                 builder.name( ContentName.unnamed() );
             }
         }
-    }
-
-    private void populateCreator( final CreateContentTranslatorParams.Builder builder )
-    {
-        final User currentUser = getCurrentUser();
-        builder.creator( currentUser.getKey() );
     }
 
     private void populateValid( final CreateContentTranslatorParams.Builder builder )

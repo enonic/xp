@@ -85,6 +85,6 @@ public abstract class AbstractImmutableEntityList<T>
     @Override
     public boolean equals( final Object o )
     {
-        return this.getClass().isInstance( o ) && this.list.equals( ( (AbstractImmutableEntityList) o ).list );
+        return this == o || this.getClass().isInstance( o ) && this.list.equals( ( (AbstractImmutableEntityList) o ).list );
     }
 }

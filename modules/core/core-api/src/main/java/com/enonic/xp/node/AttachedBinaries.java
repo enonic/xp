@@ -14,25 +14,16 @@ import com.enonic.xp.util.BinaryReference;
 public class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
 {
-    private AttachedBinaries( final Builder builder )
-    {
-        super( ImmutableSet.copyOf( builder.nodeAttachedBinaries ) );
-    }
+    private static final AttachedBinaries EMPTY = new AttachedBinaries( ImmutableSet.of() );
 
     private AttachedBinaries( final ImmutableSet<AttachedBinary> set )
     {
         super( set );
     }
 
-    private AttachedBinaries( final Set<AttachedBinary> set )
-    {
-        super( ImmutableSet.copyOf( set ) );
-    }
-
     public static AttachedBinaries empty()
     {
-        final Set<AttachedBinary> returnFields = new HashSet<>();
-        return new AttachedBinaries( returnFields );
+        return EMPTY;
     }
 
     public AttachedBinary getByBinaryReference( final BinaryReference reference )
@@ -50,7 +41,12 @@ public class AttachedBinaries
 
     public static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
     {
-        return new AttachedBinaries( ImmutableSet.copyOf( references ) );
+        return fromInternal( ImmutableSet.copyOf( references ) );
+    }
+
+    private static AttachedBinaries fromInternal( final ImmutableSet<AttachedBinary> set )
+    {
+        return set.isEmpty() ? EMPTY : new AttachedBinaries( set );
     }
 
     public static Builder create()
@@ -68,6 +64,7 @@ public class AttachedBinaries
             return this;
         }
 
+        @Deprecated
         public Set<AttachedBinary> getNodeAttachedBinaries()
         {
             return nodeAttachedBinaries;
@@ -75,7 +72,7 @@ public class AttachedBinaries
 
         public AttachedBinaries build()
         {
-            return new AttachedBinaries( this );
+            return fromInternal( ImmutableSet.copyOf( nodeAttachedBinaries ) );
         }
     }
 

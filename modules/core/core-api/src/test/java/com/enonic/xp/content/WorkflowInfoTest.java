@@ -2,6 +2,8 @@ package com.enonic.xp.content;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,5 +22,10 @@ public class WorkflowInfoTest
             state( WorkflowState.READY ).
             build();
         assertTrue( workflowInfo.getChecks().isEmpty() );
+    }
+
+    @Test
+    void equalsContract() {
+        EqualsVerifier.forClass( WorkflowInfo.class ).withNonnullFields( "state", "checks" ).verify();
     }
 }

@@ -43,7 +43,7 @@ public class UpdateContentCommandTest
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
 
-    private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpg" ).build();
+    private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpeg" ).build();
 
     @Test
     public void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()

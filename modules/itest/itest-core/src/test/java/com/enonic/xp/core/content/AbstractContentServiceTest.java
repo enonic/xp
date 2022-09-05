@@ -2,6 +2,7 @@ package com.enonic.xp.core.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -282,7 +283,7 @@ public class AbstractContentServiceTest
         xDataService = mock( XDataService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
 
         final ExtractedData extractedData = ExtractedData.create().
             metadata( metadata ).
@@ -356,11 +357,12 @@ public class AbstractContentServiceTest
     }
 
     protected ByteSource loadImage( final String name )
-        throws IOException
     {
         try (InputStream stream = this.getClass().getResourceAsStream( name ))
         {
             return ByteSource.wrap( stream.readAllBytes() );
+        } catch ( IOException e ) {
+            throw new UncheckedIOException( e );
         }
     }
 

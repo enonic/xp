@@ -2,10 +2,10 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -17,12 +17,19 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
 public class UpdateNodeParamsFactory
 {
-    private final UpdateContentTranslatorParams params;
+    private final Content editedContent;
+
+    private final PrincipalKey modifier;
+
+    private final CreateAttachments createAttachments;
+
+    private final Attachments attachments;
 
     private final ContentTypeService contentTypeService;
 
@@ -40,7 +47,10 @@ public class UpdateNodeParamsFactory
 
     public UpdateNodeParamsFactory( final Builder builder )
     {
-        this.params = builder.params;
+        this.editedContent = builder.editedContent;
+        this.modifier = builder.modifier;
+        this.createAttachments = builder.createAttachments;
+        this.attachments = builder.attachments;
         this.contentTypeService = builder.contentTypeService;
         this.xDataService = builder.xDataService;
         this.pageDescriptorService = builder.pageDescriptorService;
@@ -52,35 +62,27 @@ public class UpdateNodeParamsFactory
 
     public UpdateNodeParams produce()
     {
-        final Content editedContent = params.getEditedContent();
-        final CreateAttachments createAttachments = params.getCreateAttachments();
-
-        final NodeEditor nodeEditor = toNodeEditor( params );
+        final NodeEditor nodeEditor = toNodeEditor();
 
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
             id( NodeId.from( editedContent.getId() ) ).
             editor( nodeEditor );
 
-        if ( createAttachments != null )
+        for ( final CreateAttachment createAttachment : createAttachments )
         {
-            for ( final CreateAttachment createAttachment : createAttachments )
-            {
-                builder.attachBinary( createAttachment.getBinaryReference(), createAttachment.getByteSource() );
-            }
+            builder.attachBinary( createAttachment.getBinaryReference(), createAttachment.getByteSource() );
         }
         return builder.build();
     }
 
-    public static Builder create( final UpdateContentTranslatorParams params )
+    public static Builder create()
     {
-        return new Builder( params );
+        return new Builder();
     }
 
-    private NodeEditor toNodeEditor( final UpdateContentTranslatorParams params )
+    private NodeEditor toNodeEditor()
     {
-        final Content content = params.getEditedContent();
-
-        final PropertyTree nodeData = contentDataSerializer.toUpdateNodeData( params );
+        final PropertyTree nodeData = contentDataSerializer.toUpdateNodeData( editedContent, modifier, attachments );
 
         final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create().
             contentTypeService( contentTypeService ).
@@ -89,25 +91,31 @@ public class UpdateNodeParamsFactory
             layoutDescriptorService( layoutDescriptorService ).
             siteService( this.siteService ).
             xDataService( this.xDataService ).
-            contentTypeName( content.getType() ).
-            page( content.getPage() ).
-            siteConfigs( content.isSite() ? ( (Site) content ).getSiteConfigs() : null ).
-            extraDatas( content.getAllExtraData()).
-            language( content.getLanguage() != null ? content.getLanguage().getLanguage() : null ).
+            contentTypeName( editedContent.getType() ).
+            page( editedContent.getPage() ).
+            siteConfigs( editedContent.isSite() ? ( (Site) editedContent ).getSiteConfigs() : null ).
+            extraDatas( editedContent.getAllExtraData() ).
+            language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null ).
             build();
 
         return editableNode -> {
             editableNode.indexConfigDocument = indexConfigFactory.produce();
             editableNode.data = nodeData;
-            editableNode.manualOrderValue = content.getManualOrderValue();
-            editableNode.permissions = content.getPermissions();
-            editableNode.inheritPermissions = content.inheritsPermissions();
+            editableNode.manualOrderValue = editedContent.getManualOrderValue();
+            editableNode.permissions = editedContent.getPermissions();
+            editableNode.inheritPermissions = editedContent.inheritsPermissions();
         };
     }
 
     public static class Builder
     {
-        private final UpdateContentTranslatorParams params;
+        private Content editedContent;
+
+        private PrincipalKey modifier;
+
+        private CreateAttachments createAttachments = CreateAttachments.empty();
+
+        private Attachments attachments;
 
         private ContentTypeService contentTypeService;
 
@@ -123,9 +131,28 @@ public class UpdateNodeParamsFactory
 
         private SiteService siteService;
 
-        Builder( final UpdateContentTranslatorParams params )
+        Builder editedContent( final Content editedContent )
         {
-            this.params = params;
+            this.editedContent = editedContent;
+            return this;
+        }
+
+        Builder modifier( final PrincipalKey modifier )
+        {
+            this.modifier = modifier;
+            return this;
+        }
+
+        Builder createAttachments( final CreateAttachments createAttachments )
+        {
+            this.createAttachments = createAttachments;
+            return this;
+        }
+
+        Builder attachments( final Attachments attachments )
+        {
+            this.attachments = attachments;
+            return this;
         }
 
         Builder contentTypeService( final ContentTypeService value )
@@ -172,7 +199,11 @@ public class UpdateNodeParamsFactory
 
         void validate()
         {
-            Preconditions.checkNotNull( params );
+            Preconditions.checkNotNull( modifier, "modifier cannot be null" );
+            Preconditions.checkNotNull( editedContent, "editedContent cannot be null" );
+            Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
+            Preconditions.checkNotNull( attachments, "attachments cannot be null" );
+
             Preconditions.checkNotNull( contentTypeService );
             Preconditions.checkNotNull( xDataService );
             Preconditions.checkNotNull( pageDescriptorService );

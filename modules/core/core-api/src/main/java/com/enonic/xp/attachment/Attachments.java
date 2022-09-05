@@ -2,10 +2,8 @@ package com.enonic.xp.attachment;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -14,34 +12,26 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class Attachments
     extends AbstractImmutableEntityList<Attachment>
 {
-    private final ImmutableMap<String, Attachment> attachmentByName;
+    private static final Attachments EMPTY = new Attachments( ImmutableList.of() );
 
     private Attachments( final ImmutableList<Attachment> list )
     {
         super( list );
-        this.attachmentByName = list.stream().collect( ImmutableMap.toImmutableMap( Attachment::getName, Function.identity() ) );
     }
 
     public Attachment byName( final String name )
     {
-        return attachmentByName.get( name );
+        return list.stream().filter( a -> a.getName().equals( name ) ).findAny().orElse( null );
     }
 
-    public Attachment byLabel( final String name )
+    public Attachment byLabel( final String label )
     {
-        for ( final Attachment attachment : this )
-        {
-            if ( name.equals( attachment.getLabel() ) )
-            {
-                return attachment;
-            }
-        }
-        return null;
+        return list.stream().filter( a -> a.getLabel().equals( label ) ).findAny().orElse( null );
     }
 
     public boolean hasByName( final String name )
     {
-        return attachmentByName.containsKey( name );
+        return byName( name ) != null;
     }
 
     public boolean hasByLabel( final String label )
@@ -51,10 +41,7 @@ public final class Attachments
 
     public Attachments add( final Attachment... attachments )
     {
-        final ImmutableList.Builder<Attachment> listBuilder = ImmutableList.builder();
-        listBuilder.addAll( this.list );
-        listBuilder.addAll( Arrays.asList( attachments ) );
-        return new Attachments( listBuilder.build() );
+        return add( Arrays.asList( attachments ) );
     }
 
     public Attachments add( final Iterable<Attachment> attachments )
@@ -62,27 +49,39 @@ public final class Attachments
         final ImmutableList.Builder<Attachment> listBuilder = ImmutableList.builder();
         listBuilder.addAll( this.list );
         listBuilder.addAll( attachments );
-        return new Attachments( listBuilder.build() );
+        return fromInternal( listBuilder.build() );
     }
 
     public static Attachments empty()
     {
-        return new Attachments( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static Attachments from( final Attachment... contents )
     {
-        return new Attachments( ImmutableList.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
     public static Attachments from( final Iterable<? extends Attachment> contents )
     {
-        return new Attachments( ImmutableList.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
     public static Attachments from( final Collection<? extends Attachment> contents )
     {
-        return new Attachments( ImmutableList.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
+    }
+
+    private static Attachments fromInternal( final ImmutableList<Attachment> list )
+    {
+        if ( list.isEmpty() )
+        {
+            return EMPTY;
+        }
+        else
+        {
+            return new Attachments( list );
+        }
     }
 
     public static Builder create()
@@ -100,6 +99,7 @@ public final class Attachments
             return this;
         }
 
+        @Deprecated
         public Builder addAll( Attachments attachments )
         {
             builder.addAll( attachments );
@@ -108,7 +108,7 @@ public final class Attachments
 
         public Attachments build()
         {
-            return new Attachments( builder.build() );
+            return fromInternal( builder.build() );
         }
     }
 }

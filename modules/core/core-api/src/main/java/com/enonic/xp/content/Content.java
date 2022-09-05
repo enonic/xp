@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
@@ -94,13 +95,8 @@ public class Content
 
     private final PrincipalKey archivedBy;
 
-    protected Content( final Builder builder )
+    protected Content( final Builder<? extends Builder> builder )
     {
-        if ( builder.type == null )
-        {
-            builder.type = ContentTypeName.unstructured();
-        }
-
         this.valid = builder.valid;
         this.validationErrors = builder.validationErrors;
         this.displayName = builder.displayName;
@@ -110,7 +106,7 @@ public class Content
         this.path = builder.root ? ContentPath.ROOT : ContentPath.from( builder.parentPath, builder.name.toString() );
         this.id = builder.id;
         this.data = builder.data;
-        this.attachments = builder.attachments;
+        this.attachments = Objects.requireNonNullElseGet( builder.attachments, Attachments::empty );
         this.extraDatas = builder.extraDatas;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -121,7 +117,7 @@ public class Content
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
-        this.inherit = builder.inherit;
+        this.inherit = Sets.immutableEnumSet( builder.inherit );
         this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
@@ -501,8 +497,8 @@ public class Content
 
         protected Builder()
         {
+            this.type = ContentTypeName.unstructured();
             this.data = new PropertyTree();
-            this.attachments = Attachments.empty();
             this.extraDatas = ExtraDatas.empty();
             this.inheritPermissions = true;
             this.processedReferences = ContentIds.create();
@@ -814,6 +810,7 @@ public class Content
                 Preconditions.checkArgument( !( page.getDescriptor() != null && page.getTemplate() != null ),
                                              "A Page cannot have both have a descriptor and a template set" );
             }
+            Preconditions.checkNotNull( type, "Content type cannot be null" );
         }
 
         public Content build()

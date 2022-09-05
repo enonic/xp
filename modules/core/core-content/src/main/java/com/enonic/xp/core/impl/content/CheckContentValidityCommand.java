@@ -31,7 +31,7 @@ public class CheckContentValidityCommand
 
     public ContentValidityResult execute()
     {
-        if ( this.contentIds.getSize() == 0 )
+        if ( this.contentIds.isEmpty() )
         {
             return ContentValidityResult.empty();
         }
