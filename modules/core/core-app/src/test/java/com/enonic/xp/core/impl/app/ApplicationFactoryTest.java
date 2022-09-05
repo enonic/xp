@@ -8,13 +8,17 @@ import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.RealOverVirtualApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ApplicationFactoryTest
     extends BundleBasedTest
@@ -32,21 +36,25 @@ public class ApplicationFactoryTest
         throws Exception
     {
         final Bundle bundle = deploy( "app1", true, false );
+        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
-        final Application app = new ApplicationFactory( RunMode.PROD, nodeService ).create( bundle );
+        final Application app = new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).create( bundle );
         assertNotNull( app );
         assertNull( app.getConfig() );
     }
 
     @Test
-    public void createUrlResolver_prod()
+    public void createUrlResolver_prod_without_virtual_apps()
         throws Exception
     {
         final Bundle bundle = deploy( "app1", true, false );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.PROD, nodeService ).createUrlResolver( bundle );
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( false );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).createUrlResolver( bundle );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof MultiApplicationUrlResolver );
+        assertTrue( resolver instanceof BundleApplicationUrlResolver );
     }
 
     @Test
@@ -55,7 +63,55 @@ public class ApplicationFactoryTest
     {
         final Bundle bundle = deploy( "app1", true, true );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService ).createUrlResolver( bundle );
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+        when( appConfig.virtual_schema_override() ).thenReturn( true );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle );
+        assertNotNull( resolver );
+        assertTrue( resolver instanceof MultiApplicationUrlResolver );
+    }
+
+    @Test
+    public void createUrlResolver_dev_virtual_not_override()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "app1", true, true );
+
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+        when( appConfig.virtual_schema_override() ).thenReturn( false );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle );
+        assertNotNull( resolver );
+        assertTrue( resolver instanceof RealOverVirtualApplicationUrlResolver );
+    }
+
+    @Test
+    public void createUrlResolver_prod_virtual_not_override()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "app1", true, true );
+
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+        when( appConfig.virtual_schema_override() ).thenReturn( false );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).createUrlResolver( bundle );
+        assertNotNull( resolver );
+        assertTrue( resolver instanceof RealOverVirtualApplicationUrlResolver );
+    }
+
+    @Test
+    public void createUrlResolver_dev_with_source_without_virtual_apps()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "app1", true, true );
+
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( false );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle );
         assertNotNull( resolver );
         assertTrue( resolver instanceof MultiApplicationUrlResolver );
     }
@@ -66,9 +122,27 @@ public class ApplicationFactoryTest
     {
         final Bundle bundle = deploy( "app1", true, false );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService ).createUrlResolver( bundle );
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+        when( appConfig.virtual_schema_override() ).thenReturn( true );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle );
         assertNotNull( resolver );
         assertTrue( resolver instanceof MultiApplicationUrlResolver );
+    }
+
+    @Test
+    public void createUrlResolver_dev_no_source_no_virtual_apps()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "app1", true, false );
+
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( false );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle );
+        assertNotNull( resolver );
+        assertTrue( resolver instanceof BundleApplicationUrlResolver );
     }
 
     private Bundle deploy( final String name, final boolean isApp, final boolean hasSourcePath )

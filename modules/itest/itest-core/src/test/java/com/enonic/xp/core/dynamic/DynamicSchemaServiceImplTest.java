@@ -223,14 +223,15 @@ public class DynamicSchemaServiceImplTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+
+        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
         applicationFactoryService.activate();
 
         ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, resourceService );
 
-        AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         AppFilterService appFilterService = new AppFilterServiceImpl( appConfig );
 
         ApplicationRegistry applicationRegistry =
