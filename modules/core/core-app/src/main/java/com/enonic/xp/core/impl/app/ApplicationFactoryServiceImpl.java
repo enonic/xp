@@ -26,7 +26,7 @@ import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.server.RunMode;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.app")
 public class ApplicationFactoryServiceImpl
     implements ApplicationFactoryService
 {
@@ -36,13 +36,17 @@ public class ApplicationFactoryServiceImpl
 
     private final NodeService nodeService;
 
+    private final AppConfig appConfig;
+
     @Activate
-    public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService )
+    public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService, final AppConfig config )
     {
         this.nodeService = nodeService;
+        this.appConfig = config;
+
         bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,
-                                 new Customizer( nodeService ) );
+                                 new Customizer( nodeService, appConfig ) );
     }
 
     @Activate
@@ -72,27 +76,31 @@ public class ApplicationFactoryServiceImpl
             .filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) )
             .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
             .findAny()
-            .map( Map.Entry::getValue ).or( () -> findVirtualApp(applicationKey) );
+            .map( Map.Entry::getValue )
+            .or( () -> findVirtualApp( applicationKey ) );
     }
 
-    public Optional<ApplicationAdaptor> findVirtualApp( final ApplicationKey applicationKey )
+    private Optional<ApplicationAdaptor> findVirtualApp( final ApplicationKey applicationKey )
     {
-        PropertyTree request = new PropertyTree();
-        final PropertySet likeExpression = request.addSet( "like" );
-        likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey );
+        if ( !appConfig.virtual_enabled() )
+        {
+            return Optional.empty();
+        }
 
         return VirtualAppContext.createContext().callWith( () -> {
+            final PropertyTree request = new PropertyTree();
+            final PropertySet likeExpression = request.addSet( "like" );
+
+            likeExpression.addString( "field", "_path" );
+            likeExpression.addString( "value", "/" + applicationKey );
+
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
                 NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
             if ( nodes.getTotalHits() != 0 )
             {
                 return Optional.of( VirtualAppFactory.create( applicationKey, nodeService ) );
             }
-            else
-            {
-                return Optional.empty();
-            }
+            return Optional.empty();
         } );
     }
 
@@ -101,9 +109,9 @@ public class ApplicationFactoryServiceImpl
     {
         private final ApplicationFactory factory;
 
-        private Customizer( final NodeService nodeService )
+        private Customizer( final NodeService nodeService, final AppConfig appConfig )
         {
-            factory = new ApplicationFactory( RunMode.get(), nodeService );
+            factory = new ApplicationFactory( RunMode.get(), nodeService, appConfig );
         }
 
         @Override

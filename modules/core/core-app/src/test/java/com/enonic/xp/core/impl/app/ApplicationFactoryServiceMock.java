@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 
@@ -20,7 +21,7 @@ public class ApplicationFactoryServiceMock
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService );
+    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService, Mockito.mock( AppConfig.class) );
 
     private final Map<Bundle, ApplicationAdaptor> map = new HashMap<>();
 

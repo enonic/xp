@@ -15,6 +15,7 @@ import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.RealOverVirtualApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -24,10 +25,13 @@ final class ApplicationFactory
 
     private final NodeService nodeService;
 
-    ApplicationFactory( final RunMode runMode, final NodeService nodeService )
+    private final AppConfig appConfig;
+
+    ApplicationFactory( final RunMode runMode, final NodeService nodeService, final AppConfig appConfig )
     {
         this.runMode = runMode;
         this.nodeService = nodeService;
+        this.appConfig = appConfig;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -46,27 +50,35 @@ final class ApplicationFactory
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle )
     {
-        final ApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final ApplicationUrlResolver nodeResourceApplicationResolver =
+        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
             new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
+        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
 
-        if ( this.runMode != RunMode.DEV )
+        final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+
+        if ( appConfig.virtual_enabled() )
         {
-            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
+            if ( appConfig.virtual_schema_override() )
+            {
+                return addCLR
+                    ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver )
+                    : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
+            }
+            else
+            {
+                return addCLR
+                    ? new RealOverVirtualApplicationUrlResolver( new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ), nodeResourceApplicationResolver )
+                    : new RealOverVirtualApplicationUrlResolver( bundleUrlResolver, nodeResourceApplicationResolver );
+            }
         }
-
-        final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
-        if ( sourcePaths.isEmpty() )
+        else
         {
-            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
+            return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
         }
-
-        final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-
-        return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver );
     }
 
-    private ApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )
+    private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )
     {
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
 
