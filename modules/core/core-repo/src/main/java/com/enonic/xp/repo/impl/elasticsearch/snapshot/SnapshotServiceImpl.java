@@ -276,7 +276,7 @@ public class SnapshotServiceImpl
 
         final List<SnapshotInfo> snapshots = getSnapshotsResponse.getSnapshots();
 
-        if ( snapshots.size() == 0 )
+        if ( snapshots.isEmpty() )
         {
             return null;
         }

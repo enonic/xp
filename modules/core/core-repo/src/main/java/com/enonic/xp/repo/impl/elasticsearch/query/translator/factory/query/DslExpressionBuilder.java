@@ -20,7 +20,7 @@ class DslExpressionBuilder
         final PropertyTree expression = dslExpr.getExpression();
 
         final List<Property> properties = (List<Property>) expression.getRoot().getProperties();
-        if ( properties.size() == 0 )
+        if ( properties.isEmpty() )
         {
             throw new IllegalArgumentException( "Query is empty" );
         }

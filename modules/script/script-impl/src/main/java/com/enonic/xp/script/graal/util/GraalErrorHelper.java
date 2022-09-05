@@ -101,7 +101,7 @@ public final class GraalErrorHelper
     private static StackTraceElement findScriptTraceElement( final Throwable e )
     {
         final List<StackTraceElement> elements = getScriptFrames( e );
-        return elements.size() > 0 ? elements.get( 0 ) : null;
+        return elements.isEmpty() ? null :elements.get( 0 );
     }
 
     private static List<StackTraceElement> getScriptFrames( final Throwable exception )

@@ -44,7 +44,7 @@ public class FlattenedPageIndexUpgraderTest
 
         final List<PropertySet> components = Lists.newArrayList( data.getSets( "components" ) );
 
-        if ( components.size() == 0 )
+        if ( components.isEmpty() )
         {
             throw new RuntimeException( "page components is empty" );
         }

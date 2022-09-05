@@ -38,7 +38,7 @@ public class SetPublishInfoCommand
     {
         final NodeIds nodeIdsToUpdate = findNodesWithoutPublishFirstAndFrom( nodeIds );
 
-        if ( nodeIdsToUpdate.getSize() == 0 )
+        if ( nodeIdsToUpdate.isEmpty() )
         {
             return;
         }

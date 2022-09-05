@@ -123,7 +123,7 @@ final class PageDataSerializer
         final List<PropertySet> componentsAsData = asSet.getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).
             map( Property::getSet ).collect( Collectors.toList() );
 
-        if ( componentsAsData.size() == 0 )
+        if ( componentsAsData.isEmpty() )
         {
             return null;
         }

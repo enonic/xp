@@ -134,7 +134,7 @@ public final class ParentContentSynchronizer
             this.doSync( contentsToSync );
         }
 
-        while ( queue.size() > 0 )
+        while ( !queue.isEmpty() )
         {
             final ContentToSync currentContentToSync = queue.poll();
 
@@ -273,7 +273,7 @@ public final class ParentContentSynchronizer
         contentToSync.getTargetContext().runWith( () -> {
             final Queue<Content> queue = new ArrayDeque<>( Set.of( contentToSync.getTargetContent() ) );
 
-            while ( queue.size() > 0 )
+            while ( !queue.isEmpty() )
             {
                 final Content currentContent = queue.poll();
                 createEventCommand( createEventCommandParams( List.of( ContentToSync.create()

@@ -385,7 +385,7 @@ public class DuplicateNodeCommandTest
 
     private void assertReferencesOutsideTreeKept( final ImmutableList<Property> duplicateReferences, final Set<Property> referencesOutsideTree )
     {
-        if ( duplicateReferences.size() > 0 )
+        if ( !duplicateReferences.isEmpty() )
         {
             assertTrue( duplicateReferences.containsAll( referencesOutsideTree ), "Ref outside duplicate-tree updated" );
         }

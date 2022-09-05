@@ -41,9 +41,8 @@ public class MixinsTest
         }
 
         mixins = Mixins.create().add( mixin ).build();
-        assertTrue( mixins.getNames().size() == 1 );
-        mixins = Mixins.empty();
-        assertTrue( mixins.getNames().size() == 0 );
+        assertEquals( 1, mixins.getNames().size() );
+        assertTrue( Mixins.empty().isEmpty() );
     }
 
     @Test

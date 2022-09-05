@@ -359,7 +359,7 @@ public final class ImageContentProcessor
             {
                 final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
                 final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
-                if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
+                if ( !tiffImageLengths.isEmpty() && !tiffImageWidths.isEmpty() )
                 {
                     final long tiffImageLength = Long.parseLong( tiffImageLengths.toArray()[0].toString() );
                     final long tiffImageWidth = Long.parseLong( tiffImageWidths.toArray()[0].toString() );

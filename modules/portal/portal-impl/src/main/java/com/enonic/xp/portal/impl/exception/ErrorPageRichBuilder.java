@@ -337,7 +337,7 @@ final class ErrorPageRichBuilder
     private static List<String> sliceLines( final int line, final List<String> all )
     {
         final int firstLine = Math.max( 0, line - NUM_DELTA_LINES );
-        if ( all.size() == 0 || firstLine >= all.size() )
+        if ( all.isEmpty() || firstLine >= all.size() )
         {
             return new ArrayList<>();
         }

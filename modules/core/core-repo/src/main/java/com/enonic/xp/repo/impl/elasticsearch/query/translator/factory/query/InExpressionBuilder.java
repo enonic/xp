@@ -18,7 +18,7 @@ class InExpressionBuilder
 
         final List<ValueExpr> values = compareExpr.getValues();
 
-        if ( values == null || values.size() == 0 )
+        if ( values == null || values.isEmpty() )
         {
             throw new IndexQueryBuilderException( "Cannot build empty 'IN' statements" );
         }

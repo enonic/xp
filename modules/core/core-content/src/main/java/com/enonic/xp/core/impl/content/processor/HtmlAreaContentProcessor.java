@@ -257,7 +257,7 @@ public class HtmlAreaContentProcessor
     {
         final Set<String> paths = getPaths( formItems );
 
-        if ( data == null || data.getTotalSize() == 0 || paths.size() == 0 )
+        if ( data == null || data.getTotalSize() == 0 || paths.isEmpty() )
         {
             return Collections.emptyList();
         }

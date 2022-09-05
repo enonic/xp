@@ -81,8 +81,8 @@ public class SiteTest
         assertEquals( 1, siteConfigs.getSize() );
         assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ApplicationKey.from( "myapplication" ) ) );
         assertNotNull( siteConfigs.get( "myapplication" ) );
-        assertTrue( SiteConfigs.empty().getSize() == 0 );
-        assertTrue( SiteConfigs.from( siteConfig ).getSize() == 1 );
+        assertTrue( SiteConfigs.empty().isEmpty() );
+        assertEquals( 1, SiteConfigs.from( siteConfig ).getSize() );
     }
 
     @Test
