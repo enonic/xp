@@ -74,7 +74,7 @@ public class EditableContent
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
         this.manualOrderValue = source.getManualOrderValue();
-        this.inherit = EnumSet.copyOf( source.getInherit() );
+        this.inherit = source.getInherit().isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( source.getInherit() );
     }
 
     public Content build()

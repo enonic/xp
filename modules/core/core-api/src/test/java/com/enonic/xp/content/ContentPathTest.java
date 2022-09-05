@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.support.AbstractEqualsTest;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -11,36 +11,9 @@ public class ContentPathTest
 {
 
     @Test
-    public void equals()
+    public void equalsContract()
     {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                return ContentPath.from( "/myPath/myContent" );
-            }
-
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                return new Object[]{ContentPath.from( "myPath/myContent" ), ContentPath.from( "myContent" ),
-                    ContentPath.from( "/myPath/myContent2" )};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                return ContentPath.from( "/myPath/myContent" );
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-                return ContentPath.from( "/myPath/myContent" );
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
+        EqualsVerifier.forClass( ContentPath.class ).withNonnullFields( "elements" ).verify();
     }
 
     @Test

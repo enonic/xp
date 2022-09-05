@@ -10,7 +10,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class CreateAttachment
+public final class CreateAttachment
 {
     private final String mimeType;
 

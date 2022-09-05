@@ -1,5 +1,6 @@
 package com.enonic.xp.repository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.base.Preconditions;
@@ -29,7 +30,7 @@ public final class Repository
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Optional.ofNullable( builder.data ).orElse( new PropertyTree() );
-        this.attachments = Optional.ofNullable( builder.attachments ).orElse( AttachedBinaries.empty() );
+        this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
     }
 
     public RepositoryId getId()

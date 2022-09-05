@@ -187,7 +187,7 @@ public abstract class AbstractContentSynchronizerTest
     private void setUpContentService()
     {
         final Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
 
         final ExtractedData extractedData = ExtractedData.create().
             metadata( metadata ).

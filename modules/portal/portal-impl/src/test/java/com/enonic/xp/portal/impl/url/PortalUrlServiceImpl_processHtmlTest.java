@@ -101,13 +101,13 @@ public class PortalUrlServiceImpl_processHtmlTest
             create().
             label( "thumb" ).
             name( "a1.jpg" ).
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             build();
         final Attachment source = Attachment.
             create().
             label( "source" ).
             name( "a2.jpg" ).
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             build();
         final Attachments attachments = Attachments.from( thumb, source );
         final Content content = Content.
@@ -180,13 +180,13 @@ public class PortalUrlServiceImpl_processHtmlTest
             create().
             label( "thumb" ).
             name( "a1.jpg" ).
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             build();
         final Attachment source = Attachment.
             create().
             label( "source" ).
             name( "a2.jpg" ).
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             build();
         final Attachments attachments = Attachments.from( thumb, source );
         final Content content = Content.
@@ -446,7 +446,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     @Test
     public void processHtml_content_queryParams()
     {
-        final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpg" ).build();
+        final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpeg" ).build();
 
         final Content content = Content.create( ContentFixtures.newContent() ).build();
 
@@ -519,7 +519,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     @Test
     public void testProcessHtmlWithCustomProcessor()
     {
-        final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpg" ).build();
+        final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpeg" ).build();
 
         final Content content = Content.create( ContentFixtures.newContent() ).build();
 

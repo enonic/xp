@@ -56,34 +56,32 @@ final class UpdatedEventSyncCommand
 
     private void doSyncAttachments( final ContentToSync content, final UpdateContentParams updateParams )
     {
-        if ( !Objects.equals( content.getSourceContent().getAttachments(), content.getTargetContent().getAttachments() ) )
+        final Attachments sourceAttachments = content.getSourceContent().getAttachments();
+        final Attachments targetAttachments = content.getTargetContent().getAttachments();
+        if ( !sourceAttachments.equals( targetAttachments ) )
         {
             updateParams.clearAttachments( true );
-            final Attachments sourceAttachments = content.getSourceContent().getAttachments();
 
-            if ( sourceAttachments != null )
-            {
-                final CreateAttachments.Builder createAttachments = CreateAttachments.create();
+            final CreateAttachments.Builder createAttachments = CreateAttachments.create();
 
-                sourceAttachments.forEach( ( sourceAttachment ) -> {
-                    final ByteSource sourceBinary = content.getSourceContext()
-                        .callWith(
-                            () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
+            sourceAttachments.forEach( ( sourceAttachment ) -> {
+                final ByteSource sourceBinary = content.getSourceContext()
+                    .callWith(
+                        () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
 
-                    final CreateAttachment createAttachment = CreateAttachment.create()
-                        .name( sourceAttachment.getName() )
-                        .mimeType( sourceAttachment.getMimeType() )
-                        .byteSource( sourceBinary )
-                        .text( sourceAttachment.getTextContent() )
-                        .label( sourceAttachment.getLabel() )
-                        .build();
+                final CreateAttachment createAttachment = CreateAttachment.create()
+                    .name( sourceAttachment.getName() )
+                    .mimeType( sourceAttachment.getMimeType() )
+                    .byteSource( sourceBinary )
+                    .text( sourceAttachment.getTextContent() )
+                    .label( sourceAttachment.getLabel() )
+                    .build();
 
-                    createAttachments.add( createAttachment );
+                createAttachments.add( createAttachment );
 
-                } );
+            } );
 
-                updateParams.createAttachments( createAttachments.build() );
-            }
+            updateParams.createAttachments( createAttachments.build() );
         }
     }
 

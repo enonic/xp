@@ -12,6 +12,7 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 @PublicApi
 public class Media
@@ -244,6 +245,7 @@ public class Media
         public Builder()
         {
             super();
+            this.type = ContentTypeName.unknownMedia();
         }
 
         @Override

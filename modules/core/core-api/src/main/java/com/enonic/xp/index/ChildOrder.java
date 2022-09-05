@@ -16,7 +16,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
-public class ChildOrder
+public final class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
 
@@ -173,23 +173,12 @@ public class ChildOrder
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final ChildOrder that = (ChildOrder) o;
-
-        return orderExpressions != null ? orderExpressions.equals( that.orderExpressions ) : that.orderExpressions == null;
+        return this == o || o instanceof ChildOrder && orderExpressions.equals( ( (ChildOrder) o ).orderExpressions );
     }
 
     @Override
     public int hashCode()
     {
-        return orderExpressions != null ? orderExpressions.hashCode() : 0;
+        return orderExpressions.hashCode();
     }
 }

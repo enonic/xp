@@ -20,6 +20,8 @@ public final class Attachment
 
     private final String label;
 
+    private final String sha512;
+
     private final String textContent;
 
     public Attachment( final Builder builder )
@@ -29,6 +31,7 @@ public final class Attachment
 
         this.mimeType = builder.mimeType;
         this.name = builder.name;
+        this.sha512 = builder.sha512;
         this.size = builder.size;
         this.label = builder.label;
         this.textContent = builder.textContent;
@@ -69,6 +72,11 @@ public final class Attachment
         return size;
     }
 
+    public String getSha512()
+    {
+        return sha512;
+    }
+
     public String getTextContent()
     {
         return textContent;
@@ -88,13 +96,14 @@ public final class Attachment
         final Attachment that = (Attachment) o;
         return Objects.equals( this.name, that.name ) && Objects.equals( this.mimeType, that.mimeType ) &&
             Objects.equals( this.label, that.label ) && Objects.equals( this.size, that.size ) &&
+            Objects.equals( this.sha512, that.sha512 ) &&
             Objects.equals( this.textContent, that.textContent );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, mimeType, label, size, textContent );
+        return Objects.hash( name, mimeType, label, size, sha512, textContent );
     }
 
     @Override
@@ -105,6 +114,8 @@ public final class Attachment
         s.add( "mimeType", mimeType );
         s.add( "label", label );
         s.add( "size", size );
+        s.add( "sha512", sha512 );
+        s.add( "textContent", textContent );
         return s.toString();
     }
 
@@ -125,6 +136,8 @@ public final class Attachment
         private String name;
 
         private String label;
+
+        private String sha512;
 
         private long size;
 
@@ -159,6 +172,12 @@ public final class Attachment
         public Builder label( final String label )
         {
             this.label = label;
+            return this;
+        }
+
+        public Builder sha512( final String sha512 )
+        {
+            this.sha512 = sha512;
             return this;
         }
 

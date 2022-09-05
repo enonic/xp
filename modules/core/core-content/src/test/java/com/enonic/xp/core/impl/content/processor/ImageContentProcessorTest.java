@@ -188,7 +188,7 @@ public class ImageContentProcessorTest
             data( data ).
             addExtraData( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).
             attachments( Attachments.from( Attachment.create().
-                mimeType( "image/jpg" ).
+                mimeType( "image/jpeg" ).
                 name( "MyImage.jpg" ).
                 build() ) ).
             build() );

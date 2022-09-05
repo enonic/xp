@@ -16,17 +16,14 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 public final class PageTemplate
     extends Content
 {
-    private final PageTemplateKey key;
-
     private PageTemplate( final Builder builder )
     {
         super( builder );
-        this.key = builder.key;
     }
 
     public PageTemplateKey getKey()
     {
-        return key;
+        return PageTemplateKey.from( getId() );
     }
 
     public PropertyTree getConfig()
@@ -79,8 +76,6 @@ public final class PageTemplate
     public static class Builder
         extends Content.Builder<Builder>
     {
-        private PageTemplateKey key;
-
         private Builder()
         {
             super();
@@ -94,7 +89,6 @@ public final class PageTemplate
 
         public Builder key( final PageTemplateKey value )
         {
-            this.key = value;
             this.id = value.getContentId();
             return this;
         }
@@ -103,7 +97,6 @@ public final class PageTemplate
         public Builder id( final ContentId value )
         {
             super.id( value );
-            this.key = PageTemplateKey.from( value );
             return this;
         }
 

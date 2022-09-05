@@ -1,13 +1,25 @@
 package com.enonic.xp.core.impl.content;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.security.DigestInputStream;
 import java.time.Instant;
-import java.util.Objects;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -19,19 +31,20 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.core.internal.HexCoder;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
@@ -41,7 +54,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.util.BinaryReferences;
+import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -102,26 +115,36 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
+        boolean commitBeforeChange = false;
+
         if ( params.stopInherit() )
         {
-            if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
+            final Set<ContentInheritType> currentInherit = editedContent.getInherit();
+
+            if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
             {
-                nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
-                                    NodeIds.from( params.getContentId().toString() ) );
-                editedContent.getInherit().remove( ContentInheritType.CONTENT );
+                final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+
+                if ( currentInherit.contains( ContentInheritType.CONTENT ) )
+                {
+                    commitBeforeChange = true;
+                    newInherit.remove( ContentInheritType.CONTENT );
+                }
+
+                newInherit.remove( ContentInheritType.NAME );
+                editedContent = Content.create( editedContent ).setInherit( newInherit ).build();
             }
-            editedContent.getInherit().remove( ContentInheritType.NAME );
-        }
-
-        final BinaryReferences removeAttachments = Objects.requireNonNullElseGet( params.getRemoveAttachments(), BinaryReferences::empty );
-
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && removeAttachments.isEmpty() &&
-            !this.params.isClearAttachments() )
-        {
-            return contentBeforeChange;
         }
 
         editedContent = processContent( contentBeforeChange, editedContent );
+
+        final Attachments attachmentsBeforeChange = contentBeforeChange.getAttachments();
+        final Attachments attachments = mergeExistingAndUpdatedAttachments( attachmentsBeforeChange );
+
+        if ( contentBeforeChange.equals( editedContent ) && attachmentsBeforeChange.equals( attachments ) )
+        {
+            return contentBeforeChange;
+        }
 
         validateBlockingChecks( editedContent );
 
@@ -133,7 +156,7 @@ final class UpdateContentCommand
                 .stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
                 .map( validationError -> (AttachmentValidationError) validationError )
-                .filter( validationError -> !removeAttachments.contains( validationError.getAttachment() ) )
+                .filter( validationError -> !params.getRemoveAttachments().contains( validationError.getAttachment() ) )
                 .forEach( validationErrorsBuilder::add );
         }
 
@@ -158,19 +181,17 @@ final class UpdateContentCommand
             } );
         }
 
-        editedContent = Content.create( editedContent ).valid( !validationErrors.hasErrors() ).validationErrors( validationErrors ).build();
-        editedContent = attachThumbnail( editedContent );
-        editedContent = setModifiedTime( editedContent );
-
-        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create()
-            .editedContent( editedContent )
-            .createAttachments( this.params.getCreateAttachments() )
-            .removeAttachments( this.params.getRemoveAttachments() )
-            .clearAttachments( this.params.isClearAttachments() )
-            .modifier( getCurrentUser().getKey() )
+        editedContent = Content.create( editedContent )
+            .valid( !validationErrors.hasErrors() )
+            .validationErrors( validationErrors )
+            .modifiedTime( Instant.now() )
             .build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams )
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
+            .editedContent( editedContent )
+            .createAttachments( params.getCreateAttachments() )
+            .attachments( attachments )
+            .modifier( getCurrentUser().getKey() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -181,64 +202,92 @@ final class UpdateContentCommand
             .build()
             .produce();
 
+        if ( commitBeforeChange )
+        {
+            nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
+                                NodeIds.from( NodeId.from( params.getContentId() ) ) );
+        }
+
         final Node editedNode = this.nodeService.update( updateNodeParams );
         return translator.fromNode( editedNode, true );
     }
 
-    private Content processContent( final Content originalContent, Content editedContent )
+    private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
     {
-        final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( editedContent.getType() ) );
+        if ( params.getCreateAttachments().isEmpty() && params.getRemoveAttachments().isEmpty() && !params.isClearAttachments() )
+        {
+            return originalAttachments;
+        }
 
-        editedContent = runContentProcessors( originalContent, editedContent, contentType );
+        final Map<BinaryReference, Attachment> attachments = new LinkedHashMap<>();
+        if ( !params.isClearAttachments() )
+        {
+            originalAttachments.stream().forEach( a -> attachments.put( a.getBinaryReference(), a ) );
+        }
+        params.getRemoveAttachments().stream().forEach( attachments::remove );
 
-        return editedContent;
+        // added attachments with same BinaryReference will replace existing ones
+        for ( final CreateAttachment createAttachment : params.getCreateAttachments() )
+        {
+            final Attachment.Builder builder = Attachment.create()
+                .name( createAttachment.getName() )
+                .label( createAttachment.getLabel() )
+                .mimeType( createAttachment.getMimeType() )
+                .textContent( createAttachment.getTextContent() );
+            populateByteSourceProperties( createAttachment.getByteSource(), builder );
+
+            final Attachment attachment = builder.build();
+            attachments.put( attachment.getBinaryReference(), attachment );
+        }
+        return Attachments.from( attachments.values() );
     }
 
-    private Content runContentProcessors( final Content originalContent, Content editedContent, final ContentType contentType )
+    private static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
     {
+        try
+        {
+            final InputStream inputStream = byteSource.openStream();
+            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
+            try (inputStream; digestInputStream)
+            {
+                final long size = ByteStreams.exhaust( digestInputStream );
+                builder.size( size );
+            }
+            builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+
+    private Content processContent( final Content originalContent, Content editedContent )
+    {
+        final ContentType contentType = getContentType( editedContent.getType() );
+
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create()
-                                                                                       .contentType( contentType )
-                                                                                       .mediaInfo( mediaInfo )
-                                                                                       .createAttachments( params.getCreateAttachments() )
-                                                                                       .originalContent( originalContent )
-                                                                                       .editedContent( editedContent )
-                                                                                       .modifier( getCurrentUser() )
-                                                                                       .build() );
+                final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
+                    .contentType( contentType )
+                    .mediaInfo( mediaInfo )
+                    .createAttachments( params.getCreateAttachments() )
+                    .originalContent( originalContent )
+                    .editedContent( editedContent )
+                    .modifier( getCurrentUser() )
+                    .build();
+                final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
 
-                editedContent = updateContentWithProcessedData( editedContent, result );
+                if ( result != null )
+                {
+                    editedContent =  editContent( result.getEditor(), editedContent );
+                    this.params.createAttachments( result.getCreateAttachments() );
+                }
             }
         }
 
-        return editedContent;
-    }
-
-    private Content updateContentWithProcessedData( Content editedContent, final ProcessUpdateResult processUpdateResult )
-    {
-        if ( processUpdateResult != null )
-        {
-            if ( processUpdateResult.getEditor() != null )
-            {
-                editedContent = editContent( processUpdateResult.getEditor(), editedContent );
-            }
-            this.params.createAttachments( processUpdateResult.getCreateAttachments() );
-        }
-        return editedContent;
-    }
-
-    private Content attachThumbnail( final Content editedContent )
-    {
-        if ( !editedContent.hasThumbnail() )
-        {
-            final Thumbnail mediaThumbnail = resolveMediaThumbnail( editedContent );
-            if ( mediaThumbnail != null )
-            {
-                return Content.create( editedContent ).thumbnail( mediaThumbnail ).build();
-            }
-        }
         return editedContent;
     }
 
@@ -250,11 +299,6 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
         return editableContent.build();
-    }
-
-    private Content setModifiedTime( final Content content )
-    {
-        return Content.create( content ).modifiedTime( Instant.now() ).build();
     }
 
     private void validateBlockingChecks( final Content editedContent )
@@ -301,8 +345,8 @@ final class UpdateContentCommand
 
     private void validatePropertyTree( final Content editedContent )
     {
-        final ContentType contentType =
-            contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
+        final ContentType contentType = getContentType( editedContent.getType() );
+
         try
         {
             InputValidator.create()
@@ -315,18 +359,6 @@ final class UpdateContentCommand
         {
             throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
         }
-    }
-
-    private Thumbnail resolveMediaThumbnail( final Content content )
-    {
-        final ContentType contentType = getContentType( content.getType() );
-
-        if ( contentType.getSuperType() == null )
-        {
-            return null;
-        }
-
-        return null;
     }
 
     private ContentType getContentType( final ContentTypeName contentTypeName )

@@ -2,12 +2,9 @@ package com.enonic.xp.attachment;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -17,28 +14,26 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class CreateAttachments
     extends AbstractImmutableEntitySet<CreateAttachment>
 {
-    private final ImmutableMap<String, CreateAttachment> map;
-
     private CreateAttachments( final Set<CreateAttachment> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( CreateAttachment::getName, Function.identity() ) );
     }
 
+    @Deprecated
     public ImmutableList<String> getNames()
     {
-        return map.keySet().asList();
+        return this.set.stream().map( CreateAttachment::getName ).collect( ImmutableList.toImmutableList() );
     }
 
+    @Deprecated
     public CreateAttachment getByName( final String name )
     {
-        return this.map.get( name );
+        return this.set.stream().filter( ca -> ca.getName().equals( name ) ).findAny().orElse( null );
     }
 
     public static CreateAttachments empty()
     {
-        final ImmutableSet<CreateAttachment> set = ImmutableSet.of();
-        return new CreateAttachments( set );
+        return new CreateAttachments( ImmutableSet.of() );
     }
 
     public static CreateAttachments from( final CreateAttachment... contents )
@@ -64,27 +59,13 @@ public final class CreateAttachments
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        if ( !super.equals( o ) )
-        {
-            return false;
-        }
-        final CreateAttachments that = (CreateAttachments) o;
-        return Objects.equals( map, that.map );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-
-        return Objects.hash( super.hashCode(), map );
+        return super.hashCode();
     }
 
     public static class Builder
@@ -99,10 +80,7 @@ public final class CreateAttachments
 
         public Builder add( CreateAttachments value )
         {
-            for ( final CreateAttachment ca : value )
-            {
-                contents.add( ca );
-            }
+            contents.addAll( value.set );
             return this;
         }
 

@@ -17,7 +17,7 @@ public class CreateAttachmentsTest
     public void getByName()
     {
         CreateAttachment a1 = CreateAttachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             byteSource( ByteSource.empty() ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
@@ -50,7 +50,7 @@ public class CreateAttachmentsTest
     public void fromBuilder()
     {
         CreateAttachment a1 = CreateAttachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             byteSource( ByteSource.empty() ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
@@ -80,7 +80,7 @@ public class CreateAttachmentsTest
     public void fromIterable()
     {
         CreateAttachment a1 = CreateAttachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             byteSource( ByteSource.empty() ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).

@@ -90,7 +90,7 @@ public class ContentServiceImplTest_update
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.imageMedia() ).
-            createAttachments( createAttachment( "cat", "image/jpg", image ) ).
+            createAttachments( createAttachment( "cat", "image/jpeg", image ) ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
@@ -102,7 +102,7 @@ public class ContentServiceImplTest_update
                 edit.displayName = "new display name";
             } ).
             clearAttachments( true ).
-            createAttachments( createAttachment( "darth", "image/jpg", loadImage( "darth-small.jpg" ) ) );
+            createAttachments( createAttachment( "darth", "image/jpeg", loadImage( "darth-small.jpg" ) ) );
 
         this.contentService.update( updateContentParams );
 
@@ -433,6 +433,49 @@ public class ContentServiceImplTest_update
         assertEquals( newThumbnail.size(), thumbnailAttachment.getSize() );
     }
 
+    @Test
+    void update_thumbnail_skip_not_changed()
+        throws Exception
+    {
+        final ByteSource thumbnail = loadImage( "cat-small.jpg" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            contentData( new PropertyTree() ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+            byteSource( thumbnail ).
+            name( AttachmentNames.THUMBNAIL ).
+            mimeType( "image/jpeg" ).
+            build() ) ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+
+        final Content createdContent = this.contentService.getById( content.getId() );
+        assertNotNull( createdContent.getThumbnail() );
+        assertEquals( thumbnail.size(), createdContent.getThumbnail().getSize() );
+
+        final ByteSource newThumbnail = loadImage( "cat-small.jpg" );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+            byteSource( newThumbnail ).
+            name( AttachmentNames.THUMBNAIL ).
+            mimeType( "image/jpeg" ).
+            build() ) );
+
+        this.contentService.update( updateContentParams );
+
+        final Content updatedContent = this.contentService.getById( content.getId() );
+        assertEquals( content.getModifiedTime(), updatedContent.getModifiedTime() );
+        assertNotNull( updatedContent.getThumbnail() );
+        final Thumbnail thumbnailAttachment = updatedContent.getThumbnail();
+        assertEquals( thumbnail.size(), thumbnailAttachment.getSize() );
+    }
     @Test
     public void update_publish_info()
         throws Exception

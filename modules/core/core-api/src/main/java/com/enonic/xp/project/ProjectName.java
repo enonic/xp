@@ -1,6 +1,5 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
@@ -51,7 +50,7 @@ public final class ProjectName
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ProjectName ) && Objects.equals( this.value, ( (ProjectName) o ).value );
+        return this == o || o instanceof ProjectName && this.value.equals( ( (ProjectName) o ).value );
     }
 
     @Override

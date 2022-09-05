@@ -153,6 +153,28 @@ public class ContentServiceImplTest_media
     }
 
     @Test
+    public void update_media_image_skip_not_changed()
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
+        final Content content = this.contentService.create( createMediaParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().content( content.getId() )
+            .name( "Small cat" )
+            .byteSource( loadImage( "cat-small.jpg" ) );
+
+        this.contentService.update( updateMediaParams );
+
+        final Content updatedContent = this.contentService.getById( storedContent.getId() );
+        assertEquals( content.getModifiedTime(), updatedContent.getModifiedTime() );
+    }
+
+    @Test
     public void update_media_image_invalid_file_name()
         throws Exception
     {

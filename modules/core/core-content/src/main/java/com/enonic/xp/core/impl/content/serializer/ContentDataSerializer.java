@@ -1,10 +1,7 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,8 +15,6 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -32,7 +27,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -51,8 +45,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.util.BinaryReferences;
-import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
@@ -150,32 +142,25 @@ public class ContentDataSerializer
             extraDataSerializer.toData( extraData, contentAsData );
         }
 
-        if ( params.getCreateAttachments() != null )
-        {
-            addAttachmentInfoToDataset( params.getCreateAttachments(), contentAsData );
-        }
+        AttachmentSerializer.create( contentAsData.getTree(), params.getCreateAttachments() );
 
         addProcessedReferences( contentAsData, params.getProcessedIds() );
 
         return propertyTree;
     }
 
-    public PropertyTree toUpdateNodeData( final UpdateContentTranslatorParams params )
+    public PropertyTree toUpdateNodeData( final Content content, final PrincipalKey modifier, final Attachments attachments )
     {
         final PropertyTree newPropertyTree = new PropertyTree();
         final PropertySet contentAsData = newPropertyTree.getRoot();
 
-        final Content content = params.getEditedContent();
-
-        addMetadata( contentAsData, content, params.getModifier() );
+        addMetadata( contentAsData, content, modifier );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasExtraData() )
         {
             extraDataSerializer.toData( content.getAllExtraData(), contentAsData );
         }
-
-        final Attachments attachments = mergeExistingAndUpdatedAttachments( content.getAttachments(), params );
 
         applyAttachmentsAsData( attachments, contentAsData );
 
@@ -210,10 +195,7 @@ public class ContentDataSerializer
             pageDataSerializer.toData( content.getPage(), contentAsData );
         }
 
-        if ( content.getAttachments() != null )
-        {
-            applyAttachmentsAsData( content.getAttachments(), contentAsData );
-        }
+        applyAttachmentsAsData( content.getAttachments(), contentAsData );
 
         addProcessedReferences( contentAsData, content.getProcessedReferences() );
 
@@ -526,15 +508,11 @@ public class ContentDataSerializer
                                  .label( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
                                  .mimeType( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
                                  .size( attachmentAsSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                                 .sha512( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) )
                                  .textContent( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
                                  .build() );
         }
         return attachments.build();
-    }
-
-    private void addAttachmentInfoToDataset( final CreateAttachments createAttachments, final PropertySet contentAsData )
-    {
-        AttachmentSerializer.create( contentAsData.getTree(), createAttachments );
     }
 
     private void applyAttachmentsAsData( final Attachments attachments, final PropertySet contentAsData )
@@ -544,46 +522,12 @@ public class ContentDataSerializer
             final PropertySet attachmentSet = contentAsData.addSet( ATTACHMENT );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_NAME, attachment.getName() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_LABEL, attachment.getLabel() );
-            attachmentSet.addBinaryReference( "binary", attachment.getBinaryReference() );
+            attachmentSet.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, attachment.getBinaryReference() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_MIMETYPE, attachment.getMimeType() );
             attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, attachment.getSize() );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, attachment.getSha512() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_TEXT, attachment.getTextContent() );
         }
-    }
-
-    private Attachments mergeExistingAndUpdatedAttachments( final Attachments existingAttachments,
-                                                            final UpdateContentTranslatorParams params )
-    {
-        CreateAttachments createAttachments = params.getCreateAttachments();
-        BinaryReferences removeAttachments = params.getRemoveAttachments();
-        if ( createAttachments == null && removeAttachments == null && !params.isClearAttachments() )
-        {
-            return existingAttachments;
-        }
-
-        createAttachments = createAttachments == null ? CreateAttachments.empty() : createAttachments;
-        removeAttachments = removeAttachments == null ? BinaryReferences.empty() : removeAttachments;
-
-        final Map<BinaryReference, Attachment> attachments = new LinkedHashMap<>();
-        if ( !params.isClearAttachments() )
-        {
-            existingAttachments.stream().forEach( ( a ) -> attachments.put( a.getBinaryReference(), a ) );
-        }
-        removeAttachments.stream().forEach( attachments::remove );
-
-        // added attachments with same BinaryReference will replace existing ones
-        for ( final CreateAttachment createAttachment : createAttachments )
-        {
-            final Attachment attachment = Attachment.create()
-                .name( createAttachment.getName() )
-                .label( createAttachment.getLabel() )
-                .mimeType( createAttachment.getMimeType() )
-                .size( attachmentSize( createAttachment ) )
-                .textContent( createAttachment.getTextContent() )
-                .build();
-            attachments.put( attachment.getBinaryReference(), attachment );
-        }
-        return Attachments.from( attachments.values() );
     }
 
     private void addValidationErrors( final ValidationErrors validationErrors, final PropertySet contentAsData )
@@ -617,18 +561,6 @@ public class ContentDataSerializer
                 }
                 return propertySet;
             } ).toArray( PropertySet[]::new ) );
-        }
-    }
-
-    private long attachmentSize( final CreateAttachment createAttachment )
-    {
-        try
-        {
-            return createAttachment.getByteSource().size();
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.unchecked( e );
         }
     }
 

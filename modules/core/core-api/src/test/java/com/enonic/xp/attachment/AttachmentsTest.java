@@ -15,7 +15,7 @@ public class AttachmentsTest
     public void getByLabel()
     {
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
@@ -41,7 +41,7 @@ public class AttachmentsTest
     public void getByName()
     {
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
@@ -68,7 +68,7 @@ public class AttachmentsTest
     {
 
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
@@ -85,7 +85,7 @@ public class AttachmentsTest
             name( "MyImage2.png" ).
             build();
 
-        Attachments attachments = Attachments.create().add( a1 ).addAll( Attachments.from( a2, a3 ) ).build();
+        Attachments attachments = Attachments.create().add( a1 ).add( a2 ).add( a3 ).build();
 
         assertEquals( 3, attachments.getSize() );
         assertEquals( a1, attachments.first() );
@@ -97,7 +97,7 @@ public class AttachmentsTest
     public void fromEmpty()
     {
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();

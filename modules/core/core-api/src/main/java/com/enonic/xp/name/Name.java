@@ -61,13 +61,13 @@ public abstract class Name
 
         final Name name = (Name) o;
 
-        return value != null ? value.equals( name.value ) : name.value == null;
+        return value.equals( name.value );
     }
 
     @Override
     public final int hashCode()
     {
-        return value != null ? value.hashCode() : 0;
+        return value.hashCode();
     }
 
     @Override

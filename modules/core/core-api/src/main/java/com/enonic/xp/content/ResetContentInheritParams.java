@@ -68,7 +68,7 @@ public class ResetContentInheritParams
 
         public Builder inherit( Collection<ContentInheritType> inherit )
         {
-            this.inherit = EnumSet.copyOf( inherit );
+            this.inherit = inherit.isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( inherit );
             return this;
         }
 

@@ -14,7 +14,7 @@ public class AttachmentTest
     public void getNameWithoutExtension()
     {
         assertEquals( "MyImage", Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             name( "MyImage.jpg" ).
             build().getNameWithoutExtension() );
 
@@ -28,7 +28,7 @@ public class AttachmentTest
     public void getBinaryReference()
     {
         assertEquals( "MyImage.jpg", Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             name( "MyImage.jpg" ).
             build().getBinaryReference().toString() );
 
@@ -42,7 +42,7 @@ public class AttachmentTest
     public void getExtension()
     {
         assertEquals( "jpg", Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             name( "MyImage.jpg" ).
             build().getExtension() );
 
@@ -62,7 +62,7 @@ public class AttachmentTest
             build().getExtension() );
 
         assertEquals( "jpg", Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             name( "MyImage.something.jpg" ).
             build().getExtension() );
     }
@@ -72,13 +72,13 @@ public class AttachmentTest
     public void serializeAttachment()
     {
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             size( 1024 ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).
             build();
 
-        assertEquals( "Attachment{name=MyImage.jpg, mimeType=image/jpg, label=My Image 1, size=1024}", a1.toString() );
+        assertEquals( "Attachment{name=MyImage.jpg, mimeType=image/jpeg, label=My Image 1, size=1024, sha512=null, textContent=null}", a1.toString() );
 
     }
 
@@ -86,7 +86,7 @@ public class AttachmentTest
     public void compareAttachments()
     {
         Attachment a1 = Attachment.create().
-            mimeType( "image/jpg" ).
+            mimeType( "image/jpeg" ).
             size( 1024 ).
             label( "My Image 1" ).
             name( "MyImage.jpg" ).

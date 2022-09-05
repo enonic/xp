@@ -53,6 +53,28 @@ public final class WorkflowInfo
         return new Builder();
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof WorkflowInfo ) )
+        {
+            return false;
+        }
+
+        final WorkflowInfo that = (WorkflowInfo) o;
+        return Objects.equals( state, that.state ) && Objects.equals( checks, that.checks );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( state, checks );
+    }
+
     public static final class Builder
     {
         private WorkflowState state;
@@ -106,28 +128,5 @@ public final class WorkflowInfo
             this.validate();
             return new WorkflowInfo( this );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof WorkflowInfo ) )
-        {
-            return false;
-        }
-
-        final WorkflowInfo that = (WorkflowInfo) o;
-        return Objects.equals( state, that.state ) && Objects.equals( checks, that.checks );
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( state, checks );
     }
 }

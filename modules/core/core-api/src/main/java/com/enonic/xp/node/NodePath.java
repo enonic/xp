@@ -114,7 +114,7 @@ public final class NodePath
 
     public boolean isEmpty()
     {
-        return this.elements.size() == 0;
+        return this.elements.isEmpty();
     }
 
     public boolean isAbsolute()

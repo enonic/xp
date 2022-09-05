@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -50,6 +51,7 @@ public class ImportContentFactoryTest
         Mockito.when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getData() ).thenReturn( new PropertyTree() );
         Mockito.when( content.getPermissions() ).thenReturn( AccessControlList.empty() );
+        Mockito.when( content.getAttachments() ).thenReturn( Attachments.empty() );
         Mockito.when( content.getPublishInfo() )
             .thenReturn( ContentPublishInfo.create().first( Instant.now() ).from( Instant.now() ).to( Instant.now() ).build() );
     }

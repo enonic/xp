@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -11,10 +9,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_attachmentUrlTest
@@ -120,8 +116,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private Content createContent()
     {
-        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpg" ).build();
-        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpg" ).build();
+        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpeg" ).build();
         final Attachments attachments = Attachments.from( a1, a2 );
 
         final Content content = Content.create( ContentFixtures.newContent() ).
