@@ -50,7 +50,7 @@ public class FlattenedPageIndexUpgrader
     {
         result = PatternIndexConfigDocument.create( sourceIndexConfigDocument );
 
-        if ( components.size() > 0 )
+        if ( !components.isEmpty() )
         {
             addNewConfigs();
         }
@@ -59,7 +59,7 @@ public class FlattenedPageIndexUpgrader
             upgradeOldConfigs( sourceIndexConfigDocument );
         }
 
-        if ( components.size() > 0 )
+        if ( !components.isEmpty() )
         {
             return removeOldConfigs( this.flattenedPageRegionsIndexUpgrader.upgrade( result.build() ) );
         }

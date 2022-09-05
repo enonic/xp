@@ -23,7 +23,7 @@ public class SiteConfigProcessor
     @Override
     public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
     {
-        if ( this.sizeConfigForms != null && this.sizeConfigForms.size() > 0 )
+        if ( this.sizeConfigForms != null && !this.sizeConfigForms.isEmpty() )
         {
             sizeConfigForms.forEach( form -> {
                 final IndexConfigVisitor indexConfigVisitor =

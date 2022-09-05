@@ -145,7 +145,7 @@ public final class IndexConfig
 
     public boolean isStemmed()
     {
-        return languages.size() > 0;
+        return !languages.isEmpty();
     }
 
     public ImmutableList<String> getLanguages()

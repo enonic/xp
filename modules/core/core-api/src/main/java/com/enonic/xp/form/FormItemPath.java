@@ -74,7 +74,7 @@ public class FormItemPath
                 parentPathElements.add( this.elements.get( i ) );
             }
         }
-        this.parentPath = parentPathElements.size() > 0 ? FormItemPath.from( parentPathElements ) : null;
+        this.parentPath = parentPathElements.isEmpty() ? null : FormItemPath.from( parentPathElements );
         this.refString = toString( this.elements );
     }
 

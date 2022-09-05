@@ -25,7 +25,7 @@ final class XmlInputTypeDefaultMapper
     private void build( final InputTypeDefault.Builder builder, final DomElement root )
     {
         builder.property(
-            InputTypeProperty.create( root.getTagName(), root.getChildren().size() > 0 ? root.serializeBody() : root.getValue() ).build() );
+            InputTypeProperty.create( root.getTagName(), root.getChildren().isEmpty() ? root.getValue() : root.serializeBody() ).build() );
 
         for ( final DomElement child : root.getChildren() )
         {

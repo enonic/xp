@@ -67,7 +67,7 @@ final class ElasticsearchClusterReport
             errorMessages.add( "not able to get cluster health info" );
         }
 
-        if ( errorMessages.size() > 0 )
+        if ( !errorMessages.isEmpty() )
         {
             json.set( "errorMessages", errorMessages );
         }

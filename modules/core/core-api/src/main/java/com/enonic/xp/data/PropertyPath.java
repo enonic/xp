@@ -104,7 +104,7 @@ public final class PropertyPath
                 parentPathElements.add( this.elements.get( i ) );
             }
         }
-        this.parentPath = parentPathElements.size() > 0 ? PropertyPath.from( parentPathElements ) : null;
+        this.parentPath = parentPathElements.isEmpty() ? null :PropertyPath.from( parentPathElements );
     }
 
     private PropertyPath( final PropertyPath parentPath, final Element element )
