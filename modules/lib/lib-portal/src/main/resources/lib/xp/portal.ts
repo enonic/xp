@@ -424,6 +424,25 @@ interface GetCurrentComponentHandler {
     execute(): object;
 }
 
+
+export type Component<
+  Config extends object = object,
+  Regions extends Record<string,Region> = Record<string,Region>
+> = {
+  config :Config
+  descriptor :string
+  path :string
+  type :'page'|'layout'|'part'
+  regions :Regions
+}
+
+export type Region<
+  Config extends object = object
+> = {
+  components :Array<Component<Config>>
+}
+
+
 /**
  * This function returns the component corresponding to the current execution context. It is meant to be called
  * from a layout or part controller.
@@ -432,9 +451,12 @@ interface GetCurrentComponentHandler {
  *
  * @returns {object} The current component as JSON.
  */
-export function getComponent(): object {
+export function getComponent<
+  Config extends object = object,
+  Regions extends Record<string,Region> = Record<string,Region>
+>() :Component<Config,Regions> {
     const bean = __.newBean<GetCurrentComponentHandler>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute()) as Component<Config,Regions>;
 }
 
 interface GetCurrentIdProviderKeyHandler {
