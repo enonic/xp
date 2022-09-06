@@ -8,12 +8,12 @@ import com.enonic.xp.resource.Resource;
 public final class RealOverVirtualApplicationUrlResolver
     implements ApplicationUrlResolver
 {
-    private final NodeResourceApplicationUrlResolver virtualAppResolver;
+    private final ApplicationUrlResolver virtualAppResolver;
 
     private final ApplicationUrlResolver realAppResolver;
 
     public RealOverVirtualApplicationUrlResolver( final ApplicationUrlResolver realAppResolver,
-                                                  final NodeResourceApplicationUrlResolver virtualAppResolver )
+                                                  final ApplicationUrlResolver virtualAppResolver )
     {
         this.virtualAppResolver = virtualAppResolver;
         this.realAppResolver = realAppResolver;
