@@ -9,6 +9,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.processor.ProcessorChainResolver;
 import com.enonic.xp.portal.impl.processor.ResponseProcessorExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 
 @Component(immediate = true, service = Renderer.class)
@@ -16,11 +17,10 @@ public final class ControllerMappingRenderer
     extends PostProcessingRenderer<ControllerMappingDescriptor>
 {
     @Activate
-    public ControllerMappingRenderer( @Reference final PostProcessor postProcessor,
-                                      @Reference final ResponseProcessorExecutor processorExecutor,
+    public ControllerMappingRenderer( @Reference final PostProcessor postProcessor, @Reference final PortalScriptService scriptService,
                                       @Reference final ProcessorChainResolver processorChainResolver )
     {
-        super( postProcessor, processorExecutor, processorChainResolver );
+        super( postProcessor, new ResponseProcessorExecutor( scriptService ), processorChainResolver );
     }
 
     @Override
