@@ -429,17 +429,17 @@ export type Component<
   Config extends object = object,
   Regions extends Record<string,Region> = Record<string,Region>
 > = {
-  config :Config
-  descriptor :string
-  path :string
-  type :'page'|'layout'|'part'
-  regions :Regions
+  config: Config
+  descriptor: string
+  path: string
+  type: 'page'|'layout'|'part'
+  regions: Regions
 }
 
 export type Region<
   Config extends object = object
 > = {
-  components :Array<Component<Config>>
+  components: Component<Config>[]
 }
 
 
@@ -454,7 +454,7 @@ export type Region<
 export function getComponent<
   Config extends object = object,
   Regions extends Record<string,Region> = Record<string,Region>
->() :Component<Config,Regions> {
+>(): Component<Config,Regions> {
     const bean = __.newBean<GetCurrentComponentHandler>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute()) as Component<Config,Regions>;
 }
