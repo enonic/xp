@@ -45,6 +45,10 @@ import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
+import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
+import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -104,9 +108,11 @@ import com.enonic.xp.xml.XmlException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DynamicSchemaServiceImplTest
@@ -128,6 +134,14 @@ public class DynamicSchemaServiceImplTest
     {
         return ContextBuilder.copyOf( ctxDefault() )
             .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).user( User.ANONYMOUS ).build() )
+            .build();
+    }
+
+    private static Context createSchemaAdminContext()
+    {
+        return ContextBuilder.copyOf( ctxDefault() )
+            .authInfo(
+                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.ANONYMOUS ).build() )
             .build();
     }
 
@@ -236,14 +250,23 @@ public class DynamicSchemaServiceImplTest
         ApplicationRegistry applicationRegistry =
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
 
-        VirtualAppService virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class );
+        when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+
+        final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
+        securityAuditLogSupport.activate( securityConfig );
+
+        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
+        securityService.initialize();
+
+        VirtualAppService virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService, securityService );
         virtualAppService.initialize();
 
         ApplicationService applicationService =
             new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
                                         virtualAppService, new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
-        createAdminContext().runWith( () -> applicationService.createVirtualApplication(
+        createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
 
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
@@ -406,6 +429,42 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
+    public void createMixinSchemaAsDevSchemaAdmin()
+        throws Exception
+    {
+        final String resource = readResource( "_mixin.xml" );
+
+        CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( resource )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        final DynamicSchemaResult<BaseSchema<?>> result =
+            createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        assertNotNull( result.getResource() );
+    }
+
+    @Test
+    public void createMixinSchemaAsNonSchemaAdmin()
+        throws Exception
+    {
+        final String resource = readResource( "_mixin.xml" );
+
+        CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( resource )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        assertThrows( ForbiddenAccessException.class,
+                      () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) ) );
+    }
+
+    @Test
     public void updateMixinSchema()
         throws Exception
     {
@@ -457,6 +516,62 @@ public class DynamicSchemaServiceImplTest
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
+
+    @Test
+    public void updateMixinSchemaAsSchemaAdmin()
+        throws Exception
+    {
+
+        final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( "<mixin></mixin>" )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        final String resource = readResource( "_mixin.xml" );
+
+        final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( resource )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        final DynamicSchemaResult<BaseSchema<?>> result =
+            createSchemaAdminContext().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) );
+
+        assertNotNull( result.getResource() );
+    }
+
+    @Test
+    public void updateMixinSchemaAsNonSchemaAdmin()
+        throws Exception
+    {
+        final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( "<mixin></mixin>" )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        final String resource = readResource( "_mixin.xml" );
+
+        final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
+            .name( MixinName.from( "myapp:mymixin" ) )
+            .resource( resource )
+            .type( DynamicContentSchemaType.MIXIN )
+            .build();
+
+        assertThrows( ForbiddenAccessException.class,
+                      () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) ) );
+    }
+
 
     @Test
     public void createXDataSchema()
@@ -1192,7 +1307,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listMixinTypes()
+    public void listMixins()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
@@ -1236,6 +1351,95 @@ public class DynamicSchemaServiceImplTest
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin3 ) );
 
+    }
+
+    @Test
+    public void listMixinsAsSchemaAdmin()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        List<DynamicSchemaResult<BaseSchema<?>>> results = createSchemaAdminContext().callWith(
+            () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                               .applicationKey( applicationKey )
+                                                               .type( DynamicContentSchemaType.MIXIN )
+                                                               .build() ) );
+
+        assertTrue( results.isEmpty() );
+
+        DynamicSchemaResult<Mixin> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "myapp:mytype1" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+        DynamicSchemaResult<Mixin> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "myapp:mytype2" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+        DynamicSchemaResult<Mixin> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "my-other-app:mytype" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
+            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
+
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin2, mixin1 ) );
+
+        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                                                                    .applicationKey( ApplicationKey.from(
+                                                                                                        "my-other-app" ) )
+                                                                                                    .type( DynamicContentSchemaType.MIXIN )
+                                                                                                    .build() ) );
+
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin3 ) );
+
+    }
+
+    @Test
+    public void listMixinsAsNonSchemaAdmin()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        List<DynamicSchemaResult<BaseSchema<?>>> results = createSchemaAdminContext().callWith(
+            () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                               .applicationKey( applicationKey )
+                                                               .type( DynamicContentSchemaType.MIXIN )
+                                                               .build() ) );
+
+        assertTrue( results.isEmpty() );
+
+         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "myapp:mytype1" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "myapp:mytype2" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( MixinName.from( "my-other-app:mytype" ) )
+                .resource( readResource( "_mixin.xml" ) )
+                .type( DynamicContentSchemaType.MIXIN )
+                .build() ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        assertThrows( ForbiddenAccessException.class, () ->  VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.listContentSchemas(
+            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() )) );
     }
 
     @Test
@@ -1320,6 +1524,50 @@ public class DynamicSchemaServiceImplTest
                                                                                                         contentType.getSchema().getName() )
                                                                                                     .build() ) ) ).isNull();
     }
+
+    @Test
+    public void deleteContentTypeComponentAsSchemaAdmin()
+        throws Exception
+    {
+        DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( ContentTypeName.from( "myapp:mytype" ) )
+                .resource( readResource( "_contentType.xml" ) )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        final boolean result = createSchemaAdminContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
+            DeleteDynamicContentSchemaParams.create()
+                .name( contentType.getSchema().getName() )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) );
+
+        assertThat( result ).isTrue();
+    }
+
+    @Test
+    public void deleteContentTypeComponentAsNonSchemaAdmin()
+        throws Exception
+    {
+        DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+            CreateDynamicContentSchemaParams.create()
+                .name( ContentTypeName.from( "myapp:mytype" ) )
+                .resource( readResource( "_contentType.xml" ) )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) );
+
+        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+
+        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
+            DeleteDynamicContentSchemaParams.create()
+                .name( contentType.getSchema().getName() )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) ));
+
+    }
+
 
     @Test
     public void deletePartComponent()

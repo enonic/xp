@@ -85,7 +85,7 @@ public class ApplicationServiceTest
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ),
-                                                              new VirtualAppService( indexService, repositoryService, nodeService ),
+                                                              new VirtualAppService( indexService, repositoryService, nodeService, securityService ),
                                                               applicationAuditLogSupport );
     }
 
