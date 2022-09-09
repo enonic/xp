@@ -163,7 +163,7 @@ interface GetUserHandler {
  *
  * @returns {User} Information for logged-in user.
  */
-export function getUser(params ?:GetUserParams): User {
+export function getUser(params?: GetUserParams): User {
     const {
         includeProfile = false,
     } = params ?? {};
