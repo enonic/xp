@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
 import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -12,6 +10,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.region.TextComponent;
@@ -33,8 +32,6 @@ public final class TextRenderer
     private static final String COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section>{1}</section></div>";
 
     private static final String COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
-
-    private static final Pattern EMPTY_FIGCAPTION_PATTERN = Pattern.compile( "<figcaption.*?></figcaption>" );
 
     @Override
     public Class<TextComponent> getType()
@@ -63,8 +60,16 @@ public final class TextRenderer
             }
             else
             {
-                ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
-                final String processedHtml = removeEmptyFigCaptionTags( service.processHtml( params ) );
+                ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).
+                    value( textComponent.getText() ).
+                    customHtmlProcessor( processor -> {
+                        processor.processDefault();
+                        processor.getDocument().select( "figcaption:empty" ).
+                            forEach( HtmlElement::remove );
+                        return processor.getDocument().getInnerHtml();
+                    } );
+
+                final String processedHtml = service.processHtml( params );
                 portalResponseBuilder.body(
                     MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
             }
@@ -91,13 +96,6 @@ public final class TextRenderer
                 portalResponseBuilder.body( "" );
                 break;
         }
-    }
-
-    private String removeEmptyFigCaptionTags( final String text )
-    {
-        final Matcher matcher = EMPTY_FIGCAPTION_PATTERN.matcher( text );
-
-        return matcher.replaceAll( "" );
     }
 
     @Reference

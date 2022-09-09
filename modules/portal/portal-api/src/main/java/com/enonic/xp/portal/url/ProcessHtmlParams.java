@@ -2,6 +2,7 @@ package com.enonic.xp.portal.url;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
@@ -19,6 +20,10 @@ public final class ProcessHtmlParams
     private List<Integer> imageWidths;
 
     private String imageSizes;
+
+    private Function<HtmlProcessorParams, String> customHtmlProcessor;
+
+    private boolean processMacros = true;
 
     public String getValue()
     {
@@ -50,6 +55,28 @@ public final class ProcessHtmlParams
     public ProcessHtmlParams imageSizes( final String imageSizes )
     {
         this.imageSizes = imageSizes;
+        return this;
+    }
+
+    public Function<HtmlProcessorParams, String> getCustomHtmlProcessor()
+    {
+        return customHtmlProcessor;
+    }
+
+    public ProcessHtmlParams customHtmlProcessor( final Function<HtmlProcessorParams, String> customHtmlProcessor )
+    {
+        this.customHtmlProcessor = customHtmlProcessor;
+        return this;
+    }
+
+    public boolean isProcessMacros()
+    {
+        return processMacros;
+    }
+
+    public ProcessHtmlParams processMacros( final boolean processMacros )
+    {
+        this.processMacros = processMacros;
         return this;
     }
 
