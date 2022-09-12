@@ -13,8 +13,8 @@ public class FiltersTest
     public void testBuilder()
     {
         final Filters filters = Filters.create().
-            add( ExistsFilter.create().build() ).
-            addAll( List.of( ExistsFilter.create().build(), ExistsFilter.create().build() ) ).
+            add( ExistsFilter.create().fieldName( "fieldName" ).build() ).
+            addAll( List.of( ExistsFilter.create().fieldName( "fieldName" ).build(), ExistsFilter.create().fieldName( "fieldName" ).build() ) ).
             build();
 
         assertNotNull( filters );
@@ -24,7 +24,7 @@ public class FiltersTest
     @Test
     public void from()
     {
-        final Filters filters = Filters.from( ExistsFilter.create().build(), ExistsFilter.create().build() );
+        final Filters filters = Filters.from( ExistsFilter.create().fieldName( "fieldName" ).build(), ExistsFilter.create().fieldName( "fieldName" ).build() );
 
         assertNotNull( filters );
         assertEquals( 2, filters.getSize() );

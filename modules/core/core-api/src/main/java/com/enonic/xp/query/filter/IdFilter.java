@@ -9,14 +9,10 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 public class IdFilter
     extends FieldFilter
 {
     private final List<String> values;
-
-    private final String defaultIdFieldName = NodeIndexPath.ID.getPath();
 
     private IdFilter( final Builder builder )
     {
@@ -27,11 +23,6 @@ public class IdFilter
     @Override
     public String getFieldName()
     {
-        if ( isNullOrEmpty( this.fieldName ) )
-        {
-            return defaultIdFieldName;
-        }
-
         return this.fieldName;
     }
 
@@ -62,6 +53,7 @@ public class IdFilter
 
         private Builder()
         {
+            this.fieldName( NodeIndexPath.ID.getPath() );
         }
 
         public Builder values( final NodeIds val )
