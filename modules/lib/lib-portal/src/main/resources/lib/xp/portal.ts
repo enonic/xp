@@ -420,9 +420,24 @@ export function getContent(): object {
     return __.toNativeObject(bean.execute());
 }
 
-interface GetCurrentComponentHandler {
-    execute(): object;
+export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {
+    config: Config;
+    descriptor: string;
+    path: string;
+    type: 'page' | 'layout' | 'part';
+    regions: Regions;
 }
+
+export interface Region<Config extends object = object> {
+    components: Component<Config>[];
+}
+
+interface GetCurrentComponentHandler<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>> {
+
+    execute(): Component<Config, Regions>;
+}
+
 
 /**
  * This function returns the component corresponding to the current execution context. It is meant to be called
@@ -432,8 +447,11 @@ interface GetCurrentComponentHandler {
  *
  * @returns {object} The current component as JSON.
  */
-export function getComponent(): object {
-    const bean = __.newBean<GetCurrentComponentHandler>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+export function getComponent<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>,
+    >(): Component<Config, Regions> {
+
+    const bean = __.newBean<GetCurrentComponentHandler<Config, Regions>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 
