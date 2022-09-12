@@ -8,13 +8,19 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 public final class VirtualAppConstants
 {
     public static final RepositoryId VIRTUAL_APP_REPO_ID = RepositoryId.from( "system.app" );
 
-    public static final AccessControlList VIRTUAL_APP_REPO_DEFAULT_ACL =
-        AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
+    public static final AccessControlList VIRTUAL_APP_REPO_DEFAULT_ACL = AccessControlList.create()
+        .add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() )
+        .add( AccessControlEntry.create()
+                  .principal( RoleKeys.SCHEMA_ADMIN )
+                  .allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE )
+                  .build() )
+        .build();
 
     public static final String MIXIN_ROOT_NAME = "mixins";
 

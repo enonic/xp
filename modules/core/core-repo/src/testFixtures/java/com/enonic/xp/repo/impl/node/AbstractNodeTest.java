@@ -16,9 +16,10 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.VirtualAppRepoInitializer;
+import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
@@ -70,6 +71,7 @@ import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -77,6 +79,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
@@ -147,6 +150,8 @@ public abstract class AbstractNodeTest
     protected EventPublisher eventPublisher;
 
     protected IndexServiceImpl indexService;
+
+    protected SecurityServiceImpl securityService;
 
     protected static Context ctxDefault()
     {
@@ -254,7 +259,7 @@ public abstract class AbstractNodeTest
 
         SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        VirtualAppRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
+        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).setSecurityService( mock( SecurityService.class ) ).build().initialize();
     }
 
     private void setUpRepositoryServices()

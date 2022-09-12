@@ -9,14 +9,11 @@ import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.security.PrincipalKey;
 
 class ApplicationRepoInitializer
     extends ExternalInitializer
 {
     private final NodeService nodeService;
-
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
 
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
 

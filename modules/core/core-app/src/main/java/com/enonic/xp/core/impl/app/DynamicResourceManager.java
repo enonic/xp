@@ -36,7 +36,7 @@ final class DynamicResourceManager
             if ( resourceFolder == null )
             {
                 resourceFolder = nodeService.create(
-                    CreateNodeParams.create().name( folderPath.getName() ).parent( folderPath.getParentPath() ).build() );
+                    CreateNodeParams.create().name( folderPath.getName() ).parent( folderPath.getParentPath() ).inheritPermissions( true ).build() );
             }
 
             final PropertyTree resourceData = new PropertyTree();
@@ -47,7 +47,7 @@ final class DynamicResourceManager
             }
 
             final Node schemaNode = nodeService.create(
-                CreateNodeParams.create().parent( resourceFolder.path() ).name( name + ".xml" ).data( resourceData ).build() );
+                CreateNodeParams.create().parent( resourceFolder.path() ).name( name + ".xml" ).data( resourceData ).inheritPermissions( true ).build() );
 
             final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
             final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );

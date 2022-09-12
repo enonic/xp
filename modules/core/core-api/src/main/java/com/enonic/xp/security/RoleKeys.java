@@ -39,4 +39,6 @@ public final class RoleKeys
 
     public static final PrincipalKey CONTENT_MANAGER_ADMIN = PrincipalKey.ofRole( CONTENT_MANAGER_ADMIN_ID );
 
+    public static final PrincipalKey SCHEMA_ADMIN = PrincipalKey.ofRole( "system.schema.admin" );
+
 }

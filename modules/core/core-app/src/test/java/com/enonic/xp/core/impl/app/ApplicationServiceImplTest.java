@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -46,6 +47,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.SecurityService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,7 +106,9 @@ public class ApplicationServiceImplTest
         final RepositoryService repositoryService = mock( RepositoryService.class );
         nodeService = mock( NodeService.class );
 
-        virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService );
+        SecurityService securityService = mock( SecurityService.class );
+
+        virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService, securityService );
 
         this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
                                                    virtualAppService, auditLogSupport );
@@ -167,9 +171,22 @@ public class ApplicationServiceImplTest
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
-        final Application result = this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() );
+        final Application result = VirtualAppContext.createAdminContext()
+            .callWith( () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
 
         assertEquals( appKey, result.getKey() );
+    }
+
+    @Test
+    public void create_virtual_application_without_admin()
+        throws Exception
+    {
+        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+
+        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
+
+        assertThrows( ForbiddenAccessException.class, () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
     }
 
     @Test
@@ -181,7 +198,19 @@ public class ApplicationServiceImplTest
 
         when( nodeService.deleteByPath( NodePath.create( "/app1" ).build() ) ).thenReturn( NodeIds.from( appNode.id() ) );
 
-        assertTrue( this.service.deleteVirtualApplication( appKey ) );
+        assertTrue(  VirtualAppContext.createAdminContext().callWith(  () ->this.service.deleteVirtualApplication( appKey ) ));
+    }
+
+    @Test
+    public void delete_virtual_application_without_admin()
+        throws Exception
+    {
+        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+
+        when( nodeService.deleteByPath( NodePath.create( "/app1" ).build() ) ).thenReturn( NodeIds.from( appNode.id() ) );
+
+        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
     }
 
     @Test
@@ -952,7 +981,8 @@ public class ApplicationServiceImplTest
             return null;
         } );
 
-        virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() );
+        VirtualAppContext.createAdminContext()
+            .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
 
         assertTrue( service.hasVirtual( applicationKey ) );
     }

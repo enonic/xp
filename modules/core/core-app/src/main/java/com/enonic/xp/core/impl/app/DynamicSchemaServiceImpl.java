@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
@@ -37,6 +39,8 @@ import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -58,6 +62,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( final CreateDynamicComponentParams params )
     {
+        requireAdminRole();
+
         final ComponentDescriptor descriptor =
             dynamicResourceParser.parseComponent( params.getKey(), params.getType(), params.getResource() );
 
@@ -72,6 +78,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( final UpdateDynamicComponentParams params )
     {
+        requireAdminRole();
+
         final ComponentDescriptor descriptor =
             dynamicResourceParser.parseComponent( params.getKey(), params.getType(), params.getResource() );
 
@@ -86,6 +94,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( final CreateDynamicContentSchemaParams params )
     {
+        requireAdminRole();
+
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
@@ -98,6 +108,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( final UpdateDynamicContentSchemaParams params )
     {
+        requireAdminRole();
+
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), params.getResource() );
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
@@ -109,6 +121,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<SiteDescriptor> createSite( final CreateDynamicSiteParams params )
     {
+        requireAdminRole();
+
         final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
@@ -121,6 +135,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<SiteDescriptor> updateSite( final UpdateDynamicSiteParams params )
     {
+        requireAdminRole();
+
         final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
@@ -135,6 +151,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<StyleDescriptor> createStyles( final CreateDynamicStylesParams params )
     {
+        requireAdminRole();
+
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
@@ -147,6 +165,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<StyleDescriptor> updateStyles( final UpdateDynamicStylesParams params )
     {
+        requireAdminRole();
+
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
@@ -159,6 +179,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends ComponentDescriptor> DynamicSchemaResult<T> getComponent( final GetDynamicComponentParams params )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
 
@@ -174,6 +196,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends ComponentDescriptor> List<DynamicSchemaResult<T>> listComponents( final ListDynamicComponentsParams params )
     {
+        requireAdminRole();
+
         return dynamicResourceManager.listResources( createComponentRootPath( params.getKey(), params.getType() ) )
             .stream()
             .map( resource -> {
@@ -190,6 +214,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends BaseSchema<?>> DynamicSchemaResult<T> getContentSchema( final GetDynamicContentSchemaParams params )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
 
@@ -205,6 +231,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<SiteDescriptor> getSite( final ApplicationKey key )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createSiteFolderPath( key );
 
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME );
@@ -220,6 +248,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<StyleDescriptor> getStyles( final ApplicationKey key )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createSiteFolderPath( key );
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME );
 
@@ -234,6 +264,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public boolean deleteComponent( final DeleteDynamicComponentParams params )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
         return dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
     }
@@ -241,6 +273,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public boolean deleteContentSchema( final DeleteDynamicContentSchemaParams params )
     {
+        requireAdminRole();
+
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
     }
@@ -248,6 +282,8 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( final ListDynamicContentSchemasParams params )
     {
+        requireAdminRole();
+
         final NodePath componentRootPath = createSchemaRootPath( params.getKey(), params.getType() );
 
         return dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
@@ -258,6 +294,24 @@ public class DynamicSchemaServiceImpl
 
             return new DynamicSchemaResult<T>( (T) schema, resource );
         } ).collect( Collectors.<DynamicSchemaResult<T>>toList() );
+    }
+
+    @Override
+    public boolean deleteSite( final ApplicationKey key )
+    {
+        requireAdminRole();
+
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
+    }
+
+    @Override
+    public boolean deleteStyles( final ApplicationKey key )
+    {
+        requireAdminRole();
+
+        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
@@ -278,20 +332,6 @@ public class DynamicSchemaServiceImpl
     private String getResourceName( final ResourceKey resourceKey )
     {
         return resourceKey.getName().substring( 0, resourceKey.getName().lastIndexOf( "." + resourceKey.getExtension() ) );
-    }
-
-    @Override
-    public boolean deleteSite( final ApplicationKey key )
-    {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
-    }
-
-    @Override
-    public boolean deleteStyles( final ApplicationKey key )
-    {
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 
     private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )
@@ -357,6 +397,16 @@ public class DynamicSchemaServiceImpl
                 return VirtualAppConstants.LAYOUT_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic component type: " + type );
+        }
+    }
+
+    private void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
+        if ( !hasAdminRole )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
         }
     }
 }
