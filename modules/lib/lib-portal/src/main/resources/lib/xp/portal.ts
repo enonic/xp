@@ -420,26 +420,22 @@ export function getContent(): object {
     return __.toNativeObject(bean.execute());
 }
 
-interface GetCurrentComponentHandler {
-    execute(): object;
+export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {
+    config: Config;
+    descriptor: string;
+    path: string;
+    type: 'page' | 'layout' | 'part';
+    regions: Regions;
 }
 
-
-export type Component<
-  Config extends object = object,
-  Regions extends Record<string,Region> = Record<string,Region>
-> = {
-  config: Config
-  descriptor: string
-  path: string
-  type: 'page'|'layout'|'part'
-  regions: Regions
+export interface Region<Config extends object = object> {
+    components: Component<Config>[];
 }
 
-export type Region<
-  Config extends object = object
-> = {
-  components: Component<Config>[]
+interface GetCurrentComponentHandler<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>> {
+
+    execute(): Component<Config, Regions>;
 }
 
 
@@ -451,12 +447,12 @@ export type Region<
  *
  * @returns {object} The current component as JSON.
  */
-export function getComponent<
-  Config extends object = object,
-  Regions extends Record<string,Region> = Record<string,Region>
->(): Component<Config,Regions> {
-    const bean = __.newBean<GetCurrentComponentHandler>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
-    return __.toNativeObject(bean.execute()) as Component<Config,Regions>;
+export function getComponent<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>,
+    >(): Component<Config, Regions> {
+
+    const bean = __.newBean<GetCurrentComponentHandler<Config, Regions>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+    return __.toNativeObject(bean.execute());
 }
 
 interface GetCurrentIdProviderKeyHandler {
