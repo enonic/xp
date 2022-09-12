@@ -46,6 +46,7 @@ import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 
@@ -329,6 +330,7 @@ class RepoDumper
         {
             final Value ageValue = ValueFactory.newDateTime( Instant.now().minus( Duration.ofDays( this.maxAge ) ) );
             queryBuilder.addQueryFilter( RangeFilter.create().
+                    fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
                 from( ageValue ).
                 build() );
         }

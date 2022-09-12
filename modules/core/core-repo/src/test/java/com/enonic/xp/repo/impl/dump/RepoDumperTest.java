@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -59,10 +60,7 @@ public class RepoDumperTest
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
 
-        updateNode( UpdateNodeParams.create().
-            id( node1.id() ).
-            editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).
-            build() );
+        updateNode( UpdateNodeParams.create().id( node1.id() ).editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).build() );
 
         final TestDumpWriter writer = new TestDumpWriter();
 
@@ -84,12 +82,12 @@ public class RepoDumperTest
         final PropertyTree data = new PropertyTree();
         data.addBinaryReference( "myBinaryRef", fiskRef );
 
-        final Node node1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myName" ).
-            data( data ).
-            attachBinary( fiskRef, ByteSource.wrap( "myBinaryData".getBytes() ) ).
-            build() );
+        final Node node1 = createNode( CreateNodeParams.create()
+                                           .parent( NodePath.ROOT )
+                                           .name( "myName" )
+                                           .data( data )
+                                           .attachBinary( fiskRef, ByteSource.wrap( "myBinaryData".getBytes() ) )
+                                           .build() );
 
         final AttachedBinary attachedBinary = node1.getAttachedBinaries().getByBinaryReference( fiskRef );
 
@@ -110,22 +108,18 @@ public class RepoDumperTest
         final PropertyTree data = new PropertyTree();
         data.addBinaryReference( "myBinaryRef", ref1 );
 
-        final Node node1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myName" ).
-            data( data ).
-            attachBinary( ref1, ByteSource.wrap( "myBinaryData".getBytes() ) ).
-            build() );
+        final Node node1 = createNode( CreateNodeParams.create()
+                                           .parent( NodePath.ROOT )
+                                           .name( "myName" )
+                                           .data( data )
+                                           .attachBinary( ref1, ByteSource.wrap( "myBinaryData".getBytes() ) )
+                                           .build() );
 
         final AttachedBinary originalBinary = node1.getAttachedBinaries().getByBinaryReference( ref1 );
 
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
-            id( node1.id() ).
-            editor( ( e ) -> {
+        final Node updatedNode = updateNode( UpdateNodeParams.create().id( node1.id() ).editor( ( e ) -> {
 
-            } ).
-            attachBinary( ref2, ByteSource.wrap( "myOtherBinaryData".getBytes() ) ).
-            build() );
+        } ).attachBinary( ref2, ByteSource.wrap( "myOtherBinaryData".getBytes() ) ).build() );
 
         final AttachedBinary updateBinary = updatedNode.getAttachedBinaries().getByBinaryReference( ref1 );
 
@@ -137,16 +131,50 @@ public class RepoDumperTest
         assertTrue( writer.getBinaries().contains( BlobKey.from( updateBinary.getBlobKey() ) ) );
     }
 
+    @Test
+    public void versions_max_age_filter()
+        throws Exception
+    {
+        final Node node1 = createNode( NodePath.ROOT, "myNode" );
+        createNode( node1.path(), "myChild" );
+        final Node node2 = createNode( node1.path(), "myChild2" );
+        createNode( node1.path(), "myChild3" );
+        refresh();
+
+        nodeService.update( UpdateNodeParams.create().id( node1.id() ).editor( ( e ) -> {
+            e.data.addBoolean( "bool", true );
+        } ).build() );
+        nodeService.update( UpdateNodeParams.create().id( node2.id() ).editor( ( e ) -> {
+            e.data.addBoolean( "bool", true );
+        } ).build() );
+
+        refresh();
+
+        final TestDumpWriter writer = new TestDumpWriter();
+
+        RepoDumpResult result = doDump( writer, -1 );
+        assertEquals( 0, result.getVersions() );
+
+        result = doDump( writer, 1 );
+        assertEquals( 8, result.getVersions() );
+    }
+
     private void doDump( final TestDumpWriter writer )
     {
-        NodeHelper.runAsAdmin( () -> RepoDumper.create().
-            nodeService( this.nodeService ).
-            writer( writer ).
-            includeBinaries( true ).
-            includeVersions( true ).
-            repository( this.repositoryService.get( TEST_REPO_ID ) ).
-            build().
-            execute() );
+        doDump( writer, null );
+    }
+
+    private RepoDumpResult doDump( final TestDumpWriter writer, final Integer maxAge )
+    {
+        return NodeHelper.runAsAdmin( () -> RepoDumper.create()
+            .nodeService( this.nodeService )
+            .writer( writer )
+            .includeBinaries( true )
+            .includeVersions( true )
+            .repository( this.repositoryService.get( TEST_REPO_ID ) )
+            .maxAge( maxAge )
+            .build()
+            .execute() );
     }
 }
 

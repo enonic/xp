@@ -1,5 +1,7 @@
 package com.enonic.xp.query.filter;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -11,7 +13,7 @@ public abstract class FieldFilter
     protected FieldFilter( final Builder builder )
     {
         super( builder );
-        this.fieldName = builder.fieldName;
+        this.fieldName = Objects.requireNonNull( builder.fieldName );
     }
 
     public String getFieldName()
