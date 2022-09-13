@@ -60,6 +60,7 @@ class ContentVersionFactory
 
         return ContentVersion.create()
             .displayName( data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString() )
+            .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
             .comment( "No comments" )
             .modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() )
             .timestamp( nodeVersionMetadata.getTimestamp() )

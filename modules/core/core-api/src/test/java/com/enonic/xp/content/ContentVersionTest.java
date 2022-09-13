@@ -43,6 +43,7 @@ public class ContentVersionTest
 
         final ContentVersion version = ContentVersion.create()
             .id( ContentVersionId.from( "a" ) )
+            .path( ContentPath.from( ContentPath.ROOT, "a" ) )
             .modified( now1 )
             .timestamp( now2 )
             .childOrder( ChildOrder.manualOrder() )
@@ -62,6 +63,7 @@ public class ContentVersionTest
         assertEquals( publishInfo, version.getPublishInfo() );
         assertEquals( workflowInfo, version.getWorkflowInfo() );
         assertEquals( ChildOrder.manualOrder(), version.getChildOrder() );
+        assertEquals( "/a", version.getPath().toString() );
     }
 
     @Test
