@@ -8,6 +8,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,6 +45,11 @@ public class ContentVersionTest
 
         final WorkflowInfo workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build();
 
+        final AccessControlList permissions = AccessControlList.create()
+            .add(
+                AccessControlEntry.create().allow( Permission.CREATE, Permission.READ_PERMISSIONS ).principal( RoleKeys.EVERYONE ).build() )
+            .build();
+
         final ContentVersion version = ContentVersion.create()
             .id( ContentVersionId.from( "a" ) )
             .path( ContentPath.from( ContentPath.ROOT, "a" ) )
@@ -52,6 +61,7 @@ public class ContentVersionTest
             .comment( "comment" )
             .publishInfo( publishInfo )
             .workflowInfo( workflowInfo )
+            .permissions( permissions )
             .build();
 
         assertEquals( ContentVersionId.from( "a" ), version.getId() );
@@ -63,6 +73,7 @@ public class ContentVersionTest
         assertEquals( publishInfo, version.getPublishInfo() );
         assertEquals( workflowInfo, version.getWorkflowInfo() );
         assertEquals( ChildOrder.manualOrder(), version.getChildOrder() );
+        assertEquals( permissions, version.getPermissions() );
         assertEquals( "/a", version.getPath().toString() );
     }
 

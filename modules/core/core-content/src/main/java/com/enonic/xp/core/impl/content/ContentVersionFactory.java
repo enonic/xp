@@ -69,6 +69,7 @@ class ContentVersionFactory
             .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
             .publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId(), data.getRoot() ) )
             .workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) )
+            .permissions( nodeVersion.getPermissions() )
             .build();
     }
 
