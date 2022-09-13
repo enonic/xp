@@ -17,6 +17,8 @@ public final class ContentVersion
 
     private final String displayName;
 
+    private final ContentPath path;
+
     private final Instant modified;
 
     private final Instant timestamp;
@@ -33,6 +35,7 @@ public final class ContentVersion
     {
         this.modifier = builder.modifier;
         this.displayName = builder.displayName;
+        this.path = builder.path;
         this.modified = builder.modified;
         this.comment = builder.comment;
         this.timestamp = builder.timestamp;
@@ -87,6 +90,11 @@ public final class ContentVersion
         return workflowInfo;
     }
 
+    public ContentPath getPath()
+    {
+        return path;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -125,13 +133,13 @@ public final class ContentVersion
             Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
             Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflowInfo, that.workflowInfo );
+            Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( path, that.path );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo );
+        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path );
     }
 
     public static final class Builder
@@ -139,6 +147,8 @@ public final class ContentVersion
         private PrincipalKey modifier;
 
         private String displayName;
+
+        private ContentPath path;
 
         private Instant modified;
 
@@ -173,6 +183,12 @@ public final class ContentVersion
         public Builder displayName( String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder path( ContentPath path )
+        {
+            this.path = path;
             return this;
         }
 
