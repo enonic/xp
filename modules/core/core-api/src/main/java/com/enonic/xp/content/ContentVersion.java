@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ContentVersion
@@ -31,6 +32,8 @@ public final class ContentVersion
 
     private final WorkflowInfo workflowInfo;
 
+    private final AccessControlList permissions;
+
     private ContentVersion( Builder builder )
     {
         this.modifier = builder.modifier;
@@ -43,6 +46,7 @@ public final class ContentVersion
         this.id = builder.id;
         this.publishInfo = builder.publishInfo;
         this.workflowInfo = builder.workflowInfo;
+        this.permissions = builder.permissions;
     }
 
     public PrincipalKey getModifier()
@@ -95,6 +99,11 @@ public final class ContentVersion
         return path;
     }
 
+    public AccessControlList getPermissions()
+    {
+        return permissions;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -133,13 +142,13 @@ public final class ContentVersion
             Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
             Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( path, that.path );
+            Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions )  && Objects.equals( path, that.path );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path );
+        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path, permissions );
     }
 
     public static final class Builder
@@ -163,6 +172,8 @@ public final class ContentVersion
         private ContentVersionPublishInfo publishInfo;
 
         private WorkflowInfo workflowInfo;
+
+        private AccessControlList permissions;
 
         private Builder()
         {
@@ -225,6 +236,12 @@ public final class ContentVersion
         public Builder workflowInfo( WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder permissions( AccessControlList permissions )
+        {
+            this.permissions = permissions;
             return this;
         }
 
