@@ -6,6 +6,7 @@ import com.enonic.xp.data.ValueFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RangeFilterTest
@@ -13,11 +14,12 @@ public class RangeFilterTest
     @Test
     public void testBuilder()
     {
-        final RangeFilter rangeFilter = RangeFilter.create().
-            from( ValueFactory.newDouble( 2.0 ) ).
-            to( ValueFactory.newDouble( 50.0 ) ).
-            setCache( true ).
-            build();
+        final RangeFilter rangeFilter = RangeFilter.create()
+            .from( ValueFactory.newDouble( 2.0 ) )
+            .to( ValueFactory.newDouble( 50.0 ) )
+            .fieldName( "fieldName" )
+            .setCache( true )
+            .build();
 
         assertNotNull( rangeFilter );
         assertEquals( ValueFactory.newDouble( 2.0 ), rangeFilter.getFrom() );
@@ -28,12 +30,23 @@ public class RangeFilterTest
     @Test
     public void testToString()
     {
-        final RangeFilter filter = RangeFilter.create().
-            from( ValueFactory.newDouble( 2.0 ) ).
-            to( ValueFactory.newDouble( 50.0 ) ).
-            setCache( true ).
-            build();
+        final RangeFilter filter = RangeFilter.create()
+            .from( ValueFactory.newDouble( 2.0 ) )
+            .to( ValueFactory.newDouble( 50.0 ) )
+            .setCache( true )
+            .fieldName( "fieldName" )
+            .build();
 
-        assertEquals( "RangeFilter{from=2.0, to=50.0, includeLower=true, includeUpper=true}", filter.toString() );
+        assertEquals( "RangeFilter{fieldName=fieldName, from=2.0, to=50.0, includeLower=true, includeUpper=true}", filter.toString() );
+    }
+
+    @Test
+    public void testEmptyFieldName()
+    {
+        assertThrows( NullPointerException.class, () -> RangeFilter.create()
+            .from( ValueFactory.newDouble( 2.0 ) )
+            .to( ValueFactory.newDouble( 50.0 ) )
+            .setCache( true )
+            .build() );
     }
 }

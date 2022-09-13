@@ -13,8 +13,8 @@ public class IndicesFilterTest
     {
         final IndicesFilter filter = IndicesFilter.create().
             addIndices( "index1" ).
-            filter( IdFilter.create().value( "value1" ).build() ).
-            noMatchFilter( IdFilter.create().value( "value2" ).build() ).
+            filter( IdFilter.create().value( "value1" ).fieldName( "fieldName1" ).build() ).
+            noMatchFilter( IdFilter.create().value( "value2" ).fieldName( "fieldName2" ).build() ).
             build();
 
         assertNotNull( filter );
@@ -25,11 +25,11 @@ public class IndicesFilterTest
     {
         final IndicesFilter filter = IndicesFilter.create().
             addIndices( "index1" ).
-            filter( IdFilter.create().value( "value1" ).build() ).
-            noMatchFilter( IdFilter.create().value( "value2" ).build() ).
-            build();
+            filter( IdFilter.create().value( "value1" ).fieldName( "fieldName1" ).build() ).
+            noMatchFilter( IdFilter.create().value( "value2" ).fieldName( "fieldName2" ).build() ).
+        build();
 
-        assertEquals( "IndicesFilter{indices=[index1], filter=IdFilter{values=[value1]}, noMatchFilter=IdFilter{values=[value2]}}",
+        assertEquals( "IndicesFilter{indices=[index1], filter=IdFilter{fieldName=fieldName1, values=[value1]}, noMatchFilter=IdFilter{fieldName=fieldName2, values=[value2]}}",
                       filter.toString() );
     }
 }

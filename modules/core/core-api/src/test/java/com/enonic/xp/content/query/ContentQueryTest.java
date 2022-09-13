@@ -58,35 +58,29 @@ public class ContentQueryTest
 
     private ContentQuery createTestQuery()
     {
-        final GeoDistanceAggregationQuery query1 = GeoDistanceAggregationQuery.create( "geo" ).
-            unit( "inch" ).
-            origin( GeoPoint.from( "20,30" ) ).
-            build();
+        final GeoDistanceAggregationQuery query1 =
+            GeoDistanceAggregationQuery.create( "geo" ).unit( "inch" ).origin( GeoPoint.from( "20,30" ) ).build();
 
-        final GeoDistanceAggregationQuery query2 = GeoDistanceAggregationQuery.create( "geo" ).
-            unit( "inch" ).
-            origin( GeoPoint.from( "20,30" ) ).
-            build();
-        final GeoDistanceAggregationQuery query3 = GeoDistanceAggregationQuery.create( "geo" ).
-            unit( "inch" ).
-            origin( GeoPoint.from( "20,30" ) ).
-            build();
+        final GeoDistanceAggregationQuery query2 =
+            GeoDistanceAggregationQuery.create( "geo" ).unit( "inch" ).origin( GeoPoint.from( "20,30" ) ).build();
+        final GeoDistanceAggregationQuery query3 =
+            GeoDistanceAggregationQuery.create( "geo" ).unit( "inch" ).origin( GeoPoint.from( "20,30" ) ).build();
 
-        final HighlightQuery highlightQuery = HighlightQuery.create().
-            property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
-            settings( HighlightQuerySettings.create().
-                encoder( Encoder.HTML ).
-                fragmenter( Fragmenter.SIMPLE ).
-                fragmentSize( 1 ).
-                noMatchSize( 2 ).
-                numOfFragments( 3 ).
-                order( Order.SCORE ).
-                addPreTags( List.of( "<a>", "<b>" ) ).
-                addPostTags( List.of( "<c>", "<d>" ) ).
-                requireFieldMatch( true ).
-                tagsSchema( TagsSchema.STYLED ).
-                build() ).
-            build();
+        final HighlightQuery highlightQuery = HighlightQuery.create()
+            .property( HighlightQueryProperty.create( "propertyToHighlight" ).build() )
+            .settings( HighlightQuerySettings.create()
+                           .encoder( Encoder.HTML )
+                           .fragmenter( Fragmenter.SIMPLE )
+                           .fragmentSize( 1 )
+                           .noMatchSize( 2 )
+                           .numOfFragments( 3 )
+                           .order( Order.SCORE )
+                           .addPreTags( List.of( "<a>", "<b>" ) )
+                           .addPostTags( List.of( "<c>", "<d>" ) )
+                           .requireFieldMatch( true )
+                           .tagsSchema( TagsSchema.STYLED )
+                           .build() )
+            .build();
 
         final ContentQuery.Builder builder = ContentQuery.create();
         builder.addContentTypeName( ContentTypeName.imageMedia() );
@@ -97,7 +91,11 @@ public class ContentQueryTest
         builder.from( 10 );
         builder.size( 10 );
         builder.queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "name" ), ValueExpr.string( "testerson" ) ) ) );
-        builder.queryFilter( RangeFilter.create().from( ValueFactory.newDouble( 2.0 ) ).to( ValueFactory.newDouble( 10.0 ) ).build() );
+        builder.queryFilter( RangeFilter.create()
+                                 .from( ValueFactory.newDouble( 2.0 ) )
+                                 .to( ValueFactory.newDouble( 10.0 ) )
+                                 .fieldName( "fieldName" )
+                                 .build() );
 
         return builder.build();
     }
