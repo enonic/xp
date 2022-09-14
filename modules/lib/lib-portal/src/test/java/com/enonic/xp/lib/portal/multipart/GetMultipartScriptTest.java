@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.portal.multipart;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -116,6 +117,7 @@ public class GetMultipartScriptTest
     @Test
     public void getForm_empty()
     {
+        createEmptyForm();
         runFunction( "/test/multipart-test.js", "getForm_empty" );
     }
 
@@ -136,6 +138,7 @@ public class GetMultipartScriptTest
     @Test
     public void getBytes_notFound()
     {
+        createEmptyForm();
         runFunction( "/test/multipart-test.js", "getBytes_notFound" );
     }
 
@@ -156,6 +159,7 @@ public class GetMultipartScriptTest
     @Test
     public void getItem_notFound()
     {
+        createEmptyForm();
         runFunction( "/test/multipart-test.js", "getItem_notFound" );
     }
 
@@ -206,5 +210,12 @@ public class GetMultipartScriptTest
     {
         createTextForm();
         runScript( "/lib/xp/examples/portal/getMultipartText.js" );
+    }
+
+    private void createEmptyForm()
+    {
+        MultipartForm form = Mockito.mock( MultipartForm.class );
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+        Mockito.when( form.iterator() ).thenReturn( Collections.emptyIterator() );
     }
 }

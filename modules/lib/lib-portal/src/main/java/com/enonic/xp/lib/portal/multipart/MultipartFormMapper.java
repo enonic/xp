@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.portal.multipart;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -23,7 +22,7 @@ public final class MultipartFormMapper
 
     private Iterable<MultipartItem> getItems()
     {
-        return this.form != null ? this.form : Collections.emptyList();
+        return this.form;
     }
 
     @Override

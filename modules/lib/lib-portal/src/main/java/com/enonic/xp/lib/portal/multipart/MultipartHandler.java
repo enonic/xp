@@ -27,33 +27,18 @@ public final class MultipartHandler
 
     public MultipartItemMapper getItem( final String name, final int index )
     {
-        if ( this.form == null )
-        {
-            return null;
-        }
-
         final MultipartItem item = this.form.get( name, index );
         return item != null ? new MultipartItemMapper( item ) : null;
     }
 
     public ByteSource getBytes( final String name, final int index )
     {
-        if ( this.form == null )
-        {
-            return null;
-        }
-
         final MultipartItem item = this.form.get( name, index );
         return item != null ? item.getBytes() : null;
     }
 
     public String getText( final String name, final int index )
     {
-        if ( this.form == null )
-        {
-            return null;
-        }
-
         final MultipartItem item = this.form.get( name, index );
         if ( item == null )
         {
