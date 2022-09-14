@@ -367,6 +367,49 @@ export type QueryDsl = {
     term: TermDslExpression;
 };
 
+export type SortDirection = 'ASC' | 'DESC';
+
+export type DistanceUnit =
+    | 'm'
+    | 'meters'
+    | 'in'
+    | 'inch'
+    | 'yd'
+    | 'yards'
+    | 'ft'
+    | 'feet'
+    | 'km'
+    | 'kilometers'
+    | 'NM'
+    | 'nmi'
+    | 'nauticalmiles'
+    | 'mm'
+    | 'millimeters'
+    | 'cm'
+    | 'centimeters'
+    | 'mi'
+    | 'miles';
+
+export interface FieldSortDsl {
+    field: string;
+
+    direction?: SortDirection;
+}
+
+export interface GeoDistanceSortDsl
+    extends FieldSortDsl {
+
+    unit?: DistanceUnit;
+
+    location?: {
+        lat: number;
+
+        lon: number;
+    }
+}
+
+export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
+
 export interface Explanation {
     value: number;
     description: string;
@@ -602,14 +645,14 @@ export interface SetChildOrderParams {
 }
 
 export interface QueryNodeParams {
-    start?: number | null;
-    count?: number | null
-    query: QueryDsl | object;
-    sort?: string;
+    start?: number;
+    count?: number;
+    query: QueryDsl | string;
+    sort?: string | SortDsl | SortDsl[];
+    filters?: Filter | Filter[];
     aggregations?: Record<string, Aggregation>;
     suggestions?: Record<string, Suggestion>;
     highlight: Highlight;
-    filters?: Filter | Filter[];
     explain: boolean;
 }
 
