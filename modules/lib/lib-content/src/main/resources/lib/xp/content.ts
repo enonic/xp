@@ -83,6 +83,7 @@ export type ContentInheritType = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
 
 export interface Bucket {
     [subAggregationName: string]: BucketsAggregation | StatsAggregation | SingleValueMetricAggregation | string | number | undefined;
+
     key: string;
     docCount: number;
 }
@@ -343,7 +344,7 @@ export interface FormItemLayout {
     formItemType: string | FormItemType;
     name: string;
     label: string;
-    items: unknown;
+    items: FormItem[];
 }
 
 export type ValueType =
@@ -495,18 +496,68 @@ export type DslExpression =
     | BooleanDslExpression
     | StemmedDslExpression;
 
-// MUST BE USED ONLY ONE
-export interface QueryDsl {
-    boolean?: BooleanDslExpression;
-    ngram?: NgramDslExpression;
-    fulltext?: FulltextDslExpression;
-    matchAll?: MatchAllDslExpression;
-    pathMatch?: PathMatchDslExpression;
-    range?: RangeDslExpression;
-    like?: LikeDslExpression;
-    in?: InDslExpression;
-    term?: TermDslExpression;
+export type QueryDsl = {
+    boolean: BooleanDslExpression;
+} | {
+    ngram: NgramDslExpression;
+} | {
+    fulltext: FulltextDslExpression;
+} | {
+    matchAll: MatchAllDslExpression;
+} | {
+    pathMatch: PathMatchDslExpression;
+} | {
+    range: RangeDslExpression;
+} | {
+    like: LikeDslExpression;
+} | {
+    in: InDslExpression;
+} | {
+    term: TermDslExpression;
+};
+
+export type SortDirection = 'ASC' | 'DESC';
+
+export type DistanceUnit =
+    | 'm'
+    | 'meters'
+    | 'in'
+    | 'inch'
+    | 'yd'
+    | 'yards'
+    | 'ft'
+    | 'feet'
+    | 'km'
+    | 'kilometers'
+    | 'NM'
+    | 'nmi'
+    | 'nauticalmiles'
+    | 'mm'
+    | 'millimeters'
+    | 'cm'
+    | 'centimeters'
+    | 'mi'
+    | 'miles';
+
+export interface FieldSortDsl {
+    field: string;
+
+    direction?: SortDirection;
 }
+
+export interface GeoDistanceSortDsl
+    extends FieldSortDsl {
+
+    unit?: DistanceUnit;
+
+    location?: {
+        lat: number;
+
+        lon: number;
+    }
+}
+
+export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 
 export interface Content {
     _id: string;
@@ -965,9 +1016,9 @@ export interface QueryContentParams {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
+    sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
     aggregations?: Record<string, Aggregation>;
-    sort?: string | object | object[];
     contentTypes?: string[];
     highlight?: Highlight;
 }
@@ -1001,12 +1052,12 @@ interface QueryContentHandler {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string|object} params.query Query expression.
- * @param {object} [params.filters] Filters to apply to query result
+ * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.
- * @param {string} [params.aggregations] Aggregations expression.
+ * @param {object} [params.aggregations] Aggregations expression.
  * @param {string[]} [params.contentTypes] Content types to filter on.
  *
- * @returns {Object} Result of query.
+ * @returns {object} Result of query.
  */
 export function query(params: QueryContentParams): ContentsResult {
     const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');

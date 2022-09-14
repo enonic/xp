@@ -31,8 +31,8 @@ public final class DslOrderExpr
         this.unit = expression.getString( "unit" );
 
         final PropertySet location = expression.getSet( "location" );
-        this.lat = location != null ? location.getDouble( "lat" ) : null;
-        this.lon = location != null ? location.getDouble( "lon" ) : null;
+        this.lat = location != null ? Objects.requireNonNull( location.getDouble( "lat" ) ) : null;
+        this.lon = location != null ? Objects.requireNonNull( location.getDouble( "lon" ) ) : null;
     }
 
     public static DslOrderExpr from( final PropertyTree expression )

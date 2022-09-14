@@ -118,6 +118,12 @@ public class SortBuilderFactoryTest
         location2.addDouble( "lat", 2D );
         location2.addDouble( "lon", 3D );
 
+        final PropertyTree geoExpressionWithoutType = new PropertyTree();
+        geoExpressionWithoutType.addString( "field", "myGeoPoint" );
+        final PropertySet location3 = geoExpressionWithoutType.addSet( "location" );
+        location3.addDouble( "lat", 2D );
+        location3.addDouble( "lon", 3D );
+
         final PropertyTree fieldExpressionWithDirection = new PropertyTree();
         fieldExpressionWithDirection.addString( "field", "myField" );
         fieldExpressionWithDirection.addString( "direction", "DESC" );
@@ -127,17 +133,19 @@ public class SortBuilderFactoryTest
 
         final DslOrderExpr geoOrderExpr = DslOrderExpr.from( geoExpression );
         final DslOrderExpr geoOrderWithoutOptionalExpr = DslOrderExpr.from( geoExpressionWithoutOptional );
+        final DslOrderExpr geoOrderWithoutTypeExpr = DslOrderExpr.from( geoExpressionWithoutType );
         final DslOrderExpr fieldWithDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithDirection );
         final DslOrderExpr fieldWithoutDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithoutDirection );
 
         final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create(
-            List.of( geoOrderExpr, geoOrderWithoutOptionalExpr, fieldWithDirectionOrderExpr, fieldWithoutDirectionOrderExpr ) );
+            List.of( geoOrderExpr, geoOrderWithoutOptionalExpr, geoOrderWithoutTypeExpr, fieldWithDirectionOrderExpr, fieldWithoutDirectionOrderExpr ) );
 
-        assertEquals( 4, sortBuilders.size() );
+        assertEquals( 5, sortBuilders.size() );
         assertTrue( sortBuilders.get( 0 ) instanceof GeoDistanceSortBuilder );
         assertTrue( sortBuilders.get( 1 ) instanceof GeoDistanceSortBuilder );
-        assertTrue( sortBuilders.get( 2 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 2 ) instanceof GeoDistanceSortBuilder );
         assertTrue( sortBuilders.get( 3 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 4 ) instanceof FieldSortBuilder );
     }
 
     @Test

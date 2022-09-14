@@ -22,7 +22,16 @@ public class DslSortBuilderFactory
     {
         final String type = orderExpr.getType();
 
-        if ( type == null )
+        if ( type != null && !"geoDistance".equals( type ) )
+        {
+            throw new IllegalArgumentException( "Not valid sort function: '" + type + "'" );
+        }
+
+        if ( "geoDistance".equals( type ) || orderExpr.getLat() != null )
+        {
+            return GeoDistanceSortFunction.create( orderExpr );
+        }
+        else
         {
             final String field = orderExpr.getField();
 
@@ -36,11 +45,5 @@ public class DslSortBuilderFactory
 
             return fieldSortBuilder;
         }
-
-        if ( "geoDistance".equals( type ) )
-        {
-            return GeoDistanceSortFunction.create( orderExpr );
-        }
-        throw new IllegalArgumentException( "Not valid sort function: '" + type + "'" );
     }
 }
