@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,7 +10,8 @@ import com.google.common.net.MediaType;
 
 public final class RequestBodyReader
 {
-    private static final MediaType JSON = MediaType.JSON_UTF_8.withoutParameters();
+    private static final List<MediaType> TEXT_CONTENT_TYPES =
+        List.of( MediaType.ANY_TEXT_TYPE, MediaType.JSON_UTF_8.withoutParameters() );
 
     public static Object readBody( final HttpServletRequest req )
         throws IOException
@@ -20,27 +22,11 @@ public final class RequestBodyReader
             return null;
         }
 
-        return readBody( req, MediaType.parse( type ) );
-    }
-
-    private static Object readBody( final HttpServletRequest req, final MediaType type )
-        throws IOException
-    {
-        if ( !isText( type ) )
-        {
-            return null;
-        }
-
-        return CharStreams.toString( req.getReader() );
+        return isText( MediaType.parse( type ) ) ? CharStreams.toString( req.getReader() ) : null;
     }
 
     public static boolean isText( final MediaType type )
     {
-        return type.type().equals( "text" ) || isJson( type );
-    }
-
-    public static boolean isJson( final MediaType type )
-    {
-        return type.is( JSON );
+        return TEXT_CONTENT_TYPES.stream().anyMatch( type::is );
     }
 }

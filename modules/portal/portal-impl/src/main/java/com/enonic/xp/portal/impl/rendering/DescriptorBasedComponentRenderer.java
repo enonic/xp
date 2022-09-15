@@ -82,7 +82,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
             final RenderMode renderMode = portalRequest.getMode();
             final MediaType contentType = portalResponse.getContentType();
-            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().type().equals( "text" ) )
+            if ( renderMode == RenderMode.EDIT && contentType != null && contentType.type().equals( "text" ) )
             {
                 final Object bodyObj = portalResponse.getBody();
                 if ( bodyObj == null || ( bodyObj instanceof String && nullToEmpty( (String) bodyObj ).isBlank() ) )
@@ -126,7 +126,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, component.getType().toString() );
 
         return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             body( html ).
             build();
     }
@@ -136,7 +136,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, component.getType().toString() );
 
         return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             body( html ).
             build();
     }
@@ -147,7 +147,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
 
         return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             body( html ).
             build();
     }

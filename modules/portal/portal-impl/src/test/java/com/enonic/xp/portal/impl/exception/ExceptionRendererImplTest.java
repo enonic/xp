@@ -34,8 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -74,7 +72,7 @@ class ExceptionRendererImplTest
     {
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.JSON_UTF_8, res.getContentType() );
 
         final String body = res.getBody().toString();
         assertEquals( "{\"status\":404,\"message\":\"Custom message\"}", body );
@@ -87,7 +85,7 @@ class ExceptionRendererImplTest
 
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "404 Not Found" ) );
@@ -109,7 +107,7 @@ class ExceptionRendererImplTest
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
 
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
 
         final String body = res.getBody().toString();
         assertThat( body ).contains( "404 - Not Found" );
@@ -123,7 +121,7 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( MediaType.JSON_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.JSON_UTF_8, res.getContentType() );
         MediaType.create( "", "" );
 
         final String body = res.getBody().toString();
@@ -138,7 +136,7 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "400 Bad Request" ) );
@@ -266,7 +264,7 @@ class ExceptionRendererImplTest
         final PortalResponse res =
             this.renderer.render( this.request, new WebException( HttpStatus.INTERNAL_SERVER_ERROR, "Custom message" ) );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
 
         final String body = res.getBody().toString();
         assertTrue( body.contains( "500 Internal Server Error" ) );

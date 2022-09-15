@@ -79,7 +79,7 @@ public final class FragmentRenderer
         if ( renderMode == RenderMode.EDIT && fragmentResponse != null )
         {
             if ( !( fragmentResponse.getBody() instanceof String ) ||
-                !fragmentResponse.getContentType().is( MediaType.parse( "text/html" ) ) )
+                !fragmentResponse.getContentType().is( MediaType.HTML_UTF_8.withoutParameters() ) )
             {
                 return fragmentResponse;
             }
@@ -128,8 +128,7 @@ public final class FragmentRenderer
     {
         final String type = component.getType().toString();
         final String html = renderMode == RenderMode.EDIT ? MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) : "";
-        return PortalResponse.create().body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
-
+        return PortalResponse.create().body( html ).contentType( MediaType.HTML_UTF_8 ).postProcess( false ).build();
     }
 
     private PortalResponse renderErrorComponentPlaceHolder( final FragmentComponent component, final String errorMessage )
@@ -137,7 +136,7 @@ public final class FragmentRenderer
         final String escapedMessage = HtmlEscapers.htmlEscaper().escape( errorMessage );
         final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
         return PortalResponse.create().
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             postProcess( false ).
             body( html ).
             build();
