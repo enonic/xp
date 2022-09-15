@@ -13,6 +13,67 @@ declare global {
     }
 }
 
+export interface Attachment {
+    name: string;
+    label?: string;
+    size: number;
+    mimeType: string;
+}
+
+export type Attachments = Record<string, Attachment>;
+
+export type XDataEntry = Record<string, Record<string, unknown>>;
+
+export type XData = Record<string, XDataEntry>;
+
+export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+
+export type WorkflowCheckState = 'PENDING' | 'REJECTED' | 'APPROVED';
+
+export type ContentInheritType = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
+
+export interface Workflow {
+    state: WorkflowState;
+    checks?: Record<string, WorkflowCheckState>;
+}
+
+export interface PublishInfo {
+    from?: string;
+    to?: string;
+    first?: string;
+}
+
+export interface Content {
+    _id: string;
+    _name: string;
+    _path: string;
+    _score: number;
+    creator: string;
+    modifier: string;
+    createdTime: string;
+    modifiedTime: string;
+    owner: string;
+    type: string;
+    displayName: string;
+    hasChildren: boolean;
+    language: string;
+    valid: boolean;
+    originProject: string;
+    childOrder?: string;
+    _sort?: object[];
+    data: Record<string, unknown>;
+    x: XData;
+    attachments: Attachments;
+    publish?: PublishInfo;
+    workflow?: Workflow;
+    inherit?: ContentInheritType[];
+}
+
+export interface Site
+    extends Content {
+    description: string;
+}
+
 export interface AssetUrlParams {
     path: string;
     application?: string;
@@ -324,6 +385,7 @@ export interface ProcessHtmlParams {
     value: string;
     type?: string;
     imageWidths?: number[];
+    imageSizes?: string;
 }
 
 interface ProcessHtmlHandler {
@@ -341,6 +403,7 @@ interface ProcessHtmlHandler {
  * @param {string} params.value Html value string to process.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {number[]} [params.imageWidths] List of image width. Allows to generate image URLs for given image widths and use them in the `srcset` attribute of a `img` tag.
+ * @param {string} [params.imageSizes] Specifies the width for an image depending on browser dimensions. The value has the following format: (media-condition) width. Multiple sizes are comma-separated.
  *
  * @returns {string} The processed HTML.
  */
@@ -370,7 +433,7 @@ export function sanitizeHtml(html: string): string {
 }
 
 interface GetCurrentSiteHandler {
-    execute(): object;
+    execute(): Site | null;
 }
 
 /**
@@ -379,15 +442,17 @@ interface GetCurrentSiteHandler {
  *
  * @example-ref examples/portal/getSite.js
  *
- * @returns {object} The current site as JSON.
+ * @returns {object|null} The current site as JSON.
  */
-export function getSite(): object {
+export function getSite(): Site | null {
     const bean = __.newBean<GetCurrentSiteHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteHandler');
     return __.toNativeObject(bean.execute());
 }
 
+export type SiteConfig = Record<string, unknown>;
+
 interface GetCurrentSiteConfigHandler {
-    execute(): object;
+    execute(): SiteConfig | null;
 }
 
 /**
@@ -396,15 +461,15 @@ interface GetCurrentSiteConfigHandler {
  *
  * @example-ref examples/portal/getSiteConfig.js
  *
- * @returns {object} The site configuration for current application as JSON.
+ * @returns {object|null} The site configuration for current application as JSON.
  */
-export function getSiteConfig(): object {
+export function getSiteConfig(): SiteConfig | null {
     const bean = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
     return __.toNativeObject(bean.execute());
 }
 
 interface GetCurrentContentHandler {
-    execute(): object;
+    execute(): Content | null;
 }
 
 /**
@@ -413,9 +478,9 @@ interface GetCurrentContentHandler {
  *
  * @example-ref examples/portal/getContent.js
  *
- * @returns {object} The current content as JSON.
+ * @returns {object|null} The current content as JSON.
  */
-export function getContent(): object {
+export function getContent(): Content | null {
     const bean = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
     return __.toNativeObject(bean.execute());
 }
@@ -435,7 +500,7 @@ export interface Region<Config extends object = object> {
 interface GetCurrentComponentHandler<Config extends object = object,
     Regions extends Record<string, Region> = Record<string, Region>> {
 
-    execute(): Component<Config, Regions>;
+    execute(): Component<Config, Regions> | null;
 }
 
 
@@ -445,18 +510,17 @@ interface GetCurrentComponentHandler<Config extends object = object,
  *
  * @example-ref examples/portal/getComponent.js
  *
- * @returns {object} The current component as JSON.
+ * @returns {object|null} The current component as JSON.
  */
 export function getComponent<Config extends object = object,
     Regions extends Record<string, Region> = Record<string, Region>,
-    >(): Component<Config, Regions> {
-
+    >(): Component<Config, Regions> | null {
     const bean = __.newBean<GetCurrentComponentHandler<Config, Regions>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 
 interface GetCurrentIdProviderKeyHandler {
-    execute(): object;
+    execute(): string | null;
 }
 
 /**
@@ -464,21 +528,32 @@ interface GetCurrentIdProviderKeyHandler {
  *
  * @example-ref examples/portal/getIdProviderKey.js
  *
- * @returns {object} The current id provider as JSON.
+ * @returns {string|null} The current id provider as JSON.
  */
-export function getIdProviderKey(): object {
+export function getIdProviderKey(): string | null {
     const bean = __.newBean<GetCurrentIdProviderKeyHandler>('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
     return __.toNativeObject(bean.execute());
 }
 
+export interface MultipartItem {
+    name: string;
+    fileName: string;
+    contentType: string;
+    size: number;
+}
+
+export interface MultipartForm {
+    [key: string]: MultipartItem | MultipartItem[];
+}
+
 interface MultipartHandler {
-    getForm(): object;
+    getForm(): MultipartForm;
 
-    getItem(name: string, index: number): object;
+    getItem(name: string, index: number): MultipartItem | null;
 
-    getBytes(name: string, index: number): object;
+    getBytes(name: string, index: number): object | null;
 
-    getText(name: string, index: number): string;
+    getText(name: string, index: number): string | null;
 }
 
 /**
@@ -488,7 +563,7 @@ interface MultipartHandler {
  *
  * @returns {object} The multipart form items.
  */
-export function getMultipartForm(): object {
+export function getMultipartForm(): MultipartForm {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return __.toNativeObject(bean.getForm());
 }
@@ -501,9 +576,9 @@ export function getMultipartForm(): object {
  * @param {string} name Name of the multipart item.
  * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
  *
- * @returns {object} The named multipart form item.
+ * @returns {object|null} The named multipart form item.
  */
-export function getMultipartItem(name: string, index: number): object {
+export function getMultipartItem(name: string, index: number): MultipartItem | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return __.toNativeObject(bean.getItem(name, index ?? 0));
 }
@@ -518,7 +593,7 @@ export function getMultipartItem(name: string, index: number): object {
  *
  * @returns {*} Stream of multipart item data.
  */
-export function getMultipartStream(name: string, index: number): object {
+export function getMultipartStream(name: string, index: number): object | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getBytes(name, index ?? 0);
 }
@@ -531,22 +606,22 @@ export function getMultipartStream(name: string, index: number): object {
  * @param {string} name Name of the multipart item.
  * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
  *
- * @returns {string} Text for multipart item data.
+ * @returns {string|null} Text for multipart item data.
  */
-export function getMultipartText(name: string, index: number): string {
+export function getMultipartText(name: string, index: number): string | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getText(name, index ?? 0);
 }
 
 export interface ImagePlaceholderParams {
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
 }
 
 interface ImagePlaceholderHandler {
-    setWidth(value: number): void;
+    setWidth(value?: number): void;
 
-    setHeight(value: number): void;
+    setHeight(value?: number): void;
 
     createImagePlaceholder(): string;
 }
