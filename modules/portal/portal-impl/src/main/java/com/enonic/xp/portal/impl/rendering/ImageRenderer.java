@@ -179,7 +179,7 @@ public final class ImageRenderer
 
         private PortalResponse renderOkResponse( final String html )
         {
-            return PortalResponse.create().body( html ).contentType( MediaType.create( "text", "html" ) ).postProcess( false ).build();
+            return PortalResponse.create().body( html ).contentType( MediaType.HTML_UTF_8 ).postProcess( false ).build();
         }
 
         private PortalResponse renderResponseImageNotFound()
@@ -218,7 +218,7 @@ public final class ImageRenderer
             final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
 
             return PortalResponse.create().
-                contentType( MediaType.create( "text", "html" ) ).
+                contentType( MediaType.HTML_UTF_8 ).
                 postProcess( false ).
                 body( html ).
                 build();

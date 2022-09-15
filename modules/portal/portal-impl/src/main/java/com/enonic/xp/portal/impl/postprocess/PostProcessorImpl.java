@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
@@ -24,8 +23,8 @@ import com.enonic.xp.web.HttpMethod;
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    private static final ImmutableList<MediaType> HTML_CONTENT_TYPES =
-        ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
+    private static final List<MediaType> HTML_CONTENT_TYPES =
+        List.of( MediaType.HTML_UTF_8.withoutParameters(), MediaType.XHTML_UTF_8.withoutParameters() );
 
     private static final ImmutableSet<HttpMethod> METHODS_ALLOWED_TO_PROCESS = Sets.immutableEnumSet( HttpMethod.GET, HttpMethod.POST );
 

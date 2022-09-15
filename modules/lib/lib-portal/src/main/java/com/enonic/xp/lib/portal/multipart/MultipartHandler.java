@@ -1,7 +1,8 @@
 package com.enonic.xp.lib.portal.multipart;
 
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
+
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
@@ -15,8 +16,8 @@ import com.enonic.xp.web.multipart.MultipartService;
 public final class MultipartHandler
     implements ScriptBean
 {
-    private static final ImmutableList<MediaType> TEXT_CONTENT_TYPES =
-        ImmutableList.of( MediaType.ANY_TEXT_TYPE, MediaType.create( "application", "json" ) );
+    private static final List<MediaType> TEXT_CONTENT_TYPES =
+        List.of( MediaType.ANY_TEXT_TYPE, MediaType.JSON_UTF_8.withoutParameters() );
 
     private MultipartForm form;
 

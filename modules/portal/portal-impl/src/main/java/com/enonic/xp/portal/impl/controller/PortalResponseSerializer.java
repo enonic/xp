@@ -112,7 +112,7 @@ public final class PortalResponseSerializer
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
     {
         final String type = ( value != null ) ? value.getValue( String.class ) : null;
-        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.create( "text", "html" ) );
+        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.HTML_UTF_8 );
     }
 
     private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )

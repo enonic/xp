@@ -97,7 +97,7 @@ final class ExceptionInfo
         return PortalResponse.create().
             status( this.status ).
             body( node.toString() ).
-            contentType( MediaType.create( "application", "json" ) ).
+            contentType( MediaType.JSON_UTF_8 ).
             build();
     }
 
@@ -122,7 +122,7 @@ final class ExceptionInfo
         return PortalResponse.create().
             status( this.status ).
             body( html ).
-            contentType( MediaType.create( "text", "html" ) ).
+            contentType( MediaType.HTML_UTF_8 ).
             build();
     }
 

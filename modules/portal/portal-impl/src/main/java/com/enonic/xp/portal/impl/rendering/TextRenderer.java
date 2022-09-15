@@ -45,7 +45,7 @@ public final class TextRenderer
         final RenderMode renderMode = portalRequest.getMode();
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create();
 
-        portalResponseBuilder.contentType( MediaType.create( "text", "html" ) ).postProcess( false );
+        portalResponseBuilder.contentType( MediaType.HTML_UTF_8 ).postProcess( false );
 
         if ( textComponent.getText().isEmpty() )
         {
