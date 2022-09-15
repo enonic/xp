@@ -420,7 +420,7 @@ export interface GetDynamicSiteParams {
 interface GetDynamicSiteHandler {
     setApplication(value: string): void;
 
-    execute(): SiteDescriptor;
+    execute(): SiteDescriptor | null;
 }
 
 /**
@@ -431,7 +431,7 @@ interface GetDynamicSiteHandler {
  *
  * @returns {SiteDescriptor} fetched resource.
  */
-export function getSite(params: GetDynamicSiteParams): SiteDescriptor {
+export function getSite(params: GetDynamicSiteParams): SiteDescriptor | null {
     checkRequired(params, 'application');
 
     const bean = __.newBean<GetDynamicSiteHandler>('com.enonic.xp.lib.schema.GetDynamicSiteHandler');
@@ -446,7 +446,7 @@ export interface GetDynamicStylesParams {
 interface GetDynamicStylesHandler {
     setApplication(value: string): void;
 
-    execute(): StyleDescriptor;
+    execute(): StyleDescriptor | null;
 }
 
 /**
@@ -457,7 +457,7 @@ interface GetDynamicStylesHandler {
  *
  * @returns {StyleDescriptor} fetched resource.
  */
-export function getStyles(params: GetDynamicStylesParams): StyleDescriptor {
+export function getStyles(params: GetDynamicStylesParams): StyleDescriptor | null {
     checkRequired(params, 'application');
 
     const bean = __.newBean<GetDynamicStylesHandler>('com.enonic.xp.lib.schema.GetDynamicStylesHandler');

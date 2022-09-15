@@ -108,7 +108,7 @@ public final class PublishContentHandler
         builder.message( message );
 
         final PublishContentResult result = this.contentService.publish( builder.build() );
-        return result != null ? new PublishContentResultMapper( result, contentNotFound ) : null;
+        return new PublishContentResultMapper( result, contentNotFound );
     }
 
     private Content getByPath( final ContentPath contentPath )

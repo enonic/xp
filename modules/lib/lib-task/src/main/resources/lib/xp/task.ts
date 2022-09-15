@@ -232,7 +232,7 @@ export function list(params: ListTasksParams): TaskInfo[] {
 interface GetTaskHandler {
     setTaskId(value?: string | null): void;
 
-    getTask(): TaskInfo;
+    getTask(): TaskInfo | null;
 }
 
 /**
@@ -244,7 +244,7 @@ interface GetTaskHandler {
  *
  * @returns {TaskInfo} Detail information for the task. Or null if the task could not be found.
  */
-export function get(taskId: string): TaskInfo {
+export function get(taskId: string): TaskInfo | null {
     if (taskId === undefined) {
         throw 'Parameter taskId is required';
     }

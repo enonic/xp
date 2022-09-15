@@ -34,10 +34,4 @@ public class CreateRoleHandlerTest
 
         runFunction( "/test/createRole-test.js", "createRole" );
     }
-
-    @Test
-    public void testCreateRoleWithUnAuthenticated()
-    {
-        runFunction( "/test/createRole-test.js", "createRoleUnAuthenticated" );
-    }
 }

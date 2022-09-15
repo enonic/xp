@@ -115,7 +115,7 @@ interface CreateRepositoryHandler {
 
     setIndexDefinitions(value: ScriptValue): void;
 
-    execute(): object;
+    execute(): Repository;
 }
 
 /**
@@ -143,7 +143,7 @@ interface CreateRepositoryHandler {
  * @returns {object} Repository created as JSON.
  *
  */
-export function create(params: CreateRepositoryParams): object {
+export function create(params: CreateRepositoryParams): Repository {
     checkRequired(params, 'id');
 
     const bean = __.newBean<CreateRepositoryHandler>('com.enonic.xp.lib.repo.CreateRepositoryHandler');
@@ -205,7 +205,7 @@ export function list(): Repository[] {
 interface GetRepositoryHandler {
     setRepositoryId(value: string): void;
 
-    execute(): Repository;
+    execute(): Repository | null;
 }
 
 /**
@@ -217,7 +217,7 @@ interface GetRepositoryHandler {
  * @return {object} The repository (as JSON).
  *
  */
-export function get(id: string): Repository {
+export function get(id: string): Repository | null {
     checkRequiredValue(id, 'id');
 
     const bean = __.newBean<GetRepositoryHandler>('com.enonic.xp.lib.repo.GetRepositoryHandler');

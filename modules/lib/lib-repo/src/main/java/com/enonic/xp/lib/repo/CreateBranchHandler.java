@@ -43,7 +43,7 @@ public class CreateBranchHandler
             get().
             createBranch( createBranchParams );
 
-        return createdBranch == null ? null : new BranchMapper( createdBranch );
+        return new BranchMapper( createdBranch );
     }
 
 

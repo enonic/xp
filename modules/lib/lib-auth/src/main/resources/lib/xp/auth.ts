@@ -150,7 +150,7 @@ export interface GetUserParams {
 interface GetUserHandler {
     setIncludeProfile(value: boolean): void;
 
-    getUser(): User;
+    getUser(): User | null;
 }
 
 /**
@@ -163,7 +163,7 @@ interface GetUserHandler {
  *
  * @returns {User} Information for logged-in user.
  */
-export function getUser(params?: GetUserParams): User {
+export function getUser(params?: GetUserParams): User | null {
     const {
         includeProfile = false,
     } = params ?? {};
@@ -253,7 +253,7 @@ export function changePassword(params: ChangePasswordParams): void {
 interface GetPrincipalHandler {
     setPrincipalKey(value?: string | null): void;
 
-    getPrincipal(): User | Group | Role;
+    getPrincipal(): User | Group | Role | null;
 }
 
 /**
@@ -264,7 +264,7 @@ interface GetPrincipalHandler {
  * @param {string} principalKey Principal key to look for.
  * @returns {Principal} the principal specified, or null if it doesn't exist.
  */
-export function getPrincipal(principalKey: string): User | Group | Role {
+export function getPrincipal(principalKey: string): User | Group | Role | null {
     const bean = __.newBean<GetPrincipalHandler>('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
@@ -336,7 +336,7 @@ interface CreateUserHandler {
 
     setEmail(value?: string | null): void;
 
-    createUser(): User | null;
+    createUser(): User;
 }
 
 /**
@@ -350,7 +350,7 @@ interface CreateUserHandler {
  * @param {string} params.displayName User display name.
  * @param {string} [params.email] User email.
  */
-export function createUser(params: CreateUserParams): User | null {
+export function createUser(params: CreateUserParams): User {
     checkRequired(params, 'name');
     checkRequired(params, 'idProvider');
 
@@ -415,7 +415,7 @@ interface CreateGroupHandler {
 
     setDescription(value?: string | null): void;
 
-    createGroup(): Group | null;
+    createGroup(): Group;
 }
 
 /**
@@ -429,7 +429,7 @@ interface CreateGroupHandler {
  * @param {string} params.displayName Group display name.
  * @param {string} params.description as principal description .
  */
-export function createGroup(params: CreateGroupParams): Group | null {
+export function createGroup(params: CreateGroupParams): Group {
     checkRequired(params, 'idProvider');
     checkRequired(params, 'name');
 
@@ -616,7 +616,7 @@ export function deletePrincipal(principalKey: string): boolean {
 }
 
 interface GetIdProviderConfigHandler {
-    execute(): Record<string, unknown>;
+    execute(): Record<string, unknown> | null;
 }
 
 /**
@@ -627,7 +627,7 @@ interface GetIdProviderConfigHandler {
  *
  * @returns {object} The ID provider configuration as JSON.
  */
-export function getIdProviderConfig(): Record<string, unknown> {
+export function getIdProviderConfig(): Record<string, unknown> | null {
     const bean = __.newBean<GetIdProviderConfigHandler>('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 }
@@ -642,7 +642,7 @@ interface GetProfileHandler {
 
     setScope(value?: string | null): void;
 
-    execute(): Record<string, unknown>;
+    execute(): Record<string, unknown> | null;
 }
 
 /**
@@ -655,7 +655,7 @@ interface GetProfileHandler {
  * @param {string} [params.scope] Scope of the data to retrieve.
  * @returns {object} The extra data as JSON
  */
-export function getProfile(params: GetProfileParams): Record<string, unknown> {
+export function getProfile(params: GetProfileParams): Record<string, unknown> | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetProfileHandler>('com.enonic.xp.lib.auth.GetProfileHandler');

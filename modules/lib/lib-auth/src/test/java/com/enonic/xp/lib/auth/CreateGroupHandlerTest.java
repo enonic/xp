@@ -34,10 +34,4 @@ public class CreateGroupHandlerTest
 
         runFunction( "/test/createGroup-test.js", "createGroup" );
     }
-
-    @Test
-    public void testCreateGroupWithUnAuthenticated()
-    {
-        runFunction( "/test/createGroup-test.js", "createGroupUnAuthenticated" );
-    }
 }

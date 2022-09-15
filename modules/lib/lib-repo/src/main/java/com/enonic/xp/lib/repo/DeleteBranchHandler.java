@@ -53,7 +53,7 @@ public class DeleteBranchHandler
             get().
             deleteBranch( deleteBranchParams );
 
-        return deletedBranch == null ? null : new BranchMapper( deletedBranch );
+        return new BranchMapper( deletedBranch );
     }
 
     private boolean isProtectedBranch( final RepositoryId repositoryId, final Branch branch )
