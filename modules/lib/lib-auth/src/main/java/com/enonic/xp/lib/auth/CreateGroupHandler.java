@@ -51,7 +51,7 @@ public final class CreateGroupHandler
             groupKey( PrincipalKey.ofGroup( this.idProvider, this.name ) ).
             description( this.description ).
             build() );
-        return group != null ? new PrincipalMapper( group ) : null;
+        return new PrincipalMapper( group );
     }
 
     @Override

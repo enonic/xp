@@ -21,16 +21,3 @@ exports.createGroup = function () {
     t.assertJsonEquals(expectedJson, result);
 
 };
-
-exports.createGroupUnAuthenticated = function () {
-
-    var result = auth.createGroup({
-        idProvider: 'myIdProvider',
-        name: 'groupId',
-        description: 'description'
-    });
-
-    var expectedJson = null;
-
-    t.assertJsonEquals(expectedJson, result);
-};

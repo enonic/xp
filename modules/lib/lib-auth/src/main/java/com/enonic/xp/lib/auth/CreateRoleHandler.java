@@ -39,11 +39,11 @@ public final class CreateRoleHandler
     public PrincipalMapper createRole()
     {
         final Role role = this.securityService.get().createRole( CreateRoleParams.create().
-            roleKey( PrincipalKey.ofRole( name )).
+            roleKey( PrincipalKey.ofRole( name ) ).
             displayName( this.displayName ).
             description( this.description ).
             build() );
-        return role != null ? new PrincipalMapper( role ) : null;
+        return new PrincipalMapper( role );
     }
 
     @Override

@@ -758,7 +758,7 @@ export interface GetSiteParams {
 interface GetSiteHandler {
     setKey(value?: string | null): void;
 
-    execute(): Site;
+    execute(): Site | null;
 }
 
 /**
@@ -771,7 +771,7 @@ interface GetSiteHandler {
  *
  * @returns {object} The current site as JSON.
  */
-export function getSite(params: GetSiteParams): Site {
+export function getSite(params: GetSiteParams): Site | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetSiteHandler>('com.enonic.xp.lib.content.GetSiteHandler');
@@ -791,7 +791,7 @@ interface GetSiteConfigHandler {
 
     setApplicationKey(value?: string | null): void;
 
-    execute(): SiteConfig;
+    execute(): SiteConfig | null;
 }
 
 /**
@@ -805,7 +805,7 @@ interface GetSiteConfigHandler {
  *
  * @returns {object} The site configuration for current application as JSON.
  */
-export function getSiteConfig(params: GetSiteConfigParams): SiteConfig {
+export function getSiteConfig(params: GetSiteConfigParams): SiteConfig | null {
     const bean = __.newBean<GetSiteConfigHandler>('com.enonic.xp.lib.content.GetSiteConfigHandler');
 
     bean.setKey(__.nullOrValue(params.key));
@@ -1087,7 +1087,7 @@ interface ModifyContentHandler {
 
     setRequireValid(value: boolean): void;
 
-    execute(): Content;
+    execute(): Content | null;
 }
 
 /**
@@ -1102,7 +1102,7 @@ interface ModifyContentHandler {
  *
  * @returns {object} Modified content as JSON.
  */
-export function modify(params: ModifyContentParams): Content {
+export function modify(params: ModifyContentParams): Content | null {
     checkRequired(params, 'key');
 
     const {
@@ -1557,7 +1557,7 @@ export interface ContentType {
 interface ContentTypeHandler {
     setName(value?: string | null): void;
 
-    getContentType(): ContentType;
+    getContentType(): ContentType | null;
 
     getAllContentTypes(): ContentType[];
 }
@@ -1570,7 +1570,7 @@ interface ContentTypeHandler {
  * @param name Name of the content type, as 'app:name' (e.g. 'com.enonic.myapp:article').
  * @returns {ContentType} The content type object if found, or null otherwise. See ContentType type definition below.
  */
-export function getType(name: string): ContentType {
+export function getType(name: string): ContentType | null {
     const bean = __.newBean<ContentTypeHandler>('com.enonic.xp.lib.content.ContentTypeHandler');
     bean.setName(__.nullOrValue(name));
     return __.toNativeObject(bean.getContentType());

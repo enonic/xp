@@ -35,7 +35,7 @@ public final class LocaleScriptBean
 
         if ( bundle == null )
         {
-            return null;
+            return NOT_TRANSLATED_MESSAGE;
         }
 
         final String localizedMessage = bundle.localize( key, toArray( values ) );

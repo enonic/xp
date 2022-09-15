@@ -49,7 +49,7 @@ public final class CreateUserHandler
         final User user = this.securityService.get().createUser(
             CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
                 PrincipalKey.ofUser( this.idProviderKey, this.name ) ).build() );
-        return user != null ? new PrincipalMapper( user ) : null;
+        return new PrincipalMapper( user );
     }
 
     @Override

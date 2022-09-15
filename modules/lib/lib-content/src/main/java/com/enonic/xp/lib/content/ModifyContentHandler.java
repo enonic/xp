@@ -41,7 +41,7 @@ public final class ModifyContentHandler
         params.requireValid( this.requireValid );
 
         final Content result = this.contentService.update( params );
-        return result != null ? new ContentMapper( result ) : null;
+        return new ContentMapper( result );
     }
 
     private Content getExistingContent( final String key )

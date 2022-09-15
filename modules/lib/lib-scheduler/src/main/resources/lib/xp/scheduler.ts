@@ -191,7 +191,7 @@ export interface GetScheduledJobParams {
 interface GetScheduledJobHandler {
     setName(value: string): void;
 
-    execute(): ScheduleJob;
+    execute(): ScheduleJob | null;
 }
 
 /**
@@ -202,7 +202,7 @@ interface GetScheduledJobHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.name job to be deleted name.
  */
-export function get(params: GetScheduledJobParams): ScheduleJob {
+export function get(params: GetScheduledJobParams): ScheduleJob | null {
     checkRequired(params, 'name');
 
     const bean = __.newBean<GetScheduledJobHandler>('com.enonic.xp.lib.scheduler.GetScheduledJobHandler');

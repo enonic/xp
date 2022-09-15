@@ -24,12 +24,3 @@ exports.createRole = function () {
     t.assertJsonEquals(expectedJson, result);
 
 };
-
-exports.createRoleUnAuthenticated = function () {
-
-    var result = createRole();
-
-    var expectedJson = null;
-
-    t.assertJsonEquals(expectedJson, result);
-};

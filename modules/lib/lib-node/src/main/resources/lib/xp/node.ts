@@ -524,7 +524,7 @@ interface NodeHandler {
 
     setChildOrder(key: string, childOrder: string): Node;
 
-    get(params: GetNodeHandlerParams): Node | Node[];
+    get(params: GetNodeHandlerParams): Node | Node[] | null;
 
     delete(keys: string[]): boolean;
 
@@ -540,7 +540,7 @@ interface NodeHandler {
 
     findVersions(params: FindVersionsHandlerParams): NodeVersionsQueryResult;
 
-    getActiveVersion(key: string): NodeVersion;
+    getActiveVersion(key: string): NodeVersion | null;
 
     setActiveVersion(key: string, versionId: string): boolean;
 
@@ -548,7 +548,7 @@ interface NodeHandler {
 
     commit(keys: string[], message?: string | null): object;
 
-    getCommit(commitId: string): NodeCommit;
+    getCommit(commitId: string): NodeCommit | null;
 
     setRootPermissions(v: ScriptValue): object;
 
@@ -876,7 +876,7 @@ export class RepoConnection {
      *
      * @returns {object} The node or node array (as JSON) fetched from the repository.
      */
-    get(...keys: (string | string[] | GetNodeParams | GetNodeParams[])[]): Node | Node[] {
+    get(...keys: (string | string[] | GetNodeParams | GetNodeParams[])[]): Node | Node[] | null {
         const handlerParams = __.newBean<GetNodeHandlerParams>('com.enonic.xp.lib.node.GetNodeHandlerParams');
         prepareGetParams(keys, handlerParams);
         return __.toNativeObject(this.nodeHandler.get(handlerParams));
@@ -1114,7 +1114,7 @@ export class RepoConnection {
      *
      * @returns {object} Active content versions per branch.
      */
-    getActiveVersion(params: GetActiveVersionParams): NodeVersion {
+    getActiveVersion(params: GetActiveVersionParams): NodeVersion | null {
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.getActiveVersion(params.key));
@@ -1228,7 +1228,7 @@ export class RepoConnection {
      *
      * @returns {object} Commit object.
      */
-    getCommit(params: GetCommitParams): NodeCommit {
+    getCommit(params: GetCommitParams): NodeCommit | null {
         checkRequired(params, 'id');
         return __.toNativeObject(this.nodeHandler.getCommit(params.id));
     }

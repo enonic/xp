@@ -118,7 +118,7 @@ public class CreateRepositoryHandler
             get().
             createRepository( createRepositoryParams );
 
-        return repository == null ? null : new RepositoryMapper( repository );
+        return new RepositoryMapper( repository );
     }
 
     private AccessControlEntry convertToAccessControlEntry( ScriptValue permission )
