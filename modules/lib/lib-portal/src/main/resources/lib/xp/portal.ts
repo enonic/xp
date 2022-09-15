@@ -20,9 +20,7 @@ export interface Attachment {
     mimeType: string;
 }
 
-export interface Attachments {
-    [key: string]: Attachment;
-}
+export type Attachments = Record<string, Attachment>;
 
 export type XDataEntry = Record<string, Record<string, unknown>>;
 
