@@ -526,7 +526,7 @@ interface NodeHandler {
 
     get(params: GetNodeHandlerParams): Node | Node[] | null;
 
-    delete(keys: string[]): boolean;
+    delete(keys: string[]): string[];
 
     push(params: PushNodeHandlerParams): PushNodesResult;
 
@@ -814,12 +814,59 @@ export interface Node {
 }
 
 /**
- * Creates a new repo-connection.
- *
- * @returns {*} native Native repo-connection object.
+ * @name RepoConnection
  * @constructor
  */
-export class RepoConnection {
+export interface RepoConnection {
+    create(params: CreateNodeParams): Node;
+
+    modify(params: ModifyNodeParams): Node;
+
+    get(...keys: (string | string[] | GetNodeParams | GetNodeParams[])[]): Node | Node[] | null;
+
+    delete(...keys: (string | string[])[]): string[];
+
+    push(params: PushNodeParams): PushNodesResult;
+
+    diff(params: DiffBranchesParams): object;
+
+    getBinary(params: GetBinaryParams): object;
+
+    move(params: MoveNodeParams): boolean;
+
+    setChildOrder(params: SetChildOrderParams): Node;
+
+    query(params: QueryNodeParams): object;
+
+    exists(key: string): boolean;
+
+    findVersions(params: FindVersionsParams): NodeVersionsQueryResult;
+
+    getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
+
+    setActiveVersion(params: SetActiveVersionParams): boolean;
+
+    findChildren(params: FindChildrenParams): FindNodesByParentResult;
+
+    refresh(mode: RefreshMode): void;
+
+    setRootPermissions(params: SetRootPermissionsParams): object;
+
+    commit(params: CommitParams): object;
+
+    getCommit(params: GetCommitParams): NodeCommit | null;
+}
+
+/**
+ * Creates a new repo connection.
+ *
+ * @constructor
+ * @hideconstructor
+ * @alias RepoConnection
+ */
+class RepoConnectionImpl
+    implements RepoConnection {
+
     constructor(private nodeHandler: NodeHandler) {
     }
 
@@ -887,11 +934,11 @@ export class RepoConnection {
      *
      * @example-ref examples/node/delete.js
      *
-     * @param {...(string|string[])} keys Keys to delete. Each argument could be an id, a path or an array of the two.
+     * @param {...(string|string[])} keys Keys to delete. Each argument could be an id, a path or an array of the two
      *
-     * @returns {boolean} True if deleted, false otherwise.
+     * @returns {string[]} An array of keys that were actually deleted
      */
-    delete(...keys: (string | string[])[]): boolean {
+    delete(...keys: (string | string[])[]): string[] {
         return __.toNativeObject(this.nodeHandler.delete(argsToStringArray(keys)));
     }
 
@@ -902,10 +949,10 @@ export class RepoConnection {
      * @example-ref examples/node/push-2.js
      * @example-ref examples/node/push-3.js
      *
-     * @param {object} params JSON with the parameters.
+     * @param {object} params JSON with the parameters
      * @param {string} params.key Id or path to the nodes
      * @param {string[]} params.keys Array of ids or paths to the nodes
-     * @param {string} params.target Branch to push nodes to.
+     * @param {string} params.target Branch to push nodes to
      * @param {boolean} [params.includeChildren=false] Also push children of given nodes
      * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
      * @param {string[]} [params.exclude] Array of ids or paths to nodes not to be pushed (nodes needed to maintain data integrity (e.g parents must be present in target) will be pushed anyway)
@@ -1180,10 +1227,10 @@ export class RepoConnection {
      *
      * @example-ref examples/node/refresh.js
      *
-     * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH) or the storage-index (STORAGE)
+     * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH), or the storage-index (STORAGE)
      */
-    refresh(mode: RefreshMode): void {
-        this.nodeHandler.refresh(mode ?? 'ALL');
+    refresh(mode: RefreshMode = 'ALL'): void {
+        this.nodeHandler.refresh(mode);
     }
 
     /**
@@ -1234,13 +1281,20 @@ export class RepoConnection {
     }
 }
 
+export interface MultiRepoConnection {
+    query(params: QueryNodeParams): object;
+}
+
 /**
  * Creates a new multirepo-connection.
  *
- * @returns {*} native Native multirepo-connection object.
  * @constructor
+ * @hideconstructor
+ * @alias MultiRepoConnection
  */
-export class MultiRepoConnection {
+class MultiRepoConnectionImpl
+    implements MultiRepoConnection {
+
     constructor(private multiRepoConnection: MultiRepoNodeHandler) {
     }
 
@@ -1346,7 +1400,11 @@ export function connect(params: ConnectParams): RepoConnection {
         nodeHandleContext.setPrincipals(params.principals);
     }
 
-    return new RepoConnection(factory.create(nodeHandleContext));
+    return new RepoConnectionImpl(factory.create(nodeHandleContext));
+}
+
+export interface MultiRepoConnectParams {
+    sources: ConnectParams[];
 }
 
 /**
@@ -1365,10 +1423,6 @@ export function connect(params: ConnectParams): RepoConnection {
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */
-export interface MultiRepoConnectParams {
-    sources: ConnectParams[];
-}
-
 export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConnection {
     const multiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
@@ -1379,5 +1433,5 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
         multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
     });
 
-    return new MultiRepoConnection(multiRepoConnectFactory.create(multiRepoNodeHandleContext));
+    return new MultiRepoConnectionImpl(multiRepoConnectFactory.create(multiRepoNodeHandleContext));
 }
