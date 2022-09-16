@@ -22,12 +22,15 @@ public class SnapshotRestoreExecutor
 
     private final RepositoryIds repositoriesToRestore;
 
+    private final boolean force;
+
     private SnapshotRestoreExecutor( final Builder builder )
     {
         super( builder );
         this.indexServiceInternal = builder.indexServiceInternal;
         this.repositoriesToClose = builder.repositoriesToClose;
         this.repositoriesToRestore = builder.repositoriesToRestore;
+        this.force = builder.force;
     }
 
     public RestoreResult execute()
@@ -36,6 +39,10 @@ public class SnapshotRestoreExecutor
         final String[] indicesToRestore = IndexNameResolver.resolveIndexNames( repositoriesToRestore ).toArray( String[]::new );
 
         indexServiceInternal.closeIndices( indicesToClose );
+        if ( force )
+        {
+            indexServiceInternal.deleteIndices( indicesToClose );
+        }
         try
         {
             final RestoreSnapshotResponse response = executeRestoreRequest( indicesToRestore );
@@ -86,6 +93,8 @@ public class SnapshotRestoreExecutor
 
         private RepositoryIds repositoriesToRestore;
 
+        private boolean force;
+
         public Builder indexServiceInternal( final IndexServiceInternal indexServiceInternal )
         {
             this.indexServiceInternal = indexServiceInternal;
@@ -101,6 +110,12 @@ public class SnapshotRestoreExecutor
         public Builder repositoriesToRestore( final RepositoryIds repositories )
         {
             this.repositoriesToRestore = repositories;
+            return this;
+        }
+
+        public Builder force( final boolean force )
+        {
+            this.force = force;
             return this;
         }
 

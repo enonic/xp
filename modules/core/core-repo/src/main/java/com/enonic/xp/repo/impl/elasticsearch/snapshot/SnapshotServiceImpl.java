@@ -67,7 +67,8 @@ public class SnapshotServiceImpl
     private final IndexServiceInternal indexServiceInternal;
 
     @Activate
-    public SnapshotServiceImpl( @Reference final Client client, @Reference final RepoConfiguration configuration, @Reference final RepositoryEntryService repositoryEntryService,
+    public SnapshotServiceImpl( @Reference final Client client, @Reference final RepoConfiguration configuration,
+                                @Reference final RepositoryEntryService repositoryEntryService,
                                 @Reference final EventPublisher eventPublisher, @Reference final IndexServiceInternal indexServiceInternal )
     {
         this.client = client;
@@ -130,10 +131,14 @@ public class SnapshotServiceImpl
             LOG.info( "Restoring repository {} from snapshot", repositoryToRestore );
         }
 
+        final RepositoryIds repositoriesToClose = restoreAll ? repositoriesBeforeRestore : RepositoryIds.from( repositoryToRestore );
+        final RepositoryIds repositoriesToRestore = restoreAll ? RepositoryIds.empty() : RepositoryIds.from( repositoryToRestore );
+
         final RestoreResult result = SnapshotRestoreExecutor.create()
             .snapshotName( snapshotName )
-            .repositoriesToClose( restoreAll ? repositoriesBeforeRestore : RepositoryIds.from( repositoryToRestore ) )
-            .repositoriesToRestore( restoreAll ? RepositoryIds.empty() : RepositoryIds.from( repositoryToRestore ) )
+            .repositoriesToClose( repositoriesToClose )
+            .repositoriesToRestore( repositoriesToRestore )
+            .force( restoreParams.isForce() )
             .client( this.client )
             .snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME )
             .indexServiceInternal( this.indexServiceInternal )

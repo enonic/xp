@@ -71,12 +71,13 @@ public final class SnapshotResource
     public RestoreResultJson restore( final RestoreRequestJson params )
         throws Exception
     {
-        final RestoreResult result = this.snapshotService.restore( RestoreParams.create().
-            snapshotName( params.getSnapshotName() ).
-            setIncludeIndexedData( !params.isSkipIndexedData() ).
-            repositoryId( params.getRepositoryId() ).
-            latest( params.isLatest() ).
-            build() );
+        final RestoreResult result = this.snapshotService.restore( RestoreParams.create()
+                                                                       .snapshotName( params.getSnapshotName() )
+                                                                       .setIncludeIndexedData( !params.isSkipIndexedData() )
+                                                                       .repositoryId( params.getRepositoryId() )
+                                                                       .latest( params.isLatest() )
+                                                                       .force( params.isForce() )
+                                                                       .build() );
 
         return RestoreResultJson.from( result );
     }

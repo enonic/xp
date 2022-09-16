@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -31,19 +32,20 @@ public class SnapshotResourceTest
         throws Exception
     {
 
-        final SnapshotResult snapshotResult = SnapshotResult.create().
-            name( "name" ).
-            reason( "because reasons" ).
-            timestamp( Instant.ofEpochMilli( 1438866915875L ) ).
-            state( SnapshotResult.State.SUCCESS ).
-            indices( Arrays.asList( "46f2a9" ) ).
-            build();
+        final SnapshotResult snapshotResult = SnapshotResult.create()
+            .name( "name" )
+            .reason( "because reasons" )
+            .timestamp( Instant.ofEpochMilli( 1438866915875L ) )
+            .state( SnapshotResult.State.SUCCESS )
+            .indices( Arrays.asList( "46f2a9" ) )
+            .build();
 
         Mockito.when( this.snapshotService.snapshot( isA( SnapshotParams.class ) ) ).thenReturn( snapshotResult );
 
-        final String result = request().path( "repo/snapshot" ).
-            entity( readFromFile( "snapshot_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String result = request().path( "repo/snapshot" )
+            .entity( readFromFile( "snapshot_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "snapshot.json", result );
     }
@@ -52,13 +54,13 @@ public class SnapshotResourceTest
     public void restore()
         throws Exception
     {
-        final RestoreResult restoreResult = RestoreResult.create().
-            repositoryId( RepositoryId.from( "repo-id" ) ).
-            name( "name" ).
-            message( "He's dead, Jim." ).
-            indices( Arrays.asList( "bc02aa" ) ).
-            failed( false ).
-            build();
+        final RestoreResult restoreResult = RestoreResult.create()
+            .repositoryId( RepositoryId.from( "repo-id" ) )
+            .name( "name" )
+            .message( "He's dead, Jim." )
+            .indices( Arrays.asList( "bc02aa" ) )
+            .failed( false )
+            .build();
 
         Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
 
@@ -71,16 +73,41 @@ public class SnapshotResourceTest
     }
 
     @Test
+    public void restore_with_deletion()
+        throws Exception
+    {
+        final RestoreResult restoreResult = RestoreResult.create()
+            .repositoryId( RepositoryId.from( "repo-id" ) )
+            .name( "name" )
+            .message( "He's dead, Jim." )
+            .indices( Arrays.asList( "bc02aa" ) )
+            .failed( false )
+            .build();
+
+        Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenAnswer( ( params ) -> {
+            Assertions.assertTrue( ( (RestoreParams) params.getArgument( 0 ) ).isForce() );
+            return restoreResult;
+        } );
+
+        final String result = request().path( "repo/snapshot/restore" )
+            .entity( readFromFile( "restore_with_deletion_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
+
+        assertJson( "restore.json", result );
+    }
+
+    @Test
     public void restore_latest()
         throws Exception
     {
-        final RestoreResult restoreResult = RestoreResult.create().
-            repositoryId( RepositoryId.from( "repo-id" ) ).
-            name( "name" ).
-            message( "He's dead, Jim." ).
-            indices( Arrays.asList( "bc02aa" ) ).
-            failed( false ).
-            build();
+        final RestoreResult restoreResult = RestoreResult.create()
+            .repositoryId( RepositoryId.from( "repo-id" ) )
+            .name( "name" )
+            .message( "He's dead, Jim." )
+            .indices( Arrays.asList( "bc02aa" ) )
+            .failed( false )
+            .build();
 
         Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
 
@@ -96,9 +123,7 @@ public class SnapshotResourceTest
     public void delete()
         throws Exception
     {
-        final DeleteSnapshotsResult deleteResult = DeleteSnapshotsResult.create().
-            add( "snapshot1" ).
-            build();
+        final DeleteSnapshotsResult deleteResult = DeleteSnapshotsResult.create().add( "snapshot1" ).build();
 
         Mockito.when( this.snapshotService.delete( isA( DeleteSnapshotParams.class ) ) ).thenReturn( deleteResult );
 
@@ -114,17 +139,15 @@ public class SnapshotResourceTest
     public void list()
         throws Exception
     {
-        final SnapshotResult snapshotResult1 = SnapshotResult.create().
-            name( "name1" ).
-            reason( "because reasons" ).
-            timestamp( Instant.ofEpochMilli( 1438866915875L ) ).
-            state( SnapshotResult.State.SUCCESS ).
-            indices( Arrays.asList( "ac27b1" ) ).
-            build();
+        final SnapshotResult snapshotResult1 = SnapshotResult.create()
+            .name( "name1" )
+            .reason( "because reasons" )
+            .timestamp( Instant.ofEpochMilli( 1438866915875L ) )
+            .state( SnapshotResult.State.SUCCESS )
+            .indices( Arrays.asList( "ac27b1" ) )
+            .build();
 
-        final SnapshotResults snapshotResults = SnapshotResults.create().
-            add( snapshotResult1 ).
-            build();
+        final SnapshotResults snapshotResults = SnapshotResults.create().add( snapshotResult1 ).build();
 
         Mockito.when( this.snapshotService.list() ).thenReturn( snapshotResults );
 
