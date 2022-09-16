@@ -47,8 +47,26 @@ public class SnapshotServiceImplTest
     public void setUp()
         throws Exception
     {
-        for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
-            for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
+        for ( String repository : client.admin()
+            .cluster()
+            .prepareGetRepositories()
+            .execute()
+            .actionGet()
+            .repositories()
+            .stream()
+            .map( RepositoryMetaData::name )
+            .collect( Collectors.toList() ) )
+        {
+            for ( String snapshot : client.admin()
+                .cluster()
+                .prepareGetSnapshots( repository )
+                .execute()
+                .actionGet()
+                .getSnapshots()
+                .stream()
+                .map( SnapshotInfo::name )
+                .collect( Collectors.toList() ) )
+            {
                 client.admin().cluster().prepareDeleteSnapshot( repository, snapshot ).execute().actionGet();
             }
             client.admin().cluster().prepareDeleteRepository( repository ).execute().actionGet();
@@ -80,20 +98,14 @@ public class SnapshotServiceImplTest
     private void doNonBuiltinReposSnapshotted()
     {
         final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
-        this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( newRepoId ).
-            build() );
+        this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
 
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
         assertNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.restore( RestoreParams.create().
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
         assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
@@ -110,31 +122,22 @@ public class SnapshotServiceImplTest
     private void doRepositoryIdGiven()
     {
         final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
-        this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( newRepoId ).
-            build() );
+        this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
         assertNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.restore( RestoreParams.create().
-            repositoryId( newRepoId ).
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.restore( RestoreParams.create().repositoryId( newRepoId ).snapshotName( "my-snapshot" ).build() );
 
         // The system repo does not now about this repo now
         assertNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.restore( RestoreParams.create().
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.restore(
+            RestoreParams.create().repositoryId( SystemConstants.SYSTEM_REPO_ID ).snapshotName( "my-snapshot" ).build() );
 
         assertTrue( this.repositoryService.isInitialized( newRepoId ) );
         assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
@@ -146,15 +149,11 @@ public class SnapshotServiceImplTest
     {
         NodeHelper.runAsAdmin( () -> {
             final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
-            this.repositoryService.createRepository( CreateRepositoryParams.create().
-                repositoryId( newRepoId ).
-                build() );
+            this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
 
             assertNotNull( this.repositoryService.get( newRepoId ) );
 
-            this.snapshotService.snapshot( SnapshotParams.create().
-                snapshotName( "my-snapshot" ).
-                build() );
+            this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
             this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
             assertNull( this.repositoryService.get( newRepoId ) );
@@ -162,6 +161,59 @@ public class SnapshotServiceImplTest
             this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertTrue( this.repositoryService.isInitialized( newRepoId ) );
+            assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
+            assertTrue( this.repositoryService.isInitialized( TEST_REPO_ID ) );
+        } );
+    }
+
+    @Test
+    public void restore_all_with_deletion()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
+            this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
+
+            assertNotNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
+
+            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
+            assertNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).force( true ).build() );
+
+            assertTrue( this.repositoryService.isInitialized( newRepoId ) );
+            assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
+            assertTrue( this.repositoryService.isInitialized( TEST_REPO_ID ) );
+        } );
+    }
+
+    @Test
+    public void restore_single_with_deletion()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final RepositoryId newRepoId = RepositoryId.from( "new-repo-1" );
+
+            this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
+
+            final RepositoryId newRepoId2 = RepositoryId.from( "new-repo-2" );
+            this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId2 ).build() );
+
+            this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
+
+            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
+            assertNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.restore(
+                RestoreParams.create().repositoryId( newRepoId ).snapshotName( "my-snapshot" ).force( true ).build() );
+
+            assertTrue( this.repositoryService.isInitialized( newRepoId2 ) );
+
+            this.snapshotService.restore(
+                RestoreParams.create().repositoryId( SystemConstants.SYSTEM_REPO_ID ).snapshotName( "my-snapshot" ).force( true ).build() );
+
+            assertTrue( this.repositoryService.isInitialized( newRepoId ) );
+            assertTrue( this.repositoryService.isInitialized( newRepoId2 ) );
             assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
             assertTrue( this.repositoryService.isInitialized( TEST_REPO_ID ) );
         } );
@@ -196,25 +248,17 @@ public class SnapshotServiceImplTest
     private void doRestoreInvalidSnapshot()
     {
         final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
-        this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( newRepoId ).
-            build() );
+        this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
 
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
-        this.snapshotService.delete( DeleteSnapshotParams.create().
-            add( "my-snapshot" ).
-            build() );
+        this.snapshotService.delete( DeleteSnapshotParams.create().add( "my-snapshot" ).build() );
 
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
 
         try
         {
-            this.snapshotService.restore( RestoreParams.create().
-                snapshotName( "my-snapshot" ).
-                build() );
+            this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
         }
         finally
         {
@@ -223,7 +267,8 @@ public class SnapshotServiceImplTest
     }
 
     @Test
-    public void restore_latest() {
+    public void restore_latest()
+    {
         NodeHelper.runAsAdmin( this::doRestoreLatest );
     }
 
@@ -239,33 +284,25 @@ public class SnapshotServiceImplTest
     private void doRestoreLatest()
     {
         final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
-        this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( newRepoId ).
-            build() );
+        this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot-latest" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot-latest" ).build() );
 
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
         assertNull( this.repositoryService.get( newRepoId ) );
 
-        final RestoreResult restoreResult = this.snapshotService.restore( RestoreParams.create().
-            repositoryId( newRepoId ).
-            latest( true ).
-            build() );
+        final RestoreResult restoreResult =
+            this.snapshotService.restore( RestoreParams.create().repositoryId( newRepoId ).latest( true ).build() );
 
         assertEquals( "my-snapshot-latest", restoreResult.getName() );
 
         // The system repo does not know about this repo now
         assertNull( this.repositoryService.get( newRepoId ) );
 
-        this.snapshotService.restore( RestoreParams.create().
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            snapshotName( "my-snapshot-latest" ).
-            build() );
+        this.snapshotService.restore(
+            RestoreParams.create().repositoryId( SystemConstants.SYSTEM_REPO_ID ).snapshotName( "my-snapshot-latest" ).build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
         assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
@@ -281,13 +318,9 @@ public class SnapshotServiceImplTest
 
     private void doListSnapshots()
     {
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
-        this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot2" ).
-            build() );
+        this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot2" ).build() );
 
         final SnapshotResults result = this.snapshotService.list();
 

@@ -18,12 +18,15 @@ public class RestoreParams
 
     private final boolean latest;
 
+    private final boolean force;
+
     private RestoreParams( Builder builder )
     {
         this.snapshotName = builder.snapshotName;
         this.repositoryId = builder.repositoryId;
         this.includeIndexedData = builder.includeIndexedData;
         this.latest = builder.latest;
+        this.force = builder.force;
     }
 
     public boolean isIncludeIndexedData()
@@ -46,6 +49,11 @@ public class RestoreParams
         return latest;
     }
 
+    public boolean isForce()
+    {
+        return force;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -60,6 +68,8 @@ public class RestoreParams
         private boolean includeIndexedData = true;
 
         private boolean latest = false;
+
+        private boolean force = false;
 
         private Builder()
         {
@@ -86,6 +96,12 @@ public class RestoreParams
         public Builder latest( final boolean latest )
         {
             this.latest = latest;
+            return this;
+        }
+
+        public Builder force( final boolean force )
+        {
+            this.force = force;
             return this;
         }
 

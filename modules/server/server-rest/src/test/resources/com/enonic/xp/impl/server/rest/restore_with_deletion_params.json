@@ -1,0 +1,6 @@
+{
+  "repository" : "repo-id",
+  "skipIndexedData" : "false",
+  "snapshotName" : "snapshot",
+  "force" : "true"
+}
