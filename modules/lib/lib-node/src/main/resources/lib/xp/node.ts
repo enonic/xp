@@ -530,7 +530,7 @@ interface NodeHandler {
 
     push(params: PushNodeHandlerParams): PushNodesResult;
 
-    diff(params: DiffBranchesHandlerParams): object;
+    diff(params: DiffBranchesHandlerParams): DiffBranchesResult;
 
     move(source: string, target: string): boolean;
 
@@ -546,15 +546,15 @@ interface NodeHandler {
 
     findChildren(params: FindChildrenHandlerParams): FindNodesByParentResult;
 
-    commit(keys: string[], message?: string | null): object;
+    commit(keys: string[], message?: string | null): NodeCommit;
 
     getCommit(commitId: string): NodeCommit | null;
 
-    setRootPermissions(v: ScriptValue): object;
+    setRootPermissions(v: ScriptValue): Node;
 
     getBinary(key: string, binaryReference?: string | null): object;
 
-    refresh(mode: RefreshMode): object;
+    refresh(mode: RefreshMode): void;
 }
 
 export interface CreateNodeParams {
@@ -621,6 +621,13 @@ export interface DiffBranchesParams {
     includeChildren: boolean;
 }
 
+export interface DiffBranchesResult {
+    diff: {
+        id: string;
+        status: string;
+    }[];
+}
+
 interface DiffBranchesHandlerParams {
     setKey(value: string): void;
 
@@ -647,13 +654,13 @@ export interface SetChildOrderParams {
 export interface QueryNodeParams {
     start?: number;
     count?: number;
-    query: QueryDsl | string;
+    query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
     aggregations?: Record<string, Aggregation>;
     suggestions?: Record<string, Suggestion>;
-    highlight: Highlight;
-    explain: boolean;
+    highlight?: Highlight;
+    explain?: boolean;
 }
 
 interface QueryNodeHandlerParams {
@@ -952,7 +959,7 @@ export class RepoConnection {
      *
      * @returns {object} DiffNodesResult
      */
-    diff(params: DiffBranchesParams): object {
+    diff(params: DiffBranchesParams): DiffBranchesResult {
         const {
             key,
             target,
@@ -1035,7 +1042,7 @@ export class RepoConnection {
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): object {
+    query(params: QueryNodeParams): NodeQueryResult {
         const {
             start = 0,
             count = 10,
@@ -1213,7 +1220,7 @@ export class RepoConnection {
      *
      * @returns {object} Commit object.
      */
-    commit(params: CommitParams): object {
+    commit(params: CommitParams): NodeCommit {
         const keys: string[] = Array.isArray(params.keys) ? params.keys : [params.keys];
 
         return __.toNativeObject(this.nodeHandler.commit(argsToStringArray(keys), __.nullOrValue(params.message)));
@@ -1260,7 +1267,7 @@ export class MultiRepoConnection {
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): object {
+    query(params: QueryNodeParams): NodeMultiRepoQueryResult {
         const {
             start = 0,
             count = 10,
