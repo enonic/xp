@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
@@ -23,6 +27,8 @@ final class ExceptionInfo
     private WebException cause;
 
     private ResourceService resourceService;
+
+    private PortalUrlService portalUrlService;
 
     private RunMode runMode;
 
@@ -81,11 +87,17 @@ final class ExceptionInfo
         return this;
     }
 
+    public ExceptionInfo portalUrlService( final PortalUrlService portalUrlService )
+    {
+        this.portalUrlService = portalUrlService;
+        return this;
+    }
+
     public PortalResponse toResponse( final WebRequest req )
     {
         final String accept = nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) );
         final boolean isHtml = accept.contains( "text/html" );
-        return isHtml ? toHtmlResponse() : toJsonResponse();
+        return isHtml ? toHtmlResponse( req ) : toJsonResponse();
     }
 
     private PortalResponse toJsonResponse()
@@ -101,7 +113,7 @@ final class ExceptionInfo
             build();
     }
 
-    public PortalResponse toHtmlResponse()
+    public PortalResponse toHtmlResponse( final WebRequest req )
     {
         final ErrorPageBuilder builder;
         if ( runMode == RunMode.DEV )
@@ -115,7 +127,13 @@ final class ExceptionInfo
         }
         else
         {
-            builder = new ErrorPageSimpleBuilder().status( this.status.value() ).tip( tip ).title( getReasonPhrase() );
+            ErrorPageSimpleBuilder errorBuilder =
+                new ErrorPageSimpleBuilder().status( this.status.value() ).tip( tip ).title( getReasonPhrase() );
+            if ( this.status == HttpStatus.FORBIDDEN && ContextAccessor.current().getAuthInfo().isAuthenticated() )
+            {
+                errorBuilder.logoutUrl( generateLogoutUrl( req ) );
+            }
+            builder = errorBuilder;
         }
 
         final String html = builder.build();
@@ -124,6 +142,14 @@ final class ExceptionInfo
             body( html ).
             contentType( MediaType.HTML_UTF_8 ).
             build();
+    }
+
+    private String generateLogoutUrl( final WebRequest req )
+    {
+        return this.portalUrlService.identityUrl( new IdentityUrlParams().
+            portalRequest( new PortalRequest( req ) ).
+            idProviderFunction( "logout" ).
+            idProviderKey( ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() ) );
     }
 
     private String getDescription()

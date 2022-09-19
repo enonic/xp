@@ -24,6 +24,7 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.postprocess.PostProcessor;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
@@ -54,6 +55,8 @@ public final class ExceptionRendererImpl
 
     private final ResourceService resourceService;
 
+    private final PortalUrlService portalUrlService;
+
     private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
     private final ContentService contentService;
@@ -65,11 +68,13 @@ public final class ExceptionRendererImpl
     private final RunMode runMode;
 
 
-    ExceptionRendererImpl( final ResourceService resourceService, final ErrorHandlerScriptFactory errorHandlerScriptFactory,
-                           final ContentService contentService, final IdProviderControllerService idProviderControllerService,
-                           final PostProcessor postProcessor, final RunMode runMode )
+    ExceptionRendererImpl( final ResourceService resourceService, final PortalUrlService portalUrlService,
+                           final ErrorHandlerScriptFactory errorHandlerScriptFactory, final ContentService contentService,
+                           final IdProviderControllerService idProviderControllerService, final PostProcessor postProcessor,
+                           final RunMode runMode )
     {
         this.resourceService = resourceService;
+        this.portalUrlService = portalUrlService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
         this.contentService = contentService;
         this.idProviderControllerService = idProviderControllerService;
@@ -79,12 +84,14 @@ public final class ExceptionRendererImpl
 
     @Activate
     public ExceptionRendererImpl( @Reference final ResourceService resourceService,
+                                  @Reference final PortalUrlService portalUrlService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                                   @Reference final ContentService contentService,
                                   @Reference final IdProviderControllerService idProviderControllerService,
                                   @Reference final PostProcessor postProcessor )
     {
-        this( resourceService, errorHandlerScriptFactory, contentService, idProviderControllerService, postProcessor, RunMode.get() );
+        this( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, idProviderControllerService, postProcessor,
+              RunMode.get() );
     }
 
     @Override
@@ -273,7 +280,9 @@ public final class ExceptionRendererImpl
         final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() ).
             runMode( runMode ).
             cause( cause ).
-            tip( tip );
+            tip( tip ).
+            resourceService( resourceService ).
+            portalUrlService( portalUrlService );
 
         logIfNeeded( info );
         return info.toResponse( req );
@@ -284,7 +293,8 @@ public final class ExceptionRendererImpl
         return ExceptionInfo.create( cause.getStatus() ).
             runMode( runMode ).
             cause( cause ).
-            resourceService( this.resourceService );
+            resourceService( this.resourceService ).
+            portalUrlService( this.portalUrlService );
     }
 
     private void logIfNeeded( final ExceptionInfo info )

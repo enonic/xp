@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,15 +15,24 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
+import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
+import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -34,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,7 +58,11 @@ class ExceptionRendererImplTest
 
     private ResourceService resourceService;
 
+    private PortalUrlService portalUrlService;
+
     private ContentService contentService;
+
+    private IdProviderControllerService idProviderControllerService;
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
@@ -56,11 +72,13 @@ class ExceptionRendererImplTest
     void setup()
     {
         this.resourceService = mock( ResourceService.class );
+        this.portalUrlService = mock( PortalUrlService.class );
         this.contentService = mock( ContentService.class );
+        this.idProviderControllerService = mock(IdProviderControllerService.class);
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
         this.renderer =
-            new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, contentService, null, postProcessor, RunMode.DEV );
+            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, null, postProcessor, RunMode.DEV );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
@@ -98,7 +116,7 @@ class ExceptionRendererImplTest
     @Test
     void render_with_tip()
     {
-        this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, contentService, null, postProcessor );
+        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, null, postProcessor );
 
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         this.request.setBaseUri( "/site" );
@@ -272,6 +290,40 @@ class ExceptionRendererImplTest
 
         // Should not show exception
         assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+    }
+
+    @Test
+    void testRenderForbidden()
+        throws IOException
+    {
+        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService,
+                                                   idProviderControllerService, postProcessor, RunMode.PROD );
+
+        when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
+        when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );
+        this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+
+        final RuntimeException cause = new RuntimeException( "Custom message" );
+
+        final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) );
+        assertEquals( HttpStatus.FORBIDDEN, res.getStatus() );
+        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+
+        final String body = res.getBody().toString();
+        assertTrue( body.contains( "<h3>403 - Forbidden</h3>" ) );
+
+        // test with already authenticated user
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
+
+        final PortalResponse response =
+            context.callWith( () -> this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) ) );
+
+        assertEquals( HttpStatus.FORBIDDEN, response.getStatus() );
+
+        final String responseBody = response.getBody().toString();
+        assertTrue( responseBody.contains( "<h3>403 - Forbidden</h3>" ) );
+        assertTrue( responseBody.contains( "<a href=\"logoutUrl\" class=\"logout\">Logout</a>" ) );
     }
 
     private Site newSite()
