@@ -917,7 +917,7 @@ export interface CreateContentParams {
     childOrder?: string;
     data?: object;
     x?: object;
-    idGenerator: IdGeneratorSupplier;
+    idGenerator?: IdGeneratorSupplier;
     workflow?: object;
 }
 
@@ -1129,11 +1129,11 @@ export interface PublishContentParams {
     keys: string[];
     sourceBranch: string;
     targetBranch: string;
-    schedule: Schedule;
+    schedule?: Schedule;
     includeChildren?: boolean;
     excludeChildrenIds?: string[];
     includeDependencies?: boolean;
-    message: string;
+    message?: string;
 }
 
 export interface PublishContentResult {
@@ -1177,7 +1177,7 @@ interface PublishContentHandler {
  * @param {string} [params.schedule.to] Time until which the content is considered published.
  * @param {string[]} [params.excludeChildrenIds] List of all content keys which children should be excluded from publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
- * @param {string} params.message Publish message.
+ * @param {string} [params.message] Publish message.
  *
  * @returns {object} Status of the publish operation in JSON.
  */
@@ -1190,7 +1190,9 @@ export function publish(params: PublishContentParams): PublishContentResult {
     bean.setKeys(params.keys);
     bean.setTargetBranch(params.targetBranch);
     bean.setSourceBranch(params.sourceBranch);
-    bean.setContentPublishInfo(__.toScriptValue(params.schedule));
+    if (params.schedule) {
+        bean.setContentPublishInfo(__.toScriptValue(params.schedule));
+    }
     if (params.excludeChildrenIds) {
         bean.setExcludeChildrenIds(params.excludeChildrenIds);
     }
@@ -1265,12 +1267,12 @@ export function exists(params: ContentExistsParams): boolean {
 
 export interface CreateMediaParams {
     name: string;
-    parentPath: string;
-    mimeType: string;
-    focalX: string;
-    focalY: string;
+    parentPath?: string;
+    mimeType?: string;
+    focalX?: string;
+    focalY?: string;
     data: string;
-    idGenerator: (v: string) => string;
+    idGenerator?: (v: string) => string;
 }
 
 interface CreateMediaHandler {
@@ -1300,8 +1302,8 @@ interface CreateMediaHandler {
  * @param {string} params.name Name of content.
  * @param {string} [params.parentPath=/] Path to place content under.
  * @param {string} [params.mimeType] Mime-type of the data.
- * @param {number} [params.focalX] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -1434,9 +1436,9 @@ export interface AccessControlEntry {
 
 export interface SetPermissionsParams {
     key: string;
-    inheritPermissions: boolean;
-    overwriteChildPermissions: boolean;
-    permissions: AccessControlEntry[];
+    inheritPermissions?: boolean;
+    overwriteChildPermissions?: boolean;
+    permissions?: AccessControlEntry[];
 }
 
 export interface Permissions {
