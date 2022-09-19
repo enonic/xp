@@ -61,7 +61,7 @@ export interface Group
 export interface LoginResult {
     authenticated: boolean;
     message: string;
-    users?: Principal;
+    user?: Principal;
 }
 
 interface LoginHandler {
