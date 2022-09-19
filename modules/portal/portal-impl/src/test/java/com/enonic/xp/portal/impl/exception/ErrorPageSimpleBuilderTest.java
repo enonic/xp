@@ -16,4 +16,13 @@ class ErrorPageSimpleBuilderTest
             "<body><h1>D&#39;oh!</h1><h3>1 - test &gt; title</h3></body></html>";
         assertEquals( expected, new ErrorPageSimpleBuilder().status( 1 ).title( "test > title" ).build() );
     }
+
+    @Test
+    void testLogoutUrl() {
+        String expected = "<!DOCTYPE html><html>" + "<head><title>403 - Forbidden</title>" + "<style>html, body { height: 100%; } " +
+            "body { font-family: Arial, Helvetica, sans-serif; margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: lightgray; } " +
+            "h1 { font-size: 3em; margin: 0; } " + "h3 { font-size: 1.5em; } .logout { color: lightgray; }</style></head>" +
+            "<body><h1>D&#39;oh!</h1><h3>403 - Forbidden</h3><a href=\"logoutUrl\" class=\"logout\">Logout</a></body></html>";
+        assertEquals( expected, new ErrorPageSimpleBuilder().status( 403 ).title( "Forbidden" ).logoutUrl( "logoutUrl" ).build() );
+    }
 }

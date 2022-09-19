@@ -9,6 +9,8 @@ public class ErrorPageSimpleBuilder
 
     private String tip;
 
+    private String logoutUrl;
+
     public ErrorPageSimpleBuilder status( final int value )
     {
         this.statusCode = value;
@@ -27,6 +29,12 @@ public class ErrorPageSimpleBuilder
         return this;
     }
 
+    public ErrorPageSimpleBuilder logoutUrl( final String logoutUrl )
+    {
+        this.logoutUrl = logoutUrl;
+        return this;
+    }
+
     @Override
     public String build()
     {
@@ -34,9 +42,12 @@ public class ErrorPageSimpleBuilder
         html.text( "<!DOCTYPE html>" );
         html.open( "html" );
         html.open( "head" ).open( "title" ).escapedText( this.statusCode + " - " + this.title ).close();
-        html.open( "style" ).text( "html, body { height: 100%; } " + "body { font-family: Arial, Helvetica, sans-serif; " +
-                                       "margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: lightgray; } " +
-                                       "h1 { font-size: 3em; margin: 0; } h3 { font-size: 1.5em; }" ).close();
+        html.open( "style" )
+            .text( "html, body { height: 100%; } " + "body { font-family: Arial, Helvetica, sans-serif; " +
+                       "margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: lightgray; } " +
+                       "h1 { font-size: 3em; margin: 0; } h3 { font-size: 1.5em; }" +
+                       ( this.logoutUrl != null ? " .logout { color: lightgray; }" : "" ) )
+            .close();
         html.close();
         final HtmlBuilder htmlBuilder = html.open( "body" );
         htmlBuilder.open( "h1" ).escapedText( "D'oh!" ).close();
@@ -45,6 +56,12 @@ public class ErrorPageSimpleBuilder
         {
             htmlBuilder.open( "h4" ).escapedText( tip ).close();
         }
+
+        if ( this.logoutUrl != null )
+        {
+            htmlBuilder.open( "a" ).attribute( "href", this.logoutUrl ).attribute( "class", "logout" ).escapedText( "Logout" ).close();
+        }
+
         html.close();
         html.close();
         return html.toString();
