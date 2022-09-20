@@ -12,7 +12,6 @@ declare global {
         '/lib/xp/content': typeof import('./content');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface XpXData {
         [key: string]: Record<string, Record<string, unknown>>
     }
