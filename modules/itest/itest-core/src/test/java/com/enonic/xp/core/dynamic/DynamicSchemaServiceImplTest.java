@@ -111,6 +111,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -238,6 +239,7 @@ public class DynamicSchemaServiceImplTest
         BundleContext bundleContext = felix.getBundleContext();
 
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        lenient().when( appConfig.virtual_enabled() ).thenReturn( true );
 
         ApplicationFactoryServiceImpl applicationFactoryService =
             new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
