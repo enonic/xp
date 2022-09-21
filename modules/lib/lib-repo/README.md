@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-repo
+npm i --save-dev @enonic-types/lib-repo
 ```
 
 ## Use

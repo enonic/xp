@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-portal
+npm i --save-dev @enonic-types/lib-portal
 ```
 
 ## Use

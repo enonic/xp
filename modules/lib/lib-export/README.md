@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-export
+npm i --save-dev @enonic-types/lib-export
 ```
 
 ## Use

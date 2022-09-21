@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-mail
+npm i --save-dev @enonic-types/lib-mail
 ```
 
 ## Use

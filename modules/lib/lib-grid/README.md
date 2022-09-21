@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-grid
+npm i --save-dev @enonic-types/lib-grid
 ```
 
 ## Use
