@@ -17,7 +17,7 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
   "compilerOptions": {
     "typeRoots": [
       "node_modules/@types",
-      "node_modules/@enonic-types",
+      "node_modules/@enonic-types"
     ]
   }
 }

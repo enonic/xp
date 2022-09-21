@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-i18n
+npm i --save-dev @enonic-types/lib-i18n
 ```
 
 ## Use

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-context
+npm i --save-dev @enonic-types/lib-context
 ```
 
 ## Use

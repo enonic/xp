@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-value
+npm i --save-dev @enonic-types/lib-value
 ```
 
 ## Use

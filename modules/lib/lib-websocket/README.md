@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-websocket
+npm i --save-dev @enonic-types/lib-websocket
 ```
 
 ## Use

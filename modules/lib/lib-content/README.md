@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-content
+npm i --save-dev @enonic-types/lib-content
 ```
 
 ## Use

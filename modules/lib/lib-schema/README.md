@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-schema
+npm i --save-dev @enonic-types/lib-schema
 ```
 
 ## Use

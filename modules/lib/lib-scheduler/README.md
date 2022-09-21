@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-scheduler
+npm i --save-dev @enonic-types/lib-scheduler
 ```
 
 ## Use

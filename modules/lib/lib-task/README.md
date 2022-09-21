@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-task
+npm i --save-dev @enonic-types/lib-task
 ```
 
 ## Use

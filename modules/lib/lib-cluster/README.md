@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-cluster
+npm i --save-dev @enonic-types/lib-cluster
 ```
 
 ## Use
