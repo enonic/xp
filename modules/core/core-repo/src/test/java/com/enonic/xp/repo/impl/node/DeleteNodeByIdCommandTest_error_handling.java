@@ -88,7 +88,7 @@ public class DeleteNodeByIdCommandTest_error_handling
         {
             super( client );
             failOnIds.forEach( id -> {
-                failOn.add( new BranchDocumentId( id, ContextAccessor.current().getBranch() ).toString() );
+                failOn.add( BranchDocumentId.from( id, ContextAccessor.current().getBranch() ).toString() );
                 failOn.add( id.toString() );
             } );
         }

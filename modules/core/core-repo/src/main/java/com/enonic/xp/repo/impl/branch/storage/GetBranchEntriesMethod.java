@@ -45,7 +45,7 @@ class GetBranchEntriesMethod
         for ( final NodeId nodeId : nodeIds )
         {
             getByIdsRequest.add( GetByIdRequest.create().
-                id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+                id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() ).
                 storageSettings( StorageSource.create().
                     storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                     storageType( StaticStorageType.BRANCH ).

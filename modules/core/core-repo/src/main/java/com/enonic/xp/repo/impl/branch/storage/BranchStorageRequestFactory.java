@@ -33,7 +33,7 @@ class BranchStorageRequestFactory
         final NodeId nodeId = nodeBranchEntry.getNodeId();
 
         return StoreRequest.create().
-            id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
+            id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() ).
             nodePath( nodeBranchEntry.getNodePath() ).
             settings( StorageSource.create().
                 storageName( StoreStorageName.from( context.getRepositoryId() ) ).

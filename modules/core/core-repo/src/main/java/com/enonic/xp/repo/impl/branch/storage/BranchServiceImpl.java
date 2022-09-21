@@ -154,7 +154,7 @@ public class BranchServiceImpl
         storageDao.delete( DeleteRequests.create()
                                .forceRefresh( false )
                                .ids( nodeIds.stream()
-                                         .map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() )
+                                         .map( nodeId -> BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
                                          .collect( Collectors.toList() ) )
                                .settings( createStorageSettings( context.getRepositoryId() ) )
                                .build() );
@@ -286,7 +286,7 @@ public class BranchServiceImpl
 
     private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )
     {
-        doCache( context, nodePath, new BranchDocumentId( nodeId, context.getBranch() ) );
+        doCache( context, nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
     }
 
     private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
@@ -348,7 +348,7 @@ public class BranchServiceImpl
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final InternalContext context )
     {
         return GetByIdRequest.create()
-            .id( new BranchDocumentId( nodeId, context.getBranch() ).toString() )
+            .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
             .storageSettings( createStorageSettings( context.getRepositoryId() ) )
             .returnFields( BRANCH_RETURN_FIELDS )
             .routing( nodeId.toString() )

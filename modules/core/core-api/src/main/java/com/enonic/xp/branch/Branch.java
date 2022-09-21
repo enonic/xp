@@ -1,6 +1,7 @@
 package com.enonic.xp.branch;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -14,30 +15,40 @@ public final class Branch
 {
     private static final long serialVersionUID = 0;
 
-    private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
+    private static final Branch MASTER = new Branch( "master" );
+
+    private static final Branch DRAFT = new Branch( "draft" );
+
+    private static final String VALID_BRANCH_ID_REGEX = "^([a-zA-Z0-9\\-:])([a-zA-Z0-9\\-.:])*$";
 
     private final String value;
 
-    private Branch( final Builder builder )
+    private Branch( final String value )
     {
-        Preconditions.checkArgument( !isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
-        Preconditions.checkArgument( builder.value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
-                                     "Branch name format incorrect: " + builder.value );
-        this.value = builder.value;
+        this.value = Objects.requireNonNull( value );
     }
 
     public static Branch from( final String name )
     {
-        return Branch.create().
-            value( name ).
-            build();
+        switch ( name )
+        {
+            case "master":
+                return MASTER;
+            case "draft":
+                return DRAFT;
+            default:
+            {
+                Preconditions.checkArgument( !isNullOrEmpty( name ), "Branch name cannot be null or empty" );
+                Preconditions.checkArgument( name.matches( VALID_BRANCH_ID_REGEX ), "Branch name format incorrect: " + name );
+                return new Branch( name );
+            }
+        }
     }
 
     public String getValue()
     {
         return value;
     }
-
 
     public static Builder create()
     {
@@ -53,17 +64,7 @@ public final class Branch
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Branch branch = (Branch) o;
-        return value.equals( branch.value );
+        return this == o || o instanceof Branch && value.equals( ( (Branch) o ).value );
     }
 
     @Override
@@ -88,7 +89,7 @@ public final class Branch
 
         public Branch build()
         {
-            return new Branch( this );
+            return Branch.from( this.value );
         }
     }
 }
