@@ -130,7 +130,7 @@ class ApplicationFactoryServiceImplTest
                                                                                   .hits( 1 )
                                                                                   .build() );
 
-        when( appConfig.auditlog_enabled() ).thenReturn( true );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( false );
 
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
