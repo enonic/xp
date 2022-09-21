@@ -1,37 +1,24 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
-public class BranchDocumentId
+public final class BranchDocumentId
 {
     private static final String SEPARATOR = "_";
-
-    private final String value;
 
     private final NodeId nodeId;
 
     private final Branch branch;
 
-    public BranchDocumentId( final NodeId nodeId, final Branch branch )
+    private BranchDocumentId( final NodeId nodeId, final Branch branch )
     {
-        Preconditions.checkNotNull( nodeId );
-        Preconditions.checkNotNull( branch );
-
-        this.value = nodeId + SEPARATOR + branch.getValue();
-        this.nodeId = nodeId;
-        this.branch = branch;
-    }
-
-    private BranchDocumentId( final String value, final String nodeIdsAsString, final String branchName )
-    {
-        this.value = value;
-        this.nodeId = NodeId.from( nodeIdsAsString );
-        this.branch = Branch.from( branchName );
+        this.nodeId = Objects.requireNonNull( nodeId );
+        this.branch = Objects.requireNonNull( branch );
     }
 
     public static BranchDocumentId from( final NodeId nodeId, final Branch branch )
@@ -41,24 +28,14 @@ public class BranchDocumentId
 
     public static BranchDocumentId from( final String value )
     {
-        if ( !value.contains( SEPARATOR ) )
-        {
-            throw new IllegalArgumentException( "Invalid format of branch-key: " + value );
-        }
-
         final int separator = value.lastIndexOf( SEPARATOR );
+        Preconditions.checkArgument( separator != -1 && separator != 0 && separator != value.length() - 1,
+                                     "Invalid format of branch-key: %s", value );
+
         final String nodeIdAsString = value.substring( 0, separator );
         final String branchName = value.substring( separator + 1 );
 
-        Preconditions.checkArgument( !isNullOrEmpty( nodeIdAsString ) );
-        Preconditions.checkArgument( !isNullOrEmpty( branchName ) );
-
-        return new BranchDocumentId( value, nodeIdAsString, branchName );
-    }
-
-    public String getValue()
-    {
-        return value;
+        return new BranchDocumentId( NodeId.from( nodeIdAsString ), Branch.from( branchName ) );
     }
 
     public NodeId getNodeId()
@@ -74,7 +51,7 @@ public class BranchDocumentId
     @Override
     public String toString()
     {
-        return value;
+        return nodeId + SEPARATOR + branch;
     }
 
     @Override
@@ -91,24 +68,12 @@ public class BranchDocumentId
 
         final BranchDocumentId that = (BranchDocumentId) o;
 
-        if ( value != null ? !value.equals( that.value ) : that.value != null )
-        {
-            return false;
-        }
-        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
-        {
-            return false;
-        }
-        return branch != null ? branch.equals( that.branch ) : that.branch == null;
-
+        return nodeId.equals( that.nodeId ) && branch.equals( that.branch );
     }
 
     @Override
     public int hashCode()
     {
-        int result = value != null ? value.hashCode() : 0;
-        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
-        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
-        return result;
+        return Objects.hash( nodeId, branch );
     }
 }
