@@ -14,7 +14,7 @@ public class StoreBranchDocumentIdTest
         throws Exception
     {
         final BranchDocumentId id = BranchDocumentId.from( "myBlobKey_myBranch" );
-        assertEquals( "myBlobKey_myBranch", id.getValue() );
+        assertEquals( "myBlobKey_myBranch", id.toString() );
         assertEquals( "myBlobKey", id.getNodeId().toString() );
         assertEquals( "myBranch", id.getBranch().getValue() );
     }
