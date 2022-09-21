@@ -4,7 +4,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-vhost
+npm i --save-dev @enonic-types/lib-vhost
 ```
 
 ## Use

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-admin
+npm i --save-dev @enonic-types/lib-admin
 ```
 
 ## Use

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i --save-dev @enonic/lib-auditlog
+npm i --save-dev @enonic-types/lib-auditlog
 ```
 
 ## Use
