@@ -70,6 +70,7 @@ class ContentVersionFactory
             .publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId(), data.getRoot() ) )
             .workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) )
             .permissions( nodeVersion.getPermissions() )
+            .inheritPermissions( nodeVersion.isInheritPermissions() )
             .build();
     }
 
