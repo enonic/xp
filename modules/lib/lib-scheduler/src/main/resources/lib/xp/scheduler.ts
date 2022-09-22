@@ -58,7 +58,7 @@ export interface ScheduledJob<Config extends object = Record<string, unknown>> {
     schedule: OneTimeSchedule | CronSchedule;
 }
 
-interface CreateScheduledJobHandler<Config extends object = Record<string, unknown>> {
+interface CreateScheduledJobHandler<Config extends object> {
     setName(value: string): void;
 
     setSchedule(value: OneTimeSchedule | CronSchedule): void;
@@ -117,7 +117,7 @@ export interface ModifyScheduledJobParams<Config extends object = Record<string,
     editor: EditorFn<ScheduledJob<Config>>;
 }
 
-interface ModifyScheduledJobHandler<Config extends object = Record<string, unknown>> {
+interface ModifyScheduledJobHandler<Config extends object> {
     setName(value: string): void;
 
     setEditor(value: ScriptValue): void;
@@ -181,7 +181,7 @@ export interface GetScheduledJobParams {
     name: string;
 }
 
-interface GetScheduledJobHandler<Config extends object = Record<string, unknown>> {
+interface GetScheduledJobHandler<Config extends object> {
     setName(value: string): void;
 
     execute(): ScheduledJob<Config> | null;
@@ -205,7 +205,7 @@ export function get<Config extends object = Record<string, unknown>>(params: Get
     return __.toNativeObject(bean.execute());
 }
 
-interface ListScheduledJobsHandler<Config extends object = Record<string, unknown>> {
+interface ListScheduledJobsHandler<Config extends object> {
     execute(): ScheduledJob<Config>[];
 }
 
