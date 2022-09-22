@@ -11,6 +11,10 @@ declare global {
     interface XpLibraries {
         '/lib/xp/portal': typeof import('./portal');
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface XpXData {
+    }
 }
 
 export interface Attachment {
@@ -43,7 +47,7 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface Content {
+export interface Content<Data = Record<string, unknown>, Type extends string = string> {
     _id: string;
     _name: string;
     _path: string;
@@ -53,7 +57,8 @@ export interface Content {
     createdTime: string;
     modifiedTime: string;
     owner: string;
-    type: string;
+    data: Data;
+    type: Type;
     displayName: string;
     hasChildren: boolean;
     language: string;
@@ -61,17 +66,21 @@ export interface Content {
     originProject: string;
     childOrder?: string;
     _sort?: object[];
-    data: Record<string, unknown>;
-    x: XData;
+    x: XpXData;
     attachments: Attachments;
     publish?: PublishInfo;
     workflow?: Workflow;
     inherit?: ContentInheritType[];
 }
 
-export interface Site
-    extends Content {
-    description: string;
+export type Site<Config> = Content<{
+    description?: string;
+    siteConfig: SiteConfig<Config> | SiteConfig<Config>[];
+}, 'portal:site'>;
+
+export interface SiteConfig<Config> {
+    applicationKey: string;
+    config: Config;
 }
 
 export interface AssetUrlParams {
@@ -433,7 +442,7 @@ export function sanitizeHtml(html: string): string {
 }
 
 interface GetCurrentSiteHandler {
-    execute(): Site | null;
+    execute<Config>(): Site<Config> | null;
 }
 
 /**
@@ -444,15 +453,13 @@ interface GetCurrentSiteHandler {
  *
  * @returns {object|null} The current site as JSON.
  */
-export function getSite(): Site | null {
+export function getSite<Config = Record<string, unknown>>(): Site<Config> | null {
     const bean = __.newBean<GetCurrentSiteHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteHandler');
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Config>());
 }
 
-export type SiteConfig = Record<string, unknown>;
-
 interface GetCurrentSiteConfigHandler {
-    execute(): SiteConfig | null;
+    execute<Config>(): Config | null;
 }
 
 /**
@@ -463,13 +470,13 @@ interface GetCurrentSiteConfigHandler {
  *
  * @returns {object|null} The site configuration for current application as JSON.
  */
-export function getSiteConfig(): SiteConfig | null {
+export function getSiteConfig<Config = Record<string, unknown>>(): Config | null {
     const bean = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Config>());
 }
 
 interface GetCurrentContentHandler {
-    execute(): Content | null;
+    execute<Data, Type extends string>(): Content<Data, Type> | null;
 }
 
 /**
@@ -480,9 +487,9 @@ interface GetCurrentContentHandler {
  *
  * @returns {object|null} The current content as JSON.
  */
-export function getContent(): Content | null {
+export function getContent<Data = Record<string, unknown>, Type extends string = string>(): Content<Data, Type> | null {
     const bean = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {

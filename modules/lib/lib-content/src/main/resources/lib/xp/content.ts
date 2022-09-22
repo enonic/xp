@@ -11,6 +11,10 @@ declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
     }
+
+    interface XpXData {
+        [key: string]: Record<string, Record<string, unknown>>
+    }
 }
 
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
@@ -40,7 +44,7 @@ interface GetContentHandler {
 
     setVersionId(value?: string | null): void;
 
-    execute(): Content | null;
+    execute<Data, Type extends string>(): Content<Data, Type> | null;
 }
 
 export interface Attachment {
@@ -65,10 +69,6 @@ interface GetAttachmentsHandler {
 
     execute(): Attachments | null;
 }
-
-export type XDataEntry = Record<string, Record<string, unknown>>;
-
-export type XData = Record<string, XDataEntry>;
 
 export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
 
@@ -559,7 +559,7 @@ export interface GeoDistanceSortDsl
 
 export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 
-export interface Content {
+export interface Content<Data = Record<string, unknown>, Type extends string = string> {
     _id: string;
     _name: string;
     _path: string;
@@ -569,7 +569,8 @@ export interface Content {
     createdTime: string;
     modifiedTime: string;
     owner: string;
-    type: string;
+    data: Data;
+    type: Type;
     displayName: string;
     hasChildren: boolean;
     language: string;
@@ -577,8 +578,7 @@ export interface Content {
     originProject: string;
     childOrder?: string;
     _sort?: object[];
-    data: Record<string, unknown>;
-    x: XData;
+    x: XpXData;
     attachments: Attachments;
     publish?: PublishInfo;
     workflow?: Workflow;
@@ -596,7 +596,7 @@ export interface Content {
  *
  * @returns {object} The content (as JSON) fetched from the repository.
  */
-export function get(params: GetContentParams): Content | null {
+export function get<Data = Record<string, unknown>, Type extends string = string>(params: GetContentParams): Content<Data, Type> | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetContentHandler>('com.enonic.xp.lib.content.GetContentHandler');
@@ -604,7 +604,7 @@ export function get(params: GetContentParams): Content | null {
     bean.setKey(params.key);
     bean.setVersionId(__.nullOrValue(params.versionId));
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 /**
@@ -746,10 +746,15 @@ export function removeAttachment(params: RemoveAttachmentParams): void {
     bean.execute();
 }
 
-export interface Site
-    extends Content {
-    description: string;
+export interface SiteConfig<Config> {
+    applicationKey: string;
+    config: Config;
 }
+
+export type Site<Config> = Content<{
+    description?: string;
+    siteConfig: SiteConfig<Config> | SiteConfig<Config>[];
+}, 'portal:site'>;
 
 export interface GetSiteParams {
     key?: string | null;
@@ -758,7 +763,7 @@ export interface GetSiteParams {
 interface GetSiteHandler {
     setKey(value?: string | null): void;
 
-    execute(): Site | null;
+    execute<Config>(): Site<Config> | null;
 }
 
 /**
@@ -771,7 +776,7 @@ interface GetSiteHandler {
  *
  * @returns {object} The current site as JSON.
  */
-export function getSite(params: GetSiteParams): Site | null {
+export function getSite<Config = Record<string, unknown>>(params: GetSiteParams): Site<Config> | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetSiteHandler>('com.enonic.xp.lib.content.GetSiteHandler');
@@ -784,14 +789,12 @@ export interface GetSiteConfigParams {
     applicationKey: string;
 }
 
-export type SiteConfig = Record<string, unknown>;
-
 interface GetSiteConfigHandler {
     setKey(value?: string | null): void;
 
     setApplicationKey(value?: string | null): void;
 
-    execute(): SiteConfig | null;
+    execute<Config>(): Config | null;
 }
 
 /**
@@ -805,13 +808,13 @@ interface GetSiteConfigHandler {
  *
  * @returns {object} The site configuration for current application as JSON.
  */
-export function getSiteConfig(params: GetSiteConfigParams): SiteConfig | null {
+export function getSiteConfig<Config = Record<string, unknown>>(params: GetSiteConfigParams): Config | null {
     const bean = __.newBean<GetSiteConfigHandler>('com.enonic.xp.lib.content.GetSiteConfigHandler');
 
     bean.setKey(__.nullOrValue(params.key));
     bean.setApplicationKey(__.nullOrValue(params.applicationKey));
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Config>());
 }
 
 export interface DeleteContentParams {
@@ -846,10 +849,10 @@ export {
     _delete as delete,
 };
 
-export interface ContentsResult {
+export interface ContentsResult<Data, Type extends string> {
     total: number;
     count: number;
-    hits: Content[];
+    hits: Content<Data, Type>[];
     aggregations?: Record<string, AggregationsResult>;
     highlight?: Record<string, HighlightResult>;
 }
@@ -870,7 +873,7 @@ interface GetChildContentHandler {
 
     setSort(value?: string | null): void;
 
-    execute(): ContentsResult;
+    execute<Data, Type extends string>(): ContentsResult<Data, Type>;
 }
 
 /**
@@ -886,7 +889,7 @@ interface GetChildContentHandler {
  *
  * @returns {Object} Result (of content) fetched from the repository.
  */
-export function getChildren(params: GetChildContentParams): ContentsResult {
+export function getChildren<Data = Record<string, unknown>, Type extends string = string>(params: GetChildContentParams): ContentsResult<Data, Type> {
     checkRequired(params, 'key');
 
     const {
@@ -901,21 +904,21 @@ export function getChildren(params: GetChildContentParams): ContentsResult {
     bean.setStart(start);
     bean.setCount(count);
     bean.setSort(__.nullOrValue(sort));
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export type IdGeneratorSupplier = (value: string) => string;
 
-export interface CreateContentParams {
+export interface CreateContentParams<Data, Type extends string> {
     name?: string;
     parentPath: string;
     displayName?: string;
     requireValid?: boolean;
     refresh?: boolean;
-    contentType: string;
+    contentType: Type;
     language?: string;
     childOrder?: string;
-    data?: object;
+    data?: Data;
     x?: object;
     idGenerator?: IdGeneratorSupplier;
     workflow?: object;
@@ -946,7 +949,7 @@ interface CreateContentHandler {
 
     setIdGenerator(value?: IdGeneratorSupplier | string | null): void;
 
-    execute(): Content;
+    execute<Data, Type extends string>(): Content<Data, Type>;
 }
 
 /**
@@ -976,7 +979,7 @@ interface CreateContentHandler {
  *
  * @returns {object} Content created as JSON.
  */
-export function create(params: CreateContentParams): Content {
+export function create<Data = Record<string, unknown>, Type extends string = string>(params: CreateContentParams<Data, Type>): Content<Data, Type> {
     const {
         name,
         parentPath,
@@ -1009,7 +1012,7 @@ export function create(params: CreateContentParams): Content {
     bean.setIdGenerator(__.nullOrValue(idGenerator));
     bean.setWorkflow(__.toScriptValue(workflow));
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export interface QueryContentParams {
@@ -1040,7 +1043,7 @@ interface QueryContentHandler {
 
     setHighlight(value: ScriptValue): void;
 
-    execute(): ContentsResult;
+    execute<Data, Type extends string>(): ContentsResult<Data, Type>;
 }
 
 /**
@@ -1059,7 +1062,7 @@ interface QueryContentHandler {
  *
  * @returns {object} Result of query.
  */
-export function query(params: QueryContentParams): ContentsResult {
+export function query<Data = Record<string, unknown>, Type extends string = string>(params: QueryContentParams): ContentsResult<Data, Type> {
     const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(params.start);
@@ -1071,12 +1074,12 @@ export function query(params: QueryContentParams): ContentsResult {
     bean.setFilters(__.toScriptValue(params.filters));
     bean.setHighlight(__.toScriptValue(params.highlight));
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
-export interface ModifyContentParams {
+export interface ModifyContentParams<Data, Type extends string> {
     key: string;
-    editor: (v: Content) => Content;
+    editor: (v: Content<Data, Type>) => Content<Data, Type>;
     requireValid?: boolean;
 }
 
@@ -1087,7 +1090,7 @@ interface ModifyContentHandler {
 
     setRequireValid(value: boolean): void;
 
-    execute(): Content | null;
+    execute<Data, Type extends string>(): Content<Data, Type> | null;
 }
 
 /**
@@ -1102,7 +1105,7 @@ interface ModifyContentHandler {
  *
  * @returns {object} Modified content as JSON.
  */
-export function modify(params: ModifyContentParams): Content | null {
+export function modify<Data = Record<string, unknown>, Type extends string = string>(params: ModifyContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
 
     const {
@@ -1117,7 +1120,7 @@ export function modify(params: ModifyContentParams): Content | null {
     bean.setEditor(__.toScriptValue(editor));
     bean.setRequireValid(requireValid);
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export interface Schedule {
@@ -1290,7 +1293,7 @@ interface CreateMediaHandler {
 
     setIdGenerator(value?: IdGeneratorSupplier | null): void;
 
-    execute(): Content;
+    execute<Data, Type extends string>(): Content<Data, Type>;
 }
 
 /**
@@ -1308,7 +1311,7 @@ interface CreateMediaHandler {
  *
  * @returns {object} Returns the created media content.
  */
-export function createMedia(params: CreateMediaParams): Content {
+export function createMedia<Data = Record<string, unknown>, Type extends string = string>(params: CreateMediaParams): Content<Data, Type> {
     checkRequired(params, 'name');
 
     const bean = __.newBean<CreateMediaHandler>('com.enonic.xp.lib.content.CreateMediaHandler');
@@ -1326,7 +1329,7 @@ export function createMedia(params: CreateMediaParams): Content {
         bean.setFocalY(params.focalY);
     }
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export interface MoveContentParams {
@@ -1339,7 +1342,7 @@ interface MoveContentHandler {
 
     setTarget(value: string): void;
 
-    execute(): Content;
+    execute<Data, Type extends string>(): Content<Data, Type>;
 }
 
 /**
@@ -1353,7 +1356,7 @@ interface MoveContentHandler {
  *
  * @returns {object} The content that was moved or renamed.
  */
-export function move(params: MoveContentParams): Content {
+export function move<Data = Record<string, unknown>, Type extends string = string>(params: MoveContentParams): Content<Data, Type> {
     checkRequired(params, 'source');
     checkRequired(params, 'target');
 
@@ -1362,7 +1365,7 @@ export function move(params: MoveContentParams): Content {
     bean.setSource(params.source);
     bean.setTarget(params.target);
 
-    return __.toNativeObject(bean.execute());
+    return __.toNativeObject(bean.execute<Data, Type>());
 }
 
 export interface ArchiveContentParams {
