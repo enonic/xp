@@ -42,7 +42,7 @@ interface ExecuteFunctionHandler {
 /**
  * @typedef TaskInfo
  * @type Object
- * @property {string} id Task Id.
+ * @property {string} id Task ID.
  * @property {string} name Task name.
  * @property {string} description Task description.
  * @property {string} state Task state. Possible values: 'WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED'
@@ -107,9 +107,9 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     return bean.executeFunction();
 }
 
-export interface SubmitNamedTaskParams {
+export interface SubmitNamedTaskParams<Config extends object = Record<string, unknown>> {
     name: string;
-    config?: Record<string, unknown> | null;
+    config?: Config;
 }
 
 interface SubmitTaskHandler {
@@ -135,7 +135,7 @@ interface SubmitTaskHandler {
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-export function submitNamed(params: SubmitNamedTaskParams): string {
+export function submitNamed<Config extends object = Record<string, unknown>>(params: SubmitNamedTaskParams<Config>): string {
     checkRequired(params, 'name');
 
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
@@ -146,9 +146,9 @@ export function submitNamed(params: SubmitNamedTaskParams): string {
     return bean.submitTask();
 }
 
-export interface SubmitTaskParams {
+export interface SubmitTaskParams<Config extends object = Record<string, unknown>> {
     descriptor: string;
-    config?: Record<string, unknown>;
+    config?: Config;
 }
 
 /**
@@ -164,7 +164,7 @@ export interface SubmitTaskParams {
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-export function submitTask(params: SubmitTaskParams): string {
+export function submitTask<Config extends object = Record<string, unknown>>(params: SubmitTaskParams<Config>): string {
     checkRequired(params, 'descriptor');
 
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
