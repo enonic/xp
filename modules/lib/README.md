@@ -29,8 +29,8 @@ After that, all the global XP variables will be typed.
 
 Adding not `"types": [...]` but `"typeRoots"` will allow to discover types for every other enonic library, that will be installed later.
 
-Import functions, such as `require`, will return typed objects if the corresponding types for imported
-libraries are also added to your `tsconfig.json`.
+Import functions, such as `require`, will return typed objects if the corresponding types for imported libraries are also added to
+your `tsconfig.json`.
 
 ## Configuration
 
@@ -57,11 +57,12 @@ declare const __non_webpack_require__: XpRequire;
 
 ### Beans
 
-To create a new bean, a `__.newBean()` function must be used. Making it return a proper type can be done in two ways. Say you have create an interface for that been somewhere in your project:
+To create a new bean, a `__.newBean()` function must be used. Making it return a proper type can be done in two ways. Say you have created
+an interface for that been somewhere in your project:
 
 ```ts
 interface SomeHelper {
-  help(text: string): void;
+    help(text: string): void;
 }
 ```
 
