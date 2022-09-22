@@ -19,9 +19,47 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-export type EditorFn<T> = (value: T) => T;
-
 export type LoginScopeType = 'SESSION' | 'REQUEST' | 'NONE';
+
+export type UserKey = `user:${string}:${string}`;
+export type GroupKey = `group:${string}:${string}`;
+export type RoleKey = `role:${string}`;
+
+export type PrincipalKey = UserKey | GroupKey | RoleKey;
+
+export interface User {
+    type: 'user';
+    key: UserKey;
+    displayName: string;
+    modifiedTime: string;
+    disabled?: boolean;
+    email?: string;
+    login?: string;
+    idProvider: string;
+}
+
+export interface UserWithProfile<Profile extends Record<string, unknown> = Record<string, unknown>>
+    extends User {
+    profile?: Profile;
+}
+
+export interface Group {
+    type: 'group';
+    key: GroupKey;
+    displayName: string;
+    modifiedTime: string;
+    description?: string;
+}
+
+export interface Role {
+    type: 'role';
+    key: RoleKey;
+    displayName: string;
+    modifiedTime: string;
+    description?: string;
+}
+
+export type Principal = User | Group | Role;
 
 export interface LoginParams {
     user: string;
@@ -32,36 +70,10 @@ export interface LoginParams {
     sessionTimeout?: number;
 }
 
-export interface Principal {
-    type: string;
-    key: string;
-    displayName: string;
-    modifiedTime: string;
-}
-
-export interface User
-    extends Principal {
-    disabled?: boolean;
-    email?: string;
-    login?: string;
-    idProvider: string;
-    profile?: Record<string, unknown>;
-}
-
-export interface Role
-    extends Principal {
-    description?: string;
-}
-
-export interface Group
-    extends Principal {
-    description?: string;
-}
-
 export interface LoginResult {
     authenticated: boolean;
     message: string;
-    user?: Principal;
+    user?: User;
 }
 
 interface LoginHandler {
@@ -163,6 +175,8 @@ interface GetUserHandler {
  *
  * @returns {User} Information for logged-in user.
  */
+export function getUser(params?: { includeProfile?: false }): User | null;
+export function getUser<Profile extends Record<string, unknown> = Record<string, unknown>>(params: { includeProfile: true }): UserWithProfile<Profile> | null;
 export function getUser(params?: GetUserParams): User | null {
     const {
         includeProfile = false,
@@ -186,8 +200,8 @@ interface HasRoleHandler {
  *
  * @example-ref examples/auth/hasRole.js
  *
- * @param {string} role Role to check for.
- * @returns {boolean} True if the user has specfied role, false otherwise.
+ * @param {string} role Role name to check for.
+ * @returns {boolean} True if the user has specified role, false otherwise.
  */
 export function hasRole(role: string): boolean {
     const bean = __.newBean<HasRoleHandler>('com.enonic.xp.lib.auth.HasRoleHandler');
@@ -253,7 +267,7 @@ export function changePassword(params: ChangePasswordParams): void {
 interface GetPrincipalHandler {
     setPrincipalKey(value?: string | null): void;
 
-    getPrincipal(): User | Group | Role | null;
+    getPrincipal(): Principal | null;
 }
 
 /**
@@ -262,9 +276,9 @@ interface GetPrincipalHandler {
  * @example-ref examples/auth/getPrincipal.js
  *
  * @param {string} principalKey Principal key to look for.
- * @returns {Principal} the principal specified, or null if it doesn't exist.
+ * @returns {User | Group | Role} the principal specified, or null if it doesn't exist.
  */
-export function getPrincipal(principalKey: string): User | Group | Role | null {
+export function getPrincipal(principalKey: PrincipalKey): Principal | null {
     const bean = __.newBean<GetPrincipalHandler>('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
@@ -273,11 +287,11 @@ export function getPrincipal(principalKey: string): User | Group | Role | null {
 }
 
 interface GetMembershipsHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value?: UserKey | GroupKey | null): void;
 
     setTransitive(value: boolean): void;
 
-    getMemberships(): (User | Group | Role)[];
+    getMemberships(): (Group | Role)[];
 }
 
 /**
@@ -285,11 +299,11 @@ interface GetMembershipsHandler {
  *
  * @example-ref examples/auth/getMemberships.js
  *
- * @param {string} principalKey Principal key to retrieve memberships for.
+ * @param {string} principalKey Principal key of user or group to retrieve memberships for.
  * @param {boolean} [transitive=false] Retrieve transitive memberships.
- * @returns {Array.<User | Group | Role>} Returns the list of principals.
+ * @returns {Array<Group | Role>} Returns the list of groups and roles.
  */
-export function getMemberships(principalKey: string, transitive: boolean): (User | Group | Role)[] {
+export function getMemberships(principalKey: UserKey | GroupKey, transitive = false): (Group | Role)[] {
     const bean = __.newBean<GetMembershipsHandler>('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
@@ -299,9 +313,9 @@ export function getMemberships(principalKey: string, transitive: boolean): (User
 }
 
 interface GetMembersHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
 
-    getMembers(): (User | Group | Role)[];
+    getMembers(): (User | Group)[];
 }
 
 /**
@@ -310,9 +324,9 @@ interface GetMembersHandler {
  * @example-ref examples/auth/getMembers.js
  *
  * @param {string} principalKey Principal key to retrieve members for.
- * @returns {Array.<User | Group | Role>} Returns the list of principals.
+ * @returns {Array<User | Group>} Returns the list of users and groups.
  */
-export function getMembers(principalKey: string): (User | Group | Role)[] {
+export function getMembers(principalKey: GroupKey | RoleKey): (User | Group)[] {
     const bean = __.newBean<GetMembersHandler>('com.enonic.xp.lib.auth.GetMembersHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
@@ -322,7 +336,7 @@ export function getMembers(principalKey: string): (User | Group | Role)[] {
 
 export interface CreateUserParams {
     name: string;
-    displayName: string;
+    displayName?: string;
     idProvider: string;
     email?: string;
 }
@@ -347,7 +361,7 @@ interface CreateUserHandler {
  * @param {object} params JSON parameters.
  * @param {string} params.idProvider Key for id provider where user has to be created.
  * @param {string} params.name User login name to set.
- * @param {string} params.displayName User display name.
+ * @param {string} [params.displayName] User display name.
  * @param {string} [params.email] User email.
  */
 export function createUser(params: CreateUserParams): User {
@@ -365,12 +379,12 @@ export function createUser(params: CreateUserParams): User {
 }
 
 export interface ModifyUserParams {
-    key: string;
-    editor: EditorFn<User>;
+    key: UserKey;
+    editor: (user: User) => User;
 }
 
 interface ModifyUserHandler {
-    setPrincipalKey(value: string): void;
+    setPrincipalKey(value: UserKey): void;
 
     setEditor(value: ScriptValue): void;
 
@@ -402,8 +416,8 @@ export function modifyUser(params: ModifyUserParams): User | null {
 export interface CreateGroupParams {
     idProvider: string;
     name: string;
-    displayName: string;
-    description: string;
+    displayName?: string;
+    description?: string;
 }
 
 interface CreateGroupHandler {
@@ -426,8 +440,8 @@ interface CreateGroupHandler {
  * @param {object} params JSON parameters.
  * @param {string} params.idProvider Key for id provider where group has to be created.
  * @param {string} params.name Group name.
- * @param {string} params.displayName Group display name.
- * @param {string} params.description as principal description .
+ * @param {string} [params.displayName] Group display name.
+ * @param {string} [params.description] as principal description .
  */
 export function createGroup(params: CreateGroupParams): Group {
     checkRequired(params, 'idProvider');
@@ -444,12 +458,12 @@ export function createGroup(params: CreateGroupParams): Group {
 }
 
 export interface ModifyGroupParams {
-    key: string;
-    editor: EditorFn<Group>;
+    key: GroupKey;
+    editor: (group: Group) => Group;
 }
 
 interface ModifyGroupHandler {
-    setPrincipalKey(value: string): void;
+    setPrincipalKey(value: GroupKey): void;
 
     setEditor(value: ScriptValue): void;
 
@@ -479,9 +493,9 @@ export function modifyGroup(params: ModifyGroupParams): Group | null {
 }
 
 interface AddMembersHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
 
-    setMembers(value: string[]): void;
+    setMembers(value: (UserKey | GroupKey)[]): void;
 
     addMembers(): void;
 }
@@ -492,21 +506,21 @@ interface AddMembersHandler {
  * @example-ref examples/auth/addMembers.js
  *
  * @param {string} principalKey Key of the principal to add members to.
- * @param {string} members Keys of the principals to add.
+ * @param {Array<string>} members Keys of users and groups to add.
  */
-export function addMembers(principalKey: string, members: string): void {
+export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
     const bean = __.newBean<AddMembersHandler>('com.enonic.xp.lib.auth.AddMembersHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
-    bean.setMembers(([] as string[]).concat(members));
+    bean.setMembers([].concat(members));
 
     __.toNativeObject(bean.addMembers());
 }
 
 interface RemoveMembersHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
 
-    setMembers(value: string[]): void;
+    setMembers(value: (UserKey | GroupKey)[]): void;
 
     removeMembers(): void;
 }
@@ -519,17 +533,17 @@ interface RemoveMembersHandler {
  * @param {string} principalKey Key of the principal to remove members from.
  * @param {string} members Keys of the principals to remove.
  */
-export function removeMembers(principalKey: string, members: string): void {
+export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
     const bean = __.newBean<RemoveMembersHandler>('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
     bean.setPrincipalKey(__.nullOrValue(principalKey));
-    bean.setMembers(([] as string[]).concat(members));
+    bean.setMembers([].concat(members));
 
     __.toNativeObject(bean.removeMembers());
 }
 
 export interface FindPrincipalsParams {
-    type?: string;
+    type?: Principal['type'];
     idProvider?: string;
     start?: number;
     count?: number;
@@ -537,10 +551,10 @@ export interface FindPrincipalsParams {
     searchText?: string;
 }
 
-export interface FindPrincipalsResult {
+export interface FindPrincipalsResult<P extends Principal = Principal> {
     total: number;
     count: number;
-    hits: (User | Group | Role)[];
+    hits: P[];
 }
 
 interface FindPrincipalsHandler {
@@ -596,7 +610,7 @@ export function findPrincipals(params: FindPrincipalsParams): FindPrincipalsResu
 }
 
 interface DeletePrincipalHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value?: PrincipalKey | null): void;
 
     deletePrincipal(): boolean;
 }
@@ -609,14 +623,14 @@ interface DeletePrincipalHandler {
  * @param {string} principalKey Principal key to delete.
  * @returns {boolean} True if deleted, false otherwise.
  */
-export function deletePrincipal(principalKey: string): boolean {
+export function deletePrincipal(principalKey: PrincipalKey): boolean {
     const bean = __.newBean<DeletePrincipalHandler>('com.enonic.xp.lib.auth.DeletePrincipalHandler');
     bean.setPrincipalKey(__.nullOrValue(principalKey));
     return __.toNativeObject(bean.deletePrincipal());
 }
 
-interface GetIdProviderConfigHandler {
-    execute(): Record<string, unknown> | null;
+interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unknown>> {
+    execute(): IdProviderConfig | null;
 }
 
 /**
@@ -627,22 +641,22 @@ interface GetIdProviderConfigHandler {
  *
  * @returns {object} The ID provider configuration as JSON.
  */
-export function getIdProviderConfig(): Record<string, unknown> | null {
-    const bean = __.newBean<GetIdProviderConfigHandler>('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
+export function getIdProviderConfig<IdProviderConfig extends Record<string, unknown>>(): IdProviderConfig | null {
+    const bean = __.newBean<GetIdProviderConfigHandler<IdProviderConfig>>('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 }
 
 export interface GetProfileParams {
-    key: string;
+    key: UserKey;
     scope?: string;
 }
 
-interface GetProfileHandler {
-    setKey(value: string): void;
+interface GetProfileHandler<Profile extends Record<string, unknown>> {
+    setKey(value: UserKey): void;
 
     setScope(value?: string | null): void;
 
-    execute(): Record<string, unknown> | null;
+    execute(): Profile | null;
 }
 
 /**
@@ -655,10 +669,10 @@ interface GetProfileHandler {
  * @param {string} [params.scope] Scope of the data to retrieve.
  * @returns {object} The extra data as JSON
  */
-export function getProfile(params: GetProfileParams): Record<string, unknown> | null {
+export function getProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: GetProfileParams): Profile | null {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetProfileHandler>('com.enonic.xp.lib.auth.GetProfileHandler');
+    const bean = __.newBean<GetProfileHandler<Profile>>('com.enonic.xp.lib.auth.GetProfileHandler');
 
     bean.setKey(params.key);
     bean.setScope(__.nullOrValue(params.scope));
@@ -667,19 +681,19 @@ export function getProfile(params: GetProfileParams): Record<string, unknown> | 
 }
 
 export interface ModifyProfileParams {
-    key: string;
+    key: UserKey;
     scope?: string | null;
-    editor: EditorFn<User>;
+    editor: (user: User) => User;
 }
 
-interface ModifyProfileHandler {
-    setKey(value: string): void;
+interface ModifyProfileHandler<Profile extends Record<string, unknown>> {
+    setKey(value: UserKey): void;
 
     setScope(value?: string | null): void;
 
     setEditor(value: ScriptValue): void;
 
-    execute(): Record<string, unknown> | null;
+    execute(): Profile | null;
 }
 
 /**
@@ -693,11 +707,11 @@ interface ModifyProfileHandler {
  * @param {function} params.editor Profile editor function to apply.
  * @returns {object} The extra data as JSON
  */
-export function modifyProfile(params: ModifyProfileParams): Record<string, unknown> | null {
+export function modifyProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProfileParams): Profile | null {
     checkRequired(params, 'key');
     checkRequired(params, 'editor');
 
-    const bean = __.newBean<ModifyProfileHandler>('com.enonic.xp.lib.auth.ModifyProfileHandler');
+    const bean = __.newBean<ModifyProfileHandler<Profile>>('com.enonic.xp.lib.auth.ModifyProfileHandler');
 
     bean.setKey(params.key);
     bean.setScope(__.nullOrValue(params.scope));
@@ -725,7 +739,7 @@ interface FindUsersHandler {
 
     setIncludeProfile(value: boolean): void;
 
-    execute(): FindPrincipalsResult;
+    execute(): FindPrincipalsResult<User | UserWithProfile>;
 }
 
 /**
@@ -742,7 +756,9 @@ interface FindUsersHandler {
  *
  * @returns {FindPrincipalsResult} Result of query.
  */
-export function findUsers(params: FindUsersParams): FindPrincipalsResult {
+export function findUsers(params: FindUsersParams & {includeProfile?: false}): FindPrincipalsResult<User>;
+export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {includeProfile: true}): FindPrincipalsResult<UserWithProfile<Profile>>;
+export function findUsers(params: FindUsersParams): FindPrincipalsResult<User | UserWithProfile> {
     const {
         start = 0,
         count = 10,
@@ -763,8 +779,8 @@ export function findUsers(params: FindUsersParams): FindPrincipalsResult {
 
 export interface CreateRoleParams {
     name: string;
-    displayName: string;
-    description: string;
+    displayName?: string;
+    description?: string;
 }
 
 interface CreateRoleHandler {
@@ -799,12 +815,12 @@ export function createRole(params: CreateRoleParams): Role {
 }
 
 export interface ModifyRoleParams {
-    key: string;
-    editor: EditorFn<Role>;
+    key: RoleKey;
+    editor: (role: Role) => Role;
 }
 
 interface ModifyRoleHandler {
-    setPrincipalKey(value: string): void;
+    setPrincipalKey(value: RoleKey): void;
 
     setEditor(value: ScriptValue): void;
 
