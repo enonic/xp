@@ -17,14 +17,16 @@ export type SharedMapValueType = string | number | boolean | object | null;
 
 export type GridMap = Record<string, SharedMapValueType>;
 
-export type SharedMapModifierFn<Map extends GridMap, Key extends keyof Map> = (value: Map[Key] | null) => Map[Key] | null;
+export type SharedMapModifierFn<Map extends GridMap, Key extends keyof Map> = (value: Map[Key] | null) => SharedMapValueType | Record<string, unknown> | object[];
+
+type ConvertedType = SharedMapValueType | Record<string, unknown> | object[];
 
 interface JavaSharedMap<Map extends GridMap> {
     get<Key extends keyof Map>(key: keyof Map): Map[Key] | null;
 
     delete(key: keyof Map): void;
 
-    set<Key extends keyof Map>(key: Key, value: Map[Key] | null, ttlSeconds?: number | null): void;
+    set<Key extends keyof Map>(key: Key, value: ConvertedType, ttlSeconds?: number | null): void;
 
     modify<Key extends keyof Map>(key: Key, modifier: SharedMapModifierFn<Map, Key>, ttlSeconds?: number | null): Map[Key];
 }
@@ -45,17 +47,6 @@ export interface ModifyParams<Map extends GridMap, Key extends keyof Map> {
     ttlSeconds?: number;
 }
 
-/**
- * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
- *
- *  WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used.
- *  Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons.
- *  The developer is also responsible for not modifying shared objects (keys and values) in place.
- *
- * @constructor
- * @hideconstructor
- * @alias SharedMap
- */
 export interface SharedMap<Map extends GridMap> {
     get<Key extends keyof Map>(key: Key): Map[Key];
 
@@ -137,8 +128,8 @@ class SharedMapImpl<Map extends GridMap>
 
         const ttlSeconds = __.nullOrValue(params.ttlSeconds);
 
-        function modifierFn<Key extends keyof Map>(oldValue: Map[Key] | null): Map[Key] | null {
-            return convertValue<Map, Key>(func.call(this, __.toNativeObject(oldValue)));
+        function modifierFn<Key extends keyof Map>(oldValue: Map[Key] | null): ConvertedType {
+            return convertValue(func.call(this, __.toNativeObject(oldValue)));
         }
 
         if (ttlSeconds === null) {
@@ -165,13 +156,13 @@ function requireNotNull<T>(value: T, parameterName: string): T {
     return value;
 }
 
-function convertValue<Map extends GridMap, Key extends keyof Map>(value: Map[Key] | null): Map[Key] | null {
+function convertValue(value: SharedMapValueType): ConvertedType {
     if (typeof value === 'undefined' || value === null) {
         return null;
     } else if (Array.isArray(value)) {
-        return __.toScriptValue(value).getList() as Map[Key];
+        return __.toScriptValue(value).getList();
     } else if (typeof value === 'object') {
-        return __.toScriptValue(value).getMap() as Map[Key];
+        return __.toScriptValue(value).getMap();
     } else {
         return value;
     }
