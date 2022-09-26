@@ -4,6 +4,8 @@ declare global {
     }
 }
 
+import {Component, Region} from './portal';
+
 export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
 
 export type WorkflowCheckState = 'PENDING' | 'REJECTED' | 'APPROVED';
@@ -28,7 +30,12 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface Content<Data = Record<string, unknown>, Type extends string = string> {
+export interface Content<
+    Data = Record<string, unknown>,
+    Type extends string = string,
+    Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>,
+    > {
     _id: string;
     _name: string;
     _path: string;
@@ -47,7 +54,7 @@ export interface Content<Data = Record<string, unknown>, Type extends string = s
     originProject: string;
     childOrder?: string;
     _sort?: object[];
-    page: import('./portal').Component;
+    page: Component<Config, Regions>;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
