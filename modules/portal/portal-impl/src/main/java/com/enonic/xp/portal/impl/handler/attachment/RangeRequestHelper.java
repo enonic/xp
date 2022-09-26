@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpStatus;
@@ -29,14 +30,14 @@ public final class RangeRequestHelper
         throws IOException
     {
         response.contentType( contentType );
-        response.header( "Accept-Ranges", "bytes" );
-        if ( !request.getHeaders().containsKey( "Range" ) )
+        response.header( HttpHeaders.ACCEPT_RANGES, "bytes" );
+        if ( !request.getHeaders().containsKey( HttpHeaders.RANGE ) )
         {
             response.body( body );
             return;
         }
 
-        final String rangeHeader = request.getHeaders().getOrDefault( "Range", "" ).trim();
+        final String rangeHeader = request.getHeaders().getOrDefault( HttpHeaders.RANGE, "" ).trim();
         final String rangeValue = rangeHeader.length() > "bytes=".length() ? rangeHeader.substring( "bytes=".length() ) : "";
 
         long fileLength = body.size();
@@ -44,7 +45,7 @@ public final class RangeRequestHelper
         if ( ranges.isEmpty() )
         {
             response.status( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE );
-            response.header( "Content-Range", "bytes */" + fileLength );
+            response.header( HttpHeaders.CONTENT_RANGE, "bytes */" + fileLength );
             response.body( null );
             return;
         }
@@ -53,8 +54,8 @@ public final class RangeRequestHelper
         if ( ranges.size() == 1 )
         {
             final Range range = ranges.get( 0 );
-            response.header( "Content-Length", Long.toString( range.length ) );
-            response.header( "Content-Range", "bytes " + range.start + "-" + range.end + "/" + fileLength );
+            response.header( HttpHeaders.CONTENT_LENGTH, Long.toString( range.length ) );
+            response.header( HttpHeaders.CONTENT_RANGE, "bytes " + range.start + "-" + range.end + "/" + fileLength );
             response.body( body.slice( range.start, range.length ) );
         }
         else

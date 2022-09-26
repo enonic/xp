@@ -13,8 +13,8 @@
     "debug": "true"
   },
   "headers": {
-    "Language": "en",
-    "Cookies": "mycookie=123; other=abc;"
+    "cookies": "mycookie=123; other=abc;",
+    "language": "en"
   },
   "cookies": {
     "mycookie": "123",

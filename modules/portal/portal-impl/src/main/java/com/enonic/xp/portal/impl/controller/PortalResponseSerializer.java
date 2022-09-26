@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -124,7 +125,7 @@ public final class PortalResponseSerializer
         }
 
         builder.status( HttpStatus.SEE_OTHER );
-        builder.header( "Location", redirect );
+        builder.header( HttpHeaders.LOCATION, redirect );
     }
 
     private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )

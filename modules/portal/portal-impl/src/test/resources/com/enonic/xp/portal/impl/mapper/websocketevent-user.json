@@ -14,5 +14,8 @@
       "idProvider": "system"
     }
   },
-  "data": {}
+  "data": {
+    "a" : "b",
+    "c" : "d"
+  }
 }

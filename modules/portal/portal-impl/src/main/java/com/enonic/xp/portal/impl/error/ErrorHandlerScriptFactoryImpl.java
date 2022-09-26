@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.error;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -11,7 +12,13 @@ import com.enonic.xp.script.ScriptExports;
 public final class ErrorHandlerScriptFactoryImpl
     implements ErrorHandlerScriptFactory
 {
-    private PortalScriptService scriptService;
+    private final PortalScriptService scriptService;
+
+    @Activate
+    public ErrorHandlerScriptFactoryImpl( @Reference final PortalScriptService scriptService )
+    {
+        this.scriptService = scriptService;
+    }
 
     @Override
     public ErrorHandlerScript errorScript( final ResourceKey script )
@@ -19,11 +26,4 @@ public final class ErrorHandlerScriptFactoryImpl
         final ScriptExports exports = this.scriptService.execute( script );
         return new ErrorHandlerScriptImpl( exports );
     }
-
-    @Reference
-    public void setScriptService( final PortalScriptService scriptService )
-    {
-        this.scriptService = scriptService;
-    }
-
 }

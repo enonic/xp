@@ -87,8 +87,7 @@ public class FilterScriptImplTest
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
-        this.factory = new FilterScriptFactoryImpl();
-        this.factory.setScriptService( scriptService );
+        this.factory = new FilterScriptFactoryImpl( scriptService );
 
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( req );

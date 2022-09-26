@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.macro;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -21,9 +22,15 @@ import com.enonic.xp.script.ScriptExports;
 public final class MacroProcessorFactoryImpl
     implements MacroProcessorFactory
 {
-    private PortalScriptService scriptService;
+    private final PortalScriptService scriptService;
 
     private final Map<String, MacroProcessor> macroProcessors = new ConcurrentHashMap<>();
+
+    @Activate
+    public MacroProcessorFactoryImpl( @Reference final PortalScriptService scriptService )
+    {
+        this.scriptService = scriptService;
+    }
 
     @Override
     public MacroProcessor fromDir( final ResourceKey dir )
@@ -50,13 +57,6 @@ public final class MacroProcessorFactoryImpl
     {
         return ApplicationKey.SYSTEM.equals( scriptResourceKey.getApplicationKey() );
     }
-
-    @Reference
-    public void setScriptService( final PortalScriptService scriptService )
-    {
-        this.scriptService = scriptService;
-    }
-
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
     public void addMacroProcessor( final BuiltInMacroProcessor value )

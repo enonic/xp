@@ -82,7 +82,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         if ( isSvgz )
         {
             contentType = SVG_MEDIA_TYPE;
-            portalResponse.header( "Content-Encoding", "gzip" );
+            portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
         }
         else if ( isGif )
         {
@@ -101,14 +101,14 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         {
             if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
             {
-                portalResponse.header( "Content-Security-Policy", contentSecurityPolicySvg );
+                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
             }
         }
         else
         {
             if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
             {
-                portalResponse.header( "Content-Security-Policy", contentSecurityPolicy );
+                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
             }
         }
 
@@ -126,7 +126,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         if ( download )
         {
-            portalResponse.header( "Content-Disposition", contentDispositionAttachment( attachment.getName() ) );
+            portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( attachment.getName() ) );
         }
 
         final ByteSource body;

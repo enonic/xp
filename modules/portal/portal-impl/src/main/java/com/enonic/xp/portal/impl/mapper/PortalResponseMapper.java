@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -14,11 +15,18 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class PortalResponseMapper
     implements MapSerializable
 {
+    private static volatile boolean lowercaseHeaders = true;
+
     private final PortalResponse response;
 
     public PortalResponseMapper( final PortalResponse response )
     {
         this.response = response;
+    }
+
+    static void setLowercaseHeaders( final boolean lowercaseHeaders )
+    {
+        PortalResponseMapper.lowercaseHeaders = lowercaseHeaders;
     }
 
     @Override
@@ -28,11 +36,28 @@ public final class PortalResponseMapper
         gen.value( "contentType", this.response.getContentType() );
         gen.value( "postProcess", this.response.isPostProcess() );
 
-        MapperHelper.serializeMap( "headers", gen, this.response.getHeaders() );
+        serializeHeaders( gen );
+
         serializePageContributions( gen );
         serializeCookies( gen );
         gen.value( "applyFilters", this.response.applyFilters() );
-        serializeBody( gen );
+        gen.value( "body", this.response.getBody() );
+    }
+
+    private void serializeHeaders( final MapGenerator gen )
+    {
+        final Map<String, String> headers = this.response.getHeaders();
+        gen.value( "headers", headers );
+        if ( lowercaseHeaders )
+        {
+            gen.map( "headers" );
+            headers.forEach( ( key, value ) -> gen.value( key.toLowerCase( Locale.ROOT ), value ) );
+            gen.end();
+        }
+        else
+        {
+            gen.value( "headers", headers );
+        }
     }
 
     private void serializePageContributions( final MapGenerator gen )
@@ -95,18 +120,5 @@ public final class PortalResponseMapper
             gen.end();
         }
         gen.end();
-    }
-
-    private void serializeBody( final MapGenerator gen )
-    {
-        final Object body = this.response.getBody();
-        if ( body instanceof Map )
-        {
-            MapperHelper.serializeMap( "body", gen, (Map) body, true );
-        }
-        else
-        {
-            gen.value( "body", body );
-        }
     }
 }
