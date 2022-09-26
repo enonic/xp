@@ -1,10 +1,10 @@
 {
     "name": "@enonic-types/%FULL_NAME%",
     "version": "%VERSION%",
-    "description": "Type definitions for %FULL_NAME%.",
+    "description": "%DESCRIPTION%",
     "types": "%FILE_NAME%.d.ts",
     "files": [
-        "%FILE_NAME%.d.ts"
+        %FILES%
     ],
     "repository": {
         "type": "git",
@@ -26,6 +26,7 @@
         "url": "https://github.com/enonic/xp/issues"
     },
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
+    "dependencies": {%DEPENDECNIES%},
     "publishConfig": {
         "access": "public"
     }

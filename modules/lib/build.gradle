@@ -8,6 +8,13 @@ node {
     version = '16.15.0'
 }
 
+def sharedDir = "$projectDir/shared/"
+
+/* Clean */
+clean {
+    delete "$sharedDir/build"
+}
+
 /* Test */
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
@@ -25,15 +32,15 @@ task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create JS and DTS files from TS'
     args = [ 'run', 'build' ]
 
-    inputs.files( subprojects.buildDir.collect { fileTree("$it/typescript/lib/xp/").matching {
-        include "**/*.ts"
-    }} )
     inputs.file "global.d.ts"
+    inputs.files( fileTree( sharedDir ).matching {
+        include "**/*.ts"
+    })
 
     inputs.file "tsconfig.build.json"
     inputs.file "tsconfig.json"
 
-    outputs.files( subprojects.buildDir.collect { fileTree("$it/typescript/lib/xp/").matching {
+    outputs.files( subprojects.buildDir.collect { fileTree( "$it/typescript/lib/xp/" ).matching {
         include "**/*.js"
     }} )
 }
@@ -71,7 +78,7 @@ task jsdoc(type: NpmTask, dependsOn: prepareToJsdoc) {
 
 /* Publish */
 
-task prepareToPublish( type: Copy ) {
+task prepareGlobalToPublish( type: Copy ) {
     into "$buildDir/npm"
 
     from 'README.md'
@@ -83,17 +90,57 @@ task prepareToPublish( type: Copy ) {
                 .replaceAll('%VERSION%', version )
                 .replaceAll('%FULL_NAME%|%FILE_NAME%', 'global' )
                 .replaceAll('%SHORT_NAME%', 'common' )
+                .replaceAll('%DESCRIPTION%', 'Global variables and functions type definition.' )
+                .replaceAll('%FILES%', '"global.d.ts"' )
+                .replaceAll('%DEPENDECNIES%', '' )
         }
         rename '.+', 'package.json'
     }
 }
 
-task publishToNpm( type: NpmTask, dependsOn: [ prepareToPublish, npmInstall ] ) {
-    onlyIf { !version.endsWith('-SNAPSHOT') }
+task prepareSharedToPublish( type: Copy ) {
+    into "$sharedDir/build/npm"
 
-    args = [ 'publish' ]
-    workingDir = prepareToPublish.destinationDir
+    from "$sharedDir/README.md"
+    from( sharedDir ) {
+        include '*.d.ts'
+    }
+
+    def files = []
+    file( sharedDir ).eachFileMatch( ~/.+\.d\.ts/ ) {
+        files << "\"${it.name}\""
+    }
+
+    from( 'package.template.json' ) {
+        filter {
+            line -> line
+                .replaceAll('%VERSION%', version )
+                .replaceAll('%SHORT_NAME%', 'common' )
+                .replaceAll('%FULL_NAME%', 'shared' )
+                .replaceAll('%FILE_NAME%', 'index' )
+                .replaceAll('%DESCRIPTION%', 'Shared type definition for core libraries.' )
+                .replaceAll('%FILES%', files.join( ',\n        ' ) )
+                .replaceAll('%DEPENDECNIES%', '' )
+        }
+        rename '.+', 'package.json'
+    }
 }
+
+task prepareToPublish( dependsOn: [ prepareGlobalToPublish, prepareSharedToPublish ] ) {}
+
+task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npmInstall ] ) {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+    args = [ 'publish' ]
+    workingDir = prepareGlobalToPublish.destinationDir
+}
+
+task publishSharedToNpm( type: NpmTask, dependsOn: [ prepareSharedToPublish, npmInstall ] ) {
+    onlyIf { !version.endsWith('-SNAPSHOT') }
+    args = [ 'publish' ]
+    workingDir = prepareSharedToPublish.destinationDir
+}
+
+task publishToNpm( dependsOn: [ publishGlobalToNpm, publishSharedToNpm ] ) {}
 
 task packageJsdoc(type: Jar, dependsOn: jsdoc) {
     from "$buildDir/resources/main/jsdoc"
@@ -139,6 +186,8 @@ subprojects {
     task prepareToPublish( type: Copy, dependsOn: processResources ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
+        // TODO: Replace with the actual lib check later, when shared types will be imported
+        def hasSharedImport = false
 
         into "$buildDir/npm"
 
@@ -153,6 +202,9 @@ subprojects {
                     .replaceAll('%VERSION%', version )
                     .replaceAll('%FULL_NAME%', fullName )
                     .replaceAll('%SHORT_NAME%|%FILE_NAME%', shortName )
+                    .replaceAll('%DESCRIPTION%', "Type definitions for ${fullName}." )
+                    .replaceAll('%FILES%', "\"${shortName}.d.ts\"" )
+                    .replaceAll('%DEPENDECNIES%', hasSharedImport ? "\n        \"@enonic-types/shared\": \"$version\"\n    " : '' )
             }
             rename '.+', 'package.json'
         }

@@ -1,6 +1,7 @@
 # Enonic XP lib-value TS types
 
 > TypeScript definitions for `lib-value` library of Enonic XP
+
 ## Install
 
 ```bash
