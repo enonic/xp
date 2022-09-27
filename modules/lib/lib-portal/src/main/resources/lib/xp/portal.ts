@@ -83,6 +83,86 @@ export interface SiteConfig<Config> {
     config: Config;
 }
 
+export type DefaultHeaders = {
+    Accept: string;
+    'Accept-Charset': string;
+    'Accept-Encoding': string;
+    Authorization: string;
+    'Content-Length': string,
+    'Content-Type': string,
+    Cookies: string;
+    Expect: string;
+    Host: string;
+    'If-None-Match': string;
+    Language: string;
+    'User-Agent': string;
+};
+
+export interface Cookie {
+    value: string;
+    path?: string;
+    domain?: string;
+    comment?: string;
+    maxAge?: number; // -1
+    secure?: boolean; // false
+    httpOnly?: boolean; // false
+    sameSite?: 'lax' | 'strict' | 'none' | ''; // ''
+}
+
+interface Request<Params extends Record<string, string | undefined> = Record<string, string | undefined>,
+    Headers extends Record<string, string | undefined> = DefaultHeaders,
+    Cookies extends Record<string, string | Cookie | undefined> = Record<string, string | Cookie | undefined>,
+    > {
+    method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'HEAD' | 'PATCH' | 'OPTIONS' | 'TRACE' | 'CONNECT';
+    scheme: 'http' | 'https';
+    host: string;
+    port: number;
+    path: string;
+    rawPath: string;
+    url: string;
+    remoteAddress: string;
+    mode: 'inline' | 'edit' | 'preview' | 'live';
+    webSocket?: boolean;
+    repositoryId: string;
+    branch: 'draft' | 'master';
+    contextPath: string;
+    body: string;
+    params: Params;
+    headers: Headers;
+    cookies: Cookies;
+    contentType: string;
+}
+
+type ResponseType = string | object | unknown[] | ReadonlyArray<unknown> | null;
+
+type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
+export interface PageContributions {
+    headBegin?: string | string[];
+    headEnd?: string | string[];
+    bodyBegin?: string | string[];
+    bodyEnd?: string | string[];
+}
+
+export interface Response<ResponseBody extends ResponseType = ResponseType,
+    Headers extends Record<string, string | undefined> = DefaultHeaders,
+    Cookies extends Record<string, string | Cookie | undefined> = Record<string, string | Cookie | undefined>,
+    > {
+    status: number;
+    body: ResponseBody;
+    contentType: LiteralUnion<| 'text/html'
+        | 'application/json'
+        | 'application/problem+json'
+        | 'text/xml'
+        | 'application/xml'>;
+    headers: Headers;
+    cookies: Cookies;
+    redirect: string;
+    postProcess: boolean;
+    pageContributions: PageContributions;
+    applyFilters: boolean;
+}
+
 export interface AssetUrlParams {
     path: string;
     application?: string;
