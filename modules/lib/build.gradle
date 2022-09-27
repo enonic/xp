@@ -8,18 +8,18 @@ node {
     version = '16.15.0'
 }
 
-def sharedDir = "$projectDir/shared/"
+def coreDir = "$projectDir/core/"
 
 /* Clean */
 clean {
-    delete "$sharedDir/build"
+    delete "$coreDir/build"
 }
 
 /* Test */
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Lint TS, JS, and JSON'
-    args = [ 'run', 'lint:quiet' ]
+    args = ['run', 'lint:quiet']
 
     outputs.upToDateWhen { false }
 }
@@ -30,42 +30,42 @@ check.dependsOn lint
 
 task typescript( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Create JS and DTS files from TS'
-    args = [ 'run', 'build' ]
+    args = ['run', 'build']
 
     inputs.file "global.d.ts"
-    inputs.files( fileTree( sharedDir ).matching {
+    inputs.files( fileTree( coreDir ).matching {
         include "**/*.ts"
-    })
+    } )
 
     inputs.file "tsconfig.build.json"
     inputs.file "tsconfig.json"
 
-    outputs.files( subprojects.buildDir.collect { fileTree( "$it/typescript/lib/xp/" ).matching {
-        include "**/*.js"
-    }} )
+    outputs.files( subprojects.buildDir.collect {
+        fileTree( "$it/typescript/lib/xp/" ).matching {
+            include "**/*.js"
+        }
+    } )
 }
 
 task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
     into "$buildDir/js"
-    into("") {
+    into( "" ) {
         from projectDir
         include "lib-*/build/typescript/lib/xp/*.js"
-        eachFile { fcd ->
-            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(3))
+        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 3 ) )
         }
 
     }
-    into ("examples") {
+    into( "examples" ) {
         from projectDir
         include "lib-*/src/main/resources/lib/xp/examples/**/*.js"
-        eachFile { fcd ->
-            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(5))
+        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 5 ) )
         }
     }
     includeEmptyDirs = false
 }
 
-task jsdoc(type: NpmTask, dependsOn: prepareToJsdoc) {
+task jsdoc( type: NpmTask, dependsOn: prepareToJsdoc ) {
     description = 'Build JSDoc for libraries.'
     args = ['run', 'jsdoc']
     doFirst {
@@ -85,64 +85,53 @@ task prepareGlobalToPublish( type: Copy ) {
     from 'global.d.ts'
 
     from( 'package.template.json' ) {
-        filter {
-            line -> line
-                .replaceAll('%VERSION%', version )
-                .replaceAll('%FULL_NAME%|%FILE_NAME%', 'global' )
-                .replaceAll('%SHORT_NAME%', 'common' )
-                .replaceAll('%DESCRIPTION%', 'Global variables and functions type definition.' )
-                .replaceAll('%FILES%', '"global.d.ts"' )
-                .replaceAll('%DEPENDECNIES%', '' )
+        filter { line ->
+            line
+                .replaceAll( '%VERSION%', version )
+                .replaceAll( '%FULL_NAME%|%FILE_NAME%', 'global' )
+                .replaceAll( '%SHORT_NAME%', 'common' )
+                .replaceAll( '%DESCRIPTION%', 'Global variables and functions type definition.' )
         }
         rename '.+', 'package.json'
     }
 }
 
-task prepareSharedToPublish( type: Copy ) {
-    into "$sharedDir/build/npm"
+task prepareCoreToPublish( type: Copy ) {
+    into "$coreDir/build/npm"
 
-    from "$sharedDir/README.md"
-    from( sharedDir ) {
-        include '*.d.ts'
-    }
-
-    def files = []
-    file( sharedDir ).eachFileMatch( ~/.+\.d\.ts/ ) {
-        files << "\"${it.name}\""
-    }
+    from "$coreDir/README.md"
+    from "$coreDir/index.d.ts"
 
     from( 'package.template.json' ) {
-        filter {
-            line -> line
-                .replaceAll('%VERSION%', version )
-                .replaceAll('%SHORT_NAME%', 'common' )
-                .replaceAll('%FULL_NAME%', 'shared' )
-                .replaceAll('%FILE_NAME%', 'index' )
-                .replaceAll('%DESCRIPTION%', 'Shared type definition for core libraries.' )
-                .replaceAll('%FILES%', files.join( ',\n        ' ) )
-                .replaceAll('%DEPENDECNIES%', '' )
+        filter { line ->
+            line
+                .replaceAll( '%VERSION%', version )
+                .replaceAll( '%SHORT_NAME%', 'shared' )
+                .replaceAll( '%FULL_NAME%', 'core' )
+                .replaceAll( '%FILE_NAME%', 'index' )
+                .replaceAll( '%DESCRIPTION%', 'Shared type definition for core libraries.' )
         }
         rename '.+', 'package.json'
     }
 }
 
-task prepareToPublish( dependsOn: [ prepareGlobalToPublish, prepareSharedToPublish ] ) {}
+task prepareToPublish( dependsOn: [prepareGlobalToPublish, prepareCoreToPublish] ) {}
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: [ prepareGlobalToPublish, npmInstall ] ) {
-    onlyIf { !version.endsWith('-SNAPSHOT') }
-    args = [ 'publish' ]
+task publishGlobalToNpm( type: NpmTask, dependsOn: [prepareGlobalToPublish, npmInstall] ) {
+    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
+    args = ['publish']
     workingDir = prepareGlobalToPublish.destinationDir
 }
 
-task publishSharedToNpm( type: NpmTask, dependsOn: [ prepareSharedToPublish, npmInstall ] ) {
-    onlyIf { !version.endsWith('-SNAPSHOT') }
-    args = [ 'publish' ]
-    workingDir = prepareSharedToPublish.destinationDir
+task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInstall] ) {
+    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
+    args = ['publish']
+    workingDir = prepareCoreToPublish.destinationDir
 }
 
-task publishToNpm( dependsOn: [ publishGlobalToNpm, publishSharedToNpm ] ) {}
+task publishToNpm( dependsOn: [publishGlobalToNpm, publishCoreToNpm] ) {}
 
-task packageJsdoc(type: Jar, dependsOn: jsdoc) {
+task packageJsdoc( type: Jar, dependsOn: jsdoc ) {
     from "$buildDir/resources/main/jsdoc"
     classifier = 'jsdoc'
 }
@@ -167,7 +156,7 @@ subprojects {
     apply plugin: 'com.github.node-gradle.node'
 
     task prepareToTypescript( type: Copy ) {
-        from ("src/main/resources") {
+        from( "src/main/resources" ) {
             include '**/*.ts'
             includeEmptyDirs = false
         }
@@ -186,8 +175,8 @@ subprojects {
     task prepareToPublish( type: Copy, dependsOn: processResources ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
-        // TODO: Replace with the actual lib check later, when shared types will be imported
-        def hasSharedImport = false
+        // TODO: Replace with the actual shared dependencies in the future, like ['@enonic-types/core']
+        def dependencies = []
 
         into "$buildDir/npm"
 
@@ -197,22 +186,25 @@ subprojects {
         }
 
         from( '../package.template.json' ) {
-            filter {
-                line -> line
-                    .replaceAll('%VERSION%', version )
-                    .replaceAll('%FULL_NAME%', fullName )
-                    .replaceAll('%SHORT_NAME%|%FILE_NAME%', shortName )
-                    .replaceAll('%DESCRIPTION%', "Type definitions for ${fullName}." )
-                    .replaceAll('%FILES%', "\"${shortName}.d.ts\"" )
-                    .replaceAll('%DEPENDECNIES%', hasSharedImport ? "\n        \"@enonic-types/shared\": \"$version\"\n    " : '' )
+            filter { line ->
+                line
+                    .replaceAll( '%VERSION%', version )
+                    .replaceAll( '%FULL_NAME%', fullName )
+                    .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
+                    .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
+                if ( dependencies.size() > 0 )
+                {
+                    def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
+                    line.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
+                }
             }
             rename '.+', 'package.json'
         }
     }
 
     task publishToNpm( type: NpmTask, dependsOn: prepareToPublish ) {
-        onlyIf { !version.endsWith('-SNAPSHOT') }
-        args = [ 'publish' ]
+        onlyIf { !version.endsWith( '-SNAPSHOT' ) }
+        args = ['publish']
         workingDir = prepareToPublish.destinationDir
     }
 

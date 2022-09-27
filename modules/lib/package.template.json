@@ -4,7 +4,7 @@
     "description": "%DESCRIPTION%",
     "types": "%FILE_NAME%.d.ts",
     "files": [
-        %FILES%
+        "%FILE_NAME%.d.ts"
     ],
     "repository": {
         "type": "git",
@@ -26,7 +26,7 @@
         "url": "https://github.com/enonic/xp/issues"
     },
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
-    "dependencies": {%DEPENDECNIES%},
+    "dependencies": {},
     "publishConfig": {
         "access": "public"
     }

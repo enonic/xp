@@ -24,7 +24,7 @@
     "homepage": "https://github.com/enonic/xp/tree/master#readme",
     "devDependencies": {
         "@enonic/eslint-config": "^0.1.0",
-        "@enonic-types/shared": "./shared",
+        "@enonic-types/core": "./core",
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
         "cp-file": "^9.1.0",
