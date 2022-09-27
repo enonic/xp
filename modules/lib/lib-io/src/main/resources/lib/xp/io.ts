@@ -13,9 +13,7 @@ declare global {
     }
 }
 
-const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
-
-interface IResource {
+interface JavaResource {
     getSize(): number;
 
     getBytes(): object;
@@ -23,14 +21,42 @@ interface IResource {
     exists(): boolean;
 }
 
+interface IOHandlerBean {
+    readText(value: object): string;
+
+    readLines(value: object): string[];
+
+    processLines(stream: object, func: (value: string) => object): void;
+
+    getSize(stream: object): number;
+
+    getMimeType(name: string): string;
+
+    newStream(text: string): object;
+
+    getResource(key: string): JavaResource;
+}
+
+export interface Resource {
+    getSize(): number;
+
+    getStream(): object;
+
+    exists(): boolean;
+}
+
+const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
+
 /**
  * Looks up a resource.
  *
- * @param {*} native Native resource object.
  * @constructor
+ * @hideconstructor
+ * @alias Resource
  */
-export class Resource {
-    private res: IResource;
+class ResourceImpl
+    implements Resource {
+    private res: JavaResource;
 
     constructor(key: string) {
         this.res = bean.getResource(key);
@@ -62,24 +88,6 @@ export class Resource {
     exists(): boolean {
         return this.res.exists();
     }
-}
-
-export type ProcessLinesFn = (value: string) => object;
-
-interface IOHandlerBean {
-    readText(value: object): string;
-
-    readLines(value: object): string[];
-
-    processLines(stream: object, func: ProcessLinesFn): void;
-
-    getSize(stream: object): number;
-
-    getMimeType(name: string): string;
-
-    newStream(text: string): object;
-
-    getResource(key: string): IResource;
 }
 
 /**
@@ -114,7 +122,7 @@ export function readLines(stream: object): string[] {
  * @param stream Stream to read lines from.
  * @param {function} func Callback function to be called for each line.
  */
-export function processLines(stream: object, func: ProcessLinesFn): void {
+export function processLines(stream: object, func: (value: string) => object): void {
     return bean.processLines(stream, func);
 }
 
@@ -163,5 +171,5 @@ export function newStream(text: string): object {
  * @returns {Resource} Resource reference.
  */
 export function getResource(key: string): Resource {
-    return new Resource(key);
+    return new ResourceImpl(key);
 }
