@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.suggester.Suggestions;
 
 @PublicApi
 public class FindNodesByMultiRepoQueryResult
@@ -9,6 +10,8 @@ public class FindNodesByMultiRepoQueryResult
     private final MultiRepoNodeHits nodeHits;
 
     private final Aggregations aggregations;
+
+    private final Suggestions suggestions;
 
     private final long totalHits;
 
@@ -20,6 +23,7 @@ public class FindNodesByMultiRepoQueryResult
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
+        this.suggestions = builder.suggestions;
     }
 
     public static Builder create()
@@ -35,6 +39,11 @@ public class FindNodesByMultiRepoQueryResult
     public Aggregations getAggregations()
     {
         return aggregations;
+    }
+
+    public Suggestions getSuggestions()
+    {
+        return suggestions;
     }
 
     public long getTotalHits()
@@ -57,6 +66,8 @@ public class FindNodesByMultiRepoQueryResult
 
         private Aggregations aggregations;
 
+        private Suggestions suggestions;
+
         private Builder()
         {
         }
@@ -64,6 +75,12 @@ public class FindNodesByMultiRepoQueryResult
         public Builder aggregations( final Aggregations aggregations )
         {
             this.aggregations = aggregations;
+            return this;
+        }
+
+        public Builder suggestions( final Suggestions suggestions )
+        {
+            this.suggestions = suggestions;
             return this;
         }
 
