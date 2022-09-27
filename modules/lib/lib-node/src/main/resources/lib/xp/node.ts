@@ -440,19 +440,12 @@ export interface NodeQueryResult {
     }[];
 }
 
-export interface NodeMultiRepoQueryResult {
-    total: number;
-    count: number;
+export type NodeMultiRepoQueryResult = NodeQueryResult & {
     hits: {
-        id: string;
-        score: number;
         repoId: string;
         branch: string;
-        explanation?: Explanation;
-        highlight?: HighlightResult;
     }[];
-    aggregations?: AggregationsResult;
-}
+};
 
 // END AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
 

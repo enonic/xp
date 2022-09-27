@@ -5,6 +5,7 @@ import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeHits;
 import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.suggester.Suggestions;
 
 public final class NodeMultiRepoQueryResultMapper
     extends AbstractQueryResultMapper
@@ -15,12 +16,14 @@ public final class NodeMultiRepoQueryResultMapper
 
     private final Aggregations aggregations;
 
+    private final Suggestions suggestions;
 
     public NodeMultiRepoQueryResultMapper( final FindNodesByMultiRepoQueryResult result )
     {
         this.nodeHits = result.getNodeHits();
         this.total = result.getTotalHits();
         this.aggregations = result.getAggregations();
+        this.suggestions = result.getSuggestions();
     }
 
     @Override
@@ -30,6 +33,7 @@ public final class NodeMultiRepoQueryResultMapper
         gen.value( "count", this.nodeHits.getSize() );
         serialize( gen, this.nodeHits );
         serialize( gen, aggregations );
+        serialize( gen, suggestions );
     }
 
     private void serialize( final MapGenerator gen, final MultiRepoNodeHits nodeHits )
@@ -47,5 +51,15 @@ public final class NodeMultiRepoQueryResultMapper
             gen.end();
         }
         gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final Suggestions suggestions )
+    {
+        if ( suggestions != null && suggestions.isNotEmpty() )
+        {
+            gen.map( "suggestions" );
+            new SuggestionsMapper( suggestions ).serialize( gen );
+            gen.end();
+        }
     }
 }
