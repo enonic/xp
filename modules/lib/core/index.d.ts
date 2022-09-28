@@ -7,19 +7,6 @@ export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
 export type RoleKey = `role:${string}`;
 
-export type PrincipalKey = UserKey | GroupKey | RoleKey;
-
-export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
-
-export type WorkflowCheckState = 'PENDING' | 'REJECTED' | 'APPROVED';
-
-export type ContentInheritType = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
-
-export interface Workflow {
-    state: WorkflowState;
-    checks?: Record<string, WorkflowCheckState>;
-}
-
 export interface Attachment {
     name: string;
     label?: string;
@@ -49,8 +36,7 @@ export interface Region<Config extends object = object> {
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>,
+    Page extends Component = Component,
     > {
     _id: string;
     _name: string;
@@ -70,10 +56,13 @@ export interface Content<
     originProject: string;
     childOrder?: string;
     _sort?: object[];
-    page: Component<Config, Regions>;
+    page: Page;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
-    workflow?: Workflow;
-    inherit?: ContentInheritType[];
+    workflow?: {
+        state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+        checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
+    };
+    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
 }

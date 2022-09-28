@@ -175,7 +175,6 @@ subprojects {
     task prepareToPublish( type: Copy, dependsOn: processResources ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
-        // TODO: Replace with the actual shared dependencies in the future, like ['@enonic-types/core']
         def dependencies = []
 
         into "$buildDir/npm"
