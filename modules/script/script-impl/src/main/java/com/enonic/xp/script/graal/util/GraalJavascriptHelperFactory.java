@@ -1,5 +1,7 @@
 package com.enonic.xp.script.graal.util;
 
+import java.util.function.Function;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
@@ -26,6 +28,15 @@ public final class GraalJavascriptHelperFactory
                 synchronized ( context )
                 {
                     return context.getBindings( "js" ).getMember( "Object" ).newInstance();
+                }
+            }
+
+            @Override
+            public Value newFunction( final Function<?, ?> function )
+            {
+                synchronized ( context )
+                {
+                    return ( context.eval( "js","f => a => f.apply(a)" ) ).execute( function );
                 }
             }
 

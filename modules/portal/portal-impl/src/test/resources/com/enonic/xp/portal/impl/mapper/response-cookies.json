@@ -22,6 +22,5 @@
       "maxAge" : 0
     }
   },
-  "applyFilters" : true,
-  "body" : null
+  "applyFilters" : true
 }

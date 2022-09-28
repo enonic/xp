@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.function.Function;
+
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -35,6 +37,19 @@ public final class JavascriptHelperFactory
             public Bindings newJsObject()
             {
                 return (Bindings) objectProto.newObject();
+            }
+
+            @Override
+            public Object newFunction( final Function<?, ?> function )
+            {
+                try
+                {
+                    return ( (JSObject) engine.eval( "f => a => f.apply(a)" ) ).call( null, function );
+                }
+                catch ( ScriptException e )
+                {
+                    throw new RuntimeException( e );
+                }
             }
 
             @Override

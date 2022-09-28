@@ -1,5 +1,7 @@
 package com.enonic.xp.script.graal.util;
 
+import java.util.function.Function;
+
 import com.enonic.xp.script.impl.util.JavascriptHelper;
 import com.enonic.xp.script.serializer.MapGeneratorBase;
 
@@ -24,6 +26,12 @@ public final class GraalScriptMapGenerator
     protected Object newArray()
     {
         return this.helper.newJsArray();
+    }
+
+    @Override
+    protected Object newFunction( final Function<?, ?> function )
+    {
+        return this.helper.newFunction( function );
     }
 
     @Override

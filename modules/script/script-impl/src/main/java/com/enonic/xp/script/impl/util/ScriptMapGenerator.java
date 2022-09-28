@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.util;
 
+import java.util.function.Function;
+
 import com.enonic.xp.script.serializer.MapGeneratorBase;
 
 final class ScriptMapGenerator
@@ -17,6 +19,12 @@ final class ScriptMapGenerator
     protected Object newMap()
     {
         return this.helper.newJsObject();
+    }
+
+    @Override
+    protected Object newFunction( Function<?, ?> function )
+    {
+        return this.helper.newFunction( function );
     }
 
     @Override

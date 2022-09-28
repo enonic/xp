@@ -11,8 +11,4 @@ public @interface PortalConfig
     String media_contentSecurityPolicy() default "default-src 'none'; base-uri 'none'; form-action 'none'";
 
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
-
-    boolean lowercaseRequestHeaders() default true;
-
-    boolean lowercaseResponseHeaders() default true;
 }

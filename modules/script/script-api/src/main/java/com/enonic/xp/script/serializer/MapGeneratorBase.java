@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
@@ -35,6 +36,8 @@ public abstract class MapGeneratorBase
     protected abstract Object newMap();
 
     protected abstract Object newArray();
+
+    protected abstract Object newFunction(Function<?, ?> function);
 
     protected abstract boolean isMap( Object value );
 
@@ -246,6 +249,11 @@ public abstract class MapGeneratorBase
         if ( value instanceof Exception )
         {
             return value;
+        }
+
+        if ( value instanceof Function )
+        {
+            return newFunction( (Function<?, ?>) value );
         }
 
         return value.toString();

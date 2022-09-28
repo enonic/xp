@@ -13,9 +13,10 @@
     "debug": "true"
   },
   "headers": {
-    "cookies": "mycookie=123; other=abc;",
-    "language": "en"
+    "Cookies": "mycookie=123; other=abc;",
+    "Language": "en"
   },
+  "getHeader" : {},
   "cookies": {
     "mycookie": "123",
     "other": "abc"

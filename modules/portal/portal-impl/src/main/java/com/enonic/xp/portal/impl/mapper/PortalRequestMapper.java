@@ -1,8 +1,7 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -11,18 +10,11 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class PortalRequestMapper
     implements MapSerializable
 {
-    private static volatile boolean lowercaseHeaders = true;
-
     private final PortalRequest request;
 
     public PortalRequestMapper( final PortalRequest request )
     {
         this.request = request;
-    }
-
-    static void setLowercaseHeaders( final boolean lowercaseHeaders )
-    {
-        PortalRequestMapper.lowercaseHeaders = lowercaseHeaders;
     }
 
     @Override
@@ -61,23 +53,9 @@ public final class PortalRequestMapper
 
         serializeBody( gen );
         MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
-        serializeHeaders( gen );
+        gen.value( "headers", this.request.getHeaders() );
+        gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
         gen.value( "cookies", this.request.getCookies() );
-    }
-
-    private void serializeHeaders( final MapGenerator gen )
-    {
-        final Map<String, String> headers = this.request.getHeaders();
-        if ( lowercaseHeaders )
-        {
-            gen.map( "headers" );
-            headers.forEach( ( key, value ) -> gen.value( key.toLowerCase( Locale.ROOT ), value ) );
-            gen.end();
-        }
-        else
-        {
-            gen.value( "headers", headers );
-        }
     }
 
     private void serializeBody( final MapGenerator gen )

@@ -12,6 +12,8 @@ import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PortalErrorMapperTest
 {
     private PortalError error;
@@ -62,6 +64,9 @@ public class PortalErrorMapperTest
     public void testSimple()
         throws Exception
     {
-        assertHelper.assertJson( "error-simple.json", new PortalErrorMapper( this.error ) );
+        final PortalErrorMapper value = new PortalErrorMapper( this.error );
+        assertHelper.assertJson( "error-simple.json", value );
+        final Exception exception = MapSerializableAssert.serializeJs( value ).getMember( "exception" ).getValue( Exception.class );
+        assertThat(exception).isInstanceOf( NotFoundException.class ).message().isEqualTo( "Not found." );
     }
 }
