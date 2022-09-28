@@ -835,7 +835,7 @@ export interface RepoConnection {
 
     push(params: PushNodeParams): PushNodesResult;
 
-    diff(params: DiffBranchesParams): object;
+    diff(params: DiffBranchesParams): DiffBranchesResult;
 
     getBinary(params: GetBinaryParams): object;
 
@@ -843,7 +843,7 @@ export interface RepoConnection {
 
     setChildOrder(params: SetChildOrderParams): Node;
 
-    query(params: QueryNodeParams): object;
+    query(params: QueryNodeParams): NodeQueryResult;
 
     exists(key: string): boolean;
 
@@ -857,9 +857,9 @@ export interface RepoConnection {
 
     refresh(mode: RefreshMode): void;
 
-    setRootPermissions(params: SetRootPermissionsParams): object;
+    setRootPermissions(params: SetRootPermissionsParams): Node;
 
-    commit(params: CommitParams): object;
+    commit(params: CommitParams): NodeCommit;
 
     getCommit(params: GetCommitParams): NodeCommit | null;
 }
@@ -1251,7 +1251,7 @@ class RepoConnectionImpl
      *
      * @returns {object} Updated root-node as JSON.
      */
-    setRootPermissions(params: SetRootPermissionsParams): object {
+    setRootPermissions(params: SetRootPermissionsParams): Node {
         checkRequired(params, '_permissions');
 
         return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
@@ -1289,7 +1289,7 @@ class RepoConnectionImpl
 }
 
 export interface MultiRepoConnection {
-    query(params: QueryNodeParams): object;
+    query(params: QueryNodeParams): NodeMultiRepoQueryResult;
 }
 
 /**
