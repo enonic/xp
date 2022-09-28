@@ -83,37 +83,25 @@ export interface SiteConfig<Config> {
     config: Config;
 }
 
-export type DefaultHeaders = {
-    Accept: string;
-    'Accept-Charset': string;
-    'Accept-Encoding': string;
-    Authorization: string;
-    'Content-Length': string,
-    'Content-Type': string,
-    Cookies: string;
-    Expect: string;
-    Host: string;
-    'If-None-Match': string;
-    Language: string;
-    'User-Agent': string;
-};
-
 export interface Cookie {
     value: string;
     path?: string;
     domain?: string;
-    comment?: string;
-    maxAge?: number; // -1
-    secure?: boolean; // false
-    httpOnly?: boolean; // false
-    sameSite?: 'lax' | 'strict' | 'none' | ''; // ''
+    maxAge?: number;
+    secure?: boolean;
+    httpOnly?: boolean;
+    sameSite?: 'lax' | 'strict' | 'none' | '';
 }
 
-interface Request<Params extends Record<string, string | undefined> = Record<string, string | undefined>,
-    Headers extends Record<string, string | undefined> = DefaultHeaders,
+type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
+export type RequestParams = Record<string, string | string[] | undefined>;
+
+export interface Request<Params extends RequestParams = RequestParams,
+    Headers extends Record<string, string | undefined> = Record<string, string | undefined>,
     Cookies extends Record<string, string | Cookie | undefined> = Record<string, string | Cookie | undefined>,
     > {
-    method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'HEAD' | 'PATCH' | 'OPTIONS' | 'TRACE' | 'CONNECT';
+    method: LiteralUnion<'GET' | 'PUT' | 'POST' | 'DELETE' | 'HEAD' | 'PATCH' | 'OPTIONS' | 'TRACE' | 'CONNECT'>;
     scheme: 'http' | 'https';
     host: string;
     port: number;
@@ -121,57 +109,44 @@ interface Request<Params extends Record<string, string | undefined> = Record<str
     rawPath: string;
     url: string;
     remoteAddress: string;
-    mode: 'inline' | 'edit' | 'preview' | 'live';
-    webSocket?: boolean;
+    mode: 'inline' | 'edit' | 'preview' | 'live' | 'admin';
+    webSocket: boolean;
     repositoryId: string;
-    branch: 'draft' | 'master';
+    branch: LiteralUnion<'draft' | 'master'>;
     contextPath: string;
-    body: string;
+    body?: string;
     params: Params;
     headers: Headers;
     cookies: Cookies;
-    contentType: string;
+    contentType?: string;
 }
 
-type ResponseType = string | object | unknown[] | ReadonlyArray<unknown> | null;
-
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
-
-export interface PageContributions {
-    headBegin?: string | string[];
-    headEnd?: string | string[];
-    bodyBegin?: string | string[];
-    bodyEnd?: string | string[];
-}
-
-export interface Response<ResponseBody extends ResponseType = ResponseType,
-    Headers extends Record<string, string | undefined> = DefaultHeaders,
-    Cookies extends Record<string, string | Cookie | undefined> = Record<string, string | Cookie | undefined>,
-    > {
+export interface Response<ResponseBody = unknown> {
     status: number;
     body: ResponseBody;
-    contentType: LiteralUnion<| 'text/html'
-        | 'application/json'
-        | 'application/problem+json'
-        | 'text/xml'
-        | 'application/xml'>;
-    headers: Headers;
-    cookies: Cookies;
+    contentType: string;
+    headers: Record<string, string | undefined>;
+    cookies: Record<string, string | Cookie | undefined>;
     redirect: string;
     postProcess: boolean;
-    pageContributions: PageContributions;
+    pageContributions: {
+        headBegin?: string | string[];
+        headEnd?: string | string[];
+        bodyBegin?: string | string[];
+        bodyEnd?: string | string[];
+    };
     applyFilters: boolean;
 }
 
-export interface AssetUrlParams {
+export interface AssetUrlParams<Params extends RequestParams = RequestParams> {
     path: string;
     application?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface AssetUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -187,12 +162,12 @@ interface AssetUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function assetUrl(params: AssetUrlParams): string {
+export function assetUrl<Params extends RequestParams = RequestParams>(params: AssetUrlParams<Params>): string {
     const bean = __.newBean<AssetUrlHandler>('com.enonic.xp.lib.portal.url.AssetUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface ImageUrlParams {
+export interface ImageUrlParams<Params extends RequestParams = RequestParams> {
     id: string;
     path: string;
     scale: string;
@@ -201,11 +176,11 @@ export interface ImageUrlParams {
     format?: string;
     filter?: string;
     server?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface ImageUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -226,21 +201,21 @@ interface ImageUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function imageUrl(params: ImageUrlParams): string {
+export function imageUrl<Params extends RequestParams = RequestParams>(params: ImageUrlParams<Params>): string {
     const bean = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface ComponentUrlParams {
+export interface ComponentUrlParams<Params extends RequestParams = RequestParams> {
     id?: string;
     path?: string;
     component?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface ComponentUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -257,23 +232,23 @@ interface ComponentUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function componentUrl(params: ComponentUrlParams): string {
+export function componentUrl<Params extends RequestParams = RequestParams>(params: ComponentUrlParams<Params>): string {
     const bean = __.newBean<ComponentUrlHandler>('com.enonic.xp.lib.portal.url.ComponentUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface AttachmentUrlParams {
+export interface AttachmentUrlParams<Params extends RequestParams = RequestParams> {
     id?: string;
     path?: string;
     name?: string;
     label?: string;
     download?: boolean;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface AttachmentUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -292,20 +267,20 @@ interface AttachmentUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function attachmentUrl(params: AttachmentUrlParams): string {
+export function attachmentUrl<Params extends RequestParams = RequestParams>(params: AttachmentUrlParams<Params>): string {
     const bean = __.newBean<AttachmentUrlHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface PageUrlParams {
+export interface PageUrlParams<Params extends RequestParams = RequestParams> {
     id?: string;
     path?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface PageUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -321,20 +296,20 @@ interface PageUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function pageUrl(params: PageUrlParams): string {
+export function pageUrl<Params extends RequestParams = RequestParams>(params: PageUrlParams<Params>): string {
     const bean = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface ServiceUrlParams {
+export interface ServiceUrlParams<Params extends RequestParams = RequestParams> {
     service: string;
     application?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface ServiceUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -350,20 +325,20 @@ interface ServiceUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function serviceUrl(params: ServiceUrlParams): string {
+export function serviceUrl<Params extends RequestParams = RequestParams>(params: ServiceUrlParams<Params>): string {
     const bean = __.newBean<ServiceUrlHandler>('com.enonic.xp.lib.portal.url.ServiceUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface IdProviderUrlParams {
+export interface IdProviderUrlParams<Params extends RequestParams = RequestParams> {
     idProvider?: string;
     contextPath?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface IdProviderUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -379,21 +354,21 @@ interface IdProviderUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function idProviderUrl(params: IdProviderUrlParams): string {
+export function idProviderUrl<Params extends RequestParams = RequestParams>(params: IdProviderUrlParams<Params>): string {
     const bean = __.newBean<IdProviderUrlHandler>('com.enonic.xp.lib.portal.url.IdProviderUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
 
-export interface LoginUrlParams {
+export interface LoginUrlParams<Params extends RequestParams = RequestParams> {
     idProvider?: string;
     redirect?: string;
     contextPath?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface LoginUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -410,20 +385,20 @@ interface LoginUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function loginUrl(params: LoginUrlParams): string {
+export function loginUrl<Params extends RequestParams = RequestParams>(params: LoginUrlParams<Params>): string {
     const bean = __.newBean<LoginUrlHandler>('com.enonic.xp.lib.portal.url.LoginUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
 
-export interface LogoutUrlParams {
+export interface LogoutUrlParams<Params extends RequestParams = RequestParams> {
     redirect?: string;
     contextPath?: string;
     type?: string;
-    params?: object;
+    params?: Params;
 }
 
 interface LogoutUrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -438,7 +413,7 @@ interface LogoutUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function logoutUrl(params: LogoutUrlParams): string {
+export function logoutUrl<Params extends RequestParams = RequestParams>(params: LogoutUrlParams<Params>): string {
     const bean = __.newBean<LogoutUrlHandler>('com.enonic.xp.lib.portal.url.LogoutUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
@@ -450,7 +425,7 @@ export interface UrlParams {
 }
 
 interface UrlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
@@ -478,7 +453,7 @@ export interface ProcessHtmlParams {
 }
 
 interface ProcessHtmlHandler {
-    createUrl(value: object): string;
+    createUrl(value: ScriptValue): string;
 }
 
 /**
