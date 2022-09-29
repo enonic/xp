@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import java.time.Instant;
-import java.util.Optional;
-
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
@@ -31,8 +28,7 @@ public abstract class DescriptorMapper<T extends ComponentDescriptor>
         gen.value( "description", descriptor.getDescription() );
         gen.value( "descriptionI18nKey", descriptor.getDescriptionI18nKey() );
         gen.value( "componentPath", descriptor.getComponentPath() );
-        gen.value( "modifiedTime",
-                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
+        gen.value( "modifiedTime", descriptor.getModifiedTime() );
         gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );
 

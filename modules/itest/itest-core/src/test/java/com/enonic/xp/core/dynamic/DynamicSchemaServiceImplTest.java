@@ -317,6 +317,7 @@ public class DynamicSchemaServiceImplTest
         assertFalse( contentType.isAbstract() );
         assertTrue( contentType.isFinal() );
         assertTrue( contentType.getXData().contains( XDataName.from( "myapplication:metadata" ) ) );
+        assertNotNull( contentType.getModifiedTime() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -696,6 +697,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
+        assertNotNull( partDescriptor.getModifiedTime() );
 
         assertEquals( 1, partDescriptor.getSchemaConfig().getSize() );
 
@@ -992,6 +994,7 @@ public class DynamicSchemaServiceImplTest
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
+        assertNotNull( siteDescriptor.getModifiedTime() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/site.xml" ).build() ) );
@@ -1129,6 +1132,7 @@ public class DynamicSchemaServiceImplTest
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/site/styles.xml", result.getResource().getKey().toString() );
+        assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/styles.xml" ).build() ) );

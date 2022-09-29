@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import java.time.Instant;
-import java.util.Optional;
-
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -28,8 +25,7 @@ public class SiteDescriptorMapper
     {
         gen.value( "application", descriptor.getApplicationKey() );
         gen.value( "resource", resource.readString() );
-        gen.value( "modifiedTime",
-                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
+        gen.value( "modifiedTime", descriptor.getModifiedTime() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
         serializeXDataMappings( gen, descriptor.getXDataMappings() );

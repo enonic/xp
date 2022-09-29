@@ -113,6 +113,7 @@ public class GetDynamicContentSchemaHandlerTest
                 .name( CAMERA_INFO_METADATA_NAME )
                 .displayName( "Photo Info" )
                 .displayNameI18nKey( "media.cameraInfo.displayName" )
+                .modifiedTime( Instant.ofEpochMilli( 443234242L ) )
                 .build();
 
             final Resource resource = mock( Resource.class );
