@@ -813,10 +813,6 @@ export interface Node {
     _permissions?: AccessControlEntry[];
 }
 
-/**
- * @name RepoConnection
- * @constructor
- */
 export interface RepoConnection {
     create(params: CreateNodeParams): Node;
 
