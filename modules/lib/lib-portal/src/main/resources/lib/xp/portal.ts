@@ -115,13 +115,20 @@ export function assetUrl(params: AssetUrlParams): string {
 export interface ImageUrlParams {
     id: string;
     path: string;
-    scale: string;
     quality?: number;
     background?: string;
     format?: string;
     filter?: string;
     server?: string;
     params?: object;
+    scale:
+        | `block(${number},${number})`
+        | `height(${number})`
+        | `max(${number})`
+        | `square(${number})`
+        | `wide(${number},${number})`
+        | `width(${number})`
+        | 'full';
 }
 
 interface ImageUrlHandler {
@@ -321,7 +328,7 @@ interface LoginUrlHandler {
  *
  *
  * @param {object} [params] Input parameters as JSON.
- * @param {string} [params.idProvider] Key of a id provider using an application.
+ * @param {string} [params.idProvider] Key of the id provider using an application.
  * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
  * @param {string} [params.redirect] The URL to redirect to after the login.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
