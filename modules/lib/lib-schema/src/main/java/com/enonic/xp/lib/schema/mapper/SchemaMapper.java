@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import java.time.Instant;
-import java.util.Optional;
-
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.BaseSchema;
@@ -32,8 +29,7 @@ public abstract class SchemaMapper<T extends BaseSchema<? extends BaseSchemaName
         gen.value( "descriptionI18nKey", descriptor.getDescriptionI18nKey() );
         gen.value( "createdTime", descriptor.getCreatedTime() );
         gen.value( "creator", descriptor.getCreator() );
-        gen.value( "modifiedTime",
-                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
+        gen.value( "modifiedTime", descriptor.getModifiedTime() );
         gen.value( "modifier", descriptor.getModifier() );
         gen.value( "resource", resource.readString() );
         gen.value( "type", getType() );

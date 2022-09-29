@@ -1,8 +1,6 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -28,8 +26,7 @@ public class StyleDescriptorMapper
     {
         gen.value( "application", descriptor.getApplicationKey() );
         gen.value( "cssPath", descriptor.getCssPath() );
-        gen.value( "modifiedTime",
-                   Optional.ofNullable( descriptor.getModifiedTime() ).orElse( Instant.ofEpochMilli( resource.getTimestamp() ) ) );
+        gen.value( "modifiedTime", descriptor.getModifiedTime() );
         gen.value( "resource", resource.readString() );
 
         serializeElements( gen, descriptor.getElements() );

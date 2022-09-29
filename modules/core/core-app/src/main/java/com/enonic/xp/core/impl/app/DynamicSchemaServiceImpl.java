@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,10 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
@@ -36,8 +40,12 @@ import com.enonic.xp.resource.UpdateDynamicSiteParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.relationship.RelationshipType;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -71,7 +79,7 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) descriptor, resource );
+        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
 
     }
 
@@ -87,7 +95,7 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) descriptor, resource );
+        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
     }
 
 
@@ -102,7 +110,7 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) schema, resource );
+        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
 
     @Override
@@ -115,7 +123,7 @@ public class DynamicSchemaServiceImpl
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
-        return new DynamicSchemaResult<>( (T) schema, resource );
+        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
 
     @Override
@@ -129,7 +137,8 @@ public class DynamicSchemaServiceImpl
         final Resource createdResource =
             dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>( site, createdResource );
+        return new DynamicSchemaResult<>(
+            SiteDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
     }
 
     @Override
@@ -145,7 +154,8 @@ public class DynamicSchemaServiceImpl
             ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() )
             : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>( site, resource );
+        return new DynamicSchemaResult<>(
+            SiteDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
     }
 
     @Override
@@ -159,7 +169,8 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>( styles, resource );
+        return new DynamicSchemaResult<>(
+            StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
     }
 
     @Override
@@ -173,7 +184,8 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>( styles, resource );
+        return new DynamicSchemaResult<>(
+            StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
     }
 
     @Override
@@ -188,7 +200,7 @@ public class DynamicSchemaServiceImpl
         {
             final ComponentDescriptor descriptor =
                 dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) descriptor, resource );
+            return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
         }
         return null;
     }
@@ -205,7 +217,7 @@ public class DynamicSchemaServiceImpl
                     dynamicResourceParser.parseComponent( DescriptorKey.from( params.getKey(), getResourceName( resource.getKey() ) ),
                                                           params.getType(), resource.readString() );
 
-                return new DynamicSchemaResult<>( (T) descriptor, resource );
+                return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
             } )
             .collect( Collectors.<DynamicSchemaResult<T>>toList() );
     }
@@ -222,7 +234,7 @@ public class DynamicSchemaServiceImpl
         if ( resource.exists() && resource.getSize() > 0 )
         {
             final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) schema, resource );
+            return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
         }
 
         return null;
@@ -240,7 +252,8 @@ public class DynamicSchemaServiceImpl
         if ( resource.exists() && resource.getSize() > 0 )
         {
             final SiteDescriptor siteDescriptor = dynamicResourceParser.parseSite( key, resource.readString() );
-            return new DynamicSchemaResult<>( siteDescriptor, resource );
+            return new DynamicSchemaResult<>(
+                SiteDescriptor.copyOf( siteDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
         }
         return null;
     }
@@ -256,7 +269,8 @@ public class DynamicSchemaServiceImpl
         if ( resource.exists() && resource.getSize() > 0 )
         {
             final StyleDescriptor descriptor = dynamicResourceParser.parseStyles( key, resource.readString() );
-            return new DynamicSchemaResult<>( descriptor, resource );
+            return new DynamicSchemaResult<>(
+                StyleDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
         }
         return null;
     }
@@ -292,7 +306,7 @@ public class DynamicSchemaServiceImpl
                 dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ),
                                                    params.getType(), resource.readString() );
 
-            return new DynamicSchemaResult<T>( (T) schema, resource );
+            return new DynamicSchemaResult<T>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
         } ).collect( Collectors.<DynamicSchemaResult<T>>toList() );
     }
 
@@ -408,5 +422,51 @@ public class DynamicSchemaServiceImpl
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
+    }
+
+    private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime )
+    {
+        if ( componentDescriptor instanceof PageDescriptor )
+        {
+            return PageDescriptor.copyOf( (PageDescriptor) componentDescriptor )
+                .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .build();
+        }
+        if ( componentDescriptor instanceof PartDescriptor )
+        {
+            return PartDescriptor.copyOf( (PartDescriptor) componentDescriptor )
+                .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .build();
+        }
+        if ( componentDescriptor instanceof LayoutDescriptor )
+        {
+            return LayoutDescriptor.copyOf( (LayoutDescriptor) componentDescriptor )
+                .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .build();
+        }
+
+        throw new IllegalArgumentException( "unknown type of ComponentDescriptor: " + componentDescriptor.getKey() );
+    }
+
+    private BaseSchema<?> wrapSchema( final BaseSchema<?> baseSchema, final long modifiedTime )
+    {
+        if ( baseSchema instanceof ContentType )
+        {
+            return ContentType.create( (ContentType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+        }
+        if ( baseSchema instanceof Mixin )
+        {
+            return Mixin.create( (Mixin) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+        }
+        if ( baseSchema instanceof RelationshipType )
+        {
+            return RelationshipType.create( (RelationshipType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+        }
+        if ( baseSchema instanceof XData )
+        {
+            return XData.create( (XData) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+        }
+
+        throw new IllegalArgumentException( "unknown type of BaseSchema: " + baseSchema.getName() );
     }
 }

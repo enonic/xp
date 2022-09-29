@@ -78,6 +78,16 @@ public final class StyleDescriptor
         return Objects.hash( applicationKey, cssPath, elements, modifiedTime );
     }
 
+    public static Builder copyOf( final StyleDescriptor styleDescriptor )
+    {
+        return new StyleDescriptor.Builder( styleDescriptor );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     @Override
     public String toString()
     {
@@ -87,11 +97,6 @@ public final class StyleDescriptor
             .add( "elements", elements )
             .add( "modifiedTime", modifiedTime )
             .toString();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static final class Builder
@@ -105,6 +110,15 @@ public final class StyleDescriptor
         private final ImmutableList.Builder<ElementStyle> elements;
 
         private final Set<String> elementNames;
+
+        private Builder( final StyleDescriptor styleDescriptor )
+        {
+            this();
+            styleDescriptor.getElements().forEach( this::addStyleElement );
+            this.application = styleDescriptor.applicationKey;
+            this.cssPath = styleDescriptor.cssPath;
+            this.modifiedTime = styleDescriptor.modifiedTime;
+        }
 
         private Builder()
         {
