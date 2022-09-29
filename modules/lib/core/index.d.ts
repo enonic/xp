@@ -66,3 +66,13 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
 }
+
+export interface Resource {
+    getSize(): number;
+
+    getTimestamp(): number;
+
+    getStream(): object;
+
+    exists(): boolean;
+}
