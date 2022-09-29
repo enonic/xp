@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -51,9 +52,10 @@ public final class PortalRequestMapper
         }
 
         serializeBody( gen );
-        MapperHelper.serializeMultimap( "params", gen, this.request.getParams() );
-        MapperHelper.serializeMap( "headers", gen, this.request.getHeaders() );
-        MapperHelper.serializeMap( "cookies", gen, this.request.getCookies() );
+        MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
+        gen.value( "headers", this.request.getHeaders() );
+        gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
+        gen.value( "cookies", this.request.getCookies() );
     }
 
     private void serializeBody( final MapGenerator gen )

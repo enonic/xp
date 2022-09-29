@@ -1,10 +1,10 @@
 package com.enonic.xp.web;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import javax.servlet.http.Cookie;
 
@@ -109,7 +109,7 @@ public class WebResponse
     {
         private Object body;
 
-        private final Map<String, String> headers = new LinkedHashMap<>();
+        private final Map<String, String> headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 
         private MediaType contentType = MediaType.PLAIN_TEXT_UTF_8;
 
@@ -153,7 +153,7 @@ public class WebResponse
 
         public T removeHeader( final String key )
         {
-            this.headers.remove( key.toLowerCase( Locale.ROOT ) );
+            this.headers.remove( key );
             return (T) this;
         }
 

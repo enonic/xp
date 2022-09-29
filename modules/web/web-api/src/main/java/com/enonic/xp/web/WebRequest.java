@@ -2,6 +2,7 @@ package com.enonic.xp.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,7 +53,7 @@ public class WebRequest
     public WebRequest()
     {
         this.params = LinkedListMultimap.create();
-        this.headers = new HashMap<>();
+        this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.cookies = new HashMap<>();
     }
 

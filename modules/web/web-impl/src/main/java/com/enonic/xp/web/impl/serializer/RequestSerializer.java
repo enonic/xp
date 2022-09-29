@@ -1,0 +1,79 @@
+package com.enonic.xp.web.impl.serializer;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
+public final class RequestSerializer
+{
+    private final WebRequest webRequest;
+    public RequestSerializer( final WebRequest webRequest )
+    {
+        this.webRequest = webRequest;
+    }
+
+    public void serialize( final HttpServletRequest request )
+        throws IOException {
+        webRequest.setRawRequest( request );
+        webRequest.setMethod( HttpMethod.valueOf( request.getMethod().toUpperCase() ) );
+
+        webRequest.setScheme( request.getScheme() );
+        webRequest.setHost( request.getServerName() );
+        webRequest.setPort( request.getServerPort() );
+        webRequest.setRemoteAddress( request.getRemoteAddr() );
+        webRequest.setRawPath( request.getPathInfo() );
+        webRequest.setPath( ServletRequestUrlHelper.getPath( request ) );
+        webRequest.setUrl( ServletRequestUrlHelper.getFullUrl( request ) );
+        webRequest.setContentType( request.getContentType() );
+        webRequest.setEndpointPath( findEndpointPath( request.getPathInfo() ) );
+
+        setParameters( request, webRequest );
+        setHeaders( request, webRequest );
+        setCookies( request, webRequest );
+    }
+
+    private void setHeaders( final HttpServletRequest from, final WebRequest to )
+    {
+        for ( final String key : Collections.list( from.getHeaderNames() ) )
+        {
+            to.getHeaders().put( key, from.getHeader( key ) );
+        }
+    }
+
+    private void setCookies( final HttpServletRequest from, final WebRequest to )
+    {
+        final Cookie[] cookies = from.getCookies();
+        if ( cookies == null )
+        {
+            return;
+        }
+
+        for ( final Cookie cookie : cookies )
+        {
+            to.getCookies().put( cookie.getName(), cookie.getValue() );
+        }
+    }
+
+    private void setParameters( final HttpServletRequest from, final WebRequest to )
+    {
+        for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
+        {
+            to.getParams().putAll( entry.getKey(), Arrays.asList( entry.getValue() ) );
+        }
+    }
+
+    private static String findEndpointPath( final String path )
+    {
+        final int endpointPathIndex = path.indexOf( "/_/" );
+        return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : null;
+    }
+
+}

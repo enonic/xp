@@ -1,23 +1,21 @@
 package com.enonic.xp.portal.impl;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.script.ScriptFixturesFacade;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public final class MapSerializableAssert
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper().
-        enable( SerializationFeature.INDENT_OUTPUT ).
-        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
+    private static final ScriptValueFactory<?> SCRIPT_VALUE_FACTORY = ScriptFixturesFacade.getInstance().scriptValueFactory();
 
     private final Class<?> clazz;
 
@@ -27,20 +25,38 @@ public final class MapSerializableAssert
     }
 
     public void assertJson( final String resource, final MapSerializable value )
-        throws IOException
     {
-        final URL url = clazz.getResource( resource );
-        assertNotNull( url, "File [" + resource + "] not found" );
+        assertEquals( readJsonFromResource( clazz, resource ), serializeJson( value ) );
+    }
 
-        final JsonNode expectedJson = MAPPER.readTree( url );
+    public static String readJsonFromResource( final Class<?> clazz, final String resource )
+    {
+        final ScriptValue jsonReStringify = SCRIPT_VALUE_FACTORY.evalValue( "(s) => JSON.stringify(JSON.parse(s))" );
+        return jsonReStringify.call( readFromFile( clazz, resource ) ).getValue( String.class );
+    }
 
-        final JsonMapGenerator generator = new JsonMapGenerator();
-        value.serialize( generator );
-        final JsonNode actualJson = (JsonNode) generator.getRoot();
+    public static String serializeJson( final MapSerializable value )
+    {
+        final ScriptValue jsonStringify = SCRIPT_VALUE_FACTORY.evalValue( "JSON.stringify" );
+        return jsonStringify.call( value ).getValue( String.class );
+    }
 
-        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
-        final String actualStr = MAPPER.writeValueAsString( actualJson );
+    public static ScriptValue serializeJs( final MapSerializable value )
+    {
+        return SCRIPT_VALUE_FACTORY.newValue( SCRIPT_VALUE_FACTORY.getJavascriptHelper().objectConverter().toJs( value ) );
+    }
 
-        assertEquals( expectedStr, actualStr );
+    private static String readFromFile( final Class<?> clazz, final String resource )
+    {
+        final InputStream stream =
+            Objects.requireNonNull( clazz.getResourceAsStream( resource ), "Resource file [" + resource + "] not found" );
+        try (stream)
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 }

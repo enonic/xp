@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 import com.google.common.primitives.Longs;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -94,7 +95,7 @@ public abstract class BaseWebHandler
     {
         return WebResponse.create().
             status( HttpStatus.OK ).
-            header( "Allow", methodsAllowed.stream().map( Object::toString ).collect( Collectors.joining( "," ) ) ).
+            header( HttpHeaders.ALLOW, methodsAllowed.stream().map( Object::toString ).collect( Collectors.joining( "," ) ) ).
             build();
     }
 
@@ -118,7 +119,7 @@ public abstract class BaseWebHandler
 
     protected Long getSize( final WebResponse webResponse )
     {
-        final String length = webResponse.getHeaders().get( "Content-Length" );
+        final String length = webResponse.getHeaders().get( HttpHeaders.CONTENT_LENGTH );
         if ( length != null )
         {
             return Longs.tryParse( length );

@@ -1,7 +1,6 @@
 {
   "status": 404,
   "message": "Message: Not found.",
-  "exception": "com.enonic.xp.portal.impl.mapper.PortalErrorMapperTest$1: Not found.",
   "request": {
     "method": "GET",
     "scheme": "http",
@@ -25,9 +24,9 @@
       ]
     },
     "headers": {
-      "header3": "value3",
+      "header1": "value1",
       "header2": "value2",
-      "header1": "value1"
+      "header3": "value3"
     },
     "cookies": {}
   }

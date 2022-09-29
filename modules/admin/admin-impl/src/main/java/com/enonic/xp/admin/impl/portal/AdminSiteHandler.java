@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.HttpHeaders;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -81,17 +83,17 @@ public class AdminSiteHandler
 
         if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
         {
-            builder.header( "X-Frame-Options", "SAMEORIGIN" );
+            builder.header( HttpHeaders.X_FRAME_OPTIONS, "SAMEORIGIN" );
         }
 
         if ( mode == RenderMode.EDIT )
         {
-            builder.removeHeader( "Content-Security-Policy" );
+            builder.removeHeader( HttpHeaders.CONTENT_SECURITY_POLICY );
         }
         else if ( !nullToEmpty( previewContentSecurityPolicy ).isBlank() &&
-            !response.getHeaders().containsKey( "Content-Security-Policy" ) )
+            !response.getHeaders().containsKey( HttpHeaders.CONTENT_SECURITY_POLICY ) )
         {
-            builder.header( "Content-Security-Policy", previewContentSecurityPolicy );
+            builder.header( HttpHeaders.CONTENT_SECURITY_POLICY, previewContentSecurityPolicy );
         }
         return builder.build();
     }

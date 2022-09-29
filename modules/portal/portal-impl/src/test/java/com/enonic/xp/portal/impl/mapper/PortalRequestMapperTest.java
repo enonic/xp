@@ -7,7 +7,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 public class PortalRequestMapperTest
 {
@@ -16,7 +21,7 @@ public class PortalRequestMapperTest
     private final MapSerializableAssert assertHelper = new MapSerializableAssert( PortalRequestMapperTest.class );
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.portalRequest = new PortalRequest();
         this.portalRequest.setMethod( HttpMethod.GET );
@@ -45,15 +50,13 @@ public class PortalRequestMapperTest
     }
 
     @Test
-    public void testSimple()
-        throws Exception
+    void testSimple()
     {
         assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
-    public void testCookies()
-        throws Exception
+    void testCookies()
     {
         this.portalRequest.getCookies().put( "a", "1" );
         this.portalRequest.getCookies().put( "b", "2" );
@@ -62,13 +65,22 @@ public class PortalRequestMapperTest
     }
 
     @Test
-    public void testBody()
-        throws Exception
+    void testBody()
     {
         this.portalRequest.setMethod( HttpMethod.POST );
         this.portalRequest.setContentType( "text/plain" );
         this.portalRequest.setBody( "Hello World" );
 
         assertHelper.assertJson( "request-body.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void getHeader()
+    {
+        final ScriptValue value = MapSerializableAssert.serializeJs( new PortalRequestMapper( this.portalRequest ) );
+        assertEquals( "value1", value.getMember( "getHeader" ).call( "Header1" ).getValue( String.class ) );
+        assertEquals( "value1", value.getMember( "getHeader" ).call( "header1" ).getValue( String.class ) );
+        assertEquals( "value2", value.getMember( "getHeader" ).call( "hEader2" ).getValue( String.class ) );
+        assertNull( value.getMember( "getHeader" ).call( "header4" ) );
     }
 }

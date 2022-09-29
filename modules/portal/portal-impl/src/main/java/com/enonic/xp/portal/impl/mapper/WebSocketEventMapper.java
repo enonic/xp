@@ -25,7 +25,7 @@ public final class WebSocketEventMapper
     {
         gen.value( "type", this.event.getType().toString().toLowerCase() );
         serializeSession( gen, this.event.getSession() );
-        MapperHelper.serializeMap( "data", gen, this.event.getData() );
+        gen.value( "data", this.event.getData() );
         serializeError( gen, this.event.getError() );
         serializeCloseReason( gen, this.event.getCloseReason() );
         serializeMessage( gen, this.event.getMessage() );

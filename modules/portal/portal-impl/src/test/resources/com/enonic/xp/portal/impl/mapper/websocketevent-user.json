@@ -7,12 +7,13 @@
     "user": {
       "key": "user:system:anonymous",
       "displayName": "Anonymous User",
-      "modifiedTime": null,
       "disabled": false,
-      "email": null,
       "login": "anonymous",
       "idProvider": "system"
     }
   },
-  "data": {}
+  "data": {
+    "a" : "b",
+    "c" : "d"
+  }
 }

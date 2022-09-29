@@ -80,8 +80,7 @@ public class MacroProcessorScriptTest
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
-        this.factory = new MacroProcessorFactoryImpl();
-        this.factory.setScriptService( scriptService );
+        this.factory = new MacroProcessorFactoryImpl( scriptService );
 
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( req );

@@ -2,6 +2,8 @@ package com.enonic.xp.admin.impl.app;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.google.common.net.HttpHeaders;
+
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -33,7 +35,7 @@ public final class MainWebHandler
         final String uri = ServletRequestUrlHelper.createUri( req.getRawRequest(), "/admin/tool" );
         return WebResponse.create().
             status( HttpStatus.TEMPORARY_REDIRECT ).
-            header( "Location", uri ).
+            header( HttpHeaders.LOCATION, uri ).
             build();
     }
 }

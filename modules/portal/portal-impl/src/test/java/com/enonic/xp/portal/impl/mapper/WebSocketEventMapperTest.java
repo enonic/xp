@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.websocket.Session;
 
@@ -30,7 +31,7 @@ class WebSocketEventMapperTest
         final WebSocketEvent webSocketEvent = WebSocketEvent.create().
             type( WebSocketEventType.MESSAGE ).
             session( session ).
-            data( Map.of() ).
+            data( new TreeMap<>( Map.of( "a", "b", "c", "d") ) ).
             build();
         assertHelper.assertJson( "websocketevent-user.json", new WebSocketEventMapper( webSocketEvent ) );
     }

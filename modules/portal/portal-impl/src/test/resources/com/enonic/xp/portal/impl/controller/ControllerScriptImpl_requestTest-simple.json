@@ -7,5 +7,6 @@
   "branch": "draft",
   "params": {},
   "headers": {},
+  "getHeader" : {},
   "cookies": {}
 }

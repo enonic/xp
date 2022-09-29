@@ -1,5 +1,7 @@
 package com.enonic.xp.script.serializer;
 
+import java.util.function.Function;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
@@ -12,9 +14,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
+@Deprecated
 public final class JsonMapGenerator
     extends MapGeneratorBase
 {
@@ -33,6 +33,12 @@ public final class JsonMapGenerator
     protected Object newArray()
     {
         return JsonNodeFactory.instance.arrayNode();
+    }
+
+    @Override
+    protected Object newFunction( final Function<?, ?> function )
+    {
+        return function;
     }
 
     @Override

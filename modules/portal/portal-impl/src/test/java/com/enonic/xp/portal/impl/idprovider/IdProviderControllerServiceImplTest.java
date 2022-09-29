@@ -35,6 +35,7 @@ import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -72,14 +73,15 @@ public class IdProviderControllerServiceImplTest
         final PortalScriptService portalScriptService = setupPortalScriptService();
 
         //Creates IdProviderControllerScriptFactoryImpl
-        final IdProviderControllerScriptFactoryImpl idProviderControllerScriptFactory = new IdProviderControllerScriptFactoryImpl();
-        idProviderControllerScriptFactory.setScriptService( portalScriptService );
+        final IdProviderControllerScriptFactoryImpl idProviderControllerScriptFactory =
+            new IdProviderControllerScriptFactoryImpl( portalScriptService );
 
         //Creates IdProviderControllerServiceImpl
         idProviderControllerService = new IdProviderControllerServiceImpl();
         idProviderControllerService.setIdProviderControllerScriptFactory( idProviderControllerScriptFactory );
         idProviderControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
         idProviderControllerService.setSecurityService( securityService );
+        idProviderControllerService.setResponseSerializationService( new ResponseSerializationServiceImpl() );
     }
 
     private PortalScriptService setupPortalScriptService()
@@ -218,6 +220,7 @@ public class IdProviderControllerServiceImplTest
         Mockito.when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
         Mockito.when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
         Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin/tool" );
+        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/admin/tool" );
         Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         return httpServletRequest;
     }

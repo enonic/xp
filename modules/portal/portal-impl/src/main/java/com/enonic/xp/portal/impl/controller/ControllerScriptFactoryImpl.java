@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,7 +14,13 @@ import com.enonic.xp.script.ScriptExports;
 public final class ControllerScriptFactoryImpl
     implements ControllerScriptFactory
 {
-    private PortalScriptService scriptService;
+    private final PortalScriptService scriptService;
+
+    @Activate
+    public ControllerScriptFactoryImpl( @Reference final PortalScriptService scriptService )
+    {
+        this.scriptService = scriptService;
+    }
 
     @Override
     public ControllerScript fromDir( final ResourceKey dir )
@@ -27,11 +34,4 @@ public final class ControllerScriptFactoryImpl
         final ScriptExports exports = this.scriptService.execute( script );
         return new ControllerScriptImpl( exports );
     }
-
-    @Reference
-    public void setScriptService( final PortalScriptService scriptService )
-    {
-        this.scriptService = scriptService;
-    }
-
 }

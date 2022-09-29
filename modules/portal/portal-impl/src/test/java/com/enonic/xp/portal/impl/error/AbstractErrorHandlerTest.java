@@ -81,8 +81,7 @@ public abstract class AbstractErrorHandlerTest
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
-        this.factory = new ErrorHandlerScriptFactoryImpl();
-        this.factory.setScriptService( scriptService );
+        this.factory = new ErrorHandlerScriptFactoryImpl( scriptService );
 
         this.postProcessor = new PostProcessorImpl();
 

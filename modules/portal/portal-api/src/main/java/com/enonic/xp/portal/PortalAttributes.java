@@ -1,8 +1,6 @@
 package com.enonic.xp.portal;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
+@Deprecated
 public final class PortalAttributes
 {
     private String baseUri;

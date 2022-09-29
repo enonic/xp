@@ -1,15 +1,10 @@
 package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +16,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.annotation.Order;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -29,8 +23,8 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
+import com.enonic.xp.web.impl.serializer.RequestSerializer;
 import com.enonic.xp.web.serializer.ResponseSerializationService;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
@@ -80,57 +74,10 @@ public final class WebDispatcherServlet
         throws IOException
     {
         final WebRequest result = new WebRequest();
-        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
-
-        final String rawPath = req.getPathInfo();
-        result.setRawPath( rawPath );
-        result.setEndpointPath( findEndpointPath( rawPath ) );
-        result.setRawRequest( req );
-        result.setContentType( req.getContentType() );
+        new RequestSerializer( result ).serialize( req );
         result.setBody( RequestBodyReader.readBody( req ) );
 
-        result.setScheme( req.getScheme() );
-        result.setHost( req.getServerName() );
-        result.setPort( req.getServerPort() );
-        result.setRemoteAddress( req.getRemoteAddr() );
-        result.setPath( ServletRequestUrlHelper.getPath( req ) );
-        result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
-
-        setParameters( req, result );
-        setHeaders( req, result );
-        setCookies( req, result );
-
         return result;
-    }
-
-    private void setHeaders( final HttpServletRequest from, final WebRequest to )
-    {
-        for ( final String key : Collections.list( from.getHeaderNames() ) )
-        {
-            to.getHeaders().put( key, from.getHeader( key ) );
-        }
-    }
-
-    private void setCookies( final HttpServletRequest from, final WebRequest to )
-    {
-        final Cookie[] cookies = from.getCookies();
-        if ( cookies == null )
-        {
-            return;
-        }
-
-        for ( final Cookie cookie : cookies )
-        {
-            to.getCookies().put( cookie.getName(), cookie.getValue() );
-        }
-    }
-
-    private void setParameters( final HttpServletRequest from, final WebRequest to )
-    {
-        for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
-        {
-            to.getParams().putAll( entry.getKey(), new ArrayList<>( Arrays.asList( entry.getValue() ) ) );
-        }
     }
 
     private WebResponse doHandle( final WebRequest webRequest )
@@ -159,12 +106,6 @@ public final class WebDispatcherServlet
             this.exceptionMapper.throwIfNeeded( webResponse );
         }
         return webResponse;
-    }
-
-    private static String findEndpointPath( final String path )
-    {
-        final int endpointPathIndex = path.indexOf( "/_/" );
-        return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : null;
     }
 
     @Reference
