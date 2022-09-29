@@ -16,6 +16,8 @@ declare global {
 interface JavaResource {
     getSize(): number;
 
+    getTimestamp(): number;
+
     getBytes(): object;
 
     exists(): boolean;
@@ -39,6 +41,8 @@ interface IOHandlerBean {
 
 export interface Resource {
     getSize(): number;
+
+    getTimestamp(): number;
 
     getStream(): object;
 
@@ -69,6 +73,15 @@ class ResourceImpl
      */
     getSize(): number {
         return this.res.getSize();
+    }
+
+    /**
+     * Returns the resource timestamp.
+     *
+     * @returns {number} Timestamp of resource creation in milliseconds.
+     */
+    getTimestamp(): number {
+        return this.res.getTimestamp();
     }
 
     /**
