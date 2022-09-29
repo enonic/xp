@@ -8,7 +8,7 @@ export interface ListenerParams<EventData extends object = EnonicEventData> {
     /**
      * Event type pattern
      */
-    type: EnonicEventTypes;
+    type: string;
 
     /**
      * Callback event listener
@@ -25,7 +25,7 @@ export interface SendParams {
     /**
      * Event type
      */
-    type: EnonicEventTypes;
+    type: string;
 
     /**
      * `true` if it should be distributed in cluster
@@ -39,7 +39,7 @@ export interface SendParams {
 }
 
 export interface EnonicEvent<EventData extends object = EnonicEventData> {
-    readonly type: EnonicEventTypes;
+    readonly type: string;
     readonly timestamp: number;
     readonly localOrigin: boolean;
     readonly distributed: boolean;
@@ -58,13 +58,6 @@ export interface EnonicEventDataNode {
     readonly repo: string;
     readonly newPath?: string; // event type <'node.moved' | 'node.renamed'>
 }
-
-// Code suggestions improvement. Using string will lead some code editors to
-// omit the more narrow types, if just the | operator is used.
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
-
-// <string> can be replaced with a particular string values of well-known events, like `node.*`
-export type EnonicEventTypes = LiteralUnion<string>;
 
 interface EventSenderHelper {
     setType(type: string): void;

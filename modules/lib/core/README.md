@@ -1,0 +1,44 @@
+# Enonic XP Core TS types
+
+> TypeScript definitions that are shared between libraries and represent core 
+> data structures.
+
+## Install
+
+```bash
+npm i --save-dev @enonic-types/core
+```
+
+## Use
+
+> It is not necessary to include this dependency into your project, as all
+> libraries export related core types, e.g. Content library exports `Content`
+> type.
+
+All core types can be imported using ES6-style import:
+
+```ts
+import type {Content} from '@enonic-types/core';
+```
+
+### Content
+
+`Content` contains the `x` property, that has a very special `XpXData` type.
+
+`XpXData` is an interface, that is added to the global scope, so it can be
+modified using the [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces).
+This allows you to set the shape of the XData in your project, simply by
+declaring the `XpXData` like this:
+
+```ts
+declare global {
+    interface XpXData {
+        'com-mysite-app': {
+            metadata: {
+                metaTagTitle: string;
+                metaTagImageId: string;
+            }
+        }
+    }
+}
+```
