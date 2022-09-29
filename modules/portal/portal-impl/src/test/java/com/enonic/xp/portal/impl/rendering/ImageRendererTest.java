@@ -4,8 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalResponse;
@@ -84,10 +86,7 @@ public class ImageRendererTest
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
-        imageComponent = ImageComponent.create().
-            image( ContentId.from( "abcdef1234567890" ) ).
-            config( config ).
-            build();
+        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
         renderer.setContentService( contentService );
@@ -121,14 +120,12 @@ public class ImageRendererTest
     {
         // setup
         this.portalRequest.setContent( createContent() );
-        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( false );
+        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
-        imageComponent = ImageComponent.create().
-            image( ContentId.from( "abcdef1234567890" ) ).
-            config( config ).
-            build();
+        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
         renderer.setContentService( contentService );
@@ -147,14 +144,15 @@ public class ImageRendererTest
         // setup
         portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.setContent( createContent() );
-        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( false );
+
+        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
-        imageComponent = ImageComponent.create().
-            image( ContentId.from( "abcdef1234567890" ) ).
-            config( config ).
-            build();
+
+        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
+
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
         renderer.setContentService( contentService );
@@ -166,5 +164,23 @@ public class ImageRendererTest
         String result =
             "<div data-portal-component-type=\"image\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">Image could not be found</span></div>";
         assertEquals( result, portalResponse.getAsString() );
+    }
+
+    @Test
+    public void testRenderImageComponentWithReadPermission()
+    {
+        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( true );
+        // simulate case when a user does not have a permission on read
+        Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
+
+        imageComponent = ImageComponent.create().image( ContentId.from( "id" ) ).build();
+
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
+
+        PortalResponse response = renderer.render( imageComponent, portalRequest );
+        assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getAsString() );
     }
 }
