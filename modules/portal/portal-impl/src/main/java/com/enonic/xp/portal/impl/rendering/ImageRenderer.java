@@ -12,6 +12,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
@@ -64,22 +65,18 @@ public final class ImageRenderer
 
         private PortalResponse render()
         {
-            if ( component.hasImage() )
+            try
             {
-                return renderResponseWithImage();
+                if ( component.hasImage() )
+                {
+                    return renderOkResponse( generateImageHtml() );
+                }
+                return renderResponseNoImage();
             }
-
-            return renderResponseNoImage();
-        }
-
-        private PortalResponse renderResponseWithImage()
-        {
-            if ( contentService.contentExists( component.getImage() ) )
+            catch ( ContentNotFoundException ex )
             {
-                return renderOkResponse( generateImageHtml() );
+                return renderResponseImageNotFound();
             }
-
-            return renderResponseImageNotFound();
         }
 
         private String generateImageHtml()
@@ -217,11 +214,7 @@ public final class ImageRenderer
             final String escapedMessage = HtmlEscapers.htmlEscaper().escape( ERROR_IMAGE_NOT_FOUND );
             final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
 
-            return PortalResponse.create().
-                contentType( MediaType.HTML_UTF_8 ).
-                postProcess( false ).
-                body( html ).
-                build();
+            return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).postProcess( false ).body( html ).build();
         }
     }
 
