@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.core.impl.content.page.region.ComponentTypes;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
@@ -33,20 +34,12 @@ final class RegionDataSerializer
         }
     }
 
-    public Region fromData( final RegionDescriptor regionDescriptor, final String parentPath, final List<PropertySet> componentsAsData )
+    public Region fromData( final RegionDescriptor regionDescriptor, final PropertyPath parentPath, final List<PropertySet> componentsAsData )
     {
-        final Region.Builder region = Region.create();
+        final Region.Builder region = Region.create().name( regionDescriptor.getName() );
+        final PropertyPath regionPath = PropertyPath.from( parentPath, regionDescriptor.getName() );
 
-        region.name( regionDescriptor.getName() );
-
-        final StringBuilder regionPathBuilder = new StringBuilder( ComponentPath.DIVIDER + regionDescriptor.getName() );
-
-        if ( !ComponentPath.DIVIDER.equals( parentPath ) )
-        {
-            regionPathBuilder.insert( 0, parentPath );
-        }
-
-        for ( final Component component : getComponents( regionPathBuilder.toString(), componentsAsData ) )
+        for ( final Component component : getComponents( regionPath, componentsAsData ) )
         {
             region.add( component );
         }
@@ -54,7 +47,7 @@ final class RegionDataSerializer
         return region.build();
     }
 
-    private List<Component> getComponents( final String regionPath, final List<PropertySet> componentsAsData )
+    private List<Component> getComponents( final PropertyPath regionPath, final List<PropertySet> componentsAsData )
     {
         final List<Component> componentList = new ArrayList<>();
 
@@ -66,22 +59,30 @@ final class RegionDataSerializer
         return componentList;
     }
 
-    private List<PropertySet> getRegionChildren( final String regionPath, final List<PropertySet> componentsAsData )
+    private List<PropertySet> getRegionChildren( final PropertyPath regionPath, final List<PropertySet> componentsAsData )
     {
         return componentsAsData.stream().filter( item -> isItemChildOf( item, regionPath ) ).collect( Collectors.toList() );
     }
 
-    private boolean isItemChildOf( final PropertySet item, final String parentPath )
+    private boolean isItemChildOf( final PropertySet item, final PropertyPath parentPath )
+    {
+        final PropertyPath itemPropertyPath = getPath( item );
+
+        return itemPropertyPath.elementCount() > 1 && itemPropertyPath.getParent().equals( parentPath );
+    }
+
+    PropertyPath getPath( final PropertySet item )
     {
         final String itemPath = item.getString( PATH );
 
-        return itemPath.startsWith( parentPath ) && ( getLevel( itemPath ) - getLevel( parentPath ) == 1 );
+        if (itemPath == ComponentPath.DIVIDER) {
+            return PropertyPath.ROOT;
+        }
+
+        final String processedItemPath = itemPath.substring( 1 ).replaceAll( ComponentPath.DIVIDER, PropertyPath.ELEMENT_DIVIDER );
+        return PropertyPath.from( processedItemPath );
     }
 
-    private int getLevel( final String path )
-    {
-        return path.split( ComponentPath.DIVIDER ).length;
-    }
 
     Component getComponent( final PropertySet componentData, final List<PropertySet> componentsAsData )
     {
@@ -99,16 +100,14 @@ final class RegionDataSerializer
 
     private List<PropertySet> getDescendantsOf( final PropertySet item, final List<PropertySet> componentsAsData )
     {
-        final String parentPath = item.getString( PATH );
+        final PropertyPath parentPath = getPath( item );
 
         return componentsAsData.stream().filter( componentAsData -> isItemDescendantOf( componentAsData, parentPath ) ).collect(
             Collectors.toList() );
     }
 
-    private boolean isItemDescendantOf( final PropertySet item, final String parentPath )
+    private boolean isItemDescendantOf( final PropertySet item, final PropertyPath parentPropertyPath )
     {
-        final String itemPath = item.getString( PATH );
-
-        return itemPath.startsWith( parentPath );
+        return getPath( item ).startsWith( parentPropertyPath );
     }
 }

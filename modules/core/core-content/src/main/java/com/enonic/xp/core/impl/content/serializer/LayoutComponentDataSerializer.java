@@ -4,6 +4,7 @@ package com.enonic.xp.core.impl.content.serializer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
@@ -63,12 +64,12 @@ final class LayoutComponentDataSerializer
 
             final LayoutDescriptor layoutDescriptor = layoutDescriptorService.getByKey( descriptorKey );
 
-            final String layoutPath = layoutData.getString( PATH );
+            final PropertyPath layoutPropertyPath = this.regionDataSerializer.getPath( layoutData );
 
             if ( layoutDescriptor.getRegions() != null && layoutDescriptor.getRegions().numberOfRegions() > 0 )
             {
                 layoutDescriptor.getRegions().forEach( regionDescriptor -> {
-                    layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
+                    layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPropertyPath, componentsAsData ) );
                 } );
             }
         }
