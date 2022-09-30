@@ -11,67 +11,11 @@ declare global {
     interface XpLibraries {
         '/lib/xp/portal': typeof import('./portal');
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface XpXData {
-    }
 }
 
-export interface Attachment {
-    name: string;
-    label?: string;
-    size: number;
-    mimeType: string;
-}
+import type {Component, Content, Region} from '@enonic-types/core';
 
-export type Attachments = Record<string, Attachment>;
-
-export type XDataEntry = Record<string, Record<string, unknown>>;
-
-export type XData = Record<string, XDataEntry>;
-
-export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
-
-export type WorkflowCheckState = 'PENDING' | 'REJECTED' | 'APPROVED';
-
-export type ContentInheritType = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
-
-export interface Workflow {
-    state: WorkflowState;
-    checks?: Record<string, WorkflowCheckState>;
-}
-
-export interface PublishInfo {
-    from?: string;
-    to?: string;
-    first?: string;
-}
-
-export interface Content<Data = Record<string, unknown>, Type extends string = string> {
-    _id: string;
-    _name: string;
-    _path: string;
-    _score: number;
-    creator: string;
-    modifier: string;
-    createdTime: string;
-    modifiedTime: string;
-    owner: string;
-    data: Data;
-    type: Type;
-    displayName: string;
-    hasChildren: boolean;
-    language: string;
-    valid: boolean;
-    originProject: string;
-    childOrder?: string;
-    _sort?: object[];
-    x: XpXData;
-    attachments: Attachments;
-    publish?: PublishInfo;
-    workflow?: Workflow;
-    inherit?: ContentInheritType[];
-}
+export type {Attachment, Content, Component, Region} from '@enonic-types/core';
 
 export type Site<Config> = Content<{
     description?: string;
@@ -476,7 +420,7 @@ export function getSiteConfig<Config = Record<string, unknown>>(): Config | null
 }
 
 interface GetCurrentContentHandler {
-    execute<Data, Type extends string>(): Content<Data, Type> | null;
+    execute<Data, Type extends string, Page extends Component>(): Content<Data, Type, Page> | null;
 }
 
 /**
@@ -487,21 +431,14 @@ interface GetCurrentContentHandler {
  *
  * @returns {object|null} The current content as JSON.
  */
-export function getContent<Data = Record<string, unknown>, Type extends string = string>(): Content<Data, Type> | null {
+export function getContent<
+    Data = Record<string, unknown>,
+    Type extends string = string,
+    Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>
+>(): Content<Data, Type, Component<Config, Regions>> | null {
     const bean = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
-    return __.toNativeObject(bean.execute<Data, Type>());
-}
-
-export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {
-    config: Config;
-    descriptor: string;
-    path: string;
-    type: 'page' | 'layout' | 'part';
-    regions: Regions;
-}
-
-export interface Region<Config extends object = object> {
-    components: Component<Config>[];
+    return __.toNativeObject(bean.execute<Data, Type, Component<Config, Regions>>());
 }
 
 interface GetCurrentComponentHandler<Config extends object = object,

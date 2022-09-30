@@ -1,9 +1,3 @@
-declare global {
-    interface XpLibraries {
-        '/lib/xp/auditlog': typeof import('./auditlog');
-    }
-}
-
 /**
  * Functions to log and find audit logs.
  *
@@ -12,6 +6,16 @@ declare global {
  *
  * @module audit
  */
+
+declare global {
+    interface XpLibraries {
+        '/lib/xp/auditlog': typeof import('./auditlog');
+    }
+}
+
+import type {UserKey} from '@enonic-types/core';
+
+export type {UserKey} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
@@ -23,7 +27,7 @@ export interface AuditLogParams {
     type: string;
     time?: string;
     source?: string;
-    user?: string;
+    user?: UserKey;
     objects?: string[];
     data?: Record<string, unknown>;
 }
@@ -33,7 +37,7 @@ export interface AuditLog {
     type: string;
     time: string;
     source: string;
-    user: string;
+    user: UserKey;
     objects: string[];
     data: Record<string, unknown>;
 }

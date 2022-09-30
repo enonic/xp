@@ -27,11 +27,8 @@
         "@enonic-types/core": "./core",
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
-        "cp-file": "^9.1.0",
         "eslint": "^8.15.0",
-        "glob": "^8.0.3",
-        "ts-loader": "^9.3.0",
-        "typescript": "^4.6.4",
+        "typescript": "^4.8.4",
         "jsdoc": "^3.6.11"
     }
 }

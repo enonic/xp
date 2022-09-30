@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {UserKey} from '@enonic-types/core';
+
+export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
         throw `Parameter '${String(name)}' is required`;
@@ -166,9 +170,9 @@ export interface Schema {
     description: string;
     descriptionI18nKey: string;
     createdTime: string;
-    creator: string;
+    creator: UserKey;
     modifiedTime: string;
-    modifier: string;
+    modifier: UserKey;
     resource: string;
     type: ContentSchemaType;
     icon?: Icon;

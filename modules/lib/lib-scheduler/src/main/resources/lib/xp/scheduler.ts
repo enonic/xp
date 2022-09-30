@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {UserKey} from '@enonic-types/core';
+
+export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
         throw `Parameter '${String(name)}' is required`;
@@ -27,7 +31,7 @@ export interface CreateScheduledJobParams<Config extends object = Record<string,
     descriptor: string;
     config?: Config;
     schedule: OneTimeSchedule | CronSchedule;
-    user?: string;
+    user?: UserKey;
     enabled: boolean;
 }
 
@@ -48,9 +52,9 @@ export interface ScheduledJob<Config extends object = Record<string, unknown>> {
     description?: string | null;
     enabled: boolean;
     config?: Config | null;
-    user?: string | null;
-    creator: string;
-    modifier: string;
+    user?: UserKey | null;
+    creator: UserKey;
+    modifier: UserKey;
     createdTime: string;
     modifiedTime: string;
     lastRun?: string | null;
@@ -71,7 +75,7 @@ interface CreateScheduledJobHandler<Config extends object> {
 
     setConfig(value?: object | null): void;
 
-    setUser(value?: string | null): void;
+    setUser(value?: UserKey | null): void;
 
     execute(): ScheduledJob<Config>;
 }

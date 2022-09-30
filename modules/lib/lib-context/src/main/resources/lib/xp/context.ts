@@ -13,25 +13,13 @@ declare global {
     }
 }
 
-export interface Principal {
-    type: string;
-    key: string;
-    displayName: string;
-    modifiedTime: string;
-}
+import type {PrincipalKey, User} from '@enonic-types/core';
 
-export interface User
-    extends Principal {
-    disabled?: boolean;
-    email?: string;
-    login?: string;
-    idProvider: string;
-    profile?: Record<string, unknown>;
-}
+export type {PrincipalKey, UserKey, Principal, User} from '@enonic-types/core';
 
 export interface AuthInfo {
     user?: User | null;
-    principals?: string[] | null;
+    principals?: PrincipalKey[] | null;
 }
 
 export type ContextAttributes = Record<string, number | string | boolean | Record<string, unknown>>;
@@ -52,7 +40,7 @@ export interface ContextParams {
     repository?: string;
     branch?: string;
     user?: ContextUserParams;
-    principals?: string[];
+    principals?: PrincipalKey[];
     attributes?: ContextAttributes;
 }
 
@@ -65,7 +53,7 @@ interface ContextRunParams {
 
     setIdProvider(value: string): void;
 
-    setPrincipals(value: string[]): void;
+    setPrincipals(value: PrincipalKey[]): void;
 
     setAttributes(value: ScriptValue): void;
 
