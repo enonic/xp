@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -220,7 +221,7 @@ final class PageDataSerializer
 
         regionDescriptors.forEach( regionDescriptor -> {
             pageRegionsBuilder.add(
-                componentDataSerializerProvider.getRegionDataSerializer().fromData( regionDescriptor, ComponentPath.DIVIDER,
+                componentDataSerializerProvider.getRegionDataSerializer().fromData( regionDescriptor, PropertyPath.ROOT,
                                                                                     componentsAsData ) );
         } );
 

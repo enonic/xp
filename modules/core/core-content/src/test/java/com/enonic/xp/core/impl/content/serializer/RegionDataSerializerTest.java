@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -67,7 +67,7 @@ public class RegionDataSerializerTest
             regionAsData.getProperties( ComponentDataSerializer.COMPONENTS ).stream().map( item -> item.getSet() ).collect(
                 Collectors.toList() );
 
-        final Region parsedRegion = regionSerializer.fromData( regionDescriptor, ComponentPath.DIVIDER, components );
+        final Region parsedRegion = regionSerializer.fromData( regionDescriptor, PropertyPath.ROOT, components );
 
         // verify
         assertEquals( region, parsedRegion );
