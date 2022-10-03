@@ -1,11 +1,12 @@
 package com.enonic.xp.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -56,7 +57,7 @@ public final class UrlResource
     {
         try
         {
-            return openConnection().getContentLength();
+            return openConnection().getContentLengthLong();
         }
         catch ( final Exception e )
         {
@@ -105,12 +106,38 @@ public final class UrlResource
     public ByteSource getBytes()
     {
         requireExists();
-        return Resources.asByteSource( this.url );
+        return new UrlResourceByteSource();
     }
 
     @Override
     public String getResolverName()
     {
         return resolverName;
+    }
+
+    private final class UrlResourceByteSource
+        extends ByteSource
+    {
+        @Override
+        public InputStream openStream()
+            throws IOException
+        {
+            return url.openStream();
+        }
+
+        @Override
+        public Optional<Long> sizeIfKnown()
+        {
+            try
+            {
+                final URLConnection urlConnection = url.openConnection();
+                urlConnection.connect();
+                return Optional.of( urlConnection.getContentLengthLong() );
+            }
+            catch ( Exception e )
+            {
+                return Optional.absent();
+            }
+        }
     }
 }

@@ -1,16 +1,15 @@
 package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
@@ -42,123 +41,67 @@ public final class ResponseSerializer
         response.setStatus( this.webResponse.getStatus().value() );
         response.setContentType( this.webResponse.getContentType().toString() );
 
-        serializeHeaders( response, this.webResponse.getHeaders() );
-        serializeCookies( response, this.webResponse.getCookies() );
+        this.webResponse.getHeaders().forEach( response::setHeader );
+        this.webResponse.getCookies().forEach( response::addCookie );
         serializeBody( response, this.webResponse.getBody() );
-    }
-
-    private void serializeCookies( final HttpServletResponse response, final ImmutableList<Cookie> cookies )
-    {
-        for ( final Cookie cookie : cookies )
-        {
-            response.addCookie( cookie );
-        }
     }
 
     private void serializeBody( final HttpServletResponse response, final Object body )
         throws IOException
     {
-        if ( body instanceof Resource )
-        {
-            serializeBody( response, (Resource) body );
-            return;
-        }
-
         if ( body instanceof ByteSource )
         {
-            serializeBody( response, (ByteSource) body );
-            return;
+            writeToStream( response, (ByteSource) body );
         }
-
-        if ( body instanceof Map )
+        else if ( body instanceof Resource )
         {
-            serializeBody( response, convertToJson( body ) );
-            return;
+            writeToStream( response, ( (Resource) body ).getBytes() );
         }
-
-        if ( body instanceof List )
+        else if ( body instanceof byte[] )
         {
-            serializeBody( response, convertToJson( body ) );
-            return;
+            writeBytesToStream( response, (byte[]) body );
         }
-
-        if ( body instanceof byte[] )
+        else if ( body instanceof CharSequence )
         {
-            serializeBody( response, (byte[]) body );
-            return;
+            writeStringToStream( response, (CharSequence) body );
         }
-
-        serializeBody( response, body == null ? "" : body.toString() );
-    }
-
-    private String convertToJson( final Object value )
-    {
-        try
+        else if ( body instanceof Map || body instanceof List )
         {
-            return MAPPER.writeValueAsString( value );
+            writeStringToStream( response, MAPPER.writeValueAsString( body ) );
         }
-        catch ( final Exception e )
+        else if ( body != null )
         {
-            throw new RuntimeException( e );
+            writeStringToStream( response, body.toString() );
         }
     }
 
-    private void serializeBody( final HttpServletResponse response, final ByteSource body )
+    private void writeStringToStream( final HttpServletResponse response, final CharSequence data )
         throws IOException
     {
-        writeToStream( response, body );
+        // Make sure the content-length is known by reading string into byte array
+        writeBytesToStream( response, CharSource.wrap( data ).asByteSource( Charset.forName( response.getCharacterEncoding() ) ).read() );
     }
 
-    private void serializeBody( final HttpServletResponse response, final byte[] body )
+    private void writeBytesToStream( final HttpServletResponse response, final byte[] data )
         throws IOException
     {
-        writeToStream( response, body );
-    }
-
-    private void serializeBody( final HttpServletResponse response, final String body )
-        throws IOException
-    {
-        writeToStream( response, body.getBytes( StandardCharsets.UTF_8 ) );
-    }
-
-    private void writeToStream( final HttpServletResponse response, final byte[] data )
-        throws IOException
-    {
-        response.setContentLength( data.length );
-
-        if ( !isHeadRequest() )
-        {
-            response.getOutputStream().write( data );
-        }
+        writeToStream( response, ByteSource.wrap( data ) );
     }
 
     private void writeToStream( final HttpServletResponse response, final ByteSource data )
         throws IOException
     {
-        response.setContentLengthLong( data.size() );
+        data.sizeIfKnown().toJavaUtil().ifPresent( response::setContentLengthLong );
 
-        if ( !isHeadRequest() )
+        if ( this.webRequest.getMethod() != HttpMethod.HEAD )
         {
             data.copyTo( response.getOutputStream() );
         }
-    }
-
-    private void serializeBody( final HttpServletResponse response, final Resource body )
-        throws IOException
-    {
-        writeToStream( response, body.readBytes() );
-    }
-
-    private void serializeHeaders( final HttpServletResponse response, final Map<String, String> headers )
-    {
-        for ( final Map.Entry<String, String> entry : headers.entrySet() )
+        else
         {
-            response.setHeader( entry.getKey(), entry.getValue() );
+            // Make sure Jetty does not try to calculate content-length response header for HEAD request
+            response.flushBuffer();
         }
     }
 
-    private boolean isHeadRequest()
-    {
-        return this.webRequest.getMethod() == HttpMethod.HEAD;
-    }
 }
