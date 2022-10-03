@@ -75,7 +75,7 @@ final class RegionDataSerializer
     {
         final String itemPath = item.getString( PATH );
 
-        return itemPath.startsWith( parentPath ) && ( getLevel( itemPath ) - getLevel( parentPath ) == 1 );
+        return isItemPathStartsWith( itemPath, parentPath ) && ( getLevel( itemPath ) - getLevel( parentPath ) == 1 );
     }
 
     private int getLevel( final String path )
@@ -101,14 +101,20 @@ final class RegionDataSerializer
     {
         final String parentPath = item.getString( PATH );
 
-        return componentsAsData.stream().filter( componentAsData -> isItemDescendantOf( componentAsData, parentPath ) ).collect(
-            Collectors.toList() );
+        return componentsAsData.stream()
+            .filter( componentAsData -> isItemDescendantOf( componentAsData, parentPath ) )
+            .collect( Collectors.toList() );
     }
 
     private boolean isItemDescendantOf( final PropertySet item, final String parentPath )
     {
         final String itemPath = item.getString( PATH );
 
-        return itemPath.startsWith( parentPath );
+        return isItemPathStartsWith( itemPath, parentPath );
+    }
+
+    private boolean isItemPathStartsWith( final String itemPath, final String parentPath )
+    {
+        return parentPath == ComponentPath.DIVIDER || itemPath.startsWith( parentPath + ComponentPath.DIVIDER );
     }
 }
