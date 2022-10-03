@@ -202,6 +202,45 @@ public class ImageContentProcessorTest
     }
 
     @Test
+    public void testProcessUpdateWithCorruptedImage()
+        throws IOException
+    {
+        ByteSource byteSource = Mockito.mock( ByteSource.class );
+        Mockito.when( byteSource.openStream() ).thenThrow( new IOException() );
+        Mockito.when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( byteSource );
+
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
+            contentType( ContentType.create().
+            name( ContentTypeName.imageMedia() ).
+            superType( ContentTypeName.imageMedia() ).
+            build() ).
+            build();
+
+        final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
+
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "CorruptedImage.jpg" ) );
+
+        final EditableContent editableContent = new EditableContent( Media.create().
+            name( "myContentName" ).
+            type( ContentTypeName.imageMedia() ).
+            parentPath( ContentPath.ROOT ).
+            data( data ).
+            addExtraData( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).
+            attachments( Attachments.from( Attachment.create().
+            mimeType( "image/jpeg" ).
+            name( "CorruptedImage.jpg" ).
+            build() ) ).
+            build() );
+
+        result.getEditor().edit( editableContent );
+
+        final ExtraData extraData = editableContent.extraDatas.first();
+        assertNotNull( extraData );
+        assertEquals( MediaInfo.IMAGE_INFO_METADATA_NAME, extraData.getName() );
+    }
+
+    @Test
     public void testProcessUpdateWithMediaInfo()
         throws IOException
     {
