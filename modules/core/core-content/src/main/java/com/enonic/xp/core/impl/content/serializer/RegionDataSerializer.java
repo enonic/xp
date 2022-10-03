@@ -115,6 +115,6 @@ final class RegionDataSerializer
 
     private boolean isItemPathStartsWith( final String itemPath, final String parentPath )
     {
-        return parentPath == ComponentPath.DIVIDER || itemPath.startsWith( parentPath + ComponentPath.DIVIDER );
+        return ComponentPath.DIVIDER.equals( parentPath ) || itemPath.startsWith( parentPath + ComponentPath.DIVIDER );
     }
 }
