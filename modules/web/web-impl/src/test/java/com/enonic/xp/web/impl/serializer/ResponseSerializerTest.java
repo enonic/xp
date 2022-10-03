@@ -51,14 +51,16 @@ public class ResponseSerializerTest
 
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
         final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getCharacterEncoding() ).thenReturn( "utf-8" );
         when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
+
         serializer.serialize( httpResponse );
 
         verify( httpResponse ).setHeader( "header-test", "header-value" );
         verify( httpResponse ).setStatus( 202 );
         verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
-        verify( httpResponse ).setContentLength( 11 );
-        verify( servletOutputStream ).write( string_body.getBytes( StandardCharsets.UTF_8 ) );
+        verify( httpResponse ).setContentLengthLong( 11 );
+        verify( servletOutputStream ).write( string_body.getBytes( StandardCharsets.UTF_8 ), 0, 11 );
     }
 
     @Test
@@ -86,8 +88,8 @@ public class ResponseSerializerTest
         verify( httpResponse ).setHeader( "header-test", "header-value" );
         verify( httpResponse ).setStatus( 202 );
         verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
-        verify( httpResponse ).setContentLength( 11 );
-        verify( servletOutputStream ).write( body_bytes );
+        verify( httpResponse ).setContentLengthLong( 11 );
+        verify( servletOutputStream ).write( body_bytes, 0 ,11 );
     }
 
     @Test
@@ -145,8 +147,8 @@ public class ResponseSerializerTest
         verify( httpResponse ).setHeader( "header-test", "header-value" );
         verify( httpResponse ).setStatus( 202 );
         verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
-        verify( httpResponse ).setContentLength( 11 );
-        verify( servletOutputStream ).write( any( byte[].class ) );
+        verify( httpResponse ).setContentLengthLong( 11 );
+        verify( servletOutputStream ).write( any( byte[].class ), eq( 0 ) , eq( 11 ) );
     }
 
     @Test
@@ -171,6 +173,7 @@ public class ResponseSerializerTest
 
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
         final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getCharacterEncoding() ).thenReturn( "utf-8" );
         when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
 
         serializer.serialize( httpResponse );
@@ -178,8 +181,8 @@ public class ResponseSerializerTest
         verify( httpResponse ).setHeader( "header-test", "header-value" );
         verify( httpResponse ).setStatus( 202 );
         verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
-        verify( httpResponse ).setContentLength( 39 );
-        verify( servletOutputStream ).write( any( byte[].class ) );
+        verify( httpResponse ).setContentLengthLong( 39 );
+        verify( servletOutputStream ).write( any( byte[].class ), eq( 0 ), eq( 39 ) );
     }
 
     @Test
@@ -198,14 +201,16 @@ public class ResponseSerializerTest
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
         final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        when( httpResponse.getCharacterEncoding() ).thenReturn( "utf-8" );
 
         serializer.serialize( httpResponse );
 
         verify( httpResponse ).setHeader( "header-test", "header-value" );
         verify( httpResponse ).setStatus( 202 );
         verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
-        verify( httpResponse ).setContentLength( 11 );
+        verify( httpResponse ).setContentLengthLong( 11 );
         verify( httpResponse, times( 0 ) ).getOutputStream();
+        verify( httpResponse, times( 1 ) ).flushBuffer();
     }
 
     @Test
