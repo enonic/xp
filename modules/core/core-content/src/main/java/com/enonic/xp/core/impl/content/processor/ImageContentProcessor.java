@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -63,6 +65,8 @@ import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 public final class ImageContentProcessor
     implements ContentProcessor
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ImageContentProcessor.class );
+
     private static final ImmutableMap<String, String> FIELD_CONFORMITY_MAP = ImmutableMap.<String, String>builder().
         put( "tiffImagelength", "imageHeight" ).
         put( "tiffImagewidth", "imageWidth" ).
@@ -183,6 +187,11 @@ public final class ImageContentProcessor
         }
 
         final BufferedImage image = toBufferedImage( binary );
+        if ( image == null )
+        {
+            return editable.extraDatas;
+        }
+
         final Cropping cropping = media.getCropping();
         final long byteSize = mediaAttachment.getSize();
 
@@ -234,7 +243,8 @@ public final class ImageContentProcessor
         }
         catch ( IOException e )
         {
-            throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+            LOG.warn( "Failed to read BufferedImage from InputStream", e );
+            return null;
         }
     }
 
