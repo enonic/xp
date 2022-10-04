@@ -40,8 +40,8 @@ public final class BuildInfoHelper
     {
         final RevWalk rw = new RevWalk( repository );
         final RevCommit commit = rw.parseCommit( revision );
-        final PersonIdent author = commit.getAuthorIdent();
-        final Instant commitDate = author.getWhen().toInstant();
+        final PersonIdent committer = commit.getCommitterIdent();
+        final Instant commitDate = committer.getWhen().toInstant();
 
         return commitDate.toString();
     }
