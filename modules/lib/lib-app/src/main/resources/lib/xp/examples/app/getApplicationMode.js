@@ -5,14 +5,14 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Create virtual app.
-var result = appLib.hasVirtual({
+var result = appLib.getApplicationMode({
     key: 'my-app',
 });
 
-log.info('Has virtual: ' + result);
+log.info('Application mode: ' + result);
 
 // END
 
 
-assert.assertEquals(true, result);
+assert.assertEquals('AUGMENTED', result);
 
