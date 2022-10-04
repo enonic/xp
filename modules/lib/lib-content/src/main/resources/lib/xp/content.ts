@@ -11,9 +11,12 @@ declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface XpXData {}
 }
 
-import type {Attachment, Component, Content, PublishInfo, Region} from '@enonic-types/core';
+import type {Content, PublishInfo} from '@enonic-types/core';
 
 export type {Attachment, PublishInfo, Content, Component, Region} from '@enonic-types/core';
 
