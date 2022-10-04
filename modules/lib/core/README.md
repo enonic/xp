@@ -42,3 +42,17 @@ declare global {
     }
 }
 ```
+
+### Additional types
+
+`Content` is a complex type that contains unions and maps, that are not exported, but may be needed during the development. Actually, these types can easily be retrieved from the `Content` itself:
+
+```ts
+import type {Content} from '@enonic-types/core';
+
+type Attachments = Content['attachments'];
+
+type ContentInheritType = Content['inherit'];
+
+type Workflow = Content['workflow'];
+```

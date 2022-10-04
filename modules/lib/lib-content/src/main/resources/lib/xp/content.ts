@@ -17,11 +17,11 @@ import type {Attachment, Component, Content, PublishInfo, Region} from '@enonic-
 
 export type {Attachment, PublishInfo, Content, Component, Region} from '@enonic-types/core';
 
-export type Attachments = Content['attachments'];
+type Attachments = Content['attachments'];
 
-export type ContentInheritType = Content['inherit'];
+type ContentInheritType = Content['inherit'];
 
-export type Workflow = Content['workflow'];
+type Workflow = Content['workflow'];
 
 export type Schedule = Omit<PublishInfo, 'first'>;
 

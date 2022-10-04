@@ -79,3 +79,17 @@ import {get, query, getChildren} from '/lib/xp/content';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+
+### Additional types
+
+Note that not all types are available for import, but can easily be retrieved from the `Content`: 
+
+```ts
+import type {Content} from '/lib/xp/content';
+
+type Attachments = Content['attachments'];
+
+type ContentInheritType = Content['inherit'];
+
+type Workflow = Content['workflow'];
+```
