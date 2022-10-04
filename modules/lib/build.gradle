@@ -177,7 +177,8 @@ subprojects {
         def shortName = project.name.substring( 4 )
 
         def hasCoreDependency = new File( "$projectDir/src/main/resources/lib/xp/${shortName}.ts" ).text.contains( '@enonic-types/core' )
-        def dependencies = hasCoreDependency ? [ '@enonic-types/core' ] : []
+        def dependencies = hasCoreDependency ? ['@enonic-types/core'] : []
+        def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
 
         into "$buildDir/npm"
 
@@ -188,17 +189,16 @@ subprojects {
 
         from( '../package.template.json' ) {
             filter { line ->
-                line
+                def newLine = line
                     .replaceAll( '%VERSION%', version )
                     .replaceAll( '%FULL_NAME%', fullName )
                     .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
                     .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
                 if ( dependencies.size > 0 )
                 {
-                    def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
-                    line.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
-                } else
-                line
+                    newLine = newLine.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
+                }
+                return newLine
             }
             rename '.+', 'package.json'
         }
