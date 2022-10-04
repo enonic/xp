@@ -13,6 +13,12 @@ declare global {
     }
 }
 
+import type {PrincipalKey} from '@enonic-types/core';
+
+export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+
+type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
@@ -77,9 +83,7 @@ export interface TermsAggregation {
         size?: number;
         minDocCount?: number;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface HistogramAggregation {
@@ -91,9 +95,7 @@ export interface HistogramAggregation {
         extendedBoundMax?: number;
         minDocCount?: number;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface DateHistogramAggregation {
@@ -103,9 +105,7 @@ export interface DateHistogramAggregation {
         minDocCount?: number;
         format: string;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface NumericRange {
@@ -119,9 +119,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface NumericRangeAggregation {
@@ -129,9 +127,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface DateRange {
@@ -146,9 +142,7 @@ export interface DateRangeAggregation {
         format: string;
         ranges: DateRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface StatsAggregation {
@@ -454,7 +448,7 @@ interface NodeHandleFactory {
 }
 
 interface MultiRepoNodeHandleContext {
-    addSource(repoId: string, branch: string, principals: string[]): void;
+    addSource(repoId: string, branch: string, principals: PrincipalKey[]): void;
 }
 
 interface MultiRepoNodeHandleFactory {
@@ -1342,10 +1336,10 @@ class MultiRepoConnectionImpl
 export interface ConnectParams {
     repoId: string;
     branch: string;
-    principals: string[];
-    user: {
+    principals?: PrincipalKey[];
+    user?: {
         login: string;
-        idProvider: string;
+        idProvider?: string;
     };
 }
 
@@ -1358,7 +1352,7 @@ interface NodeHandleContext {
 
     setIdProvider(value: string): void;
 
-    setPrincipals(value: string[]): void;
+    setPrincipals(value: string[] | null): void;
 }
 
 /**
@@ -1392,15 +1386,13 @@ export function connect(params: ConnectParams): RepoConnection {
         }
     }
 
-    if (params.principals) {
-        nodeHandleContext.setPrincipals(params.principals);
-    }
+    nodeHandleContext.setPrincipals(params.principals ?? null);
 
     return new RepoConnectionImpl(factory.create(nodeHandleContext));
 }
 
 export interface MultiRepoConnectParams {
-    sources: ConnectParams[];
+    sources: WithRequiredProperty<ConnectParams, 'principals'>[];
 }
 
 /**
@@ -1415,14 +1407,14 @@ export interface MultiRepoConnectParams {
  * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
  * @param {string} params.sources.user.login Login of the user.
  * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
- * @param {string[]} [params.sources.principals] Additional principals to execute the callback with.
+ * @param {string[]} params.sources.principals Principals to execute the callback with.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */
 export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConnection {
     const multiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
-    params.sources.forEach(function (source: ConnectParams) {
+    params.sources.forEach((source: ConnectParams) => {
         checkRequired(source, 'repoId');
         checkRequired(source, 'branch');
         checkRequired(source, 'principals');

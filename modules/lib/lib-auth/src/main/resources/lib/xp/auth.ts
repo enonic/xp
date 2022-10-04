@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, User, UserKey} from '@enonic-types/core';
+
+export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, User, Group, Role} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
@@ -21,45 +25,10 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
 
 export type LoginScopeType = 'SESSION' | 'REQUEST' | 'NONE';
 
-export type UserKey = `user:${string}:${string}`;
-export type GroupKey = `group:${string}:${string}`;
-export type RoleKey = `role:${string}`;
-
-export type PrincipalKey = UserKey | GroupKey | RoleKey;
-
-export interface User {
-    type: 'user';
-    key: UserKey;
-    displayName: string;
-    modifiedTime: string;
-    disabled?: boolean;
-    email?: string;
-    login?: string;
-    idProvider: string;
-}
-
 export interface UserWithProfile<Profile extends Record<string, unknown> = Record<string, unknown>>
     extends User {
     profile?: Profile;
 }
-
-export interface Group {
-    type: 'group';
-    key: GroupKey;
-    displayName: string;
-    modifiedTime: string;
-    description?: string;
-}
-
-export interface Role {
-    type: 'role';
-    key: RoleKey;
-    displayName: string;
-    modifiedTime: string;
-    description?: string;
-}
-
-export type Principal = User | Group | Role;
 
 export interface LoginParams {
     user: string;

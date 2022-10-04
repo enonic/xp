@@ -175,7 +175,9 @@ subprojects {
     task prepareToPublish( type: Copy, dependsOn: processResources ) {
         def fullName = project.name
         def shortName = project.name.substring( 4 )
-        def dependencies = []
+
+        def hasCoreDependency = new File( "$projectDir/src/main/resources/lib/xp/${shortName}.ts" ).text.contains( '@enonic-types/core' )
+        def dependencies = hasCoreDependency ? [ '@enonic-types/core' ] : []
 
         into "$buildDir/npm"
 
@@ -191,11 +193,12 @@ subprojects {
                     .replaceAll( '%FULL_NAME%', fullName )
                     .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
                     .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
-                if ( dependencies.size() > 0 )
+                if ( dependencies.size > 0 )
                 {
                     def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
                     line.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
-                }
+                } else
+                line
             }
             rename '.+', 'package.json'
         }

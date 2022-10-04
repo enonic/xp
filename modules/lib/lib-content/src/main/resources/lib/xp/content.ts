@@ -11,11 +11,19 @@ declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
     }
-
-    interface XpXData {
-        [key: string]: Record<string, Record<string, unknown>>
-    }
 }
+
+import type {Attachment, Component, Content, PublishInfo, Region} from '@enonic-types/core';
+
+export type {Attachment, PublishInfo, Content, Component, Region} from '@enonic-types/core';
+
+type Attachments = Content['attachments'];
+
+type ContentInheritType = Content['inherit'];
+
+type Workflow = Content['workflow'];
+
+export type Schedule = Omit<PublishInfo, 'first'>;
 
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
@@ -47,39 +55,11 @@ interface GetContentHandler {
     execute<Data, Type extends string>(): Content<Data, Type> | null;
 }
 
-export interface Attachment {
-    name: string;
-    label?: string;
-    size: number;
-    mimeType: string;
-}
-
-export interface Attachments {
-    [key: string]: Attachment;
-}
-
-export interface PublishInfo {
-    from?: string;
-    to?: string;
-    first?: string;
-}
-
 interface GetAttachmentsHandler {
     setKey(value?: string | null): void;
 
     execute(): Attachments | null;
 }
-
-export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
-
-export type WorkflowCheckState = 'PENDING' | 'REJECTED' | 'APPROVED';
-
-export interface Workflow {
-    state: WorkflowState;
-    checks?: Record<string, WorkflowCheckState>;
-}
-
-export type ContentInheritType = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
 
 export interface Bucket {
     [subAggregationName: string]: BucketsAggregation | StatsAggregation | SingleValueMetricAggregation | string | number | undefined;
@@ -559,32 +539,6 @@ export interface GeoDistanceSortDsl
 
 export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 
-export interface Content<Data = Record<string, unknown>, Type extends string = string> {
-    _id: string;
-    _name: string;
-    _path: string;
-    _score: number;
-    creator: string;
-    modifier: string;
-    createdTime: string;
-    modifiedTime: string;
-    owner: string;
-    data: Data;
-    type: Type;
-    displayName: string;
-    hasChildren: boolean;
-    language: string;
-    valid: boolean;
-    originProject: string;
-    childOrder?: string;
-    _sort?: object[];
-    x: XpXData;
-    attachments: Attachments;
-    publish?: PublishInfo;
-    workflow?: Workflow;
-    inherit?: ContentInheritType[];
-}
-
 /**
  * This function fetches a content.
  *
@@ -919,9 +873,9 @@ export interface CreateContentParams<Data, Type extends string> {
     language?: string;
     childOrder?: string;
     data?: Data;
-    x?: object;
+    x?: XpXData;
     idGenerator?: IdGeneratorSupplier;
-    workflow?: object;
+    workflow?: Workflow;
 }
 
 interface CreateContentHandler {
@@ -1121,11 +1075,6 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
     bean.setRequireValid(requireValid);
 
     return __.toNativeObject(bean.execute<Data, Type>());
-}
-
-export interface Schedule {
-    from?: string;
-    to?: string;
 }
 
 export interface PublishContentParams {
