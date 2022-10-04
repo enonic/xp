@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {Resource} from '@enonic-types/core';
+
+export type {Resource} from '@enonic-types/core';
+
 interface JavaResource {
     getSize(): number;
 
@@ -37,16 +41,6 @@ interface IOHandlerBean {
     newStream(text: string): object;
 
     getResource(key: string): JavaResource;
-}
-
-export interface Resource {
-    getSize(): number;
-
-    getTimestamp(): number;
-
-    getStream(): object;
-
-    exists(): boolean;
 }
 
 const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');

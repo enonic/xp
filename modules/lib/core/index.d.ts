@@ -1,11 +1,43 @@
 declare global {
     interface XpXData {
+        [key: string]: Record<string, Record<string, unknown>>;
     }
 }
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
 export type RoleKey = `role:${string}`;
+
+export type PrincipalKey = UserKey | GroupKey | RoleKey;
+
+export interface User {
+    type: 'user';
+    key: UserKey;
+    displayName: string;
+    modifiedTime: string;
+    disabled?: boolean;
+    email?: string;
+    login?: string;
+    idProvider: string;
+}
+
+export interface Group {
+    type: 'group';
+    key: GroupKey;
+    displayName: string;
+    modifiedTime: string;
+    description?: string;
+}
+
+export interface Role {
+    type: 'role';
+    key: RoleKey;
+    displayName: string;
+    modifiedTime: string;
+    description?: string;
+}
+
+export type Principal = User | Group | Role;
 
 export interface Attachment {
     name: string;
@@ -42,8 +74,8 @@ export interface Content<
     _name: string;
     _path: string;
     _score: number;
-    creator: string;
-    modifier: string;
+    creator: UserKey;
+    modifier: UserKey;
     createdTime: string;
     modifiedTime: string;
     owner: string;
