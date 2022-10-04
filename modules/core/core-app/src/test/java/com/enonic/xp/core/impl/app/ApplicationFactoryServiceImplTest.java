@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
@@ -89,6 +94,35 @@ class ApplicationFactoryServiceImplTest
 
         bundle.stop();
         assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
+    }
+
+    @Test
+    void findActiveResolver()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( appName, newBundle( appName, true ) );
+
+        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+
+        bundle.start();
+        Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
+        assertThat( activeResolver ).isNotEmpty();
+        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
+
+        activeResolver = service.findResolver( applicationKey, "virtual" );
+        assertThat( activeResolver ).isNotEmpty();
+        assertThat( activeResolver.get() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
     }
 
     @Test

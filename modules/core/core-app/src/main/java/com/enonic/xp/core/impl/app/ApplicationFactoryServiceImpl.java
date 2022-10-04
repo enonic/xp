@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -38,15 +39,19 @@ public class ApplicationFactoryServiceImpl
 
     private final AppConfig appConfig;
 
+    private final ApplicationFactory factory;
+
     @Activate
     public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService, final AppConfig config )
     {
         this.nodeService = nodeService;
         this.appConfig = config;
 
-        bundleTracker =
+        this.factory = new ApplicationFactory( RunMode.get(), nodeService, appConfig );
+
+        this.bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,
-                                 new Customizer( nodeService, appConfig ) );
+                                 new Customizer( factory ) );
     }
 
     @Activate
@@ -80,6 +85,26 @@ public class ApplicationFactoryServiceImpl
             .or( () -> findVirtualApp( applicationKey ) );
     }
 
+    @Override
+    public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String source )
+    {
+        final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = bundleTracker.getTracked()
+            .entrySet()
+            .stream()
+            .filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) )
+            .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
+            .findAny();
+
+        if ( source == null )
+        {
+            return adaptorEntry.map( Map.Entry::getValue )
+                .or( () -> findVirtualApp( applicationKey ) )
+                .map( ApplicationAdaptor::getUrlResolver );
+        }
+
+        return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
+    }
+
     private Optional<ApplicationAdaptor> findVirtualApp( final ApplicationKey applicationKey )
     {
         if ( !appConfig.virtual_enabled() )
@@ -109,9 +134,9 @@ public class ApplicationFactoryServiceImpl
     {
         private final ApplicationFactory factory;
 
-        private Customizer( final NodeService nodeService, final AppConfig appConfig )
+        private Customizer( final ApplicationFactory factory )
         {
-            factory = new ApplicationFactory( RunMode.get(), nodeService, appConfig );
+            this.factory = factory;
         }
 
         @Override

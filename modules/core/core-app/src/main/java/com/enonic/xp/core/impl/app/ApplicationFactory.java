@@ -19,7 +19,7 @@ import com.enonic.xp.core.impl.app.resolver.RealOverVirtualApplicationUrlResolve
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
-final class ApplicationFactory
+public final class ApplicationFactory
 {
     private final RunMode runMode;
 
@@ -39,16 +39,16 @@ final class ApplicationFactory
         return create( bundle, null );
     }
 
-    public ApplicationImpl create( final Bundle bundle, final Configuration config )
+    ApplicationImpl create( final Bundle bundle, final Configuration config )
     {
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.bundle( bundle );
-        builder.urlResolver( createUrlResolver( bundle ) );
+        builder.urlResolver( createUrlResolver( bundle, null ) );
         builder.config( config );
         return builder.build();
     }
 
-    ApplicationUrlResolver createUrlResolver( final Bundle bundle )
+    ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )
     {
         final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
         final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
@@ -56,6 +56,11 @@ final class ApplicationFactory
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
 
         final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+
+        if ( source != null )
+        {
+            return createUrlResolverBySource( bundle, source );
+        }
 
         if ( appConfig.virtual_enabled() )
         {
@@ -68,13 +73,36 @@ final class ApplicationFactory
             else
             {
                 return addCLR
-                    ? new RealOverVirtualApplicationUrlResolver( new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ), nodeResourceApplicationResolver )
+                    ? new RealOverVirtualApplicationUrlResolver(
+                    new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ), nodeResourceApplicationResolver )
                     : new RealOverVirtualApplicationUrlResolver( bundleUrlResolver, nodeResourceApplicationResolver );
             }
         }
         else
         {
             return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
+        }
+    }
+
+    ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
+    {
+        switch ( source )
+        {
+            case "bundle":
+                final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
+                final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+
+                return addCLR
+                    ? new MultiApplicationUrlResolver( classLoaderUrlResolver, new BundleApplicationUrlResolver( bundle ) )
+                    : new BundleApplicationUrlResolver( bundle );
+            case "virtual":
+                if ( !appConfig.virtual_enabled() )
+                {
+                    throw new IllegalStateException( "virtual apps are disabled" );
+                }
+                return new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
+            default:
+                throw new IllegalArgumentException( "invalid application resolver source: " + source );
         }
     }
 

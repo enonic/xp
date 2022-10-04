@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.ApplicationAdaptor;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.resource.Resource;
@@ -65,8 +65,8 @@ public final class ResourceServiceImpl
 
     private Optional<ApplicationUrlResolver> findApplicationUrlResolver( final ApplicationKey key )
     {
-        final ApplicationKey applicationKey = isSystemApp( key ) ? SYSTEM_APPLICATION_KEY : key;
-        return applicationFactoryService.findActiveApplication( applicationKey ).map( ApplicationAdaptor::getUrlResolver );
+        final String resolverSource = (String) ContextAccessor.current().getAttribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE );
+        return applicationFactoryService.findResolver( isSystemApp( key ) ? SYSTEM_APPLICATION_KEY : key, resolverSource );
     }
 
     private boolean isSystemApp( final ApplicationKey key )
