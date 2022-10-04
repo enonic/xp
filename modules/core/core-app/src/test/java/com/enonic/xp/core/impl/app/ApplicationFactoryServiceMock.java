@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -21,7 +22,7 @@ public class ApplicationFactoryServiceMock
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService, Mockito.mock( AppConfig.class) );
+    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService, Mockito.mock( AppConfig.class ) );
 
     private final Map<Bundle, ApplicationAdaptor> map = new HashMap<>();
 
@@ -38,6 +39,17 @@ public class ApplicationFactoryServiceMock
             .stream()
             .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
             .map( e -> e.getValue() )
+            .findAny();
+    }
+
+    @Override
+    public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String resolverName )
+    {
+        return map.entrySet()
+            .stream()
+            .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
+            .map( Map.Entry::getValue )
+            .map( ApplicationAdaptor::getUrlResolver )
             .findAny();
     }
 }

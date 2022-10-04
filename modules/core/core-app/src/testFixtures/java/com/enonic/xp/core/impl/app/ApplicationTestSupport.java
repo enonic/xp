@@ -42,6 +42,10 @@ public abstract class ApplicationTestSupport
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
         when( applicationFactoryService.findActiveApplication( any() ) ).then(
             invocationOnMock -> Optional.ofNullable( apps.get( invocationOnMock.getArgument( 0 ) ) ) );
+        when( applicationFactoryService.findResolver( any(), any() ) ).then( invocationOnMock -> {
+            final Object argument = invocationOnMock.getArgument( 0 );
+            return Optional.ofNullable( apps.get( argument ) ).map( MockApplication::getUrlResolver );
+        } );
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 

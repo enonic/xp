@@ -14,6 +14,8 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
@@ -78,6 +80,7 @@ class ResourceServiceImplTest
         app.setResourcePath( appDir );
 
         when( applicationFactoryService.findActiveApplication( appKey ) ).thenReturn( Optional.of( app ) );
+        when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
 
         resourceService = new ResourceServiceImpl( applicationFactoryService );
     }
@@ -147,6 +150,42 @@ class ResourceServiceImplTest
     }
 
     @Test
+    public void testProcessResourceWithParticularResolver()
+        throws Exception
+    {
+        newFile( "a.txt" );
+
+        final Instant timestamp = Instant.parse( "2021-12-03T10:15:30.00Z" );
+
+        final PropertyTree data = new PropertyTree();
+        data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
+
+        final Node appNode = createNode( "myapp", NodePath.create( "/myapp" ).build(), timestamp, new PropertyTree() );
+        final Node partSchemaNode = createNode( "a.xml", NodePath.create( "/schemas/site/parts/a" ).build(), timestamp, data );
+
+        final NodeService nodeService = mock( NodeService.class );
+
+        when( nodeService.getByPath( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( appNode );
+        when( nodeService.getByPath( NodePath.create( "myapp/site/parts/a/a.xml" ).build().asAbsolute() ) ).thenReturn( partSchemaNode );
+
+        ContextBuilder.copyOf( ContextAccessor.current() )
+            .attribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE, "node" )
+            .build()
+            .runWith( () -> {
+                assertNull( processResource( "segment1", "/site/parts/a/a.xml", "1" ) );
+
+                final ApplicationUrlResolver applicationUrlResolver =
+                    new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
+
+                doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
+                    .findResolver( ApplicationKey.from( "myapp" ), "node" );
+
+                final String value1 = processResource( "segment1", "/site/parts/a/a.xml", "1" );
+                assertEquals( "myapp:/site/parts/a/a.xml->1", value1 );
+            } );
+    }
+
+    @Test
     public void testProcessProjectResource()
         throws Exception
     {
@@ -184,9 +223,8 @@ class ResourceServiceImplTest
         final ApplicationUrlResolver applicationUrlResolver =
             new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
 
-        when( application.getUrlResolver() ).thenReturn( applicationUrlResolver );
-
-        doReturn( Optional.of( application ) ).when( applicationFactoryService ).findActiveApplication( ApplicationKey.from( "myapp" ) );
+        doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
+            .findResolver( ApplicationKey.from( "myapp" ), null );
 
         final Resource resource =
             resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/site/parts/my-part/my-part.xml" ) );
