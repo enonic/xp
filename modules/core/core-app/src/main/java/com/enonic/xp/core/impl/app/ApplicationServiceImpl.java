@@ -27,6 +27,7 @@ import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
@@ -256,17 +257,29 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public boolean hasVirtual( final ApplicationKey applicationKey )
+    public ApplicationMode getApplicationMode( final ApplicationKey applicationKey )
     {
-        return this.virtualAppService.get( applicationKey ) != null;
-    }
+        final boolean hasReal = this.registry.get( applicationKey ) != null;
+        final boolean hasVirtual = this.virtualAppService.get( applicationKey ) != null;
 
-    @Override
-    public boolean hasReal( final ApplicationKey applicationKey )
-    {
-        return this.registry.get( applicationKey ) != null;
-    }
+        if ( hasReal )
+        {
+            if ( hasVirtual )
+            {
+                return ApplicationMode.AUGMENTED;
+            }
+            else
+            {
+                return ApplicationMode.BUNDLED;
+            }
+        }
+        else if ( hasVirtual )
+        {
+            return ApplicationMode.VIRTUAL;
+        }
 
+        return null;
+    }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {

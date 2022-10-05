@@ -23,6 +23,7 @@ import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
@@ -186,7 +187,8 @@ public class ApplicationServiceImplTest
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
-        assertThrows( ForbiddenAccessException.class, () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
+        assertThrows( ForbiddenAccessException.class,
+                      () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
     }
 
     @Test
@@ -198,7 +200,7 @@ public class ApplicationServiceImplTest
 
         when( nodeService.deleteByPath( NodePath.create( "/app1" ).build() ) ).thenReturn( NodeIds.from( appNode.id() ) );
 
-        assertTrue(  VirtualAppContext.createAdminContext().callWith(  () ->this.service.deleteVirtualApplication( appKey ) ));
+        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
     }
 
     @Test
@@ -932,26 +934,10 @@ public class ApplicationServiceImplTest
 
 
     @Test
-    public void has_virtual()
+    public void get_application_mode()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        assertFalse( service.hasReal( applicationKey ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.installApplication( bundle );
-
-        assertTrue( service.hasReal( applicationKey ) );
-    }
-
-    @Test
-    public void has_real()
-        throws Exception
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        assertFalse( service.hasReal( applicationKey ) );
 
         final List<String> appNodeNames = List.of( "site", "content-types", "mixins", "x-data", "parts", "layouts", "pages" );
 
@@ -984,7 +970,30 @@ public class ApplicationServiceImplTest
         VirtualAppContext.createAdminContext()
             .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
 
-        assertTrue( service.hasVirtual( applicationKey ) );
+        assertEquals( ApplicationMode.VIRTUAL, service.getApplicationMode( applicationKey ) );
+
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.installApplication( bundle );
+
+        assertEquals( ApplicationMode.AUGMENTED, service.getApplicationMode( applicationKey ) );
+
+    }
+
+    @Test
+    public void get_application_mode_bundled()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer(
+            searchParams -> FindNodesByQueryResult.create().totalHits( 0 ).hits( 0 ).build() );
+
+        assertNull( service.getApplicationMode( applicationKey ) );
+
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.installApplication( bundle );
+
+        assertEquals( ApplicationMode.BUNDLED, service.getApplicationMode( applicationKey ) );
     }
 
     private void verifyInstalledEvents( final Node node, final VerificationMode never )
