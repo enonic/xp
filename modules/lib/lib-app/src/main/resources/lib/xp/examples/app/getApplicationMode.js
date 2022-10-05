@@ -14,5 +14,5 @@ log.info('Application mode: ' + result);
 // END
 
 
-assert.assertEquals('AUGMENTED', result);
+assert.assertEquals('augmented', result);
 
