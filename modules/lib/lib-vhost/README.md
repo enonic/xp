@@ -10,20 +10,6 @@ npm i --save-dev @enonic-types/lib-vhost
 
 ## Use
 
-Add the corresponding types to your `tsconfig.json` file that is used for application's server-side TypeScript code.
-
-`tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "types": [
-      "@enonic-types/lib-vhost"
-    ]
-  }
-}
-```
-
 ### Require and custom imports
 
 To make `require` work out of the box, you must install and add the `@enonic-types/global` types. Aside from providing definitions for XP
@@ -31,12 +17,11 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 
 `tsconfig.json`
 
-```diff
+```json
 {
   "compilerOptions": {
     "types": [
-+     "@enonic-types/global"
-      "@enonic-types/lib-vhost"
+      "@enonic-types/global"
     ]
   }
 }
@@ -58,16 +43,13 @@ types mapping to your configuration.
 
 `tsconfig.json`
 
-```diff
+```json
 {
   "compilerOptions": {
-    "types": [
-      "@enonic-types/lib-vhost"
-    ]
-+   "baseUrl": "./",
-+   "paths": {
-+     "/lib/xp/vhost": ["node_modules/@enonic-types/lib-vhost"],
-+   }
+    "baseUrl": "./",
+    "paths": {
+      "/lib/xp/vhost": ["node_modules/@enonic-types/lib-vhost"]
+    }
   }
 }
 ```
