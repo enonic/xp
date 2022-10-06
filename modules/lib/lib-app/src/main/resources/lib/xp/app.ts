@@ -195,7 +195,7 @@ export interface GetApplicationModeParams {
 interface GetApplicationModeHandler {
     setKey(value: string): void;
 
-    execute(): string;
+    execute(): string | null;
 }
 
 /**
@@ -206,7 +206,7 @@ interface GetApplicationModeHandler {
  *
  * @returns {string} application mode.
  */
-export function getApplicationMode(params: GetApplicationModeParams): string {
+export function getApplicationMode(params: GetApplicationModeParams): string | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
