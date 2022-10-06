@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.data.PropertySet;
@@ -15,7 +16,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.resource.NodeValueResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
