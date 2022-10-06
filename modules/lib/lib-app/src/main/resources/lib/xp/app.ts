@@ -188,28 +188,28 @@ export function hasVirtual(params: HasVirtualApplicationParams): boolean {
     return __.toNativeObject(bean.execute());
 }
 
-export interface HasRealApplicationParams {
+export interface GetApplicationModeParams {
     key: string;
 }
 
-interface HasRealApplicationHandler {
+interface GetApplicationModeHandler {
     setKey(value: string): void;
 
-    execute(): boolean;
+    execute(): string | null;
 }
 
 /**
- * Checks if there is a real app with the app key.
+ * Fetches a mode of the app with the app key.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
  *
- * @returns {boolean} result.
+ * @returns {string} application mode.
  */
-export function hasReal(params: HasRealApplicationParams): boolean {
+export function getApplicationMode(params: GetApplicationModeParams): string | null {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<HasRealApplicationHandler>('com.enonic.xp.lib.app.HasRealApplicationHandler');
+    const bean = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
