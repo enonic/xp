@@ -1,4 +1,4 @@
-package com.enonic.xp.resource;
+package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -10,6 +10,8 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.resource.ResourceBase;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 @PublicApi
