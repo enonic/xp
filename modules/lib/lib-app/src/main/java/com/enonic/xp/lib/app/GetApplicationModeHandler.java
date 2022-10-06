@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.app;
 
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -7,7 +9,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public final class HasVirtualApplicationHandler
+public final class GetApplicationModeHandler
     implements ScriptBean
 {
     private String key;
@@ -15,9 +17,11 @@ public final class HasVirtualApplicationHandler
     private Supplier<ApplicationService> applicationServiceSupplier;
 
 
-    public boolean execute()
+    public String execute()
     {
-        return applicationServiceSupplier.get().hasVirtual( ApplicationKey.from( key ) );
+        return Optional.ofNullable( applicationServiceSupplier.get().getApplicationMode( ApplicationKey.from( key ) ) )
+            .map( applicationMode -> applicationMode.toString().toLowerCase( Locale.ROOT ) )
+            .orElse( null );
     }
 
     public void setKey( final String key )
