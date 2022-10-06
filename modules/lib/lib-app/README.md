@@ -31,12 +31,11 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 
 `tsconfig.json`
 
-```diff
+```json
 {
   "compilerOptions": {
     "types": [
-+     "@enonic-types/global"
-      "@enonic-types/lib-app"
+      "@enonic-types/global"
     ]
   }
 }
@@ -66,16 +65,13 @@ types mapping to your configuration.
 
 `tsconfig.json`
 
-```diff
+```json
 {
   "compilerOptions": {
-    "types": [
-      "@enonic-types/lib-app"
-    ]
-+   "baseUrl": "./",
-+   "paths": {
-+     "/lib/xp/app": ["node_modules/@enonic-types/lib-app"],
-+   }
+    "baseUrl": "./",
+    "paths": {
+      "/lib/xp/app": ["node_modules/@enonic-types/lib-app"]
+    }
   }
 }
 ```

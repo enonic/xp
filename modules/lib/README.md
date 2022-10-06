@@ -15,19 +15,14 @@ Add the corresponding types to your `tsconfig.json` file that is used for applic
 ```json
 {
   "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@enonic-types"
+    "types": [
+      "@enonic-types/global"
     ]
   }
 }
 ```
 
-> The paths to the `node_modules` assume that your `tsconfig.json` is placed under your project root.
-
 After that, all the global XP variables will be typed.
-
-Adding not `"types": [...]` but `"typeRoots"` will allow to discover types for every other enonic library, that will be installed later.
 
 Import functions, such as `require`, will return typed objects if the corresponding types for imported libraries are also added to
 your `tsconfig.json`.
