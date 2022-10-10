@@ -31,13 +31,17 @@ import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public final class ApplicationServiceImpl
@@ -259,8 +263,11 @@ public final class ApplicationServiceImpl
     @Override
     public ApplicationMode getApplicationMode( final ApplicationKey applicationKey )
     {
+        requireSchemaAdminRole();
+
         final boolean hasReal = this.registry.get( applicationKey ) != null;
-        final boolean hasVirtual = this.virtualAppService.get( applicationKey ) != null;
+        final boolean hasVirtual =
+            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
 
         if ( hasReal )
         {
@@ -593,5 +600,15 @@ public final class ApplicationServiceImpl
             throw new ApplicationInstallException( "Cannot install application", e );
         }
         return ApplicationKey.from( applicationName );
+    }
+
+    private void requireSchemaAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
+        if ( !hasAdminRole )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 }
