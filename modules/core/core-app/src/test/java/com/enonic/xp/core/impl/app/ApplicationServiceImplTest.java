@@ -959,9 +959,7 @@ public class ApplicationServiceImplTest
             if ( appNodeNames.contains( createNodeParams.getName() ) )
             {
                 return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .parentPath( NodePath.create( "/app1" ).build() )
-                    .build();
+                    .id( NodeId.from( createNodeParams.getName() ) ).parentPath( NodePath.create( "/app1" ).build() ).build();
             }
 
             return null;
@@ -970,12 +968,15 @@ public class ApplicationServiceImplTest
         VirtualAppContext.createAdminContext()
             .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
 
-        assertEquals( ApplicationMode.VIRTUAL, service.getApplicationMode( applicationKey ) );
+        assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
+        assertEquals( ApplicationMode.VIRTUAL,
+                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.installApplication( bundle );
 
-        assertEquals( ApplicationMode.AUGMENTED, service.getApplicationMode( applicationKey ) );
+        assertEquals( ApplicationMode.AUGMENTED,
+                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
     }
 
@@ -988,12 +989,13 @@ public class ApplicationServiceImplTest
         when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer(
             searchParams -> FindNodesByQueryResult.create().totalHits( 0 ).hits( 0 ).build() );
 
-        assertNull( service.getApplicationMode( applicationKey ) );
+        assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.installApplication( bundle );
 
-        assertEquals( ApplicationMode.BUNDLED, service.getApplicationMode( applicationKey ) );
+        assertEquals( ApplicationMode.BUNDLED,
+                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
     }
 
     private void verifyInstalledEvents( final Node node, final VerificationMode never )
