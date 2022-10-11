@@ -461,23 +461,12 @@ export interface StemmedDslExpression {
 }
 
 export interface BooleanDslExpression {
-    should?: DslExpression | DslExpression[];
-    must?: DslExpression | DslExpression[];
-    mustNot?: DslExpression | DslExpression[];
-    filter?: DslExpression | DslExpression[];
+    should?: QueryDsl | QueryDsl[];
+    must?: QueryDsl | QueryDsl[];
+    mustNot?: QueryDsl | QueryDsl[];
+    filter?: QueryDsl | QueryDsl[];
+    boost?: number;
 }
-
-export type DslExpression =
-    | TermDslExpression
-    | InDslExpression
-    | LikeDslExpression
-    | RangeDslExpression
-    | PathMatchDslExpression
-    | MatchAllDslExpression
-    | FulltextDslExpression
-    | NgramDslExpression
-    | BooleanDslExpression
-    | StemmedDslExpression;
 
 export type QueryDsl = {
     boolean: BooleanDslExpression;
