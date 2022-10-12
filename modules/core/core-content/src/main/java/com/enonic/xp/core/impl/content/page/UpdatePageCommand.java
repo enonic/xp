@@ -66,9 +66,7 @@ final class UpdatePageCommand
             contentId( this.params.getContent() ).
             editor( edit -> edit.page = editedPage );
 
-        this.contentService.update( params );
-
-        return this.contentService.getById( this.params.getContent() );
+        return this.contentService.update( params );
     }
 
     public static final class Builder

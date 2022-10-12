@@ -356,7 +356,6 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addStrings( "contentIds", params.getContentIds().stream().
             map( ContentId::toString ).collect( Collectors.toList() ) );
-        paramsSet.addBoolean( "includeChildren", params.isIncludeChildren() );
         if ( params.getUnpublishBranch() != null )
         {
             paramsSet.addString( "unpublishBranch", params.getUnpublishBranch().getValue() );
@@ -552,7 +551,6 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addBoolean( "silent", params.isSilent() );
 
         resultSet.addLong( "size", (long) result.getMovedChildren() );
 

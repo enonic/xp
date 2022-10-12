@@ -25,7 +25,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
+import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -220,7 +220,7 @@ public abstract class AbstractContentSynchronizerTest
         final ContentConfig contentConfig = mock( ContentConfig.class );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService );
 
         contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );

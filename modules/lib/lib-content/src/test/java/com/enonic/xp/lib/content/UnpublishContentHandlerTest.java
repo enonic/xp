@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -15,6 +15,9 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class UnpublishContentHandlerTest
     extends BaseContentHandlerTest
@@ -60,54 +63,44 @@ public class UnpublishContentHandlerTest
     public void testExample()
     {
         final Content content = exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
 
-        ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
-        UnpublishContentParams unpublishParams = UnpublishContentParams.create().
-            contentIds( ids ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            includeChildren( true ).
-            build();
-
-        Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
+        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
 
         runScript( "/lib/xp/examples/content/unpublish.js" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
+            .containsExactly( ContentIds.from( PUB_ID_1, FAIL_ID ), ContentConstants.BRANCH_MASTER );
     }
 
     @Test
     public void unpublishById()
     {
-        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
-
-        UnpublishContentParams unpublishParams = UnpublishContentParams.create().
-            contentIds( ids ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            includeChildren( true ).
-            build();
-
-        Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
+        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishById" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
+            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), ContentConstants.BRANCH_MASTER );
     }
 
     @Test
     public void unpublishByPath()
     {
         final Content myContent = exampleContent( PUB_ID_2, "mycontent", "My Content", "/myfolder/mycontent", "myfield", "Hello World" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
+        when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
         final Content yourContent =
             exampleContent( PUB_ID_3, "yourcontent", "Your Content", "/yourfolder/yourcontent", "yourfield", "Hello Universe!" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
+        when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
 
-        ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
-        UnpublishContentParams unpublishParams = UnpublishContentParams.create().
-            contentIds( ids ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
-            includeChildren( true ).
-            build();
-
-        Mockito.when( this.contentService.unpublishContent( unpublishParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
+        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
+            .containsExactly( ContentIds.from( PUB_ID_2, PUB_ID_3 ), ContentConstants.BRANCH_MASTER );
     }
 }

@@ -119,7 +119,6 @@ final class ArchiveContentCommand
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.from( params.getContentId() ) )
                          .unpublishBranch( ContentConstants.BRANCH_MASTER )
-                         .includeChildren( true )
                          .build() )
             .build()
             .execute();

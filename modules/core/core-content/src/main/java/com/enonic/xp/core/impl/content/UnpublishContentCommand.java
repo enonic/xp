@@ -61,7 +61,7 @@ public class UnpublishContentCommand
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            recursiveUnpublish( NodeId.from( contentId ), this.params.isIncludeChildren(), contentBuilder );
+            recursiveUnpublish( NodeId.from( contentId ), contentBuilder );
         }
 
         final ContentIds contentIds = contentBuilder.build();
@@ -75,11 +75,7 @@ public class UnpublishContentCommand
             addUnpublished( contentIds );
         if ( contentIds.getSize() == 1 )
         {
-
-            draftContext.callWith( () -> {
-                resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
-                return null;
-            } );
+            draftContext.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
         }
 
         final UnpublishContentsResult result = resultBuilder.build();
@@ -89,17 +85,13 @@ public class UnpublishContentCommand
         return result;
     }
 
-    private void recursiveUnpublish( final NodeId nodeId, boolean includeChildren, final ContentIds.Builder contentsBuilder )
+    private void recursiveUnpublish( final NodeId nodeId, final ContentIds.Builder contentsBuilder )
     {
-        if ( includeChildren )
-        {
-            final FindNodesByParentResult result =
-                this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() );
+        final FindNodesByParentResult result = this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() );
 
-            result.getNodeIds().forEach( ( id ) -> recursiveUnpublish( id, true, contentsBuilder ) );
-        }
+        result.getNodeIds().forEach( id -> recursiveUnpublish( id, contentsBuilder ) );
         final NodeIds nodes = this.nodeService.deleteById( nodeId );
-        if ( nodes != null && nodes.isNotEmpty() )
+        if ( nodes.isNotEmpty() )
         {
             if ( params.getPublishContentListener() != null )
             {
@@ -153,7 +145,7 @@ public class UnpublishContentCommand
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                         }
 
-                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now() ) > 0 )
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( now ) > 0 )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }

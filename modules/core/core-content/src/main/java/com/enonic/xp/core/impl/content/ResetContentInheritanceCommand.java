@@ -78,7 +78,6 @@ final class ResetContentInheritanceCommand
                 {
                     final UpdateContentParams updateParams = new UpdateContentParams().
                         contentId( targetContent.getId() ).
-                        modifier( targetContent.getModifier() ).
                         stopInherit( false ).
                         editor( edit -> {
                             edit.inherit = processInherit( edit.inherit, typesToReset );

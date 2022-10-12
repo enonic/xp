@@ -10,8 +10,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
@@ -30,7 +28,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.region.TextComponentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.security.User;
 
 final class CreateFragmentCommand
 {
@@ -78,7 +75,6 @@ final class CreateFragmentCommand
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( content.getId() ).
-            modifier( getCurrentUser().getKey() ).
             editor( edit -> edit.page = page );
 
         return this.contentService.update( params );
@@ -157,12 +153,6 @@ final class CreateFragmentCommand
             return componentDescriptor.getDisplayName();
         }
         return component.getName().toString();
-    }
-
-    private User getCurrentUser()
-    {
-        final Context context = ContextAccessor.current();
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 
     private String generateUniqueContentName( final ContentPath parent, final String displayName )

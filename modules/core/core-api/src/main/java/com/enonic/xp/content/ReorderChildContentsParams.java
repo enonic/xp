@@ -28,6 +28,7 @@ public class ReorderChildContentsParams
         return contentId;
     }
 
+    @Deprecated
     public boolean isSilent()
     {
         return silent;
@@ -66,6 +67,7 @@ public class ReorderChildContentsParams
             return this;
         }
 
+        @Deprecated
         public Builder silent( final boolean silent )
         {
             this.silent = silent;

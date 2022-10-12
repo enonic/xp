@@ -22,11 +22,11 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static java.util.stream.Collectors.toList;
 
-public class ContentDependenciesResolver
+class ContentDependenciesResolver
 {
     private final ContentService contentService;
 
-    public ContentDependenciesResolver( final ContentService contentService )
+    ContentDependenciesResolver( final ContentService contentService )
     {
         this.contentService = contentService;
     }

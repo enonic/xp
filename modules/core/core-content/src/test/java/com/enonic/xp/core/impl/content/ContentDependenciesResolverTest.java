@@ -1,4 +1,4 @@
-package com.enonic.xp.core.content;
+package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.Locale;
@@ -20,7 +20,6 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.core.impl.content.ContentDependenciesResolver;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
