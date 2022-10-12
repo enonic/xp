@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+@Deprecated
 public class SetActiveContentVersionResult
 {
 

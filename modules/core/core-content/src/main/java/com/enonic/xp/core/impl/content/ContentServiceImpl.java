@@ -108,7 +108,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
@@ -1050,11 +1049,7 @@ public class ContentServiceImpl
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        nodeService.setActiveVersion( NodeId.from( contentId ), NodeVersionId.from( versionId ) );
-
-        contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
-
-        return new SetActiveContentVersionResult( contentId, versionId );
+        throw new UnsupportedOperationException( "setActiveContentVersion is no longer supported" );
     }
 
     @Override
