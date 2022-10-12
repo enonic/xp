@@ -24,7 +24,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
@@ -488,29 +487,6 @@ public class ContentAuditLogSupportImpl
         addContent( resultSet, content );
 
         log( "system.content.rename", data, content.getId(), rootContext );
-    }
-
-    @Override
-    public void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doSetActiveContentVersion( contentId, versionId, context ) );
-    }
-
-    private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId, final Context rootContext )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.addString( "contentId", nullToNull( contentId ) );
-        paramsSet.addString( "versionId", nullToNull( versionId ) );
-
-        resultSet.addString( "contentId", nullToNull( contentId ) );
-        resultSet.addString( "versionId", nullToNull( versionId ) );
-
-        log( "system.content.setActiveContentVersion", data, contentId, rootContext );
     }
 
     @Override

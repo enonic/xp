@@ -7,8 +7,6 @@ import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
@@ -61,8 +59,6 @@ interface ContentAuditLogSupport
     void restore( RestoreContentParams params, RestoreContentsResult result );
 
     void rename( RenameContentParams params, Content content );
-
-    void setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
     void setChildOrder( SetContentChildOrderParams params, Content content );
 
