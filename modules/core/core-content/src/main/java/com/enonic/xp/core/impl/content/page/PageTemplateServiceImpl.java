@@ -20,9 +20,9 @@ import com.enonic.xp.page.PageTemplates;
 public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
-    protected ContentService contentService;
+    private ContentService contentService;
 
-    protected PageService pageService;
+    private PageService pageService;
 
     @Override
     public PageTemplate create( final CreatePageTemplateParams params )

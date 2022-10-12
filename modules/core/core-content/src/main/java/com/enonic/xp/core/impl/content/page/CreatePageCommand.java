@@ -5,15 +5,12 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.security.User;
 
 final class CreatePageCommand
 {
@@ -53,17 +50,9 @@ final class CreatePageCommand
 
         final UpdateContentParams params = new UpdateContentParams().
             contentId( this.params.getContent() ).
-            modifier( getCurrentUser().getKey() ).
             editor( edit -> edit.page = page );
 
         return this.contentService.update( params );
-    }
-
-    User getCurrentUser()
-    {
-        final Context context = ContextAccessor.current();
-
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 
     public static final class Builder

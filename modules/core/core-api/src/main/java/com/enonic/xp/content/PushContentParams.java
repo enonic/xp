@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
@@ -31,7 +29,6 @@ public class PushContentParams
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        excludedContentIds = builder.excludedContentIds;
         target = builder.target;
         contentPublishInfo = builder.contentPublishInfo;
         includeDependencies = builder.includeDependencies;
@@ -40,6 +37,9 @@ public class PushContentParams
         publishContentListener = builder.publishContentListener;
         deleteContentListener = builder.deleteContentListener;
         message = builder.message;
+        excludedContentIds = builder.excludedContentIds.isEmpty()
+            ? ( builder.includeChildren ? ContentIds.empty() : builder.contentIds )
+            : builder.excludedContentIds;
     }
 
     public static Builder create()
@@ -101,34 +101,20 @@ public class PushContentParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final PushContentParams that = (PushContentParams) o;
-        return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
-            Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
-            Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
-            Objects.equals( publishContentListener, that.publishContentListener ) &&
-            Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             publishContentListener, deleteContentListener, message );
+        return super.hashCode();
     }
 
     public static final class Builder
     {
         private ContentIds contentIds;
 
-        private ContentIds excludedContentIds;
+        private ContentIds excludedContentIds = ContentIds.empty();
 
         private ContentIds excludeChildrenIds = ContentIds.empty();
 
@@ -173,7 +159,6 @@ public class PushContentParams
             this.target = target;
             return this;
         }
-
 
         public Builder contentPublishInfo( ContentPublishInfo contentPublishInfo )
         {

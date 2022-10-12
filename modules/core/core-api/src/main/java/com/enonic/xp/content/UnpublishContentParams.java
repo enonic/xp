@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -9,8 +7,6 @@ import com.enonic.xp.branch.Branch;
 public final class UnpublishContentParams
 {
     private final ContentIds contentIds;
-
-    private final boolean includeChildren;
 
     private final Branch unpublishBranch;
 
@@ -20,7 +16,6 @@ public final class UnpublishContentParams
     {
         contentIds = builder.contentIds;
         unpublishBranch = builder.unpublishBranch;
-        includeChildren = builder.includeChildren;
         publishContentListener = builder.publishContentListener;
     }
 
@@ -34,31 +29,22 @@ public final class UnpublishContentParams
         return unpublishBranch;
     }
 
+    @Deprecated
     public boolean isIncludeChildren()
     {
-        return includeChildren;
+        return true;
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final UnpublishContentParams that = (UnpublishContentParams) o;
-        return includeChildren == that.includeChildren && Objects.equals( contentIds, that.contentIds ) &&
-            Objects.equals( unpublishBranch, that.unpublishBranch );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, includeChildren, unpublishBranch );
+        return super.hashCode();
     }
 
     public static Builder create()
@@ -76,8 +62,6 @@ public final class UnpublishContentParams
         private ContentIds contentIds;
 
         private Branch unpublishBranch;
-
-        private boolean includeChildren;
 
         private PushContentListener publishContentListener;
 
@@ -97,9 +81,9 @@ public final class UnpublishContentParams
             return this;
         }
 
+        @Deprecated
         public Builder includeChildren( final boolean val )
         {
-            includeChildren = val;
             return this;
         }
 

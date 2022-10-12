@@ -22,7 +22,7 @@ public final class PageTemplateKey
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof PageTemplateKey ) && ( (PageTemplateKey) o ).id.equals( this.id );
+        return this == o || o instanceof PageTemplateKey && this.id.equals( ( (PageTemplateKey) o ).id );
     }
 
     @Override

@@ -24,12 +24,11 @@ public final class ComponentServiceImpl
     @Override
     public Component getByName( final ApplicationKey applicationKey, final ComponentName name )
     {
-        return new GetComponentByNameCommand().
+        return new GetComponentByKeyCommand().
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             resourceService( this.resourceService ).
-            applicationKey( applicationKey ).
-            name( name ).
+            descriptorKey( DescriptorKey.from( applicationKey, name.toString() ) ).
             execute();
     }
 

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.content;
+package com.enonic.xp.core.impl.content;
 
 import java.util.Locale;
 
@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.core.impl.content.ContentOutboundDependenciesIdsResolver;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;

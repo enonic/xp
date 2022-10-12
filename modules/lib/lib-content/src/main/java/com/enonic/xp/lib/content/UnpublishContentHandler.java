@@ -40,7 +40,6 @@ public final class UnpublishContentHandler
         final UnpublishContentParams unpublishContentParams = UnpublishContentParams.create().
             contentIds( ContentIds.from( contentIds ) ).
             unpublishBranch( targetBranch ).
-            includeChildren( true ).
             build();
 
         final UnpublishContentsResult result = this.contentService.unpublishContent( unpublishContentParams );

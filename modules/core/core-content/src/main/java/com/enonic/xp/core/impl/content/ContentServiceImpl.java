@@ -204,7 +204,6 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
-
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -257,7 +256,6 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
-
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -423,7 +421,7 @@ public class ContentServiceImpl
             excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             contentPublishInfo( params.getContentPublishInfo() ).
-            excludeChildrenIds( getExcludeChildrenIds( params ) ).
+            excludeChildrenIds( params.getExcludeChildrenIds() ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPublishContentListener() ).
             deleteListener( params.getDeleteContentListener() ).
@@ -434,19 +432,6 @@ public class ContentServiceImpl
         contentAuditLogSupport.publish( params, result );
 
         return result;
-    }
-
-    private ContentIds getExcludeChildrenIds( final PushContentParams params )
-    {
-        if ( params.getExcludeChildrenIds().isNotEmpty() )
-        {
-            return params.getExcludeChildrenIds();
-        }
-        if ( params.isIncludeChildren() )
-        {
-            return ContentIds.empty();
-        }
-        return params.getContentIds();
     }
 
     @Override
@@ -1164,18 +1149,13 @@ public class ContentServiceImpl
     @Override
     public ContentDependencies getDependencies( final ContentId id )
     {
-        final ContentDependenciesResolver contentDependenciesResolver = new ContentDependenciesResolver( this );
-
-        return contentDependenciesResolver.resolve( id );
+        return new ContentDependenciesResolver( this ).resolve( id );
     }
 
     @Override
     public ContentIds getOutboundDependencies( final ContentId id )
     {
-        final ContentOutboundDependenciesIdsResolver contentOutboundDependenciesIdsResolver =
-            new ContentOutboundDependenciesIdsResolver( this, contentDataSerializer );
-
-        return contentOutboundDependenciesIdsResolver.resolve( id );
+        return new ContentOutboundDependenciesIdsResolver( this, contentDataSerializer ).resolve( id );
     }
 
     @Override
@@ -1276,10 +1256,7 @@ public class ContentServiceImpl
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
             final Content content = doGetByIdAndVersionId( contentId, versionId );
-            if ( content != null )
-            {
-                trace.put( "path", content.getPath() );
-            }
+            trace.put( "path", content.getPath() );
             return content;
         } );
     }

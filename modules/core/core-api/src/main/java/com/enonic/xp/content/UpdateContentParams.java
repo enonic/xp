@@ -71,7 +71,6 @@ public final class UpdateContentParams
         return this;
     }
 
-
     public UpdateContentParams stopInherit( final boolean stopInherit )
     {
         this.stopInherit = stopInherit;
@@ -93,7 +92,6 @@ public final class UpdateContentParams
     {
         return modifier;
     }
-
 
     public ContentId getContentId()
     {
@@ -128,25 +126,12 @@ public final class UpdateContentParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final UpdateContentParams that = (UpdateContentParams) o;
-        return clearAttachments == that.clearAttachments && requireValid == that.requireValid &&
-            Objects.equals( contentId, that.contentId ) && Objects.equals( editor, that.editor ) &&
-            Objects.equals( modifier, that.modifier ) && Objects.equals( createAttachments, that.createAttachments ) &&
-            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( stopInherit, that.stopInherit );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid,
-                             stopInherit );
+        return super.hashCode();
     }
 }

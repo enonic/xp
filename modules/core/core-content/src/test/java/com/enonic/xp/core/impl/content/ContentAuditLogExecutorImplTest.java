@@ -10,7 +10,7 @@ class ContentAuditLogExecutorImplTest
     void lifecycle()
     {
         Phaser phaser = new Phaser( 2 );
-        final ContentAuditLogExecutorImpl taskManagerExecutor = new ContentAuditLogExecutorImpl();
+        final ContentAuditLogExecutor taskManagerExecutor = new ContentAuditLogExecutor();
         taskManagerExecutor.execute( phaser::arriveAndAwaitAdvance );
 
         phaser.arriveAndAwaitAdvance();

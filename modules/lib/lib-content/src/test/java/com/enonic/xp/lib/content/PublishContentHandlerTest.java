@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -12,10 +12,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 public class PublishContentHandlerTest
     extends BaseContentHandlerTest
@@ -70,54 +73,45 @@ public class PublishContentHandlerTest
     public void testExample()
     {
         final Content content = exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
 
-        ContentIds ids = ContentIds.from( PUB_ID_1, FAIL_ID );
-        PushContentParams pushParams = PushContentParams.create().
-            contentIds( ids ).
-            target( Branch.from( "master" ) ).
-            includeDependencies( false ).
-            message( "My first publish" ).
-            build();
-
-        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
+        when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runScript( "/lib/xp/examples/content/publish.js" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "target", "includeDependencies", "message" )
+            .containsExactly( ContentIds.from( PUB_ID_1, FAIL_ID ), Branch.from( "master" ), false, "My first publish" );
     }
 
     @Test
     public void publishById()
     {
-        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
-
-        PushContentParams pushParams = PushContentParams.create().
-            contentIds( ids ).
-            target( Branch.from( "draft" ) ).
-            build();
-
-        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
+        when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishById" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "target" )
+            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), Branch.from( "draft" ) );
     }
 
     @Test
     public void publishByPath()
     {
         final Content myContent = exampleContent( PUB_ID_2, "mycontent", "My Content", "/myfolder/mycontent", "myfield", "Hello World" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
+        when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
         final Content yourContent =
             exampleContent( PUB_ID_3, "yourcontent", "Your Content", "/yourfolder/yourcontent", "yourfield", "Hello Universe!" );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
+        when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
 
-        ContentIds ids = ContentIds.from( PUB_ID_2, PUB_ID_3 );
-        PushContentParams pushParams = PushContentParams.create().
-            contentIds( ids ).
-            target( Branch.from( "master" ) ).
-            build();
-
-        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+        final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
+        when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishByPath" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "target" )
+            .containsExactly( ContentIds.from( PUB_ID_2, PUB_ID_3 ), Branch.from( "master" ));
     }
 
     @Test
@@ -129,33 +123,25 @@ public class PublishContentHandlerTest
             setPushed( published.getIds() ).
             build();
 
-        ContentIds ids = ContentIds.from( PUB_ID_3 );
-
-        PushContentParams pushParams = PushContentParams.create().
-            contentIds( ids ).
-            target( Branch.from( "master" ) ).
-            excludeChildrenIds( ids ).
-            includeDependencies( false ).
-            build();
-
-        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult );
+        final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
+        when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "target", "excludeChildrenIds", "includeDependencies" )
+            .containsExactly( ContentIds.from( PUB_ID_3 ), Branch.from( "master" ), ContentIds.from( PUB_ID_3 ), false );
     }
 
     @Test
     public void publishWithMessage()
     {
-        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
+        final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
 
-        PushContentParams pushParams = PushContentParams.create().
-            contentIds( ids ).
-            target( Branch.from( "draft" ) ).
-            message( "My first publish" ).
-            build();
-
-        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+        when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithMessage" );
+
+        assertThat( captor.getValue() ).extracting( "contentIds", "target", "message" )
+            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), Branch.from( "draft" ), "My first publish" );
     }
 }

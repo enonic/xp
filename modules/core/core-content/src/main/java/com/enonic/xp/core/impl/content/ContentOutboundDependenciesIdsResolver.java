@@ -14,13 +14,13 @@ import com.enonic.xp.data.ValueTypes;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class ContentOutboundDependenciesIdsResolver
+class ContentOutboundDependenciesIdsResolver
 {
     private final ContentService contentService;
 
     private final ContentDataSerializer contentDataSerializer;
 
-    public ContentOutboundDependenciesIdsResolver( final ContentService contentService, final ContentDataSerializer contentDataSerializer )
+    ContentOutboundDependenciesIdsResolver( final ContentService contentService, final ContentDataSerializer contentDataSerializer )
     {
         this.contentService = contentService;
         this.contentDataSerializer = contentDataSerializer;

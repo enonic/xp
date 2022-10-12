@@ -44,7 +44,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
+import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -312,7 +312,7 @@ public class AbstractContentServiceTest
         when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
