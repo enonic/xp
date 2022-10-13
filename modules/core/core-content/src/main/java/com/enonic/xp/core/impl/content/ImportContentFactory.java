@@ -52,10 +52,10 @@ public class ImportContentFactory
         }
         else
         {
-            nodeData.removeProperty( ORIGIN_PROJECT );
+            nodeData.removeProperties( ORIGIN_PROJECT );
         }
 
-        nodeData.removeProperty( PUBLISH_INFO );
+        nodeData.removeProperties( PUBLISH_INFO );
 
         return Node.create()
             .id( NodeId.from( params.getContent().getId() ) )

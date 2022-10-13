@@ -18,26 +18,18 @@ public class DuplicateContentProcessor
 
         final PropertyTree data = originalData.copy();
 
-        data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
-        data.setInstant( ContentPropertyNames.MODIFIED_TIME, Instant.now() );
+        final Instant now = Instant.now();
+        data.setInstant( ContentPropertyNames.CREATED_TIME, now );
+        data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
         data.setString( ContentPropertyNames.OWNER, user.getKey().toString() );
         data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
         data.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
 
-        if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
-        {
-            data.removeProperty( ContentPropertyNames.PUBLISH_INFO );
-        }
+        data.removeProperties( ContentPropertyNames.PUBLISH_INFO );
 
-        if ( data.hasProperty( ContentPropertyNames.INHERIT ) )
-        {
-            data.removeProperties( ContentPropertyNames.INHERIT );
-        }
+        data.removeProperties( ContentPropertyNames.INHERIT );
 
-        if ( data.hasProperty( ContentPropertyNames.ORIGIN_PROJECT ) )
-        {
-            data.removeProperty( ContentPropertyNames.ORIGIN_PROJECT );
-        }
+        data.removeProperties( ContentPropertyNames.ORIGIN_PROJECT );
 
         return data;
     }

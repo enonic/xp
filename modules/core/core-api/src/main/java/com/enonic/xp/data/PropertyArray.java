@@ -135,7 +135,7 @@ public final class PropertyArray
 
     public int countAncestors()
     {
-        return parent.getProperty() != null ? parent.countAncestors() + 1 : 0;
+        return parent.getProperty() != null ? parent.getProperty().countAncestors() + 1 : 0;
     }
 
     PropertySet getParent()
@@ -245,17 +245,7 @@ public final class PropertyArray
 
     void remove( final int index )
     {
-        final Property property = array.get( index );
         array.remove( index );
-    }
-
-    void removeAll()
-    {
-        for ( int index = array.size() - 1; index >= 0; index-- )
-        {
-            final Property property = array.get( index );
-            array.remove( index );
-        }
     }
 
     private void checkType( final ValueType valueType )

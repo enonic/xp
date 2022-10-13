@@ -183,7 +183,6 @@ abstract class PrincipalNodeTranslator
                     filter( ( val ) -> !relationshipToKey.equals( val.asString() ) ).
                     collect( Collectors.toList() );
 
-                nodeData.removeProperty( PrincipalPropertyNames.MEMBER_KEY );
                 nodeData.setValues( PrincipalPropertyNames.MEMBER_KEY, updatedMembers );
             } ).
             build();
