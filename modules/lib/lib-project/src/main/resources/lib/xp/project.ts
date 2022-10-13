@@ -249,7 +249,7 @@ interface GetAvailableApplicationsHandler {
  *
  * @returns {string[]} Keys of the available applications.
  */
-export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] | [] {
+export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] {
     checkRequired(params, 'id');
 
     const bean = __.newBean<GetAvailableApplicationsHandler>('com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
