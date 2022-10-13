@@ -3,7 +3,9 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.security.User;
@@ -11,6 +13,13 @@ import com.enonic.xp.security.User;
 public class DuplicateContentProcessor
     implements NodeDataProcessor
 {
+    private final WorkflowInfo workflowInfo;
+
+    public DuplicateContentProcessor( final WorkflowInfo workflowInfo )
+    {
+        this.workflowInfo = workflowInfo;
+    }
+
     @Override
     public PropertyTree process( final PropertyTree originalData )
     {
@@ -30,6 +39,8 @@ public class DuplicateContentProcessor
         data.removeProperties( ContentPropertyNames.INHERIT );
 
         data.removeProperties( ContentPropertyNames.ORIGIN_PROJECT );
+
+        ContentDataSerializer.addWorkflowInfo( data.getRoot(), workflowInfo );
 
         return data;
     }
