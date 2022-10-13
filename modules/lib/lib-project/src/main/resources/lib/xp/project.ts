@@ -227,6 +227,36 @@ export function get(params: GetProjectParams): Project | null {
     return __.toNativeObject(bean.execute());
 }
 
+
+export interface GetAvailableApplicationsParams {
+    id: string;
+}
+
+interface GetAvailableApplicationsHandler {
+    setId(value: string): void;
+
+    execute(): string[] | [];
+}
+
+/**
+ * Returns available applications for the specified project. It contains apps specified for the current and all parent projects/layers.
+ * User must be a member of one of the project roles, or either `system.admin` or `cms.admin` role.
+ *
+ * @example-ref examples/project/getAvailableApplications.js
+ *
+ * @param {GetProjectParams} params JSON with the parameters.
+ * @param {string} params.id Unique project id to identify the project.
+ *
+ * @returns {string[]} Keys of the available applications.
+ */
+export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] | [] {
+    checkRequired(params, 'id');
+
+    const bean = __.newBean<GetAvailableApplicationsHandler>('com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
+    bean.setId(params.id);
+    return __.toNativeObject(bean.execute());
+}
+
 interface ListProjectsHandler {
     execute(): Project[];
 }
