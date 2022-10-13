@@ -295,6 +295,11 @@ public class ProjectServiceImpl
     {
         final Project project = get( projectName );
 
+        if ( project == null )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+
         final Collection<ApplicationKey> projectApps = project.getSiteConfigs().getApplicationKeys();
 
         return callWithListContext( () -> ApplicationKeys.from( Stream.concat( projectApps.stream(), doGetParents( project ).stream()

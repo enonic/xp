@@ -1049,6 +1049,13 @@ class ProjectServiceImplTest
         assertEquals( "app1", childAvailableApplications.get( 2 ).toString() );
     }
 
+    @Test
+    void get_available_applications_null_project()
+    {
+        assertThrows( ProjectNotFoundException.class,
+                      () -> adminContext().callWith( () -> projectService.getAvailableApplications( ProjectName.from( "unknown" ) ) ) );
+    }
+
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
         return adminContext().callWith( () -> doCreateProject( name ) );
