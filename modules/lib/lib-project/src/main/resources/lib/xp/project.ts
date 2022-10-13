@@ -235,7 +235,7 @@ export interface GetAvailableApplicationsParams {
 interface GetAvailableApplicationsHandler {
     setId(value: string): void;
 
-    execute(): string[] | [];
+    execute(): string[];
 }
 
 /**
