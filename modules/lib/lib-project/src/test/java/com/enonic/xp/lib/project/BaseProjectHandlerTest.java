@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -20,6 +21,7 @@ import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
@@ -93,6 +95,17 @@ public abstract class BaseProjectHandlerTest
         } );
 
         when( this.projectService.list() ).thenAnswer( mock -> Projects.create().addAll( projects.values() ).build() );
+
+        when( this.projectService.getAvailableApplications( any( ProjectName.class ) ) ).thenAnswer( mock -> {
+
+            final Project project = projects.get( mock.getArguments()[0] );
+
+            if ( project == null )
+            {
+                throw new ProjectNotFoundException( (ProjectName) mock.getArguments()[0] );
+            }
+            return ApplicationKeys.from( project.getSiteConfigs().getApplicationKeys() );
+        } );
 
         when( this.projectService.getPermissions( any( ProjectName.class ) ) ).thenReturn( ProjectPermissions.create().build() );
 
