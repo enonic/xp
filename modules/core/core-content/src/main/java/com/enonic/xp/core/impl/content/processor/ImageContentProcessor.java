@@ -35,7 +35,6 @@ import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -227,11 +226,7 @@ public final class ImageContentProcessor
 
     private void setLongProperty( final PropertyTree propertyTree, final String path, final Long value )
     {
-        final Property existingProperty = propertyTree.getProperty( path );
-        if ( existingProperty != null && !existingProperty.getType().equals( ValueTypes.LONG ) )
-        {
-            propertyTree.removeProperty( path );
-        }
+        propertyTree.removeProperties( path );
         propertyTree.setLong( path, value );
     }
 

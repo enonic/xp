@@ -3,10 +3,8 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class MediaFormDataBuilder
@@ -90,11 +88,7 @@ final class MediaFormDataBuilder
             tree.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
         }
 
-        final Property mediaProperty = data.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty != null && !mediaProperty.getType().equals( ValueTypes.PROPERTY_SET ) )
-        {
-            data.removeProperty( ContentPropertyNames.MEDIA );
-        }
+        data.removeProperties( ContentPropertyNames.MEDIA );
         data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
 
         if ( !type.isDocumentMedia() )

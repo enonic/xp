@@ -39,17 +39,12 @@ public final class Property
     {
         if ( value.isSet() && !value.isNull() )
         {
-            value.asData().setProperty( this );
+            final PropertySet data = value.asData();
+            final PropertyTree tree = parent.getTree();
 
-            checkPropertySetValueIsNotRootPropertySet( value, parent );
-        }
-    }
+            data.setProperty( this );
 
-    private void checkPropertySetValueIsNotRootPropertySet( final Value value, final PropertySet parent )
-    {
-        if ( parent.getTree() != null )
-        {
-            if ( value.asData() == parent.getTree().getRoot() )
+            if ( tree != null && data == tree.getRoot() )
             {
                 throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
             }
@@ -85,19 +80,9 @@ public final class Property
         return index;
     }
 
-    boolean hasParentProperty()
-    {
-        return getParentProperty() != null;
-    }
-
-    Property getParentProperty()
-    {
-        return this.parent.getProperty();
-    }
-
     public PropertyPath getPath()
     {
-        if ( hasParentProperty() )
+        if ( this.parent.getProperty() != null )
         {
             return PropertyPath.from( this.parent.getProperty().getPath(), PropertyPath.Element.from( this.name, this.index ) );
         }

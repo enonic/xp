@@ -19,7 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.support.AbstractEqualsTest;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -36,63 +38,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PropertyTreeTest
 {
     @Test
-    public void equals()
-    {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                PropertyTree tree = new PropertyTree();
-                tree.addString( "myString", "myValue" );
-                PropertySet set = tree.addSet( "mySet" );
-                set.addString( "myString", "myValue" );
-                return tree;
-            }
+    void equalsContract() {
+        final PropertySet expression1 = new PropertySet();
+        expression1.addString( "field", "myField" );
 
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                PropertyTree tree1 = new PropertyTree();
-                tree1.addString( "myString", "myValue" );
-                PropertySet set1 = tree1.addSet( "mySet" );
-                set1.addString( "myString", "otherValue" );
+        final PropertySet expression2 = new PropertySet();
+        expression2.addString( "field", "anotherField" );
 
-                PropertyTree tree2 = new PropertyTree();
-                tree2.addString( "myString", "otherValue" );
-                PropertySet set2 = tree2.addSet( "mySet" );
-                set2.addString( "myString", "myValue" );
-
-                PropertyTree tree3 = new PropertyTree();
-                tree3.addString( "myString", "myValue" );
-                PropertySet set3 = tree3.addSet( "myOtherSet" );
-                set3.addString( "myString", "myValue" );
-
-                return new Object[]{tree1, tree2, tree3, new Object()};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                PropertyTree tree = new PropertyTree();
-                tree.addString( "myString", "myValue" );
-                PropertySet set = tree.addSet( "mySet" );
-                set.addString( "myString", "myValue" );
-                return tree;
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-
-                PropertyTree tree = new PropertyTree();
-                tree.addString( "myString", "myValue" );
-                PropertySet set = tree.addSet( "mySet" );
-                set.addString( "myString", "myValue" );
-                return tree;
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
+        EqualsVerifier.forClass( PropertyTree.class )
+            .suppress( Warning.NONFINAL_FIELDS, Warning.TRANSIENT_FIELDS )
+            .withNonnullFields( "root" )
+            .withPrefabValues( PropertySet.class, expression1, expression2 )
+            .verify();
     }
 
     @Test
@@ -431,6 +388,7 @@ public class PropertyTreeTest
 
         List<Value> stringValueList = new ArrayList<>();
         stringValueList.add( ValueFactory.newString( "d" ) );
+        stringValueList.add( ValueFactory.newString( "f" ) );
 
         List<Value> longValueList = new ArrayList<>();
         longValueList.add( ValueFactory.newLong( 1L ) );
@@ -439,8 +397,10 @@ public class PropertyTreeTest
         tree.setValues( PropertyPath.from( "longs" ), longValueList );
 
         assertEquals( "d", tree.getString( PropertyPath.from( "mySet.strings" ) ) );
+        assertEquals( "f", tree.getString( PropertyPath.from( "mySet.strings[1]" ) ) );
+        assertNull( tree.getString( PropertyPath.from( "mySet.strings[2]" ) ) );
         Property p = tree.getProperty( PropertyPath.from( "longs" ) );
-        assertEquals( 1, p.getLong() );
+        assertEquals( 1L, p.getLong() );
     }
 
     @Test
@@ -453,6 +413,16 @@ public class PropertyTreeTest
         assertNotNull( tree.getProperty( "mySet" ) );
         tree.removeProperties( "mySet" );
         assertNull( tree.getProperty( "mySet" ) );
+    }
+
+    @Test
+    public void replaceStringWithLong()
+    {
+        PropertyTree tree = new PropertyTree();
+        PropertySet set1 = tree.addSet( "mySet" );
+        set1.addString( "strings", "a" );
+        set1.removeProperty( "strings" );
+        set1.setLong( "strings", 1L );
     }
 
     @Test

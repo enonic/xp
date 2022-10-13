@@ -237,10 +237,7 @@ abstract class IdProviderNodeTranslator
                 final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
                 if ( idProviderConfig == null )
                 {
-                    if ( nodeData.hasProperty( IdProviderPropertyNames.APPLICATION ) )
-                    {
-                        nodeData.removeProperty( IdProviderPropertyNames.APPLICATION );
-                    }
+                    nodeData.removeProperties( IdProviderPropertyNames.APPLICATION );
                 }
                 else
                 {

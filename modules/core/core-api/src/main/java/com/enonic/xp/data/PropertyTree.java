@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
@@ -55,24 +54,13 @@ public final class PropertyTree
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof PropertyTree ) )
-        {
-            return false;
-        }
-
-        final PropertyTree that = (PropertyTree) o;
-
-        return Objects.equals( root, that.root );
+        return this == o || o instanceof PropertyTree && root.equals( ( (PropertyTree) o ).root );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( root );
+        return root.hashCode();
     }
 
     @Override

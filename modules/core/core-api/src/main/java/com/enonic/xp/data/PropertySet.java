@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -162,6 +161,7 @@ public final class PropertySet
         return new PropertyTree( this );
     }
 
+    @Deprecated
     public int countAncestors()
     {
         if ( this.property == null )
@@ -322,6 +322,7 @@ public final class PropertySet
         }
         else
         {
+            removeProperties( firstElement.getName() );
             int index = 0;
             for ( final Value value : values )
             {
@@ -350,29 +351,18 @@ public final class PropertySet
         }
         else
         {
-            removeProperty( firstElement );
-        }
-    }
+            final PropertyArray propertyArray = propertyArrayByName.get( firstElement.getName() );
+            if ( propertyArray == null )
+            {
+                return;
+            }
 
-    private void removeProperty( final PropertyPath.Element element )
-    {
-        final PropertyArray propertyArray = propertyArrayByName.get( element.getName() );
-        if ( propertyArray == null )
-        {
-            return;
+            propertyArray.remove( firstElement.getIndex() );
         }
-
-        propertyArray.remove( element.getIndex() );
     }
 
     public void removeProperties( final String name )
     {
-        final PropertyArray propertyArray = propertyArrayByName.get( name );
-        if ( propertyArray == null )
-        {
-            return;
-        }
-        propertyArray.removeAll();
         propertyArrayByName.remove( name );
     }
 
@@ -449,16 +439,8 @@ public final class PropertySet
 
     public String[] getPropertyNames()
     {
-        final Set<String> keySet = propertyArrayByName.keySet();
-        final String[] propertyNames = new String[keySet.size()];
-        int index = 0;
-        for ( final String key : keySet )
-        {
-            propertyNames[index++] = key;
-        }
-        return propertyNames;
+        return propertyArrayByName.keySet().toArray( String[]::new );
     }
-
 
     private Property getProperty( final PropertyPath.Element element )
     {
