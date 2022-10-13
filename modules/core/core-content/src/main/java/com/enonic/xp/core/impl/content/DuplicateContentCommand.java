@@ -41,8 +41,7 @@ final class DuplicateContentCommand
 
         try
         {
-            final DuplicateContentsResult duplicatedContents = doExecute();
-            return duplicatedContents;
+            return doExecute();
         }
         catch ( Exception e )
         {
@@ -59,12 +58,12 @@ final class DuplicateContentCommand
             throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
         }
 
-        final DuplicateNodeParams duplicateNodeParams = DuplicateNodeParams.create().
-            duplicateListener( this ).
-            nodeId( sourceNodeId ).
-            dataProcessor( new DuplicateContentProcessor() ).
-            includeChildren( params.getIncludeChildren() ).
-            build();
+        final DuplicateNodeParams duplicateNodeParams = DuplicateNodeParams.create()
+            .duplicateListener( this )
+            .nodeId( sourceNodeId )
+            .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo() ) )
+            .includeChildren( params.getIncludeChildren() )
+            .build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
 
@@ -72,12 +71,12 @@ final class DuplicateContentCommand
 
         final ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
 
-        return DuplicateContentsResult.create().
-            setSourceContentPath( ContentNodeHelper.translateNodePathToContentPath( sourceNode.path() ) ).
-            setContentName( duplicatedContent.getDisplayName() ).
-            addDuplicated( duplicatedContent.getId() ).
-            addDuplicated( childrenIds ).
-            build();
+        return DuplicateContentsResult.create()
+            .setSourceContentPath( ContentNodeHelper.translateNodePathToContentPath( sourceNode.path() ) )
+            .setContentName( duplicatedContent.getDisplayName() )
+            .addDuplicated( duplicatedContent.getId() )
+            .addDuplicated( childrenIds )
+            .build();
     }
 
     @Override
@@ -100,10 +99,8 @@ final class DuplicateContentCommand
 
     private ContentIds getAllChildren( final Content duplicatedContent )
     {
-        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-            parentId( NodeId.from( duplicatedContent.getId() ) ).
-            recursive( true ).
-            build() );
+        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent(
+            FindNodesByParentParams.create().parentId( NodeId.from( duplicatedContent.getId() ) ).recursive( true ).build() );
 
         return ContentNodeHelper.toContentIds( findNodesByParentResult.getNodeIds() );
     }

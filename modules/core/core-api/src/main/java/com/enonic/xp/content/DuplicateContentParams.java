@@ -12,6 +12,8 @@ public final class DuplicateContentParams
 
     private PrincipalKey creator;
 
+    private final WorkflowInfo workflowInfo;
+
     private final DuplicateContentListener duplicateContentListener;
 
     private final Boolean includeChildren;
@@ -20,6 +22,7 @@ public final class DuplicateContentParams
     {
         this.contentId = builder.contentId;
         this.creator = builder.creator;
+        this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = builder.includeChildren;
     }
@@ -51,6 +54,11 @@ public final class DuplicateContentParams
         return creator;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     public Boolean getIncludeChildren()
     {
         return includeChildren;
@@ -64,29 +72,13 @@ public final class DuplicateContentParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof DuplicateContentParams ) )
-        {
-            return false;
-        }
-
-        final DuplicateContentParams that = (DuplicateContentParams) o;
-
-        if ( !contentId.equals( that.contentId ) )
-        {
-            return false;
-        }
-
-        return includeChildren.equals( that.includeChildren );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return contentId.hashCode();
+        return super.hashCode();
     }
 
     public static final class Builder
@@ -95,6 +87,8 @@ public final class DuplicateContentParams
         private ContentId contentId;
 
         private PrincipalKey creator;
+
+        private WorkflowInfo workflowInfo;
 
         private DuplicateContentListener duplicateContentListener;
 
@@ -113,6 +107,12 @@ public final class DuplicateContentParams
         public Builder creator( PrincipalKey creator )
         {
             this.creator = creator;
+            return this;
+        }
+
+        public Builder workflowInfo( final WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
             return this;
         }
 

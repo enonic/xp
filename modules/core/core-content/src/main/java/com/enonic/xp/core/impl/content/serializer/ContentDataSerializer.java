@@ -295,10 +295,12 @@ public class ContentDataSerializer
         }
     }
 
-    private void addWorkflowInfo( final PropertySet contentAsData, final WorkflowInfo data )
+    public static void addWorkflowInfo( final PropertySet contentAsData, final WorkflowInfo data )
     {
         if ( data != null )
         {
+            contentAsData.removeProperties( WORKFLOW_INFO );
+
             final PropertySet workflowInfo = contentAsData.addSet( WORKFLOW_INFO );
             workflowInfo.addString( WORKFLOW_INFO_STATE, data.getState().toString() );
 

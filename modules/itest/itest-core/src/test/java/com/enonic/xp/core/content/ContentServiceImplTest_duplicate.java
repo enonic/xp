@@ -14,6 +14,8 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -76,7 +78,11 @@ public class ContentServiceImplTest_duplicate
         final Content childrenLevel1 = createContent( rootContent.getPath() );
         final Content childrenLevel2 = createContent( childrenLevel1.getPath() );
 
-        final Content duplicatedContent = doDuplicateContent( rootContent, false );
+        final DuplicateContentParams params =
+            DuplicateContentParams.create().contentId( rootContent.getId() ).includeChildren( false ).build();
+        final DuplicateContentsResult result = contentService.duplicate( params );
+
+        final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
 
         assertFalse( duplicatedContent.hasChildren() );
     }
@@ -153,15 +159,38 @@ public class ContentServiceImplTest_duplicate
         assertTrue( duplicateContent.getInherit().isEmpty() );
     }
 
-    private Content doDuplicateContent( final Content content )
+    @Test
+    public void workflow_info_changed()
+        throws Exception
     {
-        return this.doDuplicateContent( content, true );
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "rootContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            permissions( AccessControlList.create().
+            build() ).
+            workflowInfo( WorkflowInfo.ready() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final DuplicateContentParams params = DuplicateContentParams.create()
+            .contentId( content.getId() )
+            .workflowInfo( WorkflowInfo.inProgress() )
+            .includeChildren( false )
+            .build();
+        final DuplicateContentsResult result = contentService.duplicate( params );
+
+        final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
+
+        assertEquals( WorkflowState.IN_PROGRESS, duplicatedContent.getWorkflowInfo().getState() );
     }
 
-    private Content doDuplicateContent( final Content content, final Boolean includeChildren )
+    private Content doDuplicateContent( final Content content )
     {
         final DuplicateContentParams params =
-            DuplicateContentParams.create().contentId( content.getId() ).includeChildren( includeChildren ).build();
+            DuplicateContentParams.create().contentId( content.getId() ).includeChildren( true ).build();
         final DuplicateContentsResult result = contentService.duplicate( params );
 
         return this.contentService.getById( result.getDuplicatedContents().first() );
