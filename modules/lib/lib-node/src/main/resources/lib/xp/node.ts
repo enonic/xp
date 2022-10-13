@@ -464,7 +464,7 @@ function argsToStringArray(argsArray: (string | string[])[]): string[] {
     return array;
 }
 
-function isString(value: unknown): boolean {
+function isString(value: unknown): value is string {
     return typeof value === 'string' || value instanceof String;
 }
 
@@ -472,11 +472,10 @@ function isObject(value: unknown): boolean {
     return typeof value !== 'undefined' && value !== null && typeof value === 'object' && value.constructor === Object;
 }
 
-function prepareGetParams(params: (string | string[] | GetNodeParams | GetNodeParams[])[], bean: GetNodeHandlerParams): void {
-    for (let i = 0; i < params.length; i++) {
-        const param = params[i];
+function prepareGetParams(params: (string | GetNodeParams | (string | GetNodeParams)[])[], bean: GetNodeHandlerParams): void {
+    params.forEach(param => {
         if (isString(param)) {
-            bean.add(param as string);
+            bean.add(param);
         } else if (isObject(param)) {
             const getParams = param as GetNodeParams;
             checkRequired(getParams, 'key');
@@ -486,7 +485,7 @@ function prepareGetParams(params: (string | string[] | GetNodeParams | GetNodePa
         } else {
             throw 'Unsupported type';
         }
-    }
+    });
 }
 
 interface MultiRepoNodeHandler {
@@ -494,13 +493,13 @@ interface MultiRepoNodeHandler {
 }
 
 interface NodeHandler {
-    create(node: ScriptValue): Node;
+    create<NodeData>(node: ScriptValue): Node<NodeData>;
 
-    modify(editor: ScriptValue, key: string): Node;
+    modify<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
 
-    setChildOrder(key: string, childOrder: string): Node;
+    setChildOrder<NodeData>(key: string, childOrder: string): Node<NodeData>;
 
-    get(params: GetNodeHandlerParams): Node | Node[] | null;
+    get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
 
     delete(keys: string[]): string[];
 
@@ -526,14 +525,14 @@ interface NodeHandler {
 
     getCommit(commitId: string): NodeCommit | null;
 
-    setRootPermissions(v: ScriptValue): Node;
+    setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
     getBinary(key: string, binaryReference?: string | null): object;
 
     refresh(mode: RefreshMode): void;
 }
 
-export interface CreateNodeParams {
+export type CreateNodeParams<NodeData = unknown> = {
     _name?: string;
     _parentPath?: string;
     _indexConfig?: NodeConfigEntry;
@@ -541,11 +540,11 @@ export interface CreateNodeParams {
     _inheritsPermissions?: boolean;
     _manualOrderValue?: number;
     _childOrder?: string;
-}
+} & NodeData;
 
-export interface ModifyNodeParams {
+export interface ModifyNodeParams<NodeData = unknown> {
     key: string;
-    editor: (node: Node) => Node;
+    editor: (node: Node<NodeData>) => Node<NodeData>;
 }
 
 export interface GetNodeParams {
@@ -778,9 +777,7 @@ export interface NodeConfigEntry {
     languages: string[];
 }
 
-export interface Node {
-    [key: string]: unknown; // node data
-
+export type Node<Data = Record<string, unknown>> = {
     _id: string;
     _name: string;
     _path: string;
@@ -794,14 +791,17 @@ export interface Node {
     _indexConfig: NodeIndexConfig;
     _inheritsPermissions: boolean;
     _permissions?: AccessControlEntry[];
-}
+} & Data;
 
 export interface RepoConnection {
-    create(params: CreateNodeParams): Node;
+    create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
 
-    modify(params: ModifyNodeParams): Node;
+    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData>;
 
-    get(...keys: (string | string[] | GetNodeParams | GetNodeParams[])[]): Node | Node[] | null;
+    get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
+    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null;
 
     delete(...keys: (string | string[])[]): string[];
 
@@ -813,7 +813,7 @@ export interface RepoConnection {
 
     move(params: MoveNodeParams): boolean;
 
-    setChildOrder(params: SetChildOrderParams): Node;
+    setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData>;
 
     query(params: QueryNodeParams): NodeQueryResult;
 
@@ -829,7 +829,7 @@ export interface RepoConnection {
 
     refresh(mode?: RefreshMode): void;
 
-    setRootPermissions(params: SetRootPermissionsParams): Node;
+    setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData>;
 
     commit(params: CommitParams): NodeCommit;
 
@@ -863,14 +863,14 @@ class RepoConnectionImpl
      * @param {string} [params._name] Name of content.
      * @param {string} [params._parentPath] Path to place content under.
      * @param {object} [params._indexConfig] How the document should be indexed. A default value "byType" will be set if no value specified.
-     * @param {object} [params._permissions] The access control list for the node. By default the creator will have full access
+     * @param {object} [params._permissions] The access control list for the node. By the default the creator will have full access
      * @param {boolean} [params._inheritsPermissions] true if the permissions should be inherited from the node parent. Default is false.
      * @param {number} [params._manualOrderValue] Value used to order document when ordering by parent and child-order is set to manual
      * @param {string} [params._childOrder] Default ordering of children when doing getChildren if no order is given in query
      *
      * @returns {object} Node created as JSON.
      */
-    create(params: CreateNodeParams): Node {
+    create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData> {
         return __.toNativeObject(this.nodeHandler.create(__.toScriptValue(params)));
     }
 
@@ -885,7 +885,7 @@ class RepoConnectionImpl
      *
      * @returns {object} Modified node as JSON.
      */
-    modify(params: ModifyNodeParams): Node {
+    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.modify(__.toScriptValue(params.editor), params.key));
@@ -898,11 +898,14 @@ class RepoConnectionImpl
      * @example-ref examples/node/get-2.js
      * @example-ref examples/node/get-3.js
      *
-     * @param {...(string|string[]|object|object[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
+     * @param {...(string|object|(string|object)[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
      *
      * @returns {object} The node or node array (as JSON) fetched from the repository.
      */
-    get(...keys: (string | string[] | GetNodeParams | GetNodeParams[])[]): Node | Node[] | null {
+    get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
+    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null {
         const handlerParams = __.newBean<GetNodeHandlerParams>('com.enonic.xp.lib.node.GetNodeHandlerParams');
         prepareGetParams(keys, handlerParams);
         return __.toNativeObject(this.nodeHandler.get(handlerParams));
@@ -1038,7 +1041,7 @@ class RepoConnectionImpl
      * @param {string} params.childOrder children order
      * @returns {object} updated node
      */
-    setChildOrder(params: SetChildOrderParams): Node {
+    setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData> {
         checkRequired(params, 'key');
         checkRequired(params, 'childOrder');
 
@@ -1223,7 +1226,7 @@ class RepoConnectionImpl
      *
      * @returns {object} Updated root-node as JSON.
      */
-    setRootPermissions(params: SetRootPermissionsParams): Node {
+    setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData> {
         checkRequired(params, '_permissions');
 
         return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
