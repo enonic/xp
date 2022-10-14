@@ -73,7 +73,7 @@ final class MoveContentCommand
 
         final NodePath newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
 
-        if ( nodeService.nodeExists( NodePath.create( newParentPath, sourceContent.getName().toString() ).build() ) )
+        if ( sourceContent.getParentPath().equals( params.getParentContentPath() ) )
         {
             throw new ContentAlreadyMovedException(
                 String.format( "Content with name [%s] is already a child of [%s]", sourceContent.getName(), params.getParentContentPath() ),
