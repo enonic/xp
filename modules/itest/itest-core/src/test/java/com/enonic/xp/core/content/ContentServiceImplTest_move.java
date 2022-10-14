@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
@@ -94,6 +95,21 @@ public class ContentServiceImplTest_move
 
     }
 
+    @Test
+    public void move_already_exists()
+    {
+        final Content content = createContent( ContentPath.ROOT, "child", new PropertyTree(), ContentTypeName.site() );
+        createContent( ContentPath.ROOT, "child-2", new PropertyTree(), ContentTypeName.site() );
+
+        final Content content3 = createContent( content.getPath(), "child-2", new PropertyTree() );
+
+        refresh();
+
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content3.getId() ).parentContentPath( content.getParentPath() ).build();
+
+        assertThrows( ContentAlreadyExistsException.class, () -> this.contentService.move( params ) );
+    }
 
     @Test
     public void audit_data()
