@@ -101,7 +101,6 @@ public final class CreateNodeCommand
 
         return StoreNodeCommand.create( this ).
             node( newNode ).
-            updateMetadataOnly( false ).
             build().
             execute();
     }

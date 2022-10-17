@@ -78,7 +78,7 @@ final class RenameContentCommand
 
         final Node node = nodeService.rename( builder.build() );
 
-        final Content content = translator.fromNode( node, false );
+        final Content content = translator.fromNode( node, true );
 
         final ValidationErrors validationErrors = validateContent( content );
 
@@ -86,8 +86,10 @@ final class RenameContentCommand
         {
             return updateValidState( content );
         }
-
-        return getContent( params.getContentId() );
+        else
+        {
+            return content;
+        }
     }
 
     private ValidationErrors validateContent( final Content content )

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -33,14 +32,14 @@ public class StoreNodeCommand
 
     public Node execute()
     {
-        final Context context = ContextAccessor.current();
+        final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
         if ( updateMetadataOnly )
         {
-            return this.nodeStorageService.updateMetadata( this.node, InternalContext.from( context ) );
+            return this.nodeStorageService.updateMetadata( this.node, context );
         }
 
-        return this.nodeStorageService.store( this.node, InternalContext.from( context ) );
+        return this.nodeStorageService.store( this.node, context );
     }
 
     public static final class Builder

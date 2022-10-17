@@ -22,10 +22,6 @@ final class NodePermissionsResolver
         throws NodeAccessException
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
-        {
-            return;
-        }
         doRequireContextUserPermission( authInfo, permission, node );
     }
 
