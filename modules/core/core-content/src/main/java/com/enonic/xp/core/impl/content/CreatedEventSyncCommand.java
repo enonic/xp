@@ -105,7 +105,6 @@ final class CreatedEventSyncCommand
             .inherit( inheritTypes )
             .originProject( ProjectName.from( content.getSourceContext().getRepositoryId() ) )
             .importPermissionsOnCreate( false )
-            .dryRun( false )
             .insertManualStrategy( insertManualStrategy )
             .build();
     }

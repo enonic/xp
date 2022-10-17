@@ -51,12 +51,10 @@ public class SetNodeStateCommand
 
     private Node setNodeState( final Node node, final SetNodeStateResult.Builder setNodeStateResultBuilder )
     {
-        final Node updatedNode = Node.create( node ).
+        final Node updatedNode = StoreNodeCommand.create( this ).
+            node(  Node.create( node ).
             nodeState( this.params.getNodeState() ).
-            build();
-
-        StoreNodeCommand.create( this ).
-            node( updatedNode ).
+            build() ).
             updateMetadataOnly( true ).
             build().
             execute();

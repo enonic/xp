@@ -12,6 +12,7 @@ import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
@@ -92,8 +93,9 @@ final class ReprocessContentCommand
             id( NodeId.from( content.getId() ) ).
             editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) ).
             build();
-        this.nodeService.update( update );
-        return this.getContent( content.getId() );
+        final Node node = this.nodeService.update( update );
+
+        return this.translator.fromNode( node, true );
     }
 
     public static Builder create( final ReprocessContentParams params )

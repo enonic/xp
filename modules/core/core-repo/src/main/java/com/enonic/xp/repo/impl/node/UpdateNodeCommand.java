@@ -14,7 +14,6 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.util.Exceptions;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermissionOrAdmin;
@@ -35,14 +34,7 @@ public final class UpdateNodeCommand
 
     public Node execute()
     {
-        try
-        {
-            return doExecute();
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
+        return doExecute();
     }
 
     private Node doExecute()
@@ -82,7 +74,7 @@ public final class UpdateNodeCommand
 
         if ( !this.params.isDryRun() )
         {
-            StoreNodeCommand.create( this ).
+            return StoreNodeCommand.create( this ).
                 node( updatedNode ).
                 build().
                 execute();

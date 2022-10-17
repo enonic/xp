@@ -67,12 +67,10 @@ public class SetNodeChildOrderCommand
             timestamp( Instant.now( CLOCK ) ).
             build();
 
-        StoreNodeCommand.create( this ).
+        return StoreNodeCommand.create( this ).
             node( editedNode ).
             build().
             execute();
-
-        return doGetById( editedNode.id() );
     }
 
     private void checkContextUserPermissionOrAdmin( final Node parentNode )
