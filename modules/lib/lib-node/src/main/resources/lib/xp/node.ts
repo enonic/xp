@@ -399,35 +399,43 @@ export interface Explanation {
     details: Explanation[];
 }
 
-export interface NodeQueryResult {
-    total: number;
-    count: number;
-    hits: {
-        id: string;
-        score: number;
-        explanation?: Explanation;
-        highlight?: HighlightResult;
-    }[];
-    aggregations?: AggregationsResult;
-    suggestions?: {
-        [suggestionName: string]: {
+export interface NodeQueryResultHit {
+    id: string;
+    score: number;
+    explanation?: Explanation;
+    highlight?: HighlightResult;
+}
+
+export interface NodeQueryResultSuggestion {
+    [suggestionName: string]: {
+        text: string;
+        length: number;
+        offset: number;
+        options: {
             text: string;
-            length: number;
-            offset: number;
-            options: {
-                text: string;
-                score: number;
-                freq?: number; // only for term
-            }[];
+            score: number;
+            freq?: number; // only for term
         }[];
     }[];
 }
 
-export type NodeMultiRepoQueryResult = NodeQueryResult & {
-    hits: {
+export interface NodeQueryResult {
+    total: number;
+    count: number;
+    hits: NodeQueryResultHit[];
+    aggregations?: AggregationsResult;
+    suggestions?: NodeQueryResultSuggestion[];
+}
+
+export interface NodeMultiRepoQueryResult {
+    total: number;
+    count: number;
+    hits: (NodeQueryResultHit & {
         repoId: string;
         branch: string;
-    }[];
+    })[];
+    aggregations?: AggregationsResult;
+    suggestions?: NodeQueryResultSuggestion[];
 };
 
 // END AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
