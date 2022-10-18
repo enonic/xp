@@ -427,7 +427,7 @@ export interface NodeQueryResult {
     suggestions?: NodeQueryResultSuggestion[];
 }
 
-export type NodeMultiRepoQueryResult = {
+export interface NodeMultiRepoQueryResult {
     total: number;
     count: number;
     hits: (NodeQueryResultHit & {
