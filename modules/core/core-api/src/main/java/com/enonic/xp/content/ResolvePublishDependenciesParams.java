@@ -12,12 +12,9 @@ public class ResolvePublishDependenciesParams
 
     private final ContentIds excludeChildrenIds;
 
-    private final Branch target;
-
     private ResolvePublishDependenciesParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        target = builder.target;
         excludeChildrenIds = builder.excludeChildrenIds;
         excludedContentIds = builder.excludedContentIds;
     }
@@ -42,9 +39,10 @@ public class ResolvePublishDependenciesParams
         return excludeChildrenIds;
     }
 
+    @Deprecated
     public Branch getTarget()
     {
-        return target;
+        return ContentConstants.BRANCH_MASTER;
     }
 
     public static final class Builder
@@ -54,8 +52,6 @@ public class ResolvePublishDependenciesParams
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
-
-        private Branch target;
 
         private Builder()
         {
@@ -79,9 +75,9 @@ public class ResolvePublishDependenciesParams
             return this;
         }
 
+        @Deprecated
         public Builder target( Branch target )
         {
-            this.target = target;
             return this;
         }
 

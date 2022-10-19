@@ -48,7 +48,6 @@ public class ContentServiceImplTest_resolvePublishDependencies
         final CompareContentResults result = this.contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             excludeChildrenIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         assertEquals( 1, result.contentIds().getSize() );
@@ -132,8 +131,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
             type( ContentTypeName.folder() ).
             build() );
 
-        return ResolvePublishDependenciesParams.create().
-            target( WS_OTHER );
+        return ResolvePublishDependenciesParams.create();
     }
 
 }

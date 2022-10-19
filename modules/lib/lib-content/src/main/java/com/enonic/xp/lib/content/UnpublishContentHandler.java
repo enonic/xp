@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -29,17 +28,11 @@ public final class UnpublishContentHandler
 
     public List<String> execute()
     {
-        final Branch targetBranch = ContentConstants.BRANCH_MASTER;
-
-        final Context context = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( targetBranch ).
-            build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_MASTER ).build();
         final List<ContentId> contentIds = context.callWith( this::resolveContentIds );
 
         final UnpublishContentParams unpublishContentParams = UnpublishContentParams.create().
             contentIds( ContentIds.from( contentIds ) ).
-            unpublishBranch( targetBranch ).
             build();
 
         final UnpublishContentsResult result = this.contentService.unpublishContent( unpublishContentParams );

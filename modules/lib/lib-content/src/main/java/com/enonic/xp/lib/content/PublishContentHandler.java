@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -27,10 +27,6 @@ public final class PublishContentHandler
     implements ScriptBean
 {
     private String[] keys;
-
-    private String targetBranch;
-
-    private String sourceBranch;
 
     private Map<String, Object> contentPublishInfo;
 
@@ -46,10 +42,7 @@ public final class PublishContentHandler
 
     public PublishContentResultMapper execute()
     {
-        final Context context = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( this.sourceBranch ).
-            build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build();
 
         return context.callWith( this::publishContent );
     }
@@ -82,7 +75,6 @@ public final class PublishContentHandler
 
         final PushContentParams.Builder builder = PushContentParams.create();
         builder.contentIds( ContentIds.from( contentIds ) );
-        builder.target( Branch.from( targetBranch ) );
         if ( this.contentPublishInfo != null )
         {
             final Object from = this.contentPublishInfo.get( "from" );
@@ -128,14 +120,14 @@ public final class PublishContentHandler
         this.keys = keys;
     }
 
+    @Deprecated
     public void setTargetBranch( final String targetBranch )
     {
-        this.targetBranch = targetBranch;
     }
 
+    @Deprecated
     public void setSourceBranch( final String sourceBranch )
     {
-        this.sourceBranch = sourceBranch;
     }
 
     public void setExcludeChildrenIds( final String[] excludeChildrenIds )

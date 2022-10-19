@@ -106,7 +106,6 @@ public class ContentServiceImplTest_publish_update_publishedTime
         final Content rootContent = createContent( ContentPath.ROOT );
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( rootContent.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         final Content duplicateContent = doDuplicateContent( rootContent );
@@ -126,7 +125,6 @@ public class ContentServiceImplTest_publish_update_publishedTime
     {
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             includeDependencies( false ).
             build() );
     }

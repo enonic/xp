@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
@@ -33,8 +32,6 @@ public class PublishContentCommand
 
     private final ContentIds excludeChildrenIds;
 
-    private final Branch target;
-
     private final ContentPublishInfo contentPublishInfo;
 
     private final boolean includeDependencies;
@@ -50,7 +47,6 @@ public class PublishContentCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
-        this.target = builder.target;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
         this.excludeChildrenIds = builder.excludeChildrenIds;
@@ -103,7 +99,6 @@ public class PublishContentCommand
             .excludedContentIds( this.excludedContentIds )
             .excludeChildrenIds( this.excludeChildrenIds )
             .includeDependencies( this.includeDependencies )
-            .target( this.target )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .translator( this.translator )
@@ -140,7 +135,7 @@ public class PublishContentCommand
             .build()
             .execute();
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, this.target, this );
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, this );
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
@@ -188,8 +183,6 @@ public class PublishContentCommand
 
         private ContentIds excludeChildrenIds;
 
-        private Branch target;
-
         private ContentPublishInfo contentPublishInfo;
 
         private boolean includeDependencies = true;
@@ -213,12 +206,6 @@ public class PublishContentCommand
         public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
-            return this;
-        }
-
-        public Builder target( final Branch target )
-        {
-            this.target = target;
             return this;
         }
 
@@ -257,7 +244,6 @@ public class PublishContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentIds );
             if ( contentPublishInfo != null )
             {

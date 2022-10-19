@@ -134,7 +134,6 @@ public class ContentServiceImplTest_delete
 
         final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         assertEquals( 1, result.getPushedContents().getSize() );
@@ -196,7 +195,6 @@ public class ContentServiceImplTest_delete
         //Publishes the content
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             build();
 
         refresh();
@@ -248,7 +246,6 @@ public class ContentServiceImplTest_delete
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId(), contentToMove.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         refresh();
@@ -304,7 +301,6 @@ public class ContentServiceImplTest_delete
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( contentToMove.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         refresh();
@@ -357,8 +353,7 @@ public class ContentServiceImplTest_delete
 
         refresh();
 
-        this.contentService.publish(
-            PushContentParams.create().contentIds( ContentIds.from( contentToMove.getId() ) ).target( WS_OTHER ).build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( contentToMove.getId() ) ).build() );
 
         refresh();
 

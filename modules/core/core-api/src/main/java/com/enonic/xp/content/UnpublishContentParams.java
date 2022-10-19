@@ -8,14 +8,11 @@ public final class UnpublishContentParams
 {
     private final ContentIds contentIds;
 
-    private final Branch unpublishBranch;
-
     private final PushContentListener publishContentListener;
 
     private UnpublishContentParams( final Builder builder )
     {
         contentIds = builder.contentIds;
-        unpublishBranch = builder.unpublishBranch;
         publishContentListener = builder.publishContentListener;
     }
 
@@ -24,9 +21,10 @@ public final class UnpublishContentParams
         return contentIds;
     }
 
+    @Deprecated
     public Branch getUnpublishBranch()
     {
-        return unpublishBranch;
+        return ContentConstants.BRANCH_MASTER;
     }
 
     @Deprecated
@@ -61,8 +59,6 @@ public final class UnpublishContentParams
     {
         private ContentIds contentIds;
 
-        private Branch unpublishBranch;
-
         private PushContentListener publishContentListener;
 
         private Builder()
@@ -75,9 +71,9 @@ public final class UnpublishContentParams
             return this;
         }
 
+        @Deprecated
         public Builder unpublishBranch( final Branch val )
         {
-            unpublishBranch = val;
             return this;
         }
 
@@ -90,7 +86,6 @@ public final class UnpublishContentParams
         private void validate()
         {
             Preconditions.checkNotNull( contentIds, "contentId must be set" );
-            Preconditions.checkNotNull( unpublishBranch, "unpublishBranch must be set" );
         }
 
         public Builder pushListener( final PushContentListener publishContentListener )

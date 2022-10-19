@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeId;
@@ -24,8 +24,6 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludeChildrenIds;
 
-    private final Branch target;
-
     private final CompareContentResults.Builder resultBuilder;
 
     private final boolean includeDependencies;
@@ -35,7 +33,6 @@ public class ResolveContentsToBePublishedCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
-        this.target = builder.target;
         this.resultBuilder = CompareContentResults.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.includeDependencies = builder.includeDependencies;
@@ -65,21 +62,20 @@ public class ResolveContentsToBePublishedCommand
 
     private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
-        final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.
-            stream().
-            map( NodeId::from ).
-            collect( Collectors.toList() ) ) : NodeIds.empty();
+        final NodeIds nodeIds = excludedContentIds != null
+            ? NodeIds.from( excludedContentIds.stream().map( NodeId::from ).collect( Collectors.toList() ) )
+            : NodeIds.empty();
 
         final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
 
-        return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
-            includeChildren( includeChildren ).
-            includeDependencies( this.includeDependencies ).
-            nodeId( NodeId.from( contentId ) ).
-            excludedNodeIds( nodeIds ).
-            branch( this.target ).
-            statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) ).
-            build() );
+        return nodeService.resolveSyncWork( SyncWorkResolverParams.create()
+                                                .includeChildren( includeChildren )
+                                                .includeDependencies( this.includeDependencies )
+                                                .nodeId( NodeId.from( contentId ) )
+                                                .excludedNodeIds( nodeIds )
+                                                .branch( ContentConstants.BRANCH_MASTER )
+                                                .statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) )
+                                                .build() );
     }
 
     public static class Builder
@@ -90,8 +86,6 @@ public class ResolveContentsToBePublishedCommand
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
-
-        private Branch target;
 
         private boolean includeDependencies = true;
 
@@ -104,12 +98,6 @@ public class ResolveContentsToBePublishedCommand
         public Builder excludedContentIds( final ContentIds excludedContentIds )
         {
             this.excludedContentIds = excludedContentIds;
-            return this;
-        }
-
-        public Builder target( final Branch target )
-        {
-            this.target = target;
             return this;
         }
 
@@ -129,7 +117,6 @@ public class ResolveContentsToBePublishedCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentIds );
         }
 

@@ -41,7 +41,6 @@ public class ContentServiceImplTest_unpublish
             build() );
 
         this.contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
@@ -53,7 +52,6 @@ public class ContentServiceImplTest_unpublish
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
         assertNotNull( contentService.contentExists( content.getId() ) );
@@ -84,7 +82,6 @@ public class ContentServiceImplTest_unpublish
             build() );
 
         this.contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
@@ -97,7 +94,6 @@ public class ContentServiceImplTest_unpublish
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
         assertNotNull( contentService.contentExists( content.getId() ) );
@@ -120,7 +116,6 @@ public class ContentServiceImplTest_unpublish
             build() );
 
         this.contentService.publish( PushContentParams.create().
-            target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
@@ -132,7 +127,6 @@ public class ContentServiceImplTest_unpublish
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( ContentConstants.BRANCH_MASTER ).
             build() );
 
         Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );

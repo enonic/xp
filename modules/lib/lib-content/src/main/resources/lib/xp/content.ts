@@ -1107,14 +1107,12 @@ interface PublishContentHandler {
 }
 
 /**
- * This function publishes content to a branch.
+ * This function publishes content from the draft branch to the master branch.
  *
  * @example-ref examples/content/publish.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string[]} params.keys List of all content keys(path or id) that should be published.
- * @param {string} params.sourceBranch The branch where the content to be published is stored.
- * @param {string} params.targetBranch The branch to which the content should be published.  Technically, publishing is just a move from one branch
  * to another, and publishing user content from master to draft is therefore also valid usage of this function, which may be practical if user input to a web-page is stored on master.
  * @param {object} [params.schedule] Schedule the publish.
  * @param {string} [params.schedule.from] Time from which the content is considered published. Defaults to the time of the publish
@@ -1127,13 +1125,9 @@ interface PublishContentHandler {
  */
 export function publish(params: PublishContentParams): PublishContentResult {
     checkRequired(params, 'keys');
-    checkRequired(params, 'targetBranch');
-    checkRequired(params, 'sourceBranch');
 
     const bean = __.newBean<PublishContentHandler>('com.enonic.xp.lib.content.PublishContentHandler');
     bean.setKeys(params.keys);
-    bean.setTargetBranch(params.targetBranch);
-    bean.setSourceBranch(params.sourceBranch);
     if (params.schedule) {
         bean.setContentPublishInfo(__.toScriptValue(params.schedule));
     }

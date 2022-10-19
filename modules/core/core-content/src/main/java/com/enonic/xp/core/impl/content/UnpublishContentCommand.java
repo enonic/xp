@@ -44,9 +44,7 @@ public class UnpublishContentCommand
     {
         final Context context = ContextAccessor.current();
 
-        final Context unpublishContext = ContextBuilder.from( context ).
-            branch( params.getUnpublishBranch() ).
-            build();
+        final Context unpublishContext = ContextBuilder.from( context ).branch( ContentConstants.BRANCH_MASTER ).build();
 
         return unpublishContext.callWith( this::unpublish );
     }
