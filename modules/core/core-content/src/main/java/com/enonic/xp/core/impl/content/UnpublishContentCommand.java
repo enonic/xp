@@ -103,17 +103,11 @@ public class UnpublishContentCommand
                     {
                         PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
 
-                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
-                        {
-                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FROM );
-                        }
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
 
-                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
-                        {
-                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
-                        }
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
 
-                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( now ) > 0 )
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }
