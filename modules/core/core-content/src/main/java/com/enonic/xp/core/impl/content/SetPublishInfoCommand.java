@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -22,7 +21,9 @@ public class SetPublishInfoCommand
 {
     private final NodeIds nodeIds;
 
-    private final ContentPublishInfo contentPublishInfo;
+    private final Instant publishFrom;
+
+    private final Instant publishTo;
 
     private final PushContentListener publishContentListener;
 
@@ -30,7 +31,8 @@ public class SetPublishInfoCommand
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
-        this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
+        this.publishFrom = builder.publishFrom;
+        this.publishTo = builder.publishTo;
         this.publishContentListener = builder.publishContentListener;
     }
 
@@ -42,10 +44,6 @@ public class SetPublishInfoCommand
         {
             return;
         }
-
-        final Instant now = Instant.now();
-        final Instant publishFrom = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
-        final Instant publishTo = contentPublishInfo.getTo();
 
         for ( final NodeId id : nodeIdsToUpdate )
         {
@@ -128,11 +126,6 @@ public class SetPublishInfoCommand
         return result.getNodeIds();
     }
 
-    public static SetPublishInfoCommand.Builder create()
-    {
-        return new Builder();
-    }
-
     public static SetPublishInfoCommand.Builder create( final AbstractContentCommand source )
     {
         return new Builder( source );
@@ -143,13 +136,11 @@ public class SetPublishInfoCommand
     {
         private NodeIds nodeIds;
 
-        private ContentPublishInfo contentPublishInfo;
+        private Instant publishFrom;
+
+        private Instant publishTo;
 
         private PushContentListener publishContentListener;
-
-        public Builder()
-        {
-        }
 
         public Builder( final AbstractContentCommand source )
         {
@@ -162,9 +153,15 @@ public class SetPublishInfoCommand
             return this;
         }
 
-        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
+        public Builder publishFrom( final Instant publishFrom )
         {
-            this.contentPublishInfo = contentPublishInfo;
+            this.publishFrom = publishFrom;
+            return this;
+        }
+
+        public Builder publishTo( final Instant publishTo )
+        {
+            this.publishTo = publishTo;
             return this;
         }
 

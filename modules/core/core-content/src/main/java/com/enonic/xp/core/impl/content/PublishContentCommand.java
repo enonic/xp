@@ -129,12 +129,13 @@ public class PublishContentCommand
             return;
         }
 
-        SetPublishInfoCommand.create( this )
-            .nodeIds( nodesToPush )
-            .contentPublishInfo( contentPublishInfo )
-            .pushListener( publishContentListener )
-            .build()
-            .execute();
+        SetPublishInfoCommand.create( this ).
+            nodeIds( nodesToPush ).
+            publishFrom( contentPublishInfo.getFrom() ).
+            publishTo( contentPublishInfo.getTo() ).
+            pushListener( publishContentListener ).
+            build().
+            execute();
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, this );
 
@@ -212,9 +213,13 @@ public class PublishContentCommand
 
         public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
         {
-            if ( contentPublishInfo != null && contentPublishInfo.getFrom() == null )
+            if ( contentPublishInfo == null )
             {
-                this.contentPublishInfo = ContentPublishInfo.create().from( Instant.now() ).to( contentPublishInfo.getFrom() ).build();
+                this.contentPublishInfo = ContentPublishInfo.create().from( Instant.now() ).build();
+            }
+            else if ( contentPublishInfo.getFrom() == null )
+            {
+                this.contentPublishInfo = ContentPublishInfo.create().from( Instant.now() ).to( contentPublishInfo.getTo() ).build();
             }
             else
             {
@@ -246,18 +251,7 @@ public class PublishContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( contentIds );
-            Preconditions.checkArgument( ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ),
-                                         "Content can be published only from the draft branch" );
-            if ( contentPublishInfo != null )
-            {
-                final Instant publishToInstant = contentPublishInfo.getTo();
-                if ( publishToInstant != null )
-                {
-                    final Instant publishFromInstant = contentPublishInfo.getFrom();
-                    Preconditions.checkArgument( publishToInstant.compareTo( publishFromInstant ) >= 0,
-                                                 "'Publish to' must be set after 'Publish from'." );
-                }
-            }
+            ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 
         public PublishContentCommand build()
