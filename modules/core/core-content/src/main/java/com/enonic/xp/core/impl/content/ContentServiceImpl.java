@@ -392,20 +392,10 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public int undoPendingDelete( final UndoPendingDeleteContentParams params )
     {
-        final Contents affectedContents = UndoPendingDeleteContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            params( params ).
-            build().
-            execute();
-
-        contentAuditLogSupport.undoPendingDelete( params, affectedContents );
-
-        return affectedContents.getSize();
+        return 0;
     }
 
     @Override
@@ -423,7 +413,6 @@ public class ContentServiceImpl
             excludeChildrenIds( params.getExcludeChildrenIds() ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPublishContentListener() ).
-            deleteListener( params.getDeleteContentListener() ).
             message( params.getMessage() ).
             build().
             execute();

@@ -6,7 +6,6 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -50,18 +49,6 @@ class CompareStatusResolver
         if ( source.equals( target ) )
         {
             return CompareStatus.EQUAL;
-        }
-
-        final NodeState sourceState = source.getNodeState();
-        final NodeState targetState = target.getNodeState();
-
-        if ( sourceState.equals( NodeState.PENDING_DELETE ) && !targetState.equals( NodeState.PENDING_DELETE ) )
-        {
-            return CompareStatus.PENDING_DELETE;
-        }
-        else if ( !sourceState.equals( NodeState.PENDING_DELETE ) && targetState.equals( NodeState.PENDING_DELETE ) )
-        {
-            return CompareStatus.PENDING_DELETE_TARGET;
         }
 
         if ( !source.getNodePath().equals( target.getNodePath() ) )

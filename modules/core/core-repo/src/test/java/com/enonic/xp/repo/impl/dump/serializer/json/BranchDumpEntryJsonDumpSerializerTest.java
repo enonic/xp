@@ -10,7 +10,6 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -27,7 +26,6 @@ public class BranchDumpEntryJsonDumpSerializerTest
     {
         final BranchDumpEntry branchDumpEntry = BranchDumpEntry.create().
             meta( VersionMeta.create().
-                nodeState( NodeState.DEFAULT ).
                 nodePath( NodePath.create( "/fisk/ost" ).build() ).
                 timestamp( Instant.now() ).
                 version( NodeVersionId.from( "fisk" ) ).

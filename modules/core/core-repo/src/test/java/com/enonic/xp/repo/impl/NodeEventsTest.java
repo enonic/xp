@@ -10,8 +10,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 
@@ -46,19 +44,16 @@ public class NodeEventsTest
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( pushed1.id() ).
             nodePath( pushed1.path() ).
-            nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed1.getNodeVersionId() ).
             build();
         final NodeBranchEntry nodeBranchEntry2 = NodeBranchEntry.create().
             nodeId( pushed2.id() ).
             nodePath( pushed2.path() ).
-            nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed2.getNodeVersionId() ).
             build();
         final NodeBranchEntry nodeBranchEntry3 = NodeBranchEntry.create().
             nodeId( pushed3.id() ).
             nodePath( pushed3.path() ).
-            nodeState( NodeState.DEFAULT ).
             nodeVersionId( pushed3.getNodeVersionId() ).
             build();
 
@@ -171,28 +166,6 @@ public class NodeEventsTest
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
         assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.default}]",
-                      event.getValue( "nodes" ).get().toString() );
-    }
-
-    @Test
-    public void testStateUpdated()
-    {
-        final Node pushed1 = createNode( "state_updated1", NodePath.create( "/mynode1/state_updated1" ).build(), "id1" );
-        final Node pushed2 = createNode( "state_updated2", NodePath.create( "/mynode1/state_updated2" ).build(), "id2" );
-        final Node pushed3 = createNode( "state_updated3", NodePath.create( "/mynode1/state_updated3" ).build(), "id3" );
-        final Nodes nodes = Nodes.from( pushed1, pushed2, pushed3 );
-
-        Event event = NodeEvents.stateUpdated( nodes );
-
-        assertNotNull( event );
-        assertTrue( event.isDistributed() );
-        assertTrue( event.hasValue( "nodes" ) );
-        assertTrue( event.hasValue( "state" ) );
-        assertEquals( NodeEvents.NODE_STATE_UPDATED_EVENT, event.getType() );
-        assertEquals( NodeState.DEFAULT.toString(), event.getValue( "state" ).get() );
-        assertEquals( "[{id=id1, path=/mynode1/state_updated1/state_updated1, branch=draft, repo=com.enonic.cms.default}" +
-                          ", {id=id2, path=/mynode1/state_updated2/state_updated2, branch=draft, repo=com.enonic.cms.default}" +
-                          ", {id=id3, path=/mynode1/state_updated3/state_updated3, branch=draft, repo=com.enonic.cms.default}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 

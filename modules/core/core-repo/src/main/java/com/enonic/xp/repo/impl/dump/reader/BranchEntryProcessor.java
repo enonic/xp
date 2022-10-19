@@ -59,7 +59,6 @@ public class BranchEntryProcessor
             nodeId( branchDumpEntry.getNodeId() ).
             nodePath( meta.getNodePath() ).
             timestamp( meta.getTimestamp() ).
-            nodeState( meta.getNodeState() ).
             nodeVersionId( meta.getVersion() ).
             build() );
 

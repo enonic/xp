@@ -11,7 +11,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeLoadException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersionId;
 
@@ -31,7 +30,6 @@ public class LoadNodeCommandTest
             id( NodeId.from( "myNodeId" ) ).
             parentPath( NodePath.ROOT ).
             name( "fisk" ).
-            nodeState( NodeState.DEFAULT ).
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "myNodes" ) ).
             timestamp( Instant.now() ).

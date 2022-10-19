@@ -7,7 +7,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -114,7 +113,6 @@ public class ContentNodeTranslator
             .permissions( node.getPermissions() )
             .inheritPermissions( node.inheritsPermissions() )
             .hasChildren( hasChildren )
-            .contentState( ContentState.from( node.getNodeState().value() ) )
             .manualOrderValue( node.getManualOrderValue() );
 
         final boolean isRoot = NodePath.ROOT.equals( node.parentPath() );

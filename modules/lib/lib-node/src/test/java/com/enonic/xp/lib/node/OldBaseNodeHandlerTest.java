@@ -13,7 +13,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
@@ -45,7 +44,6 @@ public class OldBaseNodeHandlerTest
     {
         return NodeBranchEntry.create().
             nodeId( NodeId.from( id ) ).
-            nodeState( NodeState.DEFAULT ).
             nodePath( NodePath.create( NodePath.ROOT + id ).
                 build() ).
             build();
@@ -87,7 +85,6 @@ public class OldBaseNodeHandlerTest
                     allowAll().
                     build() ).
                 build() ).
-            nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "versionKey" ) ).
             timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) ).
             build();

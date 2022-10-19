@@ -5,8 +5,6 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -19,16 +17,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.SetNodeStateParams;
 
 
 final class DeleteContentCommand
@@ -76,30 +70,6 @@ final class DeleteContentCommand
             throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
         }
 
-        if ( !params.isDeleteOnline() )
-        {
-            final NodeIds draftChildren = this.nodeService.findByParent( FindNodesByParentParams.create().
-                parentId( nodeToDelete.id() ).
-                recursive( true ).
-                build() ).
-                getNodeIds();
-
-            final boolean anyChildIsMovedIn = nodeService.compare( draftChildren, ContentConstants.BRANCH_MASTER ).
-                getComparisons().
-                stream().
-                anyMatch( nodeComparison -> {
-                    final boolean moved = CompareStatus.MOVED.equals( nodeComparison.getCompareStatus() );
-                    return moved && !nodeComparison.getTargetPath().asAbsolute().toString().startsWith( nodePath.asAbsolute().toString() );
-                } );
-
-            if ( anyChildIsMovedIn )
-            {
-                throw new RuntimeException( String.format(
-                    "Cannot make content tree pending delete for [%s], at least one published child is moved in from outside.",
-                    nodeToDelete.id() ) );
-            }
-        }
-
         final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
 
         this.nodeService.refresh( RefreshMode.ALL );
@@ -109,42 +79,10 @@ final class DeleteContentCommand
 
     private DeleteContentsResult doDeleteContent( NodeId nodeToDelete )
     {
-        final CompareStatus rootNodeStatus = getCompareStatus( nodeToDelete );
-
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        if ( rootNodeStatus == CompareStatus.NEW )
-        {
-            // Root node is new, just delete all children
-            final NodeIds nodes = this.nodeService.deleteById( nodeToDelete, this );
+        deleteNodeInDraftAndMaster( nodeToDelete, result );
 
-            result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
-
-        }
-        else if ( this.params.isDeleteOnline() )
-        {
-            deleteNodeInDraftAndMaster( nodeToDelete, result );
-        }
-        else
-        {
-            this.nodeService.setNodeState( SetNodeStateParams.create().
-                nodeId( nodeToDelete ).
-                nodeState( NodeState.PENDING_DELETE ).
-                build() );
-
-            result.addPending( ContentId.from( nodeToDelete ) );
-            this.nodesDeleted( 1 );
-
-            final NodeIds children = getDirectChildren( nodeToDelete );
-
-            for ( final NodeId child : children )
-            {
-                final DeleteContentsResult childDeleteResult = this.doDeleteContent( child );
-
-                result.addDeleted( childDeleteResult.getDeletedContents() );
-                result.addPending( childDeleteResult.getPendingContents() );
-            }
-        }
         return result.build();
     }
 
@@ -194,33 +132,6 @@ final class DeleteContentCommand
                 deleteNodeInContext( id, masterContext );
                 result.addUnpublished( ContentId.from( id ) );
             } );
-    }
-
-    private NodeIds getDirectChildren( final NodeId nodeToDelete )
-    {
-        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-            parentId( nodeToDelete ).
-            recursive( false ).
-            build() );
-
-        return findNodesByParentResult.getNodeIds();
-    }
-
-    private CompareStatus getCompareStatus( final NodeId nodeToDelete )
-    {
-        final Context context = ContextAccessor.current();
-        final Branch currentBranch = context.getBranch();
-
-        final NodeComparison compare;
-        if ( currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
-        {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_MASTER );
-        }
-        else
-        {
-            compare = this.nodeService.compare( nodeToDelete, ContentConstants.BRANCH_DRAFT );
-        }
-        return compare.getCompareStatus();
     }
 
     private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )

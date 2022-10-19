@@ -10,7 +10,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -156,7 +155,6 @@ class NodeStorageServiceImplTest
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( nodeId ).
             nodePath( nodePath ).
-            nodeState( NodeState.DEFAULT ).
             build();
 
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().

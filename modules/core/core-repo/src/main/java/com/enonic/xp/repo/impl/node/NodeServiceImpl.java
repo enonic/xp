@@ -946,21 +946,7 @@ public class NodeServiceImpl
     @Override
     public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
-        verifyContext();
-        final SetNodeStateResult setNodeStateResult = SetNodeStateCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
-
-        if ( setNodeStateResult.getUpdatedNodes().isNotEmpty() )
-        {
-            this.eventPublisher.publish( NodeEvents.stateUpdated( setNodeStateResult.getUpdatedNodes() ) );
-        }
-
-        return setNodeStateResult;
+        return SetNodeStateResult.create().build();
     }
 
     @Override

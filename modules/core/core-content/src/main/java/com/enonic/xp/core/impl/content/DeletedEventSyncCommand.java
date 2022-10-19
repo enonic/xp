@@ -33,7 +33,7 @@ final class DeletedEventSyncCommand
                 if ( needToDelete( content ) )
                 {
                     final DeleteContentParams deleteParams =
-                        DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).deleteOnline( true ).build();
+                        DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
 
                     contentService.deleteWithoutFetch( deleteParams );
                 }

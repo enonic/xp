@@ -79,8 +79,6 @@ public class Content
 
     private final Locale language;
 
-    private final ContentState contentState;
-
     private final ContentIds processedReferences;
 
     private final WorkflowInfo workflowInfo;
@@ -123,7 +121,6 @@ public class Content
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.language = builder.language;
-        this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
         this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
         this.manualOrderValue = builder.manualOrderValue;
@@ -343,9 +340,10 @@ public class Content
         return language;
     }
 
+    @Deprecated
     public ContentState getContentState()
     {
-        return contentState;
+        return ContentState.DEFAULT;
     }
 
     public ContentIds getProcessedReferences()
@@ -409,11 +407,11 @@ public class Content
             Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
             Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
-            Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
-            Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
-            Objects.equals( workflowInfo, other.workflowInfo ) && Objects.equals( manualOrderValue, other.manualOrderValue ) &&
-            Objects.equals( originalName, other.originalName ) && Objects.equals( originalParentPath, other.originalParentPath ) &&
-            Objects.equals( archivedTime, other.archivedTime ) && Objects.equals( archivedBy, other.archivedBy );
+            Objects.equals( language, other.language ) && Objects.equals( publishInfo, other.publishInfo ) &&
+            Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
+            Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
+            Objects.equals( originalParentPath, other.originalParentPath ) && Objects.equals( archivedTime, other.archivedTime ) &&
+            Objects.equals( archivedBy, other.archivedBy );
     }
 
     @Override
@@ -421,8 +419,8 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
-                             extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo, manualOrderValue,
-                             originalName, originalParentPath, archivedTime, archivedBy );
+                             extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
+                             originalParentPath, archivedTime, archivedBy );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -477,8 +475,6 @@ public class Content
 
         protected Locale language;
 
-        protected ContentState contentState;
-
         protected ContentIds.Builder processedReferences;
 
         protected WorkflowInfo workflowInfo;
@@ -530,7 +526,6 @@ public class Content
             this.permissions = source.permissions;
             this.inheritPermissions = source.inheritPermissions;
             this.language = source.language;
-            this.contentState = source.contentState;
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
             this.workflowInfo = source.workflowInfo;
@@ -741,9 +736,9 @@ public class Content
             return (BUILDER) this;
         }
 
+        @Deprecated
         public BUILDER contentState( final ContentState contentState )
         {
-            this.contentState = contentState;
             return (BUILDER) this;
         }
 

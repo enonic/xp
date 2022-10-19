@@ -9,14 +9,11 @@ public final class DeleteContentParams
 {
     private final ContentPath contentPath;
 
-    private final boolean deleteOnline;
-
     private final DeleteContentListener deleteContentListener;
 
     private DeleteContentParams( Builder builder )
     {
         contentPath = builder.contentPath;
-        deleteOnline = builder.deleteOnline;
         deleteContentListener = builder.deleteContentListener;
     }
 
@@ -30,9 +27,10 @@ public final class DeleteContentParams
         return contentPath;
     }
 
+    @Deprecated
     public boolean isDeleteOnline()
     {
-        return deleteOnline;
+        return true;
     }
 
     public DeleteContentListener getDeleteContentListener()
@@ -73,8 +71,6 @@ public final class DeleteContentParams
     {
         private ContentPath contentPath;
 
-        private boolean deleteOnline = false;
-
         private DeleteContentListener deleteContentListener;
 
         private Builder()
@@ -87,9 +83,9 @@ public final class DeleteContentParams
             return this;
         }
 
+        @Deprecated
         public Builder deleteOnline( boolean deleteOnline )
         {
-            this.deleteOnline = deleteOnline;
             return this;
         }
 

@@ -4,12 +4,10 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
@@ -19,11 +17,9 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 
@@ -78,11 +74,7 @@ public class UnpublishContentCommand
             draftContext.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
         }
 
-        final UnpublishContentsResult result = resultBuilder.build();
-
-        removePendingDeleteFromDraft( result );
-
-        return result;
+        return resultBuilder.build();
     }
 
     private void recursiveUnpublish( final NodeId nodeId, final ContentIds.Builder contentsBuilder )
@@ -98,28 +90,6 @@ public class UnpublishContentCommand
                 params.getPublishContentListener().contentPushed( 1 );
             }
             contentsBuilder.add( ContentId.from( nodes.first() ) );
-        }
-    }
-
-    private void removePendingDeleteFromDraft( final UnpublishContentsResult result )
-    {
-        final Branch currentBranch = ContextAccessor.current().getBranch();
-        if ( !currentBranch.equals( ContentConstants.BRANCH_DRAFT ) )
-        {
-            final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
-                build();
-            draftContext.callWith( () -> {
-                final Nodes draftNodes = this.nodeService.getByIds( NodeIds.from( result.getUnpublishedContents().asStrings() ) );
-                for ( final Node draftNode : draftNodes )
-                {
-                    if ( draftNode.getNodeState().value().equalsIgnoreCase( ContentState.PENDING_DELETE.toString() ) )
-                    {
-                        this.nodeService.deleteById( draftNode.id() );
-                    }
-                }
-                return null;
-            } );
         }
     }
 

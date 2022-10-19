@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@Deprecated
 public enum NodeState
 {
     DEFAULT( "default" ),

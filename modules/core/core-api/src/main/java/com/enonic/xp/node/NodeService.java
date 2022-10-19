@@ -93,6 +93,7 @@ public interface NodeService
 
     Node createRootNode( CreateRootNodeParams params );
 
+    @Deprecated
     SetNodeStateResult setNodeState( SetNodeStateParams params );
 
     Node getRoot();

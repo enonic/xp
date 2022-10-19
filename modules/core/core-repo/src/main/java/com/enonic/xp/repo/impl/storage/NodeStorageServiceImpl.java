@@ -176,34 +176,6 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Node updateMetadata( final Node node, final InternalContext context )
-    {
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );
-
-        if ( nodeBranchEntry == null )
-        {
-            throw new NodeNotFoundException( "Cannot find node with id: " + node.id() + " in branch " + context.getBranch() );
-        }
-
-        final NodeVersionId nodeVersionId = nodeBranchEntry.getVersionId();
-        final NodeVersionKey nodeVersionKey = nodeBranchEntry.getNodeVersionKey();
-
-        final StoreBranchMetadataParams storeBranchMetadataParams = StoreBranchMetadataParams.create().
-            node( node ).
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
-            context( context ).
-            build();
-        storeBranchMetadata( storeBranchMetadataParams );
-
-        indexNode( node, nodeVersionId, context );
-
-        return Node.create( node ).
-            nodeVersionId( nodeVersionId ).
-            build();
-    }
-
-    @Override
     public void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
     {
         //TODO Check

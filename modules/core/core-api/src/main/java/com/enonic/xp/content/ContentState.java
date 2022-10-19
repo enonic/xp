@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@Deprecated
 public enum ContentState
 {
     DEFAULT, PENDING_DELETE;

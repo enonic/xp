@@ -6,13 +6,11 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.blob.NodeVersionKey;
 
-public class NodeBranchEntry
+public final class NodeBranchEntry
 {
     private final NodeVersionId nodeVersionId;
 
     private final NodeVersionKey nodeVersionKey;
-
-    private final NodeState nodeState;
 
     private final NodePath nodePath;
 
@@ -24,7 +22,6 @@ public class NodeBranchEntry
     {
         this.nodeVersionId = builder.nodeVersionId;
         this.nodeVersionKey = builder.nodeVersionKey;
-        this.nodeState = builder.state;
         this.nodePath = builder.nodePath;
         this.timestamp = builder.timestamp;
         this.nodeId = builder.nodeId;
@@ -47,7 +44,7 @@ public class NodeBranchEntry
 
     public NodeState getNodeState()
     {
-        return nodeState;
+        return NodeState.DEFAULT;
     }
 
     public NodePath getNodePath()
@@ -87,10 +84,6 @@ public class NodeBranchEntry
         {
             return false;
         }
-        if ( nodeState != that.nodeState )
-        {
-            return false;
-        }
         if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
         {
             return false;
@@ -108,7 +101,6 @@ public class NodeBranchEntry
     {
         int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
         result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
-        result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
@@ -120,8 +112,6 @@ public class NodeBranchEntry
         private NodeVersionId nodeVersionId;
 
         private NodeVersionKey nodeVersionKey;
-
-        private NodeState state;
 
         private NodePath nodePath;
 
@@ -145,9 +135,9 @@ public class NodeBranchEntry
             return this;
         }
 
+        @Deprecated
         public Builder nodeState( final NodeState state )
         {
-            this.state = state;
             return this;
         }
 
@@ -173,7 +163,6 @@ public class NodeBranchEntry
         {
             Preconditions.checkNotNull( this.nodePath, "NodePath must be set" );
             Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
-            Preconditions.checkNotNull( this.state, "Nodestate must be set" );
         }
 
         public NodeBranchEntry build()

@@ -21,6 +21,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
@@ -137,33 +138,6 @@ public class ContentServiceImplTest_publish
             build() );
 
         assertEquals( 1, push.getPushedContents().getSize() );
-    }
-
-    @Test
-    public void push_deleted()
-        throws Exception
-    {
-        final Content content = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
-
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
-            build();
-
-        final PublishContentResult push = this.contentService.publish( pushParams );
-        assertEquals( 1, push.getPushedContents().getSize() );
-
-        contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( content.getPath() ).
-            build() );
-
-        final PublishContentResult pushWithDeleted = this.contentService.publish( pushParams );
-        assertEquals( 1, pushWithDeleted.getDeletedContents().getSize() );
     }
 
     @Test
@@ -355,7 +329,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void publish_move_delete_moved_also_published()
+    public void move_delete_published()
         throws Exception
     {
         final Content s1 = createContent( ContentPath.ROOT, "s1" );
@@ -366,12 +340,15 @@ public class ContentServiceImplTest_publish
         // Move to f2, delete f1
         final Content f2 = createContent( s1.getPath(), "f2" );
         doMove( c1.getId(), f2.getPath() );
-        doDelete( f1.getPath(), false );
+        DeleteContentsResult result = doDelete( f1.getPath() );
 
-        // include children = false should be overridden since its a pending delete
-        final PublishContentResult result = doPublish( ContentIds.from( f1.getId() ), f1.getId() );
-        assertTrue( result.getPushedContents().contains( c1.getId() ) );
-        assertStatus( c1.getId(), CompareStatus.EQUAL );
+        assertEquals( 1, result.getDeletedContents().getSize() );
+        assertTrue( result.getDeletedContents().contains( f1.getId() ) );
+
+        assertEquals( 2, result.getUnpublishedContents().getSize() );
+        assertTrue( result.getUnpublishedContents().contains( f1.getId() ) );
+        assertTrue( result.getUnpublishedContents().contains( c1.getId() ) );
+
     }
 
     /*
@@ -552,14 +529,11 @@ public class ContentServiceImplTest_publish
         this.contentService.move( params );
     }
 
-    private void doDelete( final ContentPath f1Path, boolean instantly )
+    private DeleteContentsResult doDelete( final ContentPath f1Path )
     {
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().
-            contentPath( f1Path ).
-            deleteOnline( instantly ).
-            build();
+        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( f1Path ).build();
 
-        this.contentService.deleteWithoutFetch( deleteContentParams );
+        return this.contentService.deleteWithoutFetch( deleteContentParams );
     }
 
     private PublishContentResult doPublish( final ContentIds excludeChildrenIds, final ContentId... contentIds )

@@ -7,7 +7,6 @@ import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -22,7 +21,6 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -43,8 +41,6 @@ interface ContentAuditLogSupport
     void update( UpdateMediaParams params, Content content );
 
     void delete( DeleteContentParams params, DeleteContentsResult contents );
-
-    void undoPendingDelete( UndoPendingDeleteContentParams params, Contents contents );
 
     void publish( PushContentParams params, PublishContentResult result );
 
