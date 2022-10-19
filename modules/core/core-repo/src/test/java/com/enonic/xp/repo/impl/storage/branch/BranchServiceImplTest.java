@@ -11,7 +11,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -76,7 +75,6 @@ public class BranchServiceImplTest
         this.branchService.store( NodeBranchEntry.create().
             nodeId( NodeId.from( "123" ) ).
             nodePath( path ).
-            nodeState( NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             timestamp( Instant.now() ).

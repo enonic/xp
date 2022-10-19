@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
@@ -59,7 +58,6 @@ public class Pre6VersionDumpEntryJson
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeVersionKey( nodeVersionKey ).
-            nodeState( NodeState.from( json.getNodeState() ) ).
             build();
     }
 

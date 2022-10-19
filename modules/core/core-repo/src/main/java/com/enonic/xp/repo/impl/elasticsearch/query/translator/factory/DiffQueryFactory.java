@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.repo.impl.StorageType;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
@@ -56,21 +55,9 @@ public class DiffQueryFactory
 
         final BoolQueryBuilder inTargetOnly = onlyInQuery( this.target, this.source );
 
-        final BoolQueryBuilder deletedInSourceOnly = deletedOnlyQuery( this.source, this.target );
-
-        final BoolQueryBuilder deletedInTargetOnly = deletedOnlyQuery( this.target, this.source );
-
-        final BoolQueryBuilder sourceTargetCompares =
-            joinOnlyInQueries( inSourceOnly, inTargetOnly, deletedInSourceOnly, deletedInTargetOnly );
+        final BoolQueryBuilder sourceTargetCompares = joinOnlyInQueries( inSourceOnly, inTargetOnly );
 
         return wrapInPathQueryIfNecessary( sourceTargetCompares );
-    }
-
-    private BoolQueryBuilder deletedOnlyQuery( final Branch source, final Branch target )
-    {
-        return new BoolQueryBuilder().
-            must( deletedInBranch( source ) ).
-            mustNot( deletedInBranch( target ) );
     }
 
     private BoolQueryBuilder onlyInQuery( final Branch source, final Branch target )
@@ -109,14 +96,9 @@ public class DiffQueryFactory
             : new FilteredQueryBuilder( QueryBuilders.matchAllQuery(), sourceTargetCompares );
     }
 
-    private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly,
-                                                final BoolQueryBuilder deletedInSourceOnly, final BoolQueryBuilder deletedInTargetOnly )
+    private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly )
     {
-        return new BoolQueryBuilder().
-            should( inSourceOnly ).
-            should( inTargetOnly ).
-            should( deletedInSourceOnly ).
-            should( deletedInTargetOnly );
+        return new BoolQueryBuilder().should( inSourceOnly ).should( inTargetOnly );
     }
 
     private QueryBuilder hasPath( final NodePath nodePath, final boolean recursive )
@@ -133,18 +115,6 @@ public class DiffQueryFactory
         }
 
         return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
-    }
-
-    private HasChildQueryBuilder deletedInBranch( final Branch sourceBranch )
-    {
-        return new HasChildQueryBuilder( childStorageType.getName(), new BoolQueryBuilder().
-            must( isDeleted() ).
-            must( new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getValue() ) ) );
-    }
-
-    private TermQueryBuilder isDeleted()
-    {
-        return new TermQueryBuilder( BranchIndexPath.STATE.toString(), NodeState.PENDING_DELETE.value() );
     }
 
     private HasChildQueryBuilder isInBranch( final Branch source )

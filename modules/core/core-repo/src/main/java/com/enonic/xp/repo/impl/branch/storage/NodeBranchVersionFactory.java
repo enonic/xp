@@ -6,7 +6,6 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.ReturnValues;
 
@@ -28,7 +27,6 @@ public class NodeBranchVersionFactory
 
         return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
-            nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             timestamp( Instant.parse( timestamp.toString() ) ).

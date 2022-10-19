@@ -60,11 +60,9 @@ public class PublishContentHandlerTest
             Contents.from( exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ),
                            exampleContent( PUB_ID_2, "content2", "Content 2", "/mysite/page2", "myfield", "No. 2" ),
                            exampleContent( PUB_ID_3, "content3", "Content 3", "/mysite/page3", "myfield", "Hello x 3" ) );
-        Contents deleted = Contents.from( exampleContent( DEL_ID, "nocontent", "No Content", "/mysite/leave", "myop", "Delete" ) );
         Contents failed = Contents.from( exampleContent( FAIL_ID, "badcontent", "Bad bad Content", "/mysite/fail", "myop", "Publish" ) );
 
         return PublishContentResult.create().setPushed( published.getIds() ).
-            setDeleted( deleted.getIds() ).
             setFailed( failed.getIds() ).
             build();
     }

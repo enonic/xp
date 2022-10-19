@@ -18,10 +18,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
 
@@ -41,116 +39,6 @@ public class ResolveSyncWorkCommandTest
         throws Exception
     {
         this.createDefaultRootNode();
-    }
-
-    @Test
-    public void detect_children_marked_for_deletion()
-        throws Exception
-    {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
-
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
-
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
-
-        final Node node2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1" ) ).
-            parent( node2.path() ).
-            name( "node2_1" ).
-            build() );
-
-        final Node node3 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node3" ) ).
-            parent( NodePath.ROOT ).
-            name( "node3" ).
-            build() );
-
-        pushNodes( WS_OTHER, node1.id(), node1_1.id(), node2.id(), node2_1.id(), node3.id() );
-
-        markAsDelete( node2_1.id() );
-        markAsDelete( node3.id() );
-
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            nodeId( ROOT_UUID ).
-            includeChildren( true ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
-
-        assertEquals( 3, result.getSize() );
-    }
-
-    /**
-     * Tries to resolve one of the nodes in the middle of tree of deleted nodes.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void deleted_child_dont_include_parent_deletion()
-        throws Exception
-    {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
-
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
-
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            name( "node1_1_1" ).
-            build() );
-
-        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1_1" ) ).
-            parent( node1_1_1.path() ).
-            name( "node1_1_1_1" ).
-            build() );
-
-        pushNodes( WS_OTHER, node1.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
-
-        refresh();
-
-        markAsDelete( node1.id() );
-        markAsDelete( node1_1.id() );
-        markAsDelete( node1_1_1.id() );
-        markAsDelete( node1_1_1_1.id() );
-
-        refresh();
-
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            nodeId( node1_1.id() ).
-            includeChildren( true ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
-
-        assertEquals( 3, result.getSize() );
-
     }
 
     @Test
@@ -1087,49 +975,6 @@ public class ResolveSyncWorkCommandTest
         assertEquals( 5, result.getSize() );
     }
 
-
-    /*
-    - S1 (New)
-      - A1 (New)
-      - A2 (New)
-         - A2_1 - Ref:B2_1 (New)
-    - S2 (New)
-      - B1 (New)
-      - B2 (New)
-         - B2_1 (New)
-    - S1d (New)
-      - A1d (New)
-      - A2d (New)
-        - A2_1d - Ref:B2_1 (New)
-    */
-    @Test
-    public void pending_delete_with_children_and_reference()
-    {
-        createS1S2Tree();
-
-        ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
-        assertEquals( 8, result.getSize() );
-
-        pushAllNodesInS1S2Tree();
-        markAsDelete( NodeId.from( "s1" ) );
-        markAsDelete( NodeId.from( "s2" ) );
-
-        refresh();
-
-        // Since this is pending delete, it should force-include the children even it the commands give "false"
-        result = resolveSyncWorkResult( NodeId.from( "s1" ), false );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ).
-            referred( "b2_1" ) );
-
-        result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ).
-            referred( "b2_1" ) );
-    }
-
     @Test
     public void exclude_empty()
     {
@@ -1428,22 +1273,6 @@ public class ResolveSyncWorkCommandTest
             build();
 
         updateNode( updateNodeParams );
-    }
-
-    private void markAsDelete( final NodeId id )
-    {
-        SetNodeStateParams setNodeStateParams =
-            SetNodeStateParams.create().nodeId( id ).nodeState( NodeState.PENDING_DELETE ).recursive( true ).build();
-
-        SetNodeStateCommand.create().
-            params( setNodeStateParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
-
-        refresh();
     }
 
     private void moveNode( final String nodeId, final NodePath newParent, final String newName )

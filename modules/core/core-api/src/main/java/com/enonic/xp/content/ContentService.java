@@ -32,6 +32,7 @@ public interface ContentService
 
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
+    @Deprecated
     int undoPendingDelete( UndoPendingDeleteContentParams params );
 
     PublishContentResult publish( PushContentParams params );

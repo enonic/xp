@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -108,8 +107,7 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).
-            nodeState( NodeState.DEFAULT ).build();
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).build();
 
         final Event localEvent = NodeEvents.deleted( NodeBranchEntries.create().add( nodeBranchEntry ).build() );
 
@@ -216,7 +214,6 @@ public class NodeEventListenerTest
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( nodeId ).
             nodePath( nodePath ).
-            nodeState( NodeState.DEFAULT ).
             build();
         final PushNodeEntry pushNodeEntry = PushNodeEntry.create().
             nodeBranchEntry( nodeBranchEntry ).

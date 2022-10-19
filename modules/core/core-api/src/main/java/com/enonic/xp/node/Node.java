@@ -45,8 +45,6 @@ public final class Node
 
     private final AttachedBinaries attachedBinaries;
 
-    private final NodeState nodeState;
-
     private final NodeVersionId nodeVersionId;
 
     protected Node( final Builder builder )
@@ -63,7 +61,6 @@ public final class Node
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
-        this.nodeState = builder.nodeState;
         this.timestamp = builder.timestamp;
         this.nodeVersionId = builder.nodeVersionId;
 
@@ -168,9 +165,10 @@ public final class Node
         return attachedBinaries;
     }
 
+    @Deprecated
     public NodeState getNodeState()
     {
-        return nodeState;
+        return NodeState.DEFAULT;
     }
 
     public NodeVersionId getNodeVersionId()
@@ -250,8 +248,6 @@ public final class Node
 
         private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
 
-        private NodeState nodeState = NodeState.DEFAULT;
-
         private NodeVersionId nodeVersionId;
 
         public Builder()
@@ -277,7 +273,6 @@ public final class Node
             this.permissions = node.permissions;
             this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
-            this.nodeState = node.nodeState;
             this.timestamp = node.timestamp;
             this.nodeVersionId = node.nodeVersionId;
         }
@@ -366,9 +361,9 @@ public final class Node
             return this;
         }
 
+        @Deprecated
         public Builder nodeState( final NodeState nodeState )
         {
-            this.nodeState = nodeState;
             return this;
         }
 

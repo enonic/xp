@@ -39,7 +39,6 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -236,44 +235,14 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentPath", params.getContentPath().toString() );
-        paramsSet.addBoolean( "deleteOnline", params.isDeleteOnline() );
 
         addContents( resultSet, contents.getDeletedContents(), "deletedContents" );
-        addContents( resultSet, contents.getPendingContents(), "pendingContents" );
-        addContents( resultSet, contents.getPendingContents(), "unpublishedContents" );
+        addContents( resultSet, contents.getUnpublishedContents(), "unpublishedContents" );
 
         log( "system.content.delete", data, ContentIds.create().
             addAll( contents.getDeletedContents() ).
-            addAll( contents.getPendingContents() ).
             addAll( contents.getUnpublishedContents() ).
             build(), rootContext );
-    }
-
-    @Override
-    public void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doUndoPendingDelete( params, contents, context ) );
-    }
-
-    private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents, final Context rootContext )
-    {
-        if ( params.getContentIds() == null )
-        {
-            return;
-        }
-
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-
-        paramsSet.addString( "target", nullToNull( params.getTarget() ) );
-        paramsSet.addStrings( "contentIds", params.getContentIds().stream().
-            map( ContentId::toString ).collect( Collectors.toList() ) );
-
-        addContents( data.getRoot(), contents, "result" );
-
-        log( "system.content.delete", data, contents.getIds(), rootContext );
     }
 
     @Override

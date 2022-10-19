@@ -1,12 +1,10 @@
 package com.enonic.xp.lib.content;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.context.ContextAccessor;
 
 public final class DeleteContentHandler
     extends BaseContextHandler
@@ -43,7 +41,6 @@ public final class DeleteContentHandler
     {
         final DeleteContentParams params = DeleteContentParams.create().
             contentPath( path ).
-            deleteOnline( isMasterBranch() ).
             build();
         return doDelete( params );
     }
@@ -63,10 +60,5 @@ public final class DeleteContentHandler
     public void setKey( final String key )
     {
         this.key = key;
-    }
-
-    private boolean isMasterBranch()
-    {
-        return ContextAccessor.current().getBranch().equals( ContentConstants.BRANCH_MASTER );
     }
 }

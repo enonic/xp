@@ -11,13 +11,10 @@ public class StoreNodeCommand
 {
     private final Node node;
 
-    private final boolean updateMetadataOnly;
-
     private StoreNodeCommand( final Builder builder )
     {
         super( builder );
         this.node = builder.node;
-        this.updateMetadataOnly = builder.updateMetadataOnly;
     }
 
     public static Builder create()
@@ -34,11 +31,6 @@ public class StoreNodeCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        if ( updateMetadataOnly )
-        {
-            return this.nodeStorageService.updateMetadata( this.node, context );
-        }
-
         return this.nodeStorageService.store( this.node, context );
     }
 
@@ -46,8 +38,6 @@ public class StoreNodeCommand
         extends AbstractNodeCommand.Builder<Builder>
     {
         private Node node;
-
-        private boolean updateMetadataOnly = false;
 
         private Builder()
         {
@@ -62,12 +52,6 @@ public class StoreNodeCommand
         public Builder node( Node node )
         {
             this.node = node;
-            return this;
-        }
-
-        public Builder updateMetadataOnly( final boolean updateMetadataOnly )
-        {
-            this.updateMetadataOnly = updateMetadataOnly;
             return this;
         }
 

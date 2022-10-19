@@ -35,8 +35,6 @@ public interface NodeStorageService
 
     void delete( NodeIds nodeIds, InternalContext context );
 
-    Node updateMetadata( Node node, InternalContext context );
-
     void updateVersion( Node node, NodeVersionId nodeVersionId, InternalContext context );
 
     void push( Node node, Branch target, InternalContext context );

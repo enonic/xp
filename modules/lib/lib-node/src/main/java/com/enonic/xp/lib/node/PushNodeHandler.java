@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.lib.node.mapper.PushNodesResultMapper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -41,13 +40,11 @@ public final class PushNodeHandler
     public Object execute()
     {
         final NodeIds.Builder toBePushed = NodeIds.create();
-        final NodeIds.Builder toBeDeleted = NodeIds.create();
-
         final NodeIds nodeIds = getNodeIds();
 
         if ( resolve )
         {
-            doResolve( nodeIds, toBePushed, toBeDeleted );
+            doResolve( nodeIds, toBePushed );
         }
         else
         {
@@ -56,9 +53,7 @@ public final class PushNodeHandler
 
         final PushNodesResult push = this.nodeService.push( toBePushed.build(), targetBranch );
 
-        final NodeIds deletedNodes = doDelete( toBeDeleted );
-
-        return new PushNodesResultMapper( push, deletedNodes );
+        return new PushNodesResultMapper( push );
     }
 
     private NodeIds getNodeIds()
@@ -90,27 +85,19 @@ public final class PushNodeHandler
         return builder.build();
     }
 
-    private void doResolve( final NodeIds nodeIds, final NodeIds.Builder toBePushed, final NodeIds.Builder toBeDeleted )
+    private void doResolve( final NodeIds nodeIds, final NodeIds.Builder toBePushed )
     {
         for ( final NodeId nodeId : nodeIds )
         {
-            final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create().
-                nodeId( nodeId ).
-                branch( targetBranch ).
-                excludedNodeIds( getNodeIds( exclude ) ).
-                includeChildren( includeChildren ).
-                build() );
+            final ResolveSyncWorkResult result = this.nodeService.resolveSyncWork( SyncWorkResolverParams.create()
+                                                                                       .nodeId( nodeId )
+                                                                                       .branch( targetBranch )
+                                                                                       .excludedNodeIds( getNodeIds( exclude ) )
+                                                                                       .includeChildren( includeChildren )
+                                                                                       .build() );
 
             result.getNodeComparisons().forEach( nodeComparison -> {
-                if ( nodeComparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) )
-                {
-                    toBeDeleted.add( nodeComparison.getNodeId() );
-                }
-                else
-                {
-
-                    toBePushed.add( nodeComparison.getNodeId() );
-                }
+                toBePushed.add( nodeComparison.getNodeId() );
             } );
         }
     }

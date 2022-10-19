@@ -59,22 +59,6 @@ public class NodeEvents
         return null;
     }
 
-    public static Event stateUpdated( final Nodes updatedNodes )
-    {
-        if ( updatedNodes != null )
-        {
-            final Node firstNode = updatedNodes.first();
-
-            if ( firstNode == null )
-            {
-                return null;
-            }
-
-            return event( NODE_STATE_UPDATED_EVENT, updatedNodes ).value( "state", firstNode.getNodeState().toString() ).build();
-        }
-        return null;
-    }
-
     public static Event deleted( final NodeBranchEntries deletedNodes )
     {
         return deletedNodes != null ? event( NODE_DELETED_EVENT, deletedNodes ).build() : null;

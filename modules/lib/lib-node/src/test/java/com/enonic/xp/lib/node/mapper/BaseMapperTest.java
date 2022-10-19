@@ -11,7 +11,6 @@ import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +24,6 @@ public abstract class BaseMapperTest
         return NodeBranchEntry.create().
             nodeId( NodeId.from( a ) ).
             nodePath( NodePath.create( a ).build() ).
-            nodeState( NodeState.DEFAULT ).
             build();
     }
 

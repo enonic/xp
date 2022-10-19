@@ -11,10 +11,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -496,21 +494,6 @@ public class PushNodesCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
-            build().
-            execute();
-    }
-
-    protected void setPendingDelete( final NodeId nodeId )
-    {
-        SetNodeStateCommand.create().
-            params( SetNodeStateParams.create().
-                nodeId( nodeId ).
-                nodeState( NodeState.PENDING_DELETE ).
-                recursive( true ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
             build().
             execute();
     }

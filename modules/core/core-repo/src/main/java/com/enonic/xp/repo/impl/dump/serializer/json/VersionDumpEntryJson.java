@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
@@ -51,7 +50,6 @@ public class VersionDumpEntryJson
         nodeBlobKey = builder.nodeBlobKey;
         indexConfigBlobKey = builder.indexConfigBlobKey;
         accessControlBlobKey = builder.accessControlBlobKey;
-        nodeState = builder.nodeState;
         commitId = builder.commitId;
     }
 
@@ -64,7 +62,6 @@ public class VersionDumpEntryJson
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeVersionKey( nodeVersionKey ).
-            nodeState( NodeState.from( json.getNodeState() ) ).
             nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) ).
             build();
     }
@@ -122,11 +119,6 @@ public class VersionDumpEntryJson
         return accessControlBlobKey;
     }
 
-    private String getNodeState()
-    {
-        return nodeState;
-    }
-
     public String getCommitId()
     {
         return commitId;
@@ -162,7 +154,6 @@ public class VersionDumpEntryJson
             this.nodeBlobKey = source.getNodeBlobKey();
             this.indexConfigBlobKey = source.getIndexConfigBlobKey();
             this.accessControlBlobKey = source.getAccessControlBlobKey();
-            this.nodeState = source.getNodeState();
             this.commitId = source.getCommitId();
         }
 
@@ -199,12 +190,6 @@ public class VersionDumpEntryJson
         public Builder accessControlBlobKey( final String val )
         {
             accessControlBlobKey = val;
-            return this;
-        }
-
-        public Builder nodeState( final String val )
-        {
-            nodeState = val;
             return this;
         }
 

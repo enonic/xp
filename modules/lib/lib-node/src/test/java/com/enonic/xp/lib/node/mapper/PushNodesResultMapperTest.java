@@ -2,7 +2,6 @@ package com.enonic.xp.lib.node.mapper;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
@@ -18,7 +17,7 @@ public class PushNodesResultMapperTest
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result, NodeIds.empty() ).serialize( jsonGenerator );
+        new PushNodesResultMapper( result ).serialize( jsonGenerator );
 
         assertJson( "nodeResult/single_successful.json", jsonGenerator );
     }
@@ -32,22 +31,9 @@ public class PushNodesResultMapperTest
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result, NodeIds.empty() ).serialize( jsonGenerator );
+        new PushNodesResultMapper( result ).serialize( jsonGenerator );
 
         assertJson( "nodeResult/single_failed.json", jsonGenerator );
-    }
-
-    @Test
-    public void single_deleted()
-        throws Exception
-    {
-        final PushNodesResult result = PushNodesResult.create().
-            build();
-
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result, NodeIds.from( "a" ) ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/single_deleted.json", jsonGenerator );
     }
 
     @Test
@@ -64,7 +50,7 @@ public class PushNodesResultMapperTest
             build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result, NodeIds.from( "g", "h", "i" ) ).serialize( jsonGenerator );
+        new PushNodesResultMapper( result ).serialize( jsonGenerator );
 
         assertJson( "nodeResult/full.json", jsonGenerator );
     }

@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -15,12 +13,9 @@ public class PushNodesResultMapper
 {
     private final PushNodesResult result;
 
-    private final NodeIds deleted;
-
-    public PushNodesResultMapper( final PushNodesResult result, final NodeIds deleted )
+    public PushNodesResultMapper( final PushNodesResult result )
     {
         this.result = result;
-        this.deleted = deleted;
     }
 
     @Override
@@ -31,15 +26,10 @@ public class PushNodesResultMapper
         addDeleted( gen );
     }
 
+    @Deprecated
     private void addDeleted( final MapGenerator gen )
     {
         gen.array( "deleted" );
-
-        for ( final NodeId entry : deleted )
-        {
-            gen.value( entry );
-        }
-
         gen.end();
     }
 

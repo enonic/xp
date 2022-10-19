@@ -144,7 +144,6 @@ public class CommitDumpUpgrader
             nodeBlobKey( sourceEntry.getNodeBlobKey() ).
             indexConfigBlobKey( sourceEntry.getIndexConfigBlobKey() ).
             accessControlBlobKey( sourceEntry.getAccessControlBlobKey() ).
-            nodeState( sourceEntry.getNodeState() ).
             commitId( commit ? commitId : null ).
             build();
     }

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 
@@ -39,7 +38,6 @@ public class NodeFactory
     public static Node create( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
     {
         final Node.Builder builder = Node.create( nodeVersion ).
-            nodeState( NodeState.DEFAULT ).
             path( nodeVersionMetadata.getNodePath().toString() ).
             nodeVersionId( nodeVersionMetadata.getNodeVersionId() ).
             parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).

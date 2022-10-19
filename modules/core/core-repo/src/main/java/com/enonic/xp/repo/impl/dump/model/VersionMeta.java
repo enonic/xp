@@ -5,7 +5,6 @@ import java.time.Instant;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 
 public class VersionMeta
@@ -18,8 +17,6 @@ public class VersionMeta
 
     private final NodeVersionKey nodeVersionKey;
 
-    private final NodeState nodeState;
-
     private final NodeCommitId nodeCommitId;
 
     private VersionMeta( final Builder builder )
@@ -28,7 +25,6 @@ public class VersionMeta
         timestamp = builder.timestamp;
         version = builder.version;
         nodeVersionKey = builder.nodeVersionKey;
-        nodeState = builder.nodeState;
         nodeCommitId = builder.nodeCommitId;
     }
 
@@ -52,11 +48,6 @@ public class VersionMeta
         return nodeVersionKey;
     }
 
-    public NodeState getNodeState()
-    {
-        return nodeState;
-    }
-
     public NodeCommitId getNodeCommitId()
     {
         return nodeCommitId;
@@ -76,8 +67,6 @@ public class VersionMeta
         private NodeVersionId version;
 
         private NodeVersionKey nodeVersionKey;
-
-        private NodeState nodeState;
 
         private NodeCommitId nodeCommitId;
 
@@ -106,12 +95,6 @@ public class VersionMeta
         public Builder nodeVersionKey( final NodeVersionKey val )
         {
             nodeVersionKey = val;
-            return this;
-        }
-
-        public Builder nodeState( final NodeState val )
-        {
-            nodeState = val;
             return this;
         }
 
@@ -157,11 +140,7 @@ public class VersionMeta
         {
             return false;
         }
-        if ( nodeCommitId != null ? !nodeCommitId.equals( meta.nodeCommitId ) : meta.nodeCommitId != null )
-        {
-            return false;
-        }
-        return nodeState == meta.nodeState;
+        return nodeCommitId != null ? nodeCommitId.equals( meta.nodeCommitId ) : meta.nodeCommitId == null;
 
     }
 
@@ -172,7 +151,6 @@ public class VersionMeta
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( version != null ? version.hashCode() : 0 );
         result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
-        result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
         result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );
         return result;
     }

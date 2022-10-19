@@ -7,21 +7,12 @@ public class PublishContentResult
 {
     private final ContentIds pushedContents;
 
-    private final ContentIds deletedContents;
-
     private final ContentIds failedContents;
-
-    private final ContentIds unpublishedContents;
-
-    private final ContentPath deletedPath;
 
     private PublishContentResult( Builder builder )
     {
         this.pushedContents = builder.pushedContents;
-        this.deletedContents = builder.deletedContents;
         this.failedContents = builder.failedContents;
-        this.unpublishedContents = builder.unpublishedContents;
-        this.deletedPath = builder.deletedPath;
     }
 
     public static Builder create()
@@ -34,9 +25,10 @@ public class PublishContentResult
         return pushedContents;
     }
 
+    @Deprecated
     public ContentIds getDeletedContents()
     {
-        return deletedContents;
+        return ContentIds.empty();
     }
 
     public ContentIds getFailedContents()
@@ -44,27 +36,23 @@ public class PublishContentResult
         return failedContents;
     }
 
+    @Deprecated
     public ContentIds getUnpublishedContents()
     {
-        return unpublishedContents;
+        return ContentIds.empty();
     }
 
+    @Deprecated
     public ContentPath getDeletedPath()
     {
-        return deletedPath;
+        return null;
     }
 
     public static final class Builder
     {
         private ContentIds pushedContents = ContentIds.empty();
 
-        private ContentIds deletedContents = ContentIds.empty();
-
         private ContentIds failedContents = ContentIds.empty();
-
-        private ContentIds unpublishedContents = ContentIds.empty();
-
-        private ContentPath deletedPath;
 
         private Builder()
         {
@@ -82,21 +70,21 @@ public class PublishContentResult
             return this;
         }
 
+        @Deprecated
         public Builder setDeleted( final ContentIds deletedContents )
         {
-            this.deletedContents = deletedContents;
             return this;
         }
 
+        @Deprecated
         public Builder setUnpublishedContents( final ContentIds unpublishedContents )
         {
-            this.unpublishedContents = unpublishedContents;
             return this;
         }
 
+        @Deprecated
         public Builder setDeletedPath( final ContentPath deletedPath )
         {
-            this.deletedPath = deletedPath;
             return this;
         }
 

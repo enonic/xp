@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+@Deprecated
 public class SetNodeStateParams
 {
     private final NodeId nodeId;

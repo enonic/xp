@@ -32,9 +32,7 @@ var expected = {
         '9f5b0db0-38f9-4e81-b92e-116f25476b1c',
         'e1f57280-d672-4cd8-b674-98e26e5b69ae'
     ],
-    'deletedContents': [
-        '45d67001-7f2b-4093-99ae-639be9fdd1f6'
-    ],
+    'deletedContents': [],
     'failedContents': [
         '79e21db0-5b43-45ce-b58c-6e1c420b22bd'
     ]
