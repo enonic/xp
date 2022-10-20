@@ -13,6 +13,7 @@ import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
@@ -30,6 +31,8 @@ import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -43,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -58,20 +62,18 @@ public class ContentServiceImplTest_publish
     public void push_one_content()
         throws Exception
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            includeDependencies( false ).
-            build() );
+        final PublishContentResult push = this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
         assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 0, push.getFailedContents().getSize() );
@@ -82,23 +84,19 @@ public class ContentServiceImplTest_publish
     public void publish_workflow_not_ready()
         throws Exception
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            workflowInfo( WorkflowInfo.create().
-                state( WorkflowState.PENDING_APPROVAL ).
-                build() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .workflowInfo( WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).build() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            includeDependencies( false ).
-            build() );
+        final PublishContentResult push = this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
         assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 1, push.getFailedContents().getSize() );
@@ -111,28 +109,25 @@ public class ContentServiceImplTest_publish
         throws Exception
     {
 
-        ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapplication:test" ).
-            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() ).
-            build();
+        ContentType contentType = ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .name( "myapplication:test" )
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
 
-        Mockito.when( this.contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).
-            thenReturn( contentType );
+        Mockito.when( this.contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( contentType.getName() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( contentType.getName() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            includeDependencies( false ).
-            build() );
+        final PublishContentResult push = this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
         assertEquals( 1, push.getPushedContents().getSize() );
     }
@@ -143,9 +138,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content2.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create().contentIds( ContentIds.from( content2.getId() ) ).build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
@@ -158,9 +151,7 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create().contentIds( ContentIds.from( content1.getId() ) ).build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
         assertEquals( 3, result.getPushedContents().getSize() );
@@ -180,10 +171,10 @@ public class ContentServiceImplTest_publish
     {
         createContentTree2();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1_1.getId() ) ).
-            excludeChildrenIds( ContentIds.from( content1_1.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create()
+            .contentIds( ContentIds.from( content1_1.getId() ) )
+            .excludeChildrenIds( ContentIds.from( content1_1.getId() ) )
+            .build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
@@ -199,10 +190,10 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId() ) ).
-            excludedContentIds( ContentIds.from( content1.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create()
+            .contentIds( ContentIds.from( content1.getId() ) )
+            .excludedContentIds( ContentIds.from( content1.getId() ) )
+            .build();
 
         refresh();
 
@@ -217,11 +208,11 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId() ) ).
-            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
-            excludeChildrenIds( ContentIds.from( content1.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create()
+            .contentIds( ContentIds.from( content1.getId() ) )
+            .excludedContentIds( ContentIds.from( content1_1.getId() ) )
+            .excludeChildrenIds( ContentIds.from( content1.getId() ) )
+            .build();
 
         refresh();
 
@@ -237,19 +228,19 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content1_1_1" ).
-            parent( content1_1.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.contentService.create( CreateContentParams.create()
+                                        .contentData( new PropertyTree() )
+                                        .displayName( "content1_1_1" )
+                                        .parent( content1_1.getPath() )
+                                        .type( ContentTypeName.folder() )
+                                        .build() );
 
         refresh();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
-            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
-            build();
+        final PushContentParams pushParams = PushContentParams.create()
+            .contentIds( ContentIds.from( content1.getId(), content2.getId() ) )
+            .excludedContentIds( ContentIds.from( content1_1.getId() ) )
+            .build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
@@ -271,10 +262,8 @@ public class ContentServiceImplTest_publish
     {
         createContentTree2();
 
-        final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId() ) ).
-            includeDependencies( false ).
-            build();
+        final PushContentParams pushParams =
+            PushContentParams.create().contentIds( ContentIds.from( content1.getId() ) ).includeDependencies( false ).build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
@@ -295,21 +284,17 @@ public class ContentServiceImplTest_publish
     {
         createContentTree();
 
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content1.getId() ) ).
-            excludeChildrenIds( ContentIds.from( content1.getId() ) ).
-            build() );
+        this.contentService.publish( PushContentParams.create()
+                                         .contentIds( ContentIds.from( content1.getId() ) )
+                                         .excludeChildrenIds( ContentIds.from( content1.getId() ) )
+                                         .build() );
 
-        final MoveContentParams params = MoveContentParams.create().
-            contentId( content2_1.getId() ).
-            parentContentPath( content1.getPath() ).
-            build();
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content2_1.getId() ).parentContentPath( content1.getPath() ).build();
 
         this.contentService.move( params );
 
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( content2.getPath() ).
-            build() );
+        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
 
         final Content movedContent =
             this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName().toString() ) );
@@ -391,14 +376,11 @@ public class ContentServiceImplTest_publish
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            message( "My message" ).
-            build() );
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( "My message" ).build() );
 
-        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( content.getId() ).
-            build() );
+        FindContentVersionsResult versions =
+            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
 
         Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
         assertTrue( iterator.hasNext() );
@@ -414,14 +396,10 @@ public class ContentServiceImplTest_publish
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            message( null ).
-            build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( null ).build() );
 
-        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( content.getId() ).
-            build() );
+        FindContentVersionsResult versions =
+            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
 
         Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
         assertTrue( iterator.hasNext() );
@@ -438,20 +416,18 @@ public class ContentServiceImplTest_publish
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            includeDependencies( false ).
-            build() );
+        final PublishContentResult push = this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
         Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 16 ) ).log( captor.capture() );
 
@@ -468,12 +444,31 @@ public class ContentServiceImplTest_publish
         assertFalse( logResultSet.getStrings( "pendingContents" ).iterator().hasNext() );
     }
 
+    @Test
+    public void push_not_from_draft()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        assertThrows( IllegalArgumentException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> this.contentService.publish(
+                PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() ) ) );
+    }
+
     private Content doRename( final ContentId contentId, final String newName )
     {
-        return this.contentService.rename( RenameContentParams.create().
-            contentId( contentId ).
-            newName( ContentName.from( newName ) ).
-            build() );
+        return this.contentService.rename(
+            RenameContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
     }
 
     private Content getInMaster( final ContentId contentId )
@@ -499,19 +494,14 @@ public class ContentServiceImplTest_publish
 
     private void doMove( final ContentId contentId, final ContentPath newParent )
     {
-        final MoveContentParams params = MoveContentParams.create().
-            contentId( contentId ).
-            parentContentPath( newParent ).
-            build();
+        final MoveContentParams params = MoveContentParams.create().contentId( contentId ).parentContentPath( newParent ).build();
         this.contentService.move( params );
     }
 
     private void doMove( final ContentId contentId, final String newParent )
     {
-        final MoveContentParams params = MoveContentParams.create().
-            contentId( contentId ).
-            parentContentPath( ContentPath.from( newParent )  ).
-            build();
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( contentId ).parentContentPath( ContentPath.from( newParent ) ).build();
         this.contentService.move( params );
     }
 
@@ -524,10 +514,8 @@ public class ContentServiceImplTest_publish
 
     private PublishContentResult doPublish( final ContentIds excludeChildrenIds, final ContentId... contentIds )
     {
-        return this.contentService.publish( PushContentParams.create().
-            excludeChildrenIds( excludeChildrenIds ).
-            contentIds( ContentIds.from( contentIds ) ).
-            build() );
+        return this.contentService.publish(
+            PushContentParams.create().excludeChildrenIds( excludeChildrenIds ).contentIds( ContentIds.from( contentIds ) ).build() );
     }
 
     /**
@@ -539,44 +527,45 @@ public class ContentServiceImplTest_publish
      */
     private void createContentTree()
     {
-        this.content1 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content1" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content1 = this.contentService.create( CreateContentParams.create()
+                                                        .contentData( new PropertyTree() )
+                                                        .displayName( "content1" )
+                                                        .parent( ContentPath.ROOT )
+                                                        .type( ContentTypeName.folder() )
+                                                        .build() );
 
-        this.content2 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content2" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content2 = this.contentService.create( CreateContentParams.create()
+                                                        .contentData( new PropertyTree() )
+                                                        .displayName( "content2" )
+                                                        .parent( ContentPath.ROOT )
+                                                        .type( ContentTypeName.folder() )
+                                                        .build() );
 
-        this.content1_1 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content1_1" ).
-            parent( content1.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content1_1 = this.contentService.create( CreateContentParams.create()
+                                                          .contentData( new PropertyTree() )
+                                                          .displayName( "content1_1" )
+                                                          .parent( content1.getPath() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .build() );
 
-        this.content1_2_offline = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content1_2_offline" ).
-            parent( content1.getPath() ).
-            type( ContentTypeName.folder() ).
-            contentPublishInfo( ContentPublishInfo.create().first( Instant.now() ).build() ).
-            build() );
+        this.content1_2_offline = this.contentService.create( CreateContentParams.create()
+                                                                  .contentData( new PropertyTree() )
+                                                                  .displayName( "content1_2_offline" )
+                                                                  .parent( content1.getPath() )
+                                                                  .type( ContentTypeName.folder() )
+                                                                  .contentPublishInfo(
+                                                                      ContentPublishInfo.create().first( Instant.now() ).build() )
+                                                                  .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", Reference.from( content1_1.getId().toString() ) );
 
-        this.content2_1 = this.contentService.create( CreateContentParams.create().
-            contentData( data ).
-            displayName( "content2_1" ).
-            parent( content2.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content2_1 = this.contentService.create( CreateContentParams.create()
+                                                          .contentData( data )
+                                                          .displayName( "content2_1" )
+                                                          .parent( content2.getPath() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .build() );
 
         refresh();
     }
@@ -591,50 +580,50 @@ public class ContentServiceImplTest_publish
      */
     private void createContentTree2()
     {
-        this.content1 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content1" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content1 = this.contentService.create( CreateContentParams.create()
+                                                        .contentData( new PropertyTree() )
+                                                        .displayName( "content1" )
+                                                        .parent( ContentPath.ROOT )
+                                                        .type( ContentTypeName.folder() )
+                                                        .build() );
 
-        this.content2 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content2" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content2 = this.contentService.create( CreateContentParams.create()
+                                                        .contentData( new PropertyTree() )
+                                                        .displayName( "content2" )
+                                                        .parent( ContentPath.ROOT )
+                                                        .type( ContentTypeName.folder() )
+                                                        .build() );
 
-        this.content2_1 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content2_1" ).
-            parent( content2.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content2_1 = this.contentService.create( CreateContentParams.create()
+                                                          .contentData( new PropertyTree() )
+                                                          .displayName( "content2_1" )
+                                                          .parent( content2.getPath() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .build() );
 
-        final Content content2_1_1 = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content2_1_1" ).
-            parent( content2_1.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        final Content content2_1_1 = this.contentService.create( CreateContentParams.create()
+                                                                     .contentData( new PropertyTree() )
+                                                                     .displayName( "content2_1_1" )
+                                                                     .parent( content2_1.getPath() )
+                                                                     .type( ContentTypeName.folder() )
+                                                                     .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", Reference.from( content2_1_1.getId().toString() ) );
 
-        this.content1_1 = this.contentService.create( CreateContentParams.create().
-            contentData( data ).
-            displayName( "content1_1" ).
-            parent( content1.getPath() ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.content1_1 = this.contentService.create( CreateContentParams.create()
+                                                          .contentData( data )
+                                                          .displayName( "content1_1" )
+                                                          .parent( content1.getPath() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .build() );
 
-        this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "content3" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        this.contentService.create( CreateContentParams.create()
+                                        .contentData( new PropertyTree() )
+                                        .displayName( "content3" )
+                                        .parent( ContentPath.ROOT )
+                                        .type( ContentTypeName.folder() )
+                                        .build() );
 
         refresh();
     }
