@@ -12,7 +12,6 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
@@ -201,8 +200,7 @@ public class ContentServiceImplTest_archive
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.publish(
-            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).target( ContentConstants.BRANCH_MASTER ).build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
 
         refresh();
 

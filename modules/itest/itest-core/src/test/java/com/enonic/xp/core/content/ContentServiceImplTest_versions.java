@@ -82,7 +82,6 @@ public class ContentServiceImplTest_versions
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         // Two versions, since publish adds one version
@@ -160,12 +159,10 @@ public class ContentServiceImplTest_versions
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( WS_OTHER ).
             build() );
 
         final FindContentVersionsResult result = this.contentService.getVersions( FindContentVersionsParams.create().

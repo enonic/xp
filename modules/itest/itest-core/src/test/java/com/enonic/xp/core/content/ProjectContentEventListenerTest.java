@@ -446,7 +446,6 @@ public class ProjectContentEventListenerTest
 
         targetContext.runWith( () -> contentService.publish( PushContentParams.create()
                                                                  .contentIds( ContentIds.from( sourceContent.getId() ) )
-                                                                 .target( ContentConstants.BRANCH_MASTER )
                                                                  .build() ) );
 
         handleEvents();

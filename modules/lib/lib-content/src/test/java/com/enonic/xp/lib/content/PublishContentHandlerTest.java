@@ -90,8 +90,7 @@ public class PublishContentHandlerTest
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishById" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "target" )
-            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), Branch.from( "draft" ) );
+        assertThat( captor.getValue() ).returns( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), PushContentParams::getContentIds );
     }
 
     @Test
@@ -139,7 +138,7 @@ public class PublishContentHandlerTest
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithMessage" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "target", "message" )
-            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), Branch.from( "draft" ), "My first publish" );
+        assertThat( captor.getValue() ).extracting( "contentIds", "message" )
+            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), "My first publish" );
     }
 }

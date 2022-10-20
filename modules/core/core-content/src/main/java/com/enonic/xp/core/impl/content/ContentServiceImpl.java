@@ -408,7 +408,6 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
-            target( params.getTarget() ).
             contentPublishInfo( params.getContentPublishInfo() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
             includeDependencies( params.isIncludeDependencies() ).
@@ -433,7 +432,6 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
-            target( params.getTarget() ).
             build().
             execute();
     }

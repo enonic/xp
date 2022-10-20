@@ -287,7 +287,6 @@ public class ContentAuditLogSupportImpl
             contentPublishInfoSet.addInstant( "to", contentPublishInfo.getTo() );
             contentPublishInfoSet.addInstant( "first", contentPublishInfo.getFirst() );
         }
-        paramsSet.addString( "target", params.getTarget().toString() );
         paramsSet.addString( "message", params.getMessage() );
         paramsSet.addBoolean( "includeDependencies", params.isIncludeDependencies() );
 
@@ -324,10 +323,6 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addStrings( "contentIds", params.getContentIds().stream().
             map( ContentId::toString ).collect( Collectors.toList() ) );
-        if ( params.getUnpublishBranch() != null )
-        {
-            paramsSet.addString( "unpublishBranch", params.getUnpublishBranch().getValue() );
-        }
 
         addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 

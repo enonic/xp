@@ -6,7 +6,6 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -86,8 +85,7 @@ public class ContentServiceImplTest_getNearestSite
 
         final Content child =
             createContent( site.getPath(), ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
-        this.contentService.publish(
-            PushContentParams.create().target( ContentConstants.BRANCH_MASTER ).contentIds( ContentIds.from( site.getId() ) ).build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
         assertNull( fetchedSite );
@@ -101,8 +99,7 @@ public class ContentServiceImplTest_getNearestSite
         final Content childLevel2 =
             createContent( childLevel1.getPath(), ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
         final Content childLevel3 = createContent( childLevel2.getPath() );
-        this.contentService.publish(
-            PushContentParams.create().target( ContentConstants.BRANCH_MASTER ).contentIds( ContentIds.from( site.getId() ) ).build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( childLevel3.getId() ) );
         assertNull( fetchedSite );
@@ -116,8 +113,7 @@ public class ContentServiceImplTest_getNearestSite
             .from( Instant.now().plus( Duration.ofDays( 1 ) ) )
             .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
             .build() );
-        this.contentService.publish(
-            PushContentParams.create().target( ContentConstants.BRANCH_MASTER ).contentIds( ContentIds.from( site.getId() ) ).build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
         assertNull( fetchedSite );

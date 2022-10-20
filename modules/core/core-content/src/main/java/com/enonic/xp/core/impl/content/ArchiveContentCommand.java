@@ -118,7 +118,6 @@ final class ArchiveContentCommand
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.from( params.getContentId() ) )
-                         .unpublishBranch( ContentConstants.BRANCH_MASTER )
                          .build() )
             .build()
             .execute();

@@ -12,8 +12,6 @@ public class PushContentParams
 
     private final ContentIds excludeChildrenIds;
 
-    private final Branch target;
-
     private final ContentPublishInfo contentPublishInfo;
 
     private final boolean includeChildren;
@@ -29,7 +27,6 @@ public class PushContentParams
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        target = builder.target;
         contentPublishInfo = builder.contentPublishInfo;
         includeDependencies = builder.includeDependencies;
         excludeChildrenIds = builder.excludeChildrenIds;
@@ -57,9 +54,10 @@ public class PushContentParams
         return excludedContentIds;
     }
 
+    @Deprecated
     public Branch getTarget()
     {
-        return target;
+        return ContentConstants.BRANCH_MASTER;
     }
 
     public ContentPublishInfo getContentPublishInfo()
@@ -118,8 +116,6 @@ public class PushContentParams
 
         private ContentIds excludeChildrenIds = ContentIds.empty();
 
-        private Branch target;
-
         private ContentPublishInfo contentPublishInfo;
 
         private boolean includeChildren = true;
@@ -154,9 +150,9 @@ public class PushContentParams
             return this;
         }
 
+        @Deprecated
         public Builder target( Branch target )
         {
-            this.target = target;
             return this;
         }
 
