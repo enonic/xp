@@ -1,7 +1,6 @@
 package com.enonic.xp.archive;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
@@ -17,7 +16,7 @@ public final class RestoreContentsResult
 
     private RestoreContentsResult( Builder builder )
     {
-        this.restoredContents = ContentIds.from( builder.restoredContents.build() );
+        this.restoredContents = builder.restoredContents.build();
         this.parentPath = builder.parentPath;
     }
 
@@ -38,7 +37,7 @@ public final class RestoreContentsResult
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<ContentId> restoredContents = ImmutableList.builder();
+        private final ContentIds.Builder restoredContents = ContentIds.create();
 
         private ContentPath parentPath;
 

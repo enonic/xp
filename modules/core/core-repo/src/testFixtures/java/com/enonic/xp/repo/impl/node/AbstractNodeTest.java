@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -490,7 +489,7 @@ public abstract class AbstractNodeTest
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
-        return doPushNodes( NodeIds.from( Arrays.asList( nodeIds ) ), target );
+        return doPushNodes( NodeIds.from( nodeIds ), target );
     }
 
     protected PushNodesResult pushNodes( final NodeIds nodeIds, final Branch target )

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.CompareStatus;
 
@@ -55,7 +57,7 @@ public class NodeComparisons
     {
         return NodeIds.from( this.comparisonMap.values().stream().
             map( NodeComparison::getNodeId ).
-            collect( Collectors.toSet() ) );
+            collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public NodePaths getSourcePaths()

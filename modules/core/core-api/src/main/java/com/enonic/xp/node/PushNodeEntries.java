@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -35,7 +34,7 @@ public class PushNodeEntries
     {
         return NodeIds.from( this.set.stream().
             map( ( entry ) -> entry.getNodeBranchEntry().getNodeId() ).
-            collect( Collectors.toSet() ) );
+            collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public Branch getTargetBranch()

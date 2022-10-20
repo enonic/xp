@@ -65,14 +65,24 @@ class ContentNodeHelper
         return translateContentPathToNodePath( parentContentPath );
     }
 
-    public static NodeIds toNodeIds( final ContentIds contentIds )
+    public static NodeIds toNodeIds( final Iterable<ContentId> contentIds )
     {
-        return NodeIds.from( contentIds.stream().map( NodeId::from ).collect( Collectors.toList() ) );
+        final NodeIds.Builder builder = NodeIds.create();
+        for ( final ContentId contentId : contentIds )
+        {
+            builder.add( NodeId.from( contentId ) );
+        }
+        return builder.build();
     }
 
-    public static ContentIds toContentIds( final NodeIds nodeIds )
+    public static ContentIds toContentIds( final Iterable<NodeId> nodeIds )
     {
-        return ContentIds.from( nodeIds.stream().map( ContentId::from ).collect( Collectors.toList() ) );
+        final ContentIds.Builder builder = ContentIds.create();
+        for ( NodeId nodeId : nodeIds )
+        {
+            builder.add( ContentId.from( nodeId ) );
+        }
+        return builder.build();
     }
 
     public static NodePath getContentRoot()

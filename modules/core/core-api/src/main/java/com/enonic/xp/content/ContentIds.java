@@ -43,6 +43,11 @@ public final class ContentIds
 
     public static ContentIds from( final Iterable<ContentId> ids )
     {
+        if ( ids instanceof ContentIds )
+        {
+            return (ContentIds) ids;
+        }
+
         return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 

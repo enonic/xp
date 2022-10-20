@@ -3,7 +3,8 @@ package com.enonic.xp.repo.impl.node;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
@@ -57,9 +58,9 @@ public class FindNodesDependenciesCommand
 
     private NodeIds resolveDependencies( final NodeIds nodeIds )
     {
-        Set<NodeId> nonProcessedNodes = nodeIds.getSet().stream().
+        final NodeIds nonProcessedNodes = NodeIds.from( nodeIds.getSet().stream().
             filter( ( nodeId ) -> !processed.contains( nodeId ) ).
-            collect( Collectors.toSet() );
+            collect( ImmutableSet.toImmutableSet() ) );
 
         if ( nonProcessedNodes.isEmpty() )
         {
@@ -68,14 +69,14 @@ public class FindNodesDependenciesCommand
 
         final SearchResult result = getReferences( nonProcessedNodes );
 
-        this.processed.addAll( nonProcessedNodes );
-
-        final NodeIds.Builder builder = NodeIds.create();
+        this.processed.addAll( nonProcessedNodes.getSet() );
 
         if ( result.isEmpty() )
         {
             return NodeIds.empty();
         }
+
+        final NodeIds.Builder builder = NodeIds.create();
 
         addNodeIdsFromReferenceReturnValues( result, builder );
 
@@ -92,7 +93,7 @@ public class FindNodesDependenciesCommand
         return builder.build();
     }
 
-    private SearchResult getReferences( final Set<NodeId> nonProcessedNodes )
+    private SearchResult getReferences( final NodeIds nonProcessedNodes )
     {
         return this.nodeSearchService.query( NodeQuery.create().
             addQueryFilter( ExistsFilter.create().
@@ -100,10 +101,10 @@ public class FindNodesDependenciesCommand
                 build() ).
             addQueryFilter( IdFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
-                values( NodeIds.from( nonProcessedNodes ) ).
+                values( nonProcessedNodes ).
                 build() ).
             from( 0 ).
-            size( nonProcessedNodes.size() ).
+            size( nonProcessedNodes.getSize() ).
             build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
     }

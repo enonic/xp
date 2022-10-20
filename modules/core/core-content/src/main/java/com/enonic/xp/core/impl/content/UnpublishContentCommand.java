@@ -128,7 +128,7 @@ public class UnpublishContentCommand
             build();
 
         nodeService.refresh( RefreshMode.ALL );
-        nodeService.commit( commitEntry, NodeIds.from( contentId.toString() ) );
+        nodeService.commit( commitEntry, NodeIds.from( NodeId.from( contentId ) ) );
     }
 
     public static class Builder

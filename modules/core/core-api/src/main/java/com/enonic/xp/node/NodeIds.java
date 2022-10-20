@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -15,52 +14,57 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class NodeIds
     extends AbstractImmutableEntitySet<NodeId>
 {
+    private static final NodeIds EMPTY = new NodeIds( ImmutableSet.of() );
 
     private NodeIds( final ImmutableSet<NodeId> set )
     {
         super( set );
     }
 
-    private NodeIds( final Builder builder )
-    {
-        super( ImmutableSet.copyOf( builder.nodeIds ) );
-    }
-
     public static NodeIds empty()
     {
-        final ImmutableSet<NodeId> set = ImmutableSet.of();
-        return new NodeIds( set );
+        return EMPTY;
     }
 
     public static NodeIds from( final NodeId... ids )
     {
-        return new NodeIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static NodeIds from( final String... ids )
     {
-        return new NodeIds( parseIds( Arrays.asList( ids ) ) );
-    }
-
-    public static NodeIds from( final Iterable<NodeId> ids )
-    {
-        return new NodeIds( ImmutableSet.copyOf( ids ) );
+        return from( Arrays.asList( ids ) );
     }
 
     public static NodeIds from( final Collection<String> ids )
     {
-        return new NodeIds( parseIds( ids ) );
+        return fromInternal( ids.stream().map( NodeId::from ).collect( ImmutableSet.toImmutableSet() ) );
     }
-
 
     public static Builder create()
     {
         return new Builder();
     }
 
-    private static ImmutableSet<NodeId> parseIds( final Collection<String> paths )
+    public static NodeIds from( final Iterable<NodeId> ids )
     {
-        return paths.stream().map( NodeId::from ).collect( ImmutableSet.toImmutableSet() );
+        if ( ids instanceof NodeIds )
+        {
+            return (NodeIds) ids;
+        }
+        return fromInternal( ImmutableSet.copyOf( ids ) );
+    }
+
+    private static NodeIds fromInternal( final ImmutableSet<NodeId> set )
+    {
+        if ( set.isEmpty() )
+        {
+            return EMPTY;
+        }
+        else
+        {
+            return new NodeIds( set );
+        }
     }
 
     public List<String> getAsStrings()
@@ -70,7 +74,7 @@ public class NodeIds
 
     public static class Builder
     {
-        private final List<NodeId> nodeIds = new ArrayList<>();
+        private final ImmutableSet.Builder<NodeId> nodeIds = ImmutableSet.builder();
 
         public Builder add( final NodeId nodeId )
         {
@@ -84,12 +88,9 @@ public class NodeIds
             return this;
         }
 
-
         public NodeIds build()
         {
-            return new NodeIds( this );
+            return fromInternal( nodeIds.build() );
         }
-
     }
-
 }

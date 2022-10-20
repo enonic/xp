@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
@@ -116,8 +115,8 @@ final class DeleteContentCommand
         final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, draftContext );
         final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, masterContext );
 
-        result.addDeleted( ContentIds.from( draftNodes.getAsStrings() ) );
-        result.addUnpublished( ContentIds.from( masterNodes.getAsStrings() ) );
+        result.addDeleted( ContentNodeHelper.toContentIds( draftNodes ) );
+        result.addUnpublished( ContentNodeHelper.toContentIds( masterNodes ) );
 
         final NodeIds masterIdsByDraftPath = masterContext.callWith( () ->  // to delete master with moved draft from moved tree
                                                                          this.nodeService.findByParent( FindNodesByParentParams.create().

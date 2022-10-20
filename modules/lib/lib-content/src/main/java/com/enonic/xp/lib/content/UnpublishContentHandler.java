@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.content;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,19 +28,19 @@ public final class UnpublishContentHandler
     public List<String> execute()
     {
         final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_MASTER ).build();
-        final List<ContentId> contentIds = context.callWith( this::resolveContentIds );
+        final ContentIds contentIds = context.callWith( this::resolveContentIds );
 
         final UnpublishContentParams unpublishContentParams = UnpublishContentParams.create().
-            contentIds( ContentIds.from( contentIds ) ).
+            contentIds( contentIds ).
             build();
 
         final UnpublishContentsResult result = this.contentService.unpublishContent( unpublishContentParams );
         return result.getUnpublishedContents().stream().map( ContentId::toString ).collect( Collectors.toList() );
     }
 
-    private List<ContentId> resolveContentIds()
+    private ContentIds resolveContentIds()
     {
-        final List<ContentId> contentIds = new ArrayList<>();
+        ContentIds.Builder contentIds = ContentIds.create();
         for ( final String key : this.keys )
         {
             if ( key.startsWith( "/" ) )
@@ -58,7 +57,7 @@ public final class UnpublishContentHandler
                 contentIds.add( ContentId.from( key ) );
             }
         }
-        return contentIds;
+        return contentIds.build();
     }
 
     private Content getByPath( final ContentPath contentPath )

@@ -2,8 +2,6 @@ package com.enonic.xp.index;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
@@ -31,7 +29,7 @@ public class ReindexResult
         this.duration = builder.duration;
         this.startTime = builder.startTime;
         this.endTime = builder.endTime;
-        this.reindexNodes = NodeIds.from( builder.nodeIds );
+        this.reindexNodes = builder.nodeIds.build();
         this.repositoryId = builder.repositoryId;
         this.branches = builder.branches;
     }
@@ -73,7 +71,7 @@ public class ReindexResult
 
     public static final class Builder
     {
-        private final Set<NodeId> nodeIds = new HashSet<>();
+        private final NodeIds.Builder nodeIds = NodeIds.create();
 
         private Duration duration;
 

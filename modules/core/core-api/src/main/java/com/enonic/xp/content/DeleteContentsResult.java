@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -14,8 +11,8 @@ public class DeleteContentsResult
 
     private DeleteContentsResult( Builder builder )
     {
-        this.deletedContents = ContentIds.from( builder.deletedContents );
-        this.unpublishedContents = ContentIds.from( builder.unpublishedContents );
+        this.deletedContents = builder.deletedContents.build();
+        this.unpublishedContents = builder.unpublishedContents.build();
     }
 
     public static Builder create()
@@ -41,9 +38,9 @@ public class DeleteContentsResult
 
     public static final class Builder
     {
-        private final List<ContentId> deletedContents = new ArrayList<>();
+        private final ContentIds.Builder deletedContents = ContentIds.create();
 
-        private final List<ContentId> unpublishedContents = new ArrayList<>();
+        private final ContentIds.Builder unpublishedContents = ContentIds.create();
 
         private Builder()
         {
@@ -69,7 +66,7 @@ public class DeleteContentsResult
 
         public Builder addDeleted( final ContentIds deletedContents )
         {
-            this.deletedContents.addAll( deletedContents.getSet() );
+            this.deletedContents.addAll( deletedContents );
             return this;
         }
 
@@ -81,7 +78,7 @@ public class DeleteContentsResult
 
         public Builder addUnpublished( final ContentIds unpublishedContents )
         {
-            this.unpublishedContents.addAll( unpublishedContents.getSet() );
+            this.unpublishedContents.addAll( unpublishedContents );
             return this;
         }
 

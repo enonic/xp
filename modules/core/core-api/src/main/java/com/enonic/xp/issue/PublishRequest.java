@@ -16,7 +16,7 @@ public final class PublishRequest
     private PublishRequest( Builder builder )
     {
         this.items = PublishRequestItems.from( builder.items );
-        this.excludeIds = ContentIds.from( builder.exclude );
+        this.excludeIds = builder.exclude.build();
     }
 
     public PublishRequestItems getItems()
@@ -38,7 +38,7 @@ public final class PublishRequest
     {
         private final Set<PublishRequestItem> items = new LinkedHashSet<>();
 
-        private final Set<ContentId> exclude = new LinkedHashSet<>();
+        private final ContentIds.Builder exclude = ContentIds.create();
 
         public Builder addItems( final Collection<PublishRequestItem> items )
         {
@@ -61,13 +61,13 @@ public final class PublishRequest
 
         public Builder addExcludeIds( final Collection<ContentId> exclude )
         {
-            this.exclude.addAll( exclude );
+            exclude.forEach( this.exclude::add );
             return this;
         }
 
         public Builder addExcludeIds( final ContentIds exclude )
         {
-            this.exclude.addAll( exclude.getSet() );
+            this.exclude.addAll( exclude );
             return this;
         }
 
