@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -14,7 +11,7 @@ public class UnpublishContentsResult
 
     private UnpublishContentsResult( Builder builder )
     {
-        this.unpublishedContents = ContentIds.from( builder.unpublishedContents );
+        this.unpublishedContents = builder.unpublishedContents.build();
         this.contentPath = builder.contentPath;
     }
 
@@ -35,7 +32,7 @@ public class UnpublishContentsResult
 
     public static final class Builder
     {
-        private final List<ContentId> unpublishedContents = new ArrayList<>();
+        private final ContentIds.Builder unpublishedContents = ContentIds.create();
 
         private ContentPath contentPath;
 
@@ -49,7 +46,7 @@ public class UnpublishContentsResult
         }
 
         public Builder addUnpublished(final ContentIds contentIds) {
-            this.unpublishedContents.addAll( contentIds.getSet() );
+            this.unpublishedContents.addAll( contentIds );
             return this;
         }
 

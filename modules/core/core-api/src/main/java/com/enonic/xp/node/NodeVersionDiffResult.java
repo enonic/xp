@@ -1,8 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -14,7 +11,7 @@ public class NodeVersionDiffResult
 
     private NodeVersionDiffResult( final Builder builder )
     {
-        nodesWithDifferences = NodeIds.from( builder.nodeIds );
+        nodesWithDifferences = builder.nodeIds.build();
         totalHits = builder.totalHits;
     }
 
@@ -40,7 +37,7 @@ public class NodeVersionDiffResult
 
     public static class Builder
     {
-        private final Set<NodeId> nodeIds = new LinkedHashSet<>();
+        private final NodeIds.Builder nodeIds = NodeIds.create();
 
         private long totalHits;
 

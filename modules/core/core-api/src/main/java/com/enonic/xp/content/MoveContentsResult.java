@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -14,7 +11,7 @@ public class MoveContentsResult
 
     private MoveContentsResult( Builder builder )
     {
-        this.movedContents = ContentIds.from( builder.movedContents );
+        this.movedContents = builder.movedContents.build();
         this.contentName = builder.contentName;
     }
 
@@ -35,7 +32,7 @@ public class MoveContentsResult
 
     public static final class Builder
     {
-        private final List<ContentId> movedContents = new ArrayList<>();
+        private final ContentIds.Builder movedContents = ContentIds.create();
 
         private String contentName;
 
@@ -51,7 +48,7 @@ public class MoveContentsResult
 
         public Builder addMoved( final ContentIds contentIds )
         {
-            this.movedContents.addAll( contentIds.getSet() );
+            this.movedContents.addAll( contentIds );
             return this;
         }
 

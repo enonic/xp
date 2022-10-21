@@ -1,7 +1,5 @@
 package com.enonic.xp.archive;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -13,7 +11,7 @@ public final class ArchiveContentsResult
 
     private ArchiveContentsResult( Builder builder )
     {
-        this.archivedContents = ContentIds.from( builder.archivedContents.build() );
+        this.archivedContents = builder.archivedContents.build();
     }
 
     public static Builder create()
@@ -28,7 +26,7 @@ public final class ArchiveContentsResult
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<ContentId> archivedContents = ImmutableList.builder();
+        private final ContentIds.Builder archivedContents = ContentIds.create();
 
         private Builder()
         {

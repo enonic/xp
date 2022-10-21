@@ -31,7 +31,7 @@ final class FindContentIdsByParentCommand
     {
         final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
 
-        final ContentIds contentIds = ContentIds.from( result.getNodeIds().getAsStrings() );
+        final ContentIds contentIds = ContentNodeHelper.toContentIds( result.getNodeIds() );
 
         return FindContentIdsByParentResult.create().
             contentIds( contentIds ).

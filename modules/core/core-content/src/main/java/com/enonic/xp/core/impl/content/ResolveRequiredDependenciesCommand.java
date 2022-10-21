@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -13,7 +11,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
@@ -48,18 +45,12 @@ public class ResolveRequiredDependenciesCommand
 
     private void resolveDependencies()
     {
+        final NodeComparisons nodeComparisons = nodeService.compare( ContentNodeHelper.toNodeIds( contentIds ), target );
 
-        final NodeComparisons nodeComparisons = nodeService.compare( NodeIds.from( contentIds.asStrings() ), target );
-
-        this.resultBuilder.addAll( getRequiredIds( nodeComparisons ) );
-    }
-
-    private ContentIds getRequiredIds( final NodeComparisons nodeComparisons )
-    {
         final NodePaths parentPaths = getParentPaths( nodeComparisons.getComparisons() );
         final NodePaths resultPaths = nodeComparisons.getSourcePaths();
 
-        final Set<ContentId> requiredIds = parentPaths.stream().
+        parentPaths.stream().
             filter( resultPaths::contains ).
             map( parentPath -> {
                 final NodeComparison comparison = nodeComparisons.getBySourcePath( parentPath );
@@ -71,9 +62,7 @@ public class ResolveRequiredDependenciesCommand
                 return null;
             } ).
             filter( Objects::nonNull ).
-            collect( Collectors.toSet() );
-
-        return ContentIds.from( requiredIds );
+            forEach( resultBuilder::add );
     }
 
     private NodePaths getParentPaths( final Collection<NodeComparison> comparisons )

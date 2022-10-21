@@ -50,7 +50,7 @@ public final class PublishContentHandler
     private PublishContentResultMapper publishContent()
     {
         final List<ContentPath> contentNotFound = new ArrayList<>();
-        final List<ContentId> contentIds = new ArrayList<>();
+        final ContentIds.Builder contentIds = ContentIds.create();
 
         for ( final String key : this.keys )
         {
@@ -74,7 +74,7 @@ public final class PublishContentHandler
         }
 
         final PushContentParams.Builder builder = PushContentParams.create();
-        builder.contentIds( ContentIds.from( contentIds ) );
+        builder.contentIds( contentIds.build() );
         if ( this.contentPublishInfo != null )
         {
             final Object from = this.contentPublishInfo.get( "from" );

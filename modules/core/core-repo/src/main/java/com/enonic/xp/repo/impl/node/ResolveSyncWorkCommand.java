@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -134,7 +135,7 @@ public class ResolveSyncWorkCommand
 
         NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
-            collect( Collectors.toSet() ) );
+            collect( ImmutableSet.toImmutableSet() ) );
 
         if ( this.initialDiffFilter != null )
         {
@@ -285,7 +286,7 @@ public class ResolveSyncWorkCommand
     {
         final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
             target( this.target ).
-            nodeIds( NodeIds.from( diffAndDependantsBuilder.build() ) ).
+            nodeIds( diffAndDependantsBuilder.build() ).
             storageService( this.nodeStorageService ).
             build().
             execute();

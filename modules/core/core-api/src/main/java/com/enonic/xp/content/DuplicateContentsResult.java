@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -16,7 +13,7 @@ public class DuplicateContentsResult
 
     private DuplicateContentsResult( Builder builder )
     {
-        this.duplicatedContents = ContentIds.from( builder.duplicatedContents );
+        this.duplicatedContents = builder.duplicatedContents.build();
         this.contentName = builder.contentName;
         this.contentPath = builder.contentPath;
     }
@@ -43,7 +40,7 @@ public class DuplicateContentsResult
 
     public static final class Builder
     {
-        private final List<ContentId> duplicatedContents = new ArrayList<>();
+        private final ContentIds.Builder duplicatedContents = ContentIds.create();
 
         private String contentName;
 
@@ -61,7 +58,7 @@ public class DuplicateContentsResult
 
         public Builder addDuplicated( final ContentIds contentIds )
         {
-            this.duplicatedContents.addAll( contentIds.getSet() );
+            this.duplicatedContents.addAll( contentIds );
             return this;
         }
 

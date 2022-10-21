@@ -81,11 +81,16 @@ public class PublishContentCommand
 
     private void doPush( final ContentIds ids )
     {
+        if ( ids.isEmpty() )
+        {
+            return;
+        }
+
         final boolean validContents = checkIfAllContentsValid( ids );
 
         if ( validContents )
         {
-            doPushNodes( NodeIds.from( ids.asStrings() ) );
+            doPushNodes( ContentNodeHelper.toNodeIds( ids ) );
         }
         else
         {
@@ -124,11 +129,6 @@ public class PublishContentCommand
 
     private void doPushNodes( final NodeIds nodesToPush )
     {
-        if ( nodesToPush.isEmpty() )
-        {
-            return;
-        }
-
         SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             publishFrom( contentPublishInfo.getFrom() ).
@@ -141,12 +141,11 @@ public class PublishContentCommand
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
-        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getFailed()
-                                                                                        .stream()
-                                                                                        .map( failed -> failed.getNodeBranchEntry()
-                                                                                            .getNodeId() )
-                                                                                        .collect( Collectors.toList() ) ) ) );
-        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( NodeIds.from( pushNodesResult.getSuccessful().getKeys() ) ) );
+        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailed()
+                                                                         .stream()
+                                                                         .map( failed -> failed.getNodeBranchEntry().getNodeId() )
+                                                                         .collect( Collectors.toList() ) ) );
+        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful().getKeys() ) );
     }
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
@@ -251,6 +250,8 @@ public class PublishContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( contentIds );
+            Preconditions.checkArgument( ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ),
+                                         "Content can be published only from the draft branch" );
             ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 

@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -63,7 +62,7 @@ public class ResolveContentsToBePublishedCommand
     private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
         final NodeIds nodeIds = excludedContentIds != null
-            ? NodeIds.from( excludedContentIds.stream().map( NodeId::from ).collect( Collectors.toList() ) )
+            ? ContentNodeHelper.toNodeIds( excludedContentIds )
             : NodeIds.empty();
 
         final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
