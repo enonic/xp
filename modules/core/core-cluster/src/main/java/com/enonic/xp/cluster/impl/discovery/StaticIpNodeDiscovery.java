@@ -2,7 +2,6 @@ package com.enonic.xp.cluster.impl.discovery;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.enonic.xp.cluster.NodeDiscovery;
@@ -14,7 +13,7 @@ public class StaticIpNodeDiscovery
 
     private StaticIpNodeDiscovery( final Builder builder )
     {
-        hosts = Collections.unmodifiableList( builder.hosts );
+        hosts = List.copyOf( builder.hosts );
     }
 
     public static Builder create()
@@ -30,7 +29,7 @@ public class StaticIpNodeDiscovery
 
     public static final class Builder
     {
-        private List<InetAddress> hosts = new ArrayList<>();
+        private final List<InetAddress> hosts = new ArrayList<>();
 
         private Builder()
         {
@@ -39,12 +38,6 @@ public class StaticIpNodeDiscovery
         public Builder add( final InetAddress val )
         {
             this.hosts.add( val );
-            return this;
-        }
-
-        public Builder hosts( final List<InetAddress> val )
-        {
-            hosts = val;
             return this;
         }
 

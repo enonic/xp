@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -17,7 +18,8 @@ public class SortValuesProperty
 
     private SortValuesProperty( final Builder builder )
     {
-        this.values = builder.values != null ? Collections.unmodifiableList( Arrays.asList( builder.values ) ) : null;
+        this.values =
+            builder.values != null ? Collections.unmodifiableList( Arrays.stream( builder.values ).collect( Collectors.toList() ) ) : null;
     }
 
     public List<Object> getValues()
