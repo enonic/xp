@@ -337,11 +337,6 @@ public class ResolveSyncWorkCommandTest
     }
 
 
-    private String createAssertFailMessage( final NodeIds result, final ExpectedNodes expectedNodes )
-    {
-        return "Expected in result: [" + expectedNodes + "], got " + result.getAsStrings();
-    }
-
     /*
     - Node1
       - Node1_1 -> Ref2_1_1
@@ -1413,9 +1408,7 @@ public class ResolveSyncWorkCommandTest
             fail( builder.toString() );
         }
 
-        assertEquals( expectedNodes
-
-                          .nodes.size(), result.getSize(), createAssertFailMessage( result, expectedNodes ) );
+        assertEquals( expectedNodes.nodes.size(), result.getSize() );
     }
 
     private enum Reason

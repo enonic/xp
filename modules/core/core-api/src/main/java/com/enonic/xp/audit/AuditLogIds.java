@@ -58,6 +58,7 @@ public final class AuditLogIds
         return list.stream().map( AuditLogId::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
+    @Deprecated
     public Set<String> asStrings()
     {
         return this.set.stream().map( AuditLogId::toString ).collect( Collectors.toSet() );

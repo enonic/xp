@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -91,7 +92,7 @@ public class IndexDataServiceImpl
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
-            ids( nodeIds.getAsStrings() ).
+            ids( nodeIds.stream().map( NodeId::toString ).collect( Collectors.toList() ) ).
             build() );
     }
 

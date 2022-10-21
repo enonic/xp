@@ -24,7 +24,7 @@ final class NodeReferenceUpdatesHolder
 
     Reference getNewReference( final Reference oldReference )
     {
-        return Reference.from( this.references.get( oldReference.getNodeId() ).toString() );
+        return new Reference( this.references.get( oldReference.getNodeId() ) );
     }
 
     static Builder create()

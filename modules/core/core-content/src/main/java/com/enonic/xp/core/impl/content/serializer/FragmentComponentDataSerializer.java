@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.serializer;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.util.Reference;
@@ -18,7 +19,7 @@ final class FragmentComponentDataSerializer
 
         if ( component.getFragment() != null )
         {
-            specBlock.addReference( ID, Reference.from( component.getFragment().toString() ) );
+            specBlock.addReference( ID, new Reference( NodeId.from( component.getFragment() ) ) );
         }
     }
 

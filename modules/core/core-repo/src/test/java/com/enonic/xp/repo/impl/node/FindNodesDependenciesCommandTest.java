@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,8 +29,7 @@ public class FindNodesDependenciesCommandTest
     }
 
     @Test
-    public void several_layers_of_dependencies()
-        throws Exception
+    void several_layers_of_dependencies()
     {
 
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
@@ -45,7 +45,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 2, dependants.getSize(), "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings() );
+        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ), NodeId.from( "n1_1_1" ) );
     }
 
     @Test
@@ -78,7 +78,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, dependants.getSize(), "Should contain 'node1_1', contains " + dependants.getAsStrings() );
+        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ) );
     }
 
     @Test
@@ -99,7 +99,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 1, dependants.getSize() , "Should contain [node1_1(r)], contains " + dependants.getAsStrings());
+        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ) );
     }
 
     @Test
@@ -120,7 +120,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertEquals( 2, dependants.getSize() , "Should contain [node1_1(r),node1_1_1(r), contains " + dependants.getAsStrings());
+        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ), NodeId.from( "n1_1_1" ) );
     }
 
     @Test

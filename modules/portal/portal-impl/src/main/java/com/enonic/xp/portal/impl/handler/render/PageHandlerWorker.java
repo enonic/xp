@@ -84,7 +84,7 @@ final class PageHandlerWorker
     {
         final Property shortcut = content.getData().getProperty( SHORTCUT_TARGET_PROPERTY );
         final Reference target = shortcut == null ? null : shortcut.getReference();
-        if ( target == null || target.getNodeId() == null )
+        if ( target == null )
         {
             throw WebException.notFound( "Missing shortcut target" );
         }

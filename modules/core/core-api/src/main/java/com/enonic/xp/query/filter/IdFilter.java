@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.UUID;
 
 public class IdFilter
     extends FieldFilter
@@ -58,7 +60,19 @@ public class IdFilter
 
         public Builder values( final NodeIds val )
         {
-            this.values.addAll( val.getAsStrings() );
+            for ( NodeId value : val )
+            {
+                this.values.add( value.toString() );
+            }
+            return this;
+        }
+
+        public Builder values( final Iterable<? extends UUID> values )
+        {
+            for ( UUID value : values )
+            {
+                this.values.add( value.toString() );
+            }
             return this;
         }
 
