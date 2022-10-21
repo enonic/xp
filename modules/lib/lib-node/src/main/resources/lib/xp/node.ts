@@ -335,6 +335,8 @@ export type QueryDsl = {
 } | {
     ngram: NgramDslExpression;
 } | {
+    stemmed: StemmedDslExpression;
+} | {
     fulltext: FulltextDslExpression;
 } | {
     matchAll: MatchAllDslExpression;
@@ -436,7 +438,7 @@ export interface NodeMultiRepoQueryResult {
     })[];
     aggregations?: AggregationsResult;
     suggestions?: NodeQueryResultSuggestion[];
-};
+}
 
 // END AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
 
@@ -910,7 +912,7 @@ class RepoConnectionImpl
      *
      * @returns {object} The node or node array (as JSON) fetched from the repository.
      */
-    get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
+    get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;
     get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null {
