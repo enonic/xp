@@ -1,16 +1,18 @@
 package com.enonic.xp.util;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodeId;
 
 @PublicApi
-public class Reference
+public final class Reference
 {
     private final NodeId nodeId;
 
     public Reference( final NodeId nodeId )
     {
-        this.nodeId = nodeId;
+        this.nodeId = Objects.requireNonNull( nodeId );
     }
 
     public static Reference from( final String value )
@@ -32,23 +34,12 @@ public class Reference
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Reference reference = (Reference) o;
-
-        return nodeId != null ? nodeId.equals( reference.nodeId ) : reference.nodeId == null;
+        return this == o || o instanceof Reference && nodeId.equals( ( (Reference) o ).nodeId );
     }
 
     @Override
     public int hashCode()
     {
-        return nodeId != null ? nodeId.hashCode() : 0;
+        return nodeId.hashCode();
     }
 }

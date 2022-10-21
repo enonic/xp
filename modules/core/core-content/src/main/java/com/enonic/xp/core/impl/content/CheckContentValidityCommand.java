@@ -54,14 +54,14 @@ public class CheckContentValidityCommand
             should( notReady ).
             build();
 
-        final ContentQuery query = ContentQuery.create().
-            queryFilter( filter ).
-            queryFilter( IdFilter.create().
-                fieldName( ContentIndexPath.ID.getPath() ).
-                values( contentIds.asStrings() ).
-                build() ).
-            size( -1 ).
-            build();
+        final ContentQuery query = ContentQuery.create()
+            .queryFilter( filter )
+            .queryFilter( IdFilter.create()
+                              .fieldName( ContentIndexPath.ID.getPath() )
+                              .values( contentIds )
+                              .build() )
+            .size( -1 )
+            .build();
 
         final FindContentByQueryResult result = FindContentByQueryCommand.create().
             params( FindContentByQueryParams.create().

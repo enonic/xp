@@ -131,7 +131,8 @@ public class IssueDataSerializer
     {
         final PropertySet publishRequestSet = issueProperties.addSet( PUBLISH_REQUEST );
 
-        publishRequestSet.addStrings( PublishRequestPropertyNames.EXCLUDE_IDS, publishRequest.getExcludeIds().asStrings() );
+        publishRequestSet.addStrings( PublishRequestPropertyNames.EXCLUDE_IDS,
+                                      publishRequest.getExcludeIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
 
         final Collection<PropertySet> itemSets = new ArrayList<>();
         for ( final PublishRequestItem item : publishRequest.getItems() )

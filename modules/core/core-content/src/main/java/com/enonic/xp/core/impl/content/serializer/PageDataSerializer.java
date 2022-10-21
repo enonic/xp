@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -87,7 +88,7 @@ final class PageDataSerializer
 
         if ( page.hasTemplate() )
         {
-            specialBlockSet.addReference( TEMPLATE, Reference.from( page.getTemplate().toString() ) );
+            specialBlockSet.addReference( TEMPLATE, new Reference( NodeId.from( page.getTemplate() ) ) );
         }
 
         if ( page.hasRegions() )

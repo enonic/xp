@@ -68,8 +68,10 @@ class ContentQueryNodeQueryTranslator
 
         if ( contentIds != null && contentIds.isNotEmpty() )
         {
-            final IdFilter.Builder contentTypeFilterBuilder =
-                IdFilter.create().fieldName( ContentIndexPath.ID.getPath() ).values( contentIds.asStrings() ).setCache( true );
+            final IdFilter.Builder contentTypeFilterBuilder = IdFilter.create()
+                .fieldName( ContentIndexPath.ID.getPath() )
+                .values( contentIds )
+                .setCache( true );
 
             builder.addQueryFilter( contentTypeFilterBuilder.build() );
         }

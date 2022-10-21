@@ -67,6 +67,7 @@ public class NodeIds
         }
     }
 
+    @Deprecated
     public List<String> getAsStrings()
     {
         return this.set.stream().map( NodeId::toString ).collect( Collectors.toList() );

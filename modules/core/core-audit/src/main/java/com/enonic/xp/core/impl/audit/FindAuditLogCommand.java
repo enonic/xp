@@ -71,7 +71,7 @@ public class FindAuditLogCommand
         if ( params.getIds() != null )
         {
             builder.addQueryFilter( IdFilter.create().
-                values( params.getIds().asStrings() ).
+                values( params.getIds() ).
                 build() );
         }
 
