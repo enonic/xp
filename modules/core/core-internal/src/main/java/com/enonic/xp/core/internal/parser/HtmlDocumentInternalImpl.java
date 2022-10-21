@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class HtmlDocumentInternalImpl
+class HtmlDocumentInternalImpl
     implements HtmlDocumentInternal
 {
     private final Document document;
 
-    public HtmlDocumentInternalImpl( final Document document )
+    HtmlDocumentInternalImpl( final Document document )
     {
         this.document = document;
         this.document.outputSettings().prettyPrint( false ).outline( false );
