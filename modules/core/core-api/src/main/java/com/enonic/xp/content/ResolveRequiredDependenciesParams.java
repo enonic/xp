@@ -8,12 +8,10 @@ public class ResolveRequiredDependenciesParams
 {
     private final ContentIds contentIds;
 
-    private final Branch target;
 
     private ResolveRequiredDependenciesParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        target = builder.target;
     }
 
     public static Builder create()
@@ -28,14 +26,13 @@ public class ResolveRequiredDependenciesParams
 
     public Branch getTarget()
     {
-        return target;
+        return ContentConstants.BRANCH_MASTER;
     }
 
     public static final class Builder
     {
         private ContentIds contentIds;
 
-        private Branch target;
 
         private Builder()
         {
@@ -47,9 +44,9 @@ public class ResolveRequiredDependenciesParams
             return this;
         }
 
+        @Deprecated
         public Builder target( Branch target )
         {
-            this.target = target;
             return this;
         }
 

@@ -67,14 +67,13 @@ public final class ContentResource
         catch ( Exception e )
         {
             errors.add(
-                String.format( "Content '%s' - %s: %s", content.getPath().toString(), e.getClass().getCanonicalName(), e.getMessage() ) );
+                String.format( "Content '%s' - %s: %s", content.getPath(), e.getClass().getCanonicalName(), e.getMessage() ) );
             LOG.warn( "Error reprocessing content [" + content.getPath() + "]", e );
         }
 
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
-    @Deprecated
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
                                    final List<String> errors )
     {

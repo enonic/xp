@@ -34,6 +34,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -203,6 +204,7 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
+        verifyContextDraftBranch();
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -255,6 +257,7 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
+        verifyContextDraftBranch();
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -298,6 +301,7 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateMediaParams params )
     {
+        verifyContextDraftBranch();
         final Content content = CreateMediaCommand.create().
             params( params ).
             nodeService( this.nodeService ).
@@ -326,6 +330,7 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateContentParams params )
     {
+        verifyContextDraftBranch();
         final Content content = UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -351,6 +356,7 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateMediaParams params )
     {
+        verifyContextDraftBranch();
         final Content content = UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -377,6 +383,7 @@ public class ContentServiceImpl
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
+        // TODO which context
         final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -401,6 +408,7 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
+        verifyContextDraftBranch();
         final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -424,6 +432,7 @@ public class ContentServiceImpl
     @Override
     public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
+        verifyContextDraftBranch();
         return ResolveContentsToBePublishedCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -439,13 +448,13 @@ public class ContentServiceImpl
     @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
+        verifyContextDraftBranch();
         return ResolveRequiredDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
-            target( params.getTarget() ).
             build().
             execute();
     }
@@ -479,6 +488,8 @@ public class ContentServiceImpl
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
+        verifyContextMasterBranch();
+
         final UnpublishContentsResult result = UnpublishContentCommand.create().
             params( params ).
             nodeService( this.nodeService ).
@@ -759,6 +770,7 @@ public class ContentServiceImpl
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
+        verifyContextDraftBranch();
         final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -776,6 +788,7 @@ public class ContentServiceImpl
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
+        verifyContextDraftBranch();
         final MoveContentsResult result = MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -793,6 +806,7 @@ public class ContentServiceImpl
     @Override
     public ArchiveContentsResult archive( final ArchiveContentParams params )
     {
+        verifyContextDraftBranch();
         final ArchiveContentsResult result = ArchiveContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -810,6 +824,7 @@ public class ContentServiceImpl
     @Override
     public RestoreContentsResult restore( final RestoreContentParams params )
     {
+        verifyContextDraftBranch();
         final RestoreContentsResult result = RestoreContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -827,6 +842,7 @@ public class ContentServiceImpl
     @Override
     public Content rename( final RenameContentParams params )
     {
+        verifyContextDraftBranch();
         final Content content = RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             xDataService( this.xDataService ).
@@ -936,12 +952,12 @@ public class ContentServiceImpl
     @Override
     public CompareContentResult compare( final CompareContentParams params )
     {
-        return CompareContentCommand.create().
+        return CompareContentsCommand.create().
             nodeService( this.nodeService ).
-            contentId( params.getContentId() ).
+            contentIds( ContentIds.from( params.getContentId() ) ).
             target( params.getTarget() ).
             build().
-            execute();
+            execute().iterator().next();
     }
 
     @Override
@@ -1042,6 +1058,7 @@ public class ContentServiceImpl
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
+        verifyContextDraftBranch();
         try
         {
             final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
@@ -1070,6 +1087,7 @@ public class ContentServiceImpl
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
+        verifyContextDraftBranch();
 
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
@@ -1106,6 +1124,8 @@ public class ContentServiceImpl
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
+        verifyContextDraftBranch();
+
         final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -1317,6 +1337,20 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
+    }
+
+    private static void verifyContextDraftBranch()
+    {
+        if (!ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) ) {
+            throw new IllegalStateException("Branch must be draft");
+        }
+    }
+
+    private static void verifyContextMasterBranch()
+    {
+        if (!ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) ) {
+            throw new IllegalStateException("Branch must be master");
+        }
     }
 
     @Reference
