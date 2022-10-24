@@ -427,7 +427,7 @@ export function getSiteConfig<Config = Record<string, unknown>>(): Config | null
 }
 
 interface GetCurrentContentHandler {
-    execute<Data, Type extends string, Page extends Component>(): Content<Data, Type, Page> | null;
+    execute<Hit extends Content<unknown>>(): Hit | null;
 }
 
 /**
@@ -438,14 +438,9 @@ interface GetCurrentContentHandler {
  *
  * @returns {object|null} The current content as JSON.
  */
-export function getContent<
-    Data = Record<string, unknown>,
-    Type extends string = string,
-    Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>
->(): Content<Data, Type, Component<Config, Regions>> | null {
+export function getContent<Hit extends Content<unknown> = Content>(): Hit | null {
     const bean = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
-    return __.toNativeObject(bean.execute<Data, Type, Component<Config, Regions>>());
+    return __.toNativeObject(bean.execute<Hit>());
 }
 
 interface GetCurrentComponentHandler<Config extends object = object,
