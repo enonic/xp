@@ -55,7 +55,7 @@ interface GetContentHandler {
 
     setVersionId(value?: string | null): void;
 
-    execute<Data, Type extends string>(): Content<Data, Type> | null;
+    execute<Hit extends Content<unknown>>(): Hit | null;
 }
 
 interface GetAttachmentsHandler {
@@ -542,7 +542,7 @@ export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
  *
  * @returns {object} The content (as JSON) fetched from the repository.
  */
-export function get<Data = Record<string, unknown>, Type extends string = string>(params: GetContentParams): Content<Data, Type> | null {
+export function get<Hit extends Content<unknown> = Content>(params: GetContentParams): Hit | null {
     checkRequired(params, 'key');
 
     const bean = __.newBean<GetContentHandler>('com.enonic.xp.lib.content.GetContentHandler');
@@ -550,7 +550,7 @@ export function get<Data = Record<string, unknown>, Type extends string = string
     bean.setKey(params.key);
     bean.setVersionId(__.nullOrValue(params.versionId));
 
-    return __.toNativeObject(bean.execute<Data, Type>());
+    return __.toNativeObject(bean.execute<Hit>());
 }
 
 /**
@@ -795,10 +795,10 @@ export {
     _delete as delete,
 };
 
-export interface ContentsResult<Data, Type extends string> {
+export interface ContentsResult<Hit extends Content<unknown>> {
     total: number;
     count: number;
-    hits: Content<Data, Type>[];
+    hits: Hit[];
     aggregations?: Record<string, AggregationsResult>;
     highlight?: Record<string, HighlightResult>;
 }
@@ -819,7 +819,7 @@ interface GetChildContentHandler {
 
     setSort(value?: string | null): void;
 
-    execute<Data, Type extends string>(): ContentsResult<Data, Type>;
+    execute<Hit extends Content<unknown>>(): ContentsResult<Hit>;
 }
 
 /**
@@ -835,7 +835,7 @@ interface GetChildContentHandler {
  *
  * @returns {Object} Result (of content) fetched from the repository.
  */
-export function getChildren<Data = Record<string, unknown>, Type extends string = string>(params: GetChildContentParams): ContentsResult<Data, Type> {
+export function getChildren<Hit extends Content<unknown> = Content>(params: GetChildContentParams): ContentsResult<Hit> {
     checkRequired(params, 'key');
 
     const {
@@ -850,7 +850,7 @@ export function getChildren<Data = Record<string, unknown>, Type extends string 
     bean.setStart(start);
     bean.setCount(count);
     bean.setSort(__.nullOrValue(sort));
-    return __.toNativeObject(bean.execute<Data, Type>());
+    return __.toNativeObject(bean.execute<Hit>());
 }
 
 export type IdGeneratorSupplier = (value: string) => string;
@@ -989,7 +989,7 @@ interface QueryContentHandler {
 
     setHighlight(value: ScriptValue): void;
 
-    execute<Data, Type extends string>(): ContentsResult<Data, Type>;
+    execute<Hit extends Content<unknown>>(): ContentsResult<Hit>;
 }
 
 /**
@@ -1008,7 +1008,7 @@ interface QueryContentHandler {
  *
  * @returns {object} Result of query.
  */
-export function query<Data = Record<string, unknown>, Type extends string = string>(params: QueryContentParams): ContentsResult<Data, Type> {
+export function query<Hit extends Content<unknown> = Content>(params: QueryContentParams): ContentsResult<Hit> {
     const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(params.start);
@@ -1020,7 +1020,7 @@ export function query<Data = Record<string, unknown>, Type extends string = stri
     bean.setFilters(__.toScriptValue(params.filters));
     bean.setHighlight(__.toScriptValue(params.highlight));
 
-    return __.toNativeObject(bean.execute<Data, Type>());
+    return __.toNativeObject(bean.execute<Hit>());
 }
 
 export interface ModifyContentParams<Data, Type extends string> {
