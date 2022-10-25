@@ -24,6 +24,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -1118,7 +1119,7 @@ public class ContentServiceImpl
     @Override
     public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
     {
-        return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), params.getTarget() );
+        return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), ContentConstants.BRANCH_MASTER );
     }
 
     @Override
@@ -1223,6 +1224,8 @@ public class ContentServiceImpl
     @Override
     public Content reprocess( final ContentId contentId )
     {
+        verifyContextDraftBranch();
+
         final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -1287,6 +1290,8 @@ public class ContentServiceImpl
     @Override
     public ImportContentResult importContent( final ImportContentParams params )
     {
+        verifyContextDraftBranch();
+
         return ImportContentCommand.create().
             params( params ).
             nodeService( nodeService ).
@@ -1339,6 +1344,14 @@ public class ContentServiceImpl
             execute();
     }
 
+    private static void verifyContextDraftOrMasterBranch()
+    {
+        final Branch branch = ContextAccessor.current().getBranch();
+        if ( !ContentConstants.BRANCH_DRAFT.equals( branch ) && !ContentConstants.BRANCH_MASTER.equals( branch ) )
+        {
+            throw new IllegalStateException( "Branch must be draft or master" );
+        }
+    }
     private static void verifyContextDraftBranch()
     {
         if (!ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) ) {
