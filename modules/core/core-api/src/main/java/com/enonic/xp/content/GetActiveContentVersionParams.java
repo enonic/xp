@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import com.enonic.xp.branch.Branch;
 
-public class GetActiveContentVersionParams
+public final class GetActiveContentVersionParams
 {
     private final ContentId contentId;
 
@@ -42,6 +42,7 @@ public class GetActiveContentVersionParams
             return this;
         }
 
+        @Deprecated
         public Builder branch( final Branch branch )
         {
             this.branch = branch;

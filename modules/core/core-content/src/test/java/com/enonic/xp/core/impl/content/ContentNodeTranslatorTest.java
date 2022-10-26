@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -25,6 +24,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,13 +72,7 @@ public class ContentNodeTranslatorTest
 
         final Contents contents = this.contentNodeTranslator.fromNodes( nodes, true );
 
-        assertEquals( 3, contents.getSize() );
-        final Content content1 = contents.getContentById( ContentId.from( ID_1.toString() ) );
-        final Content content3 = contents.getContentById( ContentId.from( ID_3.toString() ) );
-        final Content content2 = contents.getContentById( ContentId.from( ID_2.toString() ) );
-        assertTrue( content1.hasChildren() );
-        assertTrue( content2.hasChildren() );
-        assertFalse( content3.hasChildren() );
+        assertThat(contents).map( Content::hasChildren ).containsExactly( true, true, false );
     }
 
     @Test
@@ -89,13 +83,7 @@ public class ContentNodeTranslatorTest
 
         final Contents contents = this.contentNodeTranslator.fromNodes( nodes, false );
 
-        assertEquals( 3, contents.getSize() );
-        final Content content1 = contents.getContentById( ContentId.from( ID_1.toString() ) );
-        final Content content3 = contents.getContentById( ContentId.from( ID_3.toString() ) );
-        final Content content2 = contents.getContentById( ContentId.from( ID_2.toString() ) );
-        assertFalse( content1.hasChildren() );
-        assertFalse( content2.hasChildren() );
-        assertFalse( content3.hasChildren() );
+        assertThat(contents).map( Content::hasChildren ).containsExactly( false, false, false );
     }
 
     @Test
@@ -138,7 +126,7 @@ public class ContentNodeTranslatorTest
         throws Exception
     {
         final Content content = this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false, true );
-        assertTrue( ContentPath.ROOT.equals( content.getPath() ) );
+        assertEquals( ContentPath.ROOT, content.getPath() );
     }
 
     private Node createNode()

@@ -85,7 +85,7 @@ public class ContentServiceImplTest_find
         throws Exception
     {
         final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                          .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                          .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                           .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                           .build() );
         assertEquals( 1, result.getTotalHits() );
@@ -97,7 +97,7 @@ public class ContentServiceImplTest_find
     {
         authorizedMasterContext().callWith( () -> {
             final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                              .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                               .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .build() );
             assertEquals( 0, result.getTotalHits() );
@@ -312,8 +312,8 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        Assertions.assertThat(
-                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getIds() )
+        Assertions.assertThat( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents() )
+            .map( Content::getId )
             .containsExactly( existedContents );
     }
 

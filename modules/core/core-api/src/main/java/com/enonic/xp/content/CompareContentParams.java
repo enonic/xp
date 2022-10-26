@@ -4,6 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
+@Deprecated
 public class CompareContentParams
 {
     private final ContentId contentId;

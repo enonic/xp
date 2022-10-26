@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -16,7 +17,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -384,7 +384,7 @@ public class ContentServiceImpl
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
-        // TODO which context
+        verifyContextDraftBranch();
         final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -953,12 +953,14 @@ public class ContentServiceImpl
     @Override
     public CompareContentResult compare( final CompareContentParams params )
     {
-        return CompareContentsCommand.create().
-            nodeService( this.nodeService ).
-            contentIds( ContentIds.from( params.getContentId() ) ).
-            target( params.getTarget() ).
-            build().
-            execute().iterator().next();
+        return CompareContentsCommand.create()
+            .nodeService( this.nodeService )
+            .contentIds( ContentIds.from( params.getContentId() ) )
+            .target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) )
+            .build()
+            .execute()
+            .iterator()
+            .next();
     }
 
     @Override
@@ -967,7 +969,7 @@ public class ContentServiceImpl
         return CompareContentsCommand.create().
             nodeService( this.nodeService ).
             contentIds( params.getContentIds() ).
-            target( params.getTarget() ).
+            target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) ).
             build().
             execute();
     }
@@ -979,7 +981,7 @@ public class ContentServiceImpl
         final Instant now = Instant.now();
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( params.getTarget() ).
+            branch( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_DRAFT ) ).
             attribute( "ignorePublishTimes", Boolean.TRUE ).
             build().
             callWith( () -> this.getByIds( getContentByIdsParams ) );
@@ -1041,13 +1043,13 @@ public class ContentServiceImpl
     @Override
     public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
     {
-        final GetActiveContentVersionsResult activeVersions = getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( params.getBranch() ) ).
-            contentId( params.getContentId() ).
-            build() );
+        final GetActiveContentVersionsParams versionsParams = GetActiveContentVersionsParams.create()
+            .branches( Branches.from( Objects.requireNonNullElse( params.getBranch(), ContentConstants.BRANCH_DRAFT ) ) )
+            .contentId( params.getContentId() )
+            .build();
+        final List<ActiveContentVersionEntry> contentVersions = getActiveVersions( versionsParams ).getActiveContentVersions();
 
-        final UnmodifiableIterator<ActiveContentVersionEntry> activeVersionIterator = activeVersions.getActiveContentVersions().iterator();
-        return activeVersionIterator.hasNext() ? activeVersionIterator.next().getContentVersion() : null;
+        return contentVersions.isEmpty() ? null : contentVersions.get( 0 ).getContentVersion();
     }
 
     @Override

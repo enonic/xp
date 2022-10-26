@@ -264,7 +264,7 @@ public class ContentServiceImplTest_findByParent
 
         assertNotNull( result );
         assertEquals( 1, result.getTotalHits() );
-        final Content content1Result = result.getContents().getContentById( content1.getId() );
+        final Content content1Result = result.getContents().iterator().next();
         assertTrue( content1Result.hasChildren() );
     }
 
@@ -296,7 +296,7 @@ public class ContentServiceImplTest_findByParent
         throws Exception
     {
         final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
         assertEquals( 1, result.getTotalHits() );
@@ -308,7 +308,7 @@ public class ContentServiceImplTest_findByParent
     {
         authorizedMasterContext().callWith( () -> {
             final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
             assertEquals( 0, result.getTotalHits() );

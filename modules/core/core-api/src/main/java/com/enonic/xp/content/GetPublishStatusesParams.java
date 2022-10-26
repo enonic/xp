@@ -4,12 +4,19 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class GetPublishStatusesParams
+public final class GetPublishStatusesParams
 {
     private final ContentIds contentIds;
 
     private final Branch target;
 
+    private GetPublishStatusesParams( final ContentIds contentIds )
+    {
+        this.contentIds = contentIds;
+        this.target = null;
+    }
+
+    @Deprecated
     public GetPublishStatusesParams( final ContentIds contentIds, final Branch target )
     {
         this.contentIds = contentIds;
@@ -36,5 +43,22 @@ public class GetPublishStatusesParams
     public int hashCode()
     {
         return super.hashCode();
+    }
+
+    public static class Builder
+    {
+
+        private ContentIds contentIds;
+
+        public Builder contentId( final ContentIds contentIds )
+        {
+            this.contentIds = contentIds;
+            return this;
+        }
+
+        public GetPublishStatusesParams build()
+        {
+            return new GetPublishStatusesParams( this.contentIds );
+        }
     }
 }

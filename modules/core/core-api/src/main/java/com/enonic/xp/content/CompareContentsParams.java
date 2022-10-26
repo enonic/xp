@@ -1,17 +1,22 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class CompareContentsParams
+public final class CompareContentsParams
 {
     private final ContentIds contentIds;
 
     private final Branch target;
 
+    private CompareContentsParams( final ContentIds contentIds )
+    {
+        this.contentIds = contentIds;
+        this.target = null;
+    }
+
+    @Deprecated
     public CompareContentsParams( final ContentIds contentIds, final Branch target )
     {
         this.contentIds = contentIds;
@@ -31,21 +36,32 @@ public class CompareContentsParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final CompareContentsParams that = (CompareContentsParams) o;
-        return Objects.equals( contentIds, that.contentIds ) && Objects.equals( target, that.target );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, target );
+        return super.hashCode();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+    public static class Builder
+    {
+        private ContentIds contentIds;
+
+        public Builder contentIds( final ContentIds contentIds )
+        {
+            this.contentIds = contentIds;
+            return this;
+        }
+
+        public CompareContentsParams build()
+        {
+            return new CompareContentsParams( this.contentIds );
+        }
     }
 }

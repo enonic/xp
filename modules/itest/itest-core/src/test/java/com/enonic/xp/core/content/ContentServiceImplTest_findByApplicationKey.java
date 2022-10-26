@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContentServiceImplTest_findByApplicationKey
     extends AbstractContentServiceTest
@@ -34,8 +33,10 @@ public class ContentServiceImplTest_findByApplicationKey
         final Content site2 = createSite( "c", SiteConfigs.from(
             SiteConfig.create().application( applicationKey2 ).config( new PropertyTree() ).build() ) );
 
-        assertEquals( Contents.from( site1, site1_2 ).getIds(), contentService.findByApplicationKey( applicationKey1 ).getIds() );
-        assertEquals( Contents.from( site1_2, site2 ).getIds(), contentService.findByApplicationKey( applicationKey2 ).getIds() );
+        assertThat( contentService.findByApplicationKey( applicationKey1 ) ).map( Content::getId )
+            .containsExactlyInAnyOrder( site1.getId(), site1_2.getId() );
+        assertThat( contentService.findByApplicationKey( applicationKey2 ) ).map( Content::getId )
+            .containsExactlyInAnyOrder( site1_2.getId(), site2.getId() );
     }
 
     private Site createSite( final String name, SiteConfigs siteConfigs )

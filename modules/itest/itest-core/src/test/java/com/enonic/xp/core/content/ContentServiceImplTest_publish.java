@@ -9,8 +9,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
-import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -458,7 +458,7 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        assertThrows( IllegalArgumentException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+        assertThrows( IllegalStateException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_MASTER )
             .build()
             .callWith( () -> this.contentService.publish(
@@ -488,7 +488,8 @@ public class ContentServiceImplTest_publish
 
     private void assertStatus( final ContentId id, CompareStatus status )
     {
-        final CompareContentResult compare = this.contentService.compare( new CompareContentParams( id, WS_OTHER ) );
+        final CompareContentResult compare =
+            this.contentService.compare( CompareContentsParams.create().contentIds( ContentIds.from( id ) ).build() ).iterator().next();
         assertEquals( status, compare.getCompareStatus() );
     }
 

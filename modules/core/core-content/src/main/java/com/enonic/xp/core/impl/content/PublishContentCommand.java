@@ -12,7 +12,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -250,8 +249,6 @@ public class PublishContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( contentIds );
-            Preconditions.checkArgument( ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ),
-                                         "Content can be published only from the draft branch" );
             ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 
