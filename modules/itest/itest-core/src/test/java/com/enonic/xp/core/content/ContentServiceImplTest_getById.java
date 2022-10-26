@@ -47,7 +47,7 @@ public class ContentServiceImplTest_getById
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-            .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
             .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
             .build() );
 
@@ -58,11 +58,12 @@ public class ContentServiceImplTest_getById
     public void test_publish_expired_master()
         throws Exception
     {
+        final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
+            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
+            .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
+            .build() );
+
         assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
-            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-                .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                .build() );
 
             return this.contentService.getById( content.getId() );
         } ) );

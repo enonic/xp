@@ -129,7 +129,7 @@ public class ContentServiceImplTest_getByPaths
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
 
@@ -148,7 +148,7 @@ public class ContentServiceImplTest_getByPaths
         authorizedMasterContext().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
             final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
 

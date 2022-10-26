@@ -262,7 +262,7 @@ public class ContentServiceImplTest_findIdsByParent
         throws Exception
     {
         final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                              .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                               .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .build() );
         assertEquals( 1, result.getTotalHits() );
@@ -274,7 +274,7 @@ public class ContentServiceImplTest_findIdsByParent
     {
         authorizedMasterContext().callWith( () -> {
             final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                                  .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                                  .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                                   .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                                   .build() );
             assertEquals( 0, result.getTotalHits() );
