@@ -27,10 +27,15 @@ export interface SiteConfig<Config> {
     config: Config;
 }
 
+export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+
+export type IdXorPath = XOR<{id: string}, {path: string}>;
+
 export interface AssetUrlParams {
     path: string;
     application?: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -56,15 +61,14 @@ export function assetUrl(params: AssetUrlParams): string {
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface ImageUrlParams {
-    id: string;
-    path: string;
+export type ImageUrlParams = IdXorPath & {
     quality?: number;
     background?: string;
     format?: string;
     filter?: string;
     server?: string;
     params?: object;
+    type?: 'server' | 'absolute';
     scale:
         | `block(${number},${number})`
         | `height(${number})`
@@ -73,7 +77,7 @@ export interface ImageUrlParams {
         | `wide(${number},${number})`
         | `width(${number})`
         | 'full';
-}
+};
 
 interface ImageUrlHandler {
     createUrl(value: object): string;
@@ -106,7 +110,7 @@ export interface ComponentUrlParams {
     id?: string;
     path?: string;
     component?: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -139,7 +143,7 @@ export interface AttachmentUrlParams {
     name?: string;
     label?: string;
     download?: boolean;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -155,7 +159,7 @@ interface AttachmentUrlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the content holding the attachment.
  * @param {string} [params.path] Path to the content holding the attachment.
- * @param {string} [params.name] Name to the attachment.
+ * @param {string} [params.name] Name of the attachment.
  * @param {string} [params.label=source] Label of the attachment.
  * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
@@ -168,12 +172,10 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
     return bean.createUrl(__.toScriptValue(params));
 }
 
-export interface PageUrlParams {
-    id?: string;
-    path?: string;
-    type?: string;
+export type PageUrlParams = IdXorPath & {
+    type?: 'server' | 'absolute';
     params?: object;
-}
+};
 
 interface PageUrlHandler {
     createUrl(value: object): string;
@@ -200,7 +202,7 @@ export function pageUrl(params: PageUrlParams): string {
 export interface ServiceUrlParams {
     service: string;
     application?: string;
-    type?: string;
+    type?: 'server' | 'absolute' | 'websocket';
     params?: object;
 }
 
@@ -229,7 +231,7 @@ export function serviceUrl(params: ServiceUrlParams): string {
 export interface IdProviderUrlParams {
     idProvider?: string;
     contextPath?: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -259,7 +261,7 @@ export interface LoginUrlParams {
     idProvider?: string;
     redirect?: string;
     contextPath?: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -289,7 +291,7 @@ export function loginUrl(params: LoginUrlParams): string {
 export interface LogoutUrlParams {
     redirect?: string;
     contextPath?: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     params?: object;
 }
 
@@ -316,7 +318,7 @@ export function logoutUrl(params: LogoutUrlParams): string {
 
 export interface UrlParams {
     path: string;
-    type?: string;
+    type?: 'server' | 'absolute' | 'websocket';
     params?: object;
 }
 
@@ -343,7 +345,7 @@ export function url(params: UrlParams): string {
 
 export interface ProcessHtmlParams {
     value: string;
-    type?: string;
+    type?: 'server' | 'absolute';
     imageWidths?: number[];
     imageSizes?: string;
 }
