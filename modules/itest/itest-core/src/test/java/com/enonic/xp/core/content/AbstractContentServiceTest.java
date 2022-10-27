@@ -131,6 +131,8 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
+    protected ProjectServiceImpl projectService;
+
     protected ContentServiceImpl contentService;
 
     protected NodeServiceImpl nodeService;
@@ -321,7 +323,7 @@ public class AbstractContentServiceTest
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-        final ProjectServiceImpl projectService =
+        projectService =
             new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
                                     eventPublisher );
         projectService.initialize();
