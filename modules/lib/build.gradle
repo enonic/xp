@@ -145,7 +145,7 @@ artifacts {
 }
 
 publishing.publications {
-    mavenJava( MavenPublication ) {
+    mavenDocs( MavenPublication ) {
         artifact( packageJsdoc ) {
             artifactId = 'docs'
         }
