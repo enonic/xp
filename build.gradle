@@ -3,7 +3,6 @@ plugins {
     id 'jacoco'
     id 'com.github.jk1.dependency-license-report'
     id "com.github.ben-manes.versions"
-    id "com.enonic.defaults"
     id 'biz.aQute.bnd.builder' apply false
     id 'maven-publish'
 }
@@ -17,8 +16,87 @@ ext {
 allprojects {
     group = 'com.enonic.xp'
 
-    apply plugin: 'com.enonic.defaults'
     apply from: "$rootDir/gradle/versions.gradle"
+
+    afterEvaluate {
+        def subProject = it
+        def hasPublishPlugins = subProject.plugins.hasPlugin( PublishingPlugin ) && subProject.plugins.hasPlugin( MavenPublishPlugin )
+        def hasJavaPlugin = subProject.plugins.hasPlugin( JavaPlugin )
+
+        if ( !hasPublishPlugins )
+        {
+            return
+        }
+
+        if ( hasJavaPlugin )
+        {
+            javadoc {
+                options {
+                    links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+                    links 'https://www.javadoc.io/doc/com.google.guava/guava/26.0-jre'
+                    quiet()
+                    encoding( 'UTF-8' )
+                }
+            }
+
+            subProject.publishing {
+                publications {
+                    mavenJava( MavenPublication ) {
+                        from components.java
+                        if ( subProject.name.startsWith( 'lib-' ) || subProject.name.endsWith( '-api' ) )
+                        {
+                            java {
+                                withJavadocJar()
+                                withSourcesJar()
+                            }
+                            customizePomXml( subProject, it )
+                        }
+                    }
+                }
+            }
+        }
+
+        subProject.publishing {
+            repositories {
+                maven {
+                    credentials {
+                        username rootProject.findProperty( 'repoUser' )
+                        password rootProject.findProperty( 'repoPassword' )
+                    }
+                    name "public"
+                    url "https://repo.enonic.com/${rootProject.version.endsWith( 'SNAPSHOT' ) ? 'snapshot' : 'public'}"
+                }
+            }
+        }
+    }
+}
+
+def customizePomXml( subProject, mavenJava )
+{
+    mavenJava.pom {
+        name = subProject.name
+        description = subProject.name
+        url = "https://github.com/enonic/xp"
+        licenses {
+            license {
+                def isLibrary = subProject.name.startsWith( 'lib-' )
+                name = "${isLibrary ? 'The Apache Software License, Version 2.0' : 'GNU General Public License, Version 3.0'}"
+                url = "https://github.com/enonic/xp/blob/master/${isLibrary ? 'LICENSE_AL.txt' : 'LICENSE.txt'}"
+            }
+        }
+        developers {
+            developer {
+                id = 'developers'
+                name = 'Enonic developers'
+                email = 'developers@enonic.com'
+            }
+        }
+        scm {
+            connection = "scm:git:git@github.com:enonic/xp.git"
+            developerConnection = "scm:git:git@github.com:enonic/xp.git"
+            url = "https://github.com/enonic/xp"
+        }
+    }
 }
 
 configure( javaProjects ) {
@@ -59,7 +137,7 @@ task javadocZip( type: Zip ) {
 
 
 publishing.publications {
-    mavenJava( MavenPublication ) {
+    mavenDocs( MavenPublication ) {
         artifact( javadocZip ) {
             artifactId = 'docs'
         }
