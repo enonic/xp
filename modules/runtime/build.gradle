@@ -201,7 +201,7 @@ installDist {
 build.dependsOn installDist
 
 publishing.publications {
-    mavenJava( MavenPublication ) {
+    mavenDist( MavenPublication ) {
         artifact distZip
     }
 }
