@@ -10,6 +10,12 @@ public final class HasUnpublishedChildrenParams
 {
     private final ContentId contentId;
 
+    private HasUnpublishedChildrenParams( final ContentId contentId )
+    {
+        this.contentId = contentId;
+    }
+
+    @Deprecated
     public HasUnpublishedChildrenParams( final ContentId contentId, final Branch target )
     {
         this.contentId = contentId;
@@ -21,13 +27,14 @@ public final class HasUnpublishedChildrenParams
     }
 
     @Deprecated
-    public Branch getTarget() {
+    public Branch getTarget()
+    {
         return ContentConstants.BRANCH_MASTER;
     }
 
+    @Deprecated
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
     @Override
@@ -40,5 +47,31 @@ public final class HasUnpublishedChildrenParams
     public int hashCode()
     {
         return super.hashCode();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private ContentId contentId;
+
+        private Builder()
+        {
+        }
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
+        }
+
+        public HasUnpublishedChildrenParams build()
+        {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            return new HasUnpublishedChildrenParams( this.contentId );
+        }
     }
 }

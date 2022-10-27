@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 
 public final class GetActiveContentVersionParams
@@ -51,6 +53,7 @@ public final class GetActiveContentVersionParams
 
         public GetActiveContentVersionParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
             return new GetActiveContentVersionParams( this );
         }
     }

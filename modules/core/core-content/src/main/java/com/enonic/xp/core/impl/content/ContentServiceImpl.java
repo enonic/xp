@@ -205,7 +205,8 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -258,7 +259,8 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -302,7 +304,8 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateMediaParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = CreateMediaCommand.create().
             params( params ).
             nodeService( this.nodeService ).
@@ -331,7 +334,8 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -357,7 +361,8 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateMediaParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -384,7 +389,8 @@ public class ContentServiceImpl
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -409,7 +415,8 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -433,7 +440,6 @@ public class ContentServiceImpl
     @Override
     public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
-        verifyContextDraftBranch();
         return ResolveContentsToBePublishedCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -449,7 +455,6 @@ public class ContentServiceImpl
     @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
-        verifyContextDraftBranch();
         return ResolveRequiredDependenciesCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -489,8 +494,6 @@ public class ContentServiceImpl
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
-        verifyContextMasterBranch();
-
         final UnpublishContentsResult result = UnpublishContentCommand.create().
             params( params ).
             nodeService( this.nodeService ).
@@ -771,7 +774,8 @@ public class ContentServiceImpl
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -789,7 +793,8 @@ public class ContentServiceImpl
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final MoveContentsResult result = MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -807,7 +812,8 @@ public class ContentServiceImpl
     @Override
     public ArchiveContentsResult archive( final ArchiveContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final ArchiveContentsResult result = ArchiveContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -825,7 +831,8 @@ public class ContentServiceImpl
     @Override
     public RestoreContentsResult restore( final RestoreContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final RestoreContentsResult result = RestoreContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -843,7 +850,8 @@ public class ContentServiceImpl
     @Override
     public Content rename( final RenameContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             xDataService( this.xDataService ).
@@ -977,14 +985,13 @@ public class ContentServiceImpl
     @Override
     public GetPublishStatusesResult getPublishStatuses( final GetPublishStatusesParams params )
     {
-        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( params.getContentIds() );
         final Instant now = Instant.now();
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_DRAFT ) ).
+            branch( Objects.requireNonNullElse( params.getTarget(), ContextAccessor.current().getBranch() ) ).
             attribute( "ignorePublishTimes", Boolean.TRUE ).
             build().
-            callWith( () -> this.getByIds( getContentByIdsParams ) );
+            callWith( () -> this.getByIds( new GetContentByIdsParams( params.getContentIds() ) ) );
 
         final GetPublishStatusesResult.Builder getPublishStatusesResult = GetPublishStatusesResult.create();
 
@@ -1044,7 +1051,7 @@ public class ContentServiceImpl
     public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
     {
         final GetActiveContentVersionsParams versionsParams = GetActiveContentVersionsParams.create()
-            .branches( Branches.from( Objects.requireNonNullElse( params.getBranch(), ContentConstants.BRANCH_DRAFT ) ) )
+            .branches( Branches.from( Objects.requireNonNullElse( params.getBranch(), ContextAccessor.current().getBranch() ) ) )
             .contentId( params.getContentId() )
             .build();
         final List<ActiveContentVersionEntry> contentVersions = getActiveVersions( versionsParams ).getActiveContentVersions();
@@ -1061,7 +1068,8 @@ public class ContentServiceImpl
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         try
         {
             final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
@@ -1090,7 +1098,7 @@ public class ContentServiceImpl
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
@@ -1127,7 +1135,7 @@ public class ContentServiceImpl
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
@@ -1226,7 +1234,7 @@ public class ContentServiceImpl
     @Override
     public Content reprocess( final ContentId contentId )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
             nodeService( this.nodeService ).
@@ -1292,7 +1300,7 @@ public class ContentServiceImpl
     @Override
     public ImportContentResult importContent( final ImportContentParams params )
     {
-        verifyContextDraftBranch();
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         return ImportContentCommand.create().
             params( params ).
@@ -1346,25 +1354,13 @@ public class ContentServiceImpl
             execute();
     }
 
-    private static void verifyContextDraftOrMasterBranch()
+    private static void verifyContextBranch( final Branch branch )
     {
-        final Branch branch = ContextAccessor.current().getBranch();
-        if ( !ContentConstants.BRANCH_DRAFT.equals( branch ) && !ContentConstants.BRANCH_MASTER.equals( branch ) )
-        {
-            throw new IllegalStateException( "Branch must be draft or master" );
-        }
-    }
-    private static void verifyContextDraftBranch()
-    {
-        if (!ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) ) {
-            throw new IllegalStateException("Branch must be draft");
-        }
-    }
+        final Branch contextBranch = ContextAccessor.current().getBranch();
 
-    private static void verifyContextMasterBranch()
-    {
-        if (!ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) ) {
-            throw new IllegalStateException("Branch must be master");
+        if ( !branch.equals( contextBranch ) )
+        {
+            throw new IllegalStateException( String.format( "Branch must be %s", branch ) );
         }
     }
 

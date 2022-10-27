@@ -42,8 +42,6 @@ final class DeleteContentCommand
 
     DeleteContentsResult execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();

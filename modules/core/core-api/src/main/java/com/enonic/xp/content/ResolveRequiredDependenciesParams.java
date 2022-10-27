@@ -1,13 +1,14 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class ResolveRequiredDependenciesParams
+public final class ResolveRequiredDependenciesParams
 {
     private final ContentIds contentIds;
-
 
     private ResolveRequiredDependenciesParams( Builder builder )
     {
@@ -33,7 +34,6 @@ public class ResolveRequiredDependenciesParams
     {
         private ContentIds contentIds;
 
-
         private Builder()
         {
         }
@@ -52,6 +52,7 @@ public class ResolveRequiredDependenciesParams
 
         public ResolveRequiredDependenciesParams build()
         {
+            Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
             return new ResolveRequiredDependenciesParams( this );
         }
     }

@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
@@ -45,12 +47,20 @@ public final class GetPublishStatusesParams
         return super.hashCode();
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
-
         private ContentIds contentIds;
 
-        public Builder contentId( final ContentIds contentIds )
+        private Builder()
+        {
+        }
+
+        public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
             return this;
@@ -58,6 +68,7 @@ public final class GetPublishStatusesParams
 
         public GetPublishStatusesParams build()
         {
+            Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
             return new GetPublishStatusesParams( this.contentIds );
         }
     }
