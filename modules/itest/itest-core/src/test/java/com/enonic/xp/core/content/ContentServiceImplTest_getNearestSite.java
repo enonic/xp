@@ -87,7 +87,7 @@ public class ContentServiceImplTest_getNearestSite
             createContent( site.getPath(), ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
-        final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
+        final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
         assertNull( fetchedSite );
     }
 
@@ -101,7 +101,7 @@ public class ContentServiceImplTest_getNearestSite
         final Content childLevel3 = createContent( childLevel2.getPath() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
-        final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( childLevel3.getId() ) );
+        final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( childLevel3.getId() ) );
         assertNull( fetchedSite );
     }
 
@@ -115,7 +115,7 @@ public class ContentServiceImplTest_getNearestSite
             .build() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
-        final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
+        final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
         assertNull( fetchedSite );
     }
 

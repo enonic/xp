@@ -62,7 +62,6 @@ public class AccessControlTest
             build();
 
         this.nodeService.create( params );
-        refresh();
     }
 
 

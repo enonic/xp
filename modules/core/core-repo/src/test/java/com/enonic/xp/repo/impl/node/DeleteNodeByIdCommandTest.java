@@ -38,15 +38,8 @@ public class DeleteNodeByIdCommandTest
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
-        refresh();
-
-        refresh();
-
-        printContentRepoIndex();
 
         doDeleteNode( createdNode.id() );
-
-        printContentRepoIndex();
 
         assertNull( getNodeById( createdNode.id() ) );
     }
@@ -59,19 +52,16 @@ public class DeleteNodeByIdCommandTest
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
-        refresh();
 
         final Node childNode = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
             name( "my-node" ).
             build() );
-        refresh();
 
         final Node childChildNode = createNode( CreateNodeParams.create().
             parent( childNode.path() ).
             name( "my-node" ).
             build() );
-        refresh();
 
         doDeleteNode( parentNode.id() );
 
@@ -88,31 +78,26 @@ public class DeleteNodeByIdCommandTest
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
-        refresh();
 
         final Node childNode = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
             name( "child1" ).
             build() );
-        refresh();
 
         final Node childNode2 = createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
             name( "child2" ).
             build() );
-        refresh();
 
         final Node childChildNode = createNode( CreateNodeParams.create().
             parent( childNode.path() ).
             name( "child1-1" ).
             build() );
-        refresh();
 
         final Node childChildNode2 = createNode( CreateNodeParams.create().
             parent( childNode2.path() ).
             name( "child2-1" ).
             build() );
-        refresh();
 
         assertNotNull( getNodeById( parentNode.id() ) );
         assertNotNull( getNodeById( childNode.id() ) );
@@ -150,14 +135,12 @@ public class DeleteNodeByIdCommandTest
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
-        refresh();
 
         createNode( CreateNodeParams.create().
             parent( parentNode.path() ).
             name( "my-node" ).
             permissions( noDeletePermission ).
             build() );
-        refresh();
 
         assertThrows(NodeAccessException.class, () -> doDeleteNode( parentNode.id() ));
     }

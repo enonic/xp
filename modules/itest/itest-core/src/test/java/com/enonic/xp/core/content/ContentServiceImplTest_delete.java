@@ -370,31 +370,43 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void create_content_with_same_paths_in_two_repos_then_delete()
-        throws Exception
+    void create_content_with_same_paths_in_two_branches_then_delete()
     {
+        final Content folder = contentService.create( CreateContentParams.create()
+                                                            .contentData( new PropertyTree() )
+                                                            .displayName( "This is my folder" )
+                                                            .parent( ContentPath.ROOT )
+                                                            .name( "folder" )
+                                                            .type( ContentTypeName.folder() )
+                                                            .build() );
+
         final CreateContentParams params = CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
+            name( "my-content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build();
 
-        final Content content = this.contentService.create( params );
+        final Content content = contentService.create( params );
+        contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+        contentService.move( MoveContentParams.create().contentId( content.getId() ).parentContentPath( folder.getPath() ).build() );
 
-        final Content contentOther = ctxOther().callWith( () -> this.contentService.create( params ) );
+        final Content content2 = contentService.create( params );
 
         //Deletes the content
         final DeleteContentsResult deletedContents =
-            this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+            contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
+        assertEquals( 0, deletedContents.getUnpublishedContents().getSize() );
 
-        final DeleteContentsResult deletedOther = ctxOther().callWith(
-            () -> this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( contentOther.getPath() ).build() ) );
+        final DeleteContentsResult deletedOther = contentService.deleteWithoutFetch(
+            DeleteContentParams.create().contentPath( ContentPath.from( folder.getPath(), content.getName().toString() ) ).build() );
 
         assertNotNull( deletedOther );
         assertEquals( 1, deletedOther.getDeletedContents().getSize() );
+        assertEquals( 0, deletedContents.getUnpublishedContents().getSize() );
     }
 
 

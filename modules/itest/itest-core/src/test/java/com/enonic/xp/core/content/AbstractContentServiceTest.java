@@ -131,14 +131,6 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        value( "draft" ).
-        build();
-
-    protected static final Branch WS_OTHER = Branch.create().
-        value( "master" ).
-        build();
-
     protected ContentServiceImpl contentService;
 
     protected NodeServiceImpl nodeService;
@@ -161,25 +153,25 @@ public class AbstractContentServiceTest
 
     private ExecutorService executorService;
 
-    protected static Context ctxDefault()
+    protected static Context ctxDraft()
     {
         return ContextBuilder.create().
-            branch( WS_DEFAULT ).
+            branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( TEST_REPO_ID ).
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
     }
 
-    protected static Context ctxOther()
+    protected static Context ctxMaster()
     {
         return ContextBuilder.create().
-            branch( WS_OTHER ).
+            branch( ContentConstants.BRANCH_MASTER ).
             repositoryId( TEST_REPO_ID ).
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
     }
 
-    public static Context masterContext()
+    public static Context ctxMasterAnonymous()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
@@ -187,7 +179,7 @@ public class AbstractContentServiceTest
             build();
     }
 
-    public static Context authorizedMasterContext()
+    public static Context ctxMasterSu()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
@@ -206,7 +198,7 @@ public class AbstractContentServiceTest
 
         deleteAllIndices();
 
-        ContextAccessor.INSTANCE.set( ctxDefault() );
+        ContextAccessor.INSTANCE.set( ctxDraft() );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -437,9 +429,9 @@ public class AbstractContentServiceTest
     {
         final Context context = ContextAccessor.current();
 
-        return ContextBuilder.from( context ).branch( WS_DEFAULT ).build().callWith( () -> {
+        return ContextBuilder.from( context ).branch( ContentConstants.BRANCH_DRAFT ).build().callWith( () -> {
             final Content content = this.contentService.create( builder.build() );
-            if ( context.getBranch().equals( WS_OTHER ) )
+            if ( context.getBranch().equals( ContentConstants.BRANCH_MASTER ) )
             {
                 this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
             }

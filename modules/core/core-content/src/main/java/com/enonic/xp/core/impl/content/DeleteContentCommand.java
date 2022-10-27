@@ -7,7 +7,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
@@ -47,9 +46,7 @@ final class DeleteContentCommand
 
         try
         {
-            final DeleteContentsResult deletedContents = doExecute();
-            nodeService.refresh( RefreshMode.SEARCH );
-            return deletedContents;
+            return doExecute();
         }
         catch ( NodeAccessException e )
         {
@@ -128,8 +125,8 @@ final class DeleteContentCommand
         Stream.concat( masterIdsByDraftPath.stream(), draftNodes.stream() ).
             filter( id -> !masterNodes.contains( id ) ).
             forEach( id -> {
-                deleteNodeInContext( id, masterContext );
-                result.addUnpublished( ContentId.from( id ) );
+            final NodeIds nodeIds = deleteNodeInContext( id, masterContext );
+            result.addUnpublished( ContentNodeHelper.toContentIds( nodeIds ) );
             } );
     }
 

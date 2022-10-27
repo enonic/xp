@@ -204,13 +204,13 @@ public class ContentServiceImplTest_archive
 
         refresh();
 
-        authorizedMasterContext().runWith( () -> {
+        ctxMasterSu().runWith( () -> {
             assertEquals( content.getId(), this.contentService.getById( content.getId() ).getId() );
         } );
 
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
 
-        authorizedMasterContext().runWith( () -> {
+        ctxMasterSu().runWith( () -> {
             assertFalse( this.contentService.contentExists( content.getId() ) );
         } );
     }

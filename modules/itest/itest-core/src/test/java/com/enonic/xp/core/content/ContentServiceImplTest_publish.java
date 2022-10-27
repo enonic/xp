@@ -353,7 +353,7 @@ public class ContentServiceImplTest_publish
 
         System.out.println( "After initial push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxOther() );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxMaster() );
 
         doRename( a.getId(), "a_old" );
         doRename( b.getId(), "a" );
@@ -366,7 +366,7 @@ public class ContentServiceImplTest_publish
         System.out.println();
         System.out.println( "After second push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxOther() );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxMaster() );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
     }
@@ -473,7 +473,7 @@ public class ContentServiceImplTest_publish
 
     private Content getInMaster( final ContentId contentId )
     {
-        return ctxOther().callWith( () -> this.contentService.getById( contentId ) );
+        return ctxMaster().callWith( () -> this.contentService.getById( contentId ) );
     }
 
     private Content getByPath( final ContentPath path )
