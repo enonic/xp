@@ -649,10 +649,10 @@ export function getProfile<Profile extends Record<string, unknown> = Record<stri
     return __.toNativeObject(bean.execute());
 }
 
-export interface ModifyProfileParams {
+export interface ModifyProfileParams<Profile extends Record<string, unknown>> {
     key: UserKey;
     scope?: string | null;
-    editor: (user: User) => User;
+    editor: (profile: Profile) => Profile;
 }
 
 interface ModifyProfileHandler<Profile extends Record<string, unknown>> {
@@ -676,7 +676,7 @@ interface ModifyProfileHandler<Profile extends Record<string, unknown>> {
  * @param {function} params.editor Profile editor function to apply.
  * @returns {object} The extra data as JSON
  */
-export function modifyProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProfileParams): Profile | null {
+export function modifyProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProfileParams<Profile>): Profile | null {
     checkRequired(params, 'key');
     checkRequired(params, 'editor');
 
