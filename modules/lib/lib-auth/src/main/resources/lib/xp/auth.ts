@@ -247,6 +247,9 @@ interface GetPrincipalHandler {
  * @param {string} principalKey Principal key to look for.
  * @returns {User | Group | Role} the principal specified, or null if it doesn't exist.
  */
+export function getPrincipal(userKey: UserKey): User | null;
+export function getPrincipal(groupKey: GroupKey): Group | null;
+export function getPrincipal(roleKey: RoleKey): Role | null;
 export function getPrincipal(principalKey: PrincipalKey): Principal | null {
     const bean = __.newBean<GetPrincipalHandler>('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
