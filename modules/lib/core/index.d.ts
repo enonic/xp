@@ -17,7 +17,7 @@ export interface User {
     modifiedTime: string;
     disabled?: boolean;
     email?: string;
-    login?: string;
+    login: string;
     idProvider: string;
 }
 
