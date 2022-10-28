@@ -762,7 +762,7 @@ export interface SetRootPermissionsParams {
 export type Permission = 'READ' | 'CREATE' | 'MODIFY' | 'DELETE' | 'PUBLISH' | 'READ_PERMISSIONS' | 'WRITE_PERMISSIONS';
 
 export interface AccessControlEntry {
-    principal: string;
+    principal: PrincipalKey;
     allow?: Permission[];
     deny?: Permission[];
 }
