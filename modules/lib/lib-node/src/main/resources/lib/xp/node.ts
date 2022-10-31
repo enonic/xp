@@ -543,7 +543,7 @@ interface NodeHandler {
 export type CreateNodeParams<NodeData = unknown> = {
     _name?: string;
     _parentPath?: string;
-    _indexConfig?: NodeConfigEntry;
+    _indexConfig?: Partial<NodeIndexConfig>;
     _permissions?: AccessControlEntry[];
     _inheritsPermissions?: boolean;
     _manualOrderValue?: number;
@@ -1107,7 +1107,7 @@ class RepoConnectionImpl
      *
      * @param {string} [key] node path or id.
      *
-     * @returns {boolean} True if exist, false otherwise.
+     * @returns {boolean} True if exists, false otherwise.
      */
     exists(key: string): boolean {
         return __.toNativeObject(this.nodeHandler.exist(key));
