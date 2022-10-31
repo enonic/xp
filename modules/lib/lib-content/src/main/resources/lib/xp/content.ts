@@ -28,8 +28,6 @@ type Workflow = Content['workflow'];
 
 export type Schedule = Omit<PublishInfo, 'first'>;
 
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
-
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
 declare const Java: any;
 
@@ -396,7 +394,7 @@ export interface FormItemOptionSet {
 
 export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput;
 
-export type DslQueryType = LiteralUnion<'dateTime' | 'time'> | number | boolean;
+export type DslQueryType = 'dateTime' | 'time';
 
 export type DslOperator = 'OR' | 'AND';
 
