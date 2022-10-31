@@ -526,9 +526,9 @@ export function getMultipartForm(): MultipartForm {
  *
  * @returns {object|null} The named multipart form item.
  */
-export function getMultipartItem(name: string, index: number): MultipartItem | null {
+export function getMultipartItem(name: string, index = 0): MultipartItem | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return __.toNativeObject(bean.getItem(name, index ?? 0));
+    return __.toNativeObject(bean.getItem(name, index));
 }
 
 /**
@@ -541,9 +541,9 @@ export function getMultipartItem(name: string, index: number): MultipartItem | n
  *
  * @returns {*} Stream of multipart item data.
  */
-export function getMultipartStream(name: string, index: number): object | null {
+export function getMultipartStream(name: string, index = 0): object | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getBytes(name, index ?? 0);
+    return bean.getBytes(name, index);
 }
 
 /**
@@ -556,9 +556,9 @@ export function getMultipartStream(name: string, index: number): object | null {
  *
  * @returns {string|null} Text for multipart item data.
  */
-export function getMultipartText(name: string, index: number): string | null {
+export function getMultipartText(name: string, index = 0): string | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
-    return bean.getText(name, index ?? 0);
+    return bean.getText(name, index);
 }
 
 export interface ImagePlaceholderParams {
