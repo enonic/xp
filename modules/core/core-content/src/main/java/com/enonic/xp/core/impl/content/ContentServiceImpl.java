@@ -466,16 +466,17 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public boolean isValidContent( ContentIds contentIds )
     {
         return getInvalidContent( contentIds ).isEmpty();
     }
 
     @Override
+    @Deprecated
     public ContentIds getInvalidContent( ContentIds contentIds )
     {
-        ContentValidityParams params = ContentValidityParams.create().contentIds( contentIds ).build();
-        return getContentValidity( params ).getNotValidContentIds();
+        return getContentValidity( ContentValidityParams.create().contentIds( contentIds ).build() ).getNotValidContentIds();
     }
 
     @Override
@@ -549,33 +550,29 @@ public class ContentServiceImpl
     @Override
     public Site getNearestSite( final ContentId contentId )
     {
+        final GetNearestSiteCommand command = GetNearestSiteCommand.create()
+            .contentId( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getNearestSite" );
         if ( trace == null )
         {
-            return doGetNearestSite( contentId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "id", contentId );
-            final Site site = doGetNearestSite( contentId );
+            final Site site = command.execute();
             if ( site != null )
             {
                 trace.put( "path", site.getPath() );
             }
             return site;
         } );
-    }
-
-    private Site doGetNearestSite( final ContentId contentId )
-    {
-        return GetNearestSiteCommand.create().
-                contentId( contentId ).
-                nodeService( this.nodeService ).
-                contentTypeService( this.contentTypeService ).
-                translator( this.translator ).
-                eventPublisher( this.eventPublisher ).
-                build().
-                execute();
     }
 
     @Override
@@ -631,27 +628,23 @@ public class ContentServiceImpl
     @Override
     public Contents getByIds( final GetContentByIdsParams params )
     {
+        final GetContentByIdsCommand command = GetContentByIdsCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByIds" );
         if ( trace == null )
         {
-            return doGetByIds( params );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "id", params.getIds() );
-            return doGetByIds( params );
+            return command.execute();
         } );
-    }
-
-    private Contents doGetByIds( final GetContentByIdsParams params )
-    {
-        return GetContentByIdsCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -706,57 +699,49 @@ public class ContentServiceImpl
     @Override
     public Contents getByPaths( final ContentPaths paths )
     {
+        final GetContentByPathsCommand command = GetContentByPathsCommand.create( paths )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByPaths" );
         if ( trace == null )
         {
-            return doGetByPaths( paths );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "path", paths );
-            return doGetByPaths( paths );
+            return command.execute();
         } );
-    }
-
-    private Contents doGetByPaths( final ContentPaths paths )
-    {
-        return GetContentByPathsCommand.create( paths ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
+        final FindContentByParentCommand command = FindContentByParentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.findByParent" );
         if ( trace == null )
         {
-            return doFindByParent( params );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-            final FindContentByParentResult result = doFindByParent( params );
+            final FindContentByParentResult result = command.execute();
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
-    }
-
-    private FindContentByParentResult doFindByParent( final FindContentByParentParams params )
-    {
-        return FindContentByParentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -889,32 +874,28 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
+        final FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
+            .query( query )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.find" );
         if ( trace == null )
         {
-            return doFind( query );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "query", query.getQueryExpr() != null ? query.getQueryExpr().toString() : "" );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
-            final FindContentIdsByQueryResult result = doFind( query );
+            final FindContentIdsByQueryResult result = command.execute();
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
-    }
-
-    private FindContentIdsByQueryResult doFind( final ContentQuery query )
-    {
-        return FindContentIdsByQueryCommand.create().
-            query( query ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -932,6 +913,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public ContentPaths findContentPaths( ContentQuery query )
     {
         return FindContentPathsByQueryCommand.create().
@@ -959,6 +941,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public CompareContentResult compare( final CompareContentParams params )
     {
         return CompareContentsCommand.create()
@@ -988,7 +971,7 @@ public class ContentServiceImpl
         final Instant now = Instant.now();
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( Objects.requireNonNullElse( params.getTarget(), ContextAccessor.current().getBranch() ) ).
+            branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) ).
             attribute( "ignorePublishTimes", Boolean.TRUE ).
             build().
             callWith( () -> this.getByIds( new GetContentByIdsParams( params.getContentIds() ) ) );
@@ -1051,7 +1034,7 @@ public class ContentServiceImpl
     public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
     {
         final GetActiveContentVersionsParams versionsParams = GetActiveContentVersionsParams.create()
-            .branches( Branches.from( Objects.requireNonNullElse( params.getBranch(), ContextAccessor.current().getBranch() ) ) )
+            .branches( Branches.from( Objects.requireNonNullElseGet( params.getBranch(), ContextAccessor.current()::getBranch ) ) )
             .contentId( params.getContentId() )
             .build();
         final List<ActiveContentVersionEntry> contentVersions = getActiveVersions( versionsParams ).getActiveContentVersions();
@@ -1060,6 +1043,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
         throw new UnsupportedOperationException( "setActiveContentVersion is no longer supported" );
@@ -1261,16 +1245,25 @@ public class ContentServiceImpl
     @Override
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
+        final GetContentByIdAndVersionIdCommand command = GetContentByIdAndVersionIdCommand.create()
+            .contentId( contentId )
+            .versionId( versionId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByIdAndVersionId" );
         if ( trace == null )
         {
-            return doGetByIdAndVersionId( contentId, versionId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
-            final Content content = doGetByIdAndVersionId( contentId, versionId );
+            final Content content = command.execute();
             trace.put( "path", content.getPath() );
             return content;
         } );
@@ -1279,20 +1272,26 @@ public class ContentServiceImpl
     @Override
     public Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
     {
+        final GetContentByPathAndVersionIdCommand command = GetContentByPathAndVersionIdCommand.create()
+            .contentPath( contentPath )
+            .versionId( versionId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByPathAndVersionId" );
         if ( trace == null )
         {
-            return doGetByPathAndVersionId( contentPath, versionId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "path", contentPath );
             trace.put( "versionId", versionId );
-            final Content content = doGetByPathAndVersionId( contentPath, versionId );
-            if ( content != null )
-            {
-                trace.put( "contentId", content.getId() );
-            }
+            final Content content = command.execute();
+            trace.put( "contentId", content.getId() );
             return content;
         } );
     }
@@ -1323,35 +1322,8 @@ public class ContentServiceImpl
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            return null;
         }
-        return null;
-    }
-
-    private Content doGetByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
-    {
-        return GetContentByIdAndVersionIdCommand.create().
-            contentId( contentId ).
-            versionId( versionId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    private Content doGetByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
-    {
-        return GetContentByPathAndVersionIdCommand.create().
-            contentPath( contentPath ).
-            versionId( versionId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     private static void verifyContextBranch( final Branch branch )

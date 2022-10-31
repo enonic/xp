@@ -36,7 +36,7 @@ public class ContentServiceImplTest_isValidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertTrue( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
+        assertTrue( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ContentServiceImplTest_isValidContent
             displayName( "my display-name" ).
             build() );
 
-        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
+        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ContentServiceImplTest_isValidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId(), content2.getId() ) ) );
+        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId(), content2.getId() ) ).isEmpty() );
     }
 
     @Test
@@ -114,6 +114,6 @@ public class ContentServiceImplTest_isValidContent
         NodeServiceImpl nodeService = Mockito.spy( this.nodeService );
         Mockito.verify( nodeService, times( 0 ) ).findByQuery( Mockito.isA( NodeQuery.class ) );
 
-        assertTrue( this.contentService.isValidContent( ContentIds.empty() ) );
+        assertTrue( this.contentService.getInvalidContent( ContentIds.empty() ).isEmpty() );
     }
 }
