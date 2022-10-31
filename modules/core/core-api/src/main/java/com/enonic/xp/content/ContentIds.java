@@ -74,7 +74,7 @@ public final class ContentIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<ContentId> contents = ImmutableSet.builder();
 

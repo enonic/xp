@@ -57,7 +57,7 @@ public final class Nodes
         return NodeIds.from( set.stream().map( Node::id ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<Node> nodes = new ImmutableSet.Builder<>();
 

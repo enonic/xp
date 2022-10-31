@@ -230,10 +230,9 @@ public class PushNodesCommand
             return false;
         }
 
-        //Else, if the existing node is being deleted or moved during the current push, returns false
+        //Else, if the existing node is being moved during the current push, returns false
         final NodeComparison nodeComparison = comparisons.get( nodeId );
-        return nodeComparison == null || (CompareStatus.MOVED != nodeComparison.getCompareStatus() &&
-            CompareStatus.PENDING_DELETE != nodeComparison.getCompareStatus());
+        return nodeComparison == null || CompareStatus.MOVED != nodeComparison.getCompareStatus();
     }
 
     private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )

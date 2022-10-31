@@ -52,7 +52,7 @@ public final class CompareContentsParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ContentIds contentIds;
 

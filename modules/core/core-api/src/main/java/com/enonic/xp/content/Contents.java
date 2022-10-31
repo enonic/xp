@@ -58,7 +58,7 @@ public final class Contents
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<Content> contents = new ImmutableSet.Builder<>();
 
