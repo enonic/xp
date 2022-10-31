@@ -256,9 +256,7 @@ export interface TermSuggestionOptions {
     maxTermFreq?: number | null;
 }
 
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
-
-export type DslQueryType = LiteralUnion<'dateTime' | 'time'> | number | boolean;
+export type DslQueryType = 'dateTime' | 'time';
 
 export type DslOperator = 'OR' | 'AND';
 
