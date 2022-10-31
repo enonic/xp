@@ -39,24 +39,24 @@ export interface SendParams {
 }
 
 export interface EnonicEvent<EventData extends object = EnonicEventData> {
-    readonly type: string;
-    readonly timestamp: number;
-    readonly localOrigin: boolean;
-    readonly distributed: boolean;
-    readonly data: EventData;
+    type: string;
+    timestamp: number;
+    localOrigin: boolean;
+    distributed: boolean;
+    data: EventData;
 }
 
 export interface EnonicEventData {
-    readonly nodes: ReadonlyArray<EnonicEventDataNode>;
-    readonly state?: string; // event type <'node.stateUpdated'>
+    nodes: EnonicEventDataNode[];
+    state?: string; // event type <'node.stateUpdated'>
 }
 
 export interface EnonicEventDataNode {
-    readonly id: string;
-    readonly path: string;
-    readonly branch: string;
-    readonly repo: string;
-    readonly newPath?: string; // event type <'node.moved' | 'node.renamed'>
+    id: string;
+    path: string;
+    branch: string;
+    repo: string;
+    newPath?: string; // event type <'node.moved' | 'node.renamed'>
 }
 
 interface EventSenderHelper {
