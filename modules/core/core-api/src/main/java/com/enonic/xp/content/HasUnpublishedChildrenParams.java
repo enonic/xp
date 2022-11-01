@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -12,12 +10,15 @@ public final class HasUnpublishedChildrenParams
 {
     private final ContentId contentId;
 
-    private final Branch target;
+    private HasUnpublishedChildrenParams( final ContentId contentId )
+    {
+        this.contentId = contentId;
+    }
 
+    @Deprecated
     public HasUnpublishedChildrenParams( final ContentId contentId, final Branch target )
     {
         this.contentId = contentId;
-        this.target = target;
     }
 
     public ContentId getContentId()
@@ -25,41 +26,52 @@ public final class HasUnpublishedChildrenParams
         return contentId;
     }
 
-    public Branch getTarget() {
-        return target;
+    @Deprecated
+    public Branch getTarget()
+    {
+        return ContentConstants.BRANCH_MASTER;
     }
 
-
+    @Deprecated
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof HasUnpublishedChildrenParams ) )
-        {
-            return false;
-        }
-
-        final HasUnpublishedChildrenParams that = (HasUnpublishedChildrenParams) o;
-
-        if ( !contentId.equals( that.contentId ) )
-        {
-            return false;
-        }
-
-        return target.equals( that.target );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentId, target );
+        return super.hashCode();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+        private ContentId contentId;
+
+        private Builder()
+        {
+        }
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
+        }
+
+        public HasUnpublishedChildrenParams build()
+        {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            return new HasUnpublishedChildrenParams( this.contentId );
+        }
     }
 }

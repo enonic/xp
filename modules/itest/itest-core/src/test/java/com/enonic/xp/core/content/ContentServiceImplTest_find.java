@@ -72,7 +72,7 @@ public class ContentServiceImplTest_find
     public void test_pending_publish_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final FindContentByQueryResult result =
                 createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
             assertEquals( 0, result.getTotalHits() );
@@ -85,7 +85,7 @@ public class ContentServiceImplTest_find
         throws Exception
     {
         final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                          .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                          .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                           .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                           .build() );
         assertEquals( 1, result.getTotalHits() );
@@ -95,9 +95,9 @@ public class ContentServiceImplTest_find
     public void test_publish_expired_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+                                                                              .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                               .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .build() );
             assertEquals( 0, result.getTotalHits() );
@@ -120,7 +120,7 @@ public class ContentServiceImplTest_find
     public void test_published_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                               .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
@@ -312,8 +312,8 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        Assertions.assertThat(
-                contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getIds() )
+        Assertions.assertThat( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents() )
+            .map( Content::getId )
             .containsExactly( existedContents );
     }
 

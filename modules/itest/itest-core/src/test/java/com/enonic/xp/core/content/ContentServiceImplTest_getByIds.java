@@ -12,8 +12,8 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_getByIds
@@ -41,7 +41,7 @@ public class ContentServiceImplTest_getByIds
     public void test_pending_publish_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
             final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
@@ -50,9 +50,7 @@ public class ContentServiceImplTest_getByIds
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
 
-            assertEquals( contents.getSize(), 1 );
-            assertTrue( contents.contains( content1 ) );
-            assertFalse( contents.contains( content2 ) );
+            assertThat( contents ).map( Content::getId ).containsExactly( content1.getId() );
 
             return null;
         } );
@@ -64,35 +62,32 @@ public class ContentServiceImplTest_getByIds
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
 
         final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
 
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
+        assertThat( contents ).map( Content::getId ).containsExactlyInAnyOrder( content1.getId(), content2.getId() );
     }
 
     @Test
     public void test_publish_expired_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
             final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+                from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
 
-            assertEquals( contents.getSize(), 1 );
-            assertTrue( contents.contains( content1 ) );
-            assertFalse( contents.contains( content2 ) );
+            assertThat( contents ).map( Content::getId ).containsExactly( content1.getId() );
+
             return null;
         } );
     }
@@ -119,7 +114,7 @@ public class ContentServiceImplTest_getByIds
     public void test_published_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
             final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
@@ -129,9 +124,7 @@ public class ContentServiceImplTest_getByIds
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
 
-            assertEquals( contents.getSize(), 2 );
-            assertTrue( contents.contains( content1 ) );
-            assertTrue( contents.contains( content2 ) );
+            assertThat( contents ).map( Content::getId ).containsExactlyInAnyOrder( content1.getId(), content2.getId() );
             return null;
         } );
     }

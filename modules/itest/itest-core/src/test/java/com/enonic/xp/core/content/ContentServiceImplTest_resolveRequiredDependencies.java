@@ -27,10 +27,9 @@ public class ContentServiceImplTest_resolveRequiredDependencies
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.empty() ).
-            target( WS_OTHER ).
             build() );
 
-        assertTrue( result.getSize() == 0 );
+        assertEquals( 0, result.getSize() );
     }
 
     @Test
@@ -45,10 +44,9 @@ public class ContentServiceImplTest_resolveRequiredDependencies
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId(), content3.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
-        assertTrue( result.getSize() == 0 );
+        assertEquals( 0, result.getSize() );
     }
 
     @Test
@@ -62,7 +60,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
         assertEquals( content1.getId(), result.first() );
@@ -80,10 +77,9 @@ public class ContentServiceImplTest_resolveRequiredDependencies
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId(), content3.getId() ) ).
-            target( WS_OTHER ).
             build() );
 
-        assertTrue( result.getSize() == 2 );
+        assertEquals( 2, result.getSize() );
         assertTrue( result.contains( content1.getId() ) );
         assertTrue( result.contains( content2.getId() ) );
     }

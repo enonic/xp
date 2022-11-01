@@ -32,10 +32,10 @@ public class ContentServiceImplTest_contentExists
     public void test_pending_publish_master()
         throws Exception
     {
-        final Content content = authorizedMasterContext().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
+        final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
             build() ) );
-        masterContext().callWith( () -> {
+        ctxMasterAnonymous().callWith( () -> {
             assertFalse( contentService.contentExists( content.getId() ) );
             assertFalse( contentService.contentExists( content.getPath() ) );
             return null;
@@ -47,7 +47,7 @@ public class ContentServiceImplTest_contentExists
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
 
@@ -59,11 +59,11 @@ public class ContentServiceImplTest_contentExists
     public void test_publish_expired_master()
         throws Exception
     {
-        final Content content = authorizedMasterContext().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
+        final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
+            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() ) );
-        masterContext().callWith( () -> {
+        ctxMasterAnonymous().callWith( () -> {
             assertFalse( this.contentService.contentExists( content.getId() ) );
             assertFalse( this.contentService.contentExists( content.getPath() ) );
             return null;
@@ -87,11 +87,11 @@ public class ContentServiceImplTest_contentExists
     public void test_published_master()
         throws Exception
     {
-        final Content content = authorizedMasterContext().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
+        final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
             build() ) );
-        masterContext().callWith( () -> {
+        ctxMasterAnonymous().callWith( () -> {
             assertTrue( this.contentService.contentExists( content.getId() ) );
             assertTrue( this.contentService.contentExists( content.getPath() ) );
             return null;

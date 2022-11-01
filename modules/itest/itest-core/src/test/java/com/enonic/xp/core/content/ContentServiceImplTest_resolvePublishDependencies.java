@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -30,7 +31,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     public void resolve_single()
         throws Exception
     {
-        nodeService.push( NodeIds.from( ROOT_UUID ), WS_OTHER );
+        nodeService.push( NodeIds.from( ROOT_UUID ), ContentConstants.BRANCH_MASTER );
 
         refresh();
 

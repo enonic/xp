@@ -17,12 +17,10 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.DeleteContentParams;
@@ -40,7 +38,6 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
 import com.enonic.xp.data.PropertyTree;
@@ -105,21 +102,6 @@ public class ProjectContentEventListenerTest
 
         compareSynched( sourceContent, targetContent );
         assertEquals( sourceProject.getName(), targetContent.getOriginProject() );
-    }
-
-    @Test
-    public void testCreatedInMaster()
-        throws InterruptedException
-    {
-        final Content sourceContent = ContextBuilder.from( sourceContext )
-            .branch( ContentConstants.BRANCH_MASTER )
-            .build()
-            .callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-
-        handleEvents();
-
-        assertThrows( ContentNotFoundException.class,
-                      () -> targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) ) );
     }
 
     @Test

@@ -1,19 +1,18 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class ResolveRequiredDependenciesParams
+public final class ResolveRequiredDependenciesParams
 {
     private final ContentIds contentIds;
-
-    private final Branch target;
 
     private ResolveRequiredDependenciesParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        target = builder.target;
     }
 
     public static Builder create()
@@ -28,14 +27,12 @@ public class ResolveRequiredDependenciesParams
 
     public Branch getTarget()
     {
-        return target;
+        return ContentConstants.BRANCH_MASTER;
     }
 
     public static final class Builder
     {
         private ContentIds contentIds;
-
-        private Branch target;
 
         private Builder()
         {
@@ -47,14 +44,15 @@ public class ResolveRequiredDependenciesParams
             return this;
         }
 
+        @Deprecated
         public Builder target( Branch target )
         {
-            this.target = target;
             return this;
         }
 
         public ResolveRequiredDependenciesParams build()
         {
+            Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
             return new ResolveRequiredDependenciesParams( this );
         }
     }

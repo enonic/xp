@@ -38,7 +38,6 @@ public class NodeFactory
     public static Node create( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
     {
         final Node.Builder builder = Node.create( nodeVersion ).
-            path( nodeVersionMetadata.getNodePath().toString() ).
             nodeVersionId( nodeVersionMetadata.getNodeVersionId() ).
             parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).
             timestamp( nodeVersionMetadata.getTimestamp() );

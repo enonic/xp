@@ -41,7 +41,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.BinaryReferences;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -690,8 +690,8 @@ public class ParentContentSynchronizerTest
         final FindContentByParentResult targetOrderedChildren = targetContext.callWith(
             () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceParent.getId() ).build() ) );
 
-        assertArrayEquals( sourceOrderedChildren.getContents().getIds().getSet().toArray(),
-                           targetOrderedChildren.getContents().getIds().getSet().toArray() );
+        assertThat( sourceOrderedChildren.getContents() ).map( Content::getId )
+            .containsExactly( targetOrderedChildren.getContents().stream().map( Content::getId ).toArray( ContentId[]::new ) );
     }
 
 

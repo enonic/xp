@@ -280,7 +280,7 @@ public class IndexServiceImplTest
 
         final Nodes nodes = getNodes( result.getNodeIds() );
 
-        return nodes.getNodeById( nodeId );
+        return nodes.stream().filter( n -> nodeId.equals( n.id() ) ).findAny().orElse( null );
     }
 
 

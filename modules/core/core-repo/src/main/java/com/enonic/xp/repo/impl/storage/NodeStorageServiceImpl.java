@@ -190,7 +190,6 @@ public class NodeStorageServiceImpl
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() ).
             nodeId( node.id() ).
-            nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             build(), context );
@@ -524,7 +523,6 @@ public class NodeStorageServiceImpl
             nodeVersionId( storeBranchMetadataParams.getNodeVersionId() ).
             nodeVersionKey( storeBranchMetadataParams.getNodeVersionKey() ).
             nodeId( node.id() ).
-            nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             build(), storeBranchMetadataParams.getContext() );
@@ -537,7 +535,6 @@ public class NodeStorageServiceImpl
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionKey ).
             nodeId( node.id() ).
-            nodeState( node.getNodeState() ).
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             build(), previousPath, context );

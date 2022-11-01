@@ -1,11 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Function;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -15,12 +11,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Nodes
     extends AbstractImmutableEntitySet<Node>
 {
-    private final ImmutableMap<NodeId, Node> map;
-
-    private Nodes( final Set<Node> set )
+    private Nodes( final ImmutableSet<Node> set )
     {
-        super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( Node::id, Function.identity() ) );
+        super( set );
     }
 
     public static Nodes empty()
@@ -48,9 +41,10 @@ public final class Nodes
         return new Builder();
     }
 
+    @Deprecated
     public Node getNodeById( final NodeId nodeId )
     {
-        return this.map.get( nodeId );
+        return this.set.stream().filter( n -> nodeId.equals( n.id() ) ).findAny().orElse( null );
     }
 
     public NodePaths getPaths()
@@ -60,12 +54,12 @@ public final class Nodes
 
     public NodeIds getIds()
     {
-        return NodeIds.from( map.keySet() );
+        return NodeIds.from( set.stream().map( Node::id ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<Node> nodes = new LinkedHashSet<>();
+        private final ImmutableSet.Builder<Node> nodes = new ImmutableSet.Builder<>();
 
         public Builder add( Node node )
         {
@@ -81,7 +75,7 @@ public final class Nodes
 
         public Nodes build()
         {
-            return new Nodes( nodes );
+            return new Nodes( nodes.build() );
         }
     }
 }

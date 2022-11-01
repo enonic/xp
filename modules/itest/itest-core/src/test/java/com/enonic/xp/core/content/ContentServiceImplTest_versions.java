@@ -13,6 +13,7 @@ import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
@@ -100,7 +101,7 @@ public class ContentServiceImplTest_versions
         final GetActiveContentVersionsResult activeVersions =
             this.contentService.getActiveVersions( GetActiveContentVersionsParams.create().
                 contentId( content.getId() ).
-                branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
         final ImmutableList<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();

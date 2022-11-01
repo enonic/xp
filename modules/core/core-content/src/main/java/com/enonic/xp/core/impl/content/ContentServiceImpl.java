@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -16,7 +17,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -24,6 +24,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -34,6 +35,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -203,6 +205,8 @@ public class ContentServiceImpl
     @Override
     public Site create( final CreateSiteParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final PropertyTree data = new PropertyTree();
         data.setString( "description", params.getDescription() );
 
@@ -255,6 +259,8 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = CreateContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -298,6 +304,8 @@ public class ContentServiceImpl
     @Override
     public Content create( final CreateMediaParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = CreateMediaCommand.create().
             params( params ).
             nodeService( this.nodeService ).
@@ -326,6 +334,8 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = UpdateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -351,6 +361,8 @@ public class ContentServiceImpl
     @Override
     public Content update( final UpdateMediaParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = UpdateMediaCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -377,6 +389,8 @@ public class ContentServiceImpl
     @Override
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final DeleteContentsResult result = DeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -401,6 +415,8 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final PublishContentResult result = PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -445,22 +461,22 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
-            target( params.getTarget() ).
             build().
             execute();
     }
 
     @Override
+    @Deprecated
     public boolean isValidContent( ContentIds contentIds )
     {
         return getInvalidContent( contentIds ).isEmpty();
     }
 
     @Override
+    @Deprecated
     public ContentIds getInvalidContent( ContentIds contentIds )
     {
-        ContentValidityParams params = ContentValidityParams.create().contentIds( contentIds ).build();
-        return getContentValidity( params ).getNotValidContentIds();
+        return getContentValidity( ContentValidityParams.create().contentIds( contentIds ).build() ).getNotValidContentIds();
     }
 
     @Override
@@ -534,33 +550,29 @@ public class ContentServiceImpl
     @Override
     public Site getNearestSite( final ContentId contentId )
     {
+        final GetNearestSiteCommand command = GetNearestSiteCommand.create()
+            .contentId( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getNearestSite" );
         if ( trace == null )
         {
-            return doGetNearestSite( contentId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "id", contentId );
-            final Site site = doGetNearestSite( contentId );
+            final Site site = command.execute();
             if ( site != null )
             {
                 trace.put( "path", site.getPath() );
             }
             return site;
         } );
-    }
-
-    private Site doGetNearestSite( final ContentId contentId )
-    {
-        return GetNearestSiteCommand.create().
-                contentId( contentId ).
-                nodeService( this.nodeService ).
-                contentTypeService( this.contentTypeService ).
-                translator( this.translator ).
-                eventPublisher( this.eventPublisher ).
-                build().
-                execute();
     }
 
     @Override
@@ -616,27 +628,23 @@ public class ContentServiceImpl
     @Override
     public Contents getByIds( final GetContentByIdsParams params )
     {
+        final GetContentByIdsCommand command = GetContentByIdsCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByIds" );
         if ( trace == null )
         {
-            return doGetByIds( params );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "id", params.getIds() );
-            return doGetByIds( params );
+            return command.execute();
         } );
-    }
-
-    private Contents doGetByIds( final GetContentByIdsParams params )
-    {
-        return GetContentByIdsCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -691,57 +699,49 @@ public class ContentServiceImpl
     @Override
     public Contents getByPaths( final ContentPaths paths )
     {
+        final GetContentByPathsCommand command = GetContentByPathsCommand.create( paths )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByPaths" );
         if ( trace == null )
         {
-            return doGetByPaths( paths );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "path", paths );
-            return doGetByPaths( paths );
+            return command.execute();
         } );
-    }
-
-    private Contents doGetByPaths( final ContentPaths paths )
-    {
-        return GetContentByPathsCommand.create( paths ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
+        final FindContentByParentCommand command = FindContentByParentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.findByParent" );
         if ( trace == null )
         {
-            return doFindByParent( params );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-            final FindContentByParentResult result = doFindByParent( params );
+            final FindContentByParentResult result = command.execute();
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
-    }
-
-    private FindContentByParentResult doFindByParent( final FindContentByParentParams params )
-    {
-        return FindContentByParentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -759,6 +759,8 @@ public class ContentServiceImpl
     @Override
     public DuplicateContentsResult duplicate( final DuplicateContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -776,6 +778,8 @@ public class ContentServiceImpl
     @Override
     public MoveContentsResult move( final MoveContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final MoveContentsResult result = MoveContentCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -793,6 +797,8 @@ public class ContentServiceImpl
     @Override
     public ArchiveContentsResult archive( final ArchiveContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final ArchiveContentsResult result = ArchiveContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -810,6 +816,8 @@ public class ContentServiceImpl
     @Override
     public RestoreContentsResult restore( final RestoreContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final RestoreContentsResult result = RestoreContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
@@ -827,6 +835,8 @@ public class ContentServiceImpl
     @Override
     public Content rename( final RenameContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
             xDataService( this.xDataService ).
@@ -864,32 +874,28 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
+        final FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
+            .query( query )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.find" );
         if ( trace == null )
         {
-            return doFind( query );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "query", query.getQueryExpr() != null ? query.getQueryExpr().toString() : "" );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
-            final FindContentIdsByQueryResult result = doFind( query );
+            final FindContentIdsByQueryResult result = command.execute();
             trace.put( "hits", result.getTotalHits() );
             return result;
         } );
-    }
-
-    private FindContentIdsByQueryResult doFind( final ContentQuery query )
-    {
-        return FindContentIdsByQueryCommand.create().
-            query( query ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
     }
 
     @Override
@@ -907,6 +913,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public ContentPaths findContentPaths( ContentQuery query )
     {
         return FindContentPathsByQueryCommand.create().
@@ -934,14 +941,17 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public CompareContentResult compare( final CompareContentParams params )
     {
-        return CompareContentCommand.create().
-            nodeService( this.nodeService ).
-            contentId( params.getContentId() ).
-            target( params.getTarget() ).
-            build().
-            execute();
+        return CompareContentsCommand.create()
+            .nodeService( this.nodeService )
+            .contentIds( ContentIds.from( params.getContentId() ) )
+            .target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) )
+            .build()
+            .execute()
+            .iterator()
+            .next();
     }
 
     @Override
@@ -950,7 +960,7 @@ public class ContentServiceImpl
         return CompareContentsCommand.create().
             nodeService( this.nodeService ).
             contentIds( params.getContentIds() ).
-            target( params.getTarget() ).
+            target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) ).
             build().
             execute();
     }
@@ -958,14 +968,13 @@ public class ContentServiceImpl
     @Override
     public GetPublishStatusesResult getPublishStatuses( final GetPublishStatusesParams params )
     {
-        final GetContentByIdsParams getContentByIdsParams = new GetContentByIdsParams( params.getContentIds() );
         final Instant now = Instant.now();
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( params.getTarget() ).
+            branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) ).
             attribute( "ignorePublishTimes", Boolean.TRUE ).
             build().
-            callWith( () -> this.getByIds( getContentByIdsParams ) );
+            callWith( () -> this.getByIds( new GetContentByIdsParams( params.getContentIds() ) ) );
 
         final GetPublishStatusesResult.Builder getPublishStatusesResult = GetPublishStatusesResult.create();
 
@@ -1024,16 +1033,17 @@ public class ContentServiceImpl
     @Override
     public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
     {
-        final GetActiveContentVersionsResult activeVersions = getActiveVersions( GetActiveContentVersionsParams.create().
-            branches( Branches.from( params.getBranch() ) ).
-            contentId( params.getContentId() ).
-            build() );
+        final GetActiveContentVersionsParams versionsParams = GetActiveContentVersionsParams.create()
+            .branches( Branches.from( Objects.requireNonNullElseGet( params.getBranch(), ContextAccessor.current()::getBranch ) ) )
+            .contentId( params.getContentId() )
+            .build();
+        final List<ActiveContentVersionEntry> contentVersions = getActiveVersions( versionsParams ).getActiveContentVersions();
 
-        final UnmodifiableIterator<ActiveContentVersionEntry> activeVersionIterator = activeVersions.getActiveContentVersions().iterator();
-        return activeVersionIterator.hasNext() ? activeVersionIterator.next().getContentVersion() : null;
+        return contentVersions.isEmpty() ? null : contentVersions.get( 0 ).getContentVersion();
     }
 
     @Override
+    @Deprecated
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
         throw new UnsupportedOperationException( "setActiveContentVersion is no longer supported" );
@@ -1042,6 +1052,8 @@ public class ContentServiceImpl
     @Override
     public Content setChildOrder( final SetContentChildOrderParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         try
         {
             final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
@@ -1070,6 +1082,7 @@ public class ContentServiceImpl
     @Override
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
@@ -1100,12 +1113,14 @@ public class ContentServiceImpl
     @Override
     public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
     {
-        return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), params.getTarget() );
+        return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), ContentConstants.BRANCH_MASTER );
     }
 
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -1203,6 +1218,8 @@ public class ContentServiceImpl
     @Override
     public Content reprocess( final ContentId contentId )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -1228,16 +1245,25 @@ public class ContentServiceImpl
     @Override
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
+        final GetContentByIdAndVersionIdCommand command = GetContentByIdAndVersionIdCommand.create()
+            .contentId( contentId )
+            .versionId( versionId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByIdAndVersionId" );
         if ( trace == null )
         {
-            return doGetByIdAndVersionId( contentId, versionId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
-            final Content content = doGetByIdAndVersionId( contentId, versionId );
+            final Content content = command.execute();
             trace.put( "path", content.getPath() );
             return content;
         } );
@@ -1246,20 +1272,26 @@ public class ContentServiceImpl
     @Override
     public Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
     {
+        final GetContentByPathAndVersionIdCommand command = GetContentByPathAndVersionIdCommand.create()
+            .contentPath( contentPath )
+            .versionId( versionId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
         final Trace trace = Tracer.newTrace( "content.getByPathAndVersionId" );
         if ( trace == null )
         {
-            return doGetByPathAndVersionId( contentPath, versionId );
+            return command.execute();
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "path", contentPath );
             trace.put( "versionId", versionId );
-            final Content content = doGetByPathAndVersionId( contentPath, versionId );
-            if ( content != null )
-            {
-                trace.put( "contentId", content.getId() );
-            }
+            final Content content = command.execute();
+            trace.put( "contentId", content.getId() );
             return content;
         } );
     }
@@ -1267,6 +1299,8 @@ public class ContentServiceImpl
     @Override
     public ImportContentResult importContent( final ImportContentParams params )
     {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
         return ImportContentCommand.create().
             params( params ).
             nodeService( nodeService ).
@@ -1288,35 +1322,18 @@ public class ContentServiceImpl
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    private Content doGetByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
+    private static void verifyContextBranch( final Branch branch )
     {
-        return GetContentByIdAndVersionIdCommand.create().
-            contentId( contentId ).
-            versionId( versionId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
+        final Branch contextBranch = ContextAccessor.current().getBranch();
 
-    private Content doGetByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
-    {
-        return GetContentByPathAndVersionIdCommand.create().
-            contentPath( contentPath ).
-            versionId( versionId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        if ( !branch.equals( contextBranch ) )
+        {
+            throw new IllegalStateException( String.format( "Branch must be %s", branch ) );
+        }
     }
 
     @Reference

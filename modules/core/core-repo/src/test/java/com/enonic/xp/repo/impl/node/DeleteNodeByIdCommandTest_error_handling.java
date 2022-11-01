@@ -42,7 +42,6 @@ public class DeleteNodeByIdCommandTest_error_handling
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() );
-        refresh();
 
         this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( createdNode.id() ) ) );
 
@@ -58,8 +57,6 @@ public class DeleteNodeByIdCommandTest_error_handling
         final Node n1_1 = createNode( n1.path(), "n1_1" );
         final Node n1_1_1 = createNode( n1_1.path(), "n1_1_1" );
         final Node n1_1_1_1 = createNode( n1_1_1.path(), "n1_1_1_1" );
-
-        refresh();
 
         this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( n1_1.id() ) ) );
 

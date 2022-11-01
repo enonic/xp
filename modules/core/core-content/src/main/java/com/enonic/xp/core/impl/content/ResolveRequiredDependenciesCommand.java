@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeComparison;
@@ -19,15 +19,12 @@ public class ResolveRequiredDependenciesCommand
 {
     private final ContentIds contentIds;
 
-    private final Branch target;
-
     private final ContentIds.Builder resultBuilder;
 
     private ResolveRequiredDependenciesCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
-        this.target = builder.target;
         this.resultBuilder = ContentIds.create();
     }
 
@@ -45,7 +42,8 @@ public class ResolveRequiredDependenciesCommand
 
     private void resolveDependencies()
     {
-        final NodeComparisons nodeComparisons = nodeService.compare( ContentNodeHelper.toNodeIds( contentIds ), target );
+        final NodeComparisons nodeComparisons =
+            nodeService.compare( ContentNodeHelper.toNodeIds( contentIds ), ContentConstants.BRANCH_MASTER );
 
         final NodePaths parentPaths = getParentPaths( nodeComparisons.getComparisons() );
         final NodePaths resultPaths = nodeComparisons.getSourcePaths();
@@ -107,17 +105,9 @@ public class ResolveRequiredDependenciesCommand
     {
         private ContentIds contentIds;
 
-        private Branch target;
-
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
-            return this;
-        }
-
-        public Builder target( final Branch target )
-        {
-            this.target = target;
             return this;
         }
 
@@ -125,7 +115,6 @@ public class ResolveRequiredDependenciesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( target );
             Preconditions.checkNotNull( contentIds );
         }
 

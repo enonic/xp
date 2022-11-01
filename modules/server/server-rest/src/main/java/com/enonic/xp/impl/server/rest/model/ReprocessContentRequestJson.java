@@ -14,7 +14,7 @@ public final class ReprocessContentRequestJson
     public ReprocessContentRequestJson( @JsonProperty("sourceBranchPath") final String sourceBranchPath,
                                         @JsonProperty("skipChildren") final boolean skipChildren )
     {
-        Preconditions.checkNotNull( sourceBranchPath, "targetBranchPath not specified" );
+        Preconditions.checkNotNull( sourceBranchPath, "sourceBranchPath not specified" );
 
         this.sourceBranchPath = BranchContentPath.from( sourceBranchPath );
         this.skipChildren = skipChildren;

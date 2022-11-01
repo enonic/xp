@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -28,12 +26,6 @@ public abstract class AbstractElasticsearchIntegrationTest
     private static final Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     protected static Client client;
-
-    protected boolean indexExists( String index )
-    {
-        IndicesExistsResponse actionGet = client.admin().indices().prepareExists( index ).execute().actionGet();
-        return actionGet.isExists();
-    }
 
     protected Path getSnapshotsDir()
     {
@@ -58,16 +50,14 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n" );
     }
 
-    protected static final RefreshResponse refresh()
+    protected static RefreshResponse refresh()
     {
-        RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
-        return actionGet;
+        return client.admin().indices().prepareRefresh().execute().actionGet();
     }
 
-    protected static final DeleteIndexResponse deleteAllIndices()
+    protected static void deleteAllIndices()
     {
-        DeleteIndexResponse actionGet = client.admin().indices().prepareDelete("_all").execute().actionGet();
-        return actionGet;
+        client.admin().indices().prepareDelete( "_all").execute().actionGet();
     }
 
     static class EmbeddedElasticsearchExtension implements BeforeAllCallback

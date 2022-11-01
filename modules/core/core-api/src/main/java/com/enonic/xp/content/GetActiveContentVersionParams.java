@@ -1,8 +1,10 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 
-public class GetActiveContentVersionParams
+public final class GetActiveContentVersionParams
 {
     private final ContentId contentId;
 
@@ -29,7 +31,7 @@ public class GetActiveContentVersionParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
 
         private ContentId contentId;
@@ -42,6 +44,7 @@ public class GetActiveContentVersionParams
             return this;
         }
 
+        @Deprecated
         public Builder branch( final Branch branch )
         {
             this.branch = branch;
@@ -50,6 +53,7 @@ public class GetActiveContentVersionParams
 
         public GetActiveContentVersionParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
             return new GetActiveContentVersionParams( this );
         }
     }

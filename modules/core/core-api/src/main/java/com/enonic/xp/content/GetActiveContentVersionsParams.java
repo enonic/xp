@@ -1,12 +1,12 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 
 @PublicApi
-public class GetActiveContentVersionsParams
+public final class GetActiveContentVersionsParams
 {
     private final ContentId contentId;
 
@@ -36,23 +36,13 @@ public class GetActiveContentVersionsParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final GetActiveContentVersionsParams that = (GetActiveContentVersionsParams) o;
-        return Objects.equals( contentId, that.contentId ) && Objects.equals( branches, that.branches );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-
-        return Objects.hash( contentId, branches );
+        return super.hashCode();
     }
 
     public static final class Builder
@@ -79,6 +69,7 @@ public class GetActiveContentVersionsParams
 
         public GetActiveContentVersionsParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
             return new GetActiveContentVersionsParams( this );
         }
     }

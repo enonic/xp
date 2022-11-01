@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -46,7 +47,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
         assertNotNull( storedContent.getPublishInfo().getFrom() );
 
         final Content publishedContent = ContextBuilder.from( ContextAccessor.current() ).
-            branch( WS_OTHER ).
+            branch( ContentConstants.BRANCH_MASTER ).
             build().
             callWith( () -> this.contentService.getById( content.getId() ) );
 

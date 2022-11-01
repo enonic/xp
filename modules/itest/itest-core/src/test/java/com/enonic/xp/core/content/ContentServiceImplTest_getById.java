@@ -34,7 +34,7 @@ public class ContentServiceImplTest_getById
     public void test_pending_publish_master()
         throws Exception
     {
-        assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
+        assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
             final Content content =
                 createContent( ContentPath.ROOT, ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
 
@@ -47,7 +47,7 @@ public class ContentServiceImplTest_getById
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-            .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
+            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
             .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
             .build() );
 
@@ -58,11 +58,12 @@ public class ContentServiceImplTest_getById
     public void test_publish_expired_master()
         throws Exception
     {
-        assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
-            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-                .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                .build() );
+        final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
+            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
+            .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
+            .build() );
+
+        assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
 
             return this.contentService.getById( content.getId() );
         } ) );
@@ -84,7 +85,7 @@ public class ContentServiceImplTest_getById
     public void test_published_master()
         throws Exception
     {
-        authorizedMasterContext().callWith( () -> {
+        ctxMaster().callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
                 .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
                 .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
@@ -99,9 +100,9 @@ public class ContentServiceImplTest_getById
     public void test_get_content_from_wrong_context()
         throws Exception
     {
-        final Content content = authorizedMasterContext().callWith( () -> createContent( ContentPath.ROOT, "my-content" ) );
+        final Content content = ctxMasterSu().callWith( () -> createContent( ContentPath.ROOT, "my-content" ) );
 
-        assertThrows( ContentNotFoundException.class, () -> ContextBuilder.from( authorizedMasterContext() )
+        assertThrows( ContentNotFoundException.class, () -> ContextBuilder.from( ctxMasterSu() )
             .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
             .build()
             .callWith( () -> this.contentService.getById( content.getId() ) ) );

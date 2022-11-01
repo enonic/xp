@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,7 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -108,9 +111,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -128,13 +131,7 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        value( "draft" ).
-        build();
-
-    protected static final Branch WS_OTHER = Branch.create().
-        value( "master" ).
-        build();
+    protected ProjectServiceImpl projectService;
 
     protected ContentServiceImpl contentService;
 
@@ -158,25 +155,25 @@ public class AbstractContentServiceTest
 
     private ExecutorService executorService;
 
-    protected static Context ctxDefault()
+    protected static Context ctxDraft()
     {
         return ContextBuilder.create().
-            branch( WS_DEFAULT ).
+            branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( TEST_REPO_ID ).
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
     }
 
-    protected static Context ctxOther()
+    protected static Context ctxMaster()
     {
         return ContextBuilder.create().
-            branch( WS_OTHER ).
+            branch( ContentConstants.BRANCH_MASTER ).
             repositoryId( TEST_REPO_ID ).
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
     }
 
-    public static Context masterContext()
+    public static Context ctxMasterAnonymous()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
@@ -184,7 +181,7 @@ public class AbstractContentServiceTest
             build();
     }
 
-    public static Context authorizedMasterContext()
+    public static Context ctxMasterSu()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
@@ -203,7 +200,7 @@ public class AbstractContentServiceTest
 
         deleteAllIndices();
 
-        ContextAccessor.INSTANCE.set( ctxDefault() );
+        ContextAccessor.INSTANCE.set( ctxDraft() );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -326,7 +323,7 @@ public class AbstractContentServiceTest
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-        final ProjectServiceImpl projectService =
+        projectService =
             new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
                                     eventPublisher );
         projectService.initialize();
@@ -432,7 +429,16 @@ public class AbstractContentServiceTest
 
     private Content doCreateContent( final CreateContentParams.Builder builder )
     {
-        return this.contentService.create( builder.build() );
+        final Context context = ContextAccessor.current();
+
+        return ContextBuilder.from( context ).branch( ContentConstants.BRANCH_DRAFT ).build().callWith( () -> {
+            final Content content = this.contentService.create( builder.build() );
+            if ( context.getBranch().equals( ContentConstants.BRANCH_MASTER ) )
+            {
+                this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+            }
+            return content;
+        } );
     }
 
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
@@ -600,29 +606,12 @@ public class AbstractContentServiceTest
 
     protected void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
     {
-        final ContentIds contentIds = result.getContents().getIds();
-
-        doAssertOrder( contentIds, expectedOrder );
+        assertOrder( result.getContents().stream().map( Content::getId ).collect( Collectors.toList() ), expectedOrder );
     }
 
-    protected void assertOrder( final ContentIds contentIds, final Content... expectedOrder )
+    protected void assertOrder( final Iterable<ContentId> contentIds, final Content... expectedOrder )
     {
-        doAssertOrder( contentIds, expectedOrder );
-    }
-
-    private void doAssertOrder( final ContentIds contentIds, final Content[] expectedOrder )
-    {
-        assertEquals( expectedOrder.length, contentIds.getSize(), "Expected [" + expectedOrder.length + "] number of hits in result" );
-
-        final Iterator<ContentId> iterator = contentIds.iterator();
-
-        for ( final Content content : expectedOrder )
-        {
-            assertTrue( iterator.hasNext(), "Expected more content, iterator empty" );
-            final ContentId next = iterator.next();
-            assertEquals( content.getId(), next, "Expected content with path [" + content.getPath() + "] in this position, found [" +
-                this.contentService.getById( next ).getPath() + "]" );
-        }
+        assertThat( contentIds ).containsExactly( Arrays.stream( expectedOrder ).map( Content::getId ).toArray( ContentId[]::new ) );
     }
 
     protected void assertVersions( final ContentId contentId, final int expected )

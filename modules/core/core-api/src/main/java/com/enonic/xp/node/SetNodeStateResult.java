@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.HashSet;
 import java.util.Set;
 
+@Deprecated
 public class SetNodeStateResult
 {
     private final Nodes updatedNodes;

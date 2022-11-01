@@ -15,15 +15,11 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -92,8 +88,7 @@ public class ResolveSyncWorkCommand
             execute();
 
         getAllPossibleNodesToBePublished();
-        final ResolveSyncWorkResult result = this.result.build();
-        return result;
+        return this.result.build();
     }
 
     private void getAllPossibleNodesToBePublished()
@@ -114,15 +109,13 @@ public class ResolveSyncWorkCommand
         addNewAndMovedParents( comparisons );
 
         comparisons.forEach( this::addToResult );
-
-        markPendingDeleteChildrenForDeletion( comparisons );
     }
 
     private NodeIds getInitialDiff()
     {
         final NodeIds.Builder initialDiff = NodeIds.create().add( this.publishRootNode.id() );
 
-        if ( !includeChildren && !forceCheckChildren() )
+        if ( !includeChildren )
         {
             return initialDiff.build();
         }
@@ -144,18 +137,6 @@ public class ResolveSyncWorkCommand
 
         return initialDiff.addAll( nodeIds ).
             build();
-    }
-
-    private boolean forceCheckChildren()
-    {
-        final NodeComparison rootNodeStatus = CompareNodeCommand.create().
-            nodeId( this.publishRootNode.id() ).
-            target( this.target ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
-
-        return rootNodeStatus.getCompareStatus().equals( CompareStatus.PENDING_DELETE );
     }
 
     private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
@@ -275,13 +256,6 @@ public class ResolveSyncWorkCommand
         return parentPathsBuilder.build();
     }
 
-    private void markPendingDeleteChildrenForDeletion( final Set<NodeComparison> comparisons )
-    {
-        comparisons.stream().
-            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) ).
-            forEach( this::markChildrenForDeletion );
-    }
-
     private Set<NodeComparison> getFilteredComparisons( final NodeIds.Builder diffAndDependantsBuilder )
     {
         final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
@@ -311,26 +285,6 @@ public class ResolveSyncWorkCommand
             filter( comparison -> nodeMoved( comparison ) || nodeNotInTarget( comparison ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             collect( Collectors.toSet() );
-    }
-
-    private void markChildrenForDeletion( final NodeComparison comparison )
-    {
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            parentId( comparison.getNodeId() ).
-            childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
-            recursive( true ).
-            build().
-            execute();
-
-        final NodeBranchEntries brancEntries =
-            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
-
-        addToResult( NodeComparisons.create().
-            addAll( brancEntries.stream().
-                map( ( branchEntry ) -> new NodeComparison( branchEntry, branchEntry, CompareStatus.PENDING_DELETE ) ).
-                collect( Collectors.toSet() ) ).
-            build() );
     }
 
     private void addParentPaths( final NodePaths.Builder parentPathsBuilder, final NodePath path )

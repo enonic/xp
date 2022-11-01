@@ -1,12 +1,14 @@
 package com.enonic.xp.content;
 
-public class ContentValidityParams
+import com.google.common.base.Preconditions;
+
+public final class ContentValidityParams
 {
     private final ContentIds contentIds;
 
-    private ContentValidityParams( final Builder builder )
+    private ContentValidityParams( final ContentIds contentIds )
     {
-        this.contentIds = builder.contentIds;
+        this.contentIds = contentIds;
     }
 
     public ContentIds getContentIds()
@@ -19,9 +21,8 @@ public class ContentValidityParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-
         private ContentIds contentIds;
 
         private Builder()
@@ -36,7 +37,8 @@ public class ContentValidityParams
 
         public ContentValidityParams build()
         {
-            return new ContentValidityParams( this );
+            Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
+            return new ContentValidityParams( this.contentIds );
         }
     }
 }

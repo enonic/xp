@@ -1,12 +1,8 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Function;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -16,12 +12,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Contents
     extends AbstractImmutableEntitySet<Content>
 {
-    private final ImmutableMap<ContentId, Content> map;
-
-    private Contents( final Set<Content> set )
+    private Contents( final ImmutableSet<Content> set )
     {
-        super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( Content::getId, Function.identity() ) );
+        super( set );
     }
 
     public ContentPaths getPaths()
@@ -31,18 +24,18 @@ public final class Contents
 
     public ContentIds getIds()
     {
-        return ContentIds.from( map.keySet() );
+        return ContentIds.from( set.stream().map( Content::getId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
+    @Deprecated
     public Content getContentById( final ContentId contentId )
     {
-        return this.map.get( contentId );
+        return this.set.stream().filter( c -> contentId.equals( c.getId() ) ).findAny().orElse( null );
     }
 
     public static Contents empty()
     {
-        final ImmutableSet<Content> set = ImmutableSet.of();
-        return new Contents( set );
+        return new Contents( ImmutableSet.of() );
     }
 
     public static Contents from( final Content... contents )
@@ -65,9 +58,9 @@ public final class Contents
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<Content> contents = new LinkedHashSet<>();
+        private final ImmutableSet.Builder<Content> contents = new ImmutableSet.Builder<>();
 
         public Builder add( Content content )
         {
@@ -84,7 +77,7 @@ public final class Contents
 
         public Contents build()
         {
-            return new Contents( contents );
+            return new Contents( contents.build() );
         }
     }
 

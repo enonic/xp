@@ -22,7 +22,6 @@ import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
@@ -466,26 +465,6 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO_ID ), WS_DEFAULT.getValue() );
     }
 
-    protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
-    {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
-    }
-
-    protected void printBranchIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ),
-                              IndexType.BRANCH.getName() );
-    }
-
-    protected void printVersionIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( TEST_REPO_ID ), IndexType.VERSION.getName() );
-    }
-
-    protected void printCommitIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( TEST_REPO_ID ), IndexType.COMMIT.getName() );
-    }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {

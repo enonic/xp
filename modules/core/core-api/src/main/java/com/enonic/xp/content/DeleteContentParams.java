@@ -38,33 +38,21 @@ public final class DeleteContentParams
         return deleteContentListener;
     }
 
+    @Deprecated
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
-        Preconditions.checkArgument( this.contentPath.isAbsolute(), "ContentPath must be absolute: " + this.contentPath );
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof DeleteContentParams ) )
-        {
-            return false;
-        }
-
-        final DeleteContentParams that = (DeleteContentParams) o;
-
-        return contentPath.equals( that.contentPath );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return contentPath.hashCode();
+        return super.hashCode();
     }
 
     public static final class Builder
@@ -97,6 +85,8 @@ public final class DeleteContentParams
 
         public DeleteContentParams build()
         {
+            Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
+            Preconditions.checkArgument( this.contentPath.isAbsolute(), "ContentPath must be absolute: " + this.contentPath );
             return new DeleteContentParams( this );
         }
     }
