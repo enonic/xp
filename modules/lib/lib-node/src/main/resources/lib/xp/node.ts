@@ -28,7 +28,7 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
 // START AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
 
 export interface Bucket {
-    [subAggregationName: string]: BucketsAggregation | StatsAggregation | SingleValueMetricAggregation | string | number | undefined;
+    [subAggregationName: string]: AggregationsResult | string | number | undefined;
 
     key: string;
     docCount: number;
@@ -46,11 +46,11 @@ export interface DateBucket
     to?: string;
 }
 
-export interface BucketsAggregation {
+export interface BucketsAggregationResult {
     buckets: (DateBucket | NumericBucket)[];
 }
 
-export interface StatsAggregation {
+export interface StatsAggregationResult {
     count: number;
     min: number;
     max: number;
@@ -58,11 +58,11 @@ export interface StatsAggregation {
     sum: number;
 }
 
-export interface SingleValueMetricAggregation {
+export interface SingleValueMetricAggregationResult {
     value: number;
 }
 
-export type AggregationsResult = BucketsAggregation | StatsAggregation | SingleValueMetricAggregation;
+export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
 
 export type Aggregation =
     | TermsAggregation
@@ -234,8 +234,6 @@ export interface BooleanFilter {
 
 export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter | BooleanFilter;
 
-export type Suggestion = TermSuggestion;
-
 export interface TermSuggestion {
     text: string;
     term: TermSuggestionOptions;
@@ -406,16 +404,14 @@ export interface NodeQueryResultHit {
     highlight?: HighlightResult;
 }
 
-export interface NodeQueryResultSuggestion {
-    [suggestionName: string]: {
+export interface SuggestionResult {
+    text: string;
+    length: number;
+    offset: number;
+    options: {
         text: string;
-        length: number;
-        offset: number;
-        options: {
-            text: string;
-            score: number;
-            freq?: number; // only for term
-        }[];
+        score: number;
+        freq?: number; // only for term
     }[];
 }
 
@@ -423,8 +419,8 @@ export interface NodeQueryResult {
     total: number;
     count: number;
     hits: NodeQueryResultHit[];
-    aggregations?: AggregationsResult;
-    suggestions?: NodeQueryResultSuggestion[];
+    aggregations?: Record<string, AggregationsResult>;
+    suggestions?: Record<string, SuggestionResult[]>;
 }
 
 export interface NodeMultiRepoQueryResult {
@@ -434,8 +430,8 @@ export interface NodeMultiRepoQueryResult {
         repoId: string;
         branch: string;
     })[];
-    aggregations?: AggregationsResult;
-    suggestions?: NodeQueryResultSuggestion[];
+    aggregations?: Record<string, AggregationsResult>;
+    suggestions?: Record<string, SuggestionResult[]>;
 }
 
 // END AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
@@ -641,7 +637,7 @@ export interface QueryNodeParams {
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
     aggregations?: Record<string, Aggregation>;
-    suggestions?: Record<string, Suggestion>;
+    suggestions?: Record<string, TermSuggestion>;
     highlight?: Highlight;
     explain?: boolean;
 }
