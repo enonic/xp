@@ -63,7 +63,7 @@ interface GetAttachmentsHandler {
 }
 
 export interface Bucket {
-    [subAggregationName: string]: BucketsAggregation | StatsAggregation | SingleValueMetricAggregation | string | number | undefined;
+    [subAggregationName: string]: AggregationsResult | string | number | undefined;
 
     key: string;
     docCount: number;
@@ -81,11 +81,11 @@ export interface DateBucket
     to?: string;
 }
 
-export interface BucketsAggregation {
+export interface BucketsAggregationResult {
     buckets: (DateBucket | NumericBucket)[];
 }
 
-export interface StatsAggregation {
+export interface StatsAggregationResult {
     count: number;
     min: number;
     max: number;
@@ -93,11 +93,11 @@ export interface StatsAggregation {
     sum: number;
 }
 
-export interface SingleValueMetricAggregation {
+export interface SingleValueMetricAggregationResult {
     value: number;
 }
 
-export type AggregationsResult = BucketsAggregation | StatsAggregation | SingleValueMetricAggregation;
+export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
 
 export type Aggregation =
     | TermsAggregation
@@ -118,9 +118,7 @@ export interface TermsAggregation {
         size?: number;
         minDocCount?: number;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface HistogramAggregation {
@@ -132,9 +130,7 @@ export interface HistogramAggregation {
         extendedBoundMax?: number;
         minDocCount?: number;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface DateHistogramAggregation {
@@ -144,9 +140,7 @@ export interface DateHistogramAggregation {
         minDocCount?: number;
         format: string;
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface NumericRange {
@@ -160,9 +154,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface NumericRangeAggregation {
@@ -170,9 +162,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface DateRange {
@@ -187,9 +177,7 @@ export interface DateRangeAggregation {
         format: string;
         ranges: DateRange[];
     };
-    aggregations?: {
-        [subAggregations: string]: Aggregation;
-    };
+    aggregations?: Record<string, Aggregation>;
 }
 
 export interface StatsAggregation {
