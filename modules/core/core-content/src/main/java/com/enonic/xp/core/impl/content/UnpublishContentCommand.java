@@ -72,6 +72,8 @@ public class UnpublishContentCommand
             draftContext.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
         }
 
+        new OnlineEventsProducer( eventPublisher ).unpublishded( contentIds );
+
         return resultBuilder.build();
     }
 

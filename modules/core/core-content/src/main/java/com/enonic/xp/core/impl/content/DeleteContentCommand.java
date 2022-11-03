@@ -7,9 +7,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -100,14 +103,13 @@ final class DeleteContentCommand
 
     private void deleteNodeInDraftAndMaster( final NodeId nodeToDelete, final DeleteContentsResult.Builder result )
     {
-        final Context draftContext = ContextAccessor.current();
-        final Context masterContext = ContextBuilder.from( draftContext ).
+        final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
             branch( ContentConstants.BRANCH_MASTER ).
             build();
 
         final Node draftRootNode = nodeService.getById( nodeToDelete );
 
-        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, draftContext );
+        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, ContextAccessor.current() );
         final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, masterContext );
 
         result.addDeleted( ContentNodeHelper.toContentIds( draftNodes ) );
@@ -126,6 +128,19 @@ final class DeleteContentCommand
             final NodeIds nodeIds = deleteNodeInContext( id, masterContext );
             result.addUnpublished( ContentNodeHelper.toContentIds( nodeIds ) );
             } );
+    }
+
+    private void unpublish( ContentIds contentIds, final DeleteContentsResult.Builder result )
+    {
+        final UnpublishContentsResult unpublishedResult = UnpublishContentCommand.create()
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .translator( translator )
+            .eventPublisher( eventPublisher )
+            .params( UnpublishContentParams.create().contentIds( contentIds ).build() )
+            .build()
+            .execute();
+        result.addUnpublished( unpublishedResult.getUnpublishedContents() );
     }
 
     private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )

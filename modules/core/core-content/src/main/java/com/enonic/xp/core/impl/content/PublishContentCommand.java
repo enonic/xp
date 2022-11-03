@@ -16,7 +16,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
@@ -24,7 +23,6 @@ import com.enonic.xp.node.RoutableNodeVersionIds;
 
 public class PublishContentCommand
     extends AbstractContentCommand
-    implements PushNodesListener
 {
     private final ContentIds contentIds;
 
@@ -75,7 +73,11 @@ public class PublishContentCommand
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        return resultBuilder.build();
+        final PublishContentResult result = resultBuilder.build();
+
+        new OnlineEventsProducer( eventPublisher ).published( result.getPushedContents() );
+
+        return result;
     }
 
     private void doPush( final ContentIds ids )
@@ -136,7 +138,12 @@ public class PublishContentCommand
             build().
             execute();
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, this );
+        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, count -> {
+            if ( publishContentListener != null )
+            {
+                publishContentListener.contentPushed( count );
+            }
+        } );
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
@@ -162,16 +169,6 @@ public class PublishContentCommand
             routableNodeVersionIds.add( routableNodeVersionId );
         }
         nodeService.commit( commitEntry, routableNodeVersionIds.build() );
-    }
-
-
-    @Override
-    public void nodesPushed( final int count )
-    {
-        if ( publishContentListener != null )
-        {
-            publishContentListener.contentPushed( count );
-        }
     }
 
     public static class Builder
