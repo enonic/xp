@@ -5,8 +5,6 @@ import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentValidityResult;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -48,53 +46,38 @@ public class CheckContentValidityCommand
             mustNot( ValueFilter.create().fieldName( WORKFLOW_STATE_FIELD ).addValues( WorkflowState.READY.toString() ).build() ).
             build();
 
-        // valid == false OR (workflow != null && workflow != READY)
-        final Filter filter = BooleanFilter.create().
-            should( notValid ).
-            should( notReady ).
-            build();
+        ContentIds invalidContentIds = FindContentIdsByQueryCommand.create()
+            .query( ContentQuery.create()
+                        .queryFilter( notValid )
+                        .queryFilter( IdFilter.create().fieldName( ContentIndexPath.ID.getPath() ).values( contentIds ).build() )
+                        .size( contentIds.getSize() )
+                        .build() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute()
+            .getContentIds();
 
-        final ContentQuery query = ContentQuery.create()
-            .queryFilter( filter )
-            .queryFilter( IdFilter.create()
-                              .fieldName( ContentIndexPath.ID.getPath() )
-                              .values( contentIds )
-                              .build() )
-            .size( -1 )
-            .build();
+        ContentIds notReadyContentIds = FindContentIdsByQueryCommand.create()
+            .query( ContentQuery.create()
+                        .queryFilter( notReady )
+                        .queryFilter( IdFilter.create().fieldName( ContentIndexPath.ID.getPath() ).values( contentIds ).build() )
+                        .size( contentIds.getSize() )
+                        .build() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute()
+            .getContentIds();
 
-        final FindContentByQueryResult result = FindContentByQueryCommand.create().
-            params( FindContentByQueryParams.create().
-                contentQuery( query ).
-                populateChildren( false ).
-                build() ).
-            contentTypeService( this.contentTypeService ).
-            eventPublisher( this.eventPublisher ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            build().
-            execute();
-
-        ContentIds.Builder invalidContentIds = ContentIds.create();
-        ContentIds.Builder notReadyContentIds = ContentIds.create();
-
-        result.getContents().forEach( content -> {
-
-            if ( !content.isValid() )
-            {
-                invalidContentIds.add( content.getId() );
-            }
-
-            if ( !content.getWorkflowInfo().getState().equals( WorkflowState.READY ) )
-            {
-                notReadyContentIds.add( content.getId() );
-            }
-
-        } );
 
         return ContentValidityResult.create().
-            notValidContentIds( invalidContentIds.build() ).
-            notReadyContentIds( notReadyContentIds.build() ).
+            notValidContentIds( invalidContentIds ).
+            notReadyContentIds( notReadyContentIds ).
             build();
     }
 
