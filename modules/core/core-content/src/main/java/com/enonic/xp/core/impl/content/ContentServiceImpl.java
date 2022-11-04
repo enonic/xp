@@ -117,7 +117,10 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -859,6 +862,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public FindContentByQueryResult find( final FindContentByQueryParams params )
     {
         return FindContentByQueryCommand.create().
@@ -901,15 +905,15 @@ public class ContentServiceImpl
     @Override
     public Contents findByApplicationKey( final ApplicationKey key )
     {
-        final ContentQuery query = ContentQuery.create().
-            queryExpr( QueryParser.parse(
-                String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) + "=" +
-                    "'" + key + "'" ) ).
-            size( -1 ).
-            build();
+        final String filedPath =
+            String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY );
+        final ContentQuery query = ContentQuery.create()
+            .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( filedPath ), ValueExpr.string( key.toString() ) ) ) )
+            .size( -1 )
+            .build();
+
 
         return this.getByIds( new GetContentByIdsParams( this.find( query ).getContentIds() ) );
-
     }
 
     @Override

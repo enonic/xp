@@ -1,13 +1,21 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ElasticsearchTimeoutException;
 import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.MultiSearchAction;
+import org.elasticsearch.action.search.MultiSearchRequestBuilder;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
+
+import com.google.common.base.Throwables;
 
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -33,29 +41,63 @@ abstract class AbstractExecutor
         progressReporter = builder.progressReporter;
     }
 
-    static int safeLongToInt( long l )
-    {
-        if ( l < Integer.MIN_VALUE || l > Integer.MAX_VALUE )
-        {
-            throw new IllegalArgumentException( l + " cannot be cast to int without changing its value." );
-        }
-        return (int) l;
-    }
-
     SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
     {
         try
         {
-            final SearchResponse searchResponse = searchRequestBuilder.
-                execute().
-                actionGet( searchTimeout );
+            final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet( searchTimeout );
 
             return SearchResultFactory.create( searchResponse );
         }
         catch ( ElasticsearchException e )
         {
+            throw rethrowException( e, searchRequestBuilder );
+        }
+    }
+
+    List<SearchResult> doSearchRequests( final SearchRequestBuilder... searchRequestBuilders )
+    {
+        List<SearchResult> results = new ArrayList<>();
+        final MultiSearchRequestBuilder multiSearchRequestBuilder = MultiSearchAction.INSTANCE.newRequestBuilder( client );
+
+        for ( SearchRequestBuilder searchRequestBuilder : searchRequestBuilders )
+        {
+            multiSearchRequestBuilder.add( searchRequestBuilder );
+        }
+
+        final MultiSearchResponse.Item[] searchResponses = multiSearchRequestBuilder.execute().actionGet( searchTimeout ).getResponses();
+
+        for ( int i = 0; i < searchResponses.length; i++ )
+        {
+            MultiSearchResponse.Item searchResponse = searchResponses[i];
+
+            if ( searchResponse.isFailure() )
+            {
+                throw rethrowException( searchResponse.getFailure(), searchRequestBuilders[i] );
+            }
+            results.add( SearchResultFactory.create( searchResponse.getResponse() ) );
+        }
+        return results;
+    }
+
+    private RuntimeException rethrowException( Throwable throwable, SearchRequestBuilder searchRequestBuilder )
+    {
+        if ( throwable instanceof ElasticsearchTimeoutException )
+        {
             throw new IndexException(
-                "Search request failed after [" + this.searchTimeout + "], query: [" + createQueryString( searchRequestBuilder ) + "]", e );
+                "Search request failed after [" + this.searchTimeout + "], query: [" + createQueryString( searchRequestBuilder ) + "]",
+                (ElasticsearchTimeoutException) throwable );
+        }
+        else if ( throwable instanceof ElasticsearchException )
+        {
+            throw new IndexException( "Search request failed, query: [" + createQueryString( searchRequestBuilder ) + "]",
+                                      (ElasticsearchException) throwable );
+
+        }
+        else
+        {
+            Throwables.throwIfUnchecked( throwable );
+            throw new RuntimeException( throwable );
         }
     }
 

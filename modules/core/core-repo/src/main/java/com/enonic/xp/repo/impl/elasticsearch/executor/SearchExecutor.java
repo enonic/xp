@@ -40,58 +40,36 @@ public class SearchExecutor
 
         if ( searchMode.equals( SearchMode.COUNT ) )
         {
-            return CountExecutor.create( this.client ).
-                build().
-                execute( query );
+            return CountExecutor.create( this.client ).build().execute( query );
         }
 
         if ( size == NodeSearchService.GET_ALL_SIZE_FLAG )
         {
             if ( anyAggregations )
             {
-                LOG.debug( "Query with size [" + query.getSize() + "] > threshold [" + SCROLL_THRESHOLD +
-                               "] but with aggregations. Scan not possible." );
+                LOG.debug( "Query with get-all size and aggregations. Scan not possible." );
+                final int resolvedSize = Math.toIntExact( CountExecutor.create( this.client ).build().execute( query ).getTotalHits() );
+                return doSearch( query, resolvedSize );
             }
-            else
-            {
-                return ScrollExecutor.create( this.client ).
-                    build().
-                    execute( query );
-            }
+            return ScrollExecutor.create( this.client ).build().execute( query );
         }
-
-        return doSearch( query );
+        else
+        {
+            return doSearch( query, query.getSize() );
+        }
     }
 
-    private SearchResult doSearch( final ElasticsearchQuery query )
+    private SearchResult doSearch( final ElasticsearchQuery query, int size )
     {
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .resolvedSize( resolveSize( query ) )
+            .resolvedSize( size )
             .searchPreference( query.getSearchPreference() )
-            .build().
-            createSearchRequest();
-
-        //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
+            .build()
+            .createSearchRequest();
 
         return doSearchRequest( searchRequestBuilder );
-    }
-
-    private int resolveSize( final ElasticsearchQuery query )
-    {
-        if ( query.getSize() == NodeSearchService.GET_ALL_SIZE_FLAG )
-        {
-            final SearchResult countResult = CountExecutor.create( this.client ).
-                build().
-                execute( query );
-
-            return safeLongToInt( countResult.getTotalHits() );
-        }
-        else
-        {
-            return query.getSize();
-        }
     }
 
     public static class Builder

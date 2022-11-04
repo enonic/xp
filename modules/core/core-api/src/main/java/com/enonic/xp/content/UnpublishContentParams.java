@@ -21,6 +21,11 @@ public final class UnpublishContentParams
         return contentIds;
     }
 
+    public PushContentListener getPublishContentListener()
+    {
+        return publishContentListener;
+    }
+
     @Deprecated
     public Branch getUnpublishBranch()
     {
@@ -48,11 +53,6 @@ public final class UnpublishContentParams
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public PushContentListener getPublishContentListener()
-    {
-        return publishContentListener;
     }
 
     public static final class Builder
