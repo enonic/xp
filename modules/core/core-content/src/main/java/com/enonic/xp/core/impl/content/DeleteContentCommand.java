@@ -1,12 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.stream.Stream;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
@@ -15,9 +13,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
@@ -103,31 +99,11 @@ final class DeleteContentCommand
 
     private void deleteNodeInDraftAndMaster( final NodeId nodeToDelete, final DeleteContentsResult.Builder result )
     {
-        final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_MASTER ).
-            build();
-
-        final Node draftRootNode = nodeService.getById( nodeToDelete );
+        unpublish( ContentIds.from( ContentId.from(nodeToDelete) ), result );
 
         final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, ContextAccessor.current() );
-        final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, masterContext );
 
         result.addDeleted( ContentNodeHelper.toContentIds( draftNodes ) );
-        result.addUnpublished( ContentNodeHelper.toContentIds( masterNodes ) );
-
-        final NodeIds masterIdsByDraftPath = masterContext.callWith( () ->  // to delete master with moved draft from moved tree
-                                                                         this.nodeService.findByParent( FindNodesByParentParams.create().
-                                                                             parentPath( draftRootNode.path() ).
-                                                                             recursive( true ).
-                                                                             build() ).
-                                                                             getNodeIds() );
-
-        Stream.concat( masterIdsByDraftPath.stream(), draftNodes.stream() ).
-            filter( id -> !masterNodes.contains( id ) ).
-            forEach( id -> {
-            final NodeIds nodeIds = deleteNodeInContext( id, masterContext );
-            result.addUnpublished( ContentNodeHelper.toContentIds( nodeIds ) );
-            } );
     }
 
     private void unpublish( ContentIds contentIds, final DeleteContentsResult.Builder result )
