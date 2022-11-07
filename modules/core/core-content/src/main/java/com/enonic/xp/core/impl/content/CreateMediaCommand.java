@@ -197,9 +197,9 @@ final class CreateMediaCommand
         @Override
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
             Preconditions.checkNotNull( formDefaultValuesProcessor );
-            super.validate();
         }
 
         public CreateMediaCommand build()

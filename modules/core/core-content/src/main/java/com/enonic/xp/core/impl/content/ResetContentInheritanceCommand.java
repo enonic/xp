@@ -204,11 +204,10 @@ final class ResetContentInheritanceCommand
         @Override
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( this.projectService, "projectService must be set." );
             Preconditions.checkNotNull( this.contentService, "contentService must be set." );
             Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
-
-            super.validate();
         }
 
         public ResetContentInheritanceCommand build()

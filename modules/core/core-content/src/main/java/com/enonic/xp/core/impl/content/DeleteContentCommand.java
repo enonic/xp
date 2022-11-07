@@ -10,10 +10,10 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.UnpublishContentParams;
-import com.enonic.xp.content.UnpublishContentsResult;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeListener;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
@@ -74,7 +74,13 @@ final class DeleteContentCommand
     {
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        deleteNodeInDraftAndMaster( nodeToDelete, result );
+        final ContentIds unpublishedContents = unpublish( nodeToDelete );
+        result.addUnpublished( unpublishedContents );
+
+        final NodeIds deletedNodes = this.nodeService.deleteById( nodeToDelete, this );
+        final ContentIds deletedContents = ContentNodeHelper.toContentIds( deletedNodes );
+
+        result.addDeleted( deletedContents );
 
         return result.build();
     }
@@ -97,31 +103,25 @@ final class DeleteContentCommand
         }
     }
 
-    private void deleteNodeInDraftAndMaster( final NodeId nodeToDelete, final DeleteContentsResult.Builder result )
+    private ContentIds unpublish( final NodeId nodeId )
     {
-        unpublish( ContentIds.from( ContentId.from(nodeToDelete) ), result );
+        final FindNodesByParentResult childrenInDraft =
+            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
 
-        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, ContextAccessor.current() );
-
-        result.addDeleted( ContentNodeHelper.toContentIds( draftNodes ) );
-    }
-
-    private void unpublish( ContentIds contentIds, final DeleteContentsResult.Builder result )
-    {
-        final UnpublishContentsResult unpublishedResult = UnpublishContentCommand.create()
+        return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .translator( translator )
             .eventPublisher( eventPublisher )
-            .params( UnpublishContentParams.create().contentIds( contentIds ).build() )
+            .params( UnpublishContentParams.create()
+                         .contentIds( ContentIds.create()
+                                          .addAll( ContentNodeHelper.toContentIds( childrenInDraft.getNodeIds() ) )
+                                          .add( ContentId.from( nodeId ) )
+                                          .build() )
+                         .build() )
             .build()
-            .execute();
-        result.addUnpublished( unpublishedResult.getUnpublishedContents() );
-    }
-
-    private NodeIds deleteNodeInContext( final NodeId nodeToDelete, final Context context )
-    {
-        return context.callWith( () -> this.nodeService.deleteById( nodeToDelete, this ) );
+            .execute()
+            .getUnpublishedContents();
     }
 
     public static class Builder
@@ -138,6 +138,7 @@ final class DeleteContentCommand
         @Override
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params );
         }
 

@@ -15,12 +15,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 
 public class UnpublishContentCommand
@@ -43,54 +40,42 @@ public class UnpublishContentCommand
     public UnpublishContentsResult execute()
     {
         final Context context = ContextAccessor.current();
-
         final Context unpublishContext = ContextBuilder.from( context ).branch( ContentConstants.BRANCH_MASTER ).build();
 
-        return unpublishContext.callWith( this::unpublish );
+        final ContentIds contentIds = unpublishContext.callWith( this::unpublish );
+
+        context.callWith( () -> removePublishInfo( contentIds ) );
+
+        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
+        if ( contentIds.getSize() == 1 )
+        {
+            context.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
+        }
+
+        new OnlineEventsProducer( eventPublisher ).unpublishded( contentIds );
+
+
+        return resultBuilder.build();
     }
 
-    private UnpublishContentsResult unpublish()
+    private ContentIds unpublish()
     {
         final ContentIds.Builder contentBuilder = ContentIds.create();
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            recursiveUnpublish( NodeId.from( contentId ), contentBuilder );
-        }
+            final NodeIds nodeIds = this.nodeService.deleteById( NodeId.from( contentId ) );
 
-        final ContentIds contentIds = contentBuilder.build();
-        final Context draftContext = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            build();
-
-        draftContext.callWith( () -> removePublishInfo( contentIds ) );
-
-        final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().
-            addUnpublished( contentIds );
-        if ( contentIds.getSize() == 1 )
-        {
-            draftContext.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
-        }
-
-        new OnlineEventsProducer( eventPublisher ).unpublishded( contentIds );
-
-        return resultBuilder.build();
-    }
-
-    private void recursiveUnpublish( final NodeId nodeId, final ContentIds.Builder contentsBuilder )
-    {
-        final FindNodesByParentResult result = this.nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).build() );
-
-        result.getNodeIds().forEach( id -> recursiveUnpublish( id, contentsBuilder ) );
-        final NodeIds nodes = this.nodeService.deleteById( nodeId );
-        if ( nodes.isNotEmpty() )
-        {
-            if ( params.getPublishContentListener() != null )
+            if ( nodeIds.isNotEmpty() )
             {
-                params.getPublishContentListener().contentPushed( 1 );
+                if ( params.getPublishContentListener() != null )
+                {
+                    params.getPublishContentListener().contentPushed( nodeIds.getSize() );
+                }
+                contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeIds ) );
             }
-            contentsBuilder.add( ContentId.from( nodes.first() ) );
         }
+        return contentBuilder.build();
     }
 
     private Void removePublishInfo( final ContentIds contentIds )
@@ -98,39 +83,27 @@ public class UnpublishContentCommand
         final Instant now = Instant.now();
         for ( final ContentId contentId : contentIds )
         {
-            this.nodeService.update( UpdateNodeParams.create().
-                editor( toBeEdited -> {
+            nodeService.update( UpdateNodeParams.create().editor( toBeEdited -> {
 
-                    if ( toBeEdited.data.getInstant( ContentPropertyNames.PUBLISH_INFO + PropertyPath.ELEMENT_DIVIDER + ContentPropertyNames.PUBLISH_FROM ) != null )
+                if ( toBeEdited.data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) ) != null )
+                {
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+
+                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
+
+                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
+
+                    if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
                     {
-                        PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-
-                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
-
-                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
-
-                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
-                        {
-                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
-                        }
+                        publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                     }
-                } ).
-                id( NodeId.from( contentId ) ).
-                build() );
+                }
+            } ).id( NodeId.from( contentId ) ).build() );
 
-            commitUnpublishedNode( contentId );
+            nodeService.commit( NodeCommitEntry.create().message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).build(),
+                                NodeIds.from( NodeId.from( contentId ) ) );
         }
         return null;
-    }
-
-    private void commitUnpublishedNode( final ContentId contentId )
-    {
-        final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).
-            build();
-
-        nodeService.refresh( RefreshMode.ALL );
-        nodeService.commit( commitEntry, NodeIds.from( NodeId.from( contentId ) ) );
     }
 
     public static class Builder
@@ -147,6 +120,7 @@ public class UnpublishContentCommand
         @Override
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params );
         }
 

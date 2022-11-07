@@ -76,6 +76,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -481,10 +482,8 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( updatedNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-        }
+        this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+
         return updatedNode;
     }
 
@@ -1114,7 +1113,8 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final InternalContext context = InternalContext.from( ContextAccessor.current() );
+        final InternalContext context =
+            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, false, context );
         branchNodeVersions.

@@ -13,7 +13,6 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -39,9 +38,7 @@ class GetBranchDataCommand
     {
         final SearchResult result = doExecute();
 
-        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( result );
-
-        return NodeBranchEntries.from( nodeBranchEntries.getList() );
+        return  NodeBranchQueryResultFactory.create( result );
     }
 
     private SearchResult doExecute()

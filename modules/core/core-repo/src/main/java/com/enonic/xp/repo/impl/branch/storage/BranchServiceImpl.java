@@ -28,7 +28,6 @@ import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.cache.BranchCachePath;
 import com.enonic.xp.repo.impl.cache.BranchPath;
@@ -341,8 +340,7 @@ public class BranchServiceImpl
                                                                 .searchPreference( context.getSearchPreference() )
                                                                 .build() );
 
-        final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
-        return NodeBranchEntries.from( nodeBranchEntries.getList() );
+        return NodeBranchQueryResultFactory.create( results );
     }
 
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final InternalContext context )
