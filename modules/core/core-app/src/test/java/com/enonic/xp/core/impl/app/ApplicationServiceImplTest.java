@@ -959,9 +959,7 @@ public class ApplicationServiceImplTest
             if ( appNodeNames.contains( createNodeParams.getName() ) )
             {
                 return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .parentPath( NodePath.create( "/app1" ).build() )
-                    .build();
+                    .id( NodeId.from( createNodeParams.getName() ) ).parentPath( NodePath.create( "/app1" ).build() ).build();
             }
 
             return null;

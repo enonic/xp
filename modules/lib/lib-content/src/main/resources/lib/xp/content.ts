@@ -1115,7 +1115,7 @@ export function publish(params: PublishContentParams): PublishContentResult {
     const bean = __.newBean<PublishContentHandler>('com.enonic.xp.lib.content.PublishContentHandler');
     bean.setKeys(params.keys);
     if (params.schedule) {
-        bean.setContentPublishInfo(__.toScriptValue(params.schedule));
+        if (params.schedule) {bean.setContentPublishInfo(__.toScriptValue(params.schedule));
     }
     if (params.excludeChildrenIds) {
         bean.setExcludeChildrenIds(params.excludeChildrenIds);
