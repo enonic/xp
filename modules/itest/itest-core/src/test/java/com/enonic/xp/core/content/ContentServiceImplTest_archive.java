@@ -58,7 +58,7 @@ public class ContentServiceImplTest_archive
 
         final ArchiveContentsResult result = this.contentService.archive( params );
 
-        assertEquals( 1, result.getArchivedContents().getSize() );
+        assertEquals( 4, result.getArchivedContents().getSize() );
         assertEquals( 4, listener.getArchived() );
 
         assertFalse( this.contentService.contentExists( child1.getId() ) );

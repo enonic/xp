@@ -94,7 +94,7 @@ final class MoveContentCommand
 
         final Node movedNode = nodeService.move( builder.build() );
 
-        final Content movedContent = translator.fromNode( movedNode, true );
+        final Content movedContent = translator.fromNode( movedNode, false );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
     }

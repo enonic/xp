@@ -13,7 +13,6 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
@@ -63,21 +62,26 @@ final class DeleteContentCommand
             throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
         }
 
-        final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
+        final DeleteContentsResult deletedContents = doDeleteContent( ContentId.from( nodeToDelete.id() ) );
 
         this.nodeService.refresh( RefreshMode.ALL );
 
         return deletedContents;
     }
 
-    private DeleteContentsResult doDeleteContent( NodeId nodeToDelete )
+    private DeleteContentsResult doDeleteContent( ContentId nodeToDelete )
     {
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        final ContentIds unpublishedContents = unpublish( nodeToDelete );
+        final NodeId nodeId = NodeId.from( nodeToDelete );
+
+        final NodeIds descendants = nodeService.findByParent(
+            FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+
+        final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
-        final NodeIds deletedNodes = this.nodeService.deleteById( nodeToDelete, this );
+        final NodeIds deletedNodes = this.nodeService.deleteById( nodeId, this );
         final ContentIds deletedContents = ContentNodeHelper.toContentIds( deletedNodes );
 
         result.addDeleted( deletedContents );
@@ -103,11 +107,8 @@ final class DeleteContentCommand
         }
     }
 
-    private ContentIds unpublish( final NodeId nodeId )
+    private ContentIds unpublish( final ContentId contentId, final ContentIds descendants )
     {
-        final FindNodesByParentResult childrenInDraft =
-            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
-
         return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
@@ -115,8 +116,8 @@ final class DeleteContentCommand
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.create()
-                                          .addAll( ContentNodeHelper.toContentIds( childrenInDraft.getNodeIds() ) )
-                                          .add( ContentId.from( nodeId ) )
+                                          .addAll( descendants )
+                                          .add( contentId )
                                           .build() )
                          .build() )
             .build()

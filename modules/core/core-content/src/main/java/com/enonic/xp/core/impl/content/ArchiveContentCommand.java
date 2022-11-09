@@ -14,19 +14,20 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -88,16 +89,29 @@ final class ArchiveContentCommand
     private ArchiveContentsResult doExecute()
     {
         validateLocation();
-        unpublish();
 
-        final Node nodeToArchive = updateProperties( NodeId.from( params.getContentId() ) );
+        final ArchiveContentsResult.Builder result = ArchiveContentsResult.create();
+
+        final ContentId contentId = params.getContentId();
+        final NodeId nodeId = NodeId.from( contentId );
+
+        final NodeIds descendants = nodeService.findByParent(
+                FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() )
+            .getNodeIds();
+
+        final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
+
+        final ContentIds unpublishedContents = unpublish( contentId, descendantContents );
+        result.addUnpublished( unpublishedContents );
+
+        final Node nodeToArchive = updateProperties( nodeId, descendants );
 
         rename( nodeToArchive );
-        move( nodeToArchive.id() );
+        move( nodeId );
 
-        commitNode( nodeToArchive.id(), ContentConstants.ARCHIVE_COMMIT_PREFIX );
+        commitNode( nodeId, ContentConstants.ARCHIVE_COMMIT_PREFIX );
 
-        return ArchiveContentsResult.create().addArchived( params.getContentId() ).build();
+        return result.addArchived( contentId ).addArchived( descendantContents ).build();
     }
 
     @Override
@@ -109,31 +123,30 @@ final class ArchiveContentCommand
         }
     }
 
-    private void unpublish()
+    private ContentIds unpublish( final ContentId contentId, final ContentIds descendants )
     {
-        UnpublishContentCommand.create()
+        return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .translator( translator )
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
-                         .contentIds( ContentIds.from( params.getContentId() ) )
+                         .contentIds( ContentIds.create()
+                                          .addAll( descendants )
+                                          .add( contentId )
+                                          .build() )
                          .build() )
             .build()
-            .execute();
-
-        nodeService.refresh( RefreshMode.ALL );
+            .execute()
+            .getUnpublishedContents();
     }
 
-    private Node updateProperties( final NodeId nodeId )
+    private Node updateProperties( final NodeId nodeId, NodeIds descendants )
     {
-        final FindNodesByParentResult childrenToArchive =
-            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
-
         final Instant now = Instant.now();
         final String archivedBy = getCurrentUser().getKey().toString();
 
-        childrenToArchive.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
+        descendants.forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
             toBeEdited.data.setInstant( ARCHIVED_TIME, now );
             toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
         } ).build() ) );

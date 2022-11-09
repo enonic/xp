@@ -88,7 +88,7 @@ final class PageDataSerializer
 
         if ( page.hasTemplate() )
         {
-            specialBlockSet.addReference( TEMPLATE, new Reference( NodeId.from( page.getTemplate() ) ) );
+            specialBlockSet.addReference( TEMPLATE, new Reference( NodeId.from( page.getTemplate().getContentId() ) ) );
         }
 
         if ( page.hasRegions() )

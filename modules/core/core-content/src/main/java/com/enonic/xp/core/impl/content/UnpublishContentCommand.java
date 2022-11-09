@@ -18,6 +18,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 
 public class UnpublishContentCommand
@@ -99,6 +100,8 @@ public class UnpublishContentCommand
                     }
                 }
             } ).id( NodeId.from( contentId ) ).build() );
+
+            nodeService.refresh( RefreshMode.ALL );
 
             nodeService.commit( NodeCommitEntry.create().message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).build(),
                                 NodeIds.from( NodeId.from( contentId ) ) );
