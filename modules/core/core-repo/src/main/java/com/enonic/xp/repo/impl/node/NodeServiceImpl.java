@@ -360,31 +360,20 @@ public class NodeServiceImpl
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
         verifyContext();
-        if ( params.isRecursive() )
-        {
-            return FindNodeIdsByParentCommand.create().
-                parentId( params.getParentId() ).
-                parentPath( params.getParentPath() ).
-                recursive( true ).
-                queryFilters( params.getQueryFilters() ).
-                from( params.getFrom() ).
-                size( params.getSize() ).
-                countOnly( params.isCountOnly() ).
-                childOrder( params.getChildOrder() ).
-                indexServiceInternal( this.indexServiceInternal ).
-                searchService( this.nodeSearchService ).
-                storageService( this.nodeStorageService ).
-                build().
-                execute();
-        }
-
-        return FindNodesByParentCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodeIdsByParentCommand.create()
+            .parentId( params.getParentId() )
+            .parentPath( params.getParentPath() )
+            .recursive( params.isRecursive() )
+            .queryFilters( params.getQueryFilters() )
+            .from( params.getFrom() )
+            .size( params.getSize() )
+            .countOnly( params.isCountOnly() )
+            .childOrder( params.getChildOrder() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.nodeSearchService )
+            .storageService( this.nodeStorageService )
+            .build()
+            .execute();
     }
 
     @Override

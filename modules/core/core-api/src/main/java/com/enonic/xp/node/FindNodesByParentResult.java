@@ -11,13 +11,6 @@ public class FindNodesByParentResult
 
     private final long hits;
 
-    private FindNodesByParentResult( Builder builder )
-    {
-        nodeIds = builder.nodeIds;
-        totalHits = builder.totalHits;
-        hits = builder.hits;
-    }
-
     private FindNodesByParentResult( final long hits, final long totalHits, final NodeIds nodeIds )
     {
         this.hits = hits;
@@ -59,9 +52,9 @@ public class FindNodesByParentResult
     {
         private NodeIds nodeIds = NodeIds.empty();
 
-        private long totalHits = 0;
+        private long totalHits;
 
-        private long hits = 0;
+        private long hits;
 
         private Builder()
         {
@@ -87,7 +80,7 @@ public class FindNodesByParentResult
 
         public FindNodesByParentResult build()
         {
-            return new FindNodesByParentResult( this );
+            return new FindNodesByParentResult( hits, totalHits, nodeIds );
         }
     }
 }
