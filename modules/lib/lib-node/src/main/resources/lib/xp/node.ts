@@ -539,7 +539,7 @@ interface NodeHandler {
 export type CreateNodeParams<NodeData = unknown> = {
     _name?: string;
     _parentPath?: string;
-    _indexConfig?: Partial<NodeIndexConfig>;
+    _indexConfig?: Partial<NodeIndexConfigParams>;
     _permissions?: AccessControlEntry[];
     _inheritsPermissions?: boolean;
     _manualOrderValue?: number;
@@ -762,11 +762,27 @@ export interface AccessControlEntry {
 }
 
 export interface NodeIndexConfig {
-    analyzer: string;
+    analyzer?: string;
     default?: NodeConfigEntry;
     configs: {
         path: string;
         config: NodeConfigEntry;
+    }[];
+}
+
+export type NodeIndexConfigTemplates =
+    | 'none'
+    | 'byType'
+    | 'fulltext'
+    | 'path'
+    | 'minimal';
+
+export interface NodeIndexConfigParams {
+    analyzer?: string;
+    default?: NodeConfigEntry | NodeIndexConfigTemplates;
+    configs: {
+        path: string;
+        config: NodeConfigEntry | NodeIndexConfigTemplates;
     }[];
 }
 
