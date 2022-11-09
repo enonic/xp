@@ -780,7 +780,7 @@ export type NodeIndexConfigTemplates =
 export interface NodeIndexConfigParams {
     analyzer?: string;
     default?: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
-    configs: {
+    configs?: {
         path: string;
         config: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
     }[];
