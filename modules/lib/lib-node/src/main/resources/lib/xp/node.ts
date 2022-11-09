@@ -779,10 +779,10 @@ export type NodeIndexConfigTemplates =
 
 export interface NodeIndexConfigParams {
     analyzer?: string;
-    default?: NodeConfigEntry | NodeIndexConfigTemplates;
+    default?: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
     configs: {
         path: string;
-        config: NodeConfigEntry | NodeIndexConfigTemplates;
+        config: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
     }[];
 }
 
