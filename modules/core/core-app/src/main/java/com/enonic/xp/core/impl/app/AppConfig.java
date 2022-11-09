@@ -6,7 +6,7 @@ public @interface AppConfig
 
     boolean auditlog_enabled() default true;
 
-    boolean virtual_enabled() default false;
+    boolean virtual_enabled() default true;
 
     boolean virtual_schema_override() default true;
 
