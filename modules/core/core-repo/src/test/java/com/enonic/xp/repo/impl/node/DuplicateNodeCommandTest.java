@@ -24,7 +24,6 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -464,7 +463,7 @@ public class DuplicateNodeCommandTest
 
     private FindNodesByParentResult findChildren( final Node node )
     {
-        return findByParent( FindNodesByParentParams.create().parentPath( node.path() ).build() );
+        return findByParent( node.path() );
     }
 
 

@@ -76,7 +76,7 @@ final class DeleteContentCommand
         final NodeId nodeId = NodeId.from( nodeToDelete );
 
         final NodeIds descendants = nodeService.findByParent(
-            FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+            FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
 
         final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );

@@ -96,7 +96,7 @@ final class ArchiveContentCommand
         final NodeId nodeId = NodeId.from( contentId );
 
         final NodeIds descendants = nodeService.findByParent(
-                FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() )
+                FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() )
             .getNodeIds();
 
         final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );

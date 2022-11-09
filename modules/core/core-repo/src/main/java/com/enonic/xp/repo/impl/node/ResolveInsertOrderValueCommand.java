@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
@@ -33,11 +32,8 @@ public class ResolveInsertOrderValueCommand
         final ChildOrder childOrder =
             InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
-        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( parentPath ).
-            childOrder( childOrder ).
-            size( 1 ).
-            build() );
+        final FindNodesByParentResult findNodesByParentResult =
+            FindNodeIdsByParentCommand.create( this ).parentPath( parentPath ).childOrder( childOrder ).size( 1 ).build().execute();
 
         if ( findNodesByParentResult.isEmpty() )
         {

@@ -26,7 +26,6 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -437,11 +436,10 @@ public abstract class AbstractNodeTest
             execute();
     }
 
-
-    FindNodesByParentResult findByParent( final FindNodesByParentParams params )
+    FindNodesByParentResult findByParent( final NodePath parentPath )
     {
-        return FindNodesByParentCommand.create().
-            params( params ).
+        return FindNodeIdsByParentCommand.create().
+            parentPath( parentPath ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

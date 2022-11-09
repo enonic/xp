@@ -9,7 +9,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -58,9 +57,7 @@ public class ReorderChildNodeCommandTest
             execute();
         refresh();
 
-        final FindNodesByParentResult reOrderedResult = findByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            build() );
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: c,a,b,d,e,f
         final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
@@ -98,9 +95,7 @@ public class ReorderChildNodeCommandTest
             execute();
         refresh();
 
-        final FindNodesByParentResult reOrderedResult = findByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            build() );
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: a,c,b,d,e,f
         final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
@@ -137,9 +132,7 @@ public class ReorderChildNodeCommandTest
             execute();
         refresh();
 
-        final FindNodesByParentResult reOrderedResult = findByParent( FindNodesByParentParams.create().
-            parentPath( parentNode.path() ).
-            build() );
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: a,b,d,e,f,c
         final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();

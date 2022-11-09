@@ -11,7 +11,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -20,7 +19,6 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
@@ -180,13 +178,11 @@ public class PushNodesCommand
             repositoryId( context.getRepositoryId() ).
             build();
 
-        final FindNodesByParentResult result = FindNodesByParentCommand.create( this ).
-            params( FindNodesByParentParams.create().
-                parentPath( nodeBranchEntry.getNodePath() ).
-                childOrder( ChildOrder.from( NodeIndexPath.PATH + " asc" ) ).
-                build() ).
-            build().
-            execute();
+        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this )
+            .parentPath( nodeBranchEntry.getNodePath() )
+            .childOrder( ChildOrder.path() )
+            .build()
+            .execute();
 
         final NodeBranchEntries childEntries =
             this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
