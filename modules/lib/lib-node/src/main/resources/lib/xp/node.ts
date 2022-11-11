@@ -316,6 +316,7 @@ export interface StemmedDslExpression {
     fields: string[];
     query: string;
     language: string;
+    operator?: DslOperator;
 }
 
 export interface BooleanDslExpression {
