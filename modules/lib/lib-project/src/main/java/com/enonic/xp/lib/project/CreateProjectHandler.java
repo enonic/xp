@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.project;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,6 +30,8 @@ public final class CreateProjectHandler
     private String displayName;
 
     private String description;
+
+    private ZoneId timeZone;
 
     private ProjectName parent;
 
@@ -71,6 +74,7 @@ public final class CreateProjectHandler
             .name( this.id )
             .displayName( this.displayName )
             .description( this.description )
+            .timeZone( this.timeZone )
             .parent( this.parent )
             .forceInitialization( true );
 
@@ -134,5 +138,10 @@ public final class CreateProjectHandler
     {
         final List<SiteConfig> configs = buildSiteConfigs( value );
         this.siteConfigs = configs != null ? SiteConfigs.from( configs ) : null;
+    }
+
+    public void setTimeZone( final String timeZone )
+    {
+        this.timeZone = timeZone != null ? ZoneId.of( timeZone ) : null;
     }
 }

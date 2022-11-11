@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -143,7 +144,7 @@ public class ProjectServiceImpl
 
             eventPublisher.publish( ProjectEvents.created( params.getName() ) );
 
-            LOG.debug( "Project created: " + params.getName() );
+            LOG.debug( "Project created: {}", params.getName() );
 
             return result;
         } );
@@ -192,7 +193,7 @@ public class ProjectServiceImpl
     {
         return callWithUpdateContext( () -> {
             final Project result = doModify( params );
-            LOG.debug( "Project updated: " + params.getName() );
+            LOG.debug( "Project updated: {}", params.getName() );
 
             return result;
         }, params.getName() );
@@ -225,7 +226,7 @@ public class ProjectServiceImpl
     {
         callWithUpdateContext( () -> {
             doModifyIcon( params );
-            LOG.debug( "Icon for project updated: " + params.getName() );
+            LOG.debug( "Icon for project updated: {}", params.getName() );
 
             return true;
         }, params.getName() );
@@ -394,7 +395,7 @@ public class ProjectServiceImpl
     {
         return callWithDeleteContext( () -> {
             final boolean result = doDelete( projectName );
-            LOG.debug( "Project deleted: " + projectName );
+            LOG.debug( "Project deleted: {}", projectName );
 
             return result;
         }, projectName );
@@ -440,7 +441,7 @@ public class ProjectServiceImpl
         return callWithUpdateContext( () -> {
 
             final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
-            LOG.debug( "Project permissions updated: " + projectName );
+            LOG.debug( "Project permissions updated: {}", projectName );
 
             return result;
 
@@ -466,6 +467,10 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+        if ( params.getTimeZone() != null )
+        {
+            projectData.setString( ProjectConstants.PROJECT_TIMEZONE_PROPERTY, params.getTimeZone().toString() );
+        }
         if ( params.getParent() != null )
         {
             projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
@@ -492,6 +497,15 @@ public class ProjectServiceImpl
 
         projectData.removeProperties( ProjectConstants.PROJECT_SITE_CONFIG_PROPERTY );
         SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), projectData );
+
+        if ( params.getTimeZone() != null )
+        {
+            projectData.setString( ProjectConstants.PROJECT_TIMEZONE_PROPERTY, params.getTimeZone().toString() );
+        }
+        else
+        {
+            projectData.removeProperties( ProjectConstants.PROJECT_TIMEZONE_PROPERTY );
+        }
 
         return data;
     }

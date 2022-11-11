@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.project.mapper;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -46,6 +47,7 @@ public final class ProjectMapper
         gen.value( "id", project.getName().toString() );
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
+        gen.value( "timeZone", Objects.toString( project.getTimeZone(), null ) );
         gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
