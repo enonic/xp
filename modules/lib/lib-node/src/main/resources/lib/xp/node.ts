@@ -681,7 +681,7 @@ export interface NodeVersion {
     nodeId: string;
     nodePath: string;
     timestamp: string;
-    commitId: string;
+    commitId?: string;
 }
 
 export interface NodeVersionsQueryResult {
