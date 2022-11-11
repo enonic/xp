@@ -1,5 +1,7 @@
 package com.enonic.xp.project;
 
+import java.time.ZoneId;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -24,6 +26,8 @@ public final class CreateProjectParams
 
     private final boolean forceInitialization;
 
+    private final ZoneId timeZone;
+
     private CreateProjectParams( final Builder builder )
     {
         this.name = builder.name;
@@ -33,6 +37,7 @@ public final class CreateProjectParams
         this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
         this.permissions = builder.permissions;
+        this.timeZone = builder.timeZone;
     }
 
     public static Builder create()
@@ -75,6 +80,11 @@ public final class CreateProjectParams
         return forceInitialization;
     }
 
+    public ZoneId getTimeZone()
+    {
+        return timeZone;
+    }
+
     public static final class Builder
     {
 
@@ -87,6 +97,8 @@ public final class CreateProjectParams
         private ProjectName parent;
 
         private AccessControlList permissions;
+
+        private ZoneId timeZone;
 
         private boolean forceInitialization = false;
 
@@ -135,6 +147,12 @@ public final class CreateProjectParams
         public Builder addSiteConfig( final SiteConfig siteConfig )
         {
             this.siteConfigs.add( siteConfig );
+            return this;
+        }
+
+        public Builder timeZone( final ZoneId timeZone )
+        {
+            this.timeZone = timeZone;
             return this;
         }
 

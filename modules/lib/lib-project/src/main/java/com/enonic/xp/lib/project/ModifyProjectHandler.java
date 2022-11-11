@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.project;
 
+import java.time.ZoneId;
 import java.util.Locale;
 
 import com.google.common.base.Preconditions;
@@ -27,6 +28,8 @@ public final class ModifyProjectHandler
     private Locale language;
 
     private SiteConfigs siteConfigs;
+
+    private ZoneId timeZone;
 
     @Override
     protected ProjectMapper doExecute()
@@ -70,7 +73,8 @@ public final class ModifyProjectHandler
         final ModifyProjectParams.Builder params = ModifyProjectParams.create()
             .name( this.id )
             .displayName( this.displayName != null ? this.displayName : projectBeforeUpdate.getDisplayName() )
-            .description( this.description != null ? this.description : projectBeforeUpdate.getDescription() );
+            .description( this.description != null ? this.description : projectBeforeUpdate.getDescription() )
+            .timeZone( this.timeZone != null ? this.timeZone: projectBeforeUpdate.getTimeZone() );
 
         final SiteConfigs siteConfigs = this.siteConfigs != null ? this.siteConfigs : projectBeforeUpdate.getSiteConfigs();
 
@@ -108,5 +112,10 @@ public final class ModifyProjectHandler
     public void setSiteConfig( final ScriptValue value )
     {
         this.siteConfigs = value != null ? SiteConfigs.from( buildSiteConfigs( value ) ) : null;
+    }
+
+    public void setTimeZone( final String timeZone )
+    {
+        this.timeZone = timeZone != null ? ZoneId.of( timeZone ) : null;
     }
 }

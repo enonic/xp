@@ -1,5 +1,6 @@
 package com.enonic.xp.project;
 
+import java.time.ZoneId;
 import java.util.Iterator;
 
 import com.google.common.base.Preconditions;
@@ -32,6 +33,8 @@ public final class Project
 
     private final SiteConfigs siteConfigs;
 
+    private final ZoneId timeZone;
+
     private Project( Builder builder )
     {
         this.name = builder.name;
@@ -40,6 +43,7 @@ public final class Project
         this.parent = builder.parent;
         this.icon = builder.icon;
         this.siteConfigs = builder.siteConfigs.build();
+        this.timeZone = builder.timeZone;
     }
 
     public static Builder create()
@@ -73,6 +77,12 @@ public final class Project
             .name( ProjectName.from( repository.getId() ) )
             .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
+
+        final String timeZone = projectData.getString( ProjectConstants.PROJECT_TIMEZONE_PROPERTY );
+        if ( timeZone != null )
+        {
+            project.timeZone( ZoneId.of( timeZone ) );
+        }
 
         buildParents( project, projectData );
         buildSiteConfigs( project, projectData );
@@ -141,6 +151,11 @@ public final class Project
         return siteConfigs;
     }
 
+    public ZoneId getTimeZone()
+    {
+        return timeZone;
+    }
+
     public static final class Builder
     {
         private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
@@ -154,6 +169,8 @@ public final class Project
         private ProjectName parent;
 
         private Attachment icon;
+
+        private ZoneId timeZone;
 
         private Builder()
         {
@@ -195,11 +212,16 @@ public final class Project
             return this;
         }
 
+        public Builder timeZone( final ZoneId timeZone )
+        {
+            this.timeZone = timeZone;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( name, "name cannot be null" );
         }
-
 
         public Project build()
         {

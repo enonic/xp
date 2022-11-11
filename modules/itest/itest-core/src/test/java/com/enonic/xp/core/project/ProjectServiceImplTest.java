@@ -3,6 +3,7 @@ package com.enonic.xp.core.project;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -214,6 +215,7 @@ class ProjectServiceImplTest
         final Project project = doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
+        assertNull( project.getTimeZone() );
 
         final NodeBranchEntry nodeBranchEntry =
             this.branchService.get( Node.ROOT_UUID, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
@@ -231,6 +233,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
         final String displayName = "test display name";
         final String description = "test description";
+        final ZoneId timeZone = ZoneId.of( "Europe/Amsterdam" );
 
         final PropertyTree data = new PropertyTree();
 
@@ -238,8 +241,9 @@ class ProjectServiceImplTest
 
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
+        projectData.setString( ProjectConstants.PROJECT_TIMEZONE_PROPERTY, timeZone.toString() );
 
-        adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description ) );
+        adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description, timeZone ) );
 
         adminContext().runWith( () -> {
             final Repository projectRepo = repositoryService.get( projectRepoId );
@@ -722,14 +726,15 @@ class ProjectServiceImplTest
                                        .name( ProjectName.from( "test-project" ) )
                                        .description( "new description" )
                                        .displayName( "new display name" )
+                                       .timeZone( ZoneId.of( "Europe/Amsterdam" ) )
                                        .build() );
 
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
             assertEquals( "new description", modifiedProject.getDescription() );
             assertEquals( "new display name", modifiedProject.getDisplayName() );
+            assertEquals( "Europe/Amsterdam", modifiedProject.getTimeZone().toString() );
         } );
-
     }
 
     @Test
@@ -1081,10 +1086,10 @@ class ProjectServiceImplTest
         return this.doCreateProject( name, projectPermissions, false, null );
     }
 
-    private Project doCreateProject( final ProjectName name, final String displayName, final String description )
+    private Project doCreateProject( final ProjectName name, final String displayName, final String description, final ZoneId timeZone )
     {
         return this.projectService.create(
-            CreateProjectParams.create().name( name ).description( description ).displayName( displayName ).build() );
+            CreateProjectParams.create().name( name ).description( description ).displayName( displayName ).timeZone( timeZone ).build() );
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,

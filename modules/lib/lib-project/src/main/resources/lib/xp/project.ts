@@ -35,6 +35,7 @@ export interface CreateProjectParams {
     id: string;
     displayName: string;
     description?: string;
+    timeZone?: string;
     language?: string;
     parent?: string;
     siteConfig: Record<string, unknown>;
@@ -47,6 +48,7 @@ export interface Project {
     id: string;
     displayName: string;
     description: string;
+    timeZone?: string;
     parent: string;
     siteConfig: Record<string, unknown>;
     applications?: string[];
@@ -61,6 +63,8 @@ interface CreateProjectHandler {
     setDisplayName(value: string): void;
 
     setDescription(value?: string | null): void;
+
+    setTimeZone(value?: string | null): void;
 
     setLanguage(value?: string | null): void;
 
@@ -116,6 +120,7 @@ export interface ModifyProjectParams {
     id: string;
     displayName: string;
     description?: string;
+    timeZone?: string;
     language?: string;
     siteConfig: Record<string, unknown>;
     applications?: string[];
@@ -127,6 +132,8 @@ interface ModifyProjectHandler {
     setDisplayName(value?: string | null): void;
 
     setDescription(value?: string | null): void;
+
+    setTimeZone(value?: string | null): void;
 
     setLanguage(value?: string | null): void;
 
