@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
@@ -62,7 +60,7 @@ public final class UpdateRepositoryEntryParams
             return this;
         }
 
-        public Builder attachments( ImmutableList<BinaryAttachment> attachments )
+        public Builder attachments( Iterable<BinaryAttachment> attachments )
         {
             if ( attachments != null )
             {

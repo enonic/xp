@@ -32,10 +32,11 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_versions
     extends AbstractContentServiceTest
@@ -110,7 +111,7 @@ public class ContentServiceImplTest_versions
 
         final UnmodifiableIterator<ActiveContentVersionEntry> iterator = activeContentVersions.iterator();
 
-        assertTrue( iterator.next().getContentVersion() != iterator.next().getContentVersion() );
+        assertNotSame( iterator.next().getContentVersion(), iterator.next().getContentVersion() );
     }
 
     @Test
@@ -181,8 +182,7 @@ public class ContentServiceImplTest_versions
     }
 
     @Test
-    public void get_archived_versions()
-        throws Exception
+    void get_archived_versions()
     {
         final Content content = this.contentService.create( CreateContentParams.create()
                                                                 .contentData( new PropertyTree() )
@@ -202,10 +202,9 @@ public class ContentServiceImplTest_versions
         assertEquals( 5, result.getHits() );
         assertEquals( 5, result.getTotalHits() );
 
-        final ImmutableList<ContentVersion> versions = ImmutableList.copyOf( result.getContentVersions().iterator() );
-
-        assertEquals( ContentVersionPublishInfo.CommitType.RESTORED, versions.get( 0 ).getPublishInfo().getType() );
-        assertEquals( ContentVersionPublishInfo.CommitType.ARCHIVED, versions.get( 2 ).getPublishInfo().getType() );
+        assertThat( result.getContentVersions() ).elements( 0, 2 )
+            .extracting( v -> v.getPublishInfo().getType() )
+            .containsExactly( ContentVersionPublishInfo.CommitType.RESTORED, ContentVersionPublishInfo.CommitType.ARCHIVED );
     }
 }
 

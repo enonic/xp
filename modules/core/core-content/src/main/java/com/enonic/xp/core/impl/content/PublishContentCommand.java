@@ -73,11 +73,7 @@ public class PublishContentCommand
 
         this.nodeService.refresh( RefreshMode.ALL );
 
-        final PublishContentResult result = resultBuilder.build();
-
-        new OnlineEventsProducer( eventPublisher ).published( result.getPushedContents() );
-
-        return result;
+        return resultBuilder.build();
     }
 
     private void doPush( final ContentIds ids )
