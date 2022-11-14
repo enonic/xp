@@ -72,13 +72,12 @@ public class CopyExecutor
     {
         final ElasticsearchQuery query = createQuery();
 
-        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
-            query( query ).
-            client( this.client ).
-            resolvedSize( query.getBatchSize() ).
-            scrollTime( DEFAULT_SCROLL_TIME ).
-            build().
-            createScrollRequest();
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
+            .query( query )
+            .client( this.client )
+            .resolvedSize( query.getBatchSize() )
+            .build()
+            .createScrollRequest( DEFAULT_SCROLL_TIME );
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().
@@ -126,7 +125,6 @@ public class CopyExecutor
         final Stopwatch timer = Stopwatch.createStarted();
         final BulkResponse response = bulkRequest.execute().actionGet();
         LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
-        reportProgress( response.getItems().length );
     }
 
 

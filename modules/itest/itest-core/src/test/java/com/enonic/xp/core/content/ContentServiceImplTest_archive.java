@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -27,6 +28,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -212,6 +214,28 @@ public class ContentServiceImplTest_archive
 
         ctxMasterSu().runWith( () -> {
             assertFalse( this.contentService.contentExists( content.getId() ) );
+        } );
+    }
+
+    @Test
+    void archive_published_and_moved_is_unpublished()
+    {
+        final Content content1 = createContent( ContentPath.ROOT, "content1" );
+        final Content content2 = createContent( ContentPath.ROOT, "content2" );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content2.getId() ) ).build() );
+
+        this.contentService.move( MoveContentParams.create().contentId( content2.getId() ).parentContentPath( content1.getPath() ).build() );
+
+        final ArchiveContentsResult archiveContentsResult =
+            this.contentService.archive( ArchiveContentParams.create().contentId( content1.getId() ).build() );
+
+        assertThat(archiveContentsResult.getUnpublishedContents()).containsExactly( content2.getId() );
+
+        assertThat(archiveContentsResult.getArchivedContents()).containsExactly( content1.getId(), content2.getId() );
+
+        ctxMasterSu().runWith( () -> {
+            assertFalse( this.contentService.contentExists( content2.getId() ) );
         } );
     }
 

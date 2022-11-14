@@ -3,8 +3,6 @@ package com.enonic.xp.aggregation;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -18,7 +16,7 @@ public abstract class Aggregation
     protected Aggregation( final Builder builder )
     {
         this.name = builder.name;
-        this.subAggregations = Aggregations.from( ImmutableSet.copyOf( builder.subAggregations ) );
+        this.subAggregations = Aggregations.from( builder.subAggregations );
     }
 
     public Aggregations getSubAggregations()

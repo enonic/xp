@@ -6,6 +6,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.search.sort.FieldSortBuilder;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -29,8 +30,6 @@ public class SearchRequestBuilderFactory
 
     private final Client client;
 
-    private final TimeValue scrollTime;
-
     private final SearchPreference searchPreference;
 
     private SearchRequestBuilderFactory( final Builder builder )
@@ -38,7 +37,6 @@ public class SearchRequestBuilderFactory
         resolvedSize = builder.resolvedSize;
         query = builder.query;
         client = builder.client;
-        scrollTime = builder.scrollTime;
         searchPreference = builder.searchPreference;
     }
 
@@ -47,14 +45,26 @@ public class SearchRequestBuilderFactory
         return new Builder();
     }
 
-    public SearchRequestBuilder createScrollRequest()
+    public SearchRequestBuilder createScrollRequest( final TimeValue keepAlive )
     {
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
-        searchRequestBuilder.setScroll( scrollTime )
-            .setSearchType( query.getSortBuilders().isEmpty() ? SearchType.SCAN : SearchType.DEFAULT );
+        if ( query.getSortBuilders().isEmpty() )
+        {
+            searchRequestBuilder.addSort( new FieldSortBuilder( "_doc" ) );
+        }
+        searchRequestBuilder.setScroll( keepAlive );
 
         return searchRequestBuilder;
+    }
+
+    public SearchRequestBuilder createCountRequest()
+    {
+        return client.prepareSearch( query.getIndexNames() )
+            .setTypes( query.getIndexTypes() )
+            .setQuery( query.getQuery() )
+            .setSize( 0 )
+            .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
     }
 
     public SearchRequestBuilder createSearchRequest()
@@ -62,9 +72,7 @@ public class SearchRequestBuilderFactory
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
         searchRequestBuilder.setExplain( query.isExplain() )
-            .setSearchType(
-                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT )
-            .setPreference( Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL ).getName() );
+            .setSearchType( SearchOptimizer.ACCURACY == query.getSearchOptimizer() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
@@ -80,7 +88,8 @@ public class SearchRequestBuilderFactory
             .setQuery( query.getQuery() )
             .setPostFilter( query.getFilter() )
             .setFrom( query.getFrom() )
-            .setSize( resolvedSize );
+            .setSize( resolvedSize )
+            .setPreference( Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL ).getName() );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
@@ -189,12 +198,6 @@ public class SearchRequestBuilderFactory
         public Builder client( final Client client )
         {
             this.client = client;
-            return this;
-        }
-
-        public Builder scrollTime( final TimeValue scrollTime )
-        {
-            this.scrollTime = scrollTime;
             return this;
         }
 

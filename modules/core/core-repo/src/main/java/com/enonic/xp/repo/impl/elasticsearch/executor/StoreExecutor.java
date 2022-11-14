@@ -16,6 +16,8 @@ import com.enonic.xp.repository.IndexException;
 public class StoreExecutor
     extends AbstractExecutor
 {
+    final String DEFAULT_STORE_TIMEOUT = "10s";
+
     private static final Logger LOG = LoggerFactory.getLogger( StoreExecutor.class );
 
     private StoreExecutor( final Builder builder )
@@ -45,7 +47,7 @@ public class StoreExecutor
 
             try
             {
-                this.client.index( req ).actionGet( storeTimeout );
+                this.client.index( req ).actionGet( DEFAULT_STORE_TIMEOUT );
             }
             catch ( Exception e )
             {

@@ -3,8 +3,6 @@ package com.enonic.xp.aggregation;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -21,7 +19,7 @@ public class Bucket
     {
         this.key = builder.key;
         this.docCount = builder.docCount;
-        this.subAggregations = Aggregations.from( ImmutableSet.copyOf( builder.aggregations ) );
+        this.subAggregations = Aggregations.from( builder.aggregations );
     }
 
     public String getKey()

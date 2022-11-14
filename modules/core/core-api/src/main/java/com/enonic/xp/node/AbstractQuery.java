@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -58,8 +57,8 @@ public class AbstractQuery
         this.size = builder.size;
         this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
-        this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
-        this.suggestionQueries = SuggestionQueries.fromCollection( ImmutableSet.copyOf( builder.suggestionQueries ) );
+        this.aggregationQueries = AggregationQueries.fromCollection( builder.aggregationQueries );
+        this.suggestionQueries = SuggestionQueries.fromCollection( builder.suggestionQueries );
         this.highlight = builder.highlight;
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
