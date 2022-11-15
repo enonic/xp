@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 
@@ -18,10 +17,10 @@ abstract class AbstractExecutor
         client = builder.client;
     }
 
-    void clearScroll( final SearchResponse scrollResp )
+    void clearScroll( final String scrollId )
     {
         final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
-        clearScrollRequest.addScrollId( scrollResp.getScrollId() );
+        clearScrollRequest.addScrollId( scrollId );
 
         client.clearScroll( clearScrollRequest ).actionGet();
     }

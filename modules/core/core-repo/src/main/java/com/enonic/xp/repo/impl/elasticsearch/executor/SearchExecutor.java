@@ -12,10 +12,12 @@ import com.google.common.base.Throwables;
 
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.aggregation.AggregationsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.ESQueryTranslator;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
+import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
@@ -43,32 +45,18 @@ public class SearchExecutor
     {
         final ElasticsearchQuery query = ESQueryTranslator.translate( searchRequest );
 
-        final SearchMode searchMode = query.getSearchMode();
-
-        if ( searchMode.equals( SearchMode.COUNT ) )
+        if (  SearchMode.COUNT == query.getSearchMode() )
         {
             return count( query );
         }
-
-        final int resolvedSize;
-        if ( query.getSize() == NodeSearchService.GET_ALL_SIZE_FLAG )
+        else if ( NodeSearchService.GET_ALL_SIZE_FLAG == query.getSize() )
         {
-            if ( query.getAggregations().isEmpty() && query.getSuggestions().isEmpty() )
-            {
-                return scroll( query );
-            }
-            else
-            {
-                LOG.debug( "Query with get-all size flag and aggregations/suggestions. Scan not possible." );
-                resolvedSize = Math.toIntExact( count( query ).getTotalHits() );
-            }
+            return scroll( query );
         }
         else
         {
-            resolvedSize = query.getSize();
+            return search( query );
         }
-
-        return doSearch( query, resolvedSize );
     }
 
     private SearchResult count( final ElasticsearchQuery query )
@@ -83,12 +71,11 @@ public class SearchExecutor
         return doSearchRequest( searchRequestBuilder );
     }
 
-    private SearchResult doSearch( final ElasticsearchQuery query, int resolvedSize )
+    private SearchResult search( final ElasticsearchQuery query )
     {
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .resolvedSize( resolvedSize )
             .searchPreference( query.getSearchPreference() )
             .build()
             .createSearchRequest();
@@ -101,38 +88,34 @@ public class SearchExecutor
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .resolvedSize( query.getBatchSize() )
             .build()
             .createScrollRequest( DEFAULT_SCROLL_TIME );
 
-        SearchResponse scrollResp = searchRequestBuilder.
-            execute().
-            actionGet();
+        SearchResponse scrollResp = searchRequestBuilder.execute().actionGet();
+
+        final SearchResponse initialResponse = scrollResp;
 
         final SearchHits.Builder searchHitsBuilder = SearchHits.create();
 
-        while ( true )
+        do
         {
-            LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
+            LOG.debug( "Scrolling, got {} hits", scrollResp.getHits().hits().length );
 
             searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
 
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( DEFAULT_SCROLL_TIME ).
-                execute().
-                actionGet();
+            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).setScroll( DEFAULT_SCROLL_TIME ).execute().actionGet();
 
-            if ( scrollResp.getHits().getHits().length == 0 )
-            {
-                clearScroll( scrollResp );
-                break;
-            }
         }
+        while ( 0 != scrollResp.getHits().hits().length );
+
+        clearScroll( scrollResp.getScrollId() );
 
         return SearchResult.create().
             hits( searchHitsBuilder.build() ).
             totalHits( scrollResp.getHits().getTotalHits() ).
             maxScore( scrollResp.getHits().maxScore() ).
+            aggregations( AggregationsFactory.create( initialResponse.getAggregations() ) ).
+            suggestions( SuggestionsFactory.create( initialResponse.getSuggest() ) ).
             build();
     }
 
@@ -155,7 +138,7 @@ public class SearchExecutor
         if ( throwable instanceof ElasticsearchTimeoutException )
         {
             throw new IndexException(
-                "Search request failed after [" + this.SEARCH_TIMEOUT + "], query: [" + createQueryString( searchRequestBuilder ) + "]",
+                "Search request failed after [" + SEARCH_TIMEOUT + "], query: [" + createQueryString( searchRequestBuilder ) + "]",
                 (ElasticsearchTimeoutException) throwable );
         }
         else if ( throwable instanceof ElasticsearchException )

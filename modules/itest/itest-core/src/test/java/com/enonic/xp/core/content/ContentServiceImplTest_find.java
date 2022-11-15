@@ -158,7 +158,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void aggs()
+    public void aggregations()
     {
         createContent( ContentPath.ROOT, "title1",new PropertyTree(), ContentTypeName.folder() );
         createContent( ContentPath.ROOT, "title2",new PropertyTree(), ContentTypeName.unknownMedia() );
@@ -180,7 +180,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void aggs_with_unlimited_size()
+    public void aggregations_with_unlimited_size()
     {
         final Content content1 = createContent( ContentPath.ROOT, "title1", new PropertyTree(), ContentTypeName.folder() );
         final Content content2 = createContent( ContentPath.ROOT, "title2", new PropertyTree(), ContentTypeName.unknownMedia() );

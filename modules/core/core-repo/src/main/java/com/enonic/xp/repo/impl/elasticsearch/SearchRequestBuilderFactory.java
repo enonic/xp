@@ -24,8 +24,6 @@ public class SearchRequestBuilderFactory
 {
     private static final String HIGHLIGHTER_TYPE = "plain";
 
-    private final int resolvedSize;
-
     private final ElasticsearchQuery query;
 
     private final Client client;
@@ -34,7 +32,6 @@ public class SearchRequestBuilderFactory
 
     private SearchRequestBuilderFactory( final Builder builder )
     {
-        resolvedSize = builder.resolvedSize;
         query = builder.query;
         client = builder.client;
         searchPreference = builder.searchPreference;
@@ -48,12 +45,30 @@ public class SearchRequestBuilderFactory
     public SearchRequestBuilder createScrollRequest( final TimeValue keepAlive )
     {
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
+        searchRequestBuilder.setSize( query.getBatchSize() );
 
         if ( query.getSortBuilders().isEmpty() )
         {
             searchRequestBuilder.addSort( new FieldSortBuilder( "_doc" ) );
         }
         searchRequestBuilder.setScroll( keepAlive );
+
+        query.getAggregations().forEach( searchRequestBuilder::addAggregation );
+        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
+
+        return searchRequestBuilder;
+    }
+
+    public SearchRequestBuilder createSearchRequest()
+    {
+        final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
+        searchRequestBuilder.setSize( query.getSize() );
+
+        searchRequestBuilder.setExplain( query.isExplain() )
+            .setSearchType( SearchOptimizer.ACCURACY == query.getSearchOptimizer() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT );
+
+        query.getAggregations().forEach( searchRequestBuilder::addAggregation );
+        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
 
         return searchRequestBuilder;
     }
@@ -67,19 +82,6 @@ public class SearchRequestBuilderFactory
             .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
     }
 
-    public SearchRequestBuilder createSearchRequest()
-    {
-        final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
-
-        searchRequestBuilder.setExplain( query.isExplain() )
-            .setSearchType( SearchOptimizer.ACCURACY == query.getSearchOptimizer() ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT );
-
-        query.getAggregations().forEach( searchRequestBuilder::addAggregation );
-        query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
-
-        return searchRequestBuilder;
-    }
-
     private SearchRequestBuilder initRequestBuilder()
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() );
@@ -88,7 +90,6 @@ public class SearchRequestBuilderFactory
             .setQuery( query.getQuery() )
             .setPostFilter( query.getFilter() )
             .setFrom( query.getFrom() )
-            .setSize( resolvedSize )
             .setPreference( Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL ).getName() );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
@@ -169,24 +170,14 @@ public class SearchRequestBuilderFactory
 
     public static final class Builder
     {
-        private int resolvedSize;
-
         private ElasticsearchQuery query;
 
         private Client client;
-
-        private TimeValue scrollTime;
 
         private SearchPreference searchPreference;
 
         private Builder()
         {
-        }
-
-        public Builder resolvedSize( final int resolvedSize )
-        {
-            this.resolvedSize = resolvedSize;
-            return this;
         }
 
         public Builder query( final ElasticsearchQuery query )
@@ -211,7 +202,6 @@ public class SearchRequestBuilderFactory
         {
             Preconditions.checkNotNull( query, "query must be set." );
             Preconditions.checkNotNull( client, "client must be set." );
-            Preconditions.checkNotNull( resolvedSize, "resolvedSize must be set." );
         }
 
         public SearchRequestBuilderFactory build()

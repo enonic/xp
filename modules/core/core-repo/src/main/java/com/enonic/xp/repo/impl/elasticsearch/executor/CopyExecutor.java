@@ -75,7 +75,6 @@ public class CopyExecutor
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .resolvedSize( query.getBatchSize() )
             .build()
             .createScrollRequest( DEFAULT_SCROLL_TIME );
 
@@ -83,27 +82,20 @@ public class CopyExecutor
             execute().
             actionGet();
 
-        while ( true )
+        do
         {
-            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+            LOG.debug( "Copy: Fetched [{}] hits, processing", scrollResp.getHits().hits().length );
 
             if ( scrollResp.getHits().getHits().length > 0 )
             {
                 doCopy( scrollResp );
             }
 
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( DEFAULT_SCROLL_TIME ).
-                execute().
-                actionGet();
-
-            if ( scrollResp.getHits().getHits().length == 0 )
-            {
-                clearScroll( scrollResp );
-                break;
-            }
+            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).setScroll( DEFAULT_SCROLL_TIME ).execute().actionGet();
         }
+        while ( scrollResp.getHits().getHits().length != 0 );
 
+        clearScroll( scrollResp.getScrollId() );
     }
 
     private void doCopy( final SearchResponse scrollResp )
