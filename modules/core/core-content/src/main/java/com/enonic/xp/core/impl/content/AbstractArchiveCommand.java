@@ -22,7 +22,7 @@ abstract class AbstractArchiveCommand
         nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult movedTree =
-            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() );
 
         nodeService.commit( commitEntry, NodeIds.create().addAll( movedTree.getNodeIds() ).add( nodeId ).build() );
     }

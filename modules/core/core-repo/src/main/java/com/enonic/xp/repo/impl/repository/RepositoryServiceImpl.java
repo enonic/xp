@@ -140,7 +140,7 @@ public class RepositoryServiceImpl
         UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
             repositoryId( repositoryId ).
             repositoryData( editableRepository.data ).
-            attachments( ImmutableList.copyOf( editableRepository.binaryAttachments ) ).
+            attachments( editableRepository.binaryAttachments ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );

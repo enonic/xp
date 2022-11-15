@@ -16,6 +16,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 
+@Deprecated
 final class FindContentByQueryCommand
     extends AbstractContentCommand
 {
@@ -48,7 +49,7 @@ final class FindContentByQueryCommand
 
         final Nodes foundNodes = this.nodeService.getByIds( nodeIds );
 
-        Contents contents = this.translator.fromNodes( foundNodes, true );
+        Contents contents = this.translator.fromNodes( foundNodes, params.isPopulateChildren() );
 
         return FindContentByQueryResult.create().
             contents( contents ).

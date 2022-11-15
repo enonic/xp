@@ -13,7 +13,15 @@ import com.enonic.xp.util.BinaryReference;
 public class BinaryAttachments
     extends AbstractImmutableEntitySet<BinaryAttachment>
 {
+    private static final BinaryAttachments EMPTY = new BinaryAttachments( ImmutableSet.of(), false );
+
+    @Deprecated
     public BinaryAttachments( final ImmutableSet<BinaryAttachment> set )
+    {
+        super( set );
+    }
+
+    private BinaryAttachments( final ImmutableSet<BinaryAttachment> set, boolean ignore )
     {
         super( set );
     }
@@ -23,9 +31,9 @@ public class BinaryAttachments
         return this.set.stream().filter( ba -> ba.getReference().equals( binaryReference ) ).findAny().orElse( null );
     }
 
-    private BinaryAttachments( final Set<BinaryAttachment> set )
+    private static BinaryAttachments fromInternal( final ImmutableSet<BinaryAttachment> set )
     {
-        super( ImmutableSet.copyOf( set ) );
+        return set.isEmpty() ? EMPTY : new BinaryAttachments( set, false );
     }
 
     public static Builder create()
@@ -35,8 +43,7 @@ public class BinaryAttachments
 
     public static BinaryAttachments empty()
     {
-        final Set<BinaryAttachment> returnFields = new HashSet<>();
-        return new BinaryAttachments( returnFields );
+        return EMPTY;
     }
 
     public static final class Builder
@@ -51,7 +58,7 @@ public class BinaryAttachments
 
         public BinaryAttachments build()
         {
-            return new BinaryAttachments( ImmutableSet.copyOf( this.binaryAttachments ) );
+            return fromInternal( ImmutableSet.copyOf( binaryAttachments ) );
         }
     }
 }

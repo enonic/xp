@@ -9,7 +9,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -223,9 +222,7 @@ public class SetNodeChildOrderCommandTest
 
     private FindNodesByParentResult findChildren( final Node node )
     {
-        return findByParent( FindNodesByParentParams.create().
-            parentPath( node.path() ).
-            build() );
+        return findByParent( node.path() );
     }
 
     private void createChildNodes( final Node node )

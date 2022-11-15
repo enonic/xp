@@ -2,10 +2,12 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -20,7 +22,12 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.RangeFilter;
+import com.enonic.xp.query.suggester.SuggestionQueries;
+import com.enonic.xp.query.suggester.TermSuggestionQuery;
+import com.enonic.xp.suggester.TermSuggestionEntry;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,6 +72,60 @@ public class FindNodesByQueryCommandTest
         assertEquals( 1, result.getNodeIds().getSize() );
     }
 
+    @Test
+    public void aggregate()
+        throws Exception
+    {
+        final Node node1 = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node node2 = createNode( CreateNodeParams.create().
+            name( "my-node-2" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final Node childNode1 = createNode( CreateNodeParams.create().
+            name( "child-node" ).
+            parent( node1.path() ).
+            build() );
+
+        refresh();
+
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( null ) )
+            .size( -1 )
+            .aggregationQueries( Set.of( TermsAggregationQuery.create( "parents" ).fieldName( "_parentpath" ).build() ) )
+            .build();
+        FindNodesByQueryResult result = doFindByQuery( query );
+        printAllIndexContent("_all", "draft");
+        assertThat( ( (BucketAggregation) result.getAggregations().get( "parents" ) ).getBuckets() ).extracting( "key", "docCount" )
+            .containsExactlyInAnyOrder( tuple( "/", 2L ), tuple("/my-node-1", 1L) );
+
+        assertEquals( 4, result.getNodeIds().getSize() );
+    }
+    @Test
+    void suggest()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "txt", "The quick brown fox jumps over the lazy dog" );
+        final Node node1 = createNode( CreateNodeParams.create().name( "my-node-1" ).parent( NodePath.ROOT ).data( data ).build() );
+
+        final NodeQuery query = NodeQuery.create()
+            .addSuggestionQueries( SuggestionQueries.create()
+                                       .add( TermSuggestionQuery.create( "mys-suggester" ).field( "txt" ).text( "qick" ).build() )
+                                       .build() )
+            .parent( NodePath.ROOT )
+            .size( -1 )
+            .build();
+        FindNodesByQueryResult result = doFindByQuery( query );
+        assertThat( result.getNodeIds() ).containsExactly( node1.id() );
+        final TermSuggestionEntry suggestionEntry =
+            (TermSuggestionEntry) result.getSuggestions().get( "mys-suggester" ).getEntries().get( 0 );
+        assertEquals( "qick", suggestionEntry.getText() );
+        assertEquals( "quick", suggestionEntry.getOptions().get( 0 ).getText() );
+    }
 
     @Test
     public void query_number_different_field_name_case()

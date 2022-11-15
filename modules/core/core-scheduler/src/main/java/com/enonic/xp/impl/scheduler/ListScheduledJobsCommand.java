@@ -32,7 +32,6 @@ public class ListScheduledJobsCommand
     {
         final FindNodesByParentResult result = nodeService.findByParent( FindNodesByParentParams.create().
             parentPath( NodePath.ROOT ).
-            size( -1 ).
             build() );
 
         return nodeService.getByIds( result.getNodeIds() ).

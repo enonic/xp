@@ -9,9 +9,12 @@ public final class ArchiveContentsResult
 {
     private final ContentIds archivedContents;
 
+    private final ContentIds unpublishedContents;
+
     private ArchiveContentsResult( Builder builder )
     {
         this.archivedContents = builder.archivedContents.build();
+        this.unpublishedContents = builder.unpublishedContents.build();
     }
 
     public static Builder create()
@@ -24,9 +27,16 @@ public final class ArchiveContentsResult
         return archivedContents;
     }
 
+    public ContentIds getUnpublishedContents()
+    {
+        return unpublishedContents;
+    }
+
     public static final class Builder
     {
         private final ContentIds.Builder archivedContents = ContentIds.create();
+
+        private final ContentIds.Builder unpublishedContents = ContentIds.create();
 
         private Builder()
         {
@@ -35,6 +45,18 @@ public final class ArchiveContentsResult
         public Builder addArchived( final ContentId contentId )
         {
             this.archivedContents.add( contentId );
+            return this;
+        }
+
+        public Builder addArchived( final ContentIds archivedContents )
+        {
+            this.archivedContents.addAll( archivedContents );
+            return this;
+        }
+
+        public Builder addUnpublished( final ContentIds unpublishedContents )
+        {
+            this.unpublishedContents.addAll( unpublishedContents );
             return this;
         }
 

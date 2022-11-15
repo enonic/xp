@@ -3,9 +3,10 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -20,6 +21,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -27,6 +29,8 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -151,6 +155,50 @@ public class ContentServiceImplTest_find
 
         // Filters will be "must", and no entry matches both titles
         assertEquals( 0, result.getHits() );
+    }
+
+    @Test
+    public void aggregations()
+    {
+        createContent( ContentPath.ROOT, "title1",new PropertyTree(), ContentTypeName.folder() );
+        createContent( ContentPath.ROOT, "title2",new PropertyTree(), ContentTypeName.unknownMedia() );
+        createContent( ContentPath.ROOT, "title3",new PropertyTree(), ContentTypeName.unknownMedia() );
+
+        FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create()
+                                                                           .aggregationQuery( TermsAggregationQuery.create( "type" ).
+                                                                               fieldName( "type" ).
+                                                                               orderDirection( TermsAggregationQuery.Direction.DESC ).
+                                                                               build() )
+                                                                           .size( 0 )
+                                                                           .build() );
+
+        final Buckets buckets = ( (BucketAggregation) result.getAggregations().get( "type" ) ).getBuckets();
+
+        assertThat( buckets ).extracting( "key", "docCount" ).containsExactly( tuple( "media:unknown", 2L ), tuple( "base:folder", 1L ) );
+        assertEquals( result.getTotalHits(), 3 );
+        assertEquals( result.getHits(), 0 );
+    }
+
+    @Test
+    public void aggregations_with_unlimited_size()
+    {
+        final Content content1 = createContent( ContentPath.ROOT, "title1", new PropertyTree(), ContentTypeName.folder() );
+        final Content content2 = createContent( ContentPath.ROOT, "title2", new PropertyTree(), ContentTypeName.unknownMedia() );
+        final Content content3 = createContent( ContentPath.ROOT, "title3", new PropertyTree(), ContentTypeName.unknownMedia() );
+
+        FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create()
+                                                                           .aggregationQuery( TermsAggregationQuery.create( "type" )
+                                                                                                  .fieldName( "type" )
+                                                                                                  .orderDirection(
+                                                                                                      TermsAggregationQuery.Direction.DESC )
+                                                                                                  .build() )
+                                                                           .size( -1 )
+                                                                           .build() );
+
+        final Buckets buckets = ( (BucketAggregation) result.getAggregations().get( "type" ) ).getBuckets();
+
+        assertThat( buckets ).extracting( "key", "docCount" ).containsExactly( tuple( "media:unknown", 2L ), tuple( "base:folder", 1L ) );
+        assertThat( result.getContentIds() ).containsExactlyInAnyOrder( content1.getId(), content2.getId(), content3.getId() );
     }
 
     @Test
@@ -312,7 +360,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        Assertions.assertThat( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents() )
+        assertThat( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents() )
             .map( Content::getId )
             .containsExactly( existedContents );
     }
@@ -462,7 +510,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( range.getTree() ) ) ).build();
 
-        Assertions.assertThat(
+        assertThat(
                 contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
             .hasSize( 2 )
             .containsExactlyInAnyOrder( child1, child2 );
@@ -508,7 +556,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( range.getTree() ) ) ).build();
 
-        Assertions.assertThat(
+        assertThat(
                 contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
             .hasSize( 1 )
             .containsExactly( child2 );
@@ -547,7 +595,7 @@ public class ContentServiceImplTest_find
         ContentQuery queryDsl =
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( booleanSet.getTree() ) ) ).queryFilter( outFilter ).build();
 
-        Assertions.assertThat(
+        assertThat(
                 contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
             .hasSize( 2 )
             .containsExactlyInAnyOrder( child1, child3 );
@@ -562,7 +610,7 @@ public class ContentServiceImplTest_find
         queryDsl =
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( booleanSet.getTree() ) ) ).queryFilter( outFilter ).build();
 
-        Assertions.assertThat(
+        assertThat(
                 contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents().getSet() )
             .hasSize( 1 )
             .containsExactly( child1 );

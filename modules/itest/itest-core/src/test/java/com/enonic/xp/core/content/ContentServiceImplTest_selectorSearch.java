@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -37,9 +36,7 @@ public class ContentServiceImplTest_selectorSearch
             queryExpr( QueryExpr.from( new DynamicConstraintExpr( fulltext ), order ) ).
             build();
 
-        final FindContentByQueryResult result = contentService.find( FindContentByQueryParams.create().
-            contentQuery( query ).
-            build() );
+        final ContentIds result = contentService.find( query ).getContentIds();
 
         assertOrder( result, first, second, third );
     }
@@ -63,9 +60,7 @@ public class ContentServiceImplTest_selectorSearch
             queryExpr( QueryExpr.from( new DynamicConstraintExpr( fulltext ), order ) ).
             build();
 
-        final FindContentByQueryResult result = contentService.find( FindContentByQueryParams.create().
-            contentQuery( query ).
-            build() );
+        final ContentIds result = contentService.find( query ).getContentIds();
 
         assertOrder( result, second, third );
     }

@@ -12,7 +12,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -25,7 +24,7 @@ import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
-import com.enonic.xp.repo.impl.node.FindNodesByParentCommand;
+import com.enonic.xp.repo.impl.node.FindNodeIdsByParentCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -69,14 +68,9 @@ public class RepositoryEntryServiceImpl
     {
         final ImmutableList.Builder<RepositoryId> repositoryIds = ImmutableList.builder();
 
-        final FindNodesByParentParams findNodesByParentParams = FindNodesByParentParams.create().
-            parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
-            size( -1 ).
-            build();
-
         final FindNodesByParentResult findNodesByParentResult = createContext().
-            callWith( () -> FindNodesByParentCommand.create().
-                params( findNodesByParentParams ).
+            callWith( () -> FindNodeIdsByParentCommand.create().
+                parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
                 indexServiceInternal( this.indexServiceInternal ).
                 storageService( this.nodeStorageService ).
                 searchService( this.nodeSearchService ).

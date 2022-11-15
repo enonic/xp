@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Objects;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -43,7 +45,7 @@ public class FindNodeIdsByParentCommand
         super( builder );
         parentPath = builder.parentPath;
         parentId = builder.parentId;
-        queryFilters = builder.queryFilters == null ? Filters.from() : builder.queryFilters;
+        queryFilters = Objects.requireNonNullElseGet( builder.queryFilters, Filters::empty );
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;
@@ -78,13 +80,6 @@ public class FindNodeIdsByParentCommand
 
         final SearchResult result = this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ),
                                                                   SingleRepoSearchSource.from( ContextAccessor.current() ) );
-
-        if ( result.getNumberOfHits() == 0 )
-        {
-            return FindNodesByParentResult.create().
-                totalHits( result.getTotalHits() ).
-                build();
-        }
 
         return FindNodesByParentResult.create().
             nodeIds( NodeIds.from( result.getIds() ) ).
@@ -133,23 +128,21 @@ public class FindNodeIdsByParentCommand
     {
         NodePath parentPath = this.parentPath;
 
-        if ( parentPath == null )
+        if ( parentPath != null )
         {
-            Node parent = GetNodeByIdCommand.create( this ).
-                id( parentId ).
-                build().
-                execute();
-
-            if ( parent == null )
-            {
-                parentPath = null;
-            }
-            else
-            {
-                parentPath = parent.path();
-            }
+            return parentPath;
         }
-        return parentPath;
+
+        Node parent = GetNodeByIdCommand.create( this ).id( parentId ).build().execute();
+
+        if ( parent == null )
+        {
+            return null;
+        }
+        else
+        {
+            return parent.path();
+        }
     }
 
 

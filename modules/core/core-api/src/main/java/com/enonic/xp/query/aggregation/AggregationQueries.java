@@ -18,11 +18,6 @@ public class AggregationQueries
         super( set );
     }
 
-    private AggregationQueries( final Set<AggregationQuery> set )
-    {
-        super( ImmutableSet.copyOf( set ) );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -30,8 +25,7 @@ public class AggregationQueries
 
     public static AggregationQueries empty()
     {
-        final Set<AggregationQuery> returnFields = new HashSet<>();
-        return new AggregationQueries( returnFields );
+        return new AggregationQueries( ImmutableSet.of() );
     }
 
     public static AggregationQueries fromCollection( final Collection<AggregationQuery> aggregationQueries )

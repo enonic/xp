@@ -404,6 +404,7 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
 
         addContents( resultSet, result.getArchivedContents(), "archivedContents" );
+        addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
         log( "system.content.archive", data, params.getContentId(), rootContext );
     }

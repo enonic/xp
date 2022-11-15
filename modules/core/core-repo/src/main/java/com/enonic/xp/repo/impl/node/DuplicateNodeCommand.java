@@ -12,7 +12,6 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
@@ -23,7 +22,6 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
@@ -132,11 +130,10 @@ public final class DuplicateNodeCommand
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
     {
-        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( originalParent.path() ).
-            from( 0 ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build() );
+        final FindNodesByParentResult findNodesByParentResult = FindNodeIdsByParentCommand.create( this )
+            .parentPath( originalParent.path() )
+            .build()
+            .execute();
 
         final Nodes children = GetNodesByIdsCommand.create( this ).
             ids( findNodesByParentResult.getNodeIds() ).
@@ -187,11 +184,10 @@ public final class DuplicateNodeCommand
 
     private void updateChildReferences( final Node duplicatedParent, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
     {
-        final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
-            parentPath( duplicatedParent.path() ).
-            from( 0 ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build() );
+        final FindNodesByParentResult findNodesByParentResult = FindNodeIdsByParentCommand.create( this )
+            .parentPath( duplicatedParent.path() )
+            .build()
+            .execute();
 
         final Nodes children = GetNodesByIdsCommand.create( this ).
             ids( findNodesByParentResult.getNodeIds() ).

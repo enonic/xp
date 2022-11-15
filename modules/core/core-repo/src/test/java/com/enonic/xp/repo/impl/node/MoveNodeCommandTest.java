@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
@@ -430,7 +429,7 @@ public class MoveNodeCommandTest
         doMoveNode( newParent.path(), a1_1.id() );
         doMoveNode( newParent.path(), a1_2.id() );
 
-        final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().parentId( newParent.id() ).build() );
+        final FindNodesByParentResult result = findByParent( newParent.path() );
 
         final Iterator<NodeId> iterator = result.getNodeIds().iterator();
 
