@@ -13,32 +13,38 @@ declare global {
     }
 }
 
-import type {Resource} from '@enonic-types/core';
+import type {
+    ByteSource,
+    Resource,
+} from '@enonic-types/core';
 
-export type {Resource} from '@enonic-types/core';
+export type {
+    ByteSource,
+    Resource,
+} from '@enonic-types/core';
 
 interface JavaResource {
     getSize(): number;
 
     getTimestamp(): number;
 
-    getBytes(): object;
+    getBytes(): ByteSource;
 
     exists(): boolean;
 }
 
 interface IOHandlerBean {
-    readText(value: object): string;
+    readText(value: ByteSource): string;
 
-    readLines(value: object): string[];
+    readLines(value: ByteSource): string[];
 
-    processLines(stream: object, func: (value: string) => object): void;
+    processLines(stream: ByteSource, func: (value: string) => void): void;
 
-    getSize(stream: object): number;
+    getSize(stream: ByteSource): number;
 
     getMimeType(name: string): string;
 
-    newStream(text: string): object;
+    newStream(text: string): ByteSource;
 
     getResource(key: string): JavaResource;
 }
@@ -83,7 +89,7 @@ class ResourceImpl
      *
      * @returns Stream of resource.
      */
-    getStream(): object {
+    getStream(): ByteSource {
         return this.res.getBytes();
     }
 
@@ -105,7 +111,7 @@ class ResourceImpl
  * @param stream Stream to read text from.
  * @returns {string} Returns the text read from stream or string.
  */
-export function readText(stream: object): string {
+export function readText(stream: ByteSource): string {
     return bean.readText(stream);
 }
 
@@ -117,7 +123,7 @@ export function readText(stream: object): string {
  * @param stream Stream to read lines from.
  * @returns {string[]} Returns lines as an array.
  */
-export function readLines(stream: object): string[] {
+export function readLines(stream: ByteSource): string[] {
     return __.toNativeObject(bean.readLines(stream));
 }
 
@@ -129,7 +135,7 @@ export function readLines(stream: object): string[] {
  * @param stream Stream to read lines from.
  * @param {function} func Callback function to be called for each line.
  */
-export function processLines(stream: object, func: (value: string) => object): void {
+export function processLines(stream: ByteSource, func: (value: string) => void): void {
     return bean.processLines(stream, func);
 }
 
@@ -141,7 +147,7 @@ export function processLines(stream: object, func: (value: string) => object): v
  * @param stream Stream to get size of.
  * @returns {number} Returns the size of a stream.
  */
-export function getSize(stream: object): number {
+export function getSize(stream: ByteSource): number {
     return bean.getSize(stream);
 }
 
@@ -165,7 +171,7 @@ export function getMimeType(name: string): string {
  * @param {string} text String to create a stream of.
  * @returns {*} A new stream.
  */
-export function newStream(text: string): object {
+export function newStream(text: string): ByteSource {
     return bean.newStream(text);
 }
 

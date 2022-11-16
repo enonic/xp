@@ -16,9 +16,20 @@ declare global {
     interface XpXData {}
 }
 
-import type {Content, PublishInfo} from '@enonic-types/core';
+import type {
+    ByteSource,
+    Content,
+    PublishInfo,
+} from '@enonic-types/core';
 
-export type {Attachment, PublishInfo, Content, Component, Region} from '@enonic-types/core';
+export type {
+    Attachment,
+    ByteSource,
+    PublishInfo,
+    Content,
+    Component,
+    Region,
+} from '@enonic-types/core';
 
 type Attachments = Content['attachments'];
 
@@ -564,7 +575,7 @@ interface GetAttachmentStreamHandler {
 
     setName(value: string): void;
 
-    getStream(): object | null;
+    getStream(): ByteSource | null;
 }
 
 /**
@@ -578,7 +589,7 @@ interface GetAttachmentStreamHandler {
  *
  * @returns {*} Stream of the attachment data.
  */
-export function getAttachmentStream(params: GetAttachmentStreamParams): object | null {
+export function getAttachmentStream(params: GetAttachmentStreamParams): ByteSource | null {
     checkRequired(params, 'key');
     checkRequired(params, 'name');
 
@@ -594,7 +605,7 @@ export interface AddAttachmentParam {
     key: string;
     name: string;
     mimeType: string;
-    data: object;
+    data: ByteSource;
     label?: string;
 }
 
@@ -605,7 +616,7 @@ interface AddAttachmentHandler {
 
     setMimeType(value: string): void;
 
-    setData(value: object): void;
+    setData(value: ByteSource): void;
 
     setLabel(value?: string | null): void;
 
@@ -1195,7 +1206,7 @@ export interface CreateMediaParams {
     mimeType?: string;
     focalX?: string;
     focalY?: string;
-    data: object;
+    data: ByteSource;
     idGenerator?: (v: string) => string;
 }
 
@@ -1444,7 +1455,7 @@ export function getPermissions(params: GetPermissionsParams): Permissions | null
 }
 
 export interface Icon {
-    data: object;
+    data: ByteSource;
     mimeType: string;
     modifiedTime: string;
 }

@@ -99,12 +99,19 @@ export interface Content<
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
 }
 
+// com.google.common.io.ByteSource
+export interface ByteSource {
+    isEmpty(): boolean;
+
+    size(): number;
+}
+
 export interface Resource {
     getSize(): number;
 
     getTimestamp(): number;
 
-    getStream(): object;
+    getStream(): ByteSource;
 
     exists(): boolean;
 }
