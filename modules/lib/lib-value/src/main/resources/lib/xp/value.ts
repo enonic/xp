@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {ByteSource} from '@enonic-types/core';
+
+export type {ByteSource} from '@enonic-types/core';
+
 function pad(value: number): string {
     if (value < 10) {
         return `0${value}`;
@@ -250,11 +254,11 @@ interface BinaryReferenceHandler {
 export interface BinaryAttachment {
     getReference(): BinaryReference;
 
-    getByteSource(): unknown;
+    getByteSource(): ByteSource;
 }
 
 interface BinaryAttachmentHandler {
-    newInstance(ref: BinaryReference, byteSource: unknown): BinaryAttachment;
+    newInstance(ref: BinaryReference, byteSource: ByteSource): BinaryAttachment;
 }
 
 /**
@@ -264,7 +268,7 @@ interface BinaryAttachmentHandler {
  *
  * @returns {*} BinaryAttachment java-type
  */
-export function binary(name: string, stream: unknown): BinaryAttachment {
+export function binary(name: string, stream: ByteSource): BinaryAttachment {
     const binaryReferenceBean = __.newBean<BinaryReferenceHandler>('com.enonic.xp.lib.value.BinaryReferenceHandler');
     const binaryAttachmentBean = __.newBean<BinaryAttachmentHandler>('com.enonic.xp.lib.value.BinaryAttachmentHandler');
 

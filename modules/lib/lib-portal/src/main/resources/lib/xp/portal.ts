@@ -13,9 +13,20 @@ declare global {
     }
 }
 
-import type {Component, Content, Region} from '@enonic-types/core';
+import type {
+    ByteSource,
+    Component,
+    Content,
+    Region,
+} from '@enonic-types/core';
 
-export type {Attachment, Content, Component, Region} from '@enonic-types/core';
+export type {
+    Attachment,
+    ByteSource,
+    Content,
+    Component,
+    Region,
+} from '@enonic-types/core';
 
 export type Site<Config> = Content<{
     description?: string;
@@ -499,7 +510,7 @@ interface MultipartHandler {
 
     getItem(name: string, index: number): MultipartItem | null;
 
-    getBytes(name: string, index: number): object | null;
+    getBytes(name: string, index: number): ByteSource | null;
 
     getText(name: string, index: number): string | null;
 }
@@ -541,7 +552,7 @@ export function getMultipartItem(name: string, index = 0): MultipartItem | null 
  *
  * @returns {*} Stream of multipart item data.
  */
-export function getMultipartStream(name: string, index = 0): object | null {
+export function getMultipartStream(name: string, index = 0): ByteSource | null {
     const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getBytes(name, index);
 }

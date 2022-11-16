@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {ByteSource} from '@enonic-types/core';
+
+export type {ByteSource} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === null) {
         throw `Parameter '${String(name)}' is required`;
@@ -131,7 +135,7 @@ export interface GetApplicationDescriptorParams {
 }
 
 export interface Icon {
-    data: unknown;
+    data: ByteSource;
     mimeType: string;
     modifiedTime: string;
 }

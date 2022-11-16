@@ -4,6 +4,10 @@ declare global {
     }
 }
 
+import type {ByteSource} from '@enonic-types/core';
+
+export type {ByteSource} from '@enonic-types/core';
+
 /**
  * Mail related functions.
  *
@@ -45,7 +49,7 @@ interface SendMailHandler {
 
 export interface Attachment {
     fileName: string;
-    data: object;
+    data: ByteSource;
     mimeType?: string;
     headers?: Record<string, string>;
 }

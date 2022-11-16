@@ -13,9 +13,18 @@ declare global {
     }
 }
 
-import type {UserKey} from '@enonic-types/core';
+import type {
+    ByteSource,
+    UserKey,
+} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+export type {
+    ByteSource,
+    GroupKey,
+    PrincipalKey,
+    RoleKey,
+    UserKey,
+} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
@@ -24,7 +33,7 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
 }
 
 export interface Icon {
-    data: unknown;
+    data: ByteSource;
     mimeType: string;
     modifiedTime: string;
 }
