@@ -1195,7 +1195,7 @@ export interface CreateMediaParams {
     mimeType?: string;
     focalX?: string;
     focalY?: string;
-    data: string;
+    data: object;
     idGenerator?: (v: string) => string;
 }
 
