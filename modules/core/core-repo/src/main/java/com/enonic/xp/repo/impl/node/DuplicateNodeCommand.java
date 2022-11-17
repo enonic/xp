@@ -51,6 +51,56 @@ public final class DuplicateNodeCommand
 
     public DuplicateNodeResult execute()
     {
+        final Node existingNode = getExistingNode();
+        final Node duplicatedNode = doDuplicateNode( existingNode );
+
+        result.node( duplicatedNode );
+        nodeDuplicated( 1 );
+
+        final NodeReferenceUpdatesHolder.Builder builder =
+            NodeReferenceUpdatesHolder.create().add( existingNode.id(), duplicatedNode.id() );
+
+        if ( params.getIncludeChildren() )
+        {
+            storeChildNodes( existingNode, duplicatedNode, builder );
+        }
+
+        final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
+
+        RefreshCommand.create().refreshMode( RefreshMode.SEARCH ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+
+        updateNodeReferences( duplicatedNode, nodesToBeUpdated );
+        updateChildReferences( duplicatedNode, nodesToBeUpdated );
+
+        return result.build();
+    }
+
+    private Node doDuplicateNode( final Node existingNode )
+    {
+        final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( existingNode );
+        attachBinaries( existingNode, paramsBuilder );
+
+        if ( params.getName() != null )
+        {
+            paramsBuilder.name( params.getName() );
+        }
+        if ( params.getParent() != null )
+        {
+            paramsBuilder.parent( params.getParent() );
+        }
+
+        if ( params.getName() != null || params.getParent() != null )
+        {
+            final CreateNodeParams processedParams = executeProcessors( paramsBuilder.build() );
+
+            return CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
+        }
+
+        return doDuplicateNode( existingNode, paramsBuilder );
+    }
+
+    private Node getExistingNode()
+    {
         final Node existingNode = doGetById( params.getNodeId() );
 
         if ( existingNode == null )
@@ -63,9 +113,11 @@ public final class DuplicateNodeCommand
             throw new OperationNotPermittedException( "Not allowed to duplicate root-node" );
         }
 
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode );
-        attachBinaries( existingNode, createNodeParams );
+        return existingNode;
+    }
 
+    private Node doDuplicateNode( final Node existingNode, final CreateNodeParams.Builder paramsBuilder )
+    {
         Node duplicatedNode = null;
         String newNodeName = existingNode.name().toString();
         do
@@ -73,7 +125,7 @@ public final class DuplicateNodeCommand
             try
             {
                 newNodeName = DuplicateValueResolver.name( newNodeName );
-                final CreateNodeParams processedParams = executeProcessors( createNodeParams.name( newNodeName ).build() );
+                final CreateNodeParams processedParams = executeProcessors( paramsBuilder.name( newNodeName ).build() );
 
                 duplicatedNode =
                     CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
@@ -82,44 +134,16 @@ public final class DuplicateNodeCommand
             catch ( NodeAlreadyExistAtPathException e )
             {
                 // try again with other name
-                LOG.debug( String.format( "[%s] node with [%s] parent already exist.", newNodeName, existingNode.parentPath().toString() ),
-                           e );
+                LOG.debug( "[{}] node with [{}] parent already exist.", newNodeName, existingNode.parentPath().toString(), e );
             }
         }
         while ( duplicatedNode == null );
 
-        result.node( duplicatedNode );
-        nodeDuplicated( 1 );
-
-        final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
-            add( existingNode.id(), duplicatedNode.id() );
-
-        if ( params.getIncludeChildren() )
-        {
-            storeChildNodes( existingNode, duplicatedNode, builder );
-        }
-
-        final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
-
-        RefreshCommand.create().
-            refreshMode( RefreshMode.SEARCH ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
-
-        updateNodeReferences( duplicatedNode, nodesToBeUpdated );
-        updateChildReferences( duplicatedNode, nodesToBeUpdated );
-
-        return result.build();
+        return duplicatedNode;
     }
 
     private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
     {
-        if ( params.getProcessor() != null )
-        {
-            params.getProcessor().process( originalParams );
-        }
-
         if ( params.getDataProcessor() != null )
         {
             return CreateNodeParams.create( originalParams ).data( params.getDataProcessor().process( originalParams.getData() ) ).build();
@@ -209,6 +233,10 @@ public final class DuplicateNodeCommand
 
         for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
         {
+            if ( "variantOf".equals( property.getPath().toString() ) ) // TODO must not be part of Node API
+            {
+                continue;
+            }
             final Reference reference = property.getReference();
             if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )
             {

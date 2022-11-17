@@ -17,6 +17,10 @@ public class DuplicateNodeParams
 
     private final Boolean includeChildren;
 
+    private final String name;
+
+    private final NodePath parent;
+
     private DuplicateNodeParams( Builder builder )
     {
         nodeId = builder.nodeId;
@@ -24,6 +28,8 @@ public class DuplicateNodeParams
         dataProcessor = builder.dataProcessor;
         duplicateListener = builder.duplicateListener;
         includeChildren = builder.includeChildren;
+        name = builder.name;
+        parent = builder.parent;
     }
 
     public static Builder create()
@@ -57,6 +63,16 @@ public class DuplicateNodeParams
         return includeChildren;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public NodePath getParent()
+    {
+        return parent;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -68,6 +84,10 @@ public class DuplicateNodeParams
         private DuplicateNodeListener duplicateListener;
 
         private Boolean includeChildren = true;
+
+        private String name;
+
+        private NodePath parent;
 
         private Builder()
         {
@@ -101,6 +121,18 @@ public class DuplicateNodeParams
         public Builder includeChildren( final Boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder name( final String nodeName )
+        {
+            this.name = nodeName;
+            return this;
+        }
+
+        public Builder parent( final NodePath parent )
+        {
+            this.parent = parent;
             return this;
         }
 

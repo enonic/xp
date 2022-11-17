@@ -59,6 +59,8 @@ public class Content
 
     private final PrincipalKey owner;
 
+    private final ContentId variantOf;
+
     private final PrincipalKey modifier;
 
     private final Page page;
@@ -128,6 +130,7 @@ public class Content
         this.originalParentPath = builder.originalParentPath;
         this.archivedTime = builder.archivedTime;
         this.archivedBy = builder.archivedBy;
+        this.variantOf = builder.variantOf;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -381,6 +384,10 @@ public class Content
         return archivedBy;
     }
 
+    public ContentId getVariantOf()
+    {
+        return variantOf;
+    }
 
     @Override
     public boolean equals( final Object o )
@@ -411,7 +418,8 @@ public class Content
             Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
             Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
             Objects.equals( originalParentPath, other.originalParentPath ) && Objects.equals( archivedTime, other.archivedTime ) &&
-            Objects.equals( archivedBy, other.archivedBy );
+            Objects.equals( archivedBy, other.archivedBy ) &&
+            Objects.equals( variantOf, other.variantOf );
     }
 
     @Override
@@ -420,7 +428,7 @@ public class Content
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
                              extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
-                             originalParentPath, archivedTime, archivedBy );
+                             originalParentPath, archivedTime, archivedBy, variantOf );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -491,6 +499,8 @@ public class Content
 
         protected boolean root;
 
+        protected ContentId variantOf;
+
         protected Builder()
         {
             this.type = ContentTypeName.unstructured();
@@ -534,6 +544,7 @@ public class Content
             this.originalParentPath = source.originalParentPath;
             this.archivedTime = source.archivedTime;
             this.root = source.name == null;
+            this.variantOf = source.variantOf;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -788,6 +799,12 @@ public class Content
         public BUILDER archivedBy( final PrincipalKey archivedBy )
         {
             this.archivedBy = archivedBy;
+            return (BUILDER) this;
+        }
+
+        public BUILDER variantOf( final ContentId variantOf )
+        {
+            this.variantOf = variantOf;
             return (BUILDER) this;
         }
 

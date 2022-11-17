@@ -18,13 +18,22 @@ public final class DuplicateContentParams
 
     private final Boolean includeChildren;
 
-    public DuplicateContentParams( Builder builder )
+    private final boolean variant;
+
+    private final String name;
+
+    private final ContentPath parent;
+
+    private DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.creator = builder.creator;
         this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = builder.includeChildren;
+        this.variant = builder.variant;
+        this.name = builder.name;
+        this.parent = builder.parent;
     }
 
     public static DuplicateContentParams.Builder create()
@@ -64,9 +73,19 @@ public final class DuplicateContentParams
         return includeChildren;
     }
 
-    public void validate()
+    public boolean isVariant()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+        return variant;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public ContentPath getParent()
+    {
+        return parent;
     }
 
     @Override
@@ -93,6 +112,12 @@ public final class DuplicateContentParams
         private DuplicateContentListener duplicateContentListener;
 
         private Boolean includeChildren = true;
+
+        private boolean variant = false;
+
+        private String name;
+
+        private ContentPath parent;
 
         private Builder()
         {
@@ -128,8 +153,28 @@ public final class DuplicateContentParams
             return this;
         }
 
+        public Builder variant( final boolean variant )
+        {
+            this.variant = variant;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder parent( final ContentPath parent )
+        {
+            this.parent = parent;
+            return this;
+        }
+
         public DuplicateContentParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+
             return new DuplicateContentParams( this );
         }
     }
