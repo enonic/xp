@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -96,10 +97,7 @@ abstract class AbstractDeleteNodeCommand
 
         final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
 
-        return FindNodeBranchEntriesByIdCommand.create( this )
-            .ids( nodeIds )
-            .build()
-            .execute();
+        return this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static class Builder<B extends Builder>

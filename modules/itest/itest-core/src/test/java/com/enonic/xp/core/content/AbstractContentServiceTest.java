@@ -298,7 +298,7 @@ public class AbstractContentServiceTest
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
-        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
         PageDescriptorService pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );

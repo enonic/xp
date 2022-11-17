@@ -11,6 +11,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 
+@Disabled("Performance test is only for manual run")
 public class ResolveSyncWorkPerformanceTest
     extends AbstractNodeTest
 {
@@ -21,15 +22,11 @@ public class ResolveSyncWorkPerformanceTest
         this.createDefaultRootNode();
     }
 
-    @Disabled
     @Test
     public void testReferencePerformance()
         throws Exception
     {
-        final Node rootNode = createNode( CreateNodeParams.create().
-            name( "rootNode" ).
-            parent( NodePath.ROOT ).
-            build(), false );
+        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
 
         createNodes( rootNode, 40, 3, 1 );
 
@@ -37,14 +34,7 @@ public class ResolveSyncWorkPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().
-            nodeId( rootNode.id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().nodeId( rootNode.id() ).target( WS_OTHER ).indexServiceInternal( this.indexServiceInternal ).storageService( this.storageService ).searchService( this.searchService ).build().execute();
 
         started.stop();
 

@@ -309,7 +309,7 @@ public class NodeExportIntegrationTest
         assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Disabled // Wait with this until decided how to handle versions. Only in dump, or in export too?
+    @Disabled("Wait with this until decided how to handle versions. Only in dump, or in export too?")
     @Test
     public void create_binary_files()
         throws Exception

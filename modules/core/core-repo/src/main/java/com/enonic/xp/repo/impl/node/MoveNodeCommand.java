@@ -166,7 +166,7 @@ public class MoveNodeCommand
         final Node persistedNode = doGetById( id );
 
         final SearchResult result = this.nodeSearchService.query(
-            NodeQuery.create().parent( persistedNode.path() ).from( 0 ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
+            NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
             SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ),

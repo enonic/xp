@@ -57,7 +57,8 @@ public class PushNodesCommand
 
         refresh();
 
-        final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
+        final NodeBranchEntries nodeBranchEntries =
+            this.nodeStorageService.getBranchNodeVersions( ids, InternalContext.from( ContextAccessor.current() ) );
         final NodeComparisons comparisons = getNodeComparisons( NodeIds.from( nodeBranchEntries.getKeys() ) );
 
         final InternalPushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
@@ -158,14 +159,6 @@ public class PushNodesCommand
             nodeIds( nodeIds ).
             storageService( this.nodeStorageService ).
             target( this.target ).
-            build().
-            execute();
-    }
-
-    private NodeBranchEntries getNodeBranchEntries()
-    {
-        return FindNodeBranchEntriesByIdCommand.create( this ).
-            ids( ids ).
             build().
             execute();
     }

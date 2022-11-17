@@ -16,6 +16,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 
+@Disabled("Performance test is only for manual run")
 public class DuplicateNodeCommandPerformanceTest
     extends AbstractNodeTest
 {
@@ -26,40 +27,23 @@ public class DuplicateNodeCommandPerformanceTest
         this.createDefaultRootNode();
     }
 
-    @Disabled
     @Test
     public void testDuplicatePerformance()
         throws Exception
     {
-        final Node rootNode = createNode( CreateNodeParams.create().
-            name( "rootNode" ).
-            parent( NodePath.ROOT ).
-            build(), false );
+        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
 
         createNodes( rootNode, 30, 3, 1 );
 
         refresh();
 
-        final NodeQuery query = NodeQuery.create().
-            searchMode( SearchMode.COUNT ).
-            build();
+        final NodeQuery query = NodeQuery.create().searchMode( SearchMode.COUNT ).build();
 
-        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
-            query( query ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).indexServiceInternal( this.indexServiceInternal ).build().execute();
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            binaryService( this.binaryService ).
-            build().
-            execute();
+        DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).indexServiceInternal( this.indexServiceInternal ).storageService( this.storageService ).searchService( this.searchService ).binaryService( this.binaryService ).build().execute();
 
         started.stop();
 

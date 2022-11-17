@@ -35,13 +35,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -103,25 +100,14 @@ public class ContentServiceImplTest_publish
         assertEquals( 0, push.getPushedContents().getSize() );
     }
 
-    @Disabled
     @Test
-    public void push_one_content_not_valid()
-        throws Exception
+    void push_one_content_not_valid()
     {
-
-        ContentType contentType = ContentType.create()
-            .superType( ContentTypeName.structured() )
-            .name( "myapplication:test" )
-            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
-            .build();
-
-        Mockito.when( this.contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
-
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
-            .displayName( "This is my content" )
+            .displayName( "Shortcut without target is not valid" )
             .parent( ContentPath.ROOT )
-            .type( contentType.getName() )
+            .type( ContentTypeName.shortcut() )
             .build();
 
         final Content content = this.contentService.create( createContentParams );
@@ -129,7 +115,8 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
-        assertEquals( 1, push.getPushedContents().getSize() );
+        assertThat( push.getPushedContents() ).isEmpty();
+        assertThat( push.getFailedContents() ).containsExactly( content.getId() );
     }
 
     @Test
