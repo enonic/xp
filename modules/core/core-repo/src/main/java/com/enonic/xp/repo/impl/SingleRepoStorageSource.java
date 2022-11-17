@@ -21,7 +21,7 @@ public class SingleRepoStorageSource
         return new SingleRepoStorageSource( repositoryId, type );
     }
 
-    public SingleRepoStorageSource( final RepositoryId repositoryId, final Type type )
+    private SingleRepoStorageSource( final RepositoryId repositoryId, final Type type )
     {
         this.repositoryId = repositoryId;
         this.type = type;

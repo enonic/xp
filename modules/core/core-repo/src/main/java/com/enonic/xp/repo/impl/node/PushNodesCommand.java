@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -10,7 +11,6 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -58,7 +58,7 @@ public class PushNodesCommand
         refresh();
 
         final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
-        final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries );
+        final NodeComparisons comparisons = getNodeComparisons( NodeIds.from( nodeBranchEntries.getKeys() ) );
 
         final InternalPushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
 
@@ -76,8 +76,10 @@ public class PushNodesCommand
 
         final InternalPushNodesResult.Builder builder = InternalPushNodesResult.create();
 
-        final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
-        list.sort( Comparator.comparing( NodeBranchEntry::getNodePath ) );
+        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
+            .stream()
+            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
+            .collect( Collectors.toList() );
 
         for ( final NodeBranchEntry branchEntry : list )
         {
@@ -150,10 +152,10 @@ public class PushNodesCommand
         }
     }
 
-    private NodeComparisons getNodeComparisons( final NodeBranchEntries nodeBranchEntries )
+    private NodeComparisons getNodeComparisons( final NodeIds nodeIds )
     {
         return CompareNodesCommand.create().
-            nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
+            nodeIds( nodeIds ).
             storageService( this.nodeStorageService ).
             target( this.target ).
             build().
@@ -180,12 +182,11 @@ public class PushNodesCommand
 
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this )
             .parentPath( nodeBranchEntry.getNodePath() )
-            .childOrder( ChildOrder.path() )
             .build()
             .execute();
 
         final NodeBranchEntries childEntries =
-            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), false, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {

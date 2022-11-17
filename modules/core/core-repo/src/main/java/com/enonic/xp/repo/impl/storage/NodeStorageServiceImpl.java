@@ -274,9 +274,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Nodes get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
+    public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, keepOrder, context );
+        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, true, context );
 
         return doReturnNodes( nodeBranchEntries, context );
     }
@@ -329,9 +329,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
+    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, keepOrder, context );
+        return this.branchService.get( nodeIds, false, context );
     }
 
     @Override
@@ -440,16 +440,12 @@ public class NodeStorageServiceImpl
 
     private Node constructNode( final NodeBranchEntry nodeBranchEntry, final NodeVersion nodeVersion )
     {
-        final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
-
-        return canRead( node.getPermissions() ) ? node : null;
+        return canRead( nodeVersion.getPermissions() ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
     }
 
     private Node constructNode( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
     {
-        final Node node = NodeFactory.create( nodeVersion, nodeVersionMetadata );
-
-        return canRead( node.getPermissions() ) ? node : null;
+        return canRead( nodeVersion.getPermissions() ) ? NodeFactory.create( nodeVersion, nodeVersionMetadata ) : null;
     }
 
     private void indexNode( final Node node, final NodeVersionId nodeVersionId, final InternalContext context )
@@ -502,16 +498,16 @@ public class NodeStorageServiceImpl
     private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
     {
         final NodeVersionKeys.Builder builder = NodeVersionKeys.create();
-        nodeBranchEntries.stream().
-            map( NodeBranchEntry::getNodeVersionKey ).
-            forEach( builder::add );
+        nodeBranchEntries.stream().map( NodeBranchEntry::getNodeVersionKey ).forEach( builder::add );
 
         final NodeVersions nodeVersions = nodeVersionService.get( builder.build(), context );
 
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodeVersions.stream().filter( ( nodeVersion ) -> canRead( nodeVersion.getPermissions() ) ).forEach(
-            ( nodeVersion ) -> filteredNodes.add( NodeFactory.create( nodeVersion, nodeBranchEntries.get( nodeVersion.getId() ) ) ) );
+        nodeVersions.stream()
+            .filter( nodeVersion -> canRead( nodeVersion.getPermissions() ) )
+            .map( nodeVersion -> NodeFactory.create( nodeVersion, nodeBranchEntries.get( nodeVersion.getId() ) ) )
+            .forEach( filteredNodes::add );
 
         return filteredNodes.build();
     }

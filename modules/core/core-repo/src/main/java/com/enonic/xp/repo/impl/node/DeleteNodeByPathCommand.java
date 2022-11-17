@@ -28,7 +28,7 @@ final class DeleteNodeByPathCommand
             build().
             execute();
 
-        return node != null ? deleteNodeWithChildren( node, context ) : NodeBranchEntries.empty();
+        return node != null ? deleteNodeWithChildren( node, context, null ) : NodeBranchEntries.empty();
     }
 
     static Builder create()

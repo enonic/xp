@@ -335,7 +335,7 @@ public class BranchServiceImpl
                                                                             .size( nodeIds.getSize() )
                                                                             .build() )
                                                                 .returnFields( BRANCH_RETURN_FIELDS )
-                                                                .searchSource( new SingleRepoStorageSource( context.getRepositoryId(),
+                                                                .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
                                                                                                             SingleRepoStorageSource.Type.BRANCH ) )
                                                                 .searchPreference( context.getSearchPreference() )
                                                                 .build() );

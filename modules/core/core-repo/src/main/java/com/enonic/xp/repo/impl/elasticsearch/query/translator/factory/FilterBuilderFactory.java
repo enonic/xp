@@ -131,9 +131,7 @@ public class FilterBuilderFactory
     {
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
-        final Set<Object> values = new HashSet<>( idFilter.getValues() );
-
-        return new TermsQueryBuilder( queryFieldName, values );
+        return new TermsQueryBuilder( queryFieldName, idFilter.getValues() );
     }
 
     private QueryBuilder createBooleanFilter( final BooleanFilter booleanFilter )

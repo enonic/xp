@@ -1,17 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodeBranchEntriesByIdCommand
@@ -19,13 +16,10 @@ public class FindNodeBranchEntriesByIdCommand
 {
     private final NodeIds ids;
 
-    private final OrderExpressions orderExpressions;
-
     private FindNodeBranchEntriesByIdCommand( final Builder builder )
     {
         super( builder );
         ids = builder.ids;
-        orderExpressions = builder.orderExpressions;
     }
 
     public static Builder create()
@@ -40,14 +34,12 @@ public class FindNodeBranchEntriesByIdCommand
 
     public NodeBranchEntries execute()
     {
-        final Context context = ContextAccessor.current();
+        final NodeIds nodeIds = getNodeIds();
 
-        final NodeIds nodeIds = getNodeIds( context );
-
-        return this.nodeStorageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) );
+        return this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private NodeIds getNodeIds( final Context context )
+    private NodeIds getNodeIds()
     {
         if ( this.ids.isEmpty() )
         {
@@ -62,17 +54,10 @@ public class FindNodeBranchEntriesByIdCommand
                     build() ).
                 build() ).
             from( 0 ).
-            size( ids.getSize() ).
-            batchSize( 10000 ).
-            addQueryFilter( AclFilterBuilderFactory.create( context.getAuthInfo().getPrincipals() ) );
+            size( ids.getSize() );
 
-        if ( !this.orderExpressions.isEmpty() )
-        {
-            queryBuilder.setOrderExpressions( this.orderExpressions );
-        }
-
-        final SearchResult result = this.nodeSearchService.query( queryBuilder.
-            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        final SearchResult result =
+            this.nodeSearchService.query( queryBuilder.build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return NodeIds.from( result.getIds() );
     }
@@ -81,8 +66,6 @@ public class FindNodeBranchEntriesByIdCommand
         extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeIds ids;
-
-        private OrderExpressions orderExpressions = OrderExpressions.empty();
 
         private Builder()
         {
@@ -97,12 +80,6 @@ public class FindNodeBranchEntriesByIdCommand
         public Builder ids( final NodeIds val )
         {
             ids = val;
-            return this;
-        }
-
-        public Builder orderExpressions( final OrderExpressions val )
-        {
-            orderExpressions = val;
             return this;
         }
 

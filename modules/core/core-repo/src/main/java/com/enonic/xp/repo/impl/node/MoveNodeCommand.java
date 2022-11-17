@@ -169,7 +169,7 @@ public class MoveNodeCommand
             NodeQuery.create().parent( persistedNode.path() ).from( 0 ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
             SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ), false,
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ),
                                                                                                    InternalContext.from(
                                                                                                        ContextAccessor.current() ) );
 
