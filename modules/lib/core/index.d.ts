@@ -99,12 +99,14 @@ export interface Content<
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
 }
 
-// com.google.common.io.ByteSource
-export interface ByteSource {
-    isEmpty(): boolean;
+// Compliant with npm module ts-brand
+type Brand<
+    Base,
+    Branding,
+    ReservedName extends string = '__type__'
+> = Base & {[K in ReservedName]: Branding} & {__witness__: Base};
 
-    size(): number;
-}
+export type ByteSource = Brand<object, 'ByteSource'>;
 
 export interface Resource {
     getSize(): number;
