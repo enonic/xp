@@ -10,11 +10,9 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -22,8 +20,10 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -165,14 +165,6 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final SearchResult result = this.nodeSearchService.query(
-            NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
-            SingleRepoSearchSource.from( ContextAccessor.current() ) );
-
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ),
-                                                                                                   InternalContext.from(
-                                                                                                       ContextAccessor.current() ) );
-
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
             .data( processor.process( persistedNode.data() ) )
@@ -199,9 +191,14 @@ public class MoveNodeCommand
 
         nodeMoved( 1 );
 
-        for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
+        final SearchResult children = this.nodeSearchService.query(
+            NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
+            ReturnFields.from( NodeIndexPath.NAME ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+
+        for ( final SearchHit nodeBranchEntry : children.getHits() )
         {
-            doMoveNode( nodeToMoveBuilder.build().path(), getNodeName( nodeBranchEntry ), nodeBranchEntry.getNodeId() );
+            doMoveNode( nodeToMoveBuilder.build().path(), NodeName.from( (String) nodeBranchEntry.getField( "_name" ).getSingleValue() ),
+                        NodeId.from( nodeBranchEntry.getId() ) );
         }
 
         return movedNode;
@@ -247,11 +244,6 @@ public class MoveNodeCommand
     {
         return this.nodeStorageService.move( StoreMovedNodeParams.create().node( movedNode ).build(),
                                              InternalContext.from( ContextAccessor.current() ) );
-    }
-
-    private NodeName getNodeName( final NodeBranchEntry nodeBranchEntry )
-    {
-        return NodeName.from( nodeBranchEntry.getNodePath().getLastElement().toString() );
     }
 
     private void nodeMoved( final int count )

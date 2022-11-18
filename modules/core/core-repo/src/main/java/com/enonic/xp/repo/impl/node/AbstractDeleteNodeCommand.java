@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -19,7 +20,9 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -34,7 +37,7 @@ abstract class AbstractDeleteNodeCommand
         this.allowDeleteRootNode = builder.allowDeleteRoot;
     }
 
-    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context, final DeleteNodeListener deleteNodeListener )
+    NodeBranchEntries deleteNodeWithChildren( final Node node, final DeleteNodeListener deleteNodeListener )
     {
         if ( node.isRoot() && !allowDeleteRootNode )
         {
@@ -43,13 +46,27 @@ abstract class AbstractDeleteNodeCommand
 
         doRefresh();
 
-        final NodeBranchEntries nodeBranchEntries = newResolveNodesToDelete( node );
+        final Context context = ContextAccessor.current();
+
+        final Context adminContext = ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
+
+        final FindNodesByParentResult result = adminContext.callWith( FindNodeIdsByParentCommand.create( this )
+                                   .parentPath( node.path() )
+                                   .recursive( true )
+                                   .build()::execute );
+
+        final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
 
         final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
-            nodeIds( NodeIds.from( nodeBranchEntries.getKeys() ) ).
+            nodeIds( nodeIds ).
             permission( Permission.DELETE ).
             build().
             execute();
+
+        final NodeBranchEntries nodeBranchEntries =
+            this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
 
         if ( !allHasPermissions )
         {
@@ -85,19 +102,6 @@ abstract class AbstractDeleteNodeCommand
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
-    }
-
-    private NodeBranchEntries newResolveNodesToDelete( final Node node )
-    {
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this )
-            .parentPath( node.path() )
-            .recursive( true )
-            .build()
-            .execute();
-
-        final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
-
-        return this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static class Builder<B extends Builder>
