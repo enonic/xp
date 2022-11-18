@@ -1221,7 +1221,7 @@ interface CreateMediaHandler {
 
     setFocalY(value?: string): void;
 
-    setData(value?: string | null): void;
+    setData(value?: ByteSource | null): void;
 
     setIdGenerator(value?: IdGeneratorSupplier | null): void;
 
