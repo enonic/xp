@@ -4,11 +4,65 @@ declare global {
     }
 }
 
-export type UserKey = `user:${string}:${string}`;
-export type GroupKey = `group:${string}:${string}`;
-export type RoleKey = `role:${string}`;
+export type UserKey<
+	IdProvider extends string = string,
+	Login extends string = string
+> = `user:${IdProvider}:${Login}`;
 
-export type PrincipalKey = UserKey | GroupKey | RoleKey;
+export type GroupKey<
+	IdProvider extends string = string,
+	Name extends string = string
+> = `group:${IdProvider}:${Name}`;
+
+export type RoleKey<T extends string = string> = `role:${T}`;
+
+export namespace Roles {
+    // NOTE: These exist, but we don't want to "expose" them
+    // export namespace Cms {
+    //   export type Admin = RoleKey<'cms.admin'>;
+    //   export namespace Cm {
+    //       export type App = RoleKey<'cms.app'>;
+    //   }
+    //   export type Expert = RoleKey<'cms.expert'>;
+    // }
+    export namespace System {
+        export type Admin = RoleKey<'system.admin'>;
+        export namespace Admin {
+            export type Login = RoleKey<'system.admin.login'>;
+        }
+        export type Auditlog = RoleKey<'system.auditlog'>;
+        export type Authenticated = RoleKey<'system.authenticated'>;
+        export type Everyone = RoleKey<'system.everyone'>;
+        export namespace User {
+            export type Admin = RoleKey<'system.user.admin'>;
+            export type App = RoleKey<'system.user.app'>;
+        }
+    }
+}
+
+export namespace Users {
+    export namespace System {
+        export type Su = UserKey<'system','su'>;
+    }
+}
+
+export type PrincipalKey =
+    | UserKey
+    | GroupKey
+    | RoleKey
+    // NOTE: These exist, but we don't want to "expose" them
+    // | Roles.Cms.Admin
+    // | Roles.Cms.Cm.App
+    // | Roles.Cms.Expert
+    | Roles.System.Admin
+    | Roles.System.Admin.Login
+    | Roles.System.Auditlog
+    | Roles.System.Authenticated
+    | Roles.System.Everyone
+    | Roles.System.User.Admin
+    | Roles.System.User.App
+    | Users.System.Su
+;
 
 export interface User {
     type: 'user';
