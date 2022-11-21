@@ -102,9 +102,10 @@ export interface Content<
 // Compliant with npm module ts-brand
 type Brand<
     Base,
-    Branding,
-    ReservedName extends string = '__type__'
-> = Base & {[K in ReservedName]: Branding} & {__witness__: Base};
+    Branding
+> = Base & {
+  '__type__': Branding
+};
 
 export type ByteSource = Brand<object, 'ByteSource'>;
 
