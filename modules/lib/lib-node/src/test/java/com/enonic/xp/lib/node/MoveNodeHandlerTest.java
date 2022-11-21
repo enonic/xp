@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -29,22 +30,19 @@ public class MoveNodeHandlerTest
 
     private void mockGetNode()
     {
-        Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).
-            thenReturn( createNode() );
-        Mockito.when( this.nodeService.getByPath( NodePath.create( "/my-name" ).build() ) ).
-            thenReturn( createNode() );
+        Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).thenReturn( createNode() );
+        Mockito.when( this.nodeService.getByPath( NodePath.create( "/my-name" ).build() ) ).thenReturn( createNode() );
 
-        Mockito.when( this.nodeService.rename( Mockito.any() ) ).
-            thenAnswer( invocation -> {
-                final RenameNodeParams renameNodeParams = (RenameNodeParams) invocation.getArguments()[0];
-                name = renameNodeParams.getNewNodeName().toString();
-                return createNode();
-            } );
-        Mockito.when( this.nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() ) ).
-            thenAnswer( invocation -> {
-                parentPath = ( (NodePath) invocation.getArguments()[1] ).trimTrailingDivider();
-                return createNode();
-            } );
+        Mockito.when( this.nodeService.rename( Mockito.any() ) ).thenAnswer( invocation -> {
+            final RenameNodeParams renameNodeParams = invocation.getArgument( 0 );
+            name = renameNodeParams.getNewNodeName().toString();
+            return createNode();
+        } );
+        Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
+            final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
+            parentPath = moveNodeParams.getParentNodePath().trimTrailingDivider();
+            return createNode();
+        } );
     }
 
     @Override

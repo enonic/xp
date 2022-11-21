@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -43,7 +44,8 @@ public class PushNodesCommand
         super( builder );
         this.target = builder.target;
         this.ids = builder.ids;
-        this.pushListener = builder.pushListener;
+        this.pushListener = Objects.requireNonNullElse( builder.pushListener, c -> {
+        } );
     }
 
     public static Builder create()
@@ -53,33 +55,30 @@ public class PushNodesCommand
 
     public InternalPushNodesResult execute()
     {
-        final Context context = ContextAccessor.current();
+        refresh();
+
+        final InternalPushNodesResult result = pushNodes();
 
         refresh();
 
-        final NodeBranchEntries nodeBranchEntries =
-            this.nodeStorageService.getBranchNodeVersions( ids, InternalContext.from( ContextAccessor.current() ) );
-        final NodeComparisons comparisons = getNodeComparisons( NodeIds.from( nodeBranchEntries.getKeys() ) );
-
-        final InternalPushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
-
-        refresh();
-
-        return builder.build();
+        return result;
     }
 
-    private InternalPushNodesResult.Builder pushNodes( final Context context, final NodeBranchEntries nodeBranchEntries,
-                                                       final NodeComparisons comparisons )
+    private InternalPushNodesResult pushNodes()
     {
-        final PushNodeEntries.Builder publishBuilder = PushNodeEntries.create().
-            targetBranch( this.target ).
-            targetRepo( context.getRepositoryId() );
+        final Context context = ContextAccessor.current();
+
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( ids, InternalContext.from( context ) );
+
+        final NodeComparisons comparisons = getNodeComparisons( ids );
+
+        final PushNodeEntries.Builder publishBuilder =
+            PushNodeEntries.create().targetBranch( this.target ).targetRepo( context.getRepositoryId() );
 
         final InternalPushNodesResult.Builder builder = InternalPushNodesResult.create();
 
-        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
-            .stream()
-            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
+        final List<NodeBranchEntry> list =
+            nodeBranchEntries.getSet().stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
             .collect( Collectors.toList() );
 
         for ( final NodeBranchEntry branchEntry : list )
@@ -97,14 +96,14 @@ public class PushNodesCommand
             if ( !hasPublishPermission )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
-                nodePushed( 1 );
+                pushListener.nodesPushed( 1 );
                 continue;
             }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
-                nodePushed( 1 );
+                pushListener.nodesPushed( 1 );
                 continue;
             }
 
@@ -112,14 +111,14 @@ public class PushNodesCommand
                 targetAlreadyExists( nodeBranchEntry.getNodePath(), comparisons, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ALREADY_EXIST );
-                nodePushed( 1 );
+                pushListener.nodesPushed( 1 );
                 continue;
             }
 
             if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
-                nodePushed( 1 );
+                pushListener.nodesPushed( 1 );
                 continue;
             }
 
@@ -142,15 +141,7 @@ public class PushNodesCommand
         final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
         this.nodeStorageService.push( pushNodeEntries, pushListener, pushContext );
 
-        return builder;
-    }
-
-    private void nodePushed( final int count )
-    {
-        if ( pushListener != null )
-        {
-            pushListener.nodesPushed( count );
-        }
+        return builder.build();
     }
 
     private NodeComparisons getNodeComparisons( final NodeIds nodeIds )

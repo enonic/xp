@@ -45,13 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
-
-    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private Content content1, content2, content1_1, content1_2_offline, content2_1;
 
@@ -230,8 +227,7 @@ public class ContentServiceImplTest_publish
             .build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
-
-        assertPushed( result, ContentIds.from( content1.getId(), content2.getId(), content2_1.getId() ) );
+        assertThat( result.getPushedContents() ).containsExactly( content1.getId(), content2.getId(), content2_1.getId() );
     }
 
 
@@ -296,12 +292,12 @@ public class ContentServiceImplTest_publish
         final Content s1 = createContent( ContentPath.ROOT, "s1" );
         final Content f1 = createContent( s1.getPath(), "f1" );
         final Content c1 = createContent( f1.getPath(), "c1" );
-        doPublish( ContentIds.empty(), s1.getId() );
+        publishContent( s1.getId() );
 
         // Move to f2, delete f1
         final Content f2 = createContent( s1.getPath(), "f2" );
-        doMove( c1.getId(), f2.getPath() );
-        DeleteContentsResult result = doDelete( f1.getPath() );
+        moveContent( c1.getId(), f2.getPath() );
+        DeleteContentsResult result = deleteContent( f1.getPath() );
 
         assertEquals( 1, result.getDeletedContents().getSize() );
         assertTrue( result.getDeletedContents().contains( f1.getId() ) );
@@ -336,19 +332,19 @@ public class ContentServiceImplTest_publish
         final Content b = createContent( ContentPath.ROOT, "b" );
         final Content a1 = createContent( a.getPath(), "a1" );
         final Content a2 = createContent( a.getPath(), "a2" );
-        doPublish( ContentIds.empty(), a.getId() );
+        publishContent( a.getId() );
 
         System.out.println( "After initial push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
         printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxMaster() );
 
-        doRename( a.getId(), "a_old" );
-        doRename( b.getId(), "a" );
+        renameContent( a.getId(), "a_old" );
+        renameContent( b.getId(), "a" );
 
-        doMove( a1.getId(), "/a" );
-        doMove( a2.getId(), "/a" );
+        moveContent( a1.getId(), "/a" );
+        moveContent( a2.getId(), "/a" );
 
-        doPublish( ContentIds.empty(), b.getId() );
+        publishContent( b.getId() );
 
         System.out.println();
         System.out.println( "After second push:" );
@@ -356,6 +352,25 @@ public class ContentServiceImplTest_publish
         printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxMaster() );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
+    }
+
+    @Test
+    void move_children()
+    {
+        final Content a = createContent( ContentPath.ROOT, "a" );
+        final Content a1 = createContent( a.getPath(), "a1" );
+
+        publishContent( a.getId() );
+
+        renameContent( a.getId(), "a_old" );
+        final Content newA = createContent( ContentPath.ROOT, "a" );
+
+        final PublishContentResult result = publishContent( newA.getId() );
+        assertThat( result.getPushedContents() ).containsExactly( newA.getId(), a.getId(), a1.getId() );
+
+        assertEquals( ContentPath.from( "/a_old" ), getInMaster( a.getId() ).getPath() );
+        assertEquals( ContentPath.from( "/a_old/a1" ), getInMaster( a1.getId() ).getPath() );
+        assertEquals( ContentPath.from( "/a" ), getInMaster( newA.getId() ).getPath() );
     }
 
     @Test
@@ -452,7 +467,7 @@ public class ContentServiceImplTest_publish
                 PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() ) ) );
     }
 
-    private Content doRename( final ContentId contentId, final String newName )
+    private Content renameContent( final ContentId contentId, final String newName )
     {
         return this.contentService.rename(
             RenameContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
@@ -468,11 +483,6 @@ public class ContentServiceImplTest_publish
         return this.contentService.getByPath( path );
     }
 
-    private Content doGet( final ContentId contentId )
-    {
-        return this.contentService.getById( contentId );
-    }
-
     private void assertStatus( final ContentId id, CompareStatus status )
     {
         final CompareContentResult compare =
@@ -480,30 +490,27 @@ public class ContentServiceImplTest_publish
         assertEquals( status, compare.getCompareStatus() );
     }
 
-    private void doMove( final ContentId contentId, final ContentPath newParent )
+    private void moveContent( final ContentId contentId, final ContentPath newParent )
     {
         final MoveContentParams params = MoveContentParams.create().contentId( contentId ).parentContentPath( newParent ).build();
         this.contentService.move( params );
     }
 
-    private void doMove( final ContentId contentId, final String newParent )
+    private void moveContent( final ContentId contentId, final String newParent )
     {
-        final MoveContentParams params =
-            MoveContentParams.create().contentId( contentId ).parentContentPath( ContentPath.from( newParent ) ).build();
-        this.contentService.move( params );
+        moveContent( contentId, ContentPath.from( newParent ) );
     }
 
-    private DeleteContentsResult doDelete( final ContentPath f1Path )
+    private DeleteContentsResult deleteContent( final ContentPath f1Path )
     {
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( f1Path ).build();
 
         return this.contentService.deleteWithoutFetch( deleteContentParams );
     }
 
-    private PublishContentResult doPublish( final ContentIds excludeChildrenIds, final ContentId... contentIds )
+    private PublishContentResult publishContent( final ContentId... contentIds )
     {
-        return this.contentService.publish(
-            PushContentParams.create().excludeChildrenIds( excludeChildrenIds ).contentIds( ContentIds.from( contentIds ) ).build() );
+        return this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( contentIds ) ).build() );
     }
 
     /**
@@ -615,63 +622,4 @@ public class ContentServiceImplTest_publish
 
         refresh();
     }
-
-    private void assertPushed( final PublishContentResult result, final ContentIds pushed )
-    {
-        assertContent( result, pushed, ContentIds.empty(), ContentIds.empty() );
-    }
-
-    private void assertContent( final PublishContentResult result, final ContentIds pushed, final ContentIds deleted,
-                                final ContentIds failed )
-    {
-
-        StringBuilder message = new StringBuilder();
-
-        boolean hasFailed = checkCollection( pushed, result.getPushedContents(), message ) ||
-            checkCollection( deleted, result.getDeletedContents(), message ) ||
-            checkCollection( failed, result.getFailedContents(), message );
-
-        if ( hasFailed )
-        {
-            fail( message.toString() );
-        }
-    }
-
-    private boolean checkCollection( final ContentIds currentExpected, final ContentIds currentResult, final StringBuilder message )
-    {
-        boolean hasFailed = false;
-
-        for ( final ContentId expectedEntry : currentExpected )
-        {
-            message.append( LINE_SEPARATOR ).append( "Content: " ).append( getName( expectedEntry ) ).append( " expected: " );
-
-            if ( !currentResult.contains( expectedEntry ) )
-            {
-                message.append( "<FAIL>" );
-                hasFailed = true;
-            }
-            else
-            {
-                message.append( "OK" );
-            }
-        }
-
-        for ( final ContentId found : currentResult )
-        {
-
-            if ( !currentExpected.contains( found ) )
-            {
-                message.append( LINE_SEPARATOR ).append( "Content: " ).append( getName( found ) ).append( " not expected" );
-                hasFailed = true;
-            }
-        }
-
-        return hasFailed;
-    }
-
-    private final String getName( final ContentId contentId )
-    {
-        return this.contentService.getById( contentId ).getPath().toString();
-    }
-
 }

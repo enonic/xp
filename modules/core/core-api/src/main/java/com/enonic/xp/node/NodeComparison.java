@@ -4,7 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.CompareStatus;
 
 @PublicApi
-public class NodeComparison
+public final class NodeComparison
 {
     private final NodePath sourcePath;
 

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.stream.Collectors;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -596,6 +594,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         return move( MoveNodeParams.create().
@@ -632,12 +631,15 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         verifyContext();
-        return Nodes.from( nodeIds.
-            stream().
-            map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
+        final Nodes.Builder builder = Nodes.create();
+        nodeIds.stream()
+            .map( nodeId -> MoveNodeParams.create().nodeId( nodeId ).parentNodePath( parentNodePath ).moveListener( moveListener ).build() )
+            .forEach( p -> builder.add( this.move( p ) ) );
+        return builder.build();
     }
 
 

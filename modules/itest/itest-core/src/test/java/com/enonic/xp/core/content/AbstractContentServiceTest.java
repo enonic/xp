@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -686,9 +687,11 @@ public class AbstractContentServiceTest
 */
         StringBuilder builder = new StringBuilder();
         builder.append( new String( new char[indent] ).replace( '\0', ' ' ) );
-        builder.append( "'" );
-        builder.append( "--" );
-        builder.append( content.getName() );
+        builder.append( "'--" );
+        builder.append( Objects.requireNonNullElse( content.getName(), "" ) );
+        builder.append( " (" );
+        builder.append( content.getId().toString(), 0, 8 );
+        builder.append( ")" );
         // builder.append( " (" + compareStatus.getCompareStatus().toString().toLowerCase() + ")" );
 
         return builder.toString();
