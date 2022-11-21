@@ -203,13 +203,9 @@ public class NodeStorageServiceImpl
         for ( final PushNodeEntry entry : entries )
         {
             final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
-            this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(), InternalContext.create( context ).
-                branch( entries.getTargetBranch() ).
-                build() );
-            if ( pushListener != null )
-            {
-                pushListener.nodesPushed( 1 );
-            }
+            this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(),
+                                      InternalContext.create( context ).branch( entries.getTargetBranch() ).build() );
+            pushListener.nodesPushed( 1 );
         }
 
         this.indexDataService.push( IndexPushNodeParams.create().
