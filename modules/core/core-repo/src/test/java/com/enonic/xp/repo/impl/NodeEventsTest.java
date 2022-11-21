@@ -173,10 +173,8 @@ public class NodeEventsTest
     public void testNullArguments()
     {
         Event eventCreated = NodeEvents.created( null );
-        Event eventDeleted = NodeEvents.deleted( null );
 
         assertNull( eventCreated );
-        assertNull( eventDeleted );
     }
 
     private Node createNode( final String name, final NodePath root )

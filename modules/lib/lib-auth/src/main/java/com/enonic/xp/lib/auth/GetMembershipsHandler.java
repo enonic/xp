@@ -23,7 +23,7 @@ public final class GetMembershipsHandler
 
     public void setPrincipalKey( final String value )
     {
-        this.principalKey = value == null ? null : PrincipalKey.from( value );
+        this.principalKey = PrincipalKey.from( value );
     }
 
     public void setTransitive( final Boolean transitive )

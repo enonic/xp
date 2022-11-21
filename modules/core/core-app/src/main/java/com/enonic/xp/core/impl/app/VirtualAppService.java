@@ -64,7 +64,7 @@ public class VirtualAppService
     {
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByParentResult result =
-                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).size( -1 ).build() );
+                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
 
             final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
 

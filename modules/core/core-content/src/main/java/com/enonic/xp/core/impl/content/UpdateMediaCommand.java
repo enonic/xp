@@ -178,6 +178,7 @@ final class UpdateMediaCommand
         @Override
         void validate()
         {
+            super.validate();
             Preconditions.checkNotNull( params );
         }
 

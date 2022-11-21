@@ -1,10 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -28,7 +24,7 @@ public class UpdateNodeParams
         this.id = builder.id;
         this.path = builder.path;
         this.editor = builder.editor;
-        this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
+        this.binaryAttachments = builder.binaryAttachments.build();
         this.dryRun = builder.dryRun;
     }
 
@@ -70,9 +66,9 @@ public class UpdateNodeParams
 
         private NodeEditor editor;
 
-        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
+        private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private boolean dryRun = false;
+        private boolean dryRun;
 
         private Builder()
         {
@@ -104,7 +100,11 @@ public class UpdateNodeParams
 
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
-            this.binaryAttachments = binaryAttachments != null ? binaryAttachments.getSet() : new HashSet<>();
+            this.binaryAttachments = BinaryAttachments.create();
+            if ( binaryAttachments != null )
+            {
+                binaryAttachments.stream().forEach( this.binaryAttachments::add );
+            }
             return this;
         }
 

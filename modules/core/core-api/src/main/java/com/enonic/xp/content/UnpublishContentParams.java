@@ -21,6 +21,11 @@ public final class UnpublishContentParams
         return contentIds;
     }
 
+    public PushContentListener getPublishContentListener()
+    {
+        return publishContentListener;
+    }
+
     @Deprecated
     public Branch getUnpublishBranch()
     {
@@ -48,11 +53,6 @@ public final class UnpublishContentParams
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public PushContentListener getPublishContentListener()
-    {
-        return publishContentListener;
     }
 
     public static final class Builder
@@ -83,11 +83,6 @@ public final class UnpublishContentParams
             return this;
         }
 
-        private void validate()
-        {
-            Preconditions.checkNotNull( contentIds, "contentId must be set" );
-        }
-
         public Builder pushListener( final PushContentListener publishContentListener )
         {
             this.publishContentListener = publishContentListener;
@@ -96,7 +91,7 @@ public final class UnpublishContentParams
 
         public UnpublishContentParams build()
         {
-            this.validate();
+            Preconditions.checkNotNull( contentIds, "contentId must be set" );
             return new UnpublishContentParams( this );
         }
     }

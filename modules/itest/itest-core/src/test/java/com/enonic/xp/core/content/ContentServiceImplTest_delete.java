@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -261,8 +262,10 @@ public class ContentServiceImplTest_delete
             contentPath( content.getPath() ).
             build() );
 
-        assertEquals( 3, result.getDeletedContents().getSize() );
-        assertEquals( 3, result.getUnpublishedContents().getSize() );
+        assertThat( result.getDeletedContents() ).containsExactlyInAnyOrder( content.getId(), contentToMove.getId(),
+                                                                             child1Content.getId() );
+        assertThat( result.getUnpublishedContents() ).containsExactlyInAnyOrder( content.getId(), contentToMove.getId(),
+                                                                                 child1Content.getId() );
     }
 
     @Test

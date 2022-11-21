@@ -9,11 +9,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -61,12 +59,7 @@ final class ApplyNodePermissionsCommand
     {
         final AccessControlList parentPermissions = parent.getPermissions();
 
-        final FindNodesByParentParams findByParentParams = FindNodesByParentParams.create().
-            parentPath( parent.path() ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build();
-
-        final FindNodesByParentResult result = doFindNodesByParent( findByParentParams );
+        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).parentPath( parent.path() ).build().execute();
 
         final Nodes children = GetNodesByIdsCommand.create( this ).
             ids( result.getNodeIds() ).

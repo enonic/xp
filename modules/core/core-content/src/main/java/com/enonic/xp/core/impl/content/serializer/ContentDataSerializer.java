@@ -71,6 +71,7 @@ import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
 import static com.enonic.xp.content.ContentPropertyNames.VALIDATION_ERRORS;
+import static com.enonic.xp.content.ContentPropertyNames.VARIANT_OF;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_CHECKS;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_STATE;
@@ -242,6 +243,7 @@ public class ContentDataSerializer
         extractOriginalParentPath( contentAsSet, builder );
         extractArchivedTime( contentAsSet, builder );
         extractArchivedBy( contentAsSet, builder );
+        extractVariantOf( contentAsSet, builder );
 
         return builder;
     }
@@ -497,6 +499,15 @@ public class ContentDataSerializer
         if ( !nullToEmpty( archivedBy ).isBlank() )
         {
             builder.archivedBy( PrincipalKey.from( archivedBy ) );
+        }
+    }
+
+    private void extractVariantOf( final PropertySet contentAsSet, final Content.Builder<?> builder )
+    {
+        final Reference variantOfRef = contentAsSet.getReference( VARIANT_OF );
+        if ( variantOfRef != null )
+        {
+            builder.variantOf( ContentId.from( variantOfRef.getNodeId() ) );
         }
     }
 

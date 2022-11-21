@@ -72,39 +72,30 @@ public class CopyExecutor
     {
         final ElasticsearchQuery query = createQuery();
 
-        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
-            query( query ).
-            client( this.client ).
-            resolvedSize( query.getBatchSize() ).
-            scrollTime( DEFAULT_SCROLL_TIME ).
-            build().
-            createScrollRequest();
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
+            .query( query )
+            .client( this.client )
+            .build()
+            .createScrollRequest( DEFAULT_SCROLL_TIME );
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().
             actionGet();
 
-        while ( true )
+        do
         {
-            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().hits().length + "] hits, processing" );
+            LOG.debug( "Copy: Fetched [{}] hits, processing", scrollResp.getHits().hits().length );
 
             if ( scrollResp.getHits().getHits().length > 0 )
             {
                 doCopy( scrollResp );
             }
 
-            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
-                setScroll( DEFAULT_SCROLL_TIME ).
-                execute().
-                actionGet();
-
-            if ( scrollResp.getHits().getHits().length == 0 )
-            {
-                clearScroll( scrollResp );
-                break;
-            }
+            scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).setScroll( DEFAULT_SCROLL_TIME ).execute().actionGet();
         }
+        while ( scrollResp.getHits().getHits().length != 0 );
 
+        clearScroll( scrollResp.getScrollId() );
     }
 
     private void doCopy( final SearchResponse scrollResp )
@@ -126,7 +117,6 @@ public class CopyExecutor
         final Stopwatch timer = Stopwatch.createStarted();
         final BulkResponse response = bulkRequest.execute().actionGet();
         LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
-        reportProgress( response.getItems().length );
     }
 
 

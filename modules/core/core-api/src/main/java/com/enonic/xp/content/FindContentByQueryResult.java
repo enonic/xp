@@ -10,6 +10,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.highlight.HighlightedProperties;
 
 @PublicApi
+@Deprecated
 public final class FindContentByQueryResult
 {
     private final Aggregations aggregations;

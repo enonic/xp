@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -42,15 +40,6 @@ abstract class AbstractNodeCommand
     {
         return GetNodeByPathCommand.create( this ).
             nodePath( path ).
-            build().
-            execute();
-    }
-
-    FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
-    {
-        return FindNodesByParentCommand.create( this ).
-            params( params ).
-            searchService( this.nodeSearchService ).
             build().
             execute();
     }

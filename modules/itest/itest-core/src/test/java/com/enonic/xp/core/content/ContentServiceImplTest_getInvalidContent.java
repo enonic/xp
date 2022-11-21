@@ -21,13 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 
-public class ContentServiceImplTest_getInvalidContent
+class ContentServiceImplTest_getInvalidContent
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void test_simple_content_is_valid()
-        throws Exception
+    void test_simple_content_is_valid()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -36,12 +35,11 @@ public class ContentServiceImplTest_getInvalidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertTrue( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
+        assertTrue( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
     }
 
     @Test
-    public void test_invalid_content()
-        throws Exception
+    void test_invalid_content()
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
         this.contentService.setContentTypeService( contentTypeService );
@@ -66,12 +64,11 @@ public class ContentServiceImplTest_getInvalidContent
             displayName( "my display-name" ).
             build() );
 
-        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId() ) ).isEmpty() );
+        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId() ) ) );
     }
 
     @Test
-    public void test_valid_and_invalid_contents_return_false()
-        throws Exception
+    void test_valid_and_invalid_contents_return_false()
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
         this.contentService.setContentTypeService( contentTypeService );
@@ -103,17 +100,16 @@ public class ContentServiceImplTest_getInvalidContent
             type( ContentTypeName.folder() ).
             build() );
 
-        assertFalse( this.contentService.getInvalidContent( ContentIds.from( content.getId(), content2.getId() ) ).isEmpty() );
+        assertFalse( this.contentService.isValidContent( ContentIds.from( content.getId(), content2.getId() ) ) );
     }
 
     @Test
-    public void test_empty_content_ids_returns_true()
-        throws Exception
+    void test_empty_content_ids_returns_true()
     {
 
         NodeServiceImpl nodeService = Mockito.spy( this.nodeService );
         Mockito.verify( nodeService, times( 0 ) ).findByQuery( Mockito.isA( NodeQuery.class ) );
 
-        assertTrue( this.contentService.getInvalidContent( ContentIds.empty() ).isEmpty() );
+        assertTrue( this.contentService.isValidContent( ContentIds.empty() ) );
     }
 }

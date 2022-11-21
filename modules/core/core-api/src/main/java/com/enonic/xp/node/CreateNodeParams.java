@@ -1,10 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -54,7 +51,7 @@ public class CreateNodeParams
         this.insertManualStrategy = builder.insertManualStrategy;
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
-        this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
+        this.binaryAttachments = builder.binaryAttachments.build();
     }
 
     public static Builder create()
@@ -201,11 +198,10 @@ public class CreateNodeParams
 
         private NodeType nodeType;
 
-        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
+        private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
         private Builder()
         {
-            this.inheritPermissions = false;
         }
 
         private Builder( final CreateNodeParams createNodeParams )
@@ -221,7 +217,7 @@ public class CreateNodeParams
             this.insertManualStrategy = createNodeParams.insertManualStrategy;
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
-            this.binaryAttachments = createNodeParams.binaryAttachments.getSet();
+            createNodeParams.binaryAttachments.stream().forEach( binaryAttachments::add );
         }
 
         public Builder setNodeId( final NodeId nodeId )
@@ -298,12 +294,11 @@ public class CreateNodeParams
 
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
-            if ( binaryAttachments == null )
+            this.binaryAttachments = BinaryAttachments.create();
+            if ( binaryAttachments != null )
             {
-                return this;
+                binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
-
-            this.binaryAttachments = new HashSet<>( binaryAttachments.getSet() );
             return this;
         }
 
