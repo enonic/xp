@@ -46,9 +46,9 @@ public final class ProjectMapper
         gen.value( "id", project.getName().toString() );
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
-        gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
+        serializeParents( gen );
         serializeSiteConfigs( gen );
         serializePermissions( gen );
         serializeReadAccess( gen );
@@ -82,6 +82,19 @@ public final class ProjectMapper
             }
             gen.end();
         }
+    }
+
+    private void serializeParents( final MapGenerator gen )
+    {
+        if ( !project.getParents().isEmpty() )
+        {
+            gen.array( "parents" );
+            project.getParents().forEach( gen::value );
+            gen.end();
+
+            gen.value( "parent", project.getParents().get( 0 ) ); // deprecated
+        }
+
     }
 
     public static final class Builder

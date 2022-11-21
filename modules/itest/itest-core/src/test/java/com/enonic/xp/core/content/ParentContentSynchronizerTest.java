@@ -277,7 +277,7 @@ public class ParentContentSynchronizerTest
     public void updateNotCreated()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertThrows( IllegalArgumentException.class, () -> syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
@@ -550,7 +550,7 @@ public class ParentContentSynchronizerTest
     public void renameNotExisted()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncRenamed( ContentId.from( "123" ) ), "sourceContent must be set." );
+        assertThrows( IllegalArgumentException.class, () -> syncRenamed( ContentId.from( "123" ) ), "sourceContent must be set." );
     }
 
     @Test
@@ -586,7 +586,7 @@ public class ParentContentSynchronizerTest
     public void sortNotExisted()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncSorted( ContentId.from( "source" ) ) );
+        assertThrows( IllegalArgumentException.class, () -> syncSorted( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -699,7 +699,7 @@ public class ParentContentSynchronizerTest
     public void moveNotExisted()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncMoved( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertThrows( IllegalArgumentException.class, () -> syncMoved( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
@@ -748,7 +748,7 @@ public class ParentContentSynchronizerTest
     public void deleteNotExisted()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncDeleted( ContentId.from( "source" ) ) );
+        assertThrows( IllegalArgumentException.class, () -> syncDeleted( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -869,7 +869,7 @@ public class ParentContentSynchronizerTest
     public void updateManualOrderNotExisted()
         throws Exception
     {
-        assertThrows( NullPointerException.class, () -> syncManualOrderUpdated( ContentId.from( "source" ) ),
+        assertThrows( IllegalArgumentException.class, () -> syncManualOrderUpdated( ContentId.from( "source" ) ),
                       "sourceContent must be set." );
     }
 

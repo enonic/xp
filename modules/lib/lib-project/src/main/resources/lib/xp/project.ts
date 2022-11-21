@@ -37,6 +37,7 @@ export interface CreateProjectParams {
     description?: string;
     language?: string;
     parent?: string;
+    parents?: string[];
     siteConfig: Record<string, unknown>;
     applications?: string[];
     permissions?: ProjectPermission;
@@ -69,6 +70,8 @@ interface CreateProjectHandler {
     setReadAccess(value?: ScriptValue): void;
 
     setParent(value?: string | null): void;
+
+    setParents(value?: string[] | null): void;
 
     setSiteConfig(value?: ScriptValue): void;
 
@@ -106,7 +109,12 @@ export function create(params: CreateProjectParams): Project {
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
-    bean.setParent(__.nullOrValue(params.parent));
+    if (params.parent) {
+        bean.setParents([__.nullOrValue(params.parent)]);
+    }
+    if (params.parents) {
+        bean.setParents(__.nullOrValue(params.parents));
+    }
     bean.setSiteConfig(__.toScriptValue(params.siteConfig));
 
     return __.toNativeObject(bean.execute());
