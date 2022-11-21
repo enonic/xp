@@ -161,11 +161,19 @@ public abstract class AbstractNodeTest
 
     protected static Context ctxOther()
     {
-        return ContextBuilder.create().
-            branch( WS_OTHER ).
-            repositoryId( TEST_REPO_ID ).
-            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create().branch( WS_OTHER ).repositoryId( TEST_REPO_ID ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
+    }
+
+    protected static Context ctxDefaultAdmin()
+    {
+        return ContextBuilder.create()
+            .branch( WS_DEFAULT )
+            .repositoryId( TEST_REPO_ID )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.ADMIN )
+                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                           .build() )
+            .build();
     }
 
     @BeforeEach

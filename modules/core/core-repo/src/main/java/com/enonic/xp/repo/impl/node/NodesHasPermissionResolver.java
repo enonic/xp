@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIds;
@@ -17,6 +18,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class NodesHasPermissionResolver
     extends AbstractNodeCommand
@@ -59,21 +61,24 @@ public class NodesHasPermissionResolver
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( IdFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
-                values( nodeIds ).
-                build() ).
-            addQueryFilter( ValueFilter.create().
-                fieldName( getPermissionFieldName().getPath() ).
-                addValues( context.getAuthInfo().getPrincipals().stream().
-                    map( PrincipalKey::toString ).
-                    collect( Collectors.toList() ) ).
-                build() ).
-            searchMode( SearchMode.COUNT ).
-            build();
+                values( nodeIds ).build() )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( getPermissionFieldName().getPath() )
+                                 .addValues( context.getAuthInfo()
+                                                 .getPrincipals()
+                                                 .stream()
+                                                 .map( PrincipalKey::toString )
+                                                 .collect( Collectors.toList() ) )
+                                 .build() )
+            .searchMode( SearchMode.COUNT )
+            .build();
 
-        final FindNodesByQueryResult result = FindNodesByQueryCommand.create( this ).
-            query( query ).
-            build().
-            execute();
+        final Context adminContext = ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
+
+        final FindNodesByQueryResult result =
+            adminContext.callWith( FindNodesByQueryCommand.create( this ).query( query ).build()::execute );
 
         return result.getTotalHits() == nodeIds.getSize();
     }

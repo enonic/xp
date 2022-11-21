@@ -48,26 +48,25 @@ public class DeleteNodeByIdCommandTest
     public void delete_with_children()
         throws Exception
     {
-        final Node parentNode = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() );
+        final Node parentNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
 
-        final Node childNode = createNode( CreateNodeParams.create().
-            parent( parentNode.path() ).
-            name( "my-node" ).
-            build() );
+        final Node childNode = createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "my-node" ).build() );
 
-        final Node childChildNode = createNode( CreateNodeParams.create().
-            parent( childNode.path() ).
-            name( "my-node" ).
-            build() );
+        // Deliberately has only DELETE but not READ permission: Node is not visible to user, but user can delete it.
+        final Node childChildNode = createNode( CreateNodeParams.create()
+                                                    .parent( childNode.path() )
+                                                    .name( "my-node" )
+                                                    .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                            .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                            .allow( Permission.DELETE )
+                                                                                            .build() ) )
+                                                    .build() );
 
         doDeleteNode( parentNode.id() );
 
-        assertNull( getNodeById( parentNode.id() ) );
-        assertNull( getNodeById( childNode.id() ) );
-        assertNull( getNodeById( childChildNode.id() ) );
+        assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( parentNode.id() ) ) );
+        assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( childNode.id() ) ) );
+        assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( childChildNode.id() ) ) );
     }
 
     @Test

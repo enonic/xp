@@ -59,19 +59,18 @@ abstract class AbstractDeleteNodeCommand
 
         final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
 
-        final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
-            nodeIds( nodeIds ).
-            permission( Permission.DELETE ).
-            build().
-            execute();
-
-        final NodeBranchEntries nodeBranchEntries =
-            this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
+        final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).nodeIds( nodeIds )
+            .permission( Permission.DELETE )
+            .build()
+            .execute();
 
         if ( !allHasPermissions )
         {
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
+
+        final NodeBranchEntries nodeBranchEntries =
+            this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
 
         final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
             .stream()

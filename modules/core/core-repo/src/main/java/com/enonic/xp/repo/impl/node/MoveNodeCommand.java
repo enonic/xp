@@ -4,7 +4,9 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
@@ -26,7 +28,9 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
@@ -95,7 +99,13 @@ public class MoveNodeCommand
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
-        doMoveNode( newParentPath, newNodeName, nodeId );
+        final Context context = ContextAccessor.current();
+
+        final Context adminContext = ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
+
+        adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, nodeId ) );
 
         RefreshCommand.create().refreshMode( RefreshMode.ALL ).indexServiceInternal( this.indexServiceInternal ).build().execute();
 
@@ -197,7 +207,8 @@ public class MoveNodeCommand
 
         for ( final SearchHit nodeBranchEntry : children.getHits() )
         {
-            doMoveNode( nodeToMoveBuilder.build().path(), NodeName.from( (String) nodeBranchEntry.getField( "_name" ).getSingleValue() ),
+            doMoveNode( nodeToMoveBuilder.build().path(),
+                        NodeName.from( (String) nodeBranchEntry.getField( NodeIndexPath.NAME.toString() ).getSingleValue() ),
                         NodeId.from( nodeBranchEntry.getId() ) );
         }
 
