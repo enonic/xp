@@ -157,7 +157,7 @@ public abstract class AbstractContentSynchronizerTest
             targetProject = projectService.create( CreateProjectParams.create()
                                                        .name( ProjectName.from( "target_project" ) )
                                                        .displayName( "Target Project" )
-                                                       .parent( sourceProject.getName() )
+                                                       .addParents( List.of( sourceProject.getName() ) )
                                                        .build() );
 
             this.targetContext = ContextBuilder.from( ContextAccessor.current() )

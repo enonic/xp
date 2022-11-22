@@ -1,9 +1,10 @@
 package com.enonic.xp.project;
 
 import java.time.ZoneId;
-import java.util.Iterator;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
@@ -27,7 +28,7 @@ public final class Project
 
     private final String description;
 
-    private final ProjectName parent;
+    private final List<ProjectName> parents;
 
     private final Attachment icon;
 
@@ -40,7 +41,7 @@ public final class Project
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.parent = builder.parent;
+        this.parents = builder.parents.build();
         this.icon = builder.icon;
         this.siteConfigs = builder.siteConfigs.build();
         this.timeZone = builder.timeZone;
@@ -109,10 +110,9 @@ public final class Project
 
     private static void buildParents( final Project.Builder project, final PropertySet projectData )
     {
-        final Iterator<String> projectNamesIterator = projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ).iterator();
-        if ( projectNamesIterator.hasNext() )
+        for ( String parent : projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ) )
         {
-            project.parent( ProjectName.from( projectNamesIterator.next() ) );
+            project.addParent( ProjectName.from( parent ) );
         }
     }
 
@@ -141,9 +141,14 @@ public final class Project
         return icon;
     }
 
+    public List<ProjectName> getParents()
+    {
+        return parents;
+    }
+
     public ProjectName getParent()
     {
-        return parent;
+        return !parents.isEmpty() ? parents.get( 0 ) : null;
     }
 
     public SiteConfigs getSiteConfigs()
@@ -166,7 +171,7 @@ public final class Project
 
         private String description;
 
-        private ProjectName parent;
+        private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
         private Attachment icon;
 
@@ -200,9 +205,16 @@ public final class Project
             return this;
         }
 
+        @Deprecated
         public Builder parent( final ProjectName parent )
         {
-            this.parent = parent;
+            this.parents.add( parent );
+            return this;
+        }
+
+        public Builder addParent( final ProjectName parent )
+        {
+            this.parents.add( parent );
             return this;
         }
 

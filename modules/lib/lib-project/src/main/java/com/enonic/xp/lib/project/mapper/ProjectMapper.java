@@ -48,9 +48,9 @@ public final class ProjectMapper
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
         gen.value( "timeZone", Objects.toString( project.getTimeZone(), null ) );
-        gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
+        serializeParents( gen );
         serializeSiteConfigs( gen );
         serializePermissions( gen );
         serializeReadAccess( gen );
@@ -84,6 +84,20 @@ public final class ProjectMapper
             }
             gen.end();
         }
+    }
+
+    private void serializeParents( final MapGenerator gen )
+    {
+        if ( !project.getParents().isEmpty() )
+        {
+            gen.array( "parents" );
+            project.getParents().forEach( gen::value );
+            gen.end();
+
+        }
+
+        gen.value( "parent", project.getParent() );
+
     }
 
     public static final class Builder

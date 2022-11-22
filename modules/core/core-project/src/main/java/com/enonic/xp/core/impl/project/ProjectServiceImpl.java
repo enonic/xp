@@ -10,10 +10,10 @@ import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,8 +23,6 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -333,8 +331,8 @@ public class ProjectServiceImpl
         }
 
         callWithListContext( () -> {
-            Stream.concat( Lists.reverse( doGetParents( targetProject ) ).stream(), Stream.of( targetProject ) )
-                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() ) );
+            Stream.concat( doGetParents( targetProject ).stream(), Stream.of( targetProject ) )
+                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() ) );
 
             final Queue<Project> children = new ArrayDeque<>();
             children.add( targetProject );
@@ -344,9 +342,9 @@ public class ProjectServiceImpl
             while ( !children.isEmpty() )
             {
                 final Project current = children.poll();
-                projects.stream().filter( p -> current.getName().equals( p.getParent() ) ).forEach( p -> {
+                projects.stream().filter( p -> p.getParents().contains( current.getName() ) ).forEach( p -> {
                     children.offer( p );
-                    graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() );
+                    graph.add( ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() );
                 } );
             }
 
@@ -356,21 +354,20 @@ public class ProjectServiceImpl
         return graph.build();
     }
 
-    private List<Project> doGetParents( final Project project )
+    private Set<Project> doGetParents( final Project project )
     {
-        ImmutableList.Builder<Project> result = ImmutableList.builder();
+        final Set<Project> parents = new LinkedHashSet<>();
+        addDirectParents( project, parents );
 
-        Project currentProject = project;
+        return parents;
+    }
 
-        while ( currentProject.getParent() != null )
-        {
-            final Project parentProject = doGet( currentProject.getParent() );
-            result.add( parentProject );
-
-            currentProject = parentProject;
-        }
-
-        return result.build();
+    private void addDirectParents( final Project project, final Set<Project> result )
+    {
+        project.getParents().stream().map( this::doGet ).forEach( parent -> {
+            addDirectParents( parent, result );
+            result.add( parent );
+        } );
     }
 
 
@@ -471,9 +468,10 @@ public class ProjectServiceImpl
         {
             projectData.setString( ProjectConstants.PROJECT_TIMEZONE_PROPERTY, params.getTimeZone().toString() );
         }
-        if ( params.getParent() != null )
+        if ( !params.getParents().isEmpty() )
         {
-            projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
+            projectData.addStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY,
+                                    params.getParents().stream().map( ProjectName::toString ).collect( Collectors.toList() ) );
         }
         if ( !params.getSiteConfigs().getApplicationKeys().isEmpty() )
         {

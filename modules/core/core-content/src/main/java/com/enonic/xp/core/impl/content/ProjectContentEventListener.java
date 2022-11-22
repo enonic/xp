@@ -128,13 +128,15 @@ public final class ProjectContentEventListener
                 return;
             }
 
-            final Project sourceProject = this.projectService.list()
-                .stream()
-                .filter( project -> currentProjectName.equals( project.getName() ) )
-                .findAny()
-                .orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
+            final Project sourceProject = this.projectService.get( currentProjectName );
+            if ( sourceProject == null )
+            {
+                throw new ProjectNotFoundException( currentProjectName );
+            }
 
-            this.projectService.list().stream().filter( project -> currentProjectName.equals( project.getParent() ) )
+            this.projectService.list()
+                .stream()
+                .filter( project -> project.getParents().contains( currentProjectName ) )
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
@@ -178,11 +180,11 @@ public final class ProjectContentEventListener
                     }
                 } );
 
-            if ( sourceProject.getParent() != null && "node.deleted".equals( type ) )
+            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( type ) )
             {
                 this.projectService.list()
                     .stream()
-                    .filter( project -> project.getName().equals( sourceProject.getParent() ) )
+                    .filter( project -> sourceProject.getParents().contains( project.getName() ) )
                     .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create()
                                                                              .addContentIds( contentIds )
                                                                              .sourceProject( parentProject.getName() )

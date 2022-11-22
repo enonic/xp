@@ -1,8 +1,10 @@
 package com.enonic.xp.lib.project;
 
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -33,7 +35,7 @@ public final class CreateProjectHandler
 
     private ZoneId timeZone;
 
-    private ProjectName parent;
+    private List<ProjectName> parents;
 
     private Locale language;
 
@@ -75,8 +77,12 @@ public final class CreateProjectHandler
             .displayName( this.displayName )
             .description( this.description )
             .timeZone( this.timeZone )
-            .parent( this.parent )
             .forceInitialization( true );
+
+        if ( parents != null )
+        {
+            builder.addParents( parents );
+        }
 
         if ( isPublic )
         {
@@ -129,9 +135,15 @@ public final class CreateProjectHandler
         this.isPublic = buildReadAccess( value );
     }
 
+    public void setParents( final String[] values )
+    {
+        this.parents = values != null ? Arrays.stream( values ).map( ProjectName::from ).collect( Collectors.toList() ) : List.of();
+    }
+
+    @Deprecated
     public void setParent( final String value )
     {
-        this.parent = value != null ? ProjectName.from( value ) : null;
+        this.parents = value != null ? List.of( ProjectName.from( value ) ) : List.of();
     }
 
     public void setSiteConfig( final ScriptValue value )

@@ -2,7 +2,11 @@ package com.enonic.xp.project;
 
 import java.time.ZoneId;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -18,7 +22,7 @@ public final class CreateProjectParams
 
     private final String description;
 
-    private final ProjectName parent;
+    private final List<ProjectName> parents;
 
     private final AccessControlList permissions;
 
@@ -33,7 +37,7 @@ public final class CreateProjectParams
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
-        this.parent = builder.parent;
+        this.parents = builder.parents.build();
         this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
         this.permissions = builder.permissions;
@@ -60,9 +64,15 @@ public final class CreateProjectParams
         return description;
     }
 
+    public List<ProjectName> getParents()
+    {
+        return parents;
+    }
+
+    @Deprecated
     public ProjectName getParent()
     {
-        return parent;
+        return !parents.isEmpty() ? parents.get( 0 ) : null;
     }
 
     public SiteConfigs getSiteConfigs()
@@ -94,7 +104,7 @@ public final class CreateProjectParams
 
         private String description;
 
-        private ProjectName parent;
+        private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
         private AccessControlList permissions;
 
@@ -126,9 +136,16 @@ public final class CreateProjectParams
             return this;
         }
 
+        public Builder addParents( final Collection<ProjectName> parent )
+        {
+            this.parents.addAll( parent );
+            return this;
+        }
+
+        @Deprecated
         public Builder parent( final ProjectName parent )
         {
-            this.parent = parent;
+            this.parents.add( parent );
             return this;
         }
 
