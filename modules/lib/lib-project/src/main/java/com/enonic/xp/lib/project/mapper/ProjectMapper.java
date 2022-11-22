@@ -92,8 +92,9 @@ public final class ProjectMapper
             project.getParents().forEach( gen::value );
             gen.end();
 
-            gen.value( "parent", project.getParents().get( 0 ) ); // deprecated
         }
+
+        gen.value( "parent", project.getParent() );
 
     }
 

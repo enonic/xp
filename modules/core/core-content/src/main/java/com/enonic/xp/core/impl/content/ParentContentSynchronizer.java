@@ -94,15 +94,7 @@ public final class ParentContentSynchronizer
         }
         else
         {
-            final List<ContentToSync> contentsToSync;
-            try
-            {
-                contentsToSync = createContentsToSync( params.getContentIds(), sourceContexts, targetContexts );
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( e );
-            }
+            final List<ContentToSync> contentsToSync = createContentsToSync( params.getContentIds(), sourceContexts, targetContexts );
 
             if ( !contentsToSync.isEmpty() )
             {
@@ -149,14 +141,8 @@ public final class ParentContentSynchronizer
         final List<ContentToSync> contentsToSync = sourceContents.stream().filter( sourceContent -> {
 
             final Content root = sourceContent.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
-            try
-            {
-                return !root.getId().equals( sourceContent.getSourceContent().getId() );
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( e );
-            }
+
+            return !root.getId().equals( sourceContent.getSourceContent().getId() );
 
         } ).collect( Collectors.toList() );
 

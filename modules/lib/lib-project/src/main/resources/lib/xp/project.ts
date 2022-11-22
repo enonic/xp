@@ -49,6 +49,7 @@ export interface Project {
     displayName: string;
     description: string;
     parent: string;
+    parents: string[];
     siteConfig: Record<string, unknown>;
     applications?: string[];
     language?: string;
@@ -88,7 +89,8 @@ interface CreateProjectHandler {
  * @param {string} params.displayName Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {string} params.parent Parent project id.
+ * @param {string} params.parent Deprecated: use 'parents' param. Parent project id.
+ * @param {string[]} params.parents Parent project ids.
  * @param {object} [params.siteConfig] Connected applications config.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
  * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`).

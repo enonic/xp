@@ -103,7 +103,7 @@ public final class Project
     {
         for ( String parent : projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ) )
         {
-            project.addParent( ProjectName.from( parent ) );
+            project.parent( ProjectName.from( parent ) );
         }
     }
 
@@ -189,7 +189,8 @@ public final class Project
             return this;
         }
 
-        public Builder addParent( final ProjectName parent )
+        @Deprecated
+        public Builder parent( final ProjectName parent )
         {
             this.parents.add( parent );
             return this;

@@ -153,10 +153,8 @@ public abstract class BaseProjectHandlerTest
         builder.displayName( params.getDisplayName() );
         builder.description( params.getDescription() );
 
-        if ( !params.getParents().isEmpty() )
-        {
-            builder.addParents( params.getParents() );
-        }
+        builder.addParents( params.getParents() );
+
         params.getSiteConfigs().forEach( builder::addSiteConfig );
 
         return builder.build();
