@@ -14,10 +14,10 @@ public class CreateProjectHandlerTest
 
 
     @Test
-    public void createProjectWithParent()
+    public void createProjectWithOneParent()
         throws Exception
     {
-        runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithParent" );
+        runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithOneParent" );
     }
 
     @Test
