@@ -99,12 +99,22 @@ export interface Content<
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
 }
 
+// Compliant with npm module ts-brand
+type Brand<
+    Base,
+    Branding
+> = Base & {
+  '__type__': Branding
+};
+
+export type ByteSource = Brand<object, 'ByteSource'>;
+
 export interface Resource {
     getSize(): number;
 
     getTimestamp(): number;
 
-    getStream(): object;
+    getStream(): ByteSource;
 
     exists(): boolean;
 }
