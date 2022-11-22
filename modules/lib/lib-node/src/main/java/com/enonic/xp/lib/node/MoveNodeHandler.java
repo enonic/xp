@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import java.util.UUID;
 
 import com.enonic.xp.lib.node.mapper.NodeMapper;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -81,7 +82,7 @@ public final class MoveNodeHandler
 
     private Node move( final NodeId sourceId, final NodePath newPath )
     {
-        return nodeService.move( sourceId, newPath, null );
+        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).parentNodePath( newPath ).build() );
     }
 
     private Node rename( final NodeId sourceId, final NodeName newName )

@@ -156,7 +156,7 @@ public class NodeExportIntegrationTest
     public void one_node_file()
         throws Exception
     {
-        createNode( "mynode", NodePath.ROOT );
+        createNode( NodePath.ROOT, "mynode" );
 
         nodeService.refresh( RefreshMode.ALL );
 
@@ -178,24 +178,25 @@ public class NodeExportIntegrationTest
     public void children_nodes()
         throws Exception
     {
-        final Node root = createNode( "mynode", NodePath.ROOT );
-        final Node child1 = createNode( "child1", root.path() );
-        createNode( "child1_1", child1.path() );
-        final Node child1_2 = createNode( "child1_2", child1.path() );
-        createNode( "child1_2_1", child1_2.path() );
-        createNode( "child1_2_2", child1_2.path() );
-        final Node child2 = createNode( "child2", root.path() );
-        createNode( "child2_1", child2.path() );
+        final Node root = createNode( NodePath.ROOT, "mynode" );
+        final Node child1 = createNode( root.path(), "child1" );
+        createNode( child1.path(), "child1_1" );
+        final Node child1_2 = createNode( child1.path(), "child1_2" );
+        createNode( child1_2.path(), "child1_2_1" );
+        createNode( child1_2.path(), "child1_2_2" );
+        final Node child2 = createNode( root.path(), "child2" );
+        createNode( child2.path(), "child2_1" );
 
         final NodeExportListener nodeExportListener = Mockito.mock( NodeExportListener.class );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+        final NodeExportResult result = NodeExporter.create()
+            .nodeService( this.nodeService )
+            .nodeExportWriter( new FileExportWriter() )
+            .sourceNodePath( NodePath.ROOT )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .
             nodeExportListener( nodeExportListener ).
             build().
             execute();
@@ -221,30 +222,27 @@ public class NodeExportIntegrationTest
     @Test
     public void writerOrderList()
     {
-        final Node root = Node.create().
-            name( NodeName.from( "root" ) ).
-            parentPath( NodePath.ROOT ).
-            childOrder( ChildOrder.manualOrder() ).
-            build();
+        final Node root =
+            Node.create().name( NodeName.from( "root" ) ).parentPath( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build();
 
         this.nodeService.create( CreateNodeParams.from( root ).build() );
 
-        createNode( "child1", root.path() );
-        createNode( "child2", root.path() );
-        createNode( "child3", root.path() );
-        createNode( "child4", root.path() );
-        createNode( "child5", root.path() );
-        createNode( "child6", root.path() );
+        createNode( root.path(), "child1" );
+        createNode( root.path(), "child2" );
+        createNode( root.path(), "child3" );
+        createNode( root.path(), "child4" );
+        createNode( root.path(), "child5" );
+        createNode( root.path(), "child6" );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            build().
-            execute();
+        final NodeExportResult result = NodeExporter.create()
+            .nodeService( this.nodeService )
+            .nodeExportWriter( new FileExportWriter() )
+            .sourceNodePath( NodePath.ROOT )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .build()
+            .execute();
 
         assertEquals( 8, result.size() );
 
@@ -257,21 +255,21 @@ public class NodeExportIntegrationTest
     public void export_from_child_of_child()
         throws Exception
     {
-        final Node root = createNode( "mynode", NodePath.ROOT );
-        final Node child1 = createNode( "child1", root.path() );
-        final Node child1_1 = createNode( "child1_1", child1.path() );
-        createNode( "child1_1_1", child1_1.path() );
-        createNode( "child1_1_2", child1_1.path() );
+        final Node root = createNode( NodePath.ROOT, "mynode" );
+        final Node child1 = createNode( root.path(), "child1" );
+        final Node child1_1 = createNode( child1.path(), "child1_1" );
+        createNode( child1_1.path(), "child1_1_1" );
+        createNode( child1_1.path(), "child1_1_2" );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            build().
-            execute();
+        final NodeExportResult result = NodeExporter.create()
+            .nodeService( this.nodeService )
+            .nodeExportWriter( new FileExportWriter() )
+            .sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .build()
+            .execute();
 
         assertEquals( 3, result.getExportedNodes().getSize() );
 
@@ -284,22 +282,22 @@ public class NodeExportIntegrationTest
     public void include_export_root_and_nested_children()
         throws Exception
     {
-        final Node root = createNode( "mynode", NodePath.ROOT );
-        final Node child1 = createNode( "child1", root.path() );
-        createNode( "child2", root.path() );
-        final Node child1_1 = createNode( "child1_1", child1.path() );
-        createNode( "child1_1_1", child1_1.path() );
-        createNode( "child1_1_2", child1_1.path() );
+        final Node root = createNode( NodePath.ROOT, "mynode" );
+        final Node child1 = createNode( root.path(), "child1" );
+        createNode( root.path(), "child2" );
+        final Node child1_1 = createNode( child1.path(), "child1_1" );
+        createNode( child1_1.path(), "child1_1_1" );
+        createNode( child1_1.path(), "child1_1_2" );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            build().
-            execute();
+        final NodeExportResult result = NodeExporter.create()
+            .nodeService( this.nodeService )
+            .nodeExportWriter( new FileExportWriter() )
+            .sourceNodePath( NodePath.create( "/mynode/child1" ).build() )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .build()
+            .execute();
 
         assertEquals( 4, result.getExportedNodes().getSize() );
 
@@ -309,7 +307,7 @@ public class NodeExportIntegrationTest
         assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Disabled // Wait with this until decided how to handle versions. Only in dump, or in export too?
+    @Disabled("Wait with this until decided how to handle versions. Only in dump, or in export too?")
     @Test
     public void create_binary_files()
         throws Exception
@@ -376,7 +374,7 @@ public class NodeExportIntegrationTest
     public void one_node_error()
         throws Exception
     {
-        createNode( "mynode", NodePath.ROOT );
+        createNode( NodePath.ROOT, "mynode" );
 
         final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
         Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),
@@ -462,16 +460,6 @@ public class NodeExportIntegrationTest
         {
             System.out.println( file.toPath() );
         }
-    }
-
-    private Node createNode( final String name, final NodePath root )
-    {
-        final Node node = Node.create().
-            name( NodeName.from( name ) ).
-            parentPath( root ).
-            build();
-
-        return this.nodeService.create( CreateNodeParams.from( node ).build() );
     }
 
     private void assertFileExists( final String path )

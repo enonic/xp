@@ -596,6 +596,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         return move( MoveNodeParams.create().
@@ -632,12 +633,12 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
         verifyContext();
-        return Nodes.from( nodeIds.
-            stream().
-            map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
+        return Nodes.from(
+            nodeIds.stream().map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
     }
 
 
@@ -1105,11 +1106,10 @@ public class NodeServiceImpl
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
-        final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, false, context );
-        branchNodeVersions.
-            stream().
-            map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) ).
-            forEach( routableNodeVersionIds::add );
+        final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, context );
+        branchNodeVersions.stream()
+            .map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) )
+            .forEach( routableNodeVersionIds::add );
         return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds.build(), context );
     }
 

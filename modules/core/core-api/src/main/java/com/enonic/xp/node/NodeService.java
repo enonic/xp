@@ -46,6 +46,7 @@ public interface NodeService
 
     Node move( MoveNodeParams params );
 
+    @Deprecated
     Nodes move( NodeIds nodeIds, NodePath parentNodePath, MoveNodeListener moveListener );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );

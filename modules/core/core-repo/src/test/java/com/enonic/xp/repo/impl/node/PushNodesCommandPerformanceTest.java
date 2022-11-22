@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 
+@Disabled("Performance test is only for manual run")
 public class PushNodesCommandPerformanceTest
     extends AbstractNodeTest
 {
@@ -24,39 +25,21 @@ public class PushNodesCommandPerformanceTest
         this.createDefaultRootNode();
     }
 
-    @Disabled
     @Test
     public void testReferencePerformance()
         throws Exception
     {
-        final Node rootNode = createNode( CreateNodeParams.create().
-            name( "rootNode" ).
-            parent( NodePath.ROOT ).
-            build(), false );
+        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
 
         createNodes( rootNode, 20, 3, 1 );
 
         refresh();
 
-        final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create().
-            nodeId( rootNode.id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create().nodeId( rootNode.id() ).target( WS_OTHER ).indexServiceInternal( this.indexServiceInternal ).storageService( this.storageService ).searchService( this.searchService ).build().execute();
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final PushNodesResult result = PushNodesCommand.create().
-            ids( syncWork.getNodeComparisons().getNodeIds() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final PushNodesResult result = PushNodesCommand.create().ids( syncWork.getNodeComparisons().getNodeIds() ).target( WS_OTHER ).indexServiceInternal( this.indexServiceInternal ).storageService( this.storageService ).searchService( this.searchService ).build().execute();
 
         started.stop();
 

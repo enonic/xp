@@ -316,101 +316,116 @@ public class MoveNodeCommandTest
     public void move_without_permissions()
         throws Exception
     {
-        final Node deleteUngrantedNode = createNode( CreateNodeParams.create()
-                                                         .name( "mynode" )
-                                                         .parent( NodePath.ROOT )
-                                                         .setNodeId( NodeId.from( "mynode" ) )
-                                                         .permissions( AccessControlList.of( AccessControlEntry.create()
-                                                                                                 .principal( TEST_DEFAULT_USER.getKey() )
-                                                                                                 .allowAll()
-                                                                                                 .deny( Permission.MODIFY )
-                                                                                                 .build() ) )
-                                                         .build() );
+        final Node cannonMoveNode = createNode( CreateNodeParams.create()
+                                                    .name( "mynode" )
+                                                    .parent( NodePath.ROOT )
+                                                    .setNodeId( NodeId.from( "mynode" ) )
+                                                    .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                            .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                            .allowAll()
+                                                                                            .deny( Permission.MODIFY )
+                                                                                            .build() ) )
+                                                    .build() );
 
-        final Node deleteGrantedNode = createNode( CreateNodeParams.create()
-                                                       .name( "mynode2" )
-                                                       .parent( NodePath.ROOT )
-                                                       .setNodeId( NodeId.from( "mynode2" ) )
-                                                       .permissions( AccessControlList.of( AccessControlEntry.create()
-                                                                                               .principal( TEST_DEFAULT_USER.getKey() )
-                                                                                               .allowAll()
-                                                                                               .build() ) )
-                                                       .build() );
+        final Node canMoveNode = createNode( CreateNodeParams.create()
+                                                 .name( "mynode2" )
+                                                 .parent( NodePath.ROOT )
+                                                 .setNodeId( NodeId.from( "mynode2" ) )
+                                                 .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                         .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                         .allowAll()
+                                                                                         .build() ) )
+                                                 .build() );
 
-        final Node createUngrantedNewParent = createNode( CreateNodeParams.create()
-                                                              .name( "new-parent" )
-                                                              .parent( NodePath.ROOT )
-                                                              .setNodeId( NodeId.from( "newparent" ) )
-                                                              .permissions( AccessControlList.of( AccessControlEntry.create()
-                                                                                                      .principal(
-                                                                                                          TEST_DEFAULT_USER.getKey() )
-                                                                                                      .allowAll()
-                                                                                                      .deny( Permission.CREATE )
-                                                                                                      .build() ) )
-                                                              .build() );
+        final Node cannotMoveIntoNode = createNode( CreateNodeParams.create()
+                                                        .name( "new-parent" )
+                                                        .parent( NodePath.ROOT )
+                                                        .setNodeId( NodeId.from( "newparent" ) )
+                                                        .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                                .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                                .allowAll()
+                                                                                                .deny( Permission.CREATE )
+                                                                                                .build() ) )
+                                                        .build() );
 
-        final Node createGrantedNewParent = createNode( CreateNodeParams.create()
-                                                            .name( "new-parent2" )
-                                                            .parent( NodePath.ROOT )
-                                                            .setNodeId( NodeId.from( "newparent2" ) )
-                                                            .permissions( AccessControlList.of( AccessControlEntry.create()
-                                                                                                    .principal( TEST_DEFAULT_USER.getKey() )
-                                                                                                    .allowAll()
-                                                                                                    .build() ) )
-                                                            .build() );
+        final Node canMoveIntoNode = createNode( CreateNodeParams.create()
+                                                     .name( "new-parent2" )
+                                                     .parent( NodePath.ROOT )
+                                                     .setNodeId( NodeId.from( "newparent2" ) )
+                                                     .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                             .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                             .allowAll()
+                                                                                             .build() ) )
+                                                     .build() );
 
-        // Tests the check of the DELETE right on the moved node
-        boolean deleteRightChecked = false;
-        try
-        {
-            MoveNodeCommand.create()
-                .indexServiceInternal( this.indexServiceInternal )
-                .storageService( this.storageService )
-                .searchService( this.searchService )
-                .id( deleteUngrantedNode.id() )
-                .newParent( createGrantedNewParent.path() )
-                .build()
-                .execute();
-        }
-        catch ( NodeAccessException e )
-        {
-            deleteRightChecked = true;
-        }
-        assertTrue( deleteRightChecked );
+        // Tests the check of the MODIFY right on the moved node
+        assertThrows( NodeAccessException.class, MoveNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .id( cannonMoveNode.id() )
+            .newParent( canMoveIntoNode.path() )
+            .build()::execute );
 
         // Tests the check of the CREATE right on the new parent
-        boolean createRightChecked = false;
-        try
-        {
-            MoveNodeCommand.create()
-                .indexServiceInternal( this.indexServiceInternal )
-                .storageService( this.storageService )
-                .searchService( this.searchService )
-                .id( deleteGrantedNode.id() )
-                .newParent( createUngrantedNewParent.path() )
-                .build()
-                .execute();
-        }
-        catch ( NodeAccessException e )
-        {
-            createRightChecked = true;
-        }
-        assertTrue( createRightChecked );
+        assertThrows( NodeAccessException.class, MoveNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .id( canMoveNode.id() )
+            .newParent( cannotMoveIntoNode.path() )
+            .build()::execute );
+    }
 
-        // Tests the correct behaviour if both rights are granted
+    @Test
+    public void move_with_hidden_node()
+    {
+        final Node nodeToMove = createNode( CreateNodeParams.create()
+                                                .name( "mynode2" )
+                                                .parent( NodePath.ROOT )
+                                                .setNodeId( NodeId.from( "mynode2" ) )
+                                                .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                        .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                        .allowAll()
+                                                                                        .build() ) )
+                                                .build() );
+
+        // This node is not visible to user, but moved together with parent node anyway.
+        final Node hiddenChild = createNode( CreateNodeParams.create()
+                                                 .name( "hiddenNode" )
+                                                 .parent( nodeToMove.path() )
+                                                 .setNodeId( NodeId.from( "myhiddennode" ) )
+                                                 .permissions( AccessControlList.of(
+                                                     AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).build() ) )
+                                                 .build() );
+
+        final Node newParent = createNode( CreateNodeParams.create()
+                                               .name( "new-parent2" )
+                                               .parent( NodePath.ROOT )
+                                               .setNodeId( NodeId.from( "newparent2" ) )
+                                               .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                       .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                       .allowAll()
+                                                                                       .build() ) )
+                                               .build() );
+
         MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( deleteGrantedNode.id() )
-            .newParent( createGrantedNewParent.path() )
+            .id( nodeToMove.id() )
+            .newParent( newParent.path() )
             .build()
             .execute();
 
-        final Node movedNode = getNodeById( deleteGrantedNode.id() );
+        final Node movedNode = getNodeById( nodeToMove.id() );
 
-        assertEquals( createGrantedNewParent.path(), movedNode.parentPath() );
+        assertEquals( newParent.path(), movedNode.parentPath() );
         assertEquals( "mynode2", movedNode.name().toString() );
+
+        final Node hiddenNode = ctxDefaultAdmin().callWith( () -> getNodeById( hiddenChild.id() ) );
+
+        assertEquals( movedNode.path(), hiddenNode.parentPath() );
     }
 
     @Test

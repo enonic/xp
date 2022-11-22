@@ -12,6 +12,9 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -20,6 +23,8 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -60,8 +65,6 @@ public class PublishContentCommand
 
     PublishContentResult execute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         final CompareContentResults results = getSyncWork();
 
         if ( publishContentListener != null )
@@ -97,17 +100,22 @@ public class PublishContentCommand
 
     private CompareContentResults getSyncWork()
     {
-        return ResolveContentsToBePublishedCommand.create()
-            .contentIds( this.contentIds )
-            .excludedContentIds( this.excludedContentIds )
-            .excludeChildrenIds( this.excludeChildrenIds )
-            .includeDependencies( this.includeDependencies )
-            .contentTypeService( this.contentTypeService )
-            .eventPublisher( this.eventPublisher )
-            .translator( this.translator )
-            .nodeService( this.nodeService )
-            .build()
-            .execute();
+        final Context context = ContextAccessor.current();
+
+        final Context adminContext = ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
+
+        return adminContext.callWith( ResolveContentsToBePublishedCommand.create()
+                                          .contentIds( this.contentIds )
+                                          .excludedContentIds( this.excludedContentIds )
+                                          .excludeChildrenIds( this.excludeChildrenIds )
+                                          .includeDependencies( this.includeDependencies )
+                                          .contentTypeService( this.contentTypeService )
+                                          .eventPublisher( this.eventPublisher )
+                                          .translator( this.translator )
+                                          .nodeService( this.nodeService )
+                                          .build()::execute );
     }
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )

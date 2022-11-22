@@ -3,9 +3,6 @@ package com.enonic.xp.repo.impl.index;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -47,15 +44,10 @@ class GetBranchDataCommand
             CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
                                 ValueExpr.string( branch.getValue() ) );
 
-        final Context reindexContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( this.repositoryId ).
-            branch( branch ).
-            build();
-
         return this.nodeSearchService.query( NodeBranchQuery.create().
             query( QueryExpr.from( compareExpr ) ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build(), SingleRepoStorageSource.create( reindexContext.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) );
+            build(), SingleRepoStorageSource.create( this.repositoryId, SingleRepoStorageSource.Type.BRANCH ) );
     }
 
     public static Builder create()

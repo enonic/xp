@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -25,11 +23,9 @@ public final class DeleteNodeByIdCommand
 
     public NodeBranchEntries execute()
     {
-        final Context context = ContextAccessor.current();
-
         final Node node = doGetById( nodeId );
 
-        return node != null ? deleteNodeWithChildren( node, context, deleteNodeListener ) : NodeBranchEntries.empty();
+        return node != null ? deleteNodeWithChildren( node, deleteNodeListener ) : NodeBranchEntries.empty();
     }
 
     public static Builder create()

@@ -77,7 +77,7 @@ public class FindNodesWithVersionDifferenceCommand
 
         final ExcludeEntries.Builder builder = ExcludeEntries.create();
 
-        final NodeBranchEntries result = this.nodeStorageService.getBranchNodeVersions( excludes, false, context );
+        final NodeBranchEntries result = this.nodeStorageService.getBranchNodeVersions( excludes, context );
 
         for ( final NodeBranchEntry entry : result )
         {

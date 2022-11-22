@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,7 +38,6 @@ import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
-import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -78,43 +76,32 @@ public class BranchServiceImpl
 
         if ( context.isSkipConstraints() )
         {
-            return doStore( nodeBranchEntry, context, false );
+            return doStore( nodeBranchEntry, context );
         }
         else
         {
-            final NodePath parentPath = nodeBranchEntry.getNodePath().getParentPath();
-            return synchronizeByPath( parentPath, () -> doStore( nodeBranchEntry, context, true ) );
+            final Lock lock = PARENT_PATH_LOCKS.get( nodeBranchEntry.getNodePath().getParentPath() );
+            lock.lock();
+            try
+            {
+                verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
+
+                return doStore( nodeBranchEntry, context );
+            }
+            finally
+            {
+                lock.unlock();
+            }
         }
     }
 
-    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context, final boolean validate )
+    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        if ( validate )
-        {
-            verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
-        }
+        final String id = this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, context ) );
 
-        final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
-
-        final String id = this.storageDao.store( storeRequest );
-
-        doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
+        doCache( context.getRepositoryId(), nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
-    }
-
-    private <T> T synchronizeByPath( final NodePath path, final Supplier<T> callback )
-    {
-        final Lock lock = PARENT_PATH_LOCKS.get( path );
-        lock.lock();
-        try
-        {
-            return callback.get();
-        }
-        finally
-        {
-            lock.unlock();
-        }
     }
 
     private void verifyNotExistingNodeWithOtherId( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
@@ -167,7 +154,12 @@ public class BranchServiceImpl
 
     private NodeBranchEntry doGetById( final NodeId nodeId, final InternalContext context )
     {
-        final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
+        final GetByIdRequest getByIdRequest = GetByIdRequest.create()
+            .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
+            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
+            .returnFields( BRANCH_RETURN_FIELDS )
+            .routing( nodeId.toString() )
+            .build();
         final GetResult getResult = this.storageDao.getById( getByIdRequest );
 
         if ( getResult.isEmpty() )
@@ -209,7 +201,7 @@ public class BranchServiceImpl
     @Override
     public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
-        doCache( context, nodePath, nodeId );
+        doCache( context.getRepositoryId(), nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
     }
 
     @Override
@@ -237,7 +229,14 @@ public class BranchServiceImpl
 
         if ( branchDocumentId != null )
         {
-            return getFromCache( nodePath, context, branchDocumentId );
+            final NodeBranchEntry nodeBranchEntry = doGetById( branchDocumentId.getNodeId(), context );
+
+            if ( nodeBranchEntry == null )
+            {
+                throw new NodeNotFoundException( "Node with path [" + nodePath + "] found in path-cache but not in storage" );
+            }
+
+            return nodeBranchEntry;
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create()
@@ -263,7 +262,8 @@ public class BranchServiceImpl
         if ( !result.isEmpty() )
         {
             final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
-            doCache( context, nodeBranchEntry.getNodePath(), nodeBranchEntry.getNodeId() );
+            doCache( context.getRepositoryId(), nodeBranchEntry.getNodePath(),
+                     BranchDocumentId.from( nodeBranchEntry.getNodeId(), context.getBranch() ) );
 
             return nodeBranchEntry;
         }
@@ -271,26 +271,9 @@ public class BranchServiceImpl
         return null;
     }
 
-    private NodeBranchEntry getFromCache( final NodePath nodePath, final InternalContext context, final BranchDocumentId branchDocumentId )
+    private void doCache( final RepositoryId repositoryId, final NodePath nodePath, final BranchDocumentId branchDocumentId )
     {
-        final NodeBranchEntry nodeBranchEntry = doGetById( branchDocumentId.getNodeId(), context );
-
-        if ( nodeBranchEntry == null )
-        {
-            throw new NodeNotFoundException( "Node with path [" + nodePath + "] found in path-cache but not in storage" );
-        }
-
-        return nodeBranchEntry;
-    }
-
-    private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )
-    {
-        doCache( context, nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
-    }
-
-    private void doCache( final InternalContext context, final NodePath nodePath, final BranchDocumentId branchDocumentId )
-    {
-        pathCache.cache( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ), branchDocumentId );
+        pathCache.cache( new BranchPath( repositoryId, branchDocumentId.getBranch(), nodePath ), branchDocumentId );
     }
 
     private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
@@ -335,22 +318,12 @@ public class BranchServiceImpl
                                                                             .size( nodeIds.getSize() )
                                                                             .build() )
                                                                 .returnFields( BRANCH_RETURN_FIELDS )
-                                                                .searchSource( new SingleRepoStorageSource( context.getRepositoryId(),
+                                                                .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
                                                                                                             SingleRepoStorageSource.Type.BRANCH ) )
                                                                 .searchPreference( context.getSearchPreference() )
                                                                 .build() );
 
         return NodeBranchQueryResultFactory.create( results );
-    }
-
-    private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final InternalContext context )
-    {
-        return GetByIdRequest.create()
-            .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
-            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
-            .returnFields( BRANCH_RETURN_FIELDS )
-            .routing( nodeId.toString() )
-            .build();
     }
 
     private StorageSource createStorageSettings( final RepositoryId repositoryId )

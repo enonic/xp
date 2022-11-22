@@ -1,23 +1,28 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
-import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
@@ -32,12 +37,7 @@ abstract class AbstractDeleteNodeCommand
         this.allowDeleteRootNode = builder.allowDeleteRoot;
     }
 
-    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
-    {
-        return deleteNodeWithChildren( node, context, null );
-    }
-
-    NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context, final DeleteNodeListener deleteNodeListener )
+    NodeBranchEntries deleteNodeWithChildren( final Node node, final DeleteNodeListener deleteNodeListener )
     {
         if ( node.isRoot() && !allowDeleteRootNode )
         {
@@ -46,34 +46,52 @@ abstract class AbstractDeleteNodeCommand
 
         doRefresh();
 
-        final NodeBranchEntries nodesToBeDeleted = newResolveNodesToDelete( node );
+        final Context context = ContextAccessor.current();
 
-        final NodeIds nodeIds = NodeIds.from( nodesToBeDeleted.getKeys() );
+        final Context adminContext = ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
 
-        final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).
-            nodeIds( nodeIds ).
-            permission( Permission.DELETE ).
-            build().
-            execute();
+        final FindNodesByParentResult result = adminContext.callWith( FindNodeIdsByParentCommand.create( this )
+                                   .parentPath( node.path() )
+                                   .recursive( true )
+                                   .build()::execute );
+
+        final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
+
+        final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).nodeIds( nodeIds )
+            .permission( Permission.DELETE )
+            .build()
+            .execute();
 
         if ( !allHasPermissions )
         {
             throw new NodeAccessException( context.getAuthInfo().getUser(), node.path(), Permission.DELETE );
         }
 
-        for ( final List<NodeId> keysBatch : Iterables.partition( nodeIds, BATCH_SIZE ) )
+        final NodeBranchEntries nodeBranchEntries =
+            this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
+
+        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
+            .stream()
+            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ).reversed() )
+            .collect( Collectors.toList() );
+
+        for ( final List<NodeBranchEntry> batch : Iterables.partition( list, BATCH_SIZE ) )
         {
-            this.nodeStorageService.delete( NodeIds.from( keysBatch ), InternalContext.from( context ) );
+            final NodeIds nodeIdsBatch =
+                NodeIds.from( batch.stream().map( NodeBranchEntry::getNodeId ).collect( ImmutableSet.toImmutableSet() ) );
+            this.nodeStorageService.delete( nodeIdsBatch, InternalContext.from( context ) );
 
             if ( deleteNodeListener != null )
             {
-                deleteNodeListener.nodesDeleted( keysBatch.size() );
+                deleteNodeListener.nodesDeleted( batch.size() );
             }
         }
 
         doRefresh();
 
-        return nodesToBeDeleted;
+        return NodeBranchEntries.from( list );
     }
 
     private void doRefresh()
@@ -81,31 +99,6 @@ abstract class AbstractDeleteNodeCommand
         RefreshCommand.create().
             refreshMode( RefreshMode.ALL ).
             indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
-    }
-
-
-    private NodeBranchEntries newResolveNodesToDelete( final Node node )
-    {
-        final FindNodeIdsByParentCommand command = FindNodeIdsByParentCommand.create( this ).
-            parentPath( node.path() ).
-            recursive( true ).
-            childOrder( ChildOrder.reversePath() ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build();
-
-        final FindNodesByParentResult result = command.execute();
-
-        final NodeIds nodeIds = NodeIds.create().
-            addAll( result.getNodeIds() ).
-            add( node.id() ).
-            build();
-
-        return FindNodeBranchEntriesByIdCommand.
-            create( command ).
-            ids( nodeIds ).
-            orderExpressions( ChildOrder.reversePath().getOrderExpressions() ).
             build().
             execute();
     }
