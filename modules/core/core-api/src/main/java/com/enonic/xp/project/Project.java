@@ -1,6 +1,5 @@
 package com.enonic.xp.project;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -103,7 +102,7 @@ public final class Project
     {
         for ( String parent : projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ) )
         {
-            project.parent( ProjectName.from( parent ) );
+            project.addParent( ProjectName.from( parent ) );
         }
     }
 
@@ -196,9 +195,9 @@ public final class Project
             return this;
         }
 
-        public Builder addParents( final Collection<ProjectName> parents )
+        public Builder addParent( final ProjectName parent )
         {
-            this.parents.addAll( parents );
+            this.parents.add( parent );
             return this;
         }
 

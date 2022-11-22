@@ -132,7 +132,7 @@ class ProjectsSyncTaskTest
 
         if ( parent != null )
         {
-            project.parent( ProjectName.from( parent ) );
+            project.addParent( ProjectName.from( parent ) );
         }
         return project.build();
     }
