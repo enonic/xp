@@ -13,9 +13,18 @@ declare global {
     }
 }
 
-import type {PrincipalKey} from '@enonic-types/core';
+import type {
+    ByteSource,
+    PrincipalKey,
+} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+export type {
+    ByteSource,
+    GroupKey,
+    PrincipalKey,
+    RoleKey,
+    UserKey,
+  } from '@enonic-types/core';
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
@@ -532,7 +541,7 @@ interface NodeHandler {
 
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
-    getBinary(key: string, binaryReference?: string | null): object;
+    getBinary(key: string, binaryReference?: string | null): ByteSource;
 
     refresh(mode: RefreshMode): void;
 }
@@ -830,7 +839,7 @@ export interface RepoConnection {
 
     diff(params: DiffBranchesParams): DiffBranchesResult;
 
-    getBinary(params: GetBinaryParams): object;
+    getBinary(params: GetBinaryParams): ByteSource;
 
     move(params: MoveNodeParams): boolean;
 
@@ -1027,7 +1036,7 @@ class RepoConnectionImpl
      *
      * @returns {*} Stream of the binary.
      */
-    getBinary(params: GetBinaryParams): object {
+    getBinary(params: GetBinaryParams): ByteSource {
         checkRequired(params, 'key');
         return this.nodeHandler.getBinary(params.key, params.binaryReference);
     }
