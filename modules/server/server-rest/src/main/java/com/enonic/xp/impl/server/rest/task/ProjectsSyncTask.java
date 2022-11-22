@@ -57,10 +57,10 @@ public final class ProjectsSyncTask
 
         final Map<ProjectName, Project> normalizedProjects = projects.stream().map( project -> {
 
-            final List<ProjectName> existingParents =
-                project.getParents().stream().filter( projectNames::contains ).collect( Collectors.toList() );
+            final Project.Builder builder = Project.create().name( project.getName() );
+            project.getParents().stream().filter( projectNames::contains ).forEach( builder::addParent );
 
-            return Project.create().name( project.getName() ).addParents( existingParents ).build();
+            return builder.build();
 
         } ).collect( Collectors.toMap( Project::getName, project -> project ) );
 
