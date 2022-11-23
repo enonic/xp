@@ -1374,7 +1374,7 @@ export interface SetPermissionsParams {
 
 export interface Permissions {
     inheritsPermissions: boolean;
-    permissions: AccessControlEntry[];
+    permissions?: AccessControlEntry[];
 }
 
 interface SetPermissionsHandler {
