@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteAction;
@@ -93,7 +94,7 @@ public class StorageDaoImpl
         try
         {
             deleteResponse = this.client.delete( builder.request() ).
-                actionGet( request.getTimeoutAsString() );
+                actionGet( request.getTimeout(), TimeUnit.SECONDS );
         }
         catch ( ClusterBlockException e )
         {
@@ -125,7 +126,7 @@ public class StorageDaoImpl
                         setRouting( id ). //TODO Java10
                         request();
 
-                this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
+                this.client.delete( request ).actionGet( requests.getTimeout(), TimeUnit.SECONDS );
             }
             catch ( ClusterBlockException e )
             {
@@ -138,13 +139,13 @@ public class StorageDaoImpl
         }
     }
 
-    private String doStore( final IndexRequest request, final String timeout )
+    private String doStore( final IndexRequest request, final int timeout )
     {
         final IndexResponse indexResponse;
         try
         {
             indexResponse = this.client.index( request ).
-                actionGet( timeout );
+                actionGet( timeout, TimeUnit.SECONDS );
         }
         catch ( ClusterBlockException e )
         {
@@ -178,7 +179,7 @@ public class StorageDaoImpl
         }
 
         final GetResponse getResponse = client.get( getRequest ).
-            actionGet( request.getTimeout() );
+            actionGet( request.getTimeout(), TimeUnit.SECONDS );
 
         return GetResultFactory.create( getResponse );
     }
