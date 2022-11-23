@@ -16,11 +16,7 @@ declare global {
     interface XpXData {}
 }
 
-import type {
-    ByteSource,
-    Content,
-    PublishInfo,
-} from '@enonic-types/core';
+import type {ByteSource, Content, PublishInfo} from '@enonic-types/core';
 
 export type {
     Attachment,
@@ -1384,7 +1380,7 @@ export interface SetPermissionsParams {
 
 export interface Permissions {
     inheritsPermissions: boolean;
-    permissions?: Permission[];
+    permissions?: AccessControlEntry[];
 }
 
 interface SetPermissionsHandler {
