@@ -1210,8 +1210,8 @@ export interface CreateMediaParams {
     name: string;
     parentPath?: string;
     mimeType?: string;
-    focalX?: string;
-    focalY?: string;
+    focalX?: number;
+    focalY?: number;
     data: ByteSource;
     idGenerator?: (v: string) => string;
 }
@@ -1223,9 +1223,9 @@ interface CreateMediaHandler {
 
     setMimeType(value?: string | null): void;
 
-    setFocalX(value?: string): void;
+    setFocalX(value?: number): void;
 
-    setFocalY(value?: string): void;
+    setFocalY(value?: number): void;
 
     setData(value?: ByteSource | null): void;
 
