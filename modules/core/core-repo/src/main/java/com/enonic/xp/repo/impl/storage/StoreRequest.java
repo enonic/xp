@@ -51,9 +51,9 @@ public class StoreRequest
         return settings;
     }
 
-    public String getTimeout()
+    public int getTimeout()
     {
-        return timeout + "s";
+        return timeout;
     }
 
     public boolean isForceRefresh()
@@ -89,7 +89,7 @@ public class StoreRequest
 
         private boolean forceRefresh = false;
 
-        private int timeout = 5;
+        private int timeout = 30;
 
         private String id;
 

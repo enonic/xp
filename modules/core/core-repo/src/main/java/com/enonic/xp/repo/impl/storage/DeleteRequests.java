@@ -47,11 +47,6 @@ public class DeleteRequests
         return timeout;
     }
 
-    public String getTimeoutAsString()
-    {
-        return timeout + "s";
-    }
-
     public static final class Builder
     {
         private StorageSource settings;
