@@ -45,9 +45,9 @@ public abstract class AbstractGetRequest
         return routing;
     }
 
-    public String getTimeout()
+    public int getTimeout()
     {
-        return timeout + "s";
+        return timeout;
     }
 
     public static class Builder<B extends Builder>

@@ -45,11 +45,6 @@ public class DeleteRequest
         return timeout;
     }
 
-    public String getTimeoutAsString()
-    {
-        return timeout + "s";
-    }
-
     public static final class Builder
     {
         private String id;
