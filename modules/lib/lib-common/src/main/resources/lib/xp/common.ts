@@ -43,3 +43,9 @@ export function sanitize(text: string): string {
     }
     return NamePrettyfier.create(text);
 }
+
+const commonLibrary = {
+    sanitize,
+};
+
+export type CommonLibrary = typeof commonLibrary;

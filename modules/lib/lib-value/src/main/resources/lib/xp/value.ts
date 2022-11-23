@@ -274,3 +274,16 @@ export function binary(name: string, stream: ByteSource): BinaryAttachment {
 
     return binaryAttachmentBean.newInstance(binaryReferenceBean.from(name), stream);
 }
+
+const valueLibrary = {
+    binary,
+    geoPoint,
+    geoPointString,
+    instant,
+    localDate,
+    localDateTime,
+    localTime,
+    reference,
+};
+
+export type ValueLibrary = typeof valueLibrary;

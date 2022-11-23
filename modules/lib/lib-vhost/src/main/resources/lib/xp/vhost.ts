@@ -61,3 +61,10 @@ export function list(): VirtualHosts {
     const bean = __.newBean<VirtualHostHandler>('com.enonic.xp.lib.vhost.VirtualHostHandler');
     return __.toNativeObject(bean.getVirtualHosts());
 }
+
+const virtualHostLibrary = {
+    isEnabled,
+    list,
+};
+
+export type VirtualHostLibrary = typeof virtualHostLibrary;

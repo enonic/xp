@@ -28,3 +28,9 @@ export function isMaster(): boolean {
     const bean = __.newBean<ClusterIsMasterHandler>('com.enonic.xp.lib.cluster.ClusterIsMasterHandler');
     return __.toNativeObject(bean.isMaster());
 }
+
+const clusterLibrary = {
+    isMaster,
+};
+
+export type ClusterLibrary = typeof clusterLibrary;

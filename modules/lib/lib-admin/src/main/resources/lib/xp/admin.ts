@@ -160,3 +160,19 @@ export function getInstallation(): string {
 export function getVersion(): string {
     return helper.getVersion();
 }
+
+const adminLibrary = {
+    getAssetsUri,
+    getBaseUri,
+    getHomeToolUrl,
+    getInstallation,
+    getLauncherPath,
+    getLauncherUrl,
+    getLocale,
+    getLocales,
+    getPhrases,
+    getToolUrl,
+    getVersion,
+};
+
+export type AdminLibrary = typeof adminLibrary;

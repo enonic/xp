@@ -203,3 +203,11 @@ export function find(params: FindAuditLogParams): AuditLogs {
     bean.setObjectUris(__.toScriptValue(objects));
     return __.toNativeObject(bean.execute());
 }
+
+const auditLogLibrary = {
+    find,
+    get,
+    log,
+};
+
+export type AuditLogLibrary = typeof auditLogLibrary;

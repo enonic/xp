@@ -385,3 +385,17 @@ export function modifyReadAccess(params: ModifyProjectReadAccessParams): Project
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     return __.toNativeObject(bean.execute());
 }
+
+const projectLibrary = {
+    addPermissions,
+    create,
+    delete: _delete,
+    get,
+    list,
+    modify,
+    modifyReadAccess,
+    removePermissions,
+    getAvailableApplications,
+};
+
+export type ProjectLibrary = typeof projectLibrary;

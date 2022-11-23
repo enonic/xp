@@ -178,3 +178,8 @@ export function getMap<Map extends GridMap>(mapId: string): SharedMap<Map> {
     return new SharedMapImpl<Map>(requireNotNull(mapId, 'mapId'));
 }
 
+const gridLibrary = {
+    getMap,
+};
+
+export type GridLibrary = typeof gridLibrary;

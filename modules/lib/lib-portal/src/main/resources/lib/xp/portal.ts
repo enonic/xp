@@ -602,3 +602,30 @@ export function imagePlaceholder(params: ImagePlaceholderParams): string {
     bean.setHeight(params?.height ?? 0);
     return bean.createImagePlaceholder();
 }
+
+const portalLibrary = {
+    assetUrl,
+    attachmentUrl,
+    componentUrl,
+    getComponent,
+    getContent,
+    getIdProviderKey,
+    getMultipartForm,
+    getMultipartItem,
+    getMultipartStream,
+    getMultipartText,
+    getSite,
+    getSiteConfig,
+    idProviderUrl,
+    imagePlaceholder,
+    imageUrl,
+    loginUrl,
+    logoutUrl,
+    pageUrl,
+    processHtml,
+    sanitizeHtml,
+    serviceUrl,
+    url,
+};
+
+export type PortalLibrary = typeof portalLibrary;

@@ -129,3 +129,9 @@ export function get(): Context {
     return __.toNativeObject(result);
 }
 
+const contextLibrary = {
+    get,
+    run,
+};
+
+export type ContextLibrary = typeof contextLibrary;

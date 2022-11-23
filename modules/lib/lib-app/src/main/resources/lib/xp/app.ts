@@ -217,3 +217,15 @@ export function getApplicationMode(params: GetApplicationModeParams): string | n
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
+
+
+const appLibrary = {
+    createVirtualApplication,
+    deleteVirtualApplication,
+    get,
+    getApplicationMode,
+    getDescriptor,
+    list,
+};
+
+export type AppLibrary = typeof appLibrary;

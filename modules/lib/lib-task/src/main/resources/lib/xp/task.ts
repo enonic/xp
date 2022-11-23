@@ -338,3 +338,17 @@ export function isRunning(task: string): boolean {
 
     return __.toNativeObject(bean.isRunning(task));
 }
+
+const taskLibrary = {
+    get,
+    isRunning,
+    list,
+    progress,
+    sleep,
+    executeFunction,
+    submitTask,
+    submit,
+    submitNamed,
+};
+
+export type TaskLibrary = typeof taskLibrary;

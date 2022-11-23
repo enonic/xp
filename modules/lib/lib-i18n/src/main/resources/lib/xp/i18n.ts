@@ -94,3 +94,11 @@ export function getSupportedLocales(bundles: string[]): string[] {
     const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
     return __.toNativeObject(bean.getSupportedLocales(bundles));
 }
+
+const i18nLibrary = {
+    getPhrases,
+    getSupportedLocales,
+    localize,
+};
+
+export type I18NLibrary = typeof i18nLibrary;

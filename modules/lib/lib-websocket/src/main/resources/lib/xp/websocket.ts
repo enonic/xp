@@ -88,3 +88,13 @@ export function getGroupSize(group: string): number {
     const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     return bean.getGroupSize(group);
 }
+
+const webSocketLibrary = {
+    addToGroup,
+    removeFromGroup,
+    send,
+    sendToGroup,
+    getGroupSize,
+};
+
+export type WebSocketLibrary = typeof webSocketLibrary;

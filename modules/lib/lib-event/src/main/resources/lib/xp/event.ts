@@ -124,3 +124,10 @@ export function send(event: SendParams): void {
 
     helper.send();
 }
+
+const eventLibrary = {
+    listener,
+    send,
+};
+
+export type EventLibrary = typeof eventLibrary;

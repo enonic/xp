@@ -225,4 +225,12 @@ export function list<Config extends object = Record<string, unknown>>(): Schedul
     return __.toNativeObject(bean.execute());
 }
 
+const schedulerLibrary = {
+    get,
+    list,
+    create,
+    modify,
+    delete: _delete,
+};
 
+export type SchedulerLibrary = typeof schedulerLibrary;

@@ -131,3 +131,9 @@ export function send(params: SendMessageParams): boolean {
 
     return bean.send();
 }
+
+const mailLibrary = {
+    send,
+};
+
+export type MailLibrary = typeof mailLibrary;

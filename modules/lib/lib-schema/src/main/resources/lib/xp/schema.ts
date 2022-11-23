@@ -772,3 +772,24 @@ export function listSchemas(params: ListDynamicSchemasParams): ContentSchemaType
     bean.setType(params.type);
     return __.toNativeObject(bean.execute());
 }
+
+const schemaLibrary = {
+    getSchema,
+    listSchemas,
+    createSchema,
+    updateSchema,
+    deleteSchema,
+    getComponent,
+    listComponents,
+    createComponent,
+    updateComponent,
+    deleteComponent,
+    getStyles,
+    createStyles,
+    updateStyles,
+    deleteStyles,
+    getSite,
+    updateSite,
+};
+
+export type SchemaLibrary = typeof schemaLibrary;

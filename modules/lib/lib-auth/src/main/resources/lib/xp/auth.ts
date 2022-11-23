@@ -820,3 +820,31 @@ export function modifyRole(params: ModifyRoleParams): Role | null {
 
     return __.toNativeObject(bean.modifyRole());
 }
+
+const authLibrary = {
+    addMembers,
+    changePassword,
+    createGroup,
+    createRole,
+    createUser,
+    deletePrincipal,
+    findPrincipals,
+    findUsers,
+    generatePassword,
+    getIdProviderConfig,
+    getMembers,
+    getMemberships,
+    getPrincipal,
+    getProfile,
+    getUser,
+    hasRole,
+    login,
+    logout,
+    modifyGroup,
+    modifyProfile,
+    modifyRole,
+    modifyUser,
+    removeMembers,
+};
+
+export type AuthLibrary = typeof authLibrary;

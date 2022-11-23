@@ -195,3 +195,10 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
 
     return __.toNativeObject(bean.execute());
 }
+
+const exportLibrary = {
+    exportNodes,
+    importNodes,
+};
+
+export type ExportLibrary = typeof exportLibrary;

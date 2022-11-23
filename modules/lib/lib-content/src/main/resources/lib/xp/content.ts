@@ -1588,3 +1588,33 @@ export function resetInheritance(params: ResetInheritanceParams): void {
 
     bean.execute();
 }
+
+const contentLibrary = {
+    addAttachment,
+    archive,
+    create,
+    createMedia,
+    delete: _delete,
+    exists,
+    get,
+    getAttachments,
+    getAttachmentStream,
+    getChildren,
+    getOutboundDependencies,
+    getPermissions,
+    getSite,
+    getSiteConfig,
+    getType,
+    getTypes,
+    modify,
+    move,
+    publish,
+    query,
+    removeAttachment,
+    resetInheritance,
+    restore,
+    setPermissions,
+    unpublish,
+};
+
+export type ContentLibrary = typeof contentLibrary;

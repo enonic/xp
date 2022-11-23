@@ -1445,3 +1445,10 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
 
     return new MultiRepoConnectionImpl(multiRepoConnectFactory.create(multiRepoNodeHandleContext));
 }
+
+const nodeLibrary = {
+    connect,
+    multiRepoConnect,
+};
+
+export type NodeLibrary = typeof nodeLibrary;

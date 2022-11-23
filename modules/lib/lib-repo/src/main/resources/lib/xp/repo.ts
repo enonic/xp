@@ -378,3 +378,15 @@ export function getBinary(params: GetRepositoryBinaryParams): object {
 
     return bean.execute();
 }
+
+const repoLibrary = {
+    create,
+    createBranch,
+    delete: _delete,
+    deleteBranch,
+    get,
+    list,
+    refresh,
+};
+
+export type RepoLibrary = typeof repoLibrary;

@@ -186,3 +186,15 @@ export function newStream(text: string): ByteSource {
 export function getResource(key: string): Resource {
     return new ResourceImpl(key);
 }
+
+const ioLibrary = {
+    getMimeType,
+    getResource,
+    getSize,
+    newStream,
+    processLines,
+    readLines,
+    readText,
+};
+
+export type IOLibrary = typeof ioLibrary;
