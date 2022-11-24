@@ -243,19 +243,11 @@ interface NodeHandler {
     refresh(mode: RefreshMode): void;
 }
 
-export type CreateNodeParams<NodeData = unknown> = {
-    _name?: string;
-    _parentPath?: string;
-    _indexConfig?: Partial<NodeIndexConfigParams>;
-    _permissions?: AccessControlEntry[];
-    _inheritsPermissions?: boolean;
-    _manualOrderValue?: number;
-    _childOrder?: string;
-} & NodeData;
+export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & NodeData;
 
 export interface ModifyNodeParams<NodeData = unknown> {
     key: string;
-    editor: (node: Node<NodeData>) => Node<NodeData>;
+    editor: (node: Node<NodeData>) => ModifyNode<NodeData>;
 }
 
 export interface GetNodeParams {
@@ -504,21 +496,42 @@ export interface NodeConfigEntry {
     languages: string[];
 }
 
-export type Node<Data = Record<string, unknown>> = {
-    _id: string;
-    _name: string;
-    _path: string;
+export type CommonNodeProperties = {
     _childOrder: string;
-    _state: string;
-    _nodeType: string;
-    _versionKey: string;
-    _manualOrderValue: number;
-    _ts: string;
-    _parentPath: string;
-    _indexConfig: NodeIndexConfig;
+    // _id: string; // Not on create
+    // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
     _inheritsPermissions: boolean;
-    _permissions?: AccessControlEntry[];
-} & Data;
+    _manualOrderValue?: number; // Notice optional
+    _name: string;
+    _nodeType: string;
+    // _parentPath?: string; // Only on create
+    _path: string;
+    _permissions: AccessControlEntry[];
+    _state: string;
+    _ts: string;
+    _versionKey: string;
+};
+
+export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
+    _indexConfig: Partial<NodeIndexConfigParams>;
+    _parentPath?: string;
+};
+
+export type NodePropertiesOnModify = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfigParams;
+    _parentPath: never
+};
+
+export type NodePropertiesOnRead = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfig;
+    _parentPath: never
+};
+
+export type ModifyNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
+
+export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
 export interface RepoConnection {
     create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
