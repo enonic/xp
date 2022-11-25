@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -40,7 +39,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void order_by_path()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -50,34 +48,26 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryOrderAsc = ContentQuery.create().queryExpr( QueryParser.parse( "order by _path asc" ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryOrderAsc ).build() ), site, child1, child2,
-                     child3 );
-
         assertOrder( contentService.find( queryOrderAsc ).getContentIds(), site, child1, child2, child3 );
 
         final ContentQuery queryOrderDesc = ContentQuery.create().queryExpr( QueryParser.parse( "order by _path desc" ) ).build();
-
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryOrderDesc ).build() ), child3, child2,
-                     child1, site );
 
         assertOrder( contentService.find( queryOrderDesc ).getContentIds(), child3, child2, child1, site );
     }
 
     @Test
     public void test_pending_publish_draft()
-        throws Exception
     {
-        final FindContentByQueryResult result =
+        final FindContentIdsByQueryResult result =
             createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
         assertEquals( 1, result.getTotalHits() );
     }
 
     @Test
     public void test_pending_publish_master()
-        throws Exception
     {
         ctxMaster().callWith( () -> {
-            final FindContentByQueryResult result =
+            final FindContentIdsByQueryResult result =
                 createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
             assertEquals( 0, result.getTotalHits() );
             return null;
@@ -86,9 +76,8 @@ public class ContentServiceImplTest_find
 
     @Test
     public void test_publish_expired_draft()
-        throws Exception
     {
-        final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
+        final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                           .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                           .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                           .build() );
@@ -97,10 +86,9 @@ public class ContentServiceImplTest_find
 
     @Test
     public void test_publish_expired_master()
-        throws Exception
     {
         ctxMaster().callWith( () -> {
-            final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
+            final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                               .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
                                                                               .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .build() );
@@ -111,9 +99,8 @@ public class ContentServiceImplTest_find
 
     @Test
     public void test_published_draft()
-        throws Exception
     {
-        final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
+        final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                           .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                           .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
                                                                           .build() );
@@ -122,10 +109,9 @@ public class ContentServiceImplTest_find
 
     @Test
     public void test_published_master()
-        throws Exception
     {
         ctxMaster().callWith( () -> {
-            final FindContentByQueryResult result = createAndFindContent( ContentPublishInfo.create()
+            final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                               .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
                                                                               .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
                                                                               .build() );
@@ -137,7 +123,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void multipleFilters()
-        throws Exception
     {
         createContent( ContentPath.ROOT, "title1" );
         createContent( ContentPath.ROOT, "title2" );
@@ -203,7 +188,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_query_geo_point()
-        throws Exception
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -225,12 +209,11 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
     }
 
     @Test
     public void dsl_like_query()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -247,14 +230,13 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        final FindContentByQueryResult result = contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() );
+        final FindContentIdsByQueryResult result = contentService.find( queryDsl );
 
-        assertOrder( result, child3 );
+        assertOrder( result.getContentIds(), child3 );
     }
 
     @Test
     public void dsl_query()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -271,12 +253,11 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child2 );
+        assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
     }
 
     @Test
     public void dsl_exists_string()
-        throws Exception
     {
         PropertyTree siteData = new PropertyTree();
         siteData.setString( "myField", "stringValue" );
@@ -296,7 +277,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_exists_long()
-        throws Exception
     {
         PropertyTree data = new PropertyTree();
         data.setLong( "myField", 2L );
@@ -315,7 +295,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_exists_boolean()
-        throws Exception
     {
         PropertyTree data = new PropertyTree();
         data.setBoolean( "myField", true );
@@ -334,7 +313,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_exists_set()
-        throws Exception
     {
         PropertyTree data = new PropertyTree();
         data.setSet( "myField", new PropertySet() );
@@ -360,24 +338,19 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertThat( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ).getContents() )
-            .map( Content::getId )
-            .containsExactly( existedContents );
+        assertThat( contentService.find( queryDsl ).getContentIds() ).containsExactlyInAnyOrder( existedContents );
     }
 
     @Test
     public void dsl_query_empty()
-        throws Exception
     {
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( new PropertyTree() ) ) ).build();
 
-        assertThrows( IllegalArgumentException.class,
-                      () -> contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ) );
+        assertThrows( IllegalArgumentException.class, () -> contentService.find( queryDsl ) );
     }
 
     @Test
     public void dsl_query_two_root_properties()
-        throws Exception
     {
         final PropertyTree request = new PropertyTree();
         request.addSet( "fulltext", new PropertySet() );
@@ -385,13 +358,11 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertThrows( IllegalArgumentException.class,
-                      () -> contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ) );
+        assertThrows( IllegalArgumentException.class, () -> contentService.find( queryDsl ) );
     }
 
     @Test
     public void dsl_query_sort()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -412,20 +383,18 @@ public class ContentServiceImplTest_find
         ContentQuery queryDsl =
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child3, child2, child1 );
+        assertOrder( contentService.find( queryDsl ).getContentIds(), child3, child2, child1 );
 
         order = new PropertyTree();
         order.addString( "field", "displayName" );
 
         queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child1, child2, child3 );
-
+        assertOrder( contentService.find(  queryDsl ).getContentIds(), child1, child2, child3 );
     }
 
     @Test
     public void dsl_query_range()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -456,12 +425,11 @@ public class ContentServiceImplTest_find
         final ContentQuery queryDsl =
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
-        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child2 );
+        assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
     }
 
     @Test
     public void dsl_match_all_query()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
         createContent( site.getPath(), "d" );
@@ -479,7 +447,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_filter_range()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -518,7 +485,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_filter_and_query()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -564,7 +530,6 @@ public class ContentServiceImplTest_find
 
     @Test
     public void dsl_filter_in_and_out()
-        throws Exception
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -616,15 +581,14 @@ public class ContentServiceImplTest_find
             .containsExactly( child1 );
     }
 
-    private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )
-        throws Exception
+    private FindContentIdsByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )
     {
         final Content content = createContent( ContentPath.ROOT, publishInfo );
 
         final ContentQuery query =
             ContentQuery.create().queryExpr( QueryParser.parse( "_id='" + content.getId().toString() + "'" ) ).build();
 
-        return contentService.find( FindContentByQueryParams.create().contentQuery( query ).build() );
+        return contentService.find(  query );
     }
 
 }

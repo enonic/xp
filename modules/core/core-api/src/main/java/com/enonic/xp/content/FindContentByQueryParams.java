@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@Deprecated
 public class FindContentByQueryParams
 {
     private final ContentQuery contentQuery;

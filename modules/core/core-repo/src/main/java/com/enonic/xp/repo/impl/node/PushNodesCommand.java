@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -21,8 +23,6 @@ import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.PushNodeEntries;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -72,15 +72,14 @@ public class PushNodesCommand
 
         final NodeComparisons comparisons = getNodeComparisons( ids );
 
-        final PushNodeEntries.Builder publishBuilder =
-            PushNodeEntries.create().targetBranch( this.target ).targetRepo( context.getRepositoryId() );
-
-        final InternalPushNodesResult.Builder builder = InternalPushNodesResult.create();
+        final InternalPushNodesResult.Builder builder =
+            InternalPushNodesResult.create().targetBranch( this.target ).targetRepo( context.getRepositoryId() );
 
         final List<NodeBranchEntry> list =
             nodeBranchEntries.getSet().stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
             .collect( Collectors.toList() );
 
+        final Set<NodePath> alreadyAdded = new HashSet<>();
         for ( final NodeBranchEntry branchEntry : list )
         {
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
@@ -103,6 +102,7 @@ public class PushNodesCommand
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
                 builder.addSuccess( nodeBranchEntry );
+                alreadyAdded.add( nodeBranchEntry.getNodePath() );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
@@ -115,33 +115,29 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( !targetParentExists( nodeBranchEntry.getNodePath(), builder, context ) )
+            if ( !alreadyAdded.contains( nodeBranchEntry.getNodePath().getParentPath() ) &&
+                !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
             {
                 builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
-            publishBuilder.add( PushNodeEntry.create().
-                nodeBranchEntry( nodeBranchEntry ).
-                currentTargetPath( comparison.getTargetPath() ).
-                build() );
-
-            builder.addSuccess( nodeBranchEntry );
+            builder.addSuccess( nodeBranchEntry, comparison.getTargetPath() );
+            alreadyAdded.add( nodeBranchEntry.getNodePath() );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
-                updateTargetChildrenMetaData( nodeBranchEntry, builder );
+                updateTargetChildrenMetaData( nodeBranchEntry, builder, alreadyAdded );
             }
         }
 
-        final PushNodeEntries pushNodeEntries = publishBuilder.build();
-        builder.setPushNodeEntries( pushNodeEntries );
+        final InternalPushNodesResult result = builder.build();
 
         final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
-        this.nodeStorageService.push( pushNodeEntries, pushListener, pushContext );
+        this.nodeStorageService.push( result.getPushNodeEntries(), pushListener, pushContext );
 
-        return builder.build();
+        return result;
     }
 
     private NodeComparisons getNodeComparisons( final NodeIds nodeIds )
@@ -154,7 +150,8 @@ public class PushNodesCommand
             execute();
     }
 
-    private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, PushNodesResult.Builder resultBuilder )
+    private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, final InternalPushNodesResult.Builder resultBuilder,
+                                               final Set<NodePath> alreadyAdded )
     {
         final Context context = ContextAccessor.current();
 
@@ -179,10 +176,7 @@ public class PushNodesCommand
 
             if ( targetNodeEntry != null )
             {
-                final Node childNode = GetNodeByIdCommand.create( this ).
-                    id( child.getNodeId() ).
-                    build().
-                    execute();
+                final Node childNode = doGetById( child.getNodeId() );
 
                 this.nodeStorageService.move( StoreMovedNodeParams.create().
                     nodeVersionId( child.getVersionId() ).
@@ -190,8 +184,9 @@ public class PushNodesCommand
                     build(), InternalContext.from( targetContext ) );
 
                 resultBuilder.addSuccess( child );
+                alreadyAdded.add( child.getNodePath() );
 
-                updateTargetChildrenMetaData( child, resultBuilder );
+                updateTargetChildrenMetaData( child, resultBuilder, alreadyAdded );
             }
         }
     }
@@ -216,24 +211,16 @@ public class PushNodesCommand
         return nodeComparison == null || CompareStatus.MOVED != nodeComparison.getCompareStatus();
     }
 
-    private boolean targetParentExists( final NodePath nodePath, final PushNodesResult.Builder builder, final Context currentContext )
+    private boolean targetParentExists( final NodePath nodePath, final Context currentContext )
     {
         if ( nodePath.isRoot() || nodePath.getParentPath().equals( NodePath.ROOT ) )
         {
             return true;
         }
 
-        if ( builder.hasBeenAdded( nodePath.getParentPath() ) )
-        {
-            return true;
-        }
-
         final Context targetContext = createTargetContext( currentContext );
 
-        return targetContext.callWith( () -> CheckNodeExistsCommand.create( this ).
-            nodePath( nodePath.getParentPath() ).
-            build().
-            execute() );
+        return targetContext.callWith( CheckNodeExistsCommand.create( this ).nodePath( nodePath.getParentPath() ).build()::execute );
     }
 
     private Context createTargetContext( final Context currentContext )

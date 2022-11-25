@@ -1,12 +1,19 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.Comparator;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Ordering;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
@@ -24,7 +31,6 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
@@ -208,12 +214,14 @@ public class NodeStorageServiceImpl
             pushListener.nodesPushed( 1 );
         }
 
-        this.indexDataService.push( IndexPushNodeParams.create().
-            nodeIds( entries.getNodeIds() ).
-            targetBranch( entries.getTargetBranch() ).
-            targetRepo( entries.getTargetRepo() ).
-            pushListener( pushListener ).
-            build(), context );
+        final NodeIds nodeIds = NodeIds.from(
+            entries.stream().map( entry -> entry.getNodeBranchEntry().getNodeId() ).collect( ImmutableSet.toImmutableSet() ) );
+
+        this.indexDataService.push( IndexPushNodeParams.create()
+                                        .nodeIds( nodeIds )
+                                        .targetBranch( entries.getTargetBranch() )
+                                        .targetRepo( entries.getTargetRepo() )
+                                        .build(), context );
     }
 
     @Override
@@ -272,17 +280,18 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodeIds, true, context );
-
-        return doReturnNodes( nodeBranchEntries, context );
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context )
+            .stream()
+            .sorted(
+                Comparator.comparing( NodeBranchEntry::getNodeId, Ordering.explicit( nodeIds.stream().collect( Collectors.toList() ) ) ) );
+        return doReturnNodes( stream, context );
     }
 
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final NodeBranchEntries nodeBranchEntries = this.branchService.get( nodePaths, context );
-
-        return doReturnNodes( nodeBranchEntries, context );
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodePaths, context ).stream();
+        return doReturnNodes( stream, context );
     }
 
     @Override
@@ -327,7 +336,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, false, context );
+        return this.branchService.get( nodeIds, context );
     }
 
     @Override
@@ -491,18 +500,14 @@ public class NodeStorageServiceImpl
             build(), loadVersionMetadataParams.getContext() );
     }
 
-    private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries, final InternalContext context )
+    private Nodes doReturnNodes( final Stream<NodeBranchEntry> nodeBranchEntries, final InternalContext context )
     {
-        final NodeVersionKeys.Builder builder = NodeVersionKeys.create();
-        nodeBranchEntries.stream().map( NodeBranchEntry::getNodeVersionKey ).forEach( builder::add );
-
-        final NodeVersions nodeVersions = nodeVersionService.get( builder.build(), context );
-
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodeVersions.stream()
-            .filter( nodeVersion -> canRead( nodeVersion.getPermissions() ) )
-            .map( nodeVersion -> NodeFactory.create( nodeVersion, nodeBranchEntries.get( nodeVersion.getId() ) ) )
+        nodeBranchEntries
+            .map( nodeBranchEntry -> Map.entry( nodeBranchEntry, nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ) ) )
+            .filter( entry -> canRead( entry.getValue().getPermissions() ) )
+            .map( entry -> NodeFactory.create( entry.getValue(), entry.getKey() ) )
             .forEach( filteredNodes::add );
 
         return filteredNodes.build();

@@ -23,5 +23,6 @@ public interface IndexService
 
     boolean waitForYellowStatus();
 
+    @Deprecated
     void purgeSearchIndex( PurgeIndexParams params );
 }

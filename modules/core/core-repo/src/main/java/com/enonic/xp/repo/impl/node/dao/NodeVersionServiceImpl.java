@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node.dao;
 
 import java.io.IOException;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -11,10 +12,8 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
@@ -26,7 +25,13 @@ public class NodeVersionServiceImpl
 {
     private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create();
 
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
+
+    @Activate
+    public NodeVersionServiceImpl( @Reference final BlobStore blobStore )
+    {
+        this.blobStore = blobStore;
+    }
 
     @Override
     public NodeVersionKey store( final NodeVersion nodeVersion, final InternalContext context )
@@ -49,20 +54,7 @@ public class NodeVersionServiceImpl
     }
 
     @Override
-    public NodeVersions get( final NodeVersionKeys nodeVersionKeys, final InternalContext context )
-    {
-        NodeVersions.Builder builder = NodeVersions.create();
-        nodeVersionKeys.forEach( nodeVersionKey -> builder.add( getFromBlob( nodeVersionKey, context ) ) );
-        return builder.build();
-    }
-
-    @Override
     public NodeVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context )
-    {
-        return getFromBlob( nodeVersionKey, context );
-    }
-
-    private NodeVersion getFromBlob( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
         final BlobRecord nodeBlobRecord = blobStore.getRecord( nodeSegment, nodeVersionKey.getNodeBlobKey() );
@@ -109,11 +101,5 @@ public class NodeVersionServiceImpl
                 "Failed to load blobs with keys: " + nodeBlobRecord.getKey() + ", " + indexConfigBlobRecord.getKey() + ", " +
                     accessControlBlobRecord.getKey(), e );
         }
-    }
-
-    @Reference
-    public void setBlobStore( final BlobStore blobStore )
-    {
-        this.blobStore = blobStore;
     }
 }

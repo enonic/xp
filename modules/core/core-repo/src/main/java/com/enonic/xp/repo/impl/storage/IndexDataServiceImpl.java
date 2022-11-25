@@ -121,7 +121,6 @@ public class IndexDataServiceImpl
             nodeIds( pushNodeParams.getNodeIds() ).
             targetBranch( pushNodeParams.getTargetBranch() ).
             targetRepo( pushNodeParams.getTargetRepo() ).
-            progressListener( pushNodeParams ).
             build() );
     }
 

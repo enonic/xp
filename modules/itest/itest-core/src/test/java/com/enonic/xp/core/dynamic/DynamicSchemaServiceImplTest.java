@@ -184,8 +184,7 @@ public class DynamicSchemaServiceImplTest
         IndexServiceImpl indexService = new IndexServiceImpl();
         indexService.setIndexServiceInternal( indexServiceInternal );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
-        nodeDao.setBlobStore( blobStore );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );

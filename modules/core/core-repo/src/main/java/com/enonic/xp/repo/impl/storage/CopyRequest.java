@@ -48,11 +48,6 @@ public class CopyRequest
         return targetRepo;
     }
 
-    public ExecutorProgressListener getProgressListener()
-    {
-        return progressListener;
-    }
-
     @Override
     public void progress( final int count )
     {

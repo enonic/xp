@@ -171,13 +171,8 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context )
+    public NodeBranchEntries get( final NodeIds nodeIds, final InternalContext context )
     {
-        if ( keepOrder )
-        {
-            return getKeepOrder( nodeIds, context );
-        }
-
         return getIgnoreOrder( nodeIds, context );
     }
 

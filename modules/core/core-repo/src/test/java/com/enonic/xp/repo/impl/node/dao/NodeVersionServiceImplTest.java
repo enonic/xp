@@ -102,9 +102,10 @@ public class NodeVersionServiceImplTest
         final Node createdNode = createNode( createNodeParams );
         final Node createdNode2 = createNode( createNodeParams2 );
 
-        final NodeVersions nodeVersions =
-            nodeDao.get( NodeVersionKeys.from( getNodeVersionKey( createdNode ), getNodeVersionKey( createdNode2 ) ),
-                         createInternalContext() );
+        NodeVersions.Builder builder = NodeVersions.create();
+        NodeVersionKeys.from( getNodeVersionKey( createdNode ), getNodeVersionKey( createdNode2 ) )
+            .forEach( nodeVersionKey -> builder.add( nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
+        final NodeVersions nodeVersions = builder.build();
 
         assertEquals( 2, nodeVersions.getSize() );
         assertEquals( createdNode.id(), nodeVersions.get( 0 ).getId() );
@@ -148,7 +149,7 @@ public class NodeVersionServiceImplTest
         throws Exception
     {
         final CachedBlobStore cachedBlobStore = CachedBlobStore.create().blobStore( this.blobStore ).build();
-        this.nodeDao.setBlobStore( cachedBlobStore );
+        this.nodeDao = new NodeVersionServiceImpl( cachedBlobStore );
 
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             name( "my-node" ).

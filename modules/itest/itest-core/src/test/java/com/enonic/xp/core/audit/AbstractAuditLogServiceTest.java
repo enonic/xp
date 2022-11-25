@@ -91,8 +91,7 @@ public class AbstractAuditLogServiceTest
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );
 
-        this.nodeDao = new NodeVersionServiceImpl();
-        this.nodeDao.setBlobStore( blobStore );
+        this.nodeDao = new NodeVersionServiceImpl( blobStore );
 
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );

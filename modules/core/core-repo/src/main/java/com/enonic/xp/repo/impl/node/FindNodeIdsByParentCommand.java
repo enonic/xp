@@ -133,7 +133,7 @@ public class FindNodeIdsByParentCommand
             return parentPath;
         }
 
-        Node parent = GetNodeByIdCommand.create( this ).id( parentId ).build().execute();
+        Node parent = doGetById( parentId );
 
         if ( parent == null )
         {

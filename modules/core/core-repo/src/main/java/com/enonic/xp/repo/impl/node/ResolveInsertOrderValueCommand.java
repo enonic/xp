@@ -41,47 +41,22 @@ public class ResolveInsertOrderValueCommand
         }
         else
         {
+            final Node first = doGetById( findNodesByParentResult.getNodeIds().first() );
+            if ( first.getManualOrderValue() == null )
+            {
+                throw new IllegalArgumentException( "Expected that node " + first +
+                                                        " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
+            }
+
             if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
             {
-                return insertAsLast( findNodesByParentResult );
+                return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
             }
             else
             {
-                return insertAsFirst( findNodesByParentResult );
+                return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
             }
         }
-    }
-
-    private Long insertAsFirst( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
-    }
-
-    private Long insertAsLast( final FindNodesByParentResult findNodesByParentResult )
-    {
-        final Node first = GetNodeByIdCommand.create( this ).
-            id( findNodesByParentResult.getNodeIds().first() ).
-            build().
-            execute();
-
-        if ( first.getManualOrderValue() == null )
-        {
-            throw new IllegalArgumentException( "Expected that node " + first +
-                                                    " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-        }
-
-        return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
     public static Builder create()

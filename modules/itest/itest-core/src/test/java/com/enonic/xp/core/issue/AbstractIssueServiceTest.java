@@ -114,8 +114,7 @@ public class AbstractIssueServiceTest
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
         indexServiceInternal.setClient( client );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
-        nodeDao.setBlobStore( blobStore );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         issueService = new IssueServiceImpl();
 
