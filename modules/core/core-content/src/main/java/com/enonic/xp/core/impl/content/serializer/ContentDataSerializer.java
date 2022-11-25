@@ -261,6 +261,9 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( MODIFIER, modifier.toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.ifNotNull().addReference( VARIANT_OF, content.getVariantOf() != null
+            ? new Reference( NodeId.from( content.getVariantOf() ) )
+            : null );
         contentAsData.ifNotNull()
             .addString( ORIGIN_PROJECT, content.getOriginProject() != null ? content.getOriginProject().toString() : null );
         addPublishInfo( contentAsData, content.getPublishInfo() );
