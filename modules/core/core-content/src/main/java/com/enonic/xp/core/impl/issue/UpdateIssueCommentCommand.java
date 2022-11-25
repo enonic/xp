@@ -30,7 +30,7 @@ public class UpdateIssueCommentCommand
 
         final Node udpatedNode = nodeService.update( updateNodeParams );
 
-        nodeService.refresh( RefreshMode.SEARCH );
+        nodeService.refresh( RefreshMode.ALL );
         return IssueCommentNodeTranslator.fromNode( udpatedNode );
     }
 

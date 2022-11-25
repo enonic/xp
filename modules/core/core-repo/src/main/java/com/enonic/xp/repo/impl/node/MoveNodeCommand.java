@@ -107,7 +107,7 @@ public class MoveNodeCommand
 
         adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, nodeId ) );
 
-        RefreshCommand.create().refreshMode( RefreshMode.ALL ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+        refresh( RefreshMode.ALL );
 
         return result.build();
     }

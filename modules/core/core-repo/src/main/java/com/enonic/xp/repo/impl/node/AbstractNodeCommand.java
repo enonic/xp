@@ -6,6 +6,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -40,6 +41,15 @@ abstract class AbstractNodeCommand
     {
         return GetNodeByPathCommand.create( this ).
             nodePath( path ).
+            build().
+            execute();
+    }
+
+    void refresh(final RefreshMode refreshMode)
+    {
+        RefreshCommand.create().
+            refreshMode( refreshMode ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }

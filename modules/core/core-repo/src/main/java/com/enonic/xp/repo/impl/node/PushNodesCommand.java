@@ -55,11 +55,11 @@ public class PushNodesCommand
 
     public InternalPushNodesResult execute()
     {
-        refresh();
+        refresh( RefreshMode.ALL );
 
         final InternalPushNodesResult result = pushNodes();
 
-        refresh();
+        refresh( RefreshMode.ALL );
 
         return result;
     }
@@ -235,15 +235,6 @@ public class PushNodesCommand
         }
 
         return targetContext.build();
-    }
-
-    private void refresh()
-    {
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
     }
 
     public static class Builder

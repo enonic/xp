@@ -39,7 +39,7 @@ public class ReorderChildNodesCommand
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : params )
         {
-            RefreshCommand.create().refreshMode( RefreshMode.SEARCH ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+            refresh( RefreshMode.SEARCH );
 
             final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
             final Node nodeToMoveBefore =

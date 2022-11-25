@@ -81,11 +81,7 @@ public class ResolveSyncWorkCommand
 
     public ResolveSyncWorkResult execute()
     {
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( RefreshMode.ALL ).
-            build().
-            execute();
+        refresh( RefreshMode.ALL );
 
         getAllPossibleNodesToBePublished();
         return this.result.build();

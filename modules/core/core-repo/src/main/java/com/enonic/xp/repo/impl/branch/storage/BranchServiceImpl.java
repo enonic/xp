@@ -271,25 +271,6 @@ public class BranchServiceImpl
         pathCache.cache( new BranchPath( repositoryId, branchDocumentId.getBranch(), nodePath ), branchDocumentId );
     }
 
-    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
-    {
-        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
-
-        final GetBranchEntriesMethod getBranchEntriesMethod =
-            GetBranchEntriesMethod.create().context( context ).returnFields( BRANCH_RETURN_FIELDS ).storageDao( this.storageDao ).build();
-
-        if ( nodeIds.getSize() > BATCHED_EXECUTOR_LIMIT )
-        {
-            builder.addAll( BatchedBranchEntryExecutor.create().nodeIds( nodeIds ).method( getBranchEntriesMethod ).build().execute() );
-        }
-        else
-        {
-            getBranchEntriesMethod.execute( nodeIds.getSet(), builder );
-        }
-
-        return builder.build();
-    }
-
     private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
     {
         if ( nodeIds.isEmpty() )
@@ -297,21 +278,16 @@ public class BranchServiceImpl
             return NodeBranchEntries.empty();
         }
 
+        final NodeBranchQuery query = NodeBranchQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
+                                 .build() )
+            .addQueryFilter( IdFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).values( nodeIds ).build() )
+            .size( nodeIds.getSize() )
+            .build();
         final SearchResult results = this.searchDao.search( SearchRequest.create()
-                                                                .query( NodeBranchQuery.create()
-                                                                            .addQueryFilter( ValueFilter.create()
-                                                                                                 .fieldName(
-                                                                                                     BranchIndexPath.BRANCH_NAME.getPath() )
-                                                                                                 .addValue( ValueFactory.newString(
-                                                                                                     context.getBranch().getValue() ) )
-                                                                                                 .build() )
-                                                                            .addQueryFilter( IdFilter.create()
-                                                                                                 .fieldName(
-                                                                                                     BranchIndexPath.NODE_ID.getPath() )
-                                                                                                 .values( nodeIds )
-                                                                                                 .build() )
-                                                                            .size( nodeIds.getSize() )
-                                                                            .build() )
+                                                                .query( query )
                                                                 .returnFields( BRANCH_RETURN_FIELDS )
                                                                 .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
                                                                                                             SingleRepoStorageSource.Type.BRANCH ) )

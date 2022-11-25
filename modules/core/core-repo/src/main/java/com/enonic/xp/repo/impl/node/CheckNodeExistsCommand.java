@@ -45,7 +45,7 @@ public class CheckNodeExistsCommand
 
         if ( Mode.ACCURACY.equals( mode ) )
         {
-            RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( RefreshMode.STORAGE ).build().execute();
+            refresh( RefreshMode.STORAGE );
         }
 
         final NodeId found = nodeStorageService.getIdForPath( nodePath, context );

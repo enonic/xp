@@ -44,7 +44,7 @@ abstract class AbstractDeleteNodeCommand
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }
 
-        doRefresh();
+        refresh( RefreshMode.ALL );
 
         final Context context = ContextAccessor.current();
 
@@ -89,18 +89,9 @@ abstract class AbstractDeleteNodeCommand
             }
         }
 
-        doRefresh();
+        refresh( RefreshMode.ALL );
 
         return NodeBranchEntries.from( list );
-    }
-
-    private void doRefresh()
-    {
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
     }
 
     public static class Builder<B extends Builder>

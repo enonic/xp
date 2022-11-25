@@ -62,11 +62,7 @@ final class DeleteContentCommand
             throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
         }
 
-        final DeleteContentsResult deletedContents = doDeleteContent( ContentId.from( nodeToDelete.id() ) );
-
-        this.nodeService.refresh( RefreshMode.ALL );
-
-        return deletedContents;
+        return doDeleteContent( ContentId.from( nodeToDelete.id() ) );
     }
 
     private DeleteContentsResult doDeleteContent( ContentId nodeToDelete )

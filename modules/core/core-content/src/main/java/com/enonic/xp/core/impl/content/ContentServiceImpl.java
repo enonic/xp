@@ -1105,7 +1105,7 @@ public class ContentServiceImpl
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
+        this.nodeService.refresh( RefreshMode.ALL );
 
         final ReorderChildContentsResult result = new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
 

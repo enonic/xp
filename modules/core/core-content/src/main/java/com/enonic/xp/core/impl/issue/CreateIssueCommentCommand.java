@@ -50,7 +50,7 @@ public class CreateIssueCommentCommand
             throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
         }
 
-        nodeService.refresh( RefreshMode.SEARCH );
+        nodeService.refresh( RefreshMode.ALL );
         return IssueCommentNodeTranslator.fromNode( createdNode );
     }
 

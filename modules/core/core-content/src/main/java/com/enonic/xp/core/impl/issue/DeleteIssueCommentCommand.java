@@ -27,7 +27,7 @@ public class DeleteIssueCommentCommand
 
         NodeIds deletedIds = nodeService.deleteById( params.getComment() );
 
-        nodeService.refresh( RefreshMode.SEARCH );
+        nodeService.refresh( RefreshMode.ALL );
         return new DeleteIssueCommentResult( deletedIds );
     }
 
