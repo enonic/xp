@@ -19,14 +19,7 @@ public final class GetPrincipalHandler
 
     public void setPrincipalKey( final String principalKey )
     {
-        if ( principalKey == null )
-        {
-            this.principalKey = null;
-        }
-        else
-        {
-            this.principalKey = PrincipalKey.from( principalKey );
-        }
+        this.principalKey = PrincipalKey.from( principalKey );
     }
 
     public PrincipalMapper getPrincipal()

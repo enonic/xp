@@ -15,3 +15,11 @@ exports.deleteSystemUser = function () {
     var result = auth.deletePrincipal('user:system:su');
     t.assertEquals(false, result);
 };
+
+exports.deletePrincipalWithoutKey = function () {
+    try {
+        auth.deletePrincipal();
+    } catch(e) {
+        t.assertEquals("Parameter 'principalKey' is required", e);
+    }
+};

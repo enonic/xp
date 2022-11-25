@@ -21,7 +21,7 @@ public final class RemoveMembersHandler
 
     public void setPrincipalKey( final String value )
     {
-        this.principalKey = value != null ? PrincipalKey.from( value ) : null;
+        this.principalKey = PrincipalKey.from( value );
     }
 
     public void setMembers( final String[] values )

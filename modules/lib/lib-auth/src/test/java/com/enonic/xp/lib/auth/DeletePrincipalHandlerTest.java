@@ -50,4 +50,10 @@ public class DeletePrincipalHandlerTest
     {
         assertThrows(ResourceProblemException.class, () -> runFunction( "/test/deletePrincipal-test.js", "deleteSystemUser" ));
     }
+
+    @Test
+    public void testDeletePrincipalWithoutKey()
+    {
+        runFunction( "/test/deletePrincipal-test.js", "deletePrincipalWithoutKey" );
+    }
 }
