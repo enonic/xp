@@ -3,16 +3,19 @@ package com.enonic.xp.repo.impl.storage;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitId;
 
-public class LoadNodeParams
+public class StoreNodeParams
 {
     final Node node;
 
     final NodeCommitId nodeCommitId;
 
-    private LoadNodeParams( final Builder builder )
+    final boolean overrideVersion;
+
+    private StoreNodeParams( final Builder builder )
     {
         node = builder.node;
         nodeCommitId = builder.nodeCommitId;
+        overrideVersion = builder.overrideVersion;
     }
 
     public Node getNode()
@@ -23,6 +26,11 @@ public class LoadNodeParams
     public NodeCommitId getNodeCommitId()
     {
         return nodeCommitId;
+    }
+
+    public boolean isOverrideVersion()
+    {
+        return overrideVersion;
     }
 
     public static Builder create()
@@ -36,6 +44,8 @@ public class LoadNodeParams
         private Node node;
 
         private NodeCommitId nodeCommitId;
+
+        private boolean overrideVersion;
 
         private Builder()
         {
@@ -53,9 +63,14 @@ public class LoadNodeParams
             return this;
         }
 
-        public LoadNodeParams build()
+        public Builder overrideVersion() {
+            this.overrideVersion = true;
+            return this;
+        }
+
+        public StoreNodeParams build()
         {
-            return new LoadNodeParams( this );
+            return new StoreNodeParams( this );
         }
     }
 }

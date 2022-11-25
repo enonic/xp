@@ -452,10 +452,8 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( createdNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.created( createdNode ) );
-        }
+        this.eventPublisher.publish( NodeEvents.created( createdNode ) );
+
         return createdNode;
     }
 

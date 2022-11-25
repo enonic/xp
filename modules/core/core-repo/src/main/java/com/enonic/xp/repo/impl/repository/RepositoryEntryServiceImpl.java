@@ -55,12 +55,10 @@ public class RepositoryEntryServiceImpl
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
         final Node createdNode = nodeStorageService.store( node, createInternalContext() );
-        if ( createdNode != null )
-        {
-            eventPublisher.publish( NodeEvents.created( createdNode ) );
-            refresh();
-            eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
-        }
+
+        eventPublisher.publish( NodeEvents.created( createdNode ) );
+        refresh();
+        eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
     }
 
     @Override

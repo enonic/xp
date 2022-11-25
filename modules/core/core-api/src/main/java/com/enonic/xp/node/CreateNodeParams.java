@@ -1,8 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -39,6 +36,8 @@ public class CreateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
+    private final RefreshMode refresh;
+
     private CreateNodeParams( Builder builder )
     {
         this.parent = builder.parent;
@@ -53,6 +52,7 @@ public class CreateNodeParams
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = builder.binaryAttachments.build();
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -143,36 +143,21 @@ public class CreateNodeParams
         return binaryAttachments;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final CreateNodeParams that = (CreateNodeParams) o;
-        return Objects.equals( nodeId, that.nodeId ) &&
-            Objects.equals( parent, that.parent ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( data, that.data ) &&
-            Objects.equals( indexConfigDocument, that.indexConfigDocument ) &&
-            Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( nodeType, that.nodeType ) &&
-            Objects.equals( binaryAttachments, that.binaryAttachments ) &&
-            inheritPermissions == that.inheritPermissions;
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( parent, name, data, indexConfigDocument, childOrder, nodeId, permissions, inheritPermissions, nodeType,
-                             binaryAttachments );
+        return super.hashCode();
     }
 
     public static final class Builder
@@ -200,6 +185,8 @@ public class CreateNodeParams
         private NodeType nodeType;
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -300,6 +287,12 @@ public class CreateNodeParams
             {
                 binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

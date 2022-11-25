@@ -29,9 +29,7 @@ public class StoreNodeCommand
 
     public Node execute()
     {
-        final InternalContext context = InternalContext.from( ContextAccessor.current() );
-
-        return this.nodeStorageService.store( this.node, context );
+        return this.nodeStorageService.store( this.node, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static final class Builder

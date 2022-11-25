@@ -10,6 +10,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeLoadException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 
 public class LoadNodeCommand
     extends AbstractNodeCommand
@@ -51,12 +52,13 @@ public class LoadNodeCommand
         verifyParentExists();
         deleteIfExistsAtPath();
 
-        final com.enonic.xp.repo.impl.storage.LoadNodeParams loadNodeParams = com.enonic.xp.repo.impl.storage.LoadNodeParams.create().
+        final StoreNodeParams storeNodeParams = StoreNodeParams.create().
             node( params.getNode() ).
             nodeCommitId( params.getNodeCommitId() ).
+            overrideVersion().
             build();
 
-        final Node loadedNode = this.nodeStorageService.load( loadNodeParams, InternalContext.from( ContextAccessor.current() ) );
+        final Node loadedNode = this.nodeStorageService.store( storeNodeParams, InternalContext.from( ContextAccessor.current() ) );
 
         return LoadNodeResult.create().
             node( loadedNode ).
