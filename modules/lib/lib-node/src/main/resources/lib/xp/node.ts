@@ -816,20 +816,20 @@ export type CommonNodeProperties = {
 };
 
 export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
-    _indexConfig: Partial<NodeIndexConfigParams>;
+    _indexConfig?: Partial<NodeIndexConfigParams>;
     _parentPath?: string;
 };
 
 export type NodePropertiesOnModify = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
-    _parentPath: never
+    _parentPath?: never;
 };
 
 export type NodePropertiesOnRead = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfig;
-    _parentPath: never
+    _parentPath?: never;
 };
 
 export type ModifyNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
