@@ -61,4 +61,10 @@ public class AddMembersHandlerTest
         runFunction( "/test/addMembers-test.js", "addMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).addRelationship( Mockito.any() );
     }
+
+    @Test
+    public void testAddMembersWithoutKey()
+    {
+        runFunction( "/test/addMembers-test.js", "addMembersWithoutKey" );
+    }
 }
