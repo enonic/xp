@@ -41,3 +41,11 @@ exports.getNoMembers = function () {
     t.assertJsonEquals(expectedJson, result);
 
 };
+
+exports.getMembersWithoutKey = function () {
+    try {
+        auth.getMembers();
+    } catch (e) {
+        t.assertEquals("Parameter 'principalKey' is required", e);
+    }
+};

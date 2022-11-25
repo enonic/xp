@@ -70,4 +70,10 @@ public class GetPrincipalHandlerTest
 
         runFunction( "/test/getPrincipal-test.js", "getNonExistingPrincipal" );
     }
+
+    @Test
+    public void testGetPrincipalWithoutKey()
+    {
+        runFunction( "/test/getPrincipal-test.js", "getPrincipalWithoutKey" );
+    }
 }

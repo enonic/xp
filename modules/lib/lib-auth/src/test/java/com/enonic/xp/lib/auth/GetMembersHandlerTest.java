@@ -74,4 +74,10 @@ public class GetMembersHandlerTest
 
         runFunction( "/test/getMembers-test.js", "getNoMembers" );
     }
+
+    @Test
+    public void testGetMembersWithoutKey()
+    {
+        runFunction( "/test/getMembers-test.js", "getMembersWithoutKey" );
+    }
 }

@@ -89,4 +89,12 @@ public class GetMembershipsHandlerTest
 
         runFunction( "/test/getMemberships-test.js", "getNonExistingMemberships" );
     }
+
+    @Test
+    public void testGetMembershipsWithoutKey()
+    {
+        Mockito.when( securityService.getPrincipals( Mockito.any() ) ).thenReturn( Principals.empty() );
+
+        runFunction( "/test/getMemberships-test.js", "getMembershipsWithoutKey" );
+    }
 }

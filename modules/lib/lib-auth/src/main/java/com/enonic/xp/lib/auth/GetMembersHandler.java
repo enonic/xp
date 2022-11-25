@@ -23,7 +23,7 @@ public final class GetMembersHandler
 
     public void setPrincipalKey( final String value )
     {
-        this.principalKey = value == null ? null : PrincipalKey.from( value );
+        this.principalKey = PrincipalKey.from( value );
     }
 
     public List<PrincipalMapper> getMembers()

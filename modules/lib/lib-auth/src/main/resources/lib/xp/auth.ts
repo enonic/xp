@@ -23,6 +23,12 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
+function checkRequiredValue(value: unknown, name: string): void {
+    if (typeof value === "undefined" || value === null) {
+        throw `Parameter '${String(name)}' is required`;
+    }
+}
+
 export type LoginScopeType = 'SESSION' | 'REQUEST' | 'NONE';
 
 export interface UserWithProfile<Profile extends Record<string, unknown> = Record<string, unknown>>
@@ -234,7 +240,7 @@ export function changePassword(params: ChangePasswordParams): void {
 }
 
 interface GetPrincipalHandler {
-    setPrincipalKey(value?: string | null): void;
+    setPrincipalKey(value: string): void;
 
     getPrincipal(): Principal | null;
 }
@@ -251,15 +257,17 @@ export function getPrincipal(userKey: UserKey): User | null;
 export function getPrincipal(groupKey: GroupKey): Group | null;
 export function getPrincipal(roleKey: RoleKey): Role | null;
 export function getPrincipal(principalKey: PrincipalKey): Principal | null {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<GetPrincipalHandler>('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
 
     return __.toNativeObject(bean.getPrincipal());
 }
 
 interface GetMembershipsHandler {
-    setPrincipalKey(value?: UserKey | GroupKey | null): void;
+    setPrincipalKey(value: UserKey | GroupKey): void;
 
     setTransitive(value: boolean): void;
 
@@ -276,16 +284,18 @@ interface GetMembershipsHandler {
  * @returns {Array<Group | Role>} Returns the list of groups and roles.
  */
 export function getMemberships(principalKey: UserKey | GroupKey, transitive = false): (Group | Role)[] {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<GetMembershipsHandler>('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
     bean.setTransitive(transitive);
 
     return __.toNativeObject(bean.getMemberships());
 }
 
 interface GetMembersHandler {
-    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
+    setPrincipalKey(value: GroupKey | RoleKey ): void;
 
     getMembers(): (User | Group)[];
 }
@@ -299,9 +309,11 @@ interface GetMembersHandler {
  * @returns {Array<User | Group>} Returns the list of users and groups.
  */
 export function getMembers(principalKey: GroupKey | RoleKey): (User | Group)[] {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<GetMembersHandler>('com.enonic.xp.lib.auth.GetMembersHandler');
 
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
 
     return __.toNativeObject(bean.getMembers());
 }
@@ -465,7 +477,7 @@ export function modifyGroup(params: ModifyGroupParams): Group | null {
 }
 
 interface AddMembersHandler {
-    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
+    setPrincipalKey(value: GroupKey | RoleKey): void;
 
     setMembers(value: (UserKey | GroupKey)[]): void;
 
@@ -481,16 +493,18 @@ interface AddMembersHandler {
  * @param {Array<string>} members Keys of users and groups to add.
  */
 export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<AddMembersHandler>('com.enonic.xp.lib.auth.AddMembersHandler');
 
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
     bean.setMembers([].concat(members));
 
-    __.toNativeObject(bean.addMembers());
+    bean.addMembers();
 }
 
 interface RemoveMembersHandler {
-    setPrincipalKey(value?: GroupKey | RoleKey | null): void;
+    setPrincipalKey(value: GroupKey | RoleKey): void;
 
     setMembers(value: (UserKey | GroupKey)[]): void;
 
@@ -506,12 +520,14 @@ interface RemoveMembersHandler {
  * @param {string} members Keys of the principals to remove.
  */
 export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<RemoveMembersHandler>('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
     bean.setMembers([].concat(members));
 
-    __.toNativeObject(bean.removeMembers());
+    bean.removeMembers();
 }
 
 export interface FindPrincipalsParams {
@@ -582,7 +598,7 @@ export function findPrincipals(params: FindPrincipalsParams): FindPrincipalsResu
 }
 
 interface DeletePrincipalHandler {
-    setPrincipalKey(value?: PrincipalKey | null): void;
+    setPrincipalKey(value: PrincipalKey): void;
 
     deletePrincipal(): boolean;
 }
@@ -596,8 +612,10 @@ interface DeletePrincipalHandler {
  * @returns {boolean} True if deleted, false otherwise.
  */
 export function deletePrincipal(principalKey: PrincipalKey): boolean {
+    checkRequiredValue(principalKey, 'principalKey');
+
     const bean = __.newBean<DeletePrincipalHandler>('com.enonic.xp.lib.auth.DeletePrincipalHandler');
-    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setPrincipalKey(principalKey);
     return __.toNativeObject(bean.deletePrincipal());
 }
 
