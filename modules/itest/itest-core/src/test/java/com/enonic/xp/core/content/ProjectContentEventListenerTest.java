@@ -254,7 +254,7 @@ public class ProjectContentEventListenerTest
     public void testUpdatedInSecondParent()
         throws InterruptedException
     {
-        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
+        sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
         final Content sourceContent2 = secondSourceContext.callWith( () -> createContent( ContentPath.ROOT, "name2" ) );
 
         final Content updatedContent = secondSourceContext.callWith( () -> {
