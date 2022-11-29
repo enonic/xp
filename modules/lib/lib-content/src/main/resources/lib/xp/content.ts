@@ -451,6 +451,7 @@ export interface StemmedDslExpression {
     fields: string[];
     query: string;
     language: string;
+    operator?: DslOperator;
 }
 
 export interface BooleanDslExpression {
@@ -465,6 +466,8 @@ export type QueryDsl = {
     boolean: BooleanDslExpression;
 } | {
     ngram: NgramDslExpression;
+} | {
+    stemmed: StemmedDslExpression;
 } | {
     fulltext: FulltextDslExpression;
 } | {
