@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
@@ -42,6 +44,8 @@ import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE
 public final class ParentContentSynchronizer
     implements ContentSynchronizer, ContentEventsSynchronizer
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ParentContentSynchronizer.class );
+
     private final Map<ContentSyncEventType, Function<ContentEventSyncCommandParams, AbstractContentEventSyncCommand>> syncCommandCreators;
 
     private final ContentService contentService;
@@ -118,20 +122,11 @@ public final class ParentContentSynchronizer
 
         final List<ContentToSync> contents = createContentsToSync( params.getContentIds(), sourceContexts, targetContexts );
 
-        if ( contents.isEmpty() )
+        if ( !contents.isEmpty() )
         {
-            throw new IllegalArgumentException( ( String.format( "nothing to sync, content ids: [%s], source: [%s], target: [%s]",
-                                                                 params.getContentIds()
-                                                                     .stream()
-                                                                     .map( ContentId::toString )
-                                                                     .collect( Collectors.joining( "," ) ), params.getSourceProject(),
-                                                                 params.getTargetProject() ) ) );
+            final ContentEventSyncCommandParams commandParams = createEventCommandParams( contents );
+            createEventCommand( commandParams, params.getSyncType() ).sync();
         }
-
-        final ContentEventSyncCommandParams commandParams = createEventCommandParams( contents );
-        final AbstractContentEventSyncCommand command = createEventCommand( commandParams, params.getSyncType() );
-
-        command.sync();
     }
 
     private void doSyncWithChildren( final List<ContentToSync> sourceContents, final Map<NodePath, Context> targetContexts )
@@ -190,7 +185,23 @@ public final class ParentContentSynchronizer
             }
         }
 
-        this.syncRemovedContents( sourceContents );
+        sourceContents.forEach( sourceContent -> {
+            if ( sourceContent.getTargetContent() != null )
+            {
+                cleanDeletedContents( sourceContent );
+                return;
+            }
+
+            final Content root = sourceContent.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+
+            if ( root.getId().equals( sourceContent.getSourceContent().getId() ) )
+            {
+                cleanDeletedContents( ContentToSync.create( sourceContent )
+                                          .targetContent( sourceContent.getTargetContext()
+                                                              .callWith( () -> contentService.getByPath( ContentPath.ROOT ) ) )
+                                          .build() );
+            }
+        } );
     }
 
     private void doSync( final Collection<ContentToSync> sourceContents )
@@ -227,7 +238,7 @@ public final class ParentContentSynchronizer
     private List<ContentToSync> createContentsToSync( final List<ContentId> contentIds, final Map<NodePath, Context> sourceContexts,
                                                       final Map<NodePath, Context> targetContexts )
     {
-        return contentIds.stream().map( contentId -> {
+        final List<ContentToSync> result = contentIds.stream().map( contentId -> {
             Context actualSourceContext = getActualContext( contentId, sourceContexts.values() );
             Context actualTargetContext = getActualContext( contentId, targetContexts.values() );
 
@@ -267,6 +278,21 @@ public final class ParentContentSynchronizer
 
         } ).filter( Objects::nonNull ).collect( Collectors.toList() );
 
+        if ( result.isEmpty() )
+        {
+            LOG.debug( String.format( "nothing to sync, content ids: [%s], source contexts: [%s], target contexts: [%s]",
+                                      contentIds.stream().map( ContentId::toString ).collect( Collectors.joining( ", " ) ),
+                                      sourceContexts.values()
+                                          .stream()
+                                          .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
+                                          .collect( Collectors.joining( ", " ) ), targetContexts.values()
+                                          .stream()
+                                          .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
+                                          .collect( Collectors.joining( ", " ) ) ) );
+        }
+
+        return result;
+
     }
 
     private ContentEventSyncCommandParams createEventCommandParams( final Collection<ContentToSync> contents )
@@ -280,30 +306,8 @@ public final class ParentContentSynchronizer
         return syncCommandCreators.get( syncType ).apply( params );
     }
 
-    private void syncRemovedContents( final List<ContentToSync> sourceContents )
-    {
-        sourceContents.forEach( sourceContent -> {
-            if ( sourceContent.getTargetContent() != null )
-            {
-                cleanDeletedContents( sourceContent );
-                return;
-            }
-
-            final Content root = sourceContent.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
-
-            if ( root.getId().equals( sourceContent.getSourceContent().getId() ) )
-            {
-                cleanDeletedContents( ContentToSync.create( sourceContent )
-                                          .targetContent( sourceContent.getTargetContext()
-                                                              .callWith( () -> contentService.getByPath( ContentPath.ROOT ) ) )
-                                          .build() );
-            }
-        } );
-    }
-
     private void cleanDeletedContents( final ContentToSync contentToSync )
     {
-
         contentToSync.getTargetContext().runWith( () -> {
             final Queue<Content> queue = new ArrayDeque<>( Set.of( contentToSync.getTargetContent() ) );
 
@@ -315,9 +319,14 @@ public final class ParentContentSynchronizer
 
                 if ( originProject != null && contentToSync.getSourceContext().getRepositoryId().equals( originProject.getRepoId() ) )
                 {
+                    final Context actualSourceContext = getActualContext( currentContent.getId(), initContexts(
+                        contentToSync.getSourceContext().getRepositoryId() ).values() );
+
                     createEventCommand( createEventCommandParams( List.of( ContentToSync.create()
                                                                                .targetContent( currentContent )
-                                                                               .sourceContext( contentToSync.getSourceContext() )
+                                                                               .sourceContext( actualSourceContext != null
+                                                                                                   ? actualSourceContext
+                                                                                                   : contentToSync.getSourceContext() )
                                                                                .targetContext( contentToSync.getTargetContext() )
                                                                                .build() ) ), ContentSyncEventType.DELETED ).sync();
                 }

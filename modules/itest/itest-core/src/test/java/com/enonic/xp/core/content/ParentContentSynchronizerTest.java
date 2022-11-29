@@ -15,7 +15,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
@@ -46,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,24 +73,24 @@ public class ParentContentSynchronizerTest
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
     private Content syncUpdated( final ContentId contentId )
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.UPDATED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
 
     }
 
@@ -98,12 +98,12 @@ public class ParentContentSynchronizerTest
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.RENAMED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
 
     }
 
@@ -111,12 +111,12 @@ public class ParentContentSynchronizerTest
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.MOVED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
 
     }
 
@@ -124,43 +124,43 @@ public class ParentContentSynchronizerTest
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.SORTED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
 
     }
 
-    private boolean syncDeleted( final ContentId contentId )
+    private Content syncDeleted( final ContentId contentId )
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.DELETED )
                                .build() );
 
-        return !targetContext.callWith( () -> contentService.contentExists( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
     private Content syncManualOrderUpdated( final ContentId contentId )
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return targetContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
     private void sync( final ContentId contentId, final boolean includeChildren )
     {
         final ContentSyncParams.Builder builder = ContentSyncParams.create()
-            .sourceProject( sourceProject.getName() )
+            .sourceProject( firstSourceParent.getName() )
             .targetProject( targetProject.getName() )
             .includeChildren( includeChildren );
 
@@ -170,6 +170,19 @@ public class ParentContentSynchronizerTest
         }
         synchronizer.sync( builder.build() );
     }
+
+    private void sync( final ContentId contentId, final ProjectName sourceProject )
+    {
+        final ContentSyncParams.Builder builder =
+            ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject.getName() );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
+    }
+
 
     @Test
     public void testCreatedChild()
@@ -239,8 +252,7 @@ public class ParentContentSynchronizerTest
         final Content sourceParent = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild = sourceContext.callWith( () -> createContent( sourceParent.getPath() ) );
 
-        assertThrows( ContentNotFoundException.class, () -> syncCreated( sourceChild.getId() ) );
-
+        assertNull( syncCreated( sourceChild.getId() ) );
     }
 
     @Test
@@ -277,16 +289,25 @@ public class ParentContentSynchronizerTest
     public void updateNotCreated()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertNull( syncUpdated( ContentId.from( "source" ) ) );
     }
 
     @Test
-    public void updateNotSynched()
+    public void syncInvalidParent()
         throws Exception
     {
-        final Content targetContent = targetContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        syncCreated( sourceContent.getId() );
 
-        assertThrows( IllegalArgumentException.class, () -> syncUpdated( targetContent.getId() ), "sourceContent must be set." );
+        final Content updatedContent = sourceContext.callWith(
+            () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
+                edit.data.addString( "a", "b" );
+            } ) ) ) );
+
+        sync( sourceContent.getId(), nonSourceProject.getName() );
+
+        assertNotEquals( targetContext.callWith( () -> contentService.getById( sourceContent.getId() ).getData() ),
+                         updatedContent.getData() );
     }
 
     @Test
@@ -543,14 +564,14 @@ public class ParentContentSynchronizerTest
     {
         final Content targetContent = targetContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncRenamed( targetContent.getId() ), "sourceContent must be set." );
+        assertNull( syncRenamed( ContentId.from( "source" ) ) );
     }
 
     @Test
     public void renameNotExisted()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncRenamed( ContentId.from( "123" ) ), "sourceContent must be set." );
+        assertNull( syncRenamed( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -586,7 +607,7 @@ public class ParentContentSynchronizerTest
     public void sortNotExisted()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncSorted( ContentId.from( "source" ) ) );
+        assertNull( syncSorted( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -699,7 +720,7 @@ public class ParentContentSynchronizerTest
     public void moveNotExisted()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncMoved( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertNull( syncMoved( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -748,7 +769,7 @@ public class ParentContentSynchronizerTest
     public void deleteNotExisted()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncDeleted( ContentId.from( "source" ) ) );
+        assertNull( syncDeleted( ContentId.from( "source" ) ) );
     }
 
     @Test
@@ -767,10 +788,9 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        final boolean result = syncDeleted( targetContent.getId() );
+        final Content result = syncDeleted( targetContent.getId() );
 
-        assertFalse( result );
-        assertTrue( targetContext.callWith( () -> contentService.contentExists( targetContent.getId() ) ) );
+        assertNotNull( result );
     }
 
     @Test
@@ -783,7 +803,7 @@ public class ParentContentSynchronizerTest
         sourceContext.runWith(
             () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
-        assertTrue( syncDeleted( targetContent.getId() ) );
+        assertNull( syncDeleted( targetContent.getId() ) );
     }
 
     @Test
@@ -869,8 +889,8 @@ public class ParentContentSynchronizerTest
     public void updateManualOrderNotExisted()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> syncManualOrderUpdated( ContentId.from( "source" ) ),
-                      "sourceContent must be set." );
+        assertNull( syncManualOrderUpdated( ContentId.from( "source" ) ) );
+
     }
 
     @Test
