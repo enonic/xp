@@ -280,15 +280,14 @@ public final class ParentContentSynchronizer
 
         if ( result.isEmpty() )
         {
-            LOG.debug( String.format( "nothing to sync, content ids: [%s], source contexts: [%s], target contexts: [%s]",
-                                      contentIds.stream().map( ContentId::toString ).collect( Collectors.joining( ", " ) ),
-                                      sourceContexts.values()
-                                          .stream()
-                                          .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
-                                          .collect( Collectors.joining( ", " ) ), targetContexts.values()
-                                          .stream()
-                                          .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
-                                          .collect( Collectors.joining( ", " ) ) ) );
+            LOG.debug( "nothing to sync, content ids: {}, source contexts: {}, target contexts: {}",
+                       contentIds.stream().map( ContentId::toString ).collect( Collectors.joining( ", " ) ), sourceContexts.values()
+                           .stream()
+                           .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
+                           .collect( Collectors.joining( ", " ) ), targetContexts.values()
+                           .stream()
+                           .map( context -> context.getRepositoryId() + "-" + context.getBranch() )
+                           .collect( Collectors.joining( ", " ) ) );
         }
 
         return result;
