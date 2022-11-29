@@ -104,13 +104,19 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context sourceContext;
 
+    protected Context secondSourceContext;
+
     protected Context targetContext;
 
     protected Context sourceArchiveContext;
 
     protected Context targetArchiveContext;
 
-    protected Project sourceProject;
+    protected Project firstSourceParent;
+
+    protected Project secondSourceParent;
+
+    protected Project nonSourceProject;
 
     protected Project targetProject;
 
@@ -151,13 +157,21 @@ public abstract class AbstractContentSynchronizerTest
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
 
-            sourceProject = projectService.create(
+            firstSourceParent = projectService.create(
                 CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
+
+            secondSourceParent = projectService.create(
+                CreateProjectParams.create().name( ProjectName.from( "source_project2" ) ).displayName( "Source Project 2" ).build() );
+
+            nonSourceProject = projectService.create( CreateProjectParams.create()
+                                                          .name( ProjectName.from( "another_project" ) )
+                                                          .displayName( "Another Source Project" )
+                                                          .build() );
 
             targetProject = projectService.create( CreateProjectParams.create()
                                                        .name( ProjectName.from( "target_project" ) )
                                                        .displayName( "Target Project" )
-                                                       .addParents( List.of( sourceProject.getName() ) )
+                                                       .addParents( List.of( firstSourceParent.getName(), secondSourceParent.getName() ) )
                                                        .build() );
 
             this.targetContext = ContextBuilder.from( ContextAccessor.current() )
@@ -167,7 +181,13 @@ public abstract class AbstractContentSynchronizerTest
                 .build();
 
             this.sourceContext = ContextBuilder.from( ContextAccessor.current() )
-                .repositoryId( sourceProject.getName().getRepoId() )
+                .repositoryId( firstSourceParent.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
+
+            this.secondSourceContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( secondSourceParent.getName().getRepoId() )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
@@ -176,8 +196,8 @@ public abstract class AbstractContentSynchronizerTest
                 .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
                 .build();
 
-            this.sourceArchiveContext = ContextBuilder.from( this.sourceContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+            this.sourceArchiveContext =
+                ContextBuilder.from( this.sourceContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
                 .build();
 
             projectService.initialize();
