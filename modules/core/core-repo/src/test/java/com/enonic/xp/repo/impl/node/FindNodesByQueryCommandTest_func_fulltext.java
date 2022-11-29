@@ -158,15 +158,15 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "myProperty", "grønnsaker" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build(), true );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(

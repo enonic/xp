@@ -72,14 +72,8 @@ public class FindNodeIdsByParentCommand
             return FindNodesByParentResult.empty();
         }
 
-        final ChildOrder order = NodeChildOrderResolver.create( this ).
-            nodePath( parentPath ).
-            childOrder( childOrder ).
-            build().
-            resolve();
-
-        final SearchResult result = this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ),
-                                                                  SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        final SearchResult result =
+            this.nodeSearchService.query( createFindChildrenQuery( parentPath ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return FindNodesByParentResult.create().
             nodeIds( NodeIds.from( result.getIds() ) ).
@@ -88,15 +82,17 @@ public class FindNodeIdsByParentCommand
             build();
     }
 
-    private NodeQuery createFindChildrenQuery( final NodePath parentPath, final ChildOrder order )
+    private NodeQuery createFindChildrenQuery( final NodePath parentPath )
     {
-        final NodeQuery.Builder builder = NodeQuery.create().
-            addQueryFilters( queryFilters ).
-            from( from ).
-            size( size ).
-            searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH ).
-            setOrderExpressions( order.getOrderExpressions() ).
-            accurateScoring( true );
+        final ChildOrder order = NodeChildOrderResolver.create( this ).nodePath( parentPath ).childOrder( childOrder ).build().resolve();
+
+        final NodeQuery.Builder builder = NodeQuery.create()
+            .addQueryFilters( queryFilters )
+            .from( from )
+            .size( size )
+            .searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH )
+            .setOrderExpressions( order.getOrderExpressions() )
+            .accurateScoring( true );
 
         if ( !recursive )
         {

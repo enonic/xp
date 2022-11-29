@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.search;
 import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repository.RepositoryId;
 
-public class SearchStorageName
+public final class SearchStorageName
     implements StorageName
 {
     public static final String STORAGE_INDEX_PREFIX = "search";
@@ -22,7 +22,6 @@ public class SearchStorageName
         return new SearchStorageName( STORAGE_INDEX_PREFIX + DIVIDER + repositoryId.toString() );
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
@@ -37,18 +36,23 @@ public class SearchStorageName
 
         final SearchStorageName that = (SearchStorageName) o;
 
-        return !( name != null ? !name.equals( that.name ) : that.name != null );
-
+        return name.equals( that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return name.hashCode();
     }
 
     @Override
     public String getName()
+    {
+        return name;
+    }
+
+    @Override
+    public String toString()
     {
         return name;
     }

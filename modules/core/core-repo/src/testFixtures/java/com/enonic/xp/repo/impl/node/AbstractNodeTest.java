@@ -22,7 +22,6 @@ import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
-import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -389,22 +388,13 @@ public abstract class AbstractNodeTest
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
-        final CreateNodeParams.Builder createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams );
-
-        if ( createNodeParams.getIndexConfigDocument() == null )
-        {
-            createParamsWithAnalyzer.indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                build() );
-        }
-
-        final Node createdNode = CreateNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            params( createParamsWithAnalyzer.build() ).
-            build().
+        final Node createdNode = CreateNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .params( createNodeParams )
+            .build().
             execute();
 
         if ( refresh )

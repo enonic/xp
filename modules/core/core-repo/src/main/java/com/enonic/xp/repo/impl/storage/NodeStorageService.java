@@ -63,7 +63,7 @@ public interface NodeStorageService
 
     NodeCommitEntry getCommit( NodeCommitId nodeCommitId, InternalContext context );
 
-    NodeId getIdForPath( NodePath nodePath, InternalContext context );
+    NodeBranchEntry getBranchNodeVersion( NodePath nodePath, InternalContext context );
 
     void invalidate();
 
@@ -76,7 +76,4 @@ public interface NodeStorageService
     void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
 
     Node getNode( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
-
-    Node getNode( NodePath nodePath, NodeVersionId nodeVersionId, InternalContext context );
-
 }

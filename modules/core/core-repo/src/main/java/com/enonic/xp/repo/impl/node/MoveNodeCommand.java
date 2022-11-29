@@ -116,10 +116,7 @@ public class MoveNodeCommand
     {
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, existingSourceNode );
 
-        final Node newParentNode = GetNodeByPathCommand.create( this ).
-            nodePath( newParentPath ).
-            build().
-            execute();
+        final Node newParentNode = doGetByPath( newParentPath );
 
         if ( newParentNode == null )
         {
@@ -238,10 +235,7 @@ public class MoveNodeCommand
 
         if ( newParentPath.equals( this.newParentPath ) )
         {
-            final Node parent = GetNodeByPathCommand.create( this ).
-                nodePath( newParentPath ).
-                build().
-                execute();
+            final Node parent = doGetByPath( newParentPath );
 
             if ( parent.getChildOrder().isManualOrder() )
             {

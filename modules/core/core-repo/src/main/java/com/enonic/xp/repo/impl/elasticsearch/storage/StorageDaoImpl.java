@@ -1,7 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteAction;
@@ -10,6 +13,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetAction;
+import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -22,20 +26,17 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeStorageException;
-import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
-import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
-import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 
@@ -185,15 +186,15 @@ public class StorageDaoImpl
     }
 
     @Override
-    public GetResults getByIds( final GetByIdsRequest requests )
+    public List<GetResult> getByIds( final GetByIdsRequest requests )
     {
         if ( requests.getRequests().isEmpty() )
         {
-            return new GetResults();
+            return List.of();
         }
 
-        final MultiGetRequestBuilder multiGetRequestBuilder = new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).
-            setPreference( SearchPreference.LOCAL.getName() );
+        final MultiGetRequestBuilder multiGetRequestBuilder =
+            new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).setPreference( requests.getSearchPreference().getName() );
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {
@@ -214,12 +215,14 @@ public class StorageDaoImpl
             }
 
             multiGetRequestBuilder.add( item );
-
         }
 
         final MultiGetResponse multiGetItemResponses = this.client.multiGet( multiGetRequestBuilder.request() ).actionGet();
 
-        return GetResultsFactory.create( multiGetItemResponses );
+        return Stream.of( multiGetItemResponses.getResponses() )
+            .map( MultiGetItemResponse::getResponse )
+            .map( GetResultFactory::create )
+            .collect( Collectors.toUnmodifiableList() );
     }
 
     @Override

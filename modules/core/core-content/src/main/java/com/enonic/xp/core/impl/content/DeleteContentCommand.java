@@ -40,6 +40,8 @@ final class DeleteContentCommand
 
     DeleteContentsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         try
         {
             return doExecute();
@@ -52,7 +54,6 @@ final class DeleteContentCommand
 
     private DeleteContentsResult doExecute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
@@ -81,6 +82,8 @@ final class DeleteContentCommand
         final ContentIds deletedContents = ContentNodeHelper.toContentIds( deletedNodes );
 
         result.addDeleted( deletedContents );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         return result.build();
     }

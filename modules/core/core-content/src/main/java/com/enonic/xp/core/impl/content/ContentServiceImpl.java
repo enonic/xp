@@ -1058,11 +1058,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         try
         {
-            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
-                nodeId( NodeId.from( params.getContentId() ) ).
-                childOrder( params.getChildOrder() );
+            final SetNodeChildOrderParams.Builder builder =
+                SetNodeChildOrderParams.create().nodeId( NodeId.from( params.getContentId() ) ).childOrder( params.getChildOrder() );
 
             if ( params.stopInherit() )
             {
@@ -1070,6 +1071,8 @@ public class ContentServiceImpl
             }
 
             final Node node = nodeService.setChildOrder( builder.build() );
+
+            this.nodeService.refresh( RefreshMode.ALL );
 
             final Content content = translator.fromNode( node, true );
 
@@ -1088,14 +1091,16 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 
         for ( final ReorderChildParams param : params )
         {
-            builder.add( ReorderChildNodeParams.create().
-                nodeId( NodeId.from( param.getContentToMove() ) ).
-                moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) ).
-                build() );
+            builder.add( ReorderChildNodeParams.create()
+                             .nodeId( NodeId.from( param.getContentToMove() ) )
+                             .moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) )
+                             .build() );
         }
 
         if ( params.stopInherit() )

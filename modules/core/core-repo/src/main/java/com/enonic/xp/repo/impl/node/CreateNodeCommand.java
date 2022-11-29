@@ -65,13 +65,7 @@ public final class CreateNodeCommand
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
         NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
-        final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
-
-        if ( parentNode == null )
-        {
-            throw new NodeNotFoundException(
-                "Parent node to node with name '" + params.getName() + "' with parent path '" + params.getParent() + "' not found" );
-        }
+        final Node parentNode = NodeHelper.runAsAdmin( this::getParentNode );
 
         requireContextUserPermission( Permission.CREATE, parentNode );
 
@@ -142,20 +136,9 @@ public final class CreateNodeCommand
         return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
     }
 
-    private Node verifyParentExists()
+    private Node getParentNode()
     {
-        if ( NodePath.ROOT.equals( params.getParent() ) )
-        {
-            return GetNodeByPathCommand.create( this ).
-                nodePath( NodePath.ROOT ).
-                build().
-                execute();
-        }
-
-        final Node parentNode = GetNodeByPathCommand.create( this ).
-            nodePath( params.getParent() ).
-            build().
-            execute();
+        final Node parentNode = doGetByPath( params.getParent() );
 
         if ( parentNode == null )
         {

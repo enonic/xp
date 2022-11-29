@@ -8,13 +8,14 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -77,10 +78,9 @@ public class NodesHasPermissionResolver
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
 
-        final FindNodesByQueryResult result =
-            adminContext.callWith( FindNodesByQueryCommand.create( this ).query( query ).build()::execute );
+        final SearchResult searchResult = nodeSearchService.query( query, SingleRepoSearchSource.from( adminContext ) );
 
-        return result.getTotalHits() == nodeIds.getSize();
+        return searchResult.getTotalHits() == nodeIds.getSize();
     }
 
     private IndexPath getPermissionFieldName()

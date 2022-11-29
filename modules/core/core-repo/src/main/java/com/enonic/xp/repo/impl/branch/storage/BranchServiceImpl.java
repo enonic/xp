@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
@@ -35,6 +36,7 @@ import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
+import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
@@ -49,8 +51,6 @@ public class BranchServiceImpl
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_BLOB_KEY,
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
                            BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
-
-    private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
     private static final Striped<Lock> PARENT_PATH_LOCKS = Striped.lazyWeakLock( 100 );
 
@@ -171,9 +171,9 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchEntries get( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries get( final NodeIds nodeIds, boolean keepOrder, final InternalContext context )
     {
-        return getIgnoreOrder( nodeIds, context );
+        return keepOrder ? getKeepOrder( nodeIds, context ) : getIgnoreOrder( nodeIds, context );
     }
 
     @Override
@@ -271,6 +271,36 @@ public class BranchServiceImpl
         pathCache.cache( new BranchPath( repositoryId, branchDocumentId.getBranch(), nodePath ), branchDocumentId );
     }
 
+    private NodeBranchEntries getKeepOrder( final NodeIds nodeIds, final InternalContext context )
+    {
+        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
+
+        for ( final NodeId nodeId : nodeIds )
+        {
+            getByIdsRequest.add( GetByIdRequest.create()
+                                     .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
+                                     .storageSettings( StorageSource.create()
+                                                           .storageName( StoreStorageName.from( context.getRepositoryId() ) )
+                                                           .storageType( StaticStorageType.BRANCH )
+                                                           .build() )
+                                     .returnFields( BRANCH_RETURN_FIELDS )
+                                     .routing( nodeId.toString() )
+                                     .build() );
+        }
+
+        final List<GetResult> getResults = this.storageDao.getByIds( getByIdsRequest );
+
+        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
+
+        getResults.stream()
+            .filter( Predicate.not( GetResult::isEmpty ) )
+            .map( GetResult::getReturnValues )
+            .map( NodeBranchVersionFactory::create )
+            .forEach( builder::add );
+
+        return builder.build();
+    }
+
     private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
     {
         if ( nodeIds.isEmpty() )
@@ -278,8 +308,7 @@ public class BranchServiceImpl
             return NodeBranchEntries.empty();
         }
 
-        final NodeBranchQuery query = NodeBranchQuery.create()
-            .addQueryFilter( ValueFilter.create()
+        final NodeBranchQuery query = NodeBranchQuery.create().addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
                                  .build() )

@@ -29,7 +29,8 @@ public class FindNodePathsByQueryCommand
 
     public FindNodePathsByQueryResult execute()
     {
-        final SearchResult result = nodeSearchService.query( this.query, ReturnFields.from( NodeIndexPath.PATH ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        final SearchResult result = nodeSearchService.query( this.query, ReturnFields.from( NodeIndexPath.PATH ),
+                                                             SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return FindNodePathsByQueryResultFactory.create( result );
     }

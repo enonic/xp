@@ -16,6 +16,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -227,14 +228,15 @@ public class ResolveSyncWorkCommand
 
         for ( final NodePath parent : parentPaths )
         {
-            final NodeId parentId = this.nodeStorageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeBranchEntry parentNodeBranchEntry =
+                this.nodeStorageService.getBranchNodeVersion( parent, InternalContext.from( ContextAccessor.current() ) );
 
-            if ( parentId == null )
+            if ( parentNodeBranchEntry == null )
             {
                 throw new NodeNotFoundException( "Cannot find parent with path [" + parent + "]" );
             }
 
-            parentIdBuilder.add( parentId );
+            parentIdBuilder.add( parentNodeBranchEntry.getNodeId() );
         }
 
         return parentIdBuilder.build();

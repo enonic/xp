@@ -30,10 +30,7 @@ public class NodeChildOrderResolver
             return this.childOrder;
         }
 
-        final Node parent = GetNodeByPathCommand.create( this ).
-            nodePath( this.parentPath ).
-            build().
-            execute();
+        final Node parent = doGetByPath( this.parentPath );
 
         return parent == null ? ChildOrder.defaultOrder() : parent.getChildOrder();
     }

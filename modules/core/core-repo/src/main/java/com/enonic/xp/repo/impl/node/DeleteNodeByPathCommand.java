@@ -19,10 +19,7 @@ final class DeleteNodeByPathCommand
 
     NodeBranchEntries execute()
     {
-        final Node node = GetNodeByPathCommand.create( this ).
-            nodePath( nodePath ).
-            build().
-            execute();
+        final Node node = doGetByPath( nodePath );
 
         return node != null ? deleteNodeWithChildren( node, null ) : NodeBranchEntries.empty();
     }

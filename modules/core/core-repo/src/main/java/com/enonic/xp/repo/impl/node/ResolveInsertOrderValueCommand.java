@@ -23,11 +23,7 @@ public class ResolveInsertOrderValueCommand
 
     public Long execute()
     {
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( RefreshMode.SEARCH ).
-            build().
-            execute();
+        refresh( RefreshMode.SEARCH );
 
         final ChildOrder childOrder =
             InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();

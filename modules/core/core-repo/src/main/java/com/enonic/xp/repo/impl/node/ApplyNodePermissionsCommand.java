@@ -12,6 +12,7 @@ import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -49,6 +50,8 @@ final class ApplyNodePermissionsCommand
         {
             return resultBuilder.build();
         }
+
+        refresh( RefreshMode.SEARCH );
 
         applyPermissions( params.getPermissions() != null ? params.getPermissions() : node.getPermissions(), node );
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
@@ -47,14 +48,14 @@ public class IndexDataServiceImpl
     @Override
     public ReturnValues get( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
     {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
+        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
 
         for ( final NodeId nodeId : nodeIds )
         {
             getByIdsRequest.add( createGetByIdRequest( nodeId, returnFields, context ) );
         }
 
-        final GetResults result = storageDao.getByIds( getByIdsRequest );
+        final List<GetResult> result = storageDao.getByIds( getByIdsRequest );
 
         final ReturnValues.Builder allResultValues = ReturnValues.create();
 

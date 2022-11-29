@@ -1,15 +1,12 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.Comparator;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Ordering;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
@@ -280,10 +277,10 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context )
-            .stream()
-            .sorted(
-                Comparator.comparing( NodeBranchEntry::getNodeId, Ordering.explicit( nodeIds.stream().collect( Collectors.toList() ) ) ) );
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, true, context ).stream();
+        // .stream()
+        // .sorted(
+        //      Comparator.comparing( NodeBranchEntry::getNodeId, Ordering.explicit( nodeIds.stream().collect( Collectors.toList() ) ) ) );
         return doReturnNodes( stream, context );
     }
 
@@ -336,7 +333,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, context );
+        return this.branchService.get( nodeIds, false, context );
     }
 
     @Override
@@ -352,11 +349,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeId getIdForPath( final NodePath nodePath, final InternalContext context )
+    public NodeBranchEntry getBranchNodeVersion( final NodePath nodePath, final InternalContext context )
     {
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
-
-        return nodeBranchEntry != null ? nodeBranchEntry.getNodeId() : null;
+        return this.branchService.get( nodePath, context );
     }
 
     @Override
@@ -416,19 +411,6 @@ public class NodeStorageServiceImpl
         }
 
         return constructNode( nodeVersion, nodeVersionMetadata );
-    }
-
-    @Override
-    public Node getNode( final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context )
-    {
-        final NodeId nodeId = getIdForPath( nodePath, context );
-
-        if ( nodeId == null )
-        {
-            return null;
-        }
-
-        return getNode( nodeId, nodeVersionId, context );
     }
 
     private Node doGetNode( final NodeBranchEntry nodeBranchEntry, final InternalContext context )

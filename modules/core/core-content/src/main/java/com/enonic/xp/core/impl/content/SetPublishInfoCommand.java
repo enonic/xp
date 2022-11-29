@@ -10,7 +10,6 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
@@ -94,8 +93,6 @@ public class SetPublishInfoCommand
                 publishContentListener.contentPushed( 1 );
             }
         }
-
-        this.nodeService.refresh( RefreshMode.ALL );
     }
 
     private NodeIds findNodesWithoutPublishFirstAndFrom( final NodeIds nodesToPush )

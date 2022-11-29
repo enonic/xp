@@ -40,6 +40,8 @@ public class UnpublishContentCommand
 
     public UnpublishContentsResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         final Context context = ContextAccessor.current();
         final Context unpublishContext = ContextBuilder.from( context ).branch( ContentConstants.BRANCH_MASTER ).build();
 
@@ -52,6 +54,8 @@ public class UnpublishContentCommand
         {
             context.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
         }
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }

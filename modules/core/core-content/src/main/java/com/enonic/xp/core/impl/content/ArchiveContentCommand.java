@@ -70,11 +70,11 @@ final class ArchiveContentCommand
     {
         params.validate();
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         try
         {
-            final ArchiveContentsResult archivedContents = doExecute();
-            this.nodeService.refresh( RefreshMode.ALL );
-            return archivedContents;
+            return doExecute();
         }
         catch ( MoveNodeException e )
         {
@@ -110,6 +110,8 @@ final class ArchiveContentCommand
         move( nodeId );
 
         commitNode( nodeId, ContentConstants.ARCHIVE_COMMIT_PREFIX );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         return result.addArchived( contentId ).addArchived( descendantContents ).build();
     }

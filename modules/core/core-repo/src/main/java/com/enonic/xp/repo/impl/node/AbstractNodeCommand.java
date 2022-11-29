@@ -45,13 +45,9 @@ abstract class AbstractNodeCommand
             execute();
     }
 
-    void refresh(final RefreshMode refreshMode)
+    void refresh( final RefreshMode refreshMode )
     {
-        RefreshCommand.create().
-            refreshMode( refreshMode ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
     }
 
     PrincipalKey getCurrentPrincipalKey()
@@ -70,14 +66,11 @@ abstract class AbstractNodeCommand
         }
         else
         {
-            final Node node = NodeHelper.runAsAdmin( () -> GetNodeByPathCommand.create( this ).
-                nodePath( parentPath ).
-                build().
-                execute() );
+            final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) );
 
             if ( node == null || node.getPermissions().isEmpty() )
             {
-                throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath.toString() + "]" );
+                throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath + "]" );
             }
             return node.getPermissions();
         }

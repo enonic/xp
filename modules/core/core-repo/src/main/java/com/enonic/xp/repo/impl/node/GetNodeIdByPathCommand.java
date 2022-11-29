@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -30,9 +31,10 @@ public class GetNodeIdByPathCommand
 
     public NodeId execute()
     {
-        final NodeId idForPath = this.nodeStorageService.getIdForPath( nodePath, InternalContext.from( ContextAccessor.current() ) );
+        final NodeBranchEntry nodeBranchEntry =
+            this.nodeStorageService.getBranchNodeVersion( nodePath, InternalContext.from( ContextAccessor.current() ) );
 
-        return idForPath;
+        return nodeBranchEntry != null ? nodeBranchEntry.getNodeId() : null;
     }
 
 

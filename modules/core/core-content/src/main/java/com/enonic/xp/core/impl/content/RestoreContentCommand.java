@@ -63,11 +63,11 @@ final class RestoreContentCommand
     {
         params.validate();
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         try
         {
-            final RestoreContentsResult restoredContents = doExecute();
-            this.nodeService.refresh( RefreshMode.ALL );
-            return restoredContents;
+            return doExecute();
         }
         catch ( MoveNodeException e )
         {
@@ -103,6 +103,8 @@ final class RestoreContentCommand
         updateProperties( movedNode, isRootContent );
 
         commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         result.addRestored( ContentId.from( movedNode.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
@@ -169,7 +171,7 @@ final class RestoreContentCommand
     private void updateProperties( final Node node, final boolean isRootContent )
     {
         final FindNodesByParentResult childrenToRestore =
-            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( node.id() ).build() );
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( node.id() ).build() );
 
         childrenToRestore.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
             toBeEdited.data.removeProperties( ARCHIVED_TIME );

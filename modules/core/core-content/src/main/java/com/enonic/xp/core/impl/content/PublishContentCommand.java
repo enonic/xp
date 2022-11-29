@@ -65,6 +65,8 @@ public class PublishContentCommand
 
     PublishContentResult execute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         final CompareContentResults results = getSyncWork();
 
         if ( publishContentListener != null )

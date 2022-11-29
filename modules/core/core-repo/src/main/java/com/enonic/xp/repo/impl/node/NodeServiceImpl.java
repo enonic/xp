@@ -408,6 +408,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
     {
         verifyContext();
