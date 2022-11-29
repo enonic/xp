@@ -5,11 +5,13 @@ import java.util.EnumSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -57,19 +59,17 @@ public class SyncContentServiceImplTest
         syncCreated( source.getId() );
 
         targetContext.runWith( () -> {
-            final Content changed = contentService.setChildOrder( SetContentChildOrderParams.create().
-                contentId( source.getId() ).
-                childOrder( ChildOrder.from( "_name ASC" ) ).
-                build() );
+            final Content changed = contentService.setChildOrder(
+                SetContentChildOrderParams.create().contentId( source.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() );
 
             assertFalse( changed.getInherit().contains( ContentInheritType.SORT ) );
         } );
 
-        syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.SORT ) ).
-            projectName( targetProject.getName() ).
-            build() );
+        syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                 .contentId( source.getId() )
+                                                 .inherit( EnumSet.of( ContentInheritType.SORT ) )
+                                                 .projectName( targetProject.getName() )
+                                                 .build() );
 
         targetContext.runWith( () -> {
             final Content changed = contentService.getById( source.getId() );
@@ -89,19 +89,17 @@ public class SyncContentServiceImplTest
         syncCreated( source.getId() );
 
         targetContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().
-                contentId( source.getId() ).
-                editor( edit -> {
-                    edit.workflowInfo = WorkflowInfo.ready();
-                    edit.data = new PropertyTree();
-                } ) );
+            contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+                edit.data = new PropertyTree();
+            } ) );
         } );
 
-        syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
-            projectName( targetProject.getName() ).
-            build() );
+        syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                 .contentId( source.getId() )
+                                                 .inherit( EnumSet.of( ContentInheritType.CONTENT ) )
+                                                 .projectName( targetProject.getName() )
+                                                 .build() );
 
         targetContext.runWith( () -> {
             final Content changed = contentService.getById( source.getId() );
@@ -121,23 +119,21 @@ public class SyncContentServiceImplTest
         syncCreated( source.getId() );
 
         targetContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().
-                contentId( source.getId() ).
-                editor( edit -> {
-                    edit.workflowInfo = WorkflowInfo.ready();
-                    edit.data = new PropertyTree();
-                } ) );
+            contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+                edit.data = new PropertyTree();
+            } ) );
         } );
 
-        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( source.getPath() ).
-            build() ) );
+        sourceContext.runWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
-            projectName( targetProject.getName() ).
-            build() ) );
+        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                                                                     .contentId( source.getId() )
+                                                                                                     .inherit( EnumSet.of(
+                                                                                                         ContentInheritType.CONTENT ) )
+                                                                                                     .projectName( targetProject.getName() )
+                                                                                                     .build() ) );
     }
 
     @Test
@@ -152,9 +148,8 @@ public class SyncContentServiceImplTest
             assertFalse( contentService.contentExists( missedChild.getId() ) );
         } );
 
-        sourceContext.runWith( () -> syncContentService.syncProject( ProjectSyncParams.create().
-            targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).
-            build() ) );
+        sourceContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).build() ) );
 
         targetContext.runWith( () -> {
             assertTrue( contentService.contentExists( missedParent.getId() ) );
@@ -163,11 +158,61 @@ public class SyncContentServiceImplTest
 
     }
 
+    @Test
+    public void testSyncProjectFromTwoParents()
+        throws Exception
+    {
+        final Content missedContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content missedContent2 = secondSourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        targetContext.runWith( () -> {
+            assertFalse( contentService.contentExists( missedContent1.getId() ) );
+            assertFalse( contentService.contentExists( missedContent2.getId() ) );
+        } );
+
+        sourceContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).build() ) );
+
+        targetContext.runWith( () -> {
+            assertTrue( contentService.contentExists( missedContent1.getId() ) );
+            assertTrue( contentService.contentExists( missedContent2.getId() ) );
+        } );
+
+    }
+
+    @Test
+    public void testMoveArchiveAndResetFromTwoParents()
+        throws Exception
+    {
+        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content sourceContent2 = secondSourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        sourceContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).build() ) );
+
+        targetContext.runWith( () -> {
+            contentService.move(
+                MoveContentParams.create().contentId( sourceContent2.getId() ).parentContentPath( sourceContent1.getPath() ).build() );
+        } );
+
+        sourceContext.runWith( () -> {
+            contentService.archive( ArchiveContentParams.create().contentId( sourceContent1.getId() ).build() );
+
+            syncContentService.syncProject(
+                ProjectSyncParams.create().targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).build() );
+        } );
+
+        targetArchiveContext.runWith( () -> {
+            assertTrue( contentService.contentExists( sourceContent1.getId() ) );
+            assertTrue( contentService.contentExists( sourceContent2.getId() ) );
+        } );
+    }
+
     private Content syncCreated( final ContentId contentId )
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
+                               .sourceProject( firstSourceParent.getName() )
                                .targetProject( targetProject.getName() )
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );

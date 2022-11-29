@@ -68,8 +68,10 @@ final class MovedEventSyncCommand
         {
             MovedEventSyncRestorer.create().contentService( contentService ).addContents( toRestore ).build().execute();
         }
-
-        this.doMove( toMove );
+        if ( !toMove.isEmpty() )
+        {
+            this.doMove( toMove );
+        }
     }
 
     private void doMove( final List<ContentToSync> contents )
