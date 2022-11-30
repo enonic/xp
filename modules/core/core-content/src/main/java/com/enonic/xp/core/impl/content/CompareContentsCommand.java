@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
 
 public class CompareContentsCommand
 {
@@ -30,8 +29,6 @@ public class CompareContentsCommand
 
     public CompareContentResults execute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         final NodeIds nodeIds = ContentNodeHelper.toNodeIds( this.contentIds );
         final NodeComparisons comparisons = this.nodeService.compare( nodeIds, this.target );
 

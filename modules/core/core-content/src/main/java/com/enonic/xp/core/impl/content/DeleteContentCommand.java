@@ -40,8 +40,6 @@ final class DeleteContentCommand
 
     DeleteContentsResult execute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         try
         {
             return doExecute();
@@ -72,18 +70,17 @@ final class DeleteContentCommand
 
         final NodeId nodeId = NodeId.from( nodeToDelete );
 
-        final NodeIds descendants = nodeService.findByParent(
-            FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+        final NodeIds descendants =
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
 
         final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
         final NodeIds deletedNodes = this.nodeService.deleteById( nodeId, this );
-        final ContentIds deletedContents = ContentNodeHelper.toContentIds( deletedNodes );
-
-        result.addDeleted( deletedContents );
 
         this.nodeService.refresh( RefreshMode.ALL );
+
+        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes ) );
 
         return result.build();
     }

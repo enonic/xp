@@ -45,6 +45,7 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -169,9 +170,7 @@ final class UpdateContentCommand
             .createAttachments( params.getCreateAttachments() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
-            .validationErrorsBuilder( validationErrorsBuilder )
-            .build()
-            .execute();
+            .validationErrorsBuilder( validationErrorsBuilder ).build().execute();
 
         if ( params.isRequireValid() )
         {
@@ -180,34 +179,38 @@ final class UpdateContentCommand
             } );
         }
 
-        editedContent = Content.create( editedContent )
-            .valid( !validationErrors.hasErrors() )
-            .validationErrors( validationErrors )
-            .modifiedTime( Instant.now() )
-            .build();
-
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
-            .editedContent( editedContent )
-            .createAttachments( params.getCreateAttachments() )
-            .attachments( attachments )
-            .modifier( getCurrentUser().getKey() )
-            .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
-            .pageDescriptorService( this.pageDescriptorService )
-            .partDescriptorService( this.partDescriptorService )
-            .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.contentDataSerializer )
-            .siteService( this.siteService )
-            .build()
-            .produce();
-
         if ( commitBeforeChange )
         {
             nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
         }
 
+        editedContent = Content.create( editedContent )
+            .valid( !validationErrors.hasErrors() )
+            .validationErrors( validationErrors )
+            .modifiedTime( Instant.now() )
+            .build();
+
+        final UpdateNodeParams updateNodeParams =
+            UpdateNodeParamsFactory.create()
+                .editedContent( editedContent )
+                .createAttachments( params.getCreateAttachments() )
+            .attachments( attachments )
+            .modifier( getCurrentUser().getKey() )
+            .contentTypeService( this.contentTypeService )
+                .xDataService( this.xDataService )
+                .pageDescriptorService( this.pageDescriptorService )
+                .partDescriptorService( this.partDescriptorService )
+                .layoutDescriptorService( this.layoutDescriptorService )
+                .contentDataSerializer( this.contentDataSerializer )
+                .siteService( this.siteService )
+                .build()
+                .produce();
+
         final Node editedNode = this.nodeService.update( updateNodeParams );
+
+        this.nodeService.refresh( RefreshMode.ALL );
+
         return translator.fromNode( editedNode, true );
     }
 

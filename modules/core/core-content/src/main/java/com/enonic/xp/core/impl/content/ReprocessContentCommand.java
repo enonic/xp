@@ -14,6 +14,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -89,11 +90,13 @@ final class ReprocessContentCommand
 
     private Content revertModifiedTime( final Content content, final Instant modifiedTime )
     {
-        final UpdateNodeParams update = UpdateNodeParams.create().
-            id( NodeId.from( content.getId() ) ).
-            editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) ).
-            build();
+        final UpdateNodeParams update = UpdateNodeParams.create()
+            .id( NodeId.from( content.getId() ) )
+            .editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) )
+            .build();
         final Node node = this.nodeService.update( update );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         return this.translator.fromNode( node, true );
     }

@@ -5,7 +5,6 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.RefreshMode;
 
 abstract class AbstractArchiveCommand
     extends AbstractContentCommand
@@ -18,8 +17,6 @@ abstract class AbstractArchiveCommand
     protected void commitNode( final NodeId nodeId, final String message )
     {
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( message ).build();
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult movedTree =
             nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() );

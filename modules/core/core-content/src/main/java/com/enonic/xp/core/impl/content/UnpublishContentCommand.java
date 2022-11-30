@@ -40,27 +40,25 @@ public class UnpublishContentCommand
 
     public UnpublishContentsResult execute()
     {
+        final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_MASTER ).build();
+
+        final ContentIds contentIds = masterContext.callWith( this::delete );
+
+        removePublishInfo( contentIds );
+
         this.nodeService.refresh( RefreshMode.ALL );
-
-        final Context context = ContextAccessor.current();
-        final Context unpublishContext = ContextBuilder.from( context ).branch( ContentConstants.BRANCH_MASTER ).build();
-
-        final ContentIds contentIds = unpublishContext.callWith( this::unpublish );
-
-        context.callWith( () -> removePublishInfo( contentIds ) );
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
         if ( contentIds.getSize() == 1 )
         {
-            context.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
+            resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
         }
 
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }
 
-    private ContentIds unpublish()
+    private ContentIds delete()
     {
         final ContentIds.Builder contentBuilder = ContentIds.create();
 

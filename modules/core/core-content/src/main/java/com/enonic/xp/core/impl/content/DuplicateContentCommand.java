@@ -38,8 +38,6 @@ final class DuplicateContentCommand
 
     DuplicateContentsResult execute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         try
         {
             return doExecute();
@@ -68,11 +66,11 @@ final class DuplicateContentCommand
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         final Content duplicatedContent = translator.fromNode( duplicatedNode, true );
 
         final ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return DuplicateContentsResult.create()
             .setSourceContentPath( ContentNodeHelper.translateNodePathToContentPath( sourceNode.path() ) )

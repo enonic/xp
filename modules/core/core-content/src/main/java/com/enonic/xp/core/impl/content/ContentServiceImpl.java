@@ -1058,8 +1058,6 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        this.nodeService.refresh( RefreshMode.ALL );
-
         try
         {
             final SetNodeChildOrderParams.Builder builder =
@@ -1090,8 +1088,6 @@ public class ContentServiceImpl
     public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
 

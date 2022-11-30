@@ -46,8 +46,6 @@ final class MoveContentCommand
     {
         params.validate();
 
-        this.nodeService.refresh( RefreshMode.ALL );
-
         try
         {
             return doExecute();

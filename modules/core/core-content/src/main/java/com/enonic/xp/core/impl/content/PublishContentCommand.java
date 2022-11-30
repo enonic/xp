@@ -65,8 +65,6 @@ public class PublishContentCommand
 
     PublishContentResult execute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         final CompareContentResults results = getSyncWork();
 
         if ( publishContentListener != null )
@@ -75,8 +73,6 @@ public class PublishContentCommand
         }
 
         doPush( results.contentIds() );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }
@@ -88,16 +84,12 @@ public class PublishContentCommand
             return;
         }
 
-        final boolean validContents = checkIfAllContentsValid( ids );
-
-        if ( validContents )
-        {
-            doPushNodes( ContentNodeHelper.toNodeIds( ids ) );
-        }
-        else
+        if ( !checkIfAllContentsValid( ids ) )
         {
             this.resultBuilder.setFailed( ids );
+            return;
         }
+        doPushNodes( ContentNodeHelper.toNodeIds( ids ) );
     }
 
     private CompareContentResults getSyncWork()
@@ -140,9 +132,7 @@ public class PublishContentCommand
             nodeIds( nodesToPush ).
             publishFrom( contentPublishInfo.getFrom() ).
             publishTo( contentPublishInfo.getTo() ).
-            pushListener( publishContentListener ).
-            build().
-            execute();
+            pushListener( publishContentListener ).build().execute();
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, count -> {
             if ( publishContentListener != null )
@@ -151,12 +141,14 @@ public class PublishContentCommand
             }
         } );
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
         this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailed()
-                                                                         .stream()
-                                                                         .map( failed -> failed.getNodeBranchEntry().getNodeId() )
-                                                                         .collect( Collectors.toList() ) ) );
+                                                                          .stream()
+                                                                          .map( failed -> failed.getNodeBranchEntry().getNodeId() )
+                                                                          .collect( Collectors.toList() ) ) );
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful().getKeys() ) );
     }
 

@@ -63,8 +63,6 @@ final class RestoreContentCommand
     {
         params.validate();
 
-        this.nodeService.refresh( RefreshMode.ALL );
-
         try
         {
             return doExecute();
@@ -102,9 +100,9 @@ final class RestoreContentCommand
 
         updateProperties( movedNode, isRootContent );
 
-        commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
-
         this.nodeService.refresh( RefreshMode.ALL );
+
+        commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
 
         result.addRestored( ContentId.from( movedNode.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
