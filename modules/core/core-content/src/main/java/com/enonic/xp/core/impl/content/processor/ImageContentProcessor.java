@@ -77,6 +77,25 @@ public final class ImageContentProcessor
         put( "gpsImgDirection", "direction" ).
         put( "whiteBalanceMode", "whiteBalance" ).
         put( "isoSpeedRatings", "iso" ).
+        put( "dcDescription", "description" ).
+        put( "iccColorSpace", "colorSpace" ).
+        put( "exifSubifdColorSpace", "colorSpace" ).
+        put( "dctermsModified", "date" ).
+        put( "tiffMake", "make" ).
+        put( "tiffModel", "model" ).
+        put( "exifSubifdLensModel", "lens" ).
+        put( "exifIsospeedratings", "iso" ).
+        put( "exifSubifdFocalLength", "focalLength" ).
+        put( "exifSubifdExposureBiasValue", "exposureBias" ).
+        put( "exifSubifdApertureValue", "aperture" ).
+        put( "exifSubifdExposureTime", "shutterTime" ).
+        put( "exifSubifdWhiteBalanceMode", "whiteBalance" ).
+        put( "exifSubifdExposureProgram", "exposureProgram" ).
+        put( "exifSubifdMeteringMode", "meteringMode" ).
+        put( "exifSubifdExposureMode", "exposureMode" ).
+        put( "exifIfd0Orientation", "orientation" ).
+        put( "globalAltitude", "altitude" ).
+        put( "exifSubifdFlash", "flash" ).
         build();
 
     private static final String GEO_LONGITUDE = "geoLong";
