@@ -55,18 +55,9 @@ public class PushNodesCommand
 
     public InternalPushNodesResult execute()
     {
-        refresh( RefreshMode.ALL );
-
-        final InternalPushNodesResult result = pushNodes();
-
-        refresh( RefreshMode.ALL );
-
-        return result;
-    }
-
-    private InternalPushNodesResult pushNodes()
-    {
         final Context context = ContextAccessor.current();
+
+        refresh( RefreshMode.ALL );
 
         final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( ids, InternalContext.from( context ) );
 
@@ -136,6 +127,8 @@ public class PushNodesCommand
 
         final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
         this.nodeStorageService.push( result.getPushNodeEntries(), pushListener, pushContext );
+
+        refresh( RefreshMode.ALL );
 
         return result;
     }

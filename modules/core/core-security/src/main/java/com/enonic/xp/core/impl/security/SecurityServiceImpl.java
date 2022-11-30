@@ -1104,8 +1104,6 @@ public final class SecurityServiceImpl
                     ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).overwriteChildPermissions( false ).build();
                 nodeService.applyPermissions( applyPermissions );
 
-                this.nodeService.refresh( RefreshMode.ALL );
-
                 return idProviderNode;
             } );
 
@@ -1179,8 +1177,6 @@ public final class SecurityServiceImpl
                     ApplyNodePermissionsParams.create().nodeId( idProviderNode.id() ).overwriteChildPermissions( false ).build();
                 nodeService.applyPermissions( applyPermissions );
             }
-
-            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
 

@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 
 
 final class DeleteContentCommand
@@ -77,8 +76,6 @@ final class DeleteContentCommand
         result.addUnpublished( unpublishedContents );
 
         final NodeIds deletedNodes = this.nodeService.deleteById( nodeId, this );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes ) );
 

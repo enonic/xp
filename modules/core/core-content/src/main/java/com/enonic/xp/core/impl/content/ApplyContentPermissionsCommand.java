@@ -5,7 +5,6 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.RefreshMode;
 
 
 final class ApplyContentPermissionsCommand
@@ -32,8 +31,6 @@ final class ApplyContentPermissionsCommand
             .build();
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsParams );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return ApplyContentPermissionsResult.create()
             .setSucceedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSucceedNodes().getPaths() ) )

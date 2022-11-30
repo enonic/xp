@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.branch;
 
+import java.util.Collection;
+
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -14,9 +16,7 @@ public interface BranchService
 
     String store( NodeBranchEntry nodeBranchEntry, NodePath previousPath, InternalContext context );
 
-    void delete( NodeId nodeId, InternalContext context );
-
-    void delete( NodeIds nodeIds, InternalContext context );
+    void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
     NodeBranchEntry get( NodeId nodeId, InternalContext context );
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -172,10 +173,16 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final List<NodeBranchEntry> entries, final InternalContext context )
     {
-        branchService.delete( nodeIds, context );
-        indexDataService.delete( nodeIds, context );
+        if ( entries.isEmpty() )
+        {
+            return;
+        }
+
+        branchService.delete( entries, context );
+        indexDataService.delete(
+            NodeIds.from( entries.stream().map( NodeBranchEntry::getNodeId ).collect( ImmutableSet.toImmutableSet() ) ), context );
     }
 
     @Override

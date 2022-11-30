@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
@@ -79,9 +78,7 @@ abstract class AbstractDeleteNodeCommand
 
         for ( final List<NodeBranchEntry> batch : Iterables.partition( list, BATCH_SIZE ) )
         {
-            final NodeIds nodeIdsBatch =
-                NodeIds.from( batch.stream().map( NodeBranchEntry::getNodeId ).collect( ImmutableSet.toImmutableSet() ) );
-            this.nodeStorageService.delete( nodeIdsBatch, InternalContext.from( context ) );
+            this.nodeStorageService.delete( batch, InternalContext.from( context ) );
 
             if ( deleteNodeListener != null )
             {

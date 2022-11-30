@@ -26,12 +26,15 @@ import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.User;
 
@@ -41,7 +44,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 
 final class ArchiveContentCommand
-    extends AbstractArchiveCommand
+    extends AbstractContentCommand
     implements MoveNodeListener
 {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
@@ -102,14 +105,14 @@ final class ArchiveContentCommand
         final ContentIds unpublishedContents = unpublish( contentId, descendantContents );
         result.addUnpublished( unpublishedContents );
 
-        final Node nodeToArchive = updateProperties( nodeId, descendants );
+        final Node node = nodeService.getById( nodeId );
 
-        rename( nodeToArchive );
+        rename( node );
         move( nodeId );
 
-        this.nodeService.refresh( RefreshMode.ALL );
+        updatePropertiesAndCommit( nodeId, descendants );
 
-        commitNode( nodeId, ContentConstants.ARCHIVE_COMMIT_PREFIX );
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         return result.addArchived( contentId ).addArchived( descendantContents ).build();
     }
@@ -141,23 +144,33 @@ final class ArchiveContentCommand
             .getUnpublishedContents();
     }
 
-    private Node updateProperties( final NodeId nodeId, NodeIds descendants )
+    private void updatePropertiesAndCommit( final NodeId nodeId, NodeIds descendants )
     {
+        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
+
         final Instant now = Instant.now();
         final String archivedBy = getCurrentUser().getKey().toString();
 
-        descendants.forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
-            toBeEdited.data.setInstant( ARCHIVED_TIME, now );
-            toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
-        } ).build() ) );
+        descendants.forEach( id -> {
+            final Node updated = nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
+                toBeEdited.data.setInstant( ARCHIVED_TIME, now );
+                toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
+            } ).build() );
+            routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
+        } );
 
-        return nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
+        final Node updated = nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
             toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
                                        ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
             toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
             toBeEdited.data.setInstant( ARCHIVED_TIME, now );
             toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
         } ).build() );
+        routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
+
+        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.ARCHIVE_COMMIT_PREFIX ).build(),
+                            routableNodeVersionIds.build() );
+
     }
 
     private Node rename( final Node node )
@@ -209,7 +222,7 @@ final class ArchiveContentCommand
     }
 
     public static class Builder
-        extends AbstractArchiveCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private final ArchiveContentParams params;
 

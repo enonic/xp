@@ -20,7 +20,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.security.RoleKeys;
@@ -140,8 +139,6 @@ public class PublishContentCommand
                 publishContentListener.contentPushed( count );
             }
         } );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 

@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.issue;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.RefreshMode;
 
 public class DeleteIssueCommentCommand
     extends AbstractIssueCommand
@@ -27,7 +26,6 @@ public class DeleteIssueCommentCommand
 
         NodeIds deletedIds = nodeService.deleteById( params.getComment() );
 
-        nodeService.refresh( RefreshMode.ALL );
         return new DeleteIssueCommentResult( deletedIds );
     }
 

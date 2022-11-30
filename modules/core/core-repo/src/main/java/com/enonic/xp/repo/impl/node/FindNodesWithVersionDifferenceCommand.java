@@ -24,8 +24,6 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final Branch target;
 
-    private final int size;
-
     private final NodeIds excludes;
 
     private final NodeSearchService nodeSearchService;
@@ -39,7 +37,6 @@ public class FindNodesWithVersionDifferenceCommand
         nodePath = builder.nodePath;
         source = builder.source;
         target = builder.target;
-        size = builder.size;
         nodeSearchService = builder.nodeSearchService;
         this.nodeStorageService = builder.nodeStorageService;
         this.excludes = builder.excludes;
@@ -56,13 +53,13 @@ public class FindNodesWithVersionDifferenceCommand
 
         final ExcludeEntries excludeEntries = getExcludePaths( context );
 
-        final SearchResult result = this.nodeSearchService.query( NodeVersionDiffQuery.create().
-            source( source ).
-            target( target ).
-            nodePath( nodePath ).
-            excludes( excludeEntries ).
-            size( this.size ).
-            batchSize( BATCH_SIZE ).
+        final SearchResult result = this.nodeSearchService.query( NodeVersionDiffQuery.create()
+                                                                      .source( source )
+                                                                      .target( target )
+                                                                      .nodePath( nodePath )
+                                                                      .excludes( excludeEntries )
+                                                                      .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                      .batchSize( BATCH_SIZE ).
             build(), SingleRepoStorageSource.create( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
 
         return NodeVersionDiffResultFactory.create( result );
@@ -101,12 +98,9 @@ public class FindNodesWithVersionDifferenceCommand
 
         private NodeIds excludes = NodeIds.empty();
 
-        private int size = NodeSearchService.GET_ALL_SIZE_FLAG;
-
         private Builder()
         {
         }
-
 
         public Builder searchService( final NodeSearchService nodeSearchService )
         {
@@ -146,12 +140,6 @@ public class FindNodesWithVersionDifferenceCommand
         public Builder excludes( final NodeIds nodeIds )
         {
             this.excludes = nodeIds;
-            return this;
-        }
-
-        public Builder size( final int val )
-        {
-            size = val;
             return this;
         }
     }

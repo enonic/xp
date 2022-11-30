@@ -42,7 +42,6 @@ public class VersionServiceImpl
     public void delete( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         storageDao.delete( DeleteRequests.create()
-                               .forceRefresh( false )
                                .ids( List.of( nodeVersionId.toString() ) )
                                .settings( createStorageSettings( context ) )
                                .build() );

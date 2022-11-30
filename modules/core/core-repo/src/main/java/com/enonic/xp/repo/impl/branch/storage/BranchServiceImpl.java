@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -116,31 +117,12 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void delete( final NodeId nodeId, final InternalContext context )
+    public void delete( final Collection<NodeBranchEntry> entries, final InternalContext context )
     {
-        final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
-
-        if ( nodeBranchEntry == null )
-        {
-            return;
-        }
-
-        storageDao.delete( BranchDeleteRequestFactory.create( nodeId, context ) );
-
-        pathCache.evict( createPath( nodeBranchEntry.getNodePath(), context ) );
-    }
-
-    @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
-    {
-        final NodeBranchEntries nodeBranchEntries = getIgnoreOrder( nodeIds, context );
-
-        nodeBranchEntries.forEach( entry -> pathCache.evict( createPath( entry.getNodePath(), context ) ) );
-
+        entries.stream().map( NodeBranchEntry::getNodePath ).forEach( path -> pathCache.evict( createPath( path, context ) ) );
         storageDao.delete( DeleteRequests.create()
-                               .forceRefresh( false )
-                               .ids( nodeIds.stream()
-                                         .map( nodeId -> BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
+                               .ids( entries.stream()
+                                         .map( entry -> BranchDocumentId.from( entry.getNodeId(), context.getBranch() ).toString() )
                                          .collect( Collectors.toList() ) )
                                .settings( createStorageSettings( context.getRepositoryId() ) )
                                .build() );
@@ -216,7 +198,6 @@ public class BranchServiceImpl
         return new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath );
     }
 
-
     private NodeBranchEntry doGetByPath( final NodePath nodePath, final InternalContext context )
     {
         final BranchDocumentId branchDocumentId =
@@ -279,10 +260,7 @@ public class BranchServiceImpl
         {
             getByIdsRequest.add( GetByIdRequest.create()
                                      .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
-                                     .storageSettings( StorageSource.create()
-                                                           .storageName( StoreStorageName.from( context.getRepositoryId() ) )
-                                                           .storageType( StaticStorageType.BRANCH )
-                                                           .build() )
+                                     .storageSettings( createStorageSettings( context.getRepositoryId() ) )
                                      .returnFields( BRANCH_RETURN_FIELDS )
                                      .routing( nodeId.toString() )
                                      .build() );
@@ -308,7 +286,8 @@ public class BranchServiceImpl
             return NodeBranchEntries.empty();
         }
 
-        final NodeBranchQuery query = NodeBranchQuery.create().addQueryFilter( ValueFilter.create()
+        final NodeBranchQuery query = NodeBranchQuery.create()
+            .addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
                                  .build() )

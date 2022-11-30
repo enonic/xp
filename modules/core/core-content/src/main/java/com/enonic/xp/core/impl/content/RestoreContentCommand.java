@@ -23,11 +23,14 @@ import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.UpdateNodeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
@@ -37,7 +40,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 import static com.google.common.base.Strings.nullToEmpty;
 
 final class RestoreContentCommand
-    extends AbstractArchiveCommand
+    extends AbstractContentCommand
     implements MoveNodeListener
 {
     private final RestoreContentParams params;
@@ -98,11 +101,9 @@ final class RestoreContentCommand
 
         final Node movedNode = move( builder.build(), originalSourceName );
 
-        updateProperties( movedNode, isRootContent );
+        updatePropertiesAndCommit( movedNode, isRootContent );
 
         this.nodeService.refresh( RefreshMode.ALL );
-
-        commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
 
         result.addRestored( ContentId.from( movedNode.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
@@ -166,25 +167,33 @@ final class RestoreContentCommand
         return movedNode;
     }
 
-    private void updateProperties( final Node node, final boolean isRootContent )
+    private void updatePropertiesAndCommit( final Node node, final boolean isRootContent )
     {
+        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         final FindNodesByParentResult childrenToRestore =
             nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( node.id() ).build() );
 
-        childrenToRestore.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
-            toBeEdited.data.removeProperties( ARCHIVED_TIME );
-            toBeEdited.data.removeProperties( ARCHIVED_BY );
-        } ).build() ) );
+        childrenToRestore.getNodeIds().forEach( id -> {
+            final Node updated = nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
+                toBeEdited.data.removeProperties( ARCHIVED_TIME );
+                toBeEdited.data.removeProperties( ARCHIVED_BY );
+            } ).build() );
+            routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
+        } );
 
         if ( isRootContent )
         {
-            nodeService.update( UpdateNodeParams.create().id( node.id() ).editor( toBeEdited -> {
+            final Node updated = nodeService.update( UpdateNodeParams.create().id( node.id() ).editor( toBeEdited -> {
                 toBeEdited.data.removeProperties( ORIGINAL_PARENT_PATH );
                 toBeEdited.data.removeProperties( ORIGINAL_NAME );
                 toBeEdited.data.removeProperties( ARCHIVED_TIME );
                 toBeEdited.data.removeProperties( ARCHIVED_BY );
             } ).build() );
+            routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
         }
+
+        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.RESTORE_COMMIT_PREFIX ).build(),
+                            routableNodeVersionIds.build() );
     }
 
     private NodePath getParentPathToRestore( final Node node, final boolean isRootContent )
@@ -243,7 +252,7 @@ final class RestoreContentCommand
     }
 
     public static class Builder
-        extends AbstractArchiveCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private final RestoreContentParams params;
 

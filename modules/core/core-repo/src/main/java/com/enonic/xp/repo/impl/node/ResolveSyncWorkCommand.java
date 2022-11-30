@@ -28,7 +28,6 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -143,7 +142,6 @@ public class ResolveSyncWorkCommand
             source( ContextAccessor.current().getBranch() ).
             nodePath( nodePath ).
             excludes( this.excludedIds ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).
             build().

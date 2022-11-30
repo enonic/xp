@@ -87,7 +87,7 @@ public class StoreRequest
 
         private StorageSource settings;
 
-        private boolean forceRefresh = false;
+        private boolean forceRefresh;
 
         private int timeout = 30;
 
