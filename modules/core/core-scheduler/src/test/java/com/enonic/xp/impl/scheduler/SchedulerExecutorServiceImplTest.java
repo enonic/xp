@@ -104,7 +104,7 @@ class SchedulerExecutorServiceImplTest
         final SchedulableTask task = mockTask( "task1" );
         service.scheduleAtFixedRate( task, 0, 10, TimeUnit.MILLISECONDS );
 
-        Thread.sleep( 50 );
+        Thread.sleep( 500 );
         verify( task, atLeast( 4 ) ).run();
     }
 

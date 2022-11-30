@@ -105,12 +105,12 @@ final class ArchiveContentCommand
         final ContentIds unpublishedContents = unpublish( contentId, descendantContents );
         result.addUnpublished( unpublishedContents );
 
-        final Node node = nodeService.getById( nodeId );
+        final Node originalNode = nodeService.getById( nodeId );
 
-        rename( node );
+        rename( originalNode );
         move( nodeId );
 
-        updatePropertiesAndCommit( nodeId, descendants );
+        updatePropertiesAndCommit( nodeId, originalNode.parentPath(), originalNode.name(), descendants );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
@@ -144,7 +144,8 @@ final class ArchiveContentCommand
             .getUnpublishedContents();
     }
 
-    private void updatePropertiesAndCommit( final NodeId nodeId, NodeIds descendants )
+    private void updatePropertiesAndCommit( final NodeId nodeId, final NodePath originalParent, final NodeName originalName,
+                                            NodeIds descendants )
     {
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
 
@@ -161,8 +162,8 @@ final class ArchiveContentCommand
 
         final Node updated = nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
             toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
-                                       ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
-            toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
+                                       ContentNodeHelper.translateNodePathToContentPath( originalParent ).toString() );
+            toBeEdited.data.setString( ORIGINAL_NAME, originalName.toString() );
             toBeEdited.data.setInstant( ARCHIVED_TIME, now );
             toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
         } ).build() );

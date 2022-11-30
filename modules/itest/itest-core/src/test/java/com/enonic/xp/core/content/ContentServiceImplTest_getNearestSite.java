@@ -111,7 +111,7 @@ public class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
         final Content child = createContent( site.getPath(), ContentPublishInfo.create()
             .from( Instant.now().plus( Duration.ofDays( 1 ) ) )
-            .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
+            .to( Instant.now().plus( Duration.ofDays( 2 ) ) )
             .build() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
