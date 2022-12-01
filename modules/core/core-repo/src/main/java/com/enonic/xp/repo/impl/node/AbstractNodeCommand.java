@@ -57,23 +57,15 @@ abstract class AbstractNodeCommand
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
-    AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
-                                           final AccessControlList permissions )
+    AccessControlList evaluatePermissions( final NodePath parentPath )
     {
-        if ( !inheritPermissions )
-        {
-            return permissions;
-        }
-        else
-        {
             final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) );
 
             if ( node == null || node.getPermissions().isEmpty() )
             {
-                throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath + "]" );
+                throw new IllegalStateException( String.format( "Could not evaluate permissions for node [%s]", parentPath ) );
             }
             return node.getPermissions();
-        }
     }
 
     public abstract static class Builder<B extends Builder>

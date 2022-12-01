@@ -52,7 +52,7 @@ public abstract class AbstractGetRequest
 
     public static class Builder<B extends Builder>
     {
-        private SearchPreference searchPreference = SearchPreference.LOCAL;
+        private SearchPreference searchPreference;
 
         private StorageSource storageSource;
 

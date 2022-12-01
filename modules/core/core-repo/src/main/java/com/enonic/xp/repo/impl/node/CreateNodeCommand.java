@@ -41,12 +41,15 @@ public final class CreateNodeCommand
 
     private final BinaryService binaryService;
 
+    private final boolean skipVerification;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.timestamp = builder.timestamp;
         this.binaryService = builder.binaryService;
+        this.skipVerification = builder.skipVerification;
     }
 
     public static Builder create()
@@ -64,7 +67,10 @@ public final class CreateNodeCommand
         Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
         Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
 
-        NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
+        if ( !skipVerification )
+        {
+            NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
+        }
         final Node parentNode = NodeHelper.runAsAdmin( this::getParentNode );
 
         requireContextUserPermission( Permission.CREATE, parentNode );
@@ -132,8 +138,7 @@ public final class CreateNodeCommand
         {
             paramPermissions = NodeDefaultAclFactory.create( creator );
         }
-
-        return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
+        return  params.inheritPermissions() ? paramPermissions : evaluatePermissions( params.getParent() );
     }
 
     private Node getParentNode()
@@ -212,6 +217,8 @@ public final class CreateNodeCommand
 
         private BinaryService binaryService;
 
+        private boolean skipVerification;
+
         private Builder()
         {
             super();
@@ -237,6 +244,12 @@ public final class CreateNodeCommand
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder skipVerification( boolean skipVerification )
+        {
+            this.skipVerification = skipVerification;
             return this;
         }
 

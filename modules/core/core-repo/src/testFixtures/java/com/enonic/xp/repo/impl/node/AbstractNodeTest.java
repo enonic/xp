@@ -394,6 +394,7 @@ public abstract class AbstractNodeTest
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( createNodeParams )
+            .skipVerification( !refresh )
             .build().
             execute();
 

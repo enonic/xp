@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,6 +27,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeStorageException;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
@@ -166,7 +168,7 @@ public class StorageDaoImpl
         final StorageSource storageSource = request.getStorageSource();
         final GetRequest getRequest = new GetRequest( storageSource.getStorageName().getName() ).
             type( storageSource.getStorageType().getName() ).
-            preference( request.getSearchPreference().getName() ).
+            preference( Objects.requireNonNullElse( request.getSearchPreference(), SearchPreference.LOCAL ).getName() ).
             id( request.getId() );
 
         if ( request.getReturnFields().isNotEmpty() )
@@ -194,7 +196,8 @@ public class StorageDaoImpl
         }
 
         final MultiGetRequestBuilder multiGetRequestBuilder =
-            new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).setPreference( requests.getSearchPreference().getName() );
+            new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).setPreference(
+                Objects.requireNonNullElse( requests.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {

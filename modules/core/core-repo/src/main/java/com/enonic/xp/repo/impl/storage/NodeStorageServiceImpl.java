@@ -284,10 +284,7 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, true, context ).stream();
-        // .stream()
-        // .sorted(
-        //      Comparator.comparing( NodeBranchEntry::getNodeId, Ordering.explicit( nodeIds.stream().collect( Collectors.toList() ) ) ) );
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context ).stream();
         return doReturnNodes( stream, context );
     }
 
@@ -340,7 +337,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, false, context );
+        return this.branchService.get( nodeIds, context );
     }
 
     @Override

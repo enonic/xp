@@ -35,14 +35,15 @@ public class IndexDataServiceImpl
 
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
     {
-        return GetByIdRequest.create().
-            storageSettings( StorageSource.create().
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                build() ).
-            returnFields( returnFields ).
-            id( nodeId.toString() ).
-            build();
+        return GetByIdRequest.create()
+            .storageSettings( StorageSource.create()
+                                  .storageType( SearchStorageType.from( context.getBranch() ) )
+                                  .storageName( SearchStorageName.from( context.getRepositoryId() ) )
+                                  .build() )
+            .searchPreference( context.getSearchPreference() )
+            .returnFields( returnFields )
+            .id( nodeId.toString() )
+            .build();
     }
 
     @Override

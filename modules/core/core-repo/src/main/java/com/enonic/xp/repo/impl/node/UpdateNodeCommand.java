@@ -109,7 +109,7 @@ public final class UpdateNodeCommand
     {
         final NodePath parentPath = editedNode.path().getParentPath();
         final AccessControlList permissions =
-            evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
+            editedNode.inheritsPermissions() ? editedNode.getPermissions() : evaluatePermissions( parentPath );
 
         final Node.Builder updateNodeBuilder = Node.create( editedNode ).
             permissions( permissions );

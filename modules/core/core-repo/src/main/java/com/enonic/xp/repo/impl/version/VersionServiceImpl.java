@@ -55,11 +55,12 @@ public class VersionServiceImpl
 
     private NodeVersionMetadata doGetById( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final GetByIdRequest getByIdRequest = GetByIdRequest.create().
-            id( nodeVersionId.toString() ).
-            returnFields( VERSION_RETURN_FIELDS ).
-            storageSettings( createStorageSettings( context ) ).
-            build();
+        final GetByIdRequest getByIdRequest = GetByIdRequest.create()
+            .id( nodeVersionId.toString() )
+            .returnFields( VERSION_RETURN_FIELDS )
+            .storageSettings( createStorageSettings( context ) )
+            .searchPreference( context.getSearchPreference() )
+            .build();
 
         final GetResult getResult = this.storageDao.getById( getByIdRequest );
 

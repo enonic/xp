@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.enonic.xp.repo.impl.SearchPreference;
 
@@ -14,7 +13,7 @@ public class GetByIdsRequest
 
     public GetByIdsRequest( final SearchPreference searchPreference )
     {
-        this.searchPreference = Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL );
+        this.searchPreference =  searchPreference;
     }
 
     public GetByIdsRequest add( final GetByIdRequest request )
