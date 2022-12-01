@@ -64,9 +64,6 @@ public final class CreateNodeCommand
 
     public Node execute()
     {
-        Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
-        Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
-
         if ( !skipVerification )
         {
             NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
@@ -77,7 +74,7 @@ public final class CreateNodeCommand
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
-        final AccessControlList permissions = getAccessControlEntries( user );
+        final AccessControlList permissions = params.inheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
 
         final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
 
@@ -132,13 +129,16 @@ public final class CreateNodeCommand
 
     private AccessControlList getAccessControlEntries( final PrincipalKey creator )
     {
-        AccessControlList paramPermissions = params.getPermissions();
+        final AccessControlList paramPermissions = params.getPermissions();
 
         if ( paramPermissions == null || paramPermissions.isEmpty() )
         {
-            paramPermissions = NodeDefaultAclFactory.create( creator );
+            return NodeDefaultAclFactory.create( creator );
         }
-        return  params.inheritPermissions() ? paramPermissions : evaluatePermissions( params.getParent() );
+        else
+        {
+            return paramPermissions;
+        }
     }
 
     private Node getParentNode()

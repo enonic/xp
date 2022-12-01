@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -107,13 +106,14 @@ public final class UpdateNodeCommand
 
     private Node createUpdatedNode( final Node editedNode )
     {
-        final NodePath parentPath = editedNode.path().getParentPath();
-        final AccessControlList permissions =
-            editedNode.inheritsPermissions() ? editedNode.getPermissions() : evaluatePermissions( parentPath );
-
-        final Node.Builder updateNodeBuilder = Node.create( editedNode ).
-            permissions( permissions );
-        return updateNodeBuilder.build();
+        if ( editedNode.inheritsPermissions() )
+        {
+            final NodePath parentPath = editedNode.path().getParentPath();
+            return Node.create( editedNode )
+                .permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() )
+                .build();
+        }
+        return editedNode;
     }
 
     public static Builder create()

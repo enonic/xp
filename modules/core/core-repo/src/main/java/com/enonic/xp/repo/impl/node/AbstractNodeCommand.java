@@ -11,7 +11,6 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractNodeCommand
@@ -55,17 +54,6 @@ abstract class AbstractNodeCommand
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-    }
-
-    AccessControlList evaluatePermissions( final NodePath parentPath )
-    {
-            final Node node = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) );
-
-            if ( node == null || node.getPermissions().isEmpty() )
-            {
-                throw new IllegalStateException( String.format( "Could not evaluate permissions for node [%s]", parentPath ) );
-            }
-            return node.getPermissions();
     }
 
     public abstract static class Builder<B extends Builder>
