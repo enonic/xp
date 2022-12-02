@@ -164,10 +164,9 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void create_virtual_application()
-        throws Exception
+    void create_virtual_application()
     {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
+        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).name( "app-node" ).parentPath( NodePath.ROOT ).build();
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
@@ -953,13 +952,19 @@ public class ApplicationServiceImplTest
                     .hits( 1 )
                     .build() );
 
-                return Node.create().id( NodeId.from( createNodeParams.getName() ) ).parentPath( NodePath.ROOT ).build();
+                return Node.create()
+                    .id( NodeId.from( createNodeParams.getName() ) )
+                    .name( createNodeParams.getName() )
+                    .parentPath( NodePath.ROOT )
+                    .build();
 
             }
             if ( appNodeNames.contains( createNodeParams.getName() ) )
             {
                 return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) ).parentPath( NodePath.create( "/app1" ).build() ).build();
+                    .id( NodeId.from( createNodeParams.getName() ) )
+                    .name( createNodeParams.getName() )
+                    .parentPath( NodePath.create( "/app1" ).build() ).build();
             }
 
             return null;

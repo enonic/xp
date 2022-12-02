@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 
 public class AuditLogSerializer
@@ -39,6 +40,7 @@ public class AuditLogSerializer
         return CreateNodeParams.create().
             nodeType( AuditLogConstants.NODE_TYPE ).
             inheritPermissions( true ).
+            parent( NodePath.ROOT ).
             data( tree );
     }
 

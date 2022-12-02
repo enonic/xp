@@ -39,7 +39,7 @@ public class UpdateIssueCommentCommandTest
     public void update()
     {
         final Node issueNode =
-            Node.create().name( "parent-issue" ).path( NodePath.ROOT.toString() ).id( NodeId.from( UUID.randomUUID() ) ).build();
+            Node.create().name( "parent-issue" ).parentPath( NodePath.ROOT ).id( NodeId.from( UUID.randomUUID() ) ).build();
 
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
 

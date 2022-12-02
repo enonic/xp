@@ -13,8 +13,6 @@ public class NodeFromNodeVersionBuilder
             name( metaData.getNodePath().getName() ).
             parentPath( metaData.getNodePath().getParentPath() ).
             timestamp( metaData.getTimestamp() ).
-            name( metaData.getNodePath().getName() ).
-            parentPath( metaData.getNodePath().getParentPath() ).
             nodeVersionId( metaData.getNodeVersionId() ).
             build();
     }

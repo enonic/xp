@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repository.RepositoryService;
@@ -86,6 +87,8 @@ public class VirtualAppService
         requireAdminRole();
 
         VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params.getKey() ) );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         return VirtualAppFactory.create( params.getKey(), nodeService );
     }
