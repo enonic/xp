@@ -57,7 +57,7 @@ public class CleanUpAuditLogCommand
 
         final NodeQuery query = createQuery();
 
-        nodeService.refresh( RefreshMode.ALL );
+        nodeService.refresh( RefreshMode.SEARCH );
         FindNodesByQueryResult nodesToDelete = nodeService.findByQuery( query );
 
         long hits = nodesToDelete.getHits();

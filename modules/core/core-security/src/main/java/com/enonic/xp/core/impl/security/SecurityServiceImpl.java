@@ -998,9 +998,7 @@ public final class SecurityServiceImpl
                 doRemoveRelationships( principalKey );
                 doRemoveMemberships( principalKey );
 
-                final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
-                this.nodeService.refresh( RefreshMode.ALL );
-                return nodes;
+                return this.nodeService.deleteByPath( principalKey.toPath() );
             } );
         }
         catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions

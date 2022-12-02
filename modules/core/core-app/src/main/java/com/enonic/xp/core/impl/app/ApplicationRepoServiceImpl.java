@@ -74,7 +74,6 @@ public class ApplicationRepoServiceImpl
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
         this.nodeService.deleteByPath( NodePath.create( APPLICATION_PATH, applicationKey.getName() ).build() );
-        this.nodeService.refresh( RefreshMode.ALL );
     }
 
     @Override

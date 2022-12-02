@@ -9,6 +9,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -48,6 +49,8 @@ final class DynamicResourceManager
             final Node schemaNode = nodeService.create(
                 CreateNodeParams.create().parent( resourceFolder.path() ).name( name + ".xml" ).data( resourceData ).inheritPermissions( true ).build() );
 
+            nodeService.refresh( RefreshMode.ALL );
+
             final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
             final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
             final NodePath resourceKeyPath = schemaNode.path().removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
@@ -71,6 +74,8 @@ final class DynamicResourceManager
                                                             .path( NodePath.create( folderPath, name + ".xml" ).build() )
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .build() );
+
+            nodeService.refresh( RefreshMode.ALL );
 
             final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
             final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );

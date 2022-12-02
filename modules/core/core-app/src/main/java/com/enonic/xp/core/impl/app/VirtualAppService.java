@@ -88,8 +88,6 @@ public class VirtualAppService
 
         VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params.getKey() ) );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         return VirtualAppFactory.create( params.getKey(), nodeService );
     }
 
@@ -109,6 +107,7 @@ public class VirtualAppService
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
         initSiteNodes( virtualAppNode.path() );
+        nodeService.refresh( RefreshMode.ALL );
 
         return virtualAppNode;
     }
