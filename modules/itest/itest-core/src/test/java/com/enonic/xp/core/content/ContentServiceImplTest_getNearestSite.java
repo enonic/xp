@@ -114,13 +114,32 @@ public class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
         final Content child = createContent( site.getPath(), ContentPublishInfo.create()
             .from( Instant.now().plus( Duration.ofDays( 1 ) ) )
-            .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
+            .to( Instant.now().plus( Duration.ofDays( 2 ) ) )
             .build() );
         this.contentService.publish(
             PushContentParams.create().target( ContentConstants.BRANCH_MASTER ).contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = authorizedMasterContext().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
         assertNull( fetchedSite );
+    }
+
+    @Test
+    public void testPublishInfo()
+    {
+        final Content site = createSite();
+        this.contentService.publish( PushContentParams.create()
+                                         .contentIds( ContentIds.from( site.getId() ) )
+                                         .contentPublishInfo( ContentPublishInfo.create()
+                                                                  .from( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
+                                                                  .to( Instant.parse( "2022-12-03T14:00:00.669487800Z" ) )
+                                                                  .build() )
+                                         .build() );
+
+        final Content publishedContent = ctxMaster().callWith( () -> this.contentService.getById( site.getId() ) );
+        assertNotNull( publishedContent );
+        assertNotNull( publishedContent.getPublishInfo() );
+        assertEquals( "2022-12-01T14:00:00.668Z", publishedContent.getPublishInfo().getFrom().toString() );
+        assertEquals( "2022-12-03T14:00:00.669Z", publishedContent.getPublishInfo().getTo().toString() );
     }
 
     @Test
