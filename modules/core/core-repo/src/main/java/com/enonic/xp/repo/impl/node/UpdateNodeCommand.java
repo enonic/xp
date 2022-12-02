@@ -66,17 +66,17 @@ public final class UpdateNodeCommand
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( Node.create( editedNode ).
-            timestamp( Instant.now( CLOCK ) ).
-            attachedBinaries( updatedBinaries ).
-            build() );
+        final Node.Builder builder = Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries );
+        if ( editedNode.inheritsPermissions() )
+        {
+            final NodePath parentPath = editedNode.path().getParentPath();
+            builder.permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() );
+        }
+        final Node updatedNode = builder.build();
 
         if ( !this.params.isDryRun() )
         {
-            return StoreNodeCommand.create( this ).
-                node( updatedNode ).
-                build().
-                execute();
+            return StoreNodeCommand.create( this ).node( updatedNode ).build().execute();
         }
 
         return updatedNode;
@@ -102,18 +102,6 @@ public final class UpdateNodeCommand
             }
         }
         return persistedNode;
-    }
-
-    private Node createUpdatedNode( final Node editedNode )
-    {
-        if ( editedNode.inheritsPermissions() )
-        {
-            final NodePath parentPath = editedNode.path().getParentPath();
-            return Node.create( editedNode )
-                .permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() )
-                .build();
-        }
-        return editedNode;
     }
 
     public static Builder create()

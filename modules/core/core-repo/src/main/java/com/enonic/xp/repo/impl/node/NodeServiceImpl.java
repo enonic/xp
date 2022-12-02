@@ -914,6 +914,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Node createRootNode( final CreateRootNodeParams params )
     {
         verifyContext();

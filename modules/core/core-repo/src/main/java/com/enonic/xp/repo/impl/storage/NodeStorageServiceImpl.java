@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
@@ -291,7 +292,9 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodePaths, context ).stream();
+        final Stream<NodeBranchEntry> stream = nodePaths.stream()
+            .map( nodePath -> this.branchService.get( nodePath, context ) )
+            .filter( Objects::nonNull );
         return doReturnNodes( stream, context );
     }
 

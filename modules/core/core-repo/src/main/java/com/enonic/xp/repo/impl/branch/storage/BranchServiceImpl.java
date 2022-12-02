@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,7 +19,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -183,47 +181,7 @@ public class BranchServiceImpl
     @Override
     public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {
-        return doGetByPath( nodePath, context );
-    }
-
-    @Override
-    public NodeBranchEntries get( final NodePaths nodePaths, final InternalContext context )
-    {
-        final List<NodeBranchEntry> nodeBranchEntries = nodePaths.stream()
-            .map( nodePath -> doGetByPath( nodePath, context ) )
-            .filter( Objects::nonNull )
-            .collect( Collectors.toList() );
-
-        return NodeBranchEntries.from( nodeBranchEntries );
-    }
-
-    @Override
-    public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
-    {
-        doCache( context.getRepositoryId(), nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
-    }
-
-    @Override
-    public void evictPath( final NodePath nodePath, final InternalContext context )
-    {
-        pathCache.evict( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
-    }
-
-    @Override
-    public void evictAllPaths()
-    {
-        pathCache.evictAll();
-    }
-
-    private BranchPath createPath( final NodePath nodePath, final InternalContext context )
-    {
-        return new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath );
-    }
-
-    private NodeBranchEntry doGetByPath( final NodePath nodePath, final InternalContext context )
-    {
-        final BranchDocumentId branchDocumentId =
-            this.pathCache.get( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
+        final BranchDocumentId branchDocumentId = this.pathCache.get( createPath( nodePath, context ) );
 
         if ( branchDocumentId != null )
         {
@@ -269,17 +227,40 @@ public class BranchServiceImpl
         return null;
     }
 
+    @Override
+    public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    {
+        doCache( context.getRepositoryId(), nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
+    }
+
+    @Override
+    public void evictPath( final NodePath nodePath, final InternalContext context )
+    {
+        pathCache.evict( createPath( nodePath, context ) );
+    }
+
+    @Override
+    public void evictAllPaths()
+    {
+        pathCache.evictAll();
+    }
+
     private void doCache( final RepositoryId repositoryId, final NodePath nodePath, final BranchDocumentId branchDocumentId )
     {
         pathCache.cache( new BranchPath( repositoryId, branchDocumentId.getBranch(), nodePath ), branchDocumentId );
     }
 
-    private StorageSource createStorageSettings( final RepositoryId repositoryId )
+    private static StorageSource createStorageSettings( final RepositoryId repositoryId )
     {
         return StorageSource.create()
             .storageName( StoreStorageName.from( repositoryId ) )
             .storageType( StaticStorageType.BRANCH )
             .build();
+    }
+
+    private static BranchPath createPath( final NodePath previousPath, final InternalContext context )
+    {
+        return new BranchPath( context.getRepositoryId(), context.getBranch(), previousPath );
     }
 
     @Reference
