@@ -75,11 +75,11 @@ public class FindNodeIdsByParentCommand
         final SearchResult result =
             this.nodeSearchService.query( createFindChildrenQuery( parentPath ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        return FindNodesByParentResult.create().
-            nodeIds( NodeIds.from( result.getIds() ) ).
-            totalHits( result.getTotalHits() ).
-            hits( result.getNumberOfHits() ).
-            build();
+        return FindNodesByParentResult.create()
+            .nodeIds( NodeIds.from( result.getIds() ) )
+            .totalHits( result.getTotalHits() )
+            .hits( result.getNumberOfHits() )
+            .build();
     }
 
     private NodeQuery createFindChildrenQuery( final NodePath parentPath )
@@ -106,10 +106,14 @@ public class FindNodeIdsByParentCommand
         return builder.build();
     }
 
-    private ChildOrder resolveChildOrder(final NodePath parentPath)
+    private ChildOrder resolveChildOrder( final NodePath parentPath )
     {
-        return this.childOrder == null || this.childOrder.isEmpty() ? NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) )
-            .getChildOrder() : this.childOrder;
+        if ( this.childOrder == null || this.childOrder.isEmpty() )
+        {
+            final Node parentNode = NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) );
+            return parentNode == null ? ChildOrder.defaultOrder() : parentNode.getChildOrder();
+        }
+        return this.childOrder;
     }
 
     private void createParentFilter( final NodePath parentPath, final NodeQuery.Builder builder )
