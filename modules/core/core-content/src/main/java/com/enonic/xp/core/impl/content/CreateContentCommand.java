@@ -125,6 +125,10 @@ final class CreateContentCommand
             {
                 nodeService.refresh( RefreshMode.ALL );
             }
+            else
+            {
+                nodeService.refresh( RefreshMode.STORAGE );
+            }
 
             return translator.fromNode( createdNode, false );
         }
