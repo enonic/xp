@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public final class ContentPublishInfo
@@ -13,9 +14,9 @@ public final class ContentPublishInfo
 
     private ContentPublishInfo( final Builder builder )
     {
-        from = builder.from;
-        to = builder.to;
-        first = builder.first;
+        from = builder.from != null ? builder.from.truncatedTo( ChronoUnit.MILLIS ) : null;
+        to = builder.to != null ? builder.to.truncatedTo( ChronoUnit.MILLIS ) : null;
+        first = builder.first != null ? builder.first.truncatedTo( ChronoUnit.MILLIS ) : null;
     }
 
     public static Builder create()
