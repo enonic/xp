@@ -24,7 +24,7 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
 }
 
 function checkRequiredValue(value: unknown, name: string): void {
-    if (typeof value === "undefined" || value === null) {
+    if (typeof value === 'undefined' || value === null) {
         throw `Parameter '${String(name)}' is required`;
     }
 }
@@ -295,7 +295,7 @@ export function getMemberships(principalKey: UserKey | GroupKey, transitive = fa
 }
 
 interface GetMembersHandler {
-    setPrincipalKey(value: GroupKey | RoleKey ): void;
+    setPrincipalKey(value: GroupKey | RoleKey): void;
 
     getMembers(): (User | Group)[];
 }

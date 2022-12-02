@@ -194,6 +194,20 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
+    public void dslQueryDslExistsExpr()
+    {
+        Mockito.doReturn( FindNodesByQueryResult.create()
+                              .totalHits( 12902 )
+                              .addNodeHit(
+                                  NodeHit.create().nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).score( 1.23f ).build() )
+                              .addNodeHit(
+                                  NodeHit.create().nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).score( 1.7f ).build() )
+                              .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryDslExistsExpr" );
+    }
+
+    @Test
     public void dslSortInvalid()
         throws Exception
     {

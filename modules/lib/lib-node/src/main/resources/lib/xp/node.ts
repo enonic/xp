@@ -328,6 +328,11 @@ export interface StemmedDslExpression {
     operator?: DslOperator;
 }
 
+export interface ExistsDslExpression {
+    field: string;
+    boost?: number;
+}
+
 export interface BooleanDslExpression {
     should?: QueryDsl | QueryDsl[];
     must?: QueryDsl | QueryDsl[];
@@ -356,6 +361,8 @@ export type QueryDsl = {
     in: InDslExpression;
 } | {
     term: TermDslExpression;
+} | {
+    exists: ExistsDslExpression;
 };
 
 export type SortDirection = 'ASC' | 'DESC';
