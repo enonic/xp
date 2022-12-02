@@ -243,6 +243,14 @@ public class QueryContentHandlerTest
     }
 
     @Test
+    public void dslQueryExistsDslExpr()
+        throws Exception
+    {
+        setupQuery( 3, false, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "queryExistsDslExpr" );
+    }
+
+    @Test
     public void testMinAggregation()
     {
         final SingleValueMetricAggregation minAgg = SingleValueMetricAggregation.create( "minPrice" ).value( 10.0 ).build();
