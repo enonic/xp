@@ -84,7 +84,7 @@ public class FindNodeIdsByParentCommand
 
     private NodeQuery createFindChildrenQuery( final NodePath parentPath )
     {
-        final ChildOrder order = resolveChildOrder();
+        final ChildOrder order = resolveChildOrder( parentPath );
 
         final NodeQuery.Builder builder = NodeQuery.create()
             .addQueryFilters( queryFilters )
@@ -106,7 +106,7 @@ public class FindNodeIdsByParentCommand
         return builder.build();
     }
 
-    private ChildOrder resolveChildOrder()
+    private ChildOrder resolveChildOrder(final NodePath parentPath)
     {
         return this.childOrder == null || this.childOrder.isEmpty() ? NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) )
             .getChildOrder() : this.childOrder;
