@@ -163,3 +163,21 @@ exports.filterInQuery = function () {
     assert.assertJsonEquals(expectedSortJson, result);
 };
 
+exports.queryDslExistsExpr = function () {
+    const result = repo.query({
+        'start': 0,
+        'count': 100,
+        'query':
+            {
+                boolean: {
+                    must: {
+                        exists: {
+                            field: 'displayName'
+                        }
+                    }
+                }
+            }
+    });
+    assert.assertJsonEquals(expectedSortJson, result);
+};
+
