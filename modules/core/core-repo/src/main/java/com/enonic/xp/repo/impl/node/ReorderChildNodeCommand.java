@@ -15,6 +15,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
@@ -118,7 +119,7 @@ public class ReorderChildNodeCommand
     {
         final Node updatedNode = Node.create( nodeToMove ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
 
-        return StoreNodeCommand.create( this ).node( updatedNode ).build().execute();
+        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final SearchResult result )

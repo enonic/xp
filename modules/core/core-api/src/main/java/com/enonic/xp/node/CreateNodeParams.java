@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;

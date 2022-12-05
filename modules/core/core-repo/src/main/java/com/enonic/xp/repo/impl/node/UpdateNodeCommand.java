@@ -5,12 +5,14 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.Permission;
 
@@ -76,7 +78,7 @@ public final class UpdateNodeCommand
 
         if ( !this.params.isDryRun() )
         {
-            return StoreNodeCommand.create( this ).node( updatedNode ).build().execute();
+            return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
         }
 
         return updatedNode;

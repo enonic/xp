@@ -115,22 +115,12 @@ final class CreateContentCommand
             .contentDataSerializer( this.contentDataSerializer )
             .siteService( this.siteService )
             .build()
-            .produce();
+            .produce().refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE ).build();
 
+        final Node createdNode;
         try
         {
-            final Node createdNode = nodeService.create( createNodeParams );
-
-            if ( params.isRefresh() )
-            {
-                nodeService.refresh( RefreshMode.ALL );
-            }
-            else
-            {
-                nodeService.refresh( RefreshMode.STORAGE );
-            }
-
-            return translator.fromNode( createdNode, false );
+            createdNode = nodeService.create( createNodeParams );
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
@@ -142,6 +132,8 @@ final class CreateContentCommand
         {
             throw new ContentAccessException( e );
         }
+
+        return translator.fromNode( createdNode, false );
     }
 
     private void validateBlockingChecks( final CreateContentParams params )

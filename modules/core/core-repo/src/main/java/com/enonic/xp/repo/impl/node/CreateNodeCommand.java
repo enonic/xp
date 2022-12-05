@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
@@ -94,12 +95,11 @@ public final class CreateNodeCommand
             attachedBinaries( attachedBinaries ).
             timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
 
-        final Node newNode = nodeBuilder.build();
 
-        return StoreNodeCommand.create( this ).
-            node( newNode ).
-            build().
-            execute();
+        final Node newNode = this.nodeStorageService.store( nodeBuilder.build(), InternalContext.from( ContextAccessor.current() ) );
+
+        refresh( params.getRefresh() );
+        return newNode;
     }
 
     private AttachedBinaries storeAndAttachBinaries()
