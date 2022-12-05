@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repository.RepositoryService;
@@ -106,6 +107,7 @@ public class VirtualAppService
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
         initSiteNodes( virtualAppNode.path() );
+        nodeService.refresh( RefreshMode.ALL );
 
         return virtualAppNode;
     }

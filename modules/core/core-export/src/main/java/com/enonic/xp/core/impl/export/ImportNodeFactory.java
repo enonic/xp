@@ -48,7 +48,7 @@ public class ImportNodeFactory
         {
             return Node.create( serializedNode ).
                 parentPath( this.nodeImportPath.getParentPath() ).
-                name( getNodeName() ).
+                name( this.nodeImportPath.getLastElement().toString() ).
                 inheritPermissions( !importPermissions || serializedNode.inheritsPermissions() ).
                 permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
                 id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
@@ -56,11 +56,6 @@ public class ImportNodeFactory
                 timestamp( serializedNode.getTimestamp() ).
                 build();
         }
-    }
-
-    private String getNodeName()
-    {
-        return this.nodeImportPath.getLastElement().toString();
     }
 
     public static final class Builder

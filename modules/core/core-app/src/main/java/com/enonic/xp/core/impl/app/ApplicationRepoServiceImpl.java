@@ -47,7 +47,9 @@ public class ApplicationRepoServiceImpl
     {
         final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( application, source );
 
-        return this.nodeService.create( createNodeParams );
+        final Node appNode = this.nodeService.create( createNodeParams );
+        this.nodeService.refresh( RefreshMode.ALL );
+        return appNode;
     }
 
     @Override
@@ -63,7 +65,9 @@ public class ApplicationRepoServiceImpl
                 "Expected to find existing node in repository for application with key [" + application.getKey() + "]" );
         }
 
-        return this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) );
+        final Node appNode = this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) );
+        this.nodeService.refresh( RefreshMode.ALL );
+        return appNode;
     }
 
     @Override
@@ -87,8 +91,6 @@ public class ApplicationRepoServiceImpl
     @Override
     public Nodes getApplications()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
-
         final FindNodesByParentResult byParent =
             ApplicationHelper.runAsAdmin( () -> this.nodeService.findByParent( FindNodesByParentParams.create().
                 parentPath( APPLICATION_PATH ).
@@ -100,17 +102,22 @@ public class ApplicationRepoServiceImpl
     @Override
     public Node updateStartedState( final ApplicationKey appKey, final boolean started )
     {
-        final Node applicationNode = this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, appKey.getName() ).build() );
+        final Node applicationNode = doGetNodeByName( appKey.getName() );
 
         if ( applicationNode == null )
         {
             throw new NodeNotFoundException( "Didnt find application node in repo" );
         }
 
-        return this.nodeService.update( UpdateNodeParams.create().
-            id( applicationNode.id() ).
-            editor( toBeEdited -> toBeEdited.data.setBoolean( ApplicationPropertyNames.STARTED, started ) ).
-            build() );
+        final Node appNode = this.nodeService.update( UpdateNodeParams.create()
+                                                         .id( applicationNode.id() )
+                                                         .editor(
+                                                             toBeEdited -> toBeEdited.data.setBoolean( ApplicationPropertyNames.STARTED,
+                                                                                                       started ) )
+                                                         .build() );
+
+        this.nodeService.refresh( RefreshMode.ALL );
+        return appNode;
     }
 
     private Node doGetNodeByName( final String applicationName )

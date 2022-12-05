@@ -223,7 +223,7 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.addRelationship( relationship );
 
@@ -243,7 +243,7 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.removeRelationship( relationship );
 
@@ -256,7 +256,7 @@ public final class SecurityServiceImpl
     {
         callWithContext( () -> {
             doRemoveRelationships( from );
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.removeRelationships( from );
 
@@ -294,7 +294,7 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             return null;
         } );
@@ -669,7 +669,7 @@ public final class SecurityServiceImpl
         {
             final Node node = callWithContext( () -> {
                 final Node createdNode = nodeService.create( createNodeParams );
-                this.nodeService.refresh( RefreshMode.SEARCH );
+                this.nodeService.refresh( RefreshMode.ALL );
                 return createdNode;
             } );
 
@@ -728,7 +728,7 @@ public final class SecurityServiceImpl
 
             final Node updatedNode = nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.updateUser( UpdateUserParams.create( userToUpdate ).build() );
 
@@ -804,7 +804,7 @@ public final class SecurityServiceImpl
         {
             final Node node = callWithContext( () -> {
                 final Node createdNode = this.nodeService.create( createGroupParams );
-                this.nodeService.refresh( RefreshMode.SEARCH );
+                this.nodeService.refresh( RefreshMode.ALL );
                 return createdNode;
             } );
 
@@ -836,7 +836,7 @@ public final class SecurityServiceImpl
 
             final Node updatedNode = nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.updateGroup( UpdateGroupParams.create( groupToUpdate ).build() );
 
@@ -868,7 +868,7 @@ public final class SecurityServiceImpl
         {
             final Node node = callWithContext( () -> {
                 final Node createdNode = this.nodeService.create( createNodeParams );
-                this.nodeService.refresh( RefreshMode.SEARCH );
+                this.nodeService.refresh( RefreshMode.ALL );
                 return createdNode;
             } );
 
@@ -900,7 +900,7 @@ public final class SecurityServiceImpl
 
             final Node updatedNode = nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+            this.nodeService.refresh( RefreshMode.ALL );
 
             securityAuditLogSupport.updateRole( UpdateRoleParams.create( roleToUpdate ).build() );
 
@@ -998,9 +998,7 @@ public final class SecurityServiceImpl
                 doRemoveRelationships( principalKey );
                 doRemoveMemberships( principalKey );
 
-                final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
-                this.nodeService.refresh( RefreshMode.SEARCH );
-                return nodes;
+                return this.nodeService.deleteByPath( principalKey.toPath() );
             } );
         }
         catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions
@@ -1104,8 +1102,6 @@ public final class SecurityServiceImpl
                     ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).overwriteChildPermissions( false ).build();
                 nodeService.applyPermissions( applyPermissions );
 
-                this.nodeService.refresh( RefreshMode.SEARCH );
-
                 return idProviderNode;
             } );
 
@@ -1180,8 +1176,6 @@ public final class SecurityServiceImpl
                 nodeService.applyPermissions( applyPermissions );
             }
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
-
             securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
 
             return IdProviderNodeTranslator.fromNode( idProviderNode );
@@ -1195,7 +1189,7 @@ public final class SecurityServiceImpl
 
         nodeService.update( updateParams );
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
+        this.nodeService.refresh( RefreshMode.ALL );
 
     }
 

@@ -37,11 +37,10 @@ public class NodeBuilderTest
     {
         final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
-            parentPath( NodePath.ROOT ).
-            path( "test" ).
+            parentPath( new NodePath("/test") ).
             build();
 
-        assertEquals( "test/my-name", myNode.path().toString() );
+        assertEquals( "/test/my-name", myNode.path().toString() );
     }
 
     @Test
@@ -50,8 +49,7 @@ public class NodeBuilderTest
     {
         final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
-            parentPath( NodePath.ROOT ).
-            path( "test" ).
+            parentPath( new NodePath("/test") ).
             build();
 
         assertNotNull( myNode.name() );

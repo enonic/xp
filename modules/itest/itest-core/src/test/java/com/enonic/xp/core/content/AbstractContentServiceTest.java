@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +40,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
@@ -232,8 +230,7 @@ public class AbstractContentServiceTest
         indexService = new IndexServiceImpl();
         indexService.setIndexServiceInternal( indexServiceInternal );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
-        nodeDao.setBlobStore( blobStore );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
@@ -603,11 +600,6 @@ public class AbstractContentServiceTest
                 build() ).
             addFormItem( set ).
             build();
-    }
-
-    protected void assertOrder( final FindContentByQueryResult result, final Content... expectedOrder )
-    {
-        assertOrder( result.getContents().stream().map( Content::getId ).collect( Collectors.toList() ), expectedOrder );
     }
 
     protected void assertOrder( final Iterable<ContentId> contentIds, final Content... expectedOrder )

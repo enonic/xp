@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 
 
 final class DeleteContentCommand
@@ -52,7 +51,6 @@ final class DeleteContentCommand
 
     private DeleteContentsResult doExecute()
     {
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
@@ -62,11 +60,7 @@ final class DeleteContentCommand
             throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
         }
 
-        final DeleteContentsResult deletedContents = doDeleteContent( ContentId.from( nodeToDelete.id() ) );
-
-        this.nodeService.refresh( RefreshMode.ALL );
-
-        return deletedContents;
+        return doDeleteContent( ContentId.from( nodeToDelete.id() ) );
     }
 
     private DeleteContentsResult doDeleteContent( ContentId nodeToDelete )
@@ -75,16 +69,15 @@ final class DeleteContentCommand
 
         final NodeId nodeId = NodeId.from( nodeToDelete );
 
-        final NodeIds descendants = nodeService.findByParent(
-            FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+        final NodeIds descendants =
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
 
         final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
         final NodeIds deletedNodes = this.nodeService.deleteById( nodeId, this );
-        final ContentIds deletedContents = ContentNodeHelper.toContentIds( deletedNodes );
 
-        result.addDeleted( deletedContents );
+        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes ) );
 
         return result.build();
     }

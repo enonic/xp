@@ -30,6 +30,7 @@ public class PushNodeEntries
         return new Builder();
     }
 
+    @Deprecated
     public NodeIds getNodeIds()
     {
         return NodeIds.from( this.set.stream().

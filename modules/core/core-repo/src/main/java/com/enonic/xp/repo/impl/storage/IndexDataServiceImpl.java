@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
@@ -34,27 +35,28 @@ public class IndexDataServiceImpl
 
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
     {
-        return GetByIdRequest.create().
-            storageSettings( StorageSource.create().
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                build() ).
-            returnFields( returnFields ).
-            id( nodeId.toString() ).
-            build();
+        return GetByIdRequest.create()
+            .storageSettings( StorageSource.create()
+                                  .storageType( SearchStorageType.from( context.getBranch() ) )
+                                  .storageName( SearchStorageName.from( context.getRepositoryId() ) )
+                                  .build() )
+            .searchPreference( context.getSearchPreference() )
+            .returnFields( returnFields )
+            .id( nodeId.toString() )
+            .build();
     }
 
     @Override
     public ReturnValues get( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
     {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest();
+        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
 
         for ( final NodeId nodeId : nodeIds )
         {
             getByIdsRequest.add( createGetByIdRequest( nodeId, returnFields, context ) );
         }
 
-        final GetResults result = storageDao.getByIds( getByIdsRequest );
+        final List<GetResult> result = storageDao.getByIds( getByIdsRequest );
 
         final ReturnValues.Builder allResultValues = ReturnValues.create();
 
@@ -121,7 +123,6 @@ public class IndexDataServiceImpl
             nodeIds( pushNodeParams.getNodeIds() ).
             targetBranch( pushNodeParams.getTargetBranch() ).
             targetRepo( pushNodeParams.getTargetRepo() ).
-            progressListener( pushNodeParams ).
             build() );
     }
 

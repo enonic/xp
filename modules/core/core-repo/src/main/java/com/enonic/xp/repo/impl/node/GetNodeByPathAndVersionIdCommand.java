@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -27,9 +27,16 @@ public class GetNodeByPathAndVersionIdCommand
 
     public Node execute()
     {
-        final Context context = ContextAccessor.current();
+        final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        return this.nodeStorageService.getNode( nodePath, versionId, InternalContext.from( context ) );
+        final NodeBranchEntry nodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( nodePath, context );
+
+        if ( nodeBranchEntry == null )
+        {
+            return null;
+        }
+
+        return this.nodeStorageService.getNode( nodeBranchEntry.getNodeId(), versionId, context );
     }
 
     public static Builder create()

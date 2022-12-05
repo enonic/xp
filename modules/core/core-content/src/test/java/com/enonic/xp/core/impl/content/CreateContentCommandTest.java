@@ -644,7 +644,7 @@ public class CreateContentCommandTest
         tree.addSet( ContentPropertyNames.DATA, new PropertySet() );
 
         final Node contentRootNode =
-            Node.create().id( NodeId.from( "id1" ) ).name( "content" ).path( "/content" ).parentPath( NodePath.ROOT ).data( tree ).build();
+            Node.create().id( NodeId.from( "id1" ) ).name( "content" ).parentPath( NodePath.ROOT ).data( tree ).build();
 
         Mockito.when( nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) ).thenReturn( contentRootNode );
 

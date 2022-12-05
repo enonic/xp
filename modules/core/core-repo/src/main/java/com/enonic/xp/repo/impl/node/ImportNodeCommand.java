@@ -59,7 +59,7 @@ public class ImportNodeCommand
         }
         else
         {
-            node = updateNode( GetNodeByPathCommand.create( this ).nodePath( this.importNode.path() ).build().execute() );
+            node = updateNode( doGetByPath( this.importNode.path() ) );
         }
 
         return ImportNodeResult.create().

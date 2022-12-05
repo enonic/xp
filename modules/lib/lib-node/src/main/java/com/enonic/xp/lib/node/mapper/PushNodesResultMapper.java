@@ -1,8 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
-import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -37,7 +36,7 @@ public class PushNodesResultMapper
     {
         gen.array( "failed" );
 
-        final ImmutableSet<PushNodesResult.Failed> failed = this.result.getFailed();
+        final Set<PushNodesResult.Failed> failed = this.result.getFailed();
 
         for ( final PushNodesResult.Failed entry : failed )
         {
@@ -53,15 +52,11 @@ public class PushNodesResultMapper
     private void addSuccessful( final MapGenerator gen )
     {
         gen.array( "success" );
-        addNodes( gen, result.getSuccessful() );
-        gen.end();
-    }
-
-    private void addNodes( final MapGenerator gen, final NodeBranchEntries successes )
-    {
-        for ( final NodeBranchEntry success : successes )
+        for ( final NodeBranchEntry success : result.getSuccessful() )
         {
             gen.value( success.getNodeId() );
         }
+        gen.end();
     }
+
 }

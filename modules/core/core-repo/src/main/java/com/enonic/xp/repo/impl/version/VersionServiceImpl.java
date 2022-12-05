@@ -42,7 +42,6 @@ public class VersionServiceImpl
     public void delete( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         storageDao.delete( DeleteRequests.create()
-                               .forceRefresh( false )
                                .ids( List.of( nodeVersionId.toString() ) )
                                .settings( createStorageSettings( context ) )
                                .build() );
@@ -56,11 +55,12 @@ public class VersionServiceImpl
 
     private NodeVersionMetadata doGetById( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final GetByIdRequest getByIdRequest = GetByIdRequest.create().
-            id( nodeVersionId.toString() ).
-            returnFields( VERSION_RETURN_FIELDS ).
-            storageSettings( createStorageSettings( context ) ).
-            build();
+        final GetByIdRequest getByIdRequest = GetByIdRequest.create()
+            .id( nodeVersionId.toString() )
+            .returnFields( VERSION_RETURN_FIELDS )
+            .storageSettings( createStorageSettings( context ) )
+            .searchPreference( context.getSearchPreference() )
+            .build();
 
         final GetResult getResult = this.storageDao.getById( getByIdRequest );
 

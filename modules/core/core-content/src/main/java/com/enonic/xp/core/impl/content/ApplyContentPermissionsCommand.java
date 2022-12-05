@@ -22,20 +22,20 @@ final class ApplyContentPermissionsCommand
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
-        final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create().
-            nodeId( nodeId ).
-            permissions( params.getPermissions() ).
-            inheritPermissions( params.isInheritPermissions() ).
-            overwriteChildPermissions( params.isOverwriteChildPermissions() ).
-            applyPermissionsListener( params.getListener() ).
-            build();
+        final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create()
+            .nodeId( nodeId )
+            .permissions( params.getPermissions() )
+            .inheritPermissions( params.isInheritPermissions() )
+            .overwriteChildPermissions( params.isOverwriteChildPermissions() )
+            .applyPermissionsListener( params.getListener() )
+            .build();
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsParams );
 
-        return ApplyContentPermissionsResult.create().
-            setSucceedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSucceedNodes().getPaths() ) ).
-            setSkippedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSkippedNodes().getPaths() ) ).
-            build();
+        return ApplyContentPermissionsResult.create()
+            .setSucceedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSucceedNodes().getPaths() ) )
+            .setSkippedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSkippedNodes().getPaths() ) )
+            .build();
     }
 
     public static Builder create( final ApplyContentPermissionsParams params )

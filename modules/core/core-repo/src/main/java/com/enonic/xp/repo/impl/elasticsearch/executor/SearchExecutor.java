@@ -64,7 +64,6 @@ public class SearchExecutor
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .searchPreference( query.getSearchPreference() )
             .build()
             .createCountRequest();
 
@@ -76,7 +75,6 @@ public class SearchExecutor
         final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
             .query( query )
             .client( this.client )
-            .searchPreference( query.getSearchPreference() )
             .build()
             .createSearchRequest();
 

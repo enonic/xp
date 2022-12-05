@@ -6,11 +6,11 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 abstract class AbstractNodeCommand
@@ -44,33 +44,16 @@ abstract class AbstractNodeCommand
             execute();
     }
 
+    void refresh( final RefreshMode refreshMode )
+    {
+        RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+    }
+
     PrincipalKey getCurrentPrincipalKey()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
-    }
-
-    AccessControlList evaluatePermissions( final NodePath parentPath, final boolean inheritPermissions,
-                                           final AccessControlList permissions )
-    {
-        if ( !inheritPermissions )
-        {
-            return permissions;
-        }
-        else
-        {
-            final Node node = NodeHelper.runAsAdmin( () -> GetNodeByPathCommand.create( this ).
-                nodePath( parentPath ).
-                build().
-                execute() );
-
-            if ( node == null || node.getPermissions().isEmpty() )
-            {
-                throw new RuntimeException( "Could not evaluate permissions for node [" + parentPath.toString() + "]" );
-            }
-            return node.getPermissions();
-        }
     }
 
     public abstract static class Builder<B extends Builder>

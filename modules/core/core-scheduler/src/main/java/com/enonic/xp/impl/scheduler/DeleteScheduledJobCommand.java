@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.scheduler.ScheduledJobName;
 
 public class DeleteScheduledJobCommand
@@ -31,7 +30,6 @@ public class DeleteScheduledJobCommand
     private boolean doExecute()
     {
         final NodeIds result = nodeService.deleteByPath( NodePath.create( NodePath.ROOT, name.getValue() ).build() );
-        nodeService.refresh( RefreshMode.ALL );
 
         return !result.isEmpty();
     }

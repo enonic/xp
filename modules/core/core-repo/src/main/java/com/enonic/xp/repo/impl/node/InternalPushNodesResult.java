@@ -1,9 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
-
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.repository.RepositoryId;
 
 public class InternalPushNodesResult
     extends PushNodesResult
@@ -13,7 +16,7 @@ public class InternalPushNodesResult
     protected InternalPushNodesResult( Builder builder )
     {
         super( builder );
-        pushNodeEntries = builder.pushNodeEntries;
+        pushNodeEntries = builder.pushNodeEntries.build();
     }
 
     public PushNodeEntries getPushNodeEntries()
@@ -29,27 +32,37 @@ public class InternalPushNodesResult
     public static final class Builder
         extends PushNodesResult.Builder<Builder>
     {
-        private PushNodeEntries pushNodeEntries;
+        private final PushNodeEntries.Builder pushNodeEntries = PushNodeEntries.create();
 
         private Builder()
         {
         }
 
-        public Builder setPushNodeEntries( final PushNodeEntries pushNodeEntries )
+        public Builder addSuccess( final NodeBranchEntry nodeBranchEntry, NodePath currentTargetPath )
         {
-            this.pushNodeEntries = pushNodeEntries;
+            addSuccess( nodeBranchEntry );
+            pushNodeEntries.add( PushNodeEntry.create().
+                nodeBranchEntry( nodeBranchEntry ).
+                currentTargetPath( currentTargetPath ).
+                build() );
             return this;
         }
 
-        private void validate()
+        public Builder targetBranch( final Branch val )
         {
-            Preconditions.checkNotNull( pushNodeEntries );
+            pushNodeEntries.targetBranch( val );
+            return this;
+        }
+
+        public Builder targetRepo( final RepositoryId val )
+        {
+            pushNodeEntries.targetRepo(val);
+            return this;
         }
 
         @Override
         public InternalPushNodesResult build()
         {
-            validate();
             return new InternalPushNodesResult( this );
         }
     }

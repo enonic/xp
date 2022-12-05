@@ -2,12 +2,9 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.PushNodesListener;
-import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repository.RepositoryId;
 
 public final class IndexPushNodeParams
-    implements ExecutorProgressListener
 {
     private final NodeIds nodeIds;
 
@@ -15,14 +12,11 @@ public final class IndexPushNodeParams
 
     private final RepositoryId targetRepo;
 
-    private final PushNodesListener pushListener;
-
     private IndexPushNodeParams( Builder builder )
     {
         nodeIds = builder.nodeIds;
         targetBranch = builder.targetBranch;
         targetRepo = builder.targetRepo;
-        pushListener = builder.pushListener;
     }
 
     public NodeIds getNodeIds()
@@ -40,20 +34,6 @@ public final class IndexPushNodeParams
         return targetRepo;
     }
 
-    public PushNodesListener getPushListener()
-    {
-        return pushListener;
-    }
-
-    @Override
-    public void progress( final int count )
-    {
-        if ( pushListener != null )
-        {
-            pushListener.nodesPushed( count );
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -66,8 +46,6 @@ public final class IndexPushNodeParams
         private Branch targetBranch;
 
         private RepositoryId targetRepo;
-
-        private PushNodesListener pushListener;
 
         private Builder()
         {
@@ -88,12 +66,6 @@ public final class IndexPushNodeParams
         public Builder targetRepo( final RepositoryId targetRepo )
         {
             this.targetRepo = targetRepo;
-            return this;
-        }
-
-        public Builder pushListener( final PushNodesListener pushListener )
-        {
-            this.pushListener = pushListener;
             return this;
         }
 

@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -67,17 +66,17 @@ public final class UpdateNodeCommand
             return persistedNode;
         }
 
-        final Node updatedNode = createUpdatedNode( Node.create( editedNode ).
-            timestamp( Instant.now( CLOCK ) ).
-            attachedBinaries( updatedBinaries ).
-            build() );
+        final Node.Builder builder = Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries );
+        if ( editedNode.inheritsPermissions() )
+        {
+            final NodePath parentPath = editedNode.path().getParentPath();
+            builder.permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() );
+        }
+        final Node updatedNode = builder.build();
 
         if ( !this.params.isDryRun() )
         {
-            return StoreNodeCommand.create( this ).
-                node( updatedNode ).
-                build().
-                execute();
+            return StoreNodeCommand.create( this ).node( updatedNode ).build().execute();
         }
 
         return updatedNode;
@@ -103,17 +102,6 @@ public final class UpdateNodeCommand
             }
         }
         return persistedNode;
-    }
-
-    private Node createUpdatedNode( final Node editedNode )
-    {
-        final NodePath parentPath = editedNode.path().getParentPath();
-        final AccessControlList permissions =
-            evaluatePermissions( parentPath, editedNode.inheritsPermissions(), editedNode.getPermissions() );
-
-        final Node.Builder updateNodeBuilder = Node.create( editedNode ).
-            permissions( permissions );
-        return updateNodeBuilder.build();
     }
 
     public static Builder create()

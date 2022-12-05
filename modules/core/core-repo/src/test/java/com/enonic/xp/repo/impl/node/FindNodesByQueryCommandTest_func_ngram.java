@@ -120,15 +120,15 @@ public class FindNodesByQueryCommandTest_func_ngram
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "grønnsaker" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build(), true );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         queryAndAssert( node, "ngram('title', 'grønnsak*', 'AND')", 1 );
     }

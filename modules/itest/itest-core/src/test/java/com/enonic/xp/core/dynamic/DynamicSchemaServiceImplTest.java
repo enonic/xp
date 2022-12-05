@@ -52,7 +52,6 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -184,8 +183,7 @@ public class DynamicSchemaServiceImplTest
         IndexServiceImpl indexService = new IndexServiceImpl();
         indexService.setIndexServiceInternal( indexServiceInternal );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
-        nodeDao.setBlobStore( blobStore );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
@@ -280,8 +278,6 @@ public class DynamicSchemaServiceImplTest
             .setRepositoryService( repositoryService )
             .build()
             .initialize();
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }
 
     @Test
@@ -298,8 +294,6 @@ public class DynamicSchemaServiceImplTest
 
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final ContentType contentType = (ContentType) result.getSchema();
 
@@ -343,8 +337,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_contentType.xml" );
 
@@ -401,8 +393,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final Mixin mixin = (Mixin) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( mixin ).usingRecursiveComparison()
@@ -444,8 +434,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<BaseSchema<?>> result =
             createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         assertNotNull( result.getResource() );
     }
 
@@ -477,8 +465,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_mixin.xml" );
 
@@ -530,8 +516,6 @@ public class DynamicSchemaServiceImplTest
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final String resource = readResource( "_mixin.xml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
@@ -557,8 +541,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_mixin.xml" );
 
@@ -587,8 +569,6 @@ public class DynamicSchemaServiceImplTest
 
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final XData xdata = (XData) result.getSchema();
 
@@ -626,8 +606,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_xdata.xml" );
 
@@ -680,8 +658,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<ComponentDescriptor> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final PartDescriptor partDescriptor = (PartDescriptor) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( partDescriptor ).usingRecursiveComparison()
@@ -725,8 +701,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_part.xml" );
 
@@ -784,8 +758,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<ComponentDescriptor> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final LayoutDescriptor layoutDescriptor = (LayoutDescriptor) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( layoutDescriptor ).usingRecursiveComparison()
@@ -826,8 +798,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( params ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_layout.xml" );
 
@@ -884,8 +854,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<ComponentDescriptor> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final PageDescriptor pageDescriptor = (PageDescriptor) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( pageDescriptor ).usingRecursiveComparison()
@@ -926,8 +894,6 @@ public class DynamicSchemaServiceImplTest
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( createParams ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final String resource = readResource( "_page.xml" );
 
@@ -981,8 +947,6 @@ public class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
             () -> dynamicSchemaService.createSite( CreateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final SiteDescriptor siteDescriptor = result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( siteDescriptor ).usingRecursiveComparison(
@@ -1021,8 +985,6 @@ public class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> dynamicSchemaService.createSite(
             CreateDynamicSiteParams.create().key( applicationKey ).resource( "<site></site>" ).build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
             () -> dynamicSchemaService.updateSite( UpdateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
 
@@ -1050,8 +1012,6 @@ public class DynamicSchemaServiceImplTest
     {
         final String resource = readResource( "_site.xml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
             () -> dynamicSchemaService.updateSite( UpdateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -1087,8 +1047,6 @@ public class DynamicSchemaServiceImplTest
         createAdminContext().callWith( () -> dynamicSchemaService.createSite(
             CreateDynamicSiteParams.create().key( applicationKey ).resource( readResource( "_site.xml" ) ).build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         DynamicSchemaResult<SiteDescriptor> site = createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) );
 
         assertThat( site.getSchema().getForm() ).isNotEmpty();
@@ -1097,8 +1055,6 @@ public class DynamicSchemaServiceImplTest
         assertThat( site.getSchema().getResponseProcessors() ).isNotEmpty();
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteSite( applicationKey ) ) ).isTrue();
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         site = createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) );
 
@@ -1119,8 +1075,6 @@ public class DynamicSchemaServiceImplTest
 
         final DynamicSchemaResult<StyleDescriptor> result = createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
             CreateDynamicStylesParams.create().key( applicationKey ).resource( resource ).build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final StyleDescriptor styleDescriptor = result.getSchema();
 
@@ -1149,8 +1103,6 @@ public class DynamicSchemaServiceImplTest
 
         createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
             CreateDynamicStylesParams.create().key( applicationKey ).resource( "<styles></styles>" ).build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final DynamicSchemaResult<StyleDescriptor> result = createAdminContext().callWith( () -> dynamicSchemaService.updateStyles(
             UpdateDynamicStylesParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -1183,13 +1135,9 @@ public class DynamicSchemaServiceImplTest
         createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
             CreateDynamicStylesParams.create().key( applicationKey ).resource( readResource( "_styles.xml" ) ).build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getStyles( applicationKey ) ) ).isNotNull();
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteStyles( applicationKey ) ) ).isTrue();
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getStyles( applicationKey ) ) ).isNull();
     }
@@ -1224,8 +1172,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_part.xml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listComponents(
             ListDynamicComponentsParams.create().applicationKey( applicationKey ).type( DynamicComponentType.PART ).build() ) );
@@ -1274,8 +1220,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_contentType.xml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( applicationKey )
@@ -1326,8 +1270,6 @@ public class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
 
@@ -1375,8 +1317,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_mixin.xml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
@@ -1426,8 +1366,6 @@ public class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         assertThrows( ForbiddenAccessException.class, () ->  VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() )) );
     }
@@ -1462,8 +1400,6 @@ public class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.XDATA )
                 .build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.XDATA ).build() ) );
 
@@ -1489,8 +1425,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_contentType.xml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final boolean result = createAdminContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
             DeleteDynamicContentSchemaParams.create()
@@ -1526,8 +1460,6 @@ public class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-
         final boolean result = createSchemaAdminContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
             DeleteDynamicContentSchemaParams.create()
                 .name( contentType.getSchema().getName() )
@@ -1547,8 +1479,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_contentType.xml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
             DeleteDynamicContentSchemaParams.create()
@@ -1571,8 +1501,6 @@ public class DynamicSchemaServiceImplTest
                 .resource( readResource( "_part.xml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
-
-        VirtualAppContext.createAdminContext().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
 
         final boolean result = createAdminContext().callWith( () -> dynamicSchemaService.deleteComponent(
             DeleteDynamicComponentParams.create().type( DynamicComponentType.PART ).descriptorKey( part.getSchema().getKey() ).build() ) );

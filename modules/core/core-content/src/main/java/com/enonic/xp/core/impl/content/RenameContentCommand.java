@@ -12,6 +12,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -77,6 +78,8 @@ final class RenameContentCommand
         }
 
         final Node node = nodeService.rename( builder.build() );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         final Content content = translator.fromNode( node, true );
 

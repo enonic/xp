@@ -39,7 +39,7 @@ public class ReorderChildNodesCommand
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : params )
         {
-            RefreshCommand.create().refreshMode( RefreshMode.SEARCH ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+            refresh( RefreshMode.SEARCH );
 
             final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
             final Node nodeToMoveBefore =
@@ -48,7 +48,7 @@ public class ReorderChildNodesCommand
             final Node parentNode = parents.stream()
                 .filter( node -> node.path().equals( nodeToMove.parentPath() ) )
                 .findAny()
-                .orElse( GetNodeByPathCommand.create( this ).nodePath( nodeToMove.parentPath() ).build().execute() );
+                .orElseGet( () -> doGetByPath( nodeToMove.parentPath() ) );
 
             final Node reorderedNode = ReorderChildNodeCommand.create()
                 .indexServiceInternal( this.indexServiceInternal )
@@ -70,6 +70,8 @@ public class ReorderChildNodesCommand
 
         parents.forEach( this::processParent );
         parents.forEach( result::addParentNode );
+
+        refresh( RefreshMode.SEARCH );
 
         return result.build();
     }

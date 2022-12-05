@@ -114,8 +114,7 @@ public class SecurityServiceImplTest
         final VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );
 
-        final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
-        nodeDao.setBlobStore( blobStore );
+        final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
         this.indexServiceInternal.setClient( client );

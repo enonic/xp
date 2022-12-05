@@ -41,12 +41,15 @@ public final class CreateNodeCommand
 
     private final BinaryService binaryService;
 
+    private final boolean skipVerification;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.timestamp = builder.timestamp;
         this.binaryService = builder.binaryService;
+        this.skipVerification = builder.skipVerification;
     }
 
     public static Builder create()
@@ -61,23 +64,17 @@ public final class CreateNodeCommand
 
     public Node execute()
     {
-        Preconditions.checkNotNull( params.getParent(), "Path of parent Node must be specified" );
-        Preconditions.checkArgument( params.getParent().isAbsolute(), "Path to parent Node must be absolute: " + params.getParent() );
-
-        NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
-        final Node parentNode = NodeHelper.runAsAdmin( this::verifyParentExists );
-
-        if ( parentNode == null )
+        if ( !skipVerification )
         {
-            throw new NodeNotFoundException(
-                "Parent node to node with name '" + params.getName() + "' with parent path '" + params.getParent() + "' not found" );
+            NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
         }
+        final Node parentNode = NodeHelper.runAsAdmin( this::getParentNode );
 
         requireContextUserPermission( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
-        final AccessControlList permissions = getAccessControlEntries( user );
+        final AccessControlList permissions = params.inheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
 
         final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
 
@@ -132,30 +129,21 @@ public final class CreateNodeCommand
 
     private AccessControlList getAccessControlEntries( final PrincipalKey creator )
     {
-        AccessControlList paramPermissions = params.getPermissions();
+        final AccessControlList paramPermissions = params.getPermissions();
 
         if ( paramPermissions == null || paramPermissions.isEmpty() )
         {
-            paramPermissions = NodeDefaultAclFactory.create( creator );
+            return NodeDefaultAclFactory.create( creator );
         }
-
-        return evaluatePermissions( params.getParent(), params.inheritPermissions(), paramPermissions );
+        else
+        {
+            return paramPermissions;
+        }
     }
 
-    private Node verifyParentExists()
+    private Node getParentNode()
     {
-        if ( NodePath.ROOT.equals( params.getParent() ) )
-        {
-            return GetNodeByPathCommand.create( this ).
-                nodePath( NodePath.ROOT ).
-                build().
-                execute();
-        }
-
-        final Node parentNode = GetNodeByPathCommand.create( this ).
-            nodePath( params.getParent() ).
-            build().
-            execute();
+        final Node parentNode = doGetByPath( params.getParent() );
 
         if ( parentNode == null )
         {
@@ -229,6 +217,8 @@ public final class CreateNodeCommand
 
         private BinaryService binaryService;
 
+        private boolean skipVerification;
+
         private Builder()
         {
             super();
@@ -254,6 +244,12 @@ public final class CreateNodeCommand
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder skipVerification( boolean skipVerification )
+        {
+            this.skipVerification = skipVerification;
             return this;
         }
 

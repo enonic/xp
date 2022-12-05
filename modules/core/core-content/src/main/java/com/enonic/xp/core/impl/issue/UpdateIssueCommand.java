@@ -42,7 +42,7 @@ public class UpdateIssueCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editedIssue );
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
-        nodeService.refresh( RefreshMode.SEARCH );
+        nodeService.refresh( RefreshMode.ALL );
         return IssueNodeTranslator.fromNode( updatedNode );
     }
 

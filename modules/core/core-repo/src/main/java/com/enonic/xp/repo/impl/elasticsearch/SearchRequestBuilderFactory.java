@@ -28,13 +28,10 @@ public class SearchRequestBuilderFactory
 
     private final Client client;
 
-    private final SearchPreference searchPreference;
-
     private SearchRequestBuilderFactory( final Builder builder )
     {
         query = builder.query;
         client = builder.client;
-        searchPreference = builder.searchPreference;
     }
 
     public static Builder newFactory()
@@ -90,7 +87,7 @@ public class SearchRequestBuilderFactory
             .setQuery( query.getQuery() )
             .setPostFilter( query.getFilter() )
             .setFrom( query.getFrom() )
-            .setPreference( Objects.requireNonNullElse( searchPreference, SearchPreference.LOCAL ).getName() );
+            .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
@@ -174,8 +171,6 @@ public class SearchRequestBuilderFactory
 
         private Client client;
 
-        private SearchPreference searchPreference;
-
         private Builder()
         {
         }
@@ -189,12 +184,6 @@ public class SearchRequestBuilderFactory
         public Builder client( final Client client )
         {
             this.client = client;
-            return this;
-        }
-
-        public Builder searchPreference( final SearchPreference searchPreference )
-        {
-            this.searchPreference = searchPreference;
             return this;
         }
 

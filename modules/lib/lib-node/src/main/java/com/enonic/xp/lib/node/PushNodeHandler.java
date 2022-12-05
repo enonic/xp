@@ -73,18 +73,6 @@ public final class PushNodeHandler
         }
     }
 
-    private NodeIds doDelete( final NodeIds.Builder toBeDeleted )
-    {
-        final NodeIds.Builder builder = NodeIds.create();
-
-        for ( final NodeId node : toBeDeleted.build() )
-        {
-            builder.addAll( this.nodeService.deleteById( node ) );
-        }
-
-        return builder.build();
-    }
-
     private void doResolve( final NodeIds nodeIds, final NodeIds.Builder toBePushed )
     {
         for ( final NodeId nodeId : nodeIds )

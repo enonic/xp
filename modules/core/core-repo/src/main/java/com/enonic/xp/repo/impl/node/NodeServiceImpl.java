@@ -408,6 +408,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
     {
         verifyContext();
@@ -827,7 +828,6 @@ public class NodeServiceImpl
             this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
         }
 
-        refresh( RefreshMode.SEARCH );
         for ( NodeId nodeId : reorderChildNodesResult.getNodeIds() )
         {
             this.eventPublisher.publish( NodeEvents.manualOrderUpdated( getById( nodeId ) ) );
@@ -914,6 +914,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public Node createRootNode( final CreateRootNodeParams params )
     {
         verifyContext();
@@ -1095,13 +1096,20 @@ public class NodeServiceImpl
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
     {
         verifyContext();
-        return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, InternalContext.from( ContextAccessor.current() ) );
+        final NodeCommitEntry commit =
+            nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, InternalContext.from( ContextAccessor.current() ) );
+
+        refresh( RefreshMode.STORAGE );
+
+        return commit;
     }
 
     @Override
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
     {
         verifyContext();
+
+        refresh( RefreshMode.STORAGE );
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
@@ -1110,7 +1118,11 @@ public class NodeServiceImpl
         branchNodeVersions.stream()
             .map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) )
             .forEach( routableNodeVersionIds::add );
-        return nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds.build(), context );
+        final NodeCommitEntry commitEntry = nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds.build(), context );
+
+        refresh( RefreshMode.STORAGE );
+
+        return commitEntry;
     }
 
     @Override

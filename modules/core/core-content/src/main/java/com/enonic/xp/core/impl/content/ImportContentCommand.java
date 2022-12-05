@@ -8,6 +8,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.RefreshMode;
 
 final class ImportContentCommand
     extends AbstractContentCommand
@@ -40,20 +41,19 @@ final class ImportContentCommand
             contentDataSerializer( contentDataSerializer ).
             build().execute();
 
-        final ImportNodeParams importNodeParams = ImportNodeParams.create().
-            importNode( importNode ).
-            binaryAttachments( params.getBinaryAttachments() ).
-            insertManualStrategy( params.getInsertManualStrategy() ).
-            dryRun( params.isDryRun() ).
-            importPermissions( params.isImportPermissions() ).
-            importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
-            build();
+        final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
+            .binaryAttachments( params.getBinaryAttachments() )
+            .insertManualStrategy( params.getInsertManualStrategy() )
+            .dryRun( params.isDryRun() )
+            .importPermissions( params.isImportPermissions() )
+            .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
 
-        return ImportContentResult.create().
-            content( translator.fromNode( result.getNode(), false ) ).
-            build();
+        this.nodeService.refresh( RefreshMode.ALL );
+
+        return ImportContentResult.create().content( translator.fromNode( result.getNode(), false ) ).build();
     }
 
     static class Builder

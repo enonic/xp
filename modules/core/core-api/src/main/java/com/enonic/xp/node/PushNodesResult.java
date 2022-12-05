@@ -1,8 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -41,8 +38,6 @@ public class PushNodesResult
 
         private final ImmutableSet.Builder<Failed> failed = ImmutableSet.builder();
 
-        private final Set<NodePath> addedParentPaths = new HashSet<>();
-
         protected Builder()
         {
         }
@@ -50,7 +45,6 @@ public class PushNodesResult
         public T addSuccess( final NodeBranchEntry success )
         {
             this.successful.add( success );
-            this.addedParentPaths.add( success.getNodePath() );
             return (T) this;
         }
 
@@ -60,9 +54,10 @@ public class PushNodesResult
             return (T) this;
         }
 
+        @Deprecated
         public boolean hasBeenAdded( final NodePath parentPath )
         {
-            return this.addedParentPaths.contains( parentPath );
+            return false;
         }
 
         public PushNodesResult build()

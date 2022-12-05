@@ -15,10 +15,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.RoutableNodeVersionId;
+import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.UpdateNodeParams;
 
 public class UnpublishContentCommand
@@ -40,23 +43,25 @@ public class UnpublishContentCommand
 
     public UnpublishContentsResult execute()
     {
-        final Context context = ContextAccessor.current();
-        final Context unpublishContext = ContextBuilder.from( context ).branch( ContentConstants.BRANCH_MASTER ).build();
+        final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_MASTER ).build();
 
-        final ContentIds contentIds = unpublishContext.callWith( this::unpublish );
+        final ContentIds contentIds = masterContext.callWith( this::delete );
 
-        context.callWith( () -> removePublishInfo( contentIds ) );
+        removePublishInfo( contentIds );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
         if ( contentIds.getSize() == 1 )
         {
-            context.callWith( () -> resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() ) );
+            resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
         }
+
 
         return resultBuilder.build();
     }
 
-    private ContentIds unpublish()
+    private ContentIds delete()
     {
         final ContentIds.Builder contentBuilder = ContentIds.create();
 
@@ -76,14 +81,15 @@ public class UnpublishContentCommand
         return contentBuilder.build();
     }
 
-    private Void removePublishInfo( final ContentIds contentIds )
+    private void removePublishInfo( final ContentIds contentIds )
     {
         final Instant now = Instant.now();
         for ( final ContentId contentId : contentIds )
         {
-            nodeService.update( UpdateNodeParams.create().editor( toBeEdited -> {
+            final Node updated = nodeService.update( UpdateNodeParams.create().editor( toBeEdited -> {
 
-                if ( toBeEdited.data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) ) != null )
+                if ( toBeEdited.data.getInstant(
+                    PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) ) != null )
                 {
                     PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
 
@@ -98,12 +104,9 @@ public class UnpublishContentCommand
                 }
             } ).id( NodeId.from( contentId ) ).build() );
 
-            nodeService.refresh( RefreshMode.ALL );
-
             nodeService.commit( NodeCommitEntry.create().message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).build(),
-                                NodeIds.from( NodeId.from( contentId ) ) );
+                                RoutableNodeVersionIds.from( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) ) );
         }
-        return null;
     }
 
     public static class Builder

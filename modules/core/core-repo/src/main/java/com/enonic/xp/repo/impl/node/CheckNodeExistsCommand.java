@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -45,10 +45,10 @@ public class CheckNodeExistsCommand
 
         if ( Mode.ACCURACY.equals( mode ) )
         {
-            RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( RefreshMode.STORAGE ).build().execute();
+            refresh( RefreshMode.STORAGE );
         }
 
-        final NodeId found = nodeStorageService.getIdForPath( nodePath, context );
+        final NodeBranchEntry found = nodeStorageService.getBranchNodeVersion( nodePath, context );
 
         if ( found != null && throwIfExists )
         {

@@ -92,6 +92,7 @@ public interface NodeService
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
+    @Deprecated
     Node createRootNode( CreateRootNodeParams params );
 
     @Deprecated

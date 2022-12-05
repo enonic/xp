@@ -101,11 +101,7 @@ public final class DuplicateNodeCommand
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
 
-        RefreshCommand.create().
-            refreshMode( RefreshMode.SEARCH ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        refresh( RefreshMode.SEARCH );
 
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );

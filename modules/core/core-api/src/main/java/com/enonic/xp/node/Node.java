@@ -295,6 +295,7 @@ public final class Node
             return this;
         }
 
+        @Deprecated
         public Builder path( final String value )
         {
             this.parentPath = new NodePath( value );

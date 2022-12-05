@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -21,9 +20,7 @@ public class GetNodeByIdCommand
 
     public Node execute()
     {
-        final Context context = ContextAccessor.current();
-
-        return this.nodeStorageService.get( id, InternalContext.from( context ) );
+        return this.nodeStorageService.get( id, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

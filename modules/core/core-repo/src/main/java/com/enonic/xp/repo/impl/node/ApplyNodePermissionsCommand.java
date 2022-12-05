@@ -12,6 +12,7 @@ import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -50,29 +51,16 @@ final class ApplyNodePermissionsCommand
             return resultBuilder.build();
         }
 
+        refresh( RefreshMode.SEARCH );
+
         applyPermissions( params.getPermissions() != null ? params.getPermissions() : node.getPermissions(), node );
+
+        refresh( RefreshMode.ALL );
 
         return resultBuilder.build();
     }
 
-    private void applyPermissionsToChildren( final Node parent )
-    {
-        final AccessControlList parentPermissions = parent.getPermissions();
-
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).parentPath( parent.path() ).build().execute();
-
-        final Nodes children = GetNodesByIdsCommand.create( this ).
-            ids( result.getNodeIds() ).
-            build().
-            execute();
-
-        for ( Node child : children )
-        {
-            applyPermissions( parentPermissions, child );
-        }
-    }
-
-    private Node applyPermissions( final AccessControlList permissions, final Node node )
+    private void applyPermissions( final AccessControlList permissions, final Node node )
     {
         if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node ) )
         {
@@ -83,10 +71,18 @@ final class ApplyNodePermissionsCommand
                 params.getListener().permissionsApplied( 1 );
             }
 
-            applyPermissionsToChildren( childApplied );
-            resultBuilder.succeedNode( childApplied );
+            final AccessControlList parentPermissions = childApplied.getPermissions();
 
-            return childApplied;
+            final FindNodesByParentResult result =
+                FindNodeIdsByParentCommand.create( this ).parentPath( childApplied.path() ).build().execute();
+
+            final Nodes children = GetNodesByIdsCommand.create( this ).ids( result.getNodeIds() ).build().execute();
+
+            for ( Node child : children )
+            {
+                applyPermissions( parentPermissions, child );
+            }
+            resultBuilder.succeedNode( childApplied );
         }
         else
         {
@@ -94,8 +90,6 @@ final class ApplyNodePermissionsCommand
             resultBuilder.skippedNode( node );
 
             LOG.info( "Not enough rights for applying permissions to node [" + node.id() + "] " + node.path() );
-
-            return node;
         }
     }
 

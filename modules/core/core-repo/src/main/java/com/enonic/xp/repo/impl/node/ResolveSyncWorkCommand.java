@@ -16,6 +16,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -27,7 +28,6 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -81,11 +81,7 @@ public class ResolveSyncWorkCommand
 
     public ResolveSyncWorkResult execute()
     {
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( RefreshMode.ALL ).
-            build().
-            execute();
+        refresh( RefreshMode.ALL );
 
         getAllPossibleNodesToBePublished();
         return this.result.build();
@@ -146,7 +142,6 @@ public class ResolveSyncWorkCommand
             source( ContextAccessor.current().getBranch() ).
             nodePath( nodePath ).
             excludes( this.excludedIds ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).
             build().
@@ -231,14 +226,15 @@ public class ResolveSyncWorkCommand
 
         for ( final NodePath parent : parentPaths )
         {
-            final NodeId parentId = this.nodeStorageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeBranchEntry parentNodeBranchEntry =
+                this.nodeStorageService.getBranchNodeVersion( parent, InternalContext.from( ContextAccessor.current() ) );
 
-            if ( parentId == null )
+            if ( parentNodeBranchEntry == null )
             {
                 throw new NodeNotFoundException( "Cannot find parent with path [" + parent + "]" );
             }
 
-            parentIdBuilder.add( parentId );
+            parentIdBuilder.add( parentNodeBranchEntry.getNodeId() );
         }
 
         return parentIdBuilder.build();

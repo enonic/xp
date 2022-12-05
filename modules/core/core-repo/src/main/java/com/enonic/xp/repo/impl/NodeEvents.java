@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -52,11 +50,7 @@ public class NodeEvents
 
     public static Event pushed( final PushNodeEntries pushNodeEntries )
     {
-        if ( pushNodeEntries != null )
-        {
-            return event( NODE_PUSHED_EVENT, pushNodeEntries ).build();
-        }
-        return null;
+        return event( NODE_PUSHED_EVENT, pushNodeEntries ).build();
     }
 
     public static Event deleted( final NodeBranchEntries deletedNodes )
@@ -132,35 +126,26 @@ public class NodeEvents
         return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
     }
 
-    private static ImmutableList nodesToList( final Nodes nodes )
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes )
     {
-        List<ImmutableMap> list = new ArrayList<>();
-        nodes.stream().map( NodeEvents::nodeToMap ).forEach( list::add );
-
-        return ImmutableList.copyOf( list );
+        return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
     }
 
-    private static ImmutableList nodesToList( final NodeBranchEntries nodes )
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final NodeBranchEntries nodes )
     {
-        List<ImmutableMap> list = new ArrayList<>();
-        nodes.stream().map( NodeEvents::nodeToMap ).forEach( list::add );
-
-        return ImmutableList.copyOf( list );
+        return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
     }
 
-    private static ImmutableList nodesToList( final PushNodeEntries pushNodeEntries )
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final PushNodeEntries pushNodeEntries )
     {
-        List<ImmutableMap> list = new ArrayList<>();
-        pushNodeEntries.stream()
+        return pushNodeEntries.stream()
             .map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch(), pushNodeEntries.getTargetRepo() ) )
-            .forEach( list::add );
-
-        return ImmutableList.copyOf( list );
+            .collect( ImmutableList.toImmutableList() );
     }
 
-    private static ImmutableMap nodeToMap( final NodeBranchEntry node )
+    private static ImmutableMap<String, String> nodeToMap( final NodeBranchEntry node )
     {
-        return ImmutableMap.builder()
+        return ImmutableMap.<String, String>builder()
             .put( "id", node.getNodeId().toString() )
             .put( "path", node.getNodePath().toString() )
             .put( "branch", ContextAccessor.current().getBranch().getValue() )
@@ -168,9 +153,9 @@ public class NodeEvents
             .build();
     }
 
-    private static ImmutableMap nodeToMap( final Node node )
+    private static ImmutableMap<String, String> nodeToMap( final Node node )
     {
-        return ImmutableMap.builder()
+        return ImmutableMap.<String, String>builder()
             .put( "id", node.id().toString() )
             .put( "path", node.path().toString() )
             .put( "branch", ContextAccessor.current().getBranch().getValue() )
@@ -178,9 +163,10 @@ public class NodeEvents
             .build();
     }
 
-    private static ImmutableMap nodeToMap( final PushNodeEntry node, final Branch targetBranch, final RepositoryId targetRepository )
+    private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final Branch targetBranch,
+                                                           final RepositoryId targetRepository )
     {
-        final ImmutableMap.Builder<Object, Object> nodeAsMap = ImmutableMap.builder()
+        final ImmutableMap.Builder<String, String> nodeAsMap = ImmutableMap.<String, String>builder()
             .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
             .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
             .put( "branch", targetBranch.getValue() )

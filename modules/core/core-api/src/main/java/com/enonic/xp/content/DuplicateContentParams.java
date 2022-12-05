@@ -64,9 +64,9 @@ public final class DuplicateContentParams
         return includeChildren;
     }
 
+    @Deprecated
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
     @Override
@@ -130,6 +130,7 @@ public final class DuplicateContentParams
 
         public DuplicateContentParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
             return new DuplicateContentParams( this );
         }
     }

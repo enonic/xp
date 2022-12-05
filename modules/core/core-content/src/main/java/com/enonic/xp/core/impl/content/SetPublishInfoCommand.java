@@ -86,9 +86,7 @@ public class SetPublishInfoCommand
                         }
                     }
 
-                } ).
-                id( id ).
-                build() );
+            } ).id( id ).build() );
             if ( publishContentListener != null )
             {
                 publishContentListener.contentPushed( 1 );

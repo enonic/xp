@@ -14,6 +14,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.RefreshMode;
 
 final class DuplicateContentCommand
     extends AbstractContentCommand
@@ -37,8 +38,6 @@ final class DuplicateContentCommand
 
     DuplicateContentsResult execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();
@@ -66,6 +65,8 @@ final class DuplicateContentCommand
             .build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         final Content duplicatedContent = translator.fromNode( duplicatedNode, true );
 

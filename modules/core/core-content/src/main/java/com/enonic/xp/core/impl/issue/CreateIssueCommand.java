@@ -63,7 +63,7 @@ public class CreateIssueCommand
             throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
         }
 
-        nodeService.refresh( RefreshMode.SEARCH );
+        nodeService.refresh( RefreshMode.ALL );
         return IssueNodeTranslator.fromNode( createdNode );
     }
 

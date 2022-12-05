@@ -50,12 +50,13 @@ public class CommitServiceImpl
 
     private GetByIdRequest createGetByIdRequest( final NodeCommitId nodeCommitId, final InternalContext context )
     {
-        return GetByIdRequest.create().
-            id( nodeCommitId.toString() ).
-            storageSettings( createStorageSettings( context ) ).
-            returnFields( COMMIT_RETURN_FIELDS ).
-            routing( nodeCommitId.toString() ).
-            build();
+        return GetByIdRequest.create()
+            .id( nodeCommitId.toString() )
+            .storageSettings( createStorageSettings( context ) )
+            .searchPreference( context.getSearchPreference() )
+            .returnFields( COMMIT_RETURN_FIELDS )
+            .routing( nodeCommitId.toString() )
+            .build();
     }
 
     private StorageSource createStorageSettings( final InternalContext context )

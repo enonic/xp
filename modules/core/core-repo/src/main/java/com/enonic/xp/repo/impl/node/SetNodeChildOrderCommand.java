@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -85,7 +84,6 @@ public class SetNodeChildOrderCommand
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             batchSize( BATCH_SIZE ).
-            searchMode( SearchMode.SEARCH ).
             build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         final NodeIds childNodeIds = NodeIds.from( result.getIds() );

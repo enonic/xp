@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -55,7 +56,8 @@ public class MoveNodeCommand
         this.nodeId = builder.id;
         this.newParentPath = builder.newParentPath;
         this.newNodeName = builder.newNodeName;
-        this.moveListener = builder.moveListener;
+        this.moveListener = Objects.requireNonNullElse( builder.moveListener, count -> {
+        } );
         this.processor = builder.processor;
         this.result = MoveNodeResult.create();
     }
@@ -86,7 +88,7 @@ public class MoveNodeCommand
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 
-        final NodePath newParentPath = resolvePath( existingNode );
+        final NodePath newParentPath = Objects.requireNonNullElse( this.newParentPath, existingNode.parentPath() );
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
@@ -95,7 +97,9 @@ public class MoveNodeCommand
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath, newNodeName );
 
-        checkContextUserPermissionOrAdmin( existingNode, newParentPath );
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, existingNode );
+
+        checkContextUserPermissionOrAdmin( newParentPath );
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
@@ -107,19 +111,14 @@ public class MoveNodeCommand
 
         adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, nodeId ) );
 
-        RefreshCommand.create().refreshMode( RefreshMode.ALL ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+        refresh( RefreshMode.ALL );
 
         return result.build();
     }
 
-    private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
+    private void checkContextUserPermissionOrAdmin( final NodePath newParentPath )
     {
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, existingSourceNode );
-
-        final Node newParentNode = GetNodeByPathCommand.create( this ).
-            nodePath( newParentPath ).
-            build().
-            execute();
+        final Node newParentNode = doGetByPath( newParentPath );
 
         if ( newParentNode == null )
         {
@@ -127,20 +126,6 @@ public class MoveNodeCommand
         }
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, newParentNode );
-    }
-
-    private NodePath resolvePath( final Node existingNode )
-    {
-        final NodePath newParentPath;
-        if ( this.newParentPath == null )
-        {
-            newParentPath = existingNode.parentPath();
-        }
-        else
-        {
-            newParentPath = this.newParentPath;
-        }
-        return newParentPath;
     }
 
     private NodeName resolveNodeName( final Node existingNode )
@@ -199,7 +184,7 @@ public class MoveNodeCommand
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
-        nodeMoved( 1 );
+        moveListener.nodesMoved( 1 );
 
         final SearchResult children = this.nodeSearchService.query(
             NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
@@ -220,49 +205,27 @@ public class MoveNodeCommand
         // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
         nodeToMoveBuilder.inheritPermissions( false );
 
-        if ( shouldUpdateManualOrderValue( newParentPath ) )
-        {
-            final Long newOrderValue = ResolveInsertOrderValueCommand.create( this ).
-                parentPath( newParentPath ).
-                insertManualStrategy( InsertManualStrategy.FIRST ).
-                build().
-                execute();
-
-            nodeToMoveBuilder.manualOrderValue( newOrderValue );
-        }
-    }
-
-    private boolean shouldUpdateManualOrderValue( final NodePath newParentPath )
-    {
-        boolean updateManualOrderValue = false;
-
         if ( newParentPath.equals( this.newParentPath ) )
         {
-            final Node parent = GetNodeByPathCommand.create( this ).
-                nodePath( newParentPath ).
-                build().
-                execute();
-
-            if ( parent.getChildOrder().isManualOrder() )
+            final Node parentNode = doGetByPath( newParentPath );
+            if (parentNode.getChildOrder().isManualOrder() )
             {
-                updateManualOrderValue = true;
+
+                final Long newOrderValue = ResolveInsertOrderValueCommand.create( this )
+                    .parentPath( newParentPath )
+                    .insertManualStrategy( InsertManualStrategy.FIRST )
+                    .build()
+                    .execute();
+
+                nodeToMoveBuilder.manualOrderValue( newOrderValue );
             }
         }
-        return updateManualOrderValue;
     }
 
     private Node doStore( final Node movedNode )
     {
         return this.nodeStorageService.move( StoreMovedNodeParams.create().node( movedNode ).build(),
                                              InternalContext.from( ContextAccessor.current() ) );
-    }
-
-    private void nodeMoved( final int count )
-    {
-        if ( moveListener != null )
-        {
-            moveListener.nodesMoved( count );
-        }
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

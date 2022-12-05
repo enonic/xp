@@ -48,9 +48,7 @@ final class MoveContentCommand
 
         try
         {
-            final MoveContentsResult movedContents = doExecute();
-            this.nodeService.refresh( RefreshMode.ALL );
-            return movedContents;
+            return doExecute();
         }
         catch ( MoveNodeException e )
         {
@@ -93,6 +91,8 @@ final class MoveContentCommand
         }
 
         final Node movedNode = nodeService.move( builder.build() );
+
+        this.nodeService.refresh( RefreshMode.ALL );
 
         final Content movedContent = translator.fromNode( movedNode, false );
 
