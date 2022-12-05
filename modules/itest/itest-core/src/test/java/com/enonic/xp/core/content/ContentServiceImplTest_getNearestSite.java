@@ -127,7 +127,7 @@ public class ContentServiceImplTest_getNearestSite
                                          .contentIds( ContentIds.from( site.getId() ) )
                                          .contentPublishInfo( ContentPublishInfo.create()
                                                                   .from( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
-                                                                  .to( Instant.parse( "2022-12-03T14:00:00.669487800Z" ) )
+                                                                  .to( Instant.parse( "2099-12-03T14:00:00.669487800Z" ) )
                                                                   .build() )
                                          .build() );
 
@@ -135,7 +135,7 @@ public class ContentServiceImplTest_getNearestSite
         assertNotNull( publishedContent );
         assertNotNull( publishedContent.getPublishInfo() );
         assertEquals( "2022-12-01T14:00:00.668Z", publishedContent.getPublishInfo().getFrom().toString() );
-        assertEquals( "2022-12-03T14:00:00.669Z", publishedContent.getPublishInfo().getTo().toString() );
+        assertEquals( "2099-12-03T14:00:00.669Z", publishedContent.getPublishInfo().getTo().toString() );
     }
 
     @Test
