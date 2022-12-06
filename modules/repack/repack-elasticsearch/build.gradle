@@ -6,6 +6,7 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+    implementation 'org.elasticsearch.plugin:analysis-icu:2.4.6'
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"

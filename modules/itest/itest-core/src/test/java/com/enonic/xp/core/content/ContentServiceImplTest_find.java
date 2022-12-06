@@ -2,6 +2,8 @@ package com.enonic.xp.core.content;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -53,6 +56,28 @@ public class ContentServiceImplTest_find
         final ContentQuery queryOrderDesc = ContentQuery.create().queryExpr( QueryParser.parse( "order by _path desc" ) ).build();
 
         assertOrder( contentService.find( queryOrderDesc ).getContentIds(), child3, child2, child1, site );
+    }
+
+    @Test
+    public void order_by_data()
+    {
+        final Content child1 = createContent( ContentPath.ROOT, "a", Map.of("surname", "å") );
+        final Content child2 = createContent( ContentPath.ROOT, "b", Map.of("surname", "æ") );
+        final Content child3 = createContent( ContentPath.ROOT, "c", Map.of("surname", "ø") );
+        final Content child4 = createContent( ContentPath.ROOT, "d", Map.of("surname", "z") );
+        final Content child5 = createContent( ContentPath.ROOT, "e", Map.of("surname", "a") );
+
+        final ContentQuery queryOrderAsc = ContentQuery.create()
+            .queryExpr(
+                QueryExpr.from( QueryParser.parseCostraintExpression( "" ), QueryParser.parseOrderExpressions( "data.surname ASC" ) ) )
+            .build();
+
+        final FindContentIdsByQueryResult findContentIdsByQueryResult = contentService.find( queryOrderAsc );
+        System.out.println( contentService.getByIds( new GetContentByIdsParams( findContentIdsByQueryResult.getContentIds() ) )
+                                .stream()
+                                .map( c -> c.getData().getString( "surname" ) )
+                                .collect( Collectors.toList() ) );
+        assertOrder( findContentIdsByQueryResult.getContentIds(), child5, child4, child2, child3, child1 );
     }
 
     @Test

@@ -8,6 +8,8 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+    implementation 'org.elasticsearch.plugin:analysis-icu:2.4.6'
+
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
@@ -28,6 +30,8 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+    testFixturesImplementation 'org.elasticsearch.plugin:analysis-icu:2.4.6'
+
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
     testImplementation( testFixtures( project( ":core:core-schema" ) ) )

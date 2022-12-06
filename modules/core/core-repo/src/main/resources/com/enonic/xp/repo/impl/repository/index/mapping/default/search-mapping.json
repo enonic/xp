@@ -75,7 +75,7 @@
             "type": "string",
             "store": false,
             "index": "analyzed",
-            "analyzer": "keywordlowercase",
+            "analyzer": "nb_sort",
             "ignore_above": 3072,
             "include_in_all": false
           }

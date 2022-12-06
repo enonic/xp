@@ -3,14 +3,16 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 
+import org.elasticsearch.Version;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugin.analysis.icu.AnalysisICUPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class EmbeddedElasticsearchServer
 {
@@ -52,12 +54,19 @@ public class EmbeddedElasticsearchServer
             .put( "http.enabled", false )
             .put( "index.translog.durability", "async" )
             .put( "index.translog.sync_interval", "15m" )
-            .put( "discovery.zen.ping.multicast.enabled", false );
+            .put( "discovery.zen.ping.multicast.enabled", false )
+            .put( "node.local", true );
 
-        node = nodeBuilder().
-            local( true ).
-            settings( testServerSetup.build() ).
-            node();
+        node = new MyNode( testServerSetup.build() );
+        node.start();
+    }
+
+    private static final class MyNode extends Node{
+        public MyNode( final Settings preparedSettings )
+        {
+            super( InternalSettingsPreparer.prepareEnvironment( preparedSettings, null ), Version.CURRENT,
+                   Collections.singleton( AnalysisICUPlugin.class ) );
+        }
     }
 
     public Client getClient()

@@ -396,6 +396,16 @@ public class AbstractContentServiceTest
         return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
     }
 
+    protected Content createContent( final ContentPath parentPath, final String displayName, final Map<String, String> dataMap )
+    {
+        final PropertyTree data = new PropertyTree();
+        for ( Map.Entry<String, String> entry : dataMap.entrySet() )
+        {
+            data.setString( entry.getKey(), entry.getValue() );
+        }
+        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
+    }
+
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, ContentTypeName type )
     {
         return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), type );

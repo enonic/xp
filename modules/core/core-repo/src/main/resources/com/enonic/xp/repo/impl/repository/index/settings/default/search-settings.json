@@ -14,6 +14,11 @@
       "nynorsk_stemmer": {
         "type": "stemmer",
         "language": "light_nynorsk"
+      },
+      "nb_sort": {
+        "type":     "icu_collation",
+        "language": "nb",
+        "country":  "NO"
       }
     },
     "tokenizer": {
@@ -35,6 +40,19 @@
         "tokenizer": "keyword",
         "filter": [
           "lowercase"
+        ]
+      },
+      "ducet_sort": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation"
+        ]
+      },
+      "nb_sort": {
+        "tokenizer": "keyword",
+        "filter": [
+          "nb_sort"
         ]
       },
       "keywordasciilowercase": {
