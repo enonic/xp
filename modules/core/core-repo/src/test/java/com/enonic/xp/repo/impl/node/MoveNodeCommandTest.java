@@ -208,8 +208,6 @@ public class MoveNodeCommandTest
         final Node newParent = createNode(
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -274,8 +272,6 @@ public class MoveNodeCommandTest
 
         final Node newParent = createNode(
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
@@ -408,8 +404,6 @@ public class MoveNodeCommandTest
                                                                                        .allowAll()
                                                                                        .build() ) )
                                                .build() );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )

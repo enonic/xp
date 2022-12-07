@@ -189,6 +189,8 @@ public class MoveNodeCommand
 
         moveListener.nodesMoved( 1 );
 
+        refresh(RefreshMode.SEARCH);
+
         final SearchResult children = this.nodeSearchService.query(
             NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
             ReturnFields.from( NodeIndexPath.NAME ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
