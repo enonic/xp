@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
@@ -14,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -188,12 +188,12 @@ public class ReorderChildNodeCommandTest
 
     private void createChildNodes( final Node parentNode )
     {
-        createNode( "b", parentNode.path() );
-        createNode( "a", parentNode.path() );
-        createNode( "c", parentNode.path() );
-        createNode( "f", parentNode.path() );
-        createNode( "e", parentNode.path() );
-        createNode( "d", parentNode.path() );
+        createNode( parentNode.path(), "b"  );
+        createNode( parentNode.path(), "a" );
+        createNode( parentNode.path(), "c" );
+        createNode( parentNode.path(), "f" );
+        createNode( parentNode.path(), "e" );
+        createNode( parentNode.path(), "d" );
     }
 
     private void setChildOrder( final Node parentNode, final IndexPath indexPath, final OrderExpr.Direction direction )
@@ -204,23 +204,9 @@ public class ReorderChildNodeCommandTest
             indexServiceInternal( indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
+            refresh( RefreshMode.ALL ).
             build().
             execute();
-
-        refresh();
-    }
-
-    private Node createNode( final String name, final NodePath parent )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.setString( "displayName", name );
-
-        return createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( name ) ).
-            name( name ).
-            parent( parent ).
-            data( data ).
-            build() );
     }
 }
 

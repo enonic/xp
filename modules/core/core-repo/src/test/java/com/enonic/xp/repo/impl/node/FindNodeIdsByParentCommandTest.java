@@ -198,6 +198,7 @@ public class FindNodeIdsByParentCommandTest
         int size = 20;
 
         createChildren( createdNode, size );
+        nodeService.refresh( RefreshMode.ALL );
 
         FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -229,6 +230,7 @@ public class FindNodeIdsByParentCommandTest
         int size = 20;
 
         createChildren( createdNode, size );
+        nodeService.refresh( RefreshMode.ALL );
 
         FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -282,6 +284,7 @@ public class FindNodeIdsByParentCommandTest
             parent( createdNode.path() ).
             name( "my-child" ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -412,6 +415,7 @@ public class FindNodeIdsByParentCommandTest
             parent( NodePath.ROOT ).
             data( createOrderProperty( 3.0 ) ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
             parentPath( NodePath.ROOT ).

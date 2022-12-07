@@ -17,6 +17,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -49,6 +50,7 @@ public class NodeOrderTest
         final Node node2 = createNode( "node2", ValueFactory.newGeoPoint( GeoPoint.from( "81,80" ) ) );
         final Node node3 = createNode( "node3", ValueFactory.newGeoPoint( GeoPoint.from( "82,80" ) ) );
         final Node node4 = createNode( "node4", ValueFactory.newGeoPoint( GeoPoint.from( "83,80" ) ) );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery distanceQuery = NodeQuery.create().
             query( QueryExpr.from( null, new DynamicOrderExpr(
@@ -75,6 +77,7 @@ public class NodeOrderTest
         final Node node3 = createNode( "node3", ValueFactory.newString( "mens denne har både fisk, ost og pølse" ) );
         final Node node4 =
             createNode( "node4", ValueFactory.newString( "denne vinner, siden den har alle sammen: fisk, ost, pølse og pai" ) );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FunctionExpr fulltextExpression =
             FunctionExpr.from( "fulltext", ValueExpr.string( "my-value" ), ValueExpr.string( "pai fisk pølse ost" ),

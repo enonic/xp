@@ -16,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -111,6 +112,7 @@ public class FindNodesByQueryCommandTest
         final PropertyTree data = new PropertyTree();
         data.addString( "txt", "The quick brown fox jumps over the lazy dog" );
         final Node node1 = createNode( CreateNodeParams.create().name( "my-node-1" ).parent( NodePath.ROOT ).data( data ).build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create()
             .addSuggestionQueries( SuggestionQueries.create()
@@ -154,6 +156,7 @@ public class FindNodesByQueryCommandTest
             parent( node1.path() ).
             data( data13 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "MYProperty" ), ValueExpr.number( 10L ) ) ) ).
@@ -204,6 +207,7 @@ public class FindNodesByQueryCommandTest
             parent( node1.path() ).
             data( data13 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final Value from = ValueFactory.newDateTime( BASE_INSTANT );
         final Value to = ValueFactory.newDateTime( BASE_INSTANT.plus( 15, ChronoUnit.DAYS ) );
@@ -252,6 +256,7 @@ public class FindNodesByQueryCommandTest
             name( "child-node" ).
             parent( node1.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( path1, value1, node1 );
         queryAndAssert( path2, value2, node1 );

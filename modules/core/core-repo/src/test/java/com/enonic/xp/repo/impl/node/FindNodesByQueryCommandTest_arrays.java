@@ -13,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -54,6 +55,7 @@ public class FindNodesByQueryCommandTest_arrays
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 

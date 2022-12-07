@@ -11,6 +11,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,6 +49,7 @@ public class FindNodesByQueryCommandTest_func_range
             parent( NodePath.ROOT ).
             name( "node-4" ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 2, "range('" + NodeIndexPath.NAME.getPath() + "', 'node-1', 'node-4' )" );
     }
@@ -65,6 +67,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-1" ).
             data( data ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 0, "range('version', '6.3.0', '6.3.1' )" );
         queryAndAssert( 1, "range('version', '6.2.4', '6.3.1' )" );
@@ -92,6 +95,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-2" ).
             data( node2 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 1, "range('publishfrom', instant('2015-08-01T09:00:00Z'), instant('2015-08-01T11:00:00Z') )" );
         queryAndAssert( 2, "range('publishfrom', instant('2015-08-01T09:00:00Z'), instant('2015-08-01T11:00:00Z'), 'false', 'true' )" );
@@ -119,6 +123,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-2" ).
             data( node2 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 0, "range('myValue', 2.0, 3.0 )" );
         queryAndAssert( 0, "range('myValue', 2.0, 3.0, 'false', 'false' )" );
@@ -139,6 +144,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-1" ).
             data( data ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 1, "range('version', '6.3.0', '6.4.0' )" );
     }
@@ -173,6 +179,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-3" ).
             data( node3 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 3, "range('myValue', 'a', '', 'true', 'false')" );
         queryAndAssert( 2, "range('myValue', 'b', '', 'true', 'false')" );
@@ -200,6 +207,7 @@ public class FindNodesByQueryCommandTest_func_range
             name( "node-2" ).
             data( node2 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( 2, "range('publishfrom', instant('2015-08-01T09:00:00Z'), '')" );
         queryAndAssert( 2, "range('publishfrom', '', instant('2017-08-01T09:00:00Z'))" );

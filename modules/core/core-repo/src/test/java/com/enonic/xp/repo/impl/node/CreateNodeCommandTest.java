@@ -20,6 +20,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -254,6 +255,7 @@ public class CreateNodeCommandTest
             parent( NodePath.ROOT ).
             data( data ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
             storageService( this.storageService ).

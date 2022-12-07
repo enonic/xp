@@ -11,6 +11,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -50,6 +51,7 @@ public class FindNodesByQueryCommandTest_compare
             parent( NodePath.ROOT ).
             data( data2 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( CompareExpr.gt( FieldExpr.from( IndexPath.from( "my-value" ) ), ValueExpr.number( 7 ) ) ) ).
@@ -79,6 +81,7 @@ public class FindNodesByQueryCommandTest_compare
             name( "child-node" ).
             parent( node1.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.NAME ), ValueExpr.string( "my-node-1" ) ) ) ).
@@ -111,6 +114,7 @@ public class FindNodesByQueryCommandTest_compare
             parent( NodePath.ROOT ).
             data( data2 ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( CompareExpr.eq( FieldExpr.from( "myDouble" ), ValueExpr.number( 2.0 ) ) ) ).
@@ -149,6 +153,7 @@ public class FindNodesByQueryCommandTest_compare
             name( "child-node" ).
             parent( node1.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 

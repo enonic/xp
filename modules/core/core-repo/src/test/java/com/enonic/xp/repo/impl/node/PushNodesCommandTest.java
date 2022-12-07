@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -175,6 +176,8 @@ public class PushNodesCommandTest
 
         //Renames the content
         renameNode( node, "my-node-renamed" );
+        nodeService.refresh( RefreshMode.ALL );
+
         assertNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
         assertNotNull( getNodeByPath( NodePath.create( "/my-node-renamed" ).build() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );

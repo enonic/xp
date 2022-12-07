@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersionsMetadata;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -39,6 +40,7 @@ class FindNodeVersionsCommandTest
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeVersionQuery query = NodeVersionQuery.create().
             size( 100 ).

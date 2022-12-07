@@ -9,6 +9,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,6 +79,7 @@ public class FindNodePathByQueryTest
             name( "test-post" ).
             parent( posts.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
     }
 
     private void queryAndExpect( final String queryString, final NodePaths expected )
