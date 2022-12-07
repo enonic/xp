@@ -69,16 +69,18 @@ public final class UpdateNodeCommand
             final NodePath parentPath = editedNode.path().getParentPath();
             builder.permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() );
         }
-        final Node updatedNode = builder.build();
 
+        final Node updatedNode = builder.build();
         if ( !this.params.isDryRun() )
         {
-            return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
+            final Node storedNode = this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
+            refresh( params.getRefresh() );
+            return storedNode;
         }
-
-        refresh( params.getRefresh() );
-
-        return updatedNode;
+        else
+        {
+            return updatedNode;
+        }
     }
 
     private Node getPersistedNode()
