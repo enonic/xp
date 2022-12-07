@@ -8,6 +8,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,6 +37,8 @@ public class NodeHasChildResolverTest
             parent( parentNode.path() ).
             name( "my-child-node" ).
             build() );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         assertTrue( NodeHasChildResolver.create().
             searchService( this.searchService ).
@@ -71,6 +74,8 @@ public class NodeHasChildResolverTest
             parent( parentNode2.path() ).
             name( "my-child-node-2" ).
             build() );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodesHasChildrenResult result = NodeHasChildResolver.create().
             searchService( this.searchService ).
