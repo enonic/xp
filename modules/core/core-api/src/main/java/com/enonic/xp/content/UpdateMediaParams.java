@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
@@ -22,11 +24,11 @@ public final class UpdateMediaParams
 
     private String caption;
 
-    private String artist;
+    private List<String> artist = List.of();
 
     private String copyright;
 
-    private String tags;
+    private List<String> tags = List.of();
 
     private WorkflowInfo workflowInfo;
 
@@ -72,9 +74,16 @@ public final class UpdateMediaParams
         return this;
     }
 
+    @Deprecated
     public UpdateMediaParams artist( final String artist )
     {
-        this.artist = artist;
+        this.artist = artist != null ? List.of( artist ) : List.of();
+        return this;
+    }
+
+    public UpdateMediaParams artist( final List<String> artist )
+    {
+        this.artist = List.copyOf( artist );
         return this;
     }
 
@@ -84,9 +93,16 @@ public final class UpdateMediaParams
         return this;
     }
 
+    @Deprecated
     public UpdateMediaParams tags( final String tags )
     {
-        this.tags = tags;
+        this.tags = tags != null ? List.of( tags ) : List.of();
+        return this;
+    }
+
+    public UpdateMediaParams tags( final List<String> tags )
+    {
+        this.tags = List.copyOf( tags );
         return this;
     }
 
@@ -138,9 +154,15 @@ public final class UpdateMediaParams
         return caption;
     }
 
-    public String getArtist()
+    public List<String> getArtistList()
     {
         return artist;
+    }
+
+    @Deprecated
+    public String getArtist()
+    {
+        return !artist.isEmpty() ? artist.get( 0 ) : null;
     }
 
     public String getCopyright()
@@ -148,9 +170,15 @@ public final class UpdateMediaParams
         return copyright;
     }
 
-    public String getTags()
+    public List<String> getTagList()
     {
         return tags;
+    }
+
+    @Deprecated
+    public String getTags()
+    {
+        return !tags.isEmpty() ? tags.get( 0 ) : null;
     }
 
     public WorkflowInfo getWorkflowInfo()
