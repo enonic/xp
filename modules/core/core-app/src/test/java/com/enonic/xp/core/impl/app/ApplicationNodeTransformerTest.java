@@ -81,7 +81,7 @@ public class ApplicationNodeTransformerTest
         Mockito.when( app.getDisplayName() ).thenReturn( "displayName" );
 
         final ByteSource updatedSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( "myBundleUpdated", true ).build() ) );
-        final UpdateNodeParams updateNodeParams = ApplicationNodeTransformer.toUpdateNodeParams( app, updatedSource, existingNode );
+        final UpdateNodeParams updateNodeParams = ApplicationNodeTransformer.toUpdateNodeParams( app, updatedSource );
 
         final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
 

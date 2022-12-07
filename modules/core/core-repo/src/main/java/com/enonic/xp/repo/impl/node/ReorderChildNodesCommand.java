@@ -73,7 +73,7 @@ public class ReorderChildNodesCommand
         parents.forEach( this::processParent );
         parents.forEach( result::addParentNode );
 
-        refresh( RefreshMode.SEARCH );
+        refresh( params.getRefresh() );
 
         return result.build();
     }

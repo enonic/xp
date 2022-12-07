@@ -207,6 +207,7 @@ public class CreateNodeParams
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
             createNodeParams.binaryAttachments.stream().forEach( binaryAttachments::add );
+            this.refresh = createNodeParams.refresh;
         }
 
         public Builder setNodeId( final NodeId nodeId )

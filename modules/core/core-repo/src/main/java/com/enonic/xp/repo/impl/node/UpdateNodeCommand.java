@@ -35,11 +35,6 @@ public final class UpdateNodeCommand
 
     public Node execute()
     {
-        return doExecute();
-    }
-
-    private Node doExecute()
-    {
         final Node persistedNode = getPersistedNode();
 
         requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
@@ -80,6 +75,8 @@ public final class UpdateNodeCommand
         {
             return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
         }
+
+        refresh( params.getRefresh() );
 
         return updatedNode;
     }

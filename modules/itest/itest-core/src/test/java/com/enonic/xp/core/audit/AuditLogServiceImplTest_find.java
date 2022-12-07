@@ -37,6 +37,7 @@ public class AuditLogServiceImplTest_find
         AuditLogContext.createAdminContext().runWith( () -> {
             LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
             AuditLog log = auditLogService.log( params );
+            refresh();
 
             context.runWith( () -> {
                 FindAuditLogResult result =
@@ -61,6 +62,7 @@ public class AuditLogServiceImplTest_find
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
         AuditLog log = logAsAdmin( params );
+        refresh();
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             ids( AuditLogIds.from( log.getId() ) ).
             build() );
@@ -73,6 +75,7 @@ public class AuditLogServiceImplTest_find
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
         logAsAdmin( params );
+        refresh();
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().build() );
         assertEquals( 1L, result.getCount() );
     }
@@ -84,6 +87,7 @@ public class AuditLogServiceImplTest_find
             type( "test" ).
             time( Instant.now().minus( 30, ChronoUnit.DAYS ) ).
             build() );
+        refresh();
 
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             from( Instant.now() ).
@@ -104,6 +108,7 @@ public class AuditLogServiceImplTest_find
             type( "test" ).
             time( Instant.now() ).
             build() );
+        refresh();
 
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             to( Instant.now().minus( 30, ChronoUnit.DAYS ) ).
@@ -128,6 +133,7 @@ public class AuditLogServiceImplTest_find
         AuditLog log2 = logAsAdmin( LogAuditLogParams.create().
             type( "type2" ).
             build() );
+        refresh();
 
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             type( "type1" ).
@@ -154,6 +160,7 @@ public class AuditLogServiceImplTest_find
             type( "test" ).
             source( "source2" ).
             build() );
+        refresh();
 
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             source( "source1" ).

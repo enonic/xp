@@ -83,7 +83,7 @@ final class MoveContentCommand
         final NodeId sourceNodeId = NodeId.from( contentId );
 
         final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).moveListener( this );
+            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).refresh( RefreshMode.ALL ).moveListener( this );
 
         if ( params.stopInherit() )
         {
@@ -91,8 +91,6 @@ final class MoveContentCommand
         }
 
         final Node movedNode = nodeService.move( builder.build() );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final Content movedContent = translator.fromNode( movedNode, false );
 

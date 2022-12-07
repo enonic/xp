@@ -37,7 +37,6 @@ import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -105,8 +104,6 @@ public class ApplicationServiceTest
             Application application = applicationService.installGlobalApplication( createByteSource( "7.8.0" ), applicationName );
             assertEquals( "7.8.0", application.getVersion().toString() );
 
-            nodeService.refresh( RefreshMode.ALL );
-
             systemRepoContext().callWith( () -> {
                 Node applicationNode =
                     nodeService.getByPath( NodePath.create( NodePath.ROOT, "/applications/" + applicationName ).build() );
@@ -117,8 +114,6 @@ public class ApplicationServiceTest
 
             application = applicationService.installGlobalApplication( createByteSource( "7.8.1" ), applicationName );
             assertEquals( "7.8.1", application.getVersion().toString() );
-
-            nodeService.refresh( RefreshMode.ALL );
 
             systemRepoContext().callWith( () -> {
                 Node applicationNode =

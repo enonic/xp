@@ -21,6 +21,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
@@ -58,12 +59,8 @@ public class IndexServiceImplTest
     public void initialize()
         throws Exception
     {
-        final Node node = createNode( CreateNodeParams.create().
-            name( "myNode" ).
-            parent( NodePath.ROOT ).
-            build() );
-
-        refresh();
+        final Node node =
+            createNode( CreateNodeParams.create().name( "myNode" ).parent( NodePath.ROOT ).refresh( RefreshMode.ALL ).build() );
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
@@ -86,9 +83,8 @@ public class IndexServiceImplTest
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
+            refresh( RefreshMode.ALL ).
             build() );
-
-        refresh();
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
@@ -109,9 +105,8 @@ public class IndexServiceImplTest
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
+            refresh( RefreshMode.ALL ).
             build() );
-
-        refresh();
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( TEST_REPO_ID ) );
 
@@ -138,9 +133,8 @@ public class IndexServiceImplTest
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
+            refresh( RefreshMode.ALL ).
             build() );
-
-        refresh();
 
         PushNodesCommand.create().
             ids( NodeIds.from( node.id() ) ).
@@ -195,10 +189,12 @@ public class IndexServiceImplTest
 
         cmsRepoContext.callWith( this::createDefaultRootNode );
 
-        cmsRepoContext.callWith(
-            () -> createNode( CreateNodeParams.create().setNodeId( NodeId.from( "su" ) ).name( "su" ).parent( NodePath.ROOT ).build() ) );
-
-        refresh();
+        cmsRepoContext.callWith( () -> createNode( CreateNodeParams.create()
+                                                       .setNodeId( NodeId.from( "su" ) )
+                                                       .name( "su" )
+                                                       .refresh( RefreshMode.ALL )
+                                                       .parent( NodePath.ROOT )
+                                                       .build() ) );
 
         assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
 
@@ -231,14 +227,12 @@ public class IndexServiceImplTest
 
         systemRepoContext.callWith( this::createDefaultRootNode );
 
-        systemRepoContext.
-            callWith( () -> createNode( CreateNodeParams.create().
-                setNodeId( NodeId.from( "su" ) ).
-                name( "su" ).
-                parent( NodePath.ROOT ).
-                build() ) );
-
-        refresh();
+        systemRepoContext.callWith( () -> createNode( CreateNodeParams.create()
+                                                          .setNodeId( NodeId.from( "su" ) )
+                                                          .name( "su" )
+                                                          .parent( NodePath.ROOT )
+                                                          .refresh( RefreshMode.ALL )
+                                                          .build() ) );
 
         final long nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getHits();
 

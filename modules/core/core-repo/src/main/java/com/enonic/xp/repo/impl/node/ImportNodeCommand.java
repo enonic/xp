@@ -6,6 +6,7 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 
@@ -26,6 +27,8 @@ public class ImportNodeCommand
 
     private final boolean importPermissionsOnCreate;
 
+    private final RefreshMode refresh;
+
     private ImportNodeCommand( Builder builder )
     {
         super( builder );
@@ -36,6 +39,7 @@ public class ImportNodeCommand
         this.dryRun = builder.dryRun;
         this.importPermissions = builder.importPermissions;
         this.importPermissionsOnCreate = builder.importPermissionsOnCreate;
+        this.refresh = builder.refresh;
 
     }
 
@@ -70,6 +74,7 @@ public class ImportNodeCommand
 
     private Node createNode()
     {
+        final Node node;
         if ( this.importNode.isRoot() )
         {
             final CreateRootNodeParams.Builder createRootNodeParams = CreateRootNodeParams.create().
@@ -80,10 +85,7 @@ public class ImportNodeCommand
                 createRootNodeParams.permissions( this.importNode.getPermissions() );
             }
 
-            return CreateRootNodeCommand.create( this ).
-                params( createRootNodeParams.build() ).
-                build().
-                execute();
+            node = CreateRootNodeCommand.create( this ).params( createRootNodeParams.build() ).build().execute();
         }
         else
         {
@@ -107,13 +109,15 @@ public class ImportNodeCommand
                 createNodeParams.permissions( this.importNode.getPermissions() );
             }
 
-            return CreateNodeCommand.create( this ).
+            node = CreateNodeCommand.create( this ).
                 params( createNodeParams.build() ).
                 timestamp( this.importNode.getTimestamp() ).
                 binaryService( binaryService ).
                 build().
                 execute();
         }
+        refresh( refresh );
+        return node;
     }
 
     private Node updateNode( final Node existingNode )
@@ -155,6 +159,7 @@ public class ImportNodeCommand
 
         private boolean importPermissionsOnCreate = true;
 
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -199,6 +204,12 @@ public class ImportNodeCommand
         public Builder importPermissionsOnCreate( boolean importPermissionsOnCreate )
         {
             this.importPermissionsOnCreate = importPermissionsOnCreate;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

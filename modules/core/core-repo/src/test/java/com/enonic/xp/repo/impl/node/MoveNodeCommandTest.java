@@ -440,9 +440,12 @@ public class MoveNodeCommandTest
             createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "a2" ).childOrder( ChildOrder.manualOrder() ).build() );
         final Node a2_1 = createNode( newParent.path(), "a2_1" );
         final Node a2_2 = createNode( newParent.path(), "a2_2" );
+        refresh();
 
         doMoveNode( newParent.path(), a1_1.id() );
         doMoveNode( newParent.path(), a1_2.id() );
+
+        refresh();
 
         final FindNodesByParentResult result = findByParent( newParent.path() );
 

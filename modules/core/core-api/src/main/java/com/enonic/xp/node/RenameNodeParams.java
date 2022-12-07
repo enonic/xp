@@ -13,11 +13,14 @@ public class RenameNodeParams
 
     private final NodeDataProcessor processor;
 
+    private final RefreshMode refresh;
+
     private RenameNodeParams( Builder builder )
     {
-        nodeId = builder.nodeId;
-        newNodeName = builder.newNodeName;
-        processor = builder.processor;
+        this.nodeId = builder.nodeId;
+        this.newNodeName = builder.newNodeName;
+        this.processor = builder.processor;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -40,6 +43,11 @@ public class RenameNodeParams
         return processor;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -47,6 +55,8 @@ public class RenameNodeParams
         private NodeName newNodeName;
 
         private NodeDataProcessor processor = ( n ) -> n;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -67,6 +77,12 @@ public class RenameNodeParams
         public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

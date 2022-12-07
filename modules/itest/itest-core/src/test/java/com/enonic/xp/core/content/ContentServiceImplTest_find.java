@@ -501,8 +501,6 @@ public class ContentServiceImplTest_find
         final Content child2 = createContent( site.getPath(), "c", data2 );
         createContent( site.getPath(), "d", data3 );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final PropertyTree request = new PropertyTree();
 
         final PropertySet booleanSet = request.addSet( "boolean" );
@@ -545,8 +543,6 @@ public class ContentServiceImplTest_find
         final Content child1 = createContent( site.getPath(), "b", data1 );
         createContent( site.getPath(), "c", data2 );
         final Content child3 = createContent( site.getPath(), "d", data3 );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final PropertyTree request = new PropertyTree();
 

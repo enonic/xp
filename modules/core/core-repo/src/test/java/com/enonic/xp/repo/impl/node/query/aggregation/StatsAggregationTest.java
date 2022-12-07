@@ -45,6 +45,7 @@ public class StatsAggregationTest
         createNode( "c2", 4.0, "n6", NodePath.ROOT );
 
         createNode( "c3", 2.0, "n7", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).

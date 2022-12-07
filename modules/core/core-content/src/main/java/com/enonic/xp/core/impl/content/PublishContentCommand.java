@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -15,13 +16,16 @@ import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -127,11 +131,7 @@ public class PublishContentCommand
 
     private void doPushNodes( final NodeIds nodesToPush )
     {
-        SetPublishInfoCommand.create( this ).
-            nodeIds( nodesToPush ).
-            publishFrom( contentPublishInfo.getFrom() ).
-            publishTo( contentPublishInfo.getTo() ).
-            pushListener( publishContentListener ).build().execute();
+        setPublishInfo( nodesToPush );
 
         final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, count -> {
             if ( publishContentListener != null )
@@ -147,6 +147,65 @@ public class PublishContentCommand
                                                                           .map( failed -> failed.getNodeBranchEntry().getNodeId() )
                                                                           .collect( Collectors.toList() ) ) );
         this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful().getKeys() ) );
+    }
+
+    private void setPublishInfo( final NodeIds nodesToPush )
+    {
+        final Instant publishFrom = contentPublishInfo.getFrom();
+        final Instant publishTo = contentPublishInfo.getTo();
+
+        for ( final NodeId id : nodesToPush )
+        {
+            this.nodeService.update( UpdateNodeParams.create().editor( toBeEdited -> {
+
+                PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+
+                if ( publishInfo == null )
+                {
+                    publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
+                }
+                else if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FIRST ) &&
+                    publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
+                {
+                    return;
+                }
+
+                if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) == null )
+                {
+                    final Instant publishFromPropertyValue = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM );
+                    if ( publishFromPropertyValue == null )
+                    {
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
+                    }
+                    else
+                    {
+                        //TODO Special case for Enonic XP 6.7 and 6.8 contents. Remove after 7.0
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFromPropertyValue );
+                    }
+                }
+
+                if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) == null )
+                {
+                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                    if ( publishTo == null )
+                    {
+                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
+                        {
+                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                        }
+                    }
+                    else
+                    {
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
+                    }
+                }
+
+            } ).id( id ).build() );
+            if ( publishContentListener != null )
+            {
+                publishContentListener.contentPushed( 1 );
+            }
+        }
     }
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )

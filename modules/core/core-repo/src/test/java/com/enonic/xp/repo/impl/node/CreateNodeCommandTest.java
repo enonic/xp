@@ -123,7 +123,6 @@ public class CreateNodeCommandTest
             parent( parentNode.path() ).
             name( "child-node-3" ).
             build() );
-        refresh();
 
         assertTrue( c1.getManualOrderValue() != null && c2.getManualOrderValue() != null && c3.getManualOrderValue() != null );
         assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );

@@ -37,6 +37,7 @@ public class DateHistogramAggregationsTest
         createNode( Instant.parse( "2014-12-10T12:45:00Z" ), "n4", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T13:59:59Z" ), "n5", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T14:01:00Z" ), "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "hour" ).
@@ -77,6 +78,7 @@ public class DateHistogramAggregationsTest
         createNode( Instant.parse( "2014-12-10T14:00:00Z" ), "n3", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T16:00:59Z" ), "n4", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T18:00:00Z" ), "n5", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithZero" ).
@@ -110,6 +112,7 @@ public class DateHistogramAggregationsTest
         // Create 5 nodes with two hours between
         createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n1", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T10:40:00Z" ), "n2", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateHistogramAggregationQuery.create( "hhMM" ).

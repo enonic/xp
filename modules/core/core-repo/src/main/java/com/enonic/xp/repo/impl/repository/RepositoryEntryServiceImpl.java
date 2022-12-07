@@ -56,8 +56,8 @@ public class RepositoryEntryServiceImpl
         final Node node = RepositoryNodeTranslator.toNode( repository );
         final Node createdNode = nodeStorageService.store( node, createInternalContext() );
 
-        eventPublisher.publish( NodeEvents.created( createdNode ) );
         refresh();
+        eventPublisher.publish( NodeEvents.created( createdNode ) );
         eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
     }
 
@@ -97,6 +97,7 @@ public class RepositoryEntryServiceImpl
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( repositoryId ) ).
             editor( RepositoryNodeTranslator.toCreateBranchNodeEditor( branch ) ).
+            refresh( RefreshMode.ALL ).
             build();
 
         return updateRepositoryNode( updateNodeParams );
@@ -108,6 +109,7 @@ public class RepositoryEntryServiceImpl
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( repositoryId ) ).
             editor( RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch ) ).
+            refresh( RefreshMode.ALL ).
             build();
 
         return updateRepositoryNode( updateNodeParams );
@@ -120,6 +122,7 @@ public class RepositoryEntryServiceImpl
             id( NodeId.from( params.getRepositoryId() ) ).
             editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
             setBinaryAttachments( params.getAttachments() ).
+            refresh( RefreshMode.ALL ).
             build();
         return updateRepositoryNode( updateNodeParams );
     }
@@ -138,7 +141,6 @@ public class RepositoryEntryServiceImpl
         if ( deletedNodes.isNotEmpty() )
         {
             eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
-            refresh();
             eventPublisher.publish( RepositoryEvents.deleted( repositoryId ) );
         }
     }
@@ -173,8 +175,6 @@ public class RepositoryEntryServiceImpl
             execute() );
 
         eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-
-        refresh();
 
         Repository repository = RepositoryNodeTranslator.toRepository( updatedNode );
 

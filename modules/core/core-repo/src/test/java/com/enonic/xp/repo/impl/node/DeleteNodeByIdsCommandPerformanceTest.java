@@ -28,7 +28,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
     public void deleteNodeByIds()
         throws Exception
     {
-        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 
         createNodes( rootNode, 50, 3, 1 );
 

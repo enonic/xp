@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
@@ -246,6 +247,7 @@ abstract class IdProviderNodeTranslator
                     nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
                 }
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 
@@ -259,6 +261,7 @@ abstract class IdProviderNodeTranslator
                 final PropertyTree data = editableNode.data;
                 data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 

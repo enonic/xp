@@ -44,10 +44,9 @@ public class HasUnpublishedChildrenCommandTest
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         final Node node1_1 = createNode( node1.path(), "node1_1" );
+        refresh();
 
         pushNodes( WS_OTHER, node1.id() );
-
-        refresh();
 
         assertTrue( resolve( node1 ) );
         assertFalse( resolve( node1_1 ) );

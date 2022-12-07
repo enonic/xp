@@ -47,9 +47,9 @@ public class UnpublishContentCommand
 
         final ContentIds contentIds = masterContext.callWith( this::delete );
 
-        removePublishInfo( contentIds );
+        removePublishInfoAndCommit( contentIds );
 
-        this.nodeService.refresh( RefreshMode.ALL );
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
         if ( contentIds.getSize() == 1 )
@@ -81,7 +81,7 @@ public class UnpublishContentCommand
         return contentBuilder.build();
     }
 
-    private void removePublishInfo( final ContentIds contentIds )
+    private void removePublishInfoAndCommit( final ContentIds contentIds )
     {
         final Instant now = Instant.now();
         for ( final ContentId contentId : contentIds )

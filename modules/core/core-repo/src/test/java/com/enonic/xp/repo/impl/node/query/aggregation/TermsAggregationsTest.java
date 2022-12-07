@@ -194,6 +194,7 @@ public class TermsAggregationsTest
         createNode( "c3", "d2", "node10", NodePath.ROOT );
         createNode( "c3", "d3", "node11", NodePath.ROOT );
         createNode( "c3", "d3", "node12", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -262,6 +263,7 @@ public class TermsAggregationsTest
         createNode( "c2", "n5", NodePath.ROOT );
 
         createNode( "c3", "n6", NodePath.ROOT );
+        refresh();
     }
 
 

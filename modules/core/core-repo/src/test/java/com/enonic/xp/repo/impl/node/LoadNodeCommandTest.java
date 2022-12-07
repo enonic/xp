@@ -62,6 +62,7 @@ public class LoadNodeCommandTest
         throws Exception
     {
         final Node originalNode = createNode( NodePath.ROOT, "fisk" );
+        refresh();
 
         final Node nodeToLoad = Node.create( originalNode ).
             id( new NodeId() ).
@@ -74,8 +75,6 @@ public class LoadNodeCommandTest
         final LoadNodeParams loadParams = LoadNodeParams.create().
             node( nodeToLoad ).
             build();
-
-        refresh();
 
         doLoadNode( loadParams );
 

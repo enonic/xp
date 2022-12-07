@@ -41,10 +41,10 @@ public class ReindexLoadTest
         final int loadSize = 10_100;
         for ( int i = 0; i < loadSize; i++ )
         {
-            createNode( CreateNodeParams.create().
+            createNodeSkipVerification( CreateNodeParams.create().
                 name( "node" + i ).
                 parent( NodePath.ROOT ).
-                build(), false );
+                build() );
         }
 
         refresh();

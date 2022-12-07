@@ -11,7 +11,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -80,16 +79,14 @@ public class SetActiveVersionCommandTest
             editor( toBeEdited -> toBeEdited.data.setString( "property1", "ver2" ) ).
             build() );
 
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( node1.id() ).
-                nodeName( NodeName.from( "renamedNode" ) ).
-                build() ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( node1.id() )
+            .newNodeName( NodeName.from( "renamedNode" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         final Node movedNode = getNodeById( node1.id() );
         assertEquals( "renamedNode", movedNode.name().toString() );

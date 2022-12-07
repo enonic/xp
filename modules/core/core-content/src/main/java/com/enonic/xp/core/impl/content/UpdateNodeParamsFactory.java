@@ -11,6 +11,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -66,7 +67,8 @@ public class UpdateNodeParamsFactory
 
         final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
             id( NodeId.from( editedContent.getId() ) ).
-            editor( nodeEditor );
+            editor( nodeEditor ).
+            refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
         {

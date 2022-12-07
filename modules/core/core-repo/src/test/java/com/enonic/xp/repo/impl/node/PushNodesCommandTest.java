@@ -12,7 +12,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -486,16 +485,14 @@ public class PushNodesCommandTest
 
     private void doRenameNode( final NodeId nodeId, final String newName )
     {
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( nodeId ).
-                nodeName( NodeName.from( newName ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( nodeId )
+            .newNodeName( NodeName.from( newName ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
     }
 
     private Node getNodeByPathInOther( final NodePath nodePath )

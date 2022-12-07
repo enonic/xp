@@ -28,8 +28,6 @@ public class DeleteVersionCommandTest
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
 
-        refresh();
-
         assertThrows(NodeVersionDeleteException.class, () -> doDeleteVersion( node1 ));
     }
 
@@ -44,8 +42,6 @@ public class DeleteVersionCommandTest
                 node1.data().setString( "myValue", "1" );
             } ).
             build() );
-
-        refresh();
 
         doDeleteNode( node1.id() );
 

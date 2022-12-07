@@ -5,7 +5,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -45,29 +44,13 @@ public class ApplicationRepoServiceImpl
     @Override
     public Node createApplicationNode( final Application application, final ByteSource source )
     {
-        final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( application, source );
-
-        final Node appNode = this.nodeService.create( createNodeParams );
-        this.nodeService.refresh( RefreshMode.ALL );
-        return appNode;
+        return this.nodeService.create( ApplicationNodeTransformer.toCreateNodeParams( application, source ) );
     }
 
     @Override
     public Node updateApplicationNode( final Application application, final ByteSource source )
     {
-        final String appName = application.getKey().getName();
-
-        final Node existingNode = doGetNodeByName( appName );
-
-        if ( existingNode == null )
-        {
-            throw new RuntimeException(
-                "Expected to find existing node in repository for application with key [" + application.getKey() + "]" );
-        }
-
-        final Node appNode = this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source, existingNode ) );
-        this.nodeService.refresh( RefreshMode.ALL );
-        return appNode;
+        return this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source ) );
     }
 
     @Override
@@ -109,15 +92,13 @@ public class ApplicationRepoServiceImpl
             throw new NodeNotFoundException( "Didnt find application node in repo" );
         }
 
-        final Node appNode = this.nodeService.update( UpdateNodeParams.create()
+        return this.nodeService.update( UpdateNodeParams.create()
                                                          .id( applicationNode.id() )
                                                          .editor(
                                                              toBeEdited -> toBeEdited.data.setBoolean( ApplicationPropertyNames.STARTED,
                                                                                                        started ) )
+                                                          .refresh( RefreshMode.ALL )
                                                          .build() );
-
-        this.nodeService.refresh( RefreshMode.ALL );
-        return appNode;
     }
 
     private Node doGetNodeByName( final String applicationName )

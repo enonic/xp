@@ -43,7 +43,6 @@ public class RepoDumperTest
         createNode( node1.path(), "myChild" );
         createNode( node1.path(), "myChild2" );
         createNode( node1.path(), "myChild3" );
-        refresh();
 
         final TestDumpWriter writer = new TestDumpWriter();
 
@@ -139,7 +138,6 @@ public class RepoDumperTest
         createNode( node1.path(), "myChild" );
         final Node node2 = createNode( node1.path(), "myChild2" );
         createNode( node1.path(), "myChild3" );
-        refresh();
 
         nodeService.update( UpdateNodeParams.create().id( node1.id() ).editor( ( e ) -> {
             e.data.addBoolean( "bool", true );
@@ -147,8 +145,6 @@ public class RepoDumperTest
         nodeService.update( UpdateNodeParams.create().id( node2.id() ).editor( ( e ) -> {
             e.data.addBoolean( "bool", true );
         } ).build() );
-
-        refresh();
 
         final TestDumpWriter writer = new TestDumpWriter();
 

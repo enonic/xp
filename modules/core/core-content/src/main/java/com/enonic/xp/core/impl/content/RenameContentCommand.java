@@ -51,8 +51,6 @@ final class RenameContentCommand
 
     Content execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();
@@ -70,7 +68,7 @@ final class RenameContentCommand
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).nodeName( nodeName );
+        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName );
 
         if ( params.stopInherit() )
         {
@@ -78,8 +76,6 @@ final class RenameContentCommand
         }
 
         final Node node = nodeService.rename( builder.build() );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final Content content = translator.fromNode( node, true );
 

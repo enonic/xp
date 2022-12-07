@@ -63,15 +63,14 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
+import com.enonic.xp.repo.impl.node.MoveNodeCommand;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.node.RenameNodeCommand;
 import com.enonic.xp.repo.impl.repository.UpdateRepositoryEntryParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -504,11 +503,12 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        RenameNodeCommand.create()
+        MoveNodeCommand.create()
             .searchService( this.searchService )
             .storageService( this.storageService )
             .indexServiceInternal( this.indexServiceInternal )
-            .params( RenameNodeParams.create().nodeId( node.id() ).nodeName( NodeName.from( "renamed" ) ).build() )
+            .id( node.id() )
+            .newNodeName( NodeName.from( "renamed" ) )
             .build()
             .execute();
 

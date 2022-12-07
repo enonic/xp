@@ -32,7 +32,7 @@ public class PushNodesCommandPerformanceTest
     @Test
     void testReferencePerformance()
     {
-        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 
         createNodes( rootNode, 20, 3, 1 );
 
@@ -78,10 +78,10 @@ public class PushNodesCommandPerformanceTest
 
         for ( int i = 0; i < amountOfNodesToLoad; i++ )
         {
-            final Node node = createNode( CreateNodeParams.create().
+            final Node node = createNodeSkipVerification( CreateNodeParams.create().
                 name( "node" + i ).
                 parent( NodePath.ROOT ).
-                build(), false );
+                build() );
             nodeIds.add( node.id() );
             if ((i + 1) % 1000 == 0) {
                 System.out.format("Nodes created so far %s %n", i + 1);
@@ -99,7 +99,7 @@ public class PushNodesCommandPerformanceTest
             timer.reset().start();
             NodeBranchEntries result = branchService.get( nodeIds.build(), InternalContext.from( ContextAccessor.current() ) );
             timer.stop();
-            final Node node = createNode( CreateNodeParams.create().name( "extranode" + i ).parent( NodePath.ROOT ).build(), false );
+            final Node node = createNodeSkipVerification( CreateNodeParams.create().name( "extranode" + i ).parent( NodePath.ROOT ).build() );
             nodeIds.add( node.id() );
             System.out.format("Fetched %s in %s%n", result.getSize(), timer);
         }

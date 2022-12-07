@@ -14,6 +14,8 @@ public class ImportNodeParams
 
     private final boolean importPermissionsOnCreate;
 
+    private final RefreshMode refresh;
+
     private ImportNodeParams( Builder builder )
     {
         binaryAttachments = builder.binaryAttachments;
@@ -22,6 +24,7 @@ public class ImportNodeParams
         dryRun = builder.dryRun;
         importPermissions = builder.importPermissions;
         importPermissionsOnCreate = builder.importPermissionsOnCreate;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -59,6 +62,11 @@ public class ImportNodeParams
         return importPermissionsOnCreate;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private BinaryAttachments binaryAttachments;
@@ -72,6 +80,8 @@ public class ImportNodeParams
         private boolean importPermissions;
 
         private boolean importPermissionsOnCreate = true;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -110,6 +120,12 @@ public class ImportNodeParams
         public Builder importPermissionsOnCreate( boolean importPermissionsOnCreate )
         {
             this.importPermissionsOnCreate = importPermissionsOnCreate;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

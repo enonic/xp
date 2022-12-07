@@ -50,7 +50,6 @@ public class CreateIssueCommentCommand
             throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
         }
 
-        nodeService.refresh( RefreshMode.ALL );
         return IssueCommentNodeTranslator.fromNode( createdNode );
     }
 
@@ -108,7 +107,8 @@ public class CreateIssueCommentCommand
                 data( commentAsData ).
                 inheritPermissions( true ).
                 childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER ).
-                nodeType( IssueCommentConstants.NODE_COLLECTION );
+                nodeType( IssueCommentConstants.NODE_COLLECTION ).
+                refresh( RefreshMode.ALL );
 
             return builder.build();
         }

@@ -15,6 +15,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
@@ -117,6 +118,7 @@ abstract class PrincipalNodeTranslator
         }
 
         builder.data( data );
+        builder.refresh( RefreshMode.ALL );
 
         return builder.build();
     }
@@ -143,6 +145,7 @@ abstract class PrincipalNodeTranslator
                         break;
                 }
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 
@@ -165,6 +168,7 @@ abstract class PrincipalNodeTranslator
                     nodeData.addString( PrincipalPropertyNames.MEMBER_KEY, relationshipToKey );
                 }
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 
@@ -185,6 +189,7 @@ abstract class PrincipalNodeTranslator
 
                 nodeData.setValues( PrincipalPropertyNames.MEMBER_KEY, updatedMembers );
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 
@@ -198,6 +203,7 @@ abstract class PrincipalNodeTranslator
                 final PropertyTree data = editableNode.data;
                 data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
             } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 

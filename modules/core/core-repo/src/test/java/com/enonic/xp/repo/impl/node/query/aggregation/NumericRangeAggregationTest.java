@@ -43,6 +43,7 @@ public class NumericRangeAggregationTest
         createNode( 200d, "n4", NodePath.ROOT );
         createNode( 600d, "n5", NodePath.ROOT );
         createNode( 500d, "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( NumericRangeAggregationQuery.create( "myNumericRange" ).
@@ -89,6 +90,7 @@ public class NumericRangeAggregationTest
         createNode( 400d, "n3", NodePath.ROOT );
         createNode( 500d, "n6", NodePath.ROOT );
         createNode( 600d, "n5", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( NumericRangeAggregationQuery.create( "myNumericRange" ).

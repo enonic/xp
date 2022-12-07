@@ -26,7 +26,7 @@ public class ResolveSyncWorkPerformanceTest
     public void testReferencePerformance()
         throws Exception
     {
-        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 
         createNodes( rootNode, 40, 3, 1 );
 

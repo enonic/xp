@@ -1,8 +1,6 @@
 package com.enonic.xp.content;
 
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -41,31 +39,18 @@ public final class RenameContentParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-
-        if ( !( o instanceof RenameContentParams ) )
-        {
-            return false;
-        }
-
-        final RenameContentParams that = (RenameContentParams) o;
-        return Objects.equals( this.contentId, that.contentId ) && Objects.equals( this.newName, that.newName ) &&
-            Objects.equals( this.stopInherit, that.stopInherit );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.contentId, this.newName, this.stopInherit );
+        return super.hashCode();
     }
 
+    @Deprecated
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-        Preconditions.checkNotNull( this.newName, "name cannot be null" );
     }
 
     public static Builder create()
@@ -101,6 +86,8 @@ public final class RenameContentParams
 
         public RenameContentParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            Preconditions.checkNotNull( this.newName, "name cannot be null" );
             return new RenameContentParams( this );
         }
     }

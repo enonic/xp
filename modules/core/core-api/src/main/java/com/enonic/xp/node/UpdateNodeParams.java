@@ -19,6 +19,8 @@ public class UpdateNodeParams
 
     private final boolean dryRun;
 
+    private final RefreshMode refresh;
+
     private UpdateNodeParams( final Builder builder )
     {
         this.id = builder.id;
@@ -26,6 +28,7 @@ public class UpdateNodeParams
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
         this.dryRun = builder.dryRun;
+        this.refresh = builder.refresh;
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -58,6 +61,11 @@ public class UpdateNodeParams
         return dryRun;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private NodeId id;
@@ -69,6 +77,8 @@ public class UpdateNodeParams
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
         private boolean dryRun;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -111,6 +121,12 @@ public class UpdateNodeParams
         public Builder dryRun( final boolean dryRun )
         {
             this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

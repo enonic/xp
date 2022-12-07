@@ -142,6 +142,7 @@ public class FindNodeIdsByParentCommandTest
         createNode( node.path(), "node1_2" );
         final Node node1_1_1 = createNode( node1_1.path(), "node1_1_1" );
         final Node node_1_1_1_1 = createNode( node1_1_1.path(), "node1_1_1_1" );
+        refresh();
 
         assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getHits() );
         assertEquals( 5, getByParentRecursive( node.id() ).getHits() );

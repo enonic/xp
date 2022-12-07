@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,8 +25,6 @@ public class ContentServiceImplTest_findByParent
     {
         createContent( ContentPath.ROOT );
         createContent( ContentPath.ROOT );
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 0 ).
@@ -69,8 +66,6 @@ public class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
-
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
@@ -97,8 +92,6 @@ public class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = childrenLevel1.getPath();
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
-
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 30 ).
@@ -118,8 +111,6 @@ public class ContentServiceImplTest_findByParent
     {
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childrenLevel1 = createContent( rootContent.getPath() );
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -142,8 +133,6 @@ public class ContentServiceImplTest_findByParent
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -172,8 +161,6 @@ public class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
-
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
             size( 1 ).
@@ -197,10 +184,6 @@ public class ContentServiceImplTest_findByParent
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
-
-        refresh();
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
             from( 10 ).
@@ -226,8 +209,6 @@ public class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        this.nodeService.refresh( RefreshMode.SEARCH );
-
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 2 ).
             parentPath( parentContentPath ).
@@ -251,8 +232,6 @@ public class ContentServiceImplTest_findByParent
         createContent( content1.getPath() );
 
         final ContentPath parentContentPath = parentContent.getPath();
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             from( 0 ).
@@ -346,8 +325,6 @@ public class ContentServiceImplTest_findByParent
         throws Exception
     {
         createContent( ContentPath.ROOT, publishInfo );
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final FindContentByParentParams params = FindContentByParentParams.create().
             parentPath( ContentPath.ROOT ).

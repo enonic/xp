@@ -63,7 +63,6 @@ public class CreateIssueCommand
             throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
         }
 
-        nodeService.refresh( RefreshMode.ALL );
         return IssueNodeTranslator.fromNode( createdNode );
     }
 
@@ -153,7 +152,8 @@ public class CreateIssueCommand
                 indexConfigDocument( indexConfigDocument ).
                 inheritPermissions( true ).
                 childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-                nodeType( IssueConstants.ISSUE_NODE_COLLECTION );
+                nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
+                refresh( RefreshMode.ALL );
 
             return builder.build();
         }

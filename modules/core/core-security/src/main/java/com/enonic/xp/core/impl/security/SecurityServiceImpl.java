@@ -223,8 +223,6 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.ALL );
-
             securityAuditLogSupport.addRelationship( relationship );
 
             return null;
@@ -243,8 +241,6 @@ public final class SecurityServiceImpl
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeRelationshipToUpdateNodeParams( relationship );
             nodeService.update( updateNodeParams );
 
-            this.nodeService.refresh( RefreshMode.ALL );
-
             securityAuditLogSupport.removeRelationship( relationship );
 
             return null;
@@ -255,19 +251,12 @@ public final class SecurityServiceImpl
     public void removeRelationships( final PrincipalKey from )
     {
         callWithContext( () -> {
-            doRemoveRelationships( from );
-            this.nodeService.refresh( RefreshMode.ALL );
+            nodeService.update( PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from ) );
 
             securityAuditLogSupport.removeRelationships( from );
 
             return null;
         } );
-    }
-
-    private void doRemoveRelationships( final PrincipalKey from )
-    {
-        final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( from );
-        nodeService.update( updateNodeParams );
     }
 
     private void doRemoveMemberships( final PrincipalKey member )
@@ -293,8 +282,6 @@ public final class SecurityServiceImpl
             final Node node = this.nodeService.getByPath( idProviderNodePath );
             final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
             nodeService.update( updateNodeParams );
-
-            this.nodeService.refresh( RefreshMode.ALL );
 
             return null;
         } );
@@ -644,9 +631,7 @@ public final class SecurityServiceImpl
 
             final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 
-            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
-
-            final Node updatedNode = nodeService.update( updateNodeParams );
+            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
 
             securityAuditLogSupport.setPassword( key );
 
@@ -667,11 +652,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
         try
         {
-            final Node node = callWithContext( () -> {
-                final Node createdNode = nodeService.create( createNodeParams );
-                this.nodeService.refresh( RefreshMode.ALL );
-                return createdNode;
-            } );
+            final Node node = callWithContext( () -> nodeService.create( createNodeParams ) );
 
             if ( createUser.getPassword() != null )
             {
@@ -724,11 +705,7 @@ public final class SecurityServiceImpl
             final User userToUpdate = updateUserParams.update( existingUser );
             duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
 
-            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate );
-
-            final Node updatedNode = nodeService.update( updateNodeParams );
-
-            this.nodeService.refresh( RefreshMode.ALL );
+            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( userToUpdate ) );
 
             securityAuditLogSupport.updateUser( UpdateUserParams.create( userToUpdate ).build() );
 
@@ -802,11 +779,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createGroupParams = PrincipalNodeTranslator.toCreateNodeParams( group );
         try
         {
-            final Node node = callWithContext( () -> {
-                final Node createdNode = this.nodeService.create( createGroupParams );
-                this.nodeService.refresh( RefreshMode.ALL );
-                return createdNode;
-            } );
+            final Node node = callWithContext( () -> this.nodeService.create( createGroupParams ) );
 
             securityAuditLogSupport.createGroup( createGroup );
 
@@ -832,11 +805,8 @@ public final class SecurityServiceImpl
             final Group existingGroup = PrincipalNodeTranslator.groupFromNode( node );
 
             final Group groupToUpdate = updateGroupParams.update( existingGroup );
-            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate );
 
-            final Node updatedNode = nodeService.update( updateNodeParams );
-
-            this.nodeService.refresh( RefreshMode.ALL );
+            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( groupToUpdate ) );
 
             securityAuditLogSupport.updateGroup( UpdateGroupParams.create( groupToUpdate ).build() );
 
@@ -866,11 +836,7 @@ public final class SecurityServiceImpl
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( role );
         try
         {
-            final Node node = callWithContext( () -> {
-                final Node createdNode = this.nodeService.create( createNodeParams );
-                this.nodeService.refresh( RefreshMode.ALL );
-                return createdNode;
-            } );
+            final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
 
             securityAuditLogSupport.createRole( createRole );
 
@@ -896,11 +862,8 @@ public final class SecurityServiceImpl
             final Role existingRole = PrincipalNodeTranslator.roleFromNode( node );
 
             final Role roleToUpdate = updateRoleParams.update( existingRole );
-            final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate );
 
-            final Node updatedNode = nodeService.update( updateNodeParams );
-
-            this.nodeService.refresh( RefreshMode.ALL );
+            final Node updatedNode = nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( roleToUpdate ) );
 
             securityAuditLogSupport.updateRole( UpdateRoleParams.create( roleToUpdate ).build() );
 
@@ -995,7 +958,7 @@ public final class SecurityServiceImpl
         try
         {
             deletedNodes = callWithContext( () -> {
-                doRemoveRelationships( principalKey );
+                nodeService.update( PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( principalKey ) );
                 doRemoveMemberships( principalKey );
 
                 return this.nodeService.deleteByPath( principalKey.toPath() );
@@ -1184,13 +1147,11 @@ public final class SecurityServiceImpl
 
     private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions )
     {
-        final UpdateNodeParams updateParams =
-            UpdateNodeParams.create().id( nodeId ).editor( editableNode -> editableNode.permissions = permissions ).build();
-
-        nodeService.update( updateParams );
-
-        this.nodeService.refresh( RefreshMode.ALL );
-
+        nodeService.update( UpdateNodeParams.create()
+                                .id( nodeId )
+                                .editor( editableNode -> editableNode.permissions = permissions )
+                                .refresh( RefreshMode.ALL )
+                                .build() );
     }
 
     private <T> T callWithContext( Callable<T> runnable )
