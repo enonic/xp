@@ -130,6 +130,8 @@ public final class DuplicateNodeCommand
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
     {
+        refresh( RefreshMode.ALL );
+
         final FindNodesByParentResult findNodesByParentResult = FindNodeIdsByParentCommand.create( this )
             .parentPath( originalParent.path() )
             .build()

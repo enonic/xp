@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindNodesByQueryCommandTest_dateTime
     extends AbstractNodeTest
@@ -31,6 +32,7 @@ public class FindNodesByQueryCommandTest_dateTime
     {
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00Z" ), "node1", NodePath.ROOT );
         createNodeWithInstant( Instant.parse( "2015-02-26T13:00:00Z" ), "node2", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "myInstant = instant('2015-02-26T12:00:00Z')", 1 );
         queryAndAssert( "myInstant < instant('2015-02-26T12:00:00Z')", 0 );
@@ -45,6 +47,7 @@ public class FindNodesByQueryCommandTest_dateTime
     {
         createNodeWithInstant( convertToInstant( "2015-02-26T12:00:00+01:00" ), "node1", NodePath.ROOT );
         createNodeWithInstant( convertToInstant( "2015-02-26T13:00:00-01:00" ), "node2", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         // passed argument contains milliseconds
         queryAndAssert( "myInstant = dateTime('2015-02-26T12:00:00+01:00')", 1 );
@@ -65,6 +68,7 @@ public class FindNodesByQueryCommandTest_dateTime
         createNodeWithLocalDate( LocalDate.parse( "2015-01-26" ), "node1", NodePath.ROOT );
         createNodeWithLocalDate( LocalDate.parse( "2015-02-26" ), "node2", NodePath.ROOT );
         createNodeWithLocalDate( LocalDate.parse( "2015-02-27" ), "node3", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "myLocalDate = '2015-02-26'", 1 );
         queryAndAssert( "myLocalDate = date('2015-02-26')", 1 );
@@ -77,6 +81,7 @@ public class FindNodesByQueryCommandTest_dateTime
     {
         createNodeWithLocalDateTime( LocalDateTime.parse( "2015-01-26T10:00:00" ), "node1", NodePath.ROOT );
         createNodeWithLocalDateTime( LocalDateTime.parse( "2015-01-27T10:00:00" ), "node2", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
@@ -95,6 +100,7 @@ public class FindNodesByQueryCommandTest_dateTime
         createNodeWithLocalTime( LocalTime.of( 11, 36, 30 ), "node4", NodePath.ROOT );
         createNodeWithLocalTime( LocalTime.of( 12, 36, 30 ), "node5", NodePath.ROOT );
         createNodeWithLocalTime( LocalTime.of( 13, 36, 30 ), "node6", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
@@ -118,6 +124,7 @@ public class FindNodesByQueryCommandTest_dateTime
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00Z" ), "node1", NodePath.ROOT );
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00.001Z" ), "node2", NodePath.ROOT );
         createNodeWithInstant( Instant.parse( "2015-02-26T13:00:00Z" ), "node3", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "myInstant = instant('2015-02-26T12:00:00.001Z')", 1 );
         queryAndAssert( "myInstant < instant('2015-02-26T12:00:00.001Z')", 1 );

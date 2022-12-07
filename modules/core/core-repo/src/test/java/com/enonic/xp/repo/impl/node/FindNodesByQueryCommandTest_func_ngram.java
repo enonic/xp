@@ -11,6 +11,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,6 +88,7 @@ public class FindNodesByQueryCommandTest_func_ngram
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( node, "ngram('title', 'test', 'AND')", 1 );
         queryAndAssert( node, "ngram('title', 'delim', 'AND')", 1 );
@@ -108,6 +110,7 @@ public class FindNodesByQueryCommandTest_func_ngram
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( node, "ngram('title', 'test', 'AND')", 1 );
         queryAndAssert( node, "ngram('title', 'delim', 'AND')", 1 );
@@ -129,6 +132,7 @@ public class FindNodesByQueryCommandTest_func_ngram
                                                                     .defaultConfig( IndexConfig.BY_TYPE )
                                                                     .build() )
                                           .build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( node, "ngram('title', 'grønnsak*', 'AND')", 1 );
     }
@@ -160,6 +164,8 @@ public class FindNodesByQueryCommandTest_func_ngram
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
+
         return node;
     }
 

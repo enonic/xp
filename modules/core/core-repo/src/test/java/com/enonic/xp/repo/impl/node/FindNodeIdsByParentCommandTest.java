@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -57,7 +58,7 @@ public class FindNodeIdsByParentCommandTest
             name( "node1_1_1" ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create().
             parentPath( root.path() ).
@@ -100,7 +101,7 @@ public class FindNodeIdsByParentCommandTest
             name( "node1" ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         MoveNodeCommand.create().
             newParent( node2.path() ).
@@ -142,7 +143,7 @@ public class FindNodeIdsByParentCommandTest
         createNode( node.path(), "node1_2" );
         final Node node1_1_1 = createNode( node1_1.path(), "node1_1_1" );
         final Node node_1_1_1_1 = createNode( node1_1_1.path(), "node1_1_1_1" );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getHits() );
         assertEquals( 5, getByParentRecursive( node.id() ).getHits() );
