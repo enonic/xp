@@ -3,10 +3,9 @@ package com.enonic.xp.repo.impl.node;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindNodesByQueryCommandTest_paths
     extends AbstractNodeTest
@@ -24,13 +23,15 @@ public class FindNodesByQueryCommandTest_paths
         throws Exception
     {
 
-        final Node rootNode = createNodeWithPath( NodePath.ROOT, "rootNode" );
-        final Node node1 = createNodeWithPath( rootNode.path(), "node1" );
-        final Node node2 = createNodeWithPath( rootNode.path(), "node2" );
-        final Node node3 = createNodeWithPath( rootNode.path(), "node3" );
-        createNodeWithPath( node1.path(), "node1_1" );
-        createNodeWithPath( node2.path(), "node2_1" );
-        createNodeWithPath( node3.path(), "node3_1" );
+        final Node rootNode = createNode( NodePath.ROOT, "rootNode" );
+        final Node node1 = createNode( rootNode.path(), "node1" );
+        final Node node2 = createNode( rootNode.path(), "node2" );
+        final Node node3 = createNode( rootNode.path(), "node3" );
+        createNode( node1.path(), "node1_1" );
+        createNode( node2.path(), "node2_1" );
+        createNode( node3.path(), "node3_1" );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "_path = '/rootNode'", 1 );
         queryAndAssert( "_path = '/rootNode/node1'", 1 );
@@ -46,13 +47,15 @@ public class FindNodesByQueryCommandTest_paths
         throws Exception
     {
 
-        final Node rootNode = createNodeWithPath( NodePath.ROOT, "rootNode" );
-        final Node node1 = createNodeWithPath( rootNode.path(), "node1" );
-        final Node node2 = createNodeWithPath( rootNode.path(), "node2" );
-        final Node node3 = createNodeWithPath( rootNode.path(), "node3" );
-        createNodeWithPath( node1.path(), "node1_1" );
-        createNodeWithPath( node2.path(), "node2_1" );
-        createNodeWithPath( node3.path(), "node3_1" );
+        final Node rootNode = createNode( NodePath.ROOT, "rootNode" );
+        final Node node1 = createNode( rootNode.path(), "node1" );
+        final Node node2 = createNode( rootNode.path(), "node2" );
+        final Node node3 = createNode( rootNode.path(), "node3" );
+        createNode( node1.path(), "node1_1" );
+        createNode( node2.path(), "node2_1" );
+        createNode( node3.path(), "node3_1" );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "_path LIKE '/rootNode*'", 7 );
         queryAndAssert( "_path LIKE '/rootNode/*'", 6 );
@@ -60,16 +63,6 @@ public class FindNodesByQueryCommandTest_paths
         queryAndAssert( "_path LIKE '/rootNode/node2/*'", 1 );
         queryAndAssert( "_path LIKE '/rootNode/node3/*'", 1 );
         queryAndAssert( "_path LIKE '/rootNode/node1/node1_1'", 1 );
-    }
-
-
-    private Node createNodeWithPath( final NodePath parent, final String name )
-    {
-        return createNode( CreateNodeParams.create().
-            parent( NodePath.create( parent ).build() ).
-            name( name ).
-            setNodeId( NodeId.from( name ) ).
-            build() );
     }
 
 }

@@ -10,6 +10,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.util.Reference;
 
@@ -39,6 +40,8 @@ public class FindNodesByQueryCommandTest_references
         createNodeWithReference( "node2", node1.id() );
         createNodeWithReference( "node3", node1.id() );
         createNodeWithReference( "node4", node1.id() );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryParser.parse( "_references = 'node1'" ) ).

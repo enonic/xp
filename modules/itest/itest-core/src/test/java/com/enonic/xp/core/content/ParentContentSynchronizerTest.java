@@ -796,8 +796,6 @@ public class ParentContentSynchronizerTest
         sourceContext.runWith(
             () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
-        refresh();
-
         sync( sourceContent.getId(), false );
 
         assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceContent.getId() ) ) );
@@ -828,8 +826,6 @@ public class ParentContentSynchronizerTest
             new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.data = new PropertyTree() ) ) );
 
         sync( null, true );
-
-        refresh();
 
         assertEquals( "/child1_1", targetContext.callWith( () -> contentService.getById( sourceChild1_1.getId() ).getPath().toString() ) );
         assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceChild1.getId() ) ) );

@@ -14,6 +14,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -50,6 +51,7 @@ public class FindNodesByQueryCommandTest_order
         createNode( "node1", createPropertyMap( 1L, "b", false ), NodePath.ROOT );
         createNode( "node2", createPropertyMap( 3L, "c", true ), NodePath.ROOT );
         createNode( "node3", createPropertyMap( 2L, "a", false ), NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
     }
 
     @Test

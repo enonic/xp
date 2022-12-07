@@ -195,8 +195,6 @@ public class NodeServiceImplTest
 
         final Node node = this.nodeService.create( params );
 
-        refresh();
-
         assertEquals( aclList, node.getPermissions() );
         assertEquals( childOrder, node.getChildOrder() );
     }

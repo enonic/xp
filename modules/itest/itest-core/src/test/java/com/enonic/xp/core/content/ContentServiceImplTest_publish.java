@@ -179,8 +179,6 @@ public class ContentServiceImplTest_publish
             .excludedContentIds( ContentIds.from( content1.getId() ) )
             .build();
 
-        refresh();
-
         final PublishContentResult result = this.contentService.publish( pushParams );
 
         assertEquals( 0, result.getPushedContents().getSize() );
@@ -197,8 +195,6 @@ public class ContentServiceImplTest_publish
             .excludedContentIds( ContentIds.from( content1_1.getId() ) )
             .excludeChildrenIds( ContentIds.from( content1.getId() ) )
             .build();
-
-        refresh();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
@@ -218,8 +214,6 @@ public class ContentServiceImplTest_publish
                                         .parent( content1_1.getPath() )
                                         .type( ContentTypeName.folder() )
                                         .build() );
-
-        refresh();
 
         final PushContentParams pushParams = PushContentParams.create()
             .contentIds( ContentIds.from( content1.getId(), content2.getId() ) )
@@ -561,8 +555,6 @@ public class ContentServiceImplTest_publish
                                                           .parent( content2.getPath() )
                                                           .type( ContentTypeName.folder() )
                                                           .build() );
-
-        refresh();
     }
 
     /**
@@ -619,7 +611,5 @@ public class ContentServiceImplTest_publish
                                         .parent( ContentPath.ROOT )
                                         .type( ContentTypeName.folder() )
                                         .build() );
-
-        refresh();
     }
 }

@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindNodesByQueryCommandTest_order_boolean
     extends AbstractNodeTest
@@ -68,6 +69,7 @@ public class FindNodesByQueryCommandTest_order_boolean
             data( data4 ).
             build() );
 
+        nodeService.refresh( RefreshMode.ALL );
         assertOrder( doQuery( "double1 = 1.0 OR double2 = 2.0 OR double3 = 3.0" ), "node3", "node4", "node2", "node1" );
 
     }

@@ -196,7 +196,6 @@ public class SecurityServiceImplTest
 
             final User user1 = securityService.createUser( createUser1 );
             final User user2 = securityService.createUser( createUser2 );
-            refresh();
 
             final User createdUser1 = securityService.getUser( userKey1 ).get();
             final User createdUser2 = securityService.getUser( userKey2 ).get();
@@ -284,11 +283,9 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final UpdateUserParams updateUserParams = UpdateUserParams.create( user ).email( "u2@enonic.net" ).build();
             final User updateUserResult = securityService.updateUser( updateUserParams );
-            refresh();
 
             final User updatedUser = securityService.getUser( user.getKey() ).get();
 
@@ -329,7 +326,6 @@ public class SecurityServiceImplTest
 
                 final UpdateUserParams updateUserParams = UpdateUserParams.create( user1 ).email( "same_email@enonic.com" ).build();
                 securityService.updateUser( updateUserParams );
-                refresh();
             } );
 
             fail( "Expected exception" );
@@ -369,7 +365,6 @@ public class SecurityServiceImplTest
                 final UpdateUserParams updateUserParams =
                     UpdateUserParams.create( user1 ).editor( editableUser -> editableUser.email = "same_email@enonic.com" ).build();
                 securityService.updateUser( updateUserParams );
-                refresh();
             } );
 
             fail( "Expected exception" );
@@ -394,7 +389,6 @@ public class SecurityServiceImplTest
 
             final Group group1 = securityService.createGroup( createGroup );
             final Group group2 = securityService.createGroup( createGroup2 );
-            refresh();
 
             final Group createdGroup1 = securityService.getGroup( groupKey1 ).get();
             final Group createdGroup2 = securityService.getGroup( groupKey2 ).get();
@@ -434,12 +428,10 @@ public class SecurityServiceImplTest
                 CreateGroupParams.create().groupKey( PrincipalKey.ofGroup( SYSTEM, "Group-a" ) ).displayName( "Group A" ).build();
 
             final Group group = securityService.createGroup( createGroup );
-            refresh();
 
             final UpdateGroupParams groupUpdate =
                 UpdateGroupParams.create( group ).displayName( "___Group B___" ).description( "description" ).build();
             final Group updatedGroupResult = securityService.updateGroup( groupUpdate );
-            refresh();
 
             final Group updatedGroup = securityService.getGroup( group.getKey() ).get();
             assertEquals( "___Group B___", updatedGroupResult.getDisplayName() );
@@ -506,7 +498,6 @@ public class SecurityServiceImplTest
             final UpdateRoleParams roleUpdate =
                 UpdateRoleParams.create( role ).displayName( "___Role B___" ).description( "description" ).build();
             final Role updatedRoleResult = securityService.updateRole( roleUpdate );
-            refresh();
 
             final Role updatedRole = securityService.getRole( role.getKey() ).get();
             assertEquals( "___Role B___", updatedRoleResult.getDisplayName() );
@@ -539,7 +530,6 @@ public class SecurityServiceImplTest
 
         runAsAdmin( () -> {
             securityService.createUser( createUser );
-            refresh();
         } );
 
         assertThrows( PrincipalNotFoundException.class, () -> securityService.deletePrincipal( createUser.getKey() ) );
@@ -576,7 +566,6 @@ public class SecurityServiceImplTest
             securityService.addRelationship( membership );
             securityService.addRelationship( membership2 );
             securityService.addRelationship( membership );
-            refresh();
 
             // verify
             final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -609,18 +598,15 @@ public class SecurityServiceImplTest
             securityService.createUser( createUser1 );
             securityService.createUser( createUser2 );
             securityService.createGroup( createGroup );
-            refresh();
 
             PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
             PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
 
             securityService.addRelationship( membership );
             securityService.addRelationship( membership2 );
-            refresh();
 
             // exercise
             securityService.removeRelationship( membership );
-            refresh();
 
             //verify
             final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -652,18 +638,15 @@ public class SecurityServiceImplTest
             securityService.createUser( createUser1 );
             securityService.createUser( createUser2 );
             securityService.createGroup( createGroup );
-            refresh();
 
             PrincipalRelationship membership = PrincipalRelationship.from( groupKey1 ).to( userKey1 );
             PrincipalRelationship membership2 = PrincipalRelationship.from( groupKey1 ).to( userKey2 );
 
             securityService.addRelationship( membership );
             securityService.addRelationship( membership2 );
-            refresh();
 
             // exercise
             securityService.removeRelationships( groupKey1 );
-            refresh();
 
             //verify
             final PrincipalRelationships relationships = securityService.getRelationships( groupKey1 );
@@ -714,7 +697,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
             authToken.setEmail( "user1@enonic.com" );
@@ -741,7 +723,6 @@ public class SecurityServiceImplTest
                 .build();
 
             securityService.createUser( createUser );
-            refresh();
 
             final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
             authToken.setEmail( "user1@enonic.com" );
@@ -767,7 +748,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
             authToken.setUsername( "User1" );
@@ -794,7 +774,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final VerifiedEmailAuthToken authToken = new VerifiedEmailAuthToken();
             authToken.setEmail( "user1@enonic.com" );
@@ -820,7 +799,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final VerifiedUsernameAuthToken authToken = new VerifiedUsernameAuthToken();
             authToken.setUsername( "user1" );
@@ -845,7 +823,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser );
-            refresh();
 
             final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
             authToken.setIdProvider( SYSTEM );
@@ -880,8 +857,6 @@ public class SecurityServiceImplTest
             securityService.createGroup( createGroup2 );
             securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
             securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( userKey ) );
-
-            refresh();
 
             final PrincipalKeys memberships = securityService.getMemberships( userKey );
 
@@ -922,8 +897,6 @@ public class SecurityServiceImplTest
             securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
             securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( groupKey1 ) );
             securityService.addRelationship( PrincipalRelationship.from( roleKey1 ).to( groupKey2 ) );
-
-            refresh();
 
             final PrincipalKeys memberships = securityService.getAllMemberships( userKey );
 
@@ -1098,7 +1071,6 @@ public class SecurityServiceImplTest
                 .build();
 
             final User user = securityService.createUser( createUser1 );
-            refresh();
 
             final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
             authToken.setUsername( "user1" );
@@ -1131,8 +1103,6 @@ public class SecurityServiceImplTest
                 .password( "123456" )
                 .build();
 
-            refresh();
-
             final PrincipalQuery query = PrincipalQuery.create().idProvider( IdProviderKey.system() ).build();
             PrincipalQueryResult queryResult = securityService.query( query );
 
@@ -1140,8 +1110,6 @@ public class SecurityServiceImplTest
             assertEquals( 2, queryResult.getTotalSize() );
 
             final User user1 = securityService.createUser( createUser1 );
-
-            refresh();
 
             queryResult = securityService.query( query );
 

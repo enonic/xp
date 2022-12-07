@@ -10,6 +10,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,6 +93,7 @@ public class FindNodesByQueryCommandTest_order_geoDistance
         createNodeWithLocation( FREDRIKSTAD, "fredrikstad", NodePath.ROOT );
         createNodeWithLocation( LONDON, "london", NodePath.ROOT );
         createNodeWithLocation( ODD_GEOPOINT, "odd-geopoint", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
     }
 
 

@@ -124,8 +124,6 @@ public class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        refresh();
-
         this.contentService.importContent( ImportContentParams.create()
                                                .importContent( content )
                                                .targetPath( content.getPath() )
@@ -148,8 +146,6 @@ public class ContentServiceImplTest_archive
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
-
-        refresh();
 
         this.contentService.importContent( ImportContentParams.create()
                                                .importContent( content )
@@ -203,8 +199,6 @@ public class ContentServiceImplTest_archive
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
-
-        refresh();
 
         ctxMasterSu().runWith( () -> {
             assertEquals( content.getId(), this.contentService.getById( content.getId() ).getId() );
