@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -79,9 +81,9 @@ final class CreateMediaCommand
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
             caption( params.getCaption() ).
-            artist( params.getArtist() ).
+            artist( params.getArtist() != null ? List.of( params.getArtist() ) : List.of() ).
             copyright( params.getCopyright() ).
-            tags( params.getTags() ).
+            tags( params.getTags() != null ? List.of( params.getTags() ) : List.of() ).
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().

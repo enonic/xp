@@ -1,10 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class MediaFormDataBuilder
@@ -15,11 +19,11 @@ final class MediaFormDataBuilder
 
     private String caption = "";
 
-    private String artist = "";
+    private List<String> artist;
 
     private String copyright = "";
 
-    private String tags = "";
+    private List<String> tags;
 
     private double focalX = 0.5;
 
@@ -43,7 +47,7 @@ final class MediaFormDataBuilder
         return this;
     }
 
-    MediaFormDataBuilder artist( final String artist )
+    MediaFormDataBuilder artist( final List<String> artist )
     {
         this.artist = artist;
         return this;
@@ -55,7 +59,7 @@ final class MediaFormDataBuilder
         return this;
     }
 
-    MediaFormDataBuilder tags( final String tags )
+    MediaFormDataBuilder tags( final List<String> tags )
     {
         this.tags = tags;
         return this;
@@ -99,7 +103,7 @@ final class MediaFormDataBuilder
             }
             if ( artist != null )
             {
-                data.setString( "artist", artist );
+                data.setValues( "artist", artist.stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
             }
             if ( copyright != null )
             {
@@ -107,7 +111,7 @@ final class MediaFormDataBuilder
             }
             if ( tags != null )
             {
-                data.setString( "tags", tags );
+                data.setValues( "tags", tags.stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
             }
         }
     }

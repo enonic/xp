@@ -205,12 +205,12 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "artist", params.getArtist() );
+        paramsSet.addStrings( "artist", params.getArtistList() );
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "mimeType", params.getMimeType() );
         paramsSet.addString( "name", params.getName() );
-        paramsSet.addString( "tags", params.getTags() );
+        paramsSet.addStrings( "tags", params.getTagList() );
         paramsSet.addDouble( "focalX", params.getFocalX() );
         paramsSet.addDouble( "focalY", params.getFocalY() );
         paramsSet.addString( "content", nullToNull( params.getContent() ) );

@@ -18,6 +18,29 @@ declare global {
 
 import type {ByteSource, Content, PublishInfo} from '@enonic-types/core';
 
+const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
+
+const isNumber = (value: unknown): value is number => typeof value === 'number' && isFinite(value);
+
+function checkRequiredString<T extends object>(obj: T, name: keyof T): void {
+    checkRequired(obj, name);
+    if (!isString(obj[name])) {
+        throw `Required parameter '${String(name)}' is not a string!`;
+    }
+}
+
+function checkOptionalString<T extends object>(obj: T, name: keyof T): void {
+    if (obj?.[name] != null && !isString(obj[name])) {
+        throw `Optional parameter '${String(name)}' is not a string!`;
+    }
+}
+
+function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
+    if (obj?.[name] != null && !isNumber(obj[name])) {
+        throw `Optional parameter '${String(name)}' is not a number!`;
+    }
+}
+
 export type {
     Attachment,
     ByteSource,
@@ -1593,4 +1616,109 @@ export function resetInheritance(params: ResetInheritanceParams): void {
     bean.setInherit(params.inherit);
 
     bean.execute();
+}
+
+export interface ModifyMediaParams {
+    key: string;
+    name: string;
+    data: ByteSource;
+    artist?: string | string[];
+    caption?: string;
+    copyright?: string;
+    focalX?: number;
+    focalY?: number;
+    mimeType?: string;
+    tags?: string | string[];
+    workflow?: Workflow;
+}
+
+interface ModifyMediaHandler {
+    setKey(value: string): void;
+
+    setName(value: string): void;
+
+    setData(value: ByteSource): void;
+
+    setFocalX(value: number): void;
+
+    setFocalY(value: number): void;
+
+    setArtist(value: string[]): void;
+
+    setCaption(value?: string | null): void;
+
+    setCopyright(value?: string | null): void;
+
+    setMimeType(value?: string | null): void;
+
+    setTags(value: string[]): void;
+
+    setWorkflow(value: ScriptValue): void;
+
+    execute<Data, Type extends string>(): Content<Data, Type>;
+}
+
+/** This function modifies a media content.
+ *
+ * @example-ref examples/content/modifyMedia.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.name Name to the content.
+ * @param {function} params.data Data (as stream) to use.
+ * @param {string} [params.mimeType] Mime-type of the data.
+ * @param {string|string[]} [params.artist] Artist to the content.
+ * @param {string} [params.caption] Caption to the content.
+ * @param {string} [params.copyright] Copyright to the content.
+ * @param {string|string[]} [params.tags] Tags to the content.
+ * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
+ * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ *
+ * @returns {object} Modified content as JSON.
+ */
+export function modifyMedia<Data = Record<string, unknown>, Type extends string = string>(params: ModifyMediaParams): Content<Data, Type> | null {
+    checkRequired(params, 'data');
+    checkRequiredString(params, 'key');
+    checkRequiredString(params, 'name');
+    checkOptionalString(params, 'caption');
+    checkOptionalString(params, 'copyright');
+    checkOptionalString(params, 'mimeType');
+    checkOptionalNumber(params, 'focalX');
+    checkOptionalNumber(params, 'focalY');
+
+    const {
+        data,
+        key,
+        name,
+        caption,
+        copyright,
+        mimeType,
+        focalX,
+        focalY,
+        workflow,
+        artist = [],
+        tags = [],
+    } = params;
+
+    const bean = __.newBean<ModifyMediaHandler>('com.enonic.xp.lib.content.ModifyMediaHandler');
+
+    bean.setKey(key);
+    bean.setName(name);
+    bean.setData(data);
+    bean.setCaption(__.nullOrValue(caption));
+    bean.setCopyright(__.nullOrValue(copyright));
+    bean.setMimeType(__.nullOrValue(mimeType));
+    bean.setWorkflow(__.toScriptValue(workflow));
+    bean.setArtist(([] as string[]).concat(artist));
+    bean.setTags(([] as string[]).concat(tags));
+
+    if (params.focalX != null) {
+        bean.setFocalX(focalX);
+    }
+    if (params.focalY != null) {
+        bean.setFocalY(focalY);
+    }
+
+    return __.toNativeObject(bean.execute());
 }

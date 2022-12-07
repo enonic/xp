@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -93,9 +95,9 @@ final class UpdateMediaCommand
             .focalX( params.getFocalX() )
             .focalY( params.getFocalY() )
             .caption( params.getCaption() )
-            .artist( params.getArtist() )
+            .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTags() );
+            .tags( params.getTagList().isEmpty() ? List.of("") : params.getTagList() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
