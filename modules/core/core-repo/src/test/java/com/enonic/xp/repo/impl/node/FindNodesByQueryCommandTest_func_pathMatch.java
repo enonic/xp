@@ -8,6 +8,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,6 +30,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
             name( "node1" ).
             parent( NodePath.ROOT ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
 
@@ -57,6 +59,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
             setNodeId( NodeId.from( "node1_1_1" ) ).
             parent( node1_1.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1', 2)" );
 
@@ -84,6 +87,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
             setNodeId( NodeId.from( "node1_1_1" ) ).
             parent( node1_1.path() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
 

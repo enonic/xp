@@ -44,6 +44,8 @@ public class MoveNodeCommand
 
     private final NodeName newNodeName;
 
+    private final RefreshMode refresh;
+
     private final NodeDataProcessor processor;
 
     private final MoveNodeListener moveListener;
@@ -59,6 +61,7 @@ public class MoveNodeCommand
         this.moveListener = Objects.requireNonNullElse( builder.moveListener, count -> {
         } );
         this.processor = builder.processor;
+        this.refresh = builder.refresh;
         this.result = MoveNodeResult.create();
     }
 
@@ -78,12 +81,12 @@ public class MoveNodeCommand
 
         if ( existingNode == null )
         {
-            throw new NodeNotFoundException( "cannot move node with id [" + nodeId + "]" );
+            throw new NodeNotFoundException( "cannot rename/move node with id [" + nodeId + "]" );
         }
 
         if ( existingNode.isRoot() )
         {
-            throw new OperationNotPermittedException( "Not allowed to move root-node" );
+            throw new OperationNotPermittedException( "Not allowed to rename/move root-node" );
         }
 
         final NodeName newNodeName = resolveNodeName( existingNode );
@@ -111,7 +114,7 @@ public class MoveNodeCommand
 
         adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, nodeId ) );
 
-        refresh( RefreshMode.ALL );
+        refresh( refresh );
 
         return result.build();
     }
@@ -186,6 +189,8 @@ public class MoveNodeCommand
 
         moveListener.nodesMoved( 1 );
 
+        refresh(RefreshMode.SEARCH);
+
         final SearchResult children = this.nodeSearchService.query(
             NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
             ReturnFields.from( NodeIndexPath.NAME ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
@@ -248,6 +253,8 @@ public class MoveNodeCommand
 
         private MoveNodeListener moveListener;
 
+        private RefreshMode refresh;
+
         private Builder()
         {
             super();
@@ -285,6 +292,11 @@ public class MoveNodeCommand
         public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

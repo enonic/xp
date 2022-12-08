@@ -1060,8 +1060,10 @@ public class ContentServiceImpl
 
         try
         {
-            final SetNodeChildOrderParams.Builder builder =
-                SetNodeChildOrderParams.create().nodeId( NodeId.from( params.getContentId() ) ).childOrder( params.getChildOrder() );
+            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create()
+                .nodeId( NodeId.from( params.getContentId() ) )
+                .refresh( RefreshMode.ALL )
+                .childOrder( params.getChildOrder() );
 
             if ( params.stopInherit() )
             {
@@ -1069,8 +1071,6 @@ public class ContentServiceImpl
             }
 
             final Node node = nodeService.setChildOrder( builder.build() );
-
-            this.nodeService.refresh( RefreshMode.ALL );
 
             final Content content = translator.fromNode( node, true );
 
@@ -1089,7 +1089,7 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create();
+        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create().refresh( RefreshMode.ALL );
 
         for ( final ReorderChildParams param : params )
         {
@@ -1105,8 +1105,6 @@ public class ContentServiceImpl
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         final ReorderChildContentsResult result = new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
 

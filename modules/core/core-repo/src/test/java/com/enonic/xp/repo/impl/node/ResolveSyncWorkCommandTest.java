@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
@@ -1150,6 +1149,7 @@ public class ResolveSyncWorkCommandTest
         createNode( node1.path(), "node1_2" );
         createNode( node1.path(), "node1_3" );
         createNode( node1.path(), "node1_4" );
+        refresh();
 
         pushNodes( NodeIds.from( ROOT_UUID.toString(), "node1", "node1_1", "node1_2", "node1_3", "node1_4" ), WS_OTHER );
 
@@ -1167,19 +1167,6 @@ public class ResolveSyncWorkCommandTest
         assertNodes( result, ExpectedNodes.create().
             implicit( node1.id() ).
             child( "node1_1", "node1_2", "node1_3", "node1_4" ) );
-    }
-
-
-    private void createChildren( final NodePath parent, final int numberOfChildren )
-    {
-        for ( int i = 0; i <= numberOfChildren; i++ )
-        {
-            createNode( CreateNodeParams.create().
-                setNodeId( NodeId.from( parent.getLastElement() + "-" + i ) ).
-                name( parent.getLastElement() + "-" + i ).
-                parent( parent ).
-                build(), false );
-        }
     }
 
     /*
@@ -1285,16 +1272,14 @@ public class ResolveSyncWorkCommandTest
 
     private void renameNode( final String nodeId, final String newName )
     {
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( NodeId.from( nodeId ) ).
-                nodeName( NodeName.from( newName ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( NodeId.from( nodeId ) )
+            .newNodeName( NodeName.from( newName ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
     }
 
 

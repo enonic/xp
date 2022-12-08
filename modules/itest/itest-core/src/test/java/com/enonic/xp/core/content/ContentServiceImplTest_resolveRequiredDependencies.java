@@ -23,8 +23,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
         content2 = createContent( content1.getPath() );
         content3 = createContent( content2.getPath() );
 
-        refresh();
-
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.empty() ).
             build() );
@@ -40,8 +38,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
         content2 = createContent( ContentPath.ROOT );
         content3 = createContent( ContentPath.ROOT );
 
-        refresh();
-
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId(), content3.getId() ) ).
             build() );
@@ -55,8 +51,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
     {
         Content content1 = createContent( ContentPath.ROOT );
         Content content2 = createContent( content1.getPath() );
-
-        refresh();
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
@@ -72,8 +66,6 @@ public class ContentServiceImplTest_resolveRequiredDependencies
         Content content1 = createContent( ContentPath.ROOT );
         Content content2 = createContent( content1.getPath() );
         Content content3 = createContent( content2.getPath() );
-
-        refresh();
 
         final ContentIds result = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId(), content3.getId() ) ).

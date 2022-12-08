@@ -107,6 +107,7 @@ public class VirtualAppService
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
         initSiteNodes( virtualAppNode.path() );
+
         nodeService.refresh( RefreshMode.ALL );
 
         return virtualAppNode;

@@ -43,6 +43,7 @@ public class DateRangeAggregationTest
         createNode( Instant.parse( "2014-12-10T12:45:00Z" ), "n4", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T13:59:59Z" ), "n5", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T14:01:00Z" ), "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
@@ -86,6 +87,7 @@ public class DateRangeAggregationTest
         createNode( now.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
         createNode( now.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
         createNode( now.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
@@ -129,6 +131,7 @@ public class DateRangeAggregationTest
         createNode( anchor.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
         createNode( anchor.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
         createNode( anchor.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).

@@ -8,15 +8,11 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Stopwatch;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.repo.impl.InternalContext;
 
 @Disabled("Performance test is only for manual run")
 public class PushNodesCommandPerformanceTest
@@ -32,7 +28,7 @@ public class PushNodesCommandPerformanceTest
     @Test
     void testReferencePerformance()
     {
-        final Node rootNode = createNode( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build(), false );
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 
         createNodes( rootNode, 20, 3, 1 );
 
@@ -65,45 +61,4 @@ public class PushNodesCommandPerformanceTest
 
         System.out.println( "Pushed : " + number + " in " + started + ", " + ( elapsed == 0 ? "n/a" : ( number / elapsed ) + "/s" ) );
     }
-
-    @Test
-    void testSearchVsMget()
-    {
-        System.out.format("Creating nodes...%n");
-
-        // create a batch of notes greater than elasticsearch can return in a single query
-        final int amountOfNodesToLoad = 100_100;
-
-        NodeIds.Builder nodeIds = NodeIds.create();
-
-        for ( int i = 0; i < amountOfNodesToLoad; i++ )
-        {
-            final Node node = createNode( CreateNodeParams.create().
-                name( "node" + i ).
-                parent( NodePath.ROOT ).
-                build(), false );
-            nodeIds.add( node.id() );
-            if ((i + 1) % 1000 == 0) {
-                System.out.format("Nodes created so far %s %n", i + 1);
-            }
-        }
-
-        refresh();
-
-        System.out.format("Starting...%n");
-
-        final Stopwatch timer = Stopwatch.createUnstarted();
-
-        for ( int i = 0; i < 10; i++ )
-        {
-            timer.reset().start();
-            NodeBranchEntries result = branchService.get( nodeIds.build(), InternalContext.from( ContextAccessor.current() ) );
-            timer.stop();
-            final Node node = createNode( CreateNodeParams.create().name( "extranode" + i ).parent( NodePath.ROOT ).build(), false );
-            nodeIds.add( node.id() );
-            System.out.format("Fetched %s in %s%n", result.getSize(), timer);
-        }
-
-    }
-
 }

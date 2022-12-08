@@ -11,6 +11,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -88,6 +89,7 @@ public class FindNodesByQueryCommandTest_acl
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(

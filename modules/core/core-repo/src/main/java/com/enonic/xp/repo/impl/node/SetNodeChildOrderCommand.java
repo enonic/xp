@@ -12,7 +12,9 @@ import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -32,12 +34,15 @@ public class SetNodeChildOrderCommand
 
     private final NodeDataProcessor processor;
 
+    private final RefreshMode refresh;
+
     private SetNodeChildOrderCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.nodeId;
         this.childOrder = builder.childOrder;
         this.processor = builder.processor;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -66,10 +71,9 @@ public class SetNodeChildOrderCommand
             timestamp( Instant.now( CLOCK ) ).
             build();
 
-        return StoreNodeCommand.create( this ).
-            node( editedNode ).
-            build().
-            execute();
+        final Node node = this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
+        refresh( refresh );
+        return node;
     }
 
     private void checkContextUserPermissionOrAdmin( final Node parentNode )
@@ -79,6 +83,7 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
+        refresh( RefreshMode.ALL );
         final SearchResult result = nodeSearchService.query( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
@@ -99,10 +104,7 @@ public class SetNodeChildOrderCommand
                 timestamp( Instant.now( CLOCK ) ).
                 build();
 
-            StoreNodeCommand.create( this ).
-                node( editedNode ).
-                build().
-                execute();
+            this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
         }
     }
 
@@ -114,6 +116,8 @@ public class SetNodeChildOrderCommand
         private ChildOrder childOrder;
 
         private NodeDataProcessor processor = ( n ) -> n;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -137,6 +141,12 @@ public class SetNodeChildOrderCommand
             return this;
         }
 
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -150,5 +160,6 @@ public class SetNodeChildOrderCommand
             validate();
             return new SetNodeChildOrderCommand( this );
         }
+
     }
 }

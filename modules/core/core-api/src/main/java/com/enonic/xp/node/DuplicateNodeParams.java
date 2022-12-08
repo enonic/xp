@@ -17,13 +17,16 @@ public class DuplicateNodeParams
 
     private final Boolean includeChildren;
 
+    private final RefreshMode refresh;
+
     private DuplicateNodeParams( Builder builder )
     {
-        nodeId = builder.nodeId;
-        processor = builder.processor;
-        dataProcessor = builder.dataProcessor;
-        duplicateListener = builder.duplicateListener;
-        includeChildren = builder.includeChildren;
+        this.nodeId = builder.nodeId;
+        this.processor = builder.processor;
+        this.dataProcessor = builder.dataProcessor;
+        this.duplicateListener = builder.duplicateListener;
+        this.includeChildren = builder.includeChildren;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -57,6 +60,11 @@ public class DuplicateNodeParams
         return includeChildren;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -68,6 +76,8 @@ public class DuplicateNodeParams
         private DuplicateNodeListener duplicateListener;
 
         private Boolean includeChildren = true;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -101,6 +111,12 @@ public class DuplicateNodeParams
         public Builder includeChildren( final Boolean includeChildren )
         {
             this.includeChildren = includeChildren;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

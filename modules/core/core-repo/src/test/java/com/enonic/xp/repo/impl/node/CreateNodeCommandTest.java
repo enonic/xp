@@ -20,6 +20,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -123,7 +124,6 @@ public class CreateNodeCommandTest
             parent( parentNode.path() ).
             name( "child-node-3" ).
             build() );
-        refresh();
 
         assertTrue( c1.getManualOrderValue() != null && c2.getManualOrderValue() != null && c3.getManualOrderValue() != null );
         assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );
@@ -255,6 +255,7 @@ public class CreateNodeCommandTest
             parent( NodePath.ROOT ).
             data( data ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
             storageService( this.storageService ).

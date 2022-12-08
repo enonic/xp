@@ -219,8 +219,6 @@ public class ContentServiceImplTest_restore
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        refresh();
-
         final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )
                                                                                                              .targetPath(
@@ -245,8 +243,6 @@ public class ContentServiceImplTest_restore
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
-
-        refresh();
 
         final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )

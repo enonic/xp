@@ -25,6 +25,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
@@ -72,6 +73,8 @@ public class NodeExporter
     public NodeExportResult execute()
     {
         this.result.dryRun( this.dryRun );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
 

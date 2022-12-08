@@ -64,6 +64,7 @@ public class FindNodesByMultiRepoQueryCommandTest
 
         runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
         runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        refresh();
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
@@ -97,6 +98,7 @@ public class FindNodesByMultiRepoQueryCommandTest
             callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
         final Node repo2MasterNode1 =
             callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        refresh();
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).
@@ -131,6 +133,7 @@ public class FindNodesByMultiRepoQueryCommandTest
             callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
         final Node repo2MasterNode1 =
             callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        refresh();
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).
@@ -159,6 +162,7 @@ public class FindNodesByMultiRepoQueryCommandTest
 
         runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
         runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        refresh();
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
@@ -187,6 +191,7 @@ public class FindNodesByMultiRepoQueryCommandTest
         runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
         runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
         runInContext( REPO_USER_3, repo3.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        refresh();
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).

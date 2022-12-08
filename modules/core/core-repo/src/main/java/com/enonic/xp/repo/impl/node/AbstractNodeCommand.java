@@ -46,7 +46,10 @@ abstract class AbstractNodeCommand
 
     void refresh( final RefreshMode refreshMode )
     {
-        RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+        if (refreshMode != null)
+        {
+            RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+        }
     }
 
     PrincipalKey getCurrentPrincipalKey()

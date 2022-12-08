@@ -14,7 +14,6 @@ public class ContentImportValidator
     @Override
     public CreateNodeParams ensureValid( final CreateNodeParams original )
     {
-
         final CreateNodeParams.Builder builder = CreateNodeParams.create( original );
 
         final PropertyTree updatedData = original.getData();

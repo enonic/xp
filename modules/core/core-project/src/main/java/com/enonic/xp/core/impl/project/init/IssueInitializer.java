@@ -90,11 +90,10 @@ public class IssueInitializer
             parent( NodePath.ROOT ).
             permissions( Objects.requireNonNullElse( accessControlList, ISSUE_ROOT_DEFAULT_ACL ) ).
             childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
+            refresh( RefreshMode.ALL ).
             build() );
 
         LOG.info( "Created issue root-node: " + issueRoot.path() );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_MASTER );
     }

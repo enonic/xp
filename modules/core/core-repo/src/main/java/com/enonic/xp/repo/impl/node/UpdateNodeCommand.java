@@ -5,12 +5,14 @@ import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.Permission;
 
@@ -32,11 +34,6 @@ public final class UpdateNodeCommand
     }
 
     public Node execute()
-    {
-        return doExecute();
-    }
-
-    private Node doExecute()
     {
         final Node persistedNode = getPersistedNode();
 
@@ -72,14 +69,18 @@ public final class UpdateNodeCommand
             final NodePath parentPath = editedNode.path().getParentPath();
             builder.permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() );
         }
-        final Node updatedNode = builder.build();
 
+        final Node updatedNode = builder.build();
         if ( !this.params.isDryRun() )
         {
-            return StoreNodeCommand.create( this ).node( updatedNode ).build().execute();
+            final Node storedNode = this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
+            refresh( params.getRefresh() );
+            return storedNode;
         }
-
-        return updatedNode;
+        else
+        {
+            return updatedNode;
+        }
     }
 
     private Node getPersistedNode()

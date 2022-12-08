@@ -9,6 +9,7 @@ import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 
 class ApplicationRepoInitializer
     extends ExternalInitializer
@@ -50,6 +51,7 @@ class ApplicationRepoInitializer
             parent( applicationsRootPath.getParentPath() ).
             name( applicationsRootPath.getLastElement().toString() ).
             inheritPermissions( true ).
+            refresh( RefreshMode.ALL ).
             build() );
     }
 

@@ -452,10 +452,8 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( createdNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.created( createdNode ) );
-        }
+        this.eventPublisher.publish( NodeEvents.created( createdNode ) );
+
         return createdNode;
     }
 
@@ -481,8 +479,11 @@ public class NodeServiceImpl
     public Node rename( final RenameNodeParams params )
     {
         verifyContext();
-        final MoveNodeResult moveNodeResult = RenameNodeCommand.create().
-            params( params ).
+        final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
+            id( params.getNodeId() ).
+            newNodeName( params.getNewNodeName() ).
+            processor( params.getProcessor() ).
+            refresh( params.getRefresh() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -614,6 +615,7 @@ public class NodeServiceImpl
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
             id( params.getNodeId() ).
             newParent( params.getParentNodePath() ).
+            refresh( params.getRefresh() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -801,13 +803,12 @@ public class NodeServiceImpl
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
             processor( params.getProcessor() ).
+            refresh( params.getRefresh() ).
             build().
             execute();
 
-        if ( sortedNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.sorted( sortedNode ) );
-        }
+        this.eventPublisher.publish( NodeEvents.sorted( sortedNode ) );
+
         return sortedNode;
     }
 
@@ -975,6 +976,7 @@ public class NodeServiceImpl
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
+            refresh( params.getRefresh() ).
             importPermissions( params.isImportPermissions() ).
             importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
             binaryBlobStore( this.binaryService ).

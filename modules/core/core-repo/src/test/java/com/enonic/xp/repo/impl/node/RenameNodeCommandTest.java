@@ -9,7 +9,6 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
-import com.enonic.xp.node.RenameNodeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,16 +33,14 @@ public class RenameNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node-edited" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         final Node renamedNode = getNodeById( createdNode.id() );
 
@@ -60,16 +57,14 @@ public class RenameNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         final Node renamedNode = getNodeById( createdNode.id() );
 
@@ -89,15 +84,13 @@ public class RenameNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        final RenameNodeCommand command = RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node-existing" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build();
+        final MoveNodeCommand command = MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node-existing" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build();
 
         assertThrows( NodeAlreadyExistAtPathException.class, command::execute );
     }
@@ -113,16 +106,14 @@ public class RenameNodeCommandTest
 
         final Node beforeRename = getNodeById( createdNode.id() );
 
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node-edited" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         final Node renamedNode = getNodeById( createdNode.id() );
 
@@ -164,20 +155,14 @@ public class RenameNodeCommandTest
             parent( child1_2.path() ).
             build() );
 
-        refresh();
-
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node-edited" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
-
-        refresh();
+        MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         final Node renamedNode = getNodeById( createdNode.id() );
         assertEquals( "my-node-edited", renamedNode.name().toString() );
@@ -209,16 +194,15 @@ public class RenameNodeCommandTest
 
         final Node createdNode = createNode( createNodeNamedMyNodeParams );
 
-        RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( createdNode.id() ).
-                nodeName( NodeName.from( "my-node-edited" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .id( createdNode.id() )
+            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
+
 
         createNode( createNodeNamedMyNodeParams );
     }
@@ -227,15 +211,13 @@ public class RenameNodeCommandTest
     public void cannot_rename_root_node()
         throws Exception
     {
-        assertThrows( OperationNotPermittedException.class, () -> RenameNodeCommand.create().
-            params( RenameNodeParams.create().
-                nodeId( Node.ROOT_UUID ).
-                nodeName( NodeName.from( "my-node-edited" ) ).
-                build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute() );
+        assertThrows( OperationNotPermittedException.class, () -> MoveNodeCommand.create()
+            .id( Node.ROOT_UUID )
+            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute() );
     }
 }

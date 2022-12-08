@@ -314,6 +314,8 @@ public class DuplicateNodeCommandTest
 
         final Node a1Duplicate = duplicateNode( a1 ).getNode();
 
+        refresh();
+
         final NodeIds children = findChildren( a1Duplicate ).getNodeIds();
         assertEquals( 2, children.getSize() );
 

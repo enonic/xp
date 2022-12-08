@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.repo.impl.InternalContext;
 
 public class CreateRootNodeCommand
     extends AbstractNodeCommand
@@ -32,13 +34,7 @@ public class CreateRootNodeCommand
             childOrder( params.getChildOrder() ).
             build();
 
-        return StoreNodeCommand.create().
-            node( rootNode ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return this.nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static class Builder

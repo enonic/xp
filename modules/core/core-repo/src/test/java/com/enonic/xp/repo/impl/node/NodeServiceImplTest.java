@@ -157,7 +157,7 @@ public class NodeServiceImplTest
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        doRename( createdNode.id(), "my-node-edited" );
+        nodeService.rename( RenameNodeParams.create().nodeName( NodeName.from( "my-node-edited" ) ).nodeId( createdNode.id() ).build() );
 
         final Node renamedNode = nodeService.getById( createdNode.id() );
 
@@ -195,8 +195,6 @@ public class NodeServiceImplTest
 
         final Node node = this.nodeService.create( params );
 
-        refresh();
-
         assertEquals( aclList, node.getPermissions() );
         assertEquals( childOrder, node.getChildOrder() );
     }
@@ -216,8 +214,6 @@ public class NodeServiceImplTest
                                                        .data( data )
                                                        .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
                                                        .build() );
-
-        this.nodeService.refresh( RefreshMode.SEARCH );
 
         final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node.id() ).build() );
 
@@ -436,8 +432,6 @@ public class NodeServiceImplTest
             nodeService.findByParent( FindNodesByParentParams.create().parentId( parent.id() ).build() ).getNodeIds() ).containsExactly(
             child3.id(), child1.id(), child2.id() );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final Node processedParent = this.nodeService.getById( parent.id() );
 
         assertEquals( "value", processedParent.data().getString( "processedValue" ) );
@@ -448,10 +442,4 @@ public class NodeServiceImplTest
         final GetNodeVersionsParams params = GetNodeVersionsParams.create().nodeId( nodeId ).build();
         return nodeService.findVersions( params ).getNodeVersionsMetadata();
     }
-
-    private Node doRename( final NodeId nodeId, final String newName )
-    {
-        return nodeService.rename( RenameNodeParams.create().nodeName( NodeName.from( newName ) ).nodeId( nodeId ).build() );
-    }
-
 }

@@ -6,12 +6,14 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+import com.enonic.xp.repo.impl.InternalContext;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
@@ -71,7 +73,7 @@ public class ReorderChildNodesCommand
         parents.forEach( this::processParent );
         parents.forEach( result::addParentNode );
 
-        refresh( RefreshMode.SEARCH );
+        refresh( params.getRefresh() );
 
         return result.build();
     }
@@ -83,7 +85,7 @@ public class ReorderChildNodesCommand
         {
             final Node editedNode = Node.create( parentNode ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();
 
-            StoreNodeCommand.create( this ).node( editedNode ).build().execute();
+            this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
         }
     }
 

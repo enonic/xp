@@ -12,15 +12,23 @@ public class ReorderChildNodesParams
 {
     private final NodeDataProcessor processor;
 
+    private final RefreshMode refresh;
+
     private ReorderChildNodesParams( final Builder builder )
     {
         super( builder.orderChildNodeParamsList.build() );
         this.processor = builder.processor;
+        this.refresh = builder.refresh;
     }
 
     public NodeDataProcessor getProcessor()
     {
         return processor;
+    }
+
+    public RefreshMode getRefresh()
+    {
+        return refresh;
     }
 
     public static Builder create()
@@ -34,6 +42,8 @@ public class ReorderChildNodesParams
 
         private NodeDataProcessor processor = ( n ) -> n;
 
+        private RefreshMode refresh;
+
         public Builder add( final ReorderChildNodeParams reorderChildNodeParams )
         {
             this.orderChildNodeParamsList.add( reorderChildNodeParams );
@@ -43,6 +53,12 @@ public class ReorderChildNodesParams
         public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 

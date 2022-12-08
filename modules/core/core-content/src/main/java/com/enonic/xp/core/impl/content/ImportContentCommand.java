@@ -47,11 +47,10 @@ final class ImportContentCommand
             .dryRun( params.isDryRun() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .refresh( RefreshMode.ALL )
             .build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return ImportContentResult.create().content( translator.fromNode( result.getNode(), false ) ).build();
     }

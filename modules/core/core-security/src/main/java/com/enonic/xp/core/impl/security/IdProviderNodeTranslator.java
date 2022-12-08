@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -14,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
@@ -246,19 +245,7 @@ abstract class IdProviderNodeTranslator
                     nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
                 }
             } ).
-            build();
-    }
-
-    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final Node idProviderNode )
-    {
-        Preconditions.checkNotNull( idProviderNode );
-
-        return UpdateNodeParams.create().
-            id( idProviderNode.id() ).
-            editor( editableNode -> {
-                final PropertyTree data = editableNode.data;
-                data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
-            } ).
+            refresh( RefreshMode.ALL ).
             build();
     }
 

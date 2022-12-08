@@ -133,11 +133,10 @@ public final class ContentInitializer
                                                              .permissions( Objects.requireNonNullElse( this.accessControlList,
                                                                                                        CONTENT_ROOT_DEFAULT_ACL ) )
                                                              .childOrder( CONTENT_DEFAULT_CHILD_ORDER )
+                                                             .refresh( RefreshMode.ALL )
                                                              .build() );
 
             LOG.info( "Created content root-node: {}", contentRoot );
-
-            nodeService.refresh( RefreshMode.ALL );
 
             nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_MASTER );
         }

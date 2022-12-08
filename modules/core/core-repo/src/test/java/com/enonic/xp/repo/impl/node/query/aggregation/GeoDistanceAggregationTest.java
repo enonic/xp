@@ -59,6 +59,7 @@ public class GeoDistanceAggregationTest
         createNode( MOSCOW, "moscow", NodePath.ROOT );
         createNode( FREDRIKSTAD, "fredrikstad", NodePath.ROOT );
         createNode( LONDON, "london", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( GeoDistanceAggregationQuery.create( "myGeoDistance" ).

@@ -5,7 +5,6 @@ import java.time.Instant;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.EditableIssue;
 import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.Issue;
@@ -14,7 +13,6 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.PublishRequestIssue;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -23,6 +21,8 @@ import com.enonic.xp.security.User;
 public class UpdateIssueCommand
     extends AbstractIssueCommand
 {
+    private static final IssueDataSerializer ISSUE_DATA_SERIALIZER = new IssueDataSerializer();
+
     private final UpdateIssueParams params;
 
     private UpdateIssueCommand( Builder builder )
@@ -39,10 +39,14 @@ public class UpdateIssueCommand
     private Issue doExecute()
     {
         Issue editedIssue = editIssue( params.getEditor(), getIssue( params.getId() ) );
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editedIssue );
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
+            .id( NodeId.from( editedIssue.getId() ) )
+            .editor( editableNode -> editableNode.data = ISSUE_DATA_SERIALIZER.toUpdateNodeData( editedIssue ) )
+            .refresh( RefreshMode.ALL )
+            .build();
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
-        nodeService.refresh( RefreshMode.ALL );
         return IssueNodeTranslator.fromNode( updatedNode );
     }
 
@@ -102,28 +106,6 @@ public class UpdateIssueCommand
         public UpdateIssueCommand build()
         {
             return new UpdateIssueCommand( this );
-        }
-    }
-
-    private static class UpdateNodeParamsFactory
-    {
-        private static final IssueDataSerializer ISSUE_DATA_SERIALIZER = new IssueDataSerializer();
-
-        public static UpdateNodeParams create( final Issue editedIssue )
-        {
-            final NodeEditor nodeEditor = toNodeEditor( editedIssue );
-
-            final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
-                id( NodeId.from( editedIssue.getId() ) ).
-                editor( nodeEditor );
-
-            return builder.build();
-        }
-
-        private static NodeEditor toNodeEditor( final Issue editedIssue )
-        {
-            final PropertyTree nodeData = ISSUE_DATA_SERIALIZER.toUpdateNodeData( editedIssue );
-            return editableNode -> editableNode.data = nodeData;
         }
     }
 }

@@ -45,7 +45,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -208,8 +207,6 @@ final class UpdateContentCommand
                 .produce();
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
-
-        this.nodeService.refresh( RefreshMode.ALL );
 
         return translator.fromNode( editedNode, true );
     }

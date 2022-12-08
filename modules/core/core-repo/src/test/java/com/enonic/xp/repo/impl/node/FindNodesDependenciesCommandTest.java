@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +37,8 @@ public class FindNodesDependenciesCommandTest
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         createNodeWithReference( "n1_1_1", node1_1.path() );
 
+        nodeService.refresh( RefreshMode.ALL );
+
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
             nodeIds( NodeIds.from( node1.id() ) ).
@@ -55,6 +58,8 @@ public class FindNodesDependenciesCommandTest
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         createNodeWithReference( "n1_1_1", node1_1.path() );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
@@ -90,6 +95,8 @@ public class FindNodesDependenciesCommandTest
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         createNodeWithReference( "n1_1_1", node1_1.path() );
 
+        nodeService.refresh( RefreshMode.ALL );
+
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( false ).
             nodeIds( NodeIds.from( node1.id() ) ).
@@ -106,10 +113,11 @@ public class FindNodesDependenciesCommandTest
     public void looping_dependencies()
         throws Exception
     {
-
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         createNodeWithReference( "n1_1_1", node1_1.path(), "n1" );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).
@@ -127,12 +135,13 @@ public class FindNodesDependenciesCommandTest
     public void exclude_dependencies()
         throws Exception
     {
-
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1", "n1_2" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         final Node node1_2 = createNodeWithReference( "n1_2", node1.path(), "n1_2_1" );
         createNodeWithReference( "n1_1_1", node1_1.path() );
         createNodeWithReference( "n1_2_1", node1_2.path() );
+
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             recursive( true ).

@@ -102,8 +102,6 @@ public class ContentServiceImplTest_delete
 
         final Content subChildContent = this.contentService.create( createSubChildContentParams );
 
-        refresh();
-
         //Deletes the content
         final DeleteContentsResult deletedContents =
             this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -130,8 +128,6 @@ public class ContentServiceImplTest_delete
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
             build() );
-
-        refresh();
 
         final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
@@ -198,8 +194,6 @@ public class ContentServiceImplTest_delete
             contentIds( ContentIds.from( content.getId() ) ).
             build();
 
-        refresh();
-
         this.contentService.publish( pushParams );
 
         //Deletes the content
@@ -243,20 +237,14 @@ public class ContentServiceImplTest_delete
 
         final Content child1Content = this.contentService.create( createChild1ContentParams );
 
-        refresh();
-
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId(), contentToMove.getId() ) ).
             build() );
-
-        refresh();
 
         this.contentService.move( MoveContentParams.create().
             contentId( contentToMove.getId() ).
             parentContentPath( child1Content.getPath() ).
             build() );
-
-        refresh();
 
         final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content.getPath() ).
@@ -300,20 +288,14 @@ public class ContentServiceImplTest_delete
 
         final Content contentToMove = this.contentService.create( createMovedContentParams );
 
-        refresh();
-
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( contentToMove.getId() ) ).
             build() );
-
-        refresh();
 
         this.contentService.move( MoveContentParams.create().
             contentId( contentToMove.getId() ).
             parentContentPath( ContentPath.ROOT ).
             build() );
-
-        refresh();
 
         DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content.getPath() ).
@@ -354,16 +336,10 @@ public class ContentServiceImplTest_delete
 
         final Content contentToMove = this.contentService.create( createMovedContentParams );
 
-        refresh();
-
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( contentToMove.getId() ) ).build() );
-
-        refresh();
 
         this.contentService.move(
             MoveContentParams.create().contentId( contentToMove.getId() ).parentContentPath( content.getPath() ).build() );
-
-        refresh();
 
         DeleteContentsResult result =
             this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -424,8 +400,6 @@ public class ContentServiceImplTest_delete
         createContent( child1.getPath(), "child2_1" );
 
         final Content site2 = createContent( ContentPath.ROOT, "site2" );
-
-        refresh();
 
         final MoveContentParams params = MoveContentParams.create().
             contentId( child1.getId() ).

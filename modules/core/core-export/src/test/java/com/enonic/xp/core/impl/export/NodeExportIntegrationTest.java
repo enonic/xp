@@ -158,8 +158,6 @@ public class NodeExportIntegrationTest
     {
         createNode( NodePath.ROOT, "mynode" );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
@@ -189,15 +187,12 @@ public class NodeExportIntegrationTest
 
         final NodeExportListener nodeExportListener = Mockito.mock( NodeExportListener.class );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( NodePath.ROOT )
             .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
-            .
-            nodeExportListener( nodeExportListener ).
+            .nodeExportListener( nodeExportListener ).
             build().
             execute();
 
@@ -225,7 +220,7 @@ public class NodeExportIntegrationTest
         final Node root =
             Node.create().name( NodeName.from( "root" ) ).parentPath( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build();
 
-        this.nodeService.create( CreateNodeParams.from( root ).build() );
+        createNode( CreateNodeParams.from( root ).build() );
 
         createNode( root.path(), "child1" );
         createNode( root.path(), "child2" );
@@ -375,6 +370,7 @@ public class NodeExportIntegrationTest
         throws Exception
     {
         createNode( NodePath.ROOT, "mynode" );
+        refresh();
 
         final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
         Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),

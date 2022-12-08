@@ -9,7 +9,6 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 
 public class CreateAuditLogCommand
     extends NodeServiceCommand<AuditLog>
@@ -41,11 +40,7 @@ public class CreateAuditLogCommand
             parent( NodePath.ROOT ).
             childOrder( AuditLogConstants.AUDIT_LOG_REPO_DEFAULT_CHILD_ORDER ).
             build();
-
-        Node node = nodeService.create( createNodeParams );
-        nodeService.refresh( RefreshMode.ALL );
-
-        return node;
+        return nodeService.create( createNodeParams );
     }
 
     public static Builder create()

@@ -76,11 +76,10 @@ public final class ArchiveInitializer
             parent( NodePath.ROOT ).
             permissions( Objects.requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) ).
             childOrder( ArchiveConstants.DEFAULT_ARCHIVE_REPO_ROOT_ORDER ).
+            refresh( RefreshMode.ALL ).
             build() );
 
         LOG.info( "Created archive root-node: " + archiveRoot.path() );
-
-        nodeService.refresh( RefreshMode.ALL );
     }
 
     public static class Builder

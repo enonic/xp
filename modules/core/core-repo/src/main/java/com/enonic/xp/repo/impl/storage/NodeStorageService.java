@@ -29,7 +29,7 @@ public interface NodeStorageService
 
     Node store( Node node, InternalContext context );
 
-    Node load( LoadNodeParams params, InternalContext context );
+    Node store( StoreNodeParams params, InternalContext context );
 
     void storeVersion( StoreNodeVersionParams params, InternalContext context );
 

@@ -45,6 +45,7 @@ public class ValueCountAggregationTest
         createNode( "c2", "n6", NodePath.ROOT );
 
         createNode( "c3", "n7", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -79,6 +80,7 @@ public class ValueCountAggregationTest
         createNode( "c2", "n2", NodePath.ROOT );
         createNode( "c3", "n3", NodePath.ROOT );
         createNode( null, "n4", NodePath.ROOT );
+        refresh();
 
         NodeQuery query = NodeQuery.create().
             addAggregationQuery( ValueCountAggregationQuery.create( "testCountAgg" ).fieldName( "category" ).build() ).

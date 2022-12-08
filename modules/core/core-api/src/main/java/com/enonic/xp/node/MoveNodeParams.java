@@ -10,12 +10,15 @@ public class MoveNodeParams
 
     private final NodeDataProcessor processor;
 
+    private final RefreshMode refresh;
+
     private MoveNodeParams( Builder builder )
     {
         this.nodeId = builder.nodeId;
         this.parentNodePath = builder.parentNodePath;
         this.moveListener = builder.moveListener;
         this.processor = builder.processor;
+        this.refresh = builder.refresh;
     }
 
     public static Builder create()
@@ -43,6 +46,11 @@ public class MoveNodeParams
         return processor;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -52,6 +60,8 @@ public class MoveNodeParams
         private MoveNodeListener moveListener;
 
         private NodeDataProcessor processor = ( n ) -> n;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -81,6 +91,11 @@ public class MoveNodeParams
             return this;
         }
 
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
+            return this;
+        }
 
         public MoveNodeParams build()
         {

@@ -48,10 +48,10 @@ public class UpdateLastRunCommand
                 toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
                 toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId.toString() );
             } ) ).
+            refresh( RefreshMode.ALL ).
             build();
 
         final Node updatedNode = nodeService.update( updateNodeParams );
-        nodeService.refresh( RefreshMode.ALL );
 
         return SchedulerSerializer.fromNode( updatedNode );
     }

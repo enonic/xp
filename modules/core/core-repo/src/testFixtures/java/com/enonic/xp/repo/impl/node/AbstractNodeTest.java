@@ -386,30 +386,29 @@ public abstract class AbstractNodeTest
     }
 
 
-    protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
+    protected Node createNodeSkipVerification( final CreateNodeParams createNodeParams )
     {
-        final Node createdNode = CreateNodeCommand.create()
+        return CreateNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( createNodeParams )
-            .skipVerification( !refresh )
+            .skipVerification( true )
             .build().
             execute();
-
-        if ( refresh )
-        {
-            refresh();
-        }
-
-        return createdNode;
     }
-
 
     protected Node createNode( final CreateNodeParams createNodeParams )
     {
-        return createNode( createNodeParams, true );
+        return CreateNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .params( createNodeParams )
+            .build()
+            .execute();
     }
 
     Node getNodeById( final NodeId nodeId )
@@ -544,11 +543,11 @@ public abstract class AbstractNodeTest
             final PropertyTree data = new PropertyTree();
             data.addReference( "myRef", new Reference( parent.id() ) );
 
-            final Node node = createNode( CreateNodeParams.create().
+            final Node node = createNodeSkipVerification( CreateNodeParams.create().
                 name( "nodeName_" + level + "-" + i ).
                 parent( parent.path() ).
                 data( data ).
-                build(), false );
+                build() );
 
             if ( level < maxLevels )
             {

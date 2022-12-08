@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -57,7 +58,7 @@ public class FindNodeIdsByParentCommandTest
             name( "node1_1_1" ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create().
             parentPath( root.path() ).
@@ -100,7 +101,7 @@ public class FindNodeIdsByParentCommandTest
             name( "node1" ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         MoveNodeCommand.create().
             newParent( node2.path() ).
@@ -142,6 +143,7 @@ public class FindNodeIdsByParentCommandTest
         createNode( node.path(), "node1_2" );
         final Node node1_1_1 = createNode( node1_1.path(), "node1_1_1" );
         final Node node_1_1_1_1 = createNode( node1_1_1.path(), "node1_1_1_1" );
+        nodeService.refresh( RefreshMode.ALL );
 
         assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getHits() );
         assertEquals( 5, getByParentRecursive( node.id() ).getHits() );
@@ -196,6 +198,7 @@ public class FindNodeIdsByParentCommandTest
         int size = 20;
 
         createChildren( createdNode, size );
+        nodeService.refresh( RefreshMode.ALL );
 
         FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -227,6 +230,7 @@ public class FindNodeIdsByParentCommandTest
         int size = 20;
 
         createChildren( createdNode, size );
+        nodeService.refresh( RefreshMode.ALL );
 
         FindNodesByParentResult children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -280,6 +284,7 @@ public class FindNodeIdsByParentCommandTest
             parent( createdNode.path() ).
             name( "my-child" ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
@@ -410,6 +415,7 @@ public class FindNodeIdsByParentCommandTest
             parent( NodePath.ROOT ).
             data( createOrderProperty( 3.0 ) ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByParentResult result = findByParent( FindNodesByParentParams.create().
             parentPath( NodePath.ROOT ).

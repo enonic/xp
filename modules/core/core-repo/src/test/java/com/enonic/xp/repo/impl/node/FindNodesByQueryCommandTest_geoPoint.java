@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.GeoPoint;
 
 public class FindNodesByQueryCommandTest_geoPoint
@@ -51,6 +52,7 @@ public class FindNodesByQueryCommandTest_geoPoint
         createNodeWithLocation( MOSCOW, "moscow", NodePath.ROOT );
         createNodeWithLocation( FREDRIKSTAD, "fredrikstad", NodePath.ROOT );
         createNodeWithLocation( LONDON, "london", NodePath.ROOT );
+        nodeService.refresh( RefreshMode.ALL );
     }
 
     @Test

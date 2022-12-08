@@ -6,6 +6,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -37,14 +38,13 @@ public class SetRootPermissionsCommand
 
         requireContextUserPermissionOrAdmin( Permission.WRITE_PERMISSIONS, rootNode );
 
-        return StoreNodeCommand.create( this ).
-            node( Node.create( rootNode ).
-                permissions( this.permissions ).
-                inheritPermissions( this.inheritPermissions ).
-                timestamp( Instant.now( CLOCK ) ).
-                build() ).
-            build().
-            execute();
+        final Node node = Node.create( rootNode )
+            .permissions( this.permissions )
+            .inheritPermissions( this.inheritPermissions )
+            .timestamp( Instant.now( CLOCK ) )
+            .build();
+
+        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()

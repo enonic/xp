@@ -106,26 +106,32 @@ public final class DuplicateNodeCommand
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
+        refresh( params.getRefresh() );
         return result.build();
     }
 
     private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
     {
+        CreateNodeParams updatedParams = originalParams;
+
         if ( params.getProcessor() != null )
         {
-            params.getProcessor().process( originalParams );
+            updatedParams = params.getProcessor().process( originalParams );
         }
 
         if ( params.getDataProcessor() != null )
         {
-            return CreateNodeParams.create( originalParams ).data( params.getDataProcessor().process( originalParams.getData() ) ).build();
+            updatedParams =
+                CreateNodeParams.create( originalParams ).data( params.getDataProcessor().process( originalParams.getData() ) ).build();
         }
 
-        return originalParams;
+        return updatedParams;
     }
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
     {
+        refresh( RefreshMode.SEARCH );
+
         final FindNodesByParentResult findNodesByParentResult = FindNodeIdsByParentCommand.create( this )
             .parentPath( originalParent.path() )
             .build()

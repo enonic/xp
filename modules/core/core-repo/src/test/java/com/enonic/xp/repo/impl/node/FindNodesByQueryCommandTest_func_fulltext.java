@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -46,6 +47,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -78,7 +80,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 build() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
@@ -124,7 +126,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 build() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
@@ -167,6 +169,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                                                                     .defaultConfig( IndexConfig.BY_TYPE )
                                                                     .build() )
                                           .build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -204,6 +207,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -234,7 +238,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 build() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -279,7 +283,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 build() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -324,6 +328,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             query( QueryExpr.from( new DynamicConstraintExpr(
@@ -345,6 +350,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         createWithTitleAndDescription( "1", "fish", "fash" );
         createWithTitleAndDescription( "2", "fosh", "basics and some fish other words not relevant" );
         createWithTitleAndDescription( "3", "fash", "fish" );
+        nodeService.refresh( RefreshMode.ALL );
 
         assertOrder( doQuery( "fulltext('title, description^5', 'fish', 'AND')" ), "3", "1", "2" );
         assertOrder( doQuery( "fulltext('title^5, description', 'fish', 'AND')" ), "1", "3", "2" );
@@ -357,6 +363,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
         createWithTitle( "1", "fishing techniques" );
         createWithTitle( "2", "fishing time interrupted by fiance" );
         createWithTitle( "3", "figure skating is better than fishing" );
+        nodeService.refresh( RefreshMode.ALL );
 
         final String queryString = "ngram('title', 'fi', 'AND') AND NOT fulltext('title', 'fiancé figure', 'OR')";
 
@@ -396,6 +403,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('test*', 'leter etter fisk', 'OR')", 2 );
         queryAndAssert( "fulltext('test.*', 'leter etter fisk', 'OR')", 2 );
@@ -451,6 +459,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'levenshteins algorithm', 'AND')", 1 );
         queryAndAssert( "fulltext('title', 'levenshteins-algorithm', 'AND')", 1 );
@@ -473,6 +482,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
         queryAndAssert( "fulltext('title', 'delimiter', 'AND')", 1 );
@@ -494,6 +504,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
                 defaultConfig( IndexConfig.BY_TYPE ).
                 build() ).
             build() );
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
         queryAndAssert( "fulltext('title', 'delimiter', 'AND')", 1 );

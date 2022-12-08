@@ -7,12 +7,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -108,10 +110,7 @@ final class ApplyNodePermissionsCommand
             updatedNode = createUpdatedNode( node, mergedPermissions, false );
         }
 
-        return StoreNodeCommand.create( this ).
-            node( updatedNode ).
-            build().
-            execute();
+        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )

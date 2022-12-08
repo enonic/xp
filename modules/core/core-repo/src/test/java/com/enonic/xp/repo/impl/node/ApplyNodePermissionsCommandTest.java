@@ -135,8 +135,6 @@ public class ApplyNodePermissionsCommandTest
             build().
             execute();
 
-        refresh();
-
         assertEquals( 6, updateNodes.getSucceedNodes().getSize() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
@@ -263,8 +261,6 @@ public class ApplyNodePermissionsCommandTest
             searchService( this.searchService ).
             build().
             execute();
-
-        refresh();
 
         assertEquals( 6, updatedNodes.getSucceedNodes().getSize() );
 

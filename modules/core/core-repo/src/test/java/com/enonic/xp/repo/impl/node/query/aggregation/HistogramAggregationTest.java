@@ -39,6 +39,7 @@ public class HistogramAggregationTest
         createNode( 40d, "n4", NodePath.ROOT );
         createNode( 50d, "n5", NodePath.ROOT );
         createNode( 60d, "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "ten" ).
@@ -78,6 +79,7 @@ public class HistogramAggregationTest
         createNode( 10d, "n4", NodePath.ROOT );
         createNode( 11d, "n5", NodePath.ROOT );
         createNode( 20d, "n6", NodePath.ROOT );
+        refresh();
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "count_asc" ).

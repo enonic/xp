@@ -10,6 +10,8 @@ import com.enonic.xp.node.UpdateNodeParams;
 public class UpdateIssueCommentCommand
     extends AbstractIssueCommand
 {
+    private static final IssueCommentDataSerializer ISSUE_COMMENT_DATA_SERIALIZER = new IssueCommentDataSerializer();
+
     private final UpdateIssueCommentParams params;
 
     private UpdateIssueCommentCommand( Builder builder )
@@ -26,11 +28,15 @@ public class UpdateIssueCommentCommand
     private IssueComment doExecute()
     {
         validateBlockingChecks();
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( this.params );
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
+            .id( this.params.getComment() )
+            .editor( e -> ISSUE_COMMENT_DATA_SERIALIZER.updateNodeData( e.data, this.params ) )
+            .refresh( RefreshMode.ALL )
+            .build();
 
         final Node udpatedNode = nodeService.update( updateNodeParams );
 
-        nodeService.refresh( RefreshMode.ALL );
         return IssueCommentNodeTranslator.fromNode( udpatedNode );
     }
 
@@ -70,22 +76,6 @@ public class UpdateIssueCommentCommand
         public UpdateIssueCommentCommand build()
         {
             return new UpdateIssueCommentCommand( this );
-        }
-    }
-
-    private static class UpdateNodeParamsFactory
-    {
-
-        private static final IssueCommentDataSerializer ISSUE_COMMENT_DATA_SERIALIZER = new IssueCommentDataSerializer();
-
-        public static UpdateNodeParams create( final UpdateIssueCommentParams params )
-        {
-
-            final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
-                id( params.getComment() ).
-                editor( e -> ISSUE_COMMENT_DATA_SERIALIZER.updateNodeData( e.data, params ) );
-
-            return builder.build();
         }
     }
 }

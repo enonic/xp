@@ -36,8 +36,6 @@ public class ContentServiceImplTest_move
         createContent( child1.getPath(), "child2_1" );
         final Content site2 = createContent( ContentPath.ROOT, "site2" );
 
-        refresh();
-
         final MoveContentParams params = MoveContentParams.create().
             contentId( child1.getId() ).
             parentContentPath( site2.getPath() ).
@@ -62,8 +60,6 @@ public class ContentServiceImplTest_move
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
 
-        refresh();
-
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( ContentPath.ROOT ).build();
 
@@ -86,8 +82,6 @@ public class ContentServiceImplTest_move
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
 
-        refresh();
-
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( content.getParentPath() ).build();
 
@@ -102,8 +96,6 @@ public class ContentServiceImplTest_move
         createContent( ContentPath.ROOT, "child-2", new PropertyTree(), ContentTypeName.site() );
 
         final Content content3 = createContent( content.getPath(), "child-2", new PropertyTree() );
-
-        refresh();
 
         final MoveContentParams params =
             MoveContentParams.create().contentId( content3.getId() ).parentContentPath( content.getParentPath() ).build();

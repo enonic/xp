@@ -42,10 +42,10 @@ public class CreateScheduledJobCommand
             name( params.getName().getValue() ).
             data( data ).
             parent( NodePath.ROOT ).
+            refresh( RefreshMode.ALL ).
             build();
 
         final Node node = nodeService.create( createNodeParams );
-        nodeService.refresh( RefreshMode.ALL );
 
         return SchedulerSerializer.fromNode( node );
 

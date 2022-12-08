@@ -363,7 +363,7 @@ public class UpdateNodeCommandTest
 
         final Node updatedNode = getNodeById( node.id() );
 
-        assertTrue( updatedNode.getTimestamp().equals( node.getTimestamp() ) );
+        assertEquals( updatedNode.getTimestamp(), node.getTimestamp() );
     }
 
 }

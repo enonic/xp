@@ -103,7 +103,7 @@ final class RestoreContentCommand
 
         updatePropertiesAndCommit( movedNode, isRootContent );
 
-        this.nodeService.refresh( RefreshMode.ALL );
+        this.nodeService.refresh( RefreshMode.SEARCH );
 
         result.addRestored( ContentId.from( movedNode.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );

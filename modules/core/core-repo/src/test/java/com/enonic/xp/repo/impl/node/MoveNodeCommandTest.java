@@ -18,11 +18,13 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -206,24 +208,19 @@ public class MoveNodeCommandTest
         final Node newParent = createNode(
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
 
-        assertEquals( 1, getVersions( child1 ).getHits() );
-        assertEquals( 1, getVersions( child1_1 ).getHits() );
-        assertEquals( 1, getVersions( child1_2 ).getHits() );
-        assertNotNull( getNodeByPath( NodePath.create( child1.path(), child1_1.name().toString() ).build() ) );
-
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .id( child1.id() )
             .newParent( newParent.path() )
+            .refresh( RefreshMode.ALL )
             .build()
             .execute()
             .getMovedNodes()
             .get( 0 )
             .getNode();
 
-        refresh();
 
         assertEquals( 2, getVersions( child1 ).getHits() );
         assertEquals( 2, getVersions( child1_1 ).getHits() );
@@ -244,7 +241,7 @@ public class MoveNodeCommandTest
         assertEquals( movedNode.path(), movedChild2.parentPath() );
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
-        assertEquals( false, movedNode.inheritsPermissions() );
+        assertFalse( movedNode.inheritsPermissions() );
         assertEquals( child1.getPermissions(), movedNode.getPermissions() );
     }
 
@@ -280,6 +277,7 @@ public class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
+            .refresh( RefreshMode.ALL )
             .id( child1.id() )
             .newParent( newParent.path() )
             .processor( ( data ) -> {
@@ -291,8 +289,6 @@ public class MoveNodeCommandTest
             .getMovedNodes()
             .get( 0 )
             .getNode();
-
-        refresh();
 
         assertEquals( 2, getVersions( child1 ).getHits() );
         assertEquals( 2, getVersions( child1_1 ).getHits() );
@@ -440,9 +436,12 @@ public class MoveNodeCommandTest
             createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "a2" ).childOrder( ChildOrder.manualOrder() ).build() );
         final Node a2_1 = createNode( newParent.path(), "a2_1" );
         final Node a2_2 = createNode( newParent.path(), "a2_2" );
+        refresh();
 
         doMoveNode( newParent.path(), a1_1.id() );
         doMoveNode( newParent.path(), a1_2.id() );
+
+        refresh();
 
         final FindNodesByParentResult result = findByParent( newParent.path() );
 

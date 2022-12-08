@@ -59,7 +59,7 @@ public class CreateNodeParamsFactory
         this.contentDataSerializer = builder.contentDataSerializer;
     }
 
-    public CreateNodeParams produce()
+    public CreateNodeParams.Builder produce()
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
@@ -117,7 +117,7 @@ public class CreateNodeParamsFactory
             builder.attachBinary( attachment.getBinaryReference(), attachment.getByteSource() );
         }
 
-        return builder.build();
+        return builder;
     }
 
     private static String resolveNodeName( final ContentName name )

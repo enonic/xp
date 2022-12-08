@@ -12,11 +12,14 @@ public class SetNodeChildOrderParams
 
     private final NodeDataProcessor processor;
 
+    private final RefreshMode refresh;
+
     private SetNodeChildOrderParams( final Builder builder )
     {
         nodeId = builder.nodeId;
         childOrder = builder.childOrder;
         processor = builder.processor;
+        this.refresh = builder.refresh;
     }
 
     public NodeId getNodeId()
@@ -34,6 +37,11 @@ public class SetNodeChildOrderParams
         return processor;
     }
 
+    public RefreshMode getRefresh()
+    {
+        return refresh;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -47,6 +55,8 @@ public class SetNodeChildOrderParams
         private ChildOrder childOrder;
 
         private NodeDataProcessor processor = ( n ) -> n;
+
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -67,6 +77,12 @@ public class SetNodeChildOrderParams
         public Builder processor( NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
             return this;
         }
 
