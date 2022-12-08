@@ -118,7 +118,11 @@ public class FindNodeIdsByParentCommand
 
     private void createParentFilter( final NodePath parentPath, final NodeQuery.Builder builder )
     {
-        if ( !parentPath.isRoot() )
+        if ( parentPath.isRoot() )
+        {
+            builder.query( QueryExpr.from( CompareExpr.neq( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( "/" ) ) ) );
+        }
+        else
         {
             final ValueExpr parentPathExpr = ValueExpr.string( parentPath + "/*" );
             builder.query( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), parentPathExpr ) ) );
