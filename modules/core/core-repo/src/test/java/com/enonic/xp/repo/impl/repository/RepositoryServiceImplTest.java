@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -14,6 +15,7 @@ import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repository.CreateBranchParams;
@@ -21,6 +23,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.IdProviderKey;
@@ -38,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RepositoryServiceImplTest
@@ -60,6 +64,11 @@ class RepositoryServiceImplTest
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
             build();
+    }
+
+    private static Context createAdminContext( final RepositoryId repositoryId, final Branch branch )
+    {
+        return ContextBuilder.create().branch( branch ).repositoryId( repositoryId ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
     }
 
     @Test
@@ -134,9 +143,7 @@ class RepositoryServiceImplTest
             } ).
             build() ) );
 
-        createAdminContext().runWith( () -> {
-            repositoryService.invalidateAll();
-        } );
+        createAdminContext().runWith( () -> repositoryService.invalidateAll() );
 
         ByteSource persistedAttachment = mockCurrentContext.callWith(
             () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
@@ -169,10 +176,14 @@ class RepositoryServiceImplTest
     @Test
     void delete_branch()
     {
-        final Node myNode = createNode( NodePath.ROOT, "myNode" );
-        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( WS_DEFAULT ) ) );
-        NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( WS_DEFAULT ) ) );
-        assertNull( getNode( myNode.id() ) );
+        createAdminContext(RepositoryId.from( "fisk" ), Branch.from( "my-branch" ) ).callWith( () -> {
+            doCreateRepo( "fisk" );
+            this.repositoryService.createBranch( CreateBranchParams.from( "my-branch" ) );
+            final Node myNode = createNode( NodePath.ROOT, "myNode" );
+            this.repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "my-branch" ) ) );
+            assertNull( getNode( myNode.id() ) );
+            return null;
+        } );
     }
 
     @Test
@@ -243,6 +254,35 @@ class RepositoryServiceImplTest
             runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
     }
 
+    @Test
+    void protected_system_repo()
+    {
+        assertThrows( RepositoryExeption.class, () -> createAdminContext().callWith(
+            () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "master" ) ) ) ) );
+    }
+
+    @Test
+    void protected_cms_repo()
+    {
+        assertThrows( RepositoryExeption.class,
+                      () -> createAdminContext( ContentConstants.CONTENT_REPO_ID, Branch.from( "master" ) ).callWith(
+                          () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "draft" ) ) ) ) );
+
+        assertThrows( RepositoryExeption.class,
+                      () -> createAdminContext( ContentConstants.CONTENT_REPO_ID, Branch.from( "master" ) ).callWith(
+                          () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "master" ) ) ) ) );
+
+        assertThrows( RepositoryExeption.class,
+                      () -> createAdminContext( RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + "web" ),
+                                                Branch.from( "master" ) ).callWith(
+                          () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "master" ) ) ) ) );
+
+        assertThrows( RepositoryExeption.class,
+                      () -> createAdminContext( RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + "web" ),
+                                                Branch.from( "master" ) ).callWith(
+                          () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "draft" ) ) ) ) );
+    }
+
     private Repository doCreateRepo( final String id )
     {
         return doCreateRepo( id, null );
@@ -269,4 +309,6 @@ class RepositoryServiceImplTest
             return this.repositoryService.get( RepositoryId.from( id ) );
         } );
     }
+
+
 }
