@@ -12,6 +12,11 @@ import com.enonic.xp.form.Input;
 
 public class InputVisitorHelper
 {
+    private InputVisitorHelper()
+    {
+
+    }
+
     public static void visitProperties( final Input input, final PropertyTree data, final Consumer<Property> consumer )
     {
         final List<String> formInputPathElements = input.getPath().getElements();
