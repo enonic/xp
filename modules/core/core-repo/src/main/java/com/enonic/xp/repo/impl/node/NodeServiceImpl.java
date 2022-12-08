@@ -976,6 +976,7 @@ public class NodeServiceImpl
             importNode( params.getNode() ).
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
+            refresh( params.getRefresh() ).
             importPermissions( params.isImportPermissions() ).
             importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
             binaryBlobStore( this.binaryService ).

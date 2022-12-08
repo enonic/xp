@@ -10,14 +10,9 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
@@ -62,16 +57,6 @@ public class ApplicationNodeTransformerTest
         final PropertyTree data = new PropertyTree();
         final BinaryReference appReference = BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF );
         data.addBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF, appReference );
-
-        final Node existingNode = Node.create().
-            id( NodeId.from( "myNode" ) ).
-            parentPath( NodePath.ROOT ).
-            name( "myNode" ).
-            data( data ).
-            attachedBinaries( AttachedBinaries.create().
-                add( new AttachedBinary( appReference, "abc" ) ).
-                build() ).
-            build();
 
         final Application app = Mockito.mock( Application.class );
         Mockito.when( app.getKey() ).thenReturn( ApplicationKey.from( "myApp" ) );

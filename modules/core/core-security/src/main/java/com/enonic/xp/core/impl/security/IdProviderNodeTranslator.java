@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -246,20 +244,6 @@ abstract class IdProviderNodeTranslator
                                         idProviderConfig.getApplicationKey().toString() );
                     nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, idProviderConfig.getConfig().getRoot() );
                 }
-            } ).
-            refresh( RefreshMode.ALL ).
-            build();
-    }
-
-    static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final Node idProviderNode )
-    {
-        Preconditions.checkNotNull( idProviderNode );
-
-        return UpdateNodeParams.create().
-            id( idProviderNode.id() ).
-            editor( editableNode -> {
-                final PropertyTree data = editableNode.data;
-                data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
             } ).
             refresh( RefreshMode.ALL ).
             build();

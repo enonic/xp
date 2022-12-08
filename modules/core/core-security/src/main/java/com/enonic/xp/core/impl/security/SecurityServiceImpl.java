@@ -275,18 +275,6 @@ public final class SecurityServiceImpl
         }
     }
 
-    private void removeRelationships( final IdProviderKey from )
-    {
-        callWithContext( () -> {
-            final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( from );
-            final Node node = this.nodeService.getByPath( idProviderNodePath );
-            final UpdateNodeParams updateNodeParams = IdProviderNodeTranslator.removeAllRelationshipsToUpdateNodeParams( node );
-            nodeService.update( updateNodeParams );
-
-            return null;
-        } );
-    }
-
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
         final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
@@ -929,7 +917,6 @@ public final class SecurityServiceImpl
     @Override
     public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
-        removeRelationships( idProviderKey );
         final NodeIds deletedNodes = callWithContext( () -> {
             final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
             final Node node = this.nodeService.getByPath( idProviderNodePath );

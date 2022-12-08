@@ -10,7 +10,6 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-import static com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl.APPLICATION_PATH;
 
 class ApplicationNodeTransformer
 {
@@ -21,7 +20,7 @@ class ApplicationNodeTransformer
         final PropertyTree data = createApplicationProperties( app );
 
         return CreateNodeParams.create().
-            parent( APPLICATION_PATH ).
+            parent( ApplicationRepoServiceImpl.APPLICATION_PATH ).
             name( app.getKey().getName() ).
             data( data ).
             attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
@@ -45,7 +44,7 @@ class ApplicationNodeTransformer
     static UpdateNodeParams toUpdateNodeParams( final Application app, final ByteSource source )
     {
         return UpdateNodeParams.create().
-            path( NodePath.create( APPLICATION_PATH, app.getKey().getName() ).build() ).
+            path( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, app.getKey().getName() ).build() ).
             attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
             editor( node -> node.data = createApplicationProperties( app ) ).
             refresh( RefreshMode.ALL ).

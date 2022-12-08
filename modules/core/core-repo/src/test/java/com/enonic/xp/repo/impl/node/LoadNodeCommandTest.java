@@ -13,6 +13,7 @@ import com.enonic.xp.node.NodeLoadException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -62,7 +63,7 @@ public class LoadNodeCommandTest
         throws Exception
     {
         final Node originalNode = createNode( NodePath.ROOT, "fisk" );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final Node nodeToLoad = Node.create( originalNode ).
             id( new NodeId() ).

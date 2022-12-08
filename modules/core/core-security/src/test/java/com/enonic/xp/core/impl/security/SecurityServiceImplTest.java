@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.audit.AuditLogServiceImpl;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -74,6 +73,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
@@ -137,14 +138,14 @@ public class SecurityServiceImplTest
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
         repositoryEntryService.setNodeStorageService( storageService );
-        repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        repositoryEntryService.setEventPublisher( mock( EventPublisher.class ) );
 
         this.repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, this.indexServiceInternal, nodeRepositoryService, storageService,
                                        searchService );
         this.repositoryService.initialize();
 
-        this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.eventPublisher = mock( EventPublisher.class );
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
         this.nodeService.setNodeSearchService( searchService );
@@ -158,13 +159,13 @@ public class SecurityServiceImplTest
         indexService.setNodeSearchService( searchService );
         indexService.setIndexServiceInternal( this.indexServiceInternal );
 
-        AuditLogConfig auditLogConfig = Mockito.mock( AuditLogConfig.class );
+        AuditLogConfig auditLogConfig = mock( AuditLogConfig.class );
         Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );
         Mockito.when( auditLogConfig.isOutputLogs() ).thenReturn( true );
 
-        AuditLogService auditLogService = new AuditLogServiceImpl( auditLogConfig, indexService, repositoryService, nodeService );
+        AuditLogService auditLogService = mock( AuditLogService.class, withSettings().stubOnly() );
 
-        SecurityConfig securityConfig = Mockito.mock( SecurityConfig.class );
+        SecurityConfig securityConfig = mock( SecurityConfig.class );
         Mockito.when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
         SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
@@ -944,6 +945,39 @@ public class SecurityServiceImplTest
             assertEquals( CREATE_USERS, createdPermissions.getEntry( userKey ).getAccess() );
             assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
             assertEquals( WRITE_USERS, createdPermissions.getEntry( groupKey2 ).getAccess() );
+        } );
+    }
+
+    @Test
+    void testDeleteIdProvider()
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+            final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+            final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
+
+            final IdProviderAccessControlList permissions =
+                IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build(),
+                                                IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey1 )
+                                                    .access( ADMINISTRATOR )
+                                                    .build(), IdProviderAccessControlEntry.create()
+                                                    .principal( groupKey2 )
+                                                    .access( WRITE_USERS )
+                                                    .build() );
+            final CreateIdProviderParams createIdProvider = CreateIdProviderParams.create()
+                .key( IdProviderKey.from( "enonic" ) )
+                .displayName( "Enonic Id Provider" )
+                .permissions( permissions )
+                .description( "id provider description" )
+                .build();
+
+            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
+
+
+            securityService.deleteIdProvider( IdProviderKey.from( "enonic" ) );
+
+            assertNull( securityService.getIdProvider( IdProviderKey.from( "enonic" ) ) );
         } );
     }
 
