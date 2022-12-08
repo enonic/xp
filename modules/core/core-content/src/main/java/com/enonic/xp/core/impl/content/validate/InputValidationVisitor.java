@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import com.enonic.xp.core.impl.content.InputVisitorHelper;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -23,11 +24,7 @@ final class InputValidationVisitor
     @Override
     public void visit( final Input input )
     {
-        final Property property = propertyTree.getProperty( input.getPath().toString() );
-        if ( property != null )
-        {
-            property.getParent().getProperties( input.getName() ).forEach( prop -> checkValidity( input, prop ) );
-        }
+        InputVisitorHelper.visitProperties( input, propertyTree, property -> checkValidity( input, property ) );
     }
 
     private void checkValidity( final Input input, final Property property )

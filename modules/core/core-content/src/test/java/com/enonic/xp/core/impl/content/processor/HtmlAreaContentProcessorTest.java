@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.processor;
 
 import java.io.IOException;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,9 +21,12 @@ import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.ContentConfig;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
@@ -156,6 +160,64 @@ public class HtmlAreaContentProcessorTest
 
         assertEquals( 1, editableContent.processedReferences.build().getSize() );
         assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+    }
+
+    @Test
+    public void content_deep_data()
+        throws IOException
+    {
+
+        final ContentTypeName deepTypeName = ContentTypeName.from( "deepContentType" );
+
+        final GetContentTypeParams params = GetContentTypeParams.from( deepTypeName );
+
+        final ContentType deepContentType = ContentType.create()
+            .name( deepTypeName )
+            .superType( ContentTypeName.folder() )
+            .form( Form.create()
+                       .addFormItem( FormOptionSet.create()
+                                         .name( "set" )
+                                         .addOptionSetOption( FormOptionSetOption.create()
+                                                                  .name( "option" )
+                                                                  .addFormItem( Input.create()
+                                                                                    .name( "htmlData" )
+                                                                                    .label( "htmlData" )
+                                                                                    .inputType( InputTypeName.HTML_AREA )
+                                                                                    .build() )
+                                                                  .build() )
+                                         .build() )
+                       .build() )
+            .build();
+
+        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( deepContentType );
+
+        final PropertyTree data = new PropertyTree();
+        PropertySet set1 = data.addSet( "set" );
+        PropertySet set2 = data.addSet( "set" );
+
+        PropertySet option1 = set1.addSet( "option" );
+        PropertySet option2 = set1.addSet( "option" );
+        PropertySet option3 = set2.addSet( "option" );
+
+        option1.addProperty( "htmlData", ValueFactory.newString(
+            "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\" src=\"image/123\"/>" ) );
+
+        option2.addProperty( "htmlData", ValueFactory.newString(
+            "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"image/123\"/>" ) );
+        option3.addProperty( "htmlData", ValueFactory.newString(
+            "<img alt=\"Dictyophorus_spumans03.jpg\" data-src=\"image://image-id3\" src=\"image/123\"/>" ) );
+        option3.addProperty( "htmlData", ValueFactory.newString(
+            "<img alt=\"Dictyophorus_spumans04.jpg\" data-src=\"image://image-id4\" src=\"image/123\"/>" ) );
+
+        final EditableContent editableContent = new EditableContent(
+            Media.create().name( "myContentName" ).type( deepTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() );
+
+        result.getEditor().edit( editableContent );
+
+        assertEquals( 4, editableContent.processedReferences.build().getSize() );
+        Assertions.assertThat( editableContent.processedReferences.build() )
+            .contains( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
+                       ContentId.from( "image-id4" ) );
     }
 
     @Test
@@ -473,7 +535,8 @@ public class HtmlAreaContentProcessorTest
         result.getEditor().edit( editableContent );
 
         assertEquals( 1, editableContent.processedReferences.build().getSize() );
-        assertEquals( "<img data-src=\"image://image-id\"/>", ( (TextComponent) editableContent.page.getComponent( ComponentPath.from( "/region/1" ) ) ).getText() );
+        assertEquals( "<img data-src=\"image://image-id\"/>",
+                      ( (TextComponent) editableContent.page.getComponent( ComponentPath.from( "/region/1" ) ) ).getText() );
     }
 
     @Test
@@ -508,7 +571,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
 
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> true);
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> true );
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );

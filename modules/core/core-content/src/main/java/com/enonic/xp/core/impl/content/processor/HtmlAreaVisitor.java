@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.form.FormItemPath;
+import com.google.common.collect.ImmutableSet;
+
+import com.enonic.xp.core.impl.content.InputVisitorHelper;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -11,21 +14,27 @@ import com.enonic.xp.inputtype.InputTypeName;
 public class HtmlAreaVisitor
     extends InputVisitor
 {
+    private final PropertyTree propertyTree;
 
-    private final Set<FormItemPath> paths = new HashSet<>();
+    private final ImmutableSet.Builder<Property> properties = ImmutableSet.builder();
+
+    public HtmlAreaVisitor( final PropertyTree propertyTree )
+    {
+        this.propertyTree = propertyTree;
+    }
 
     @Override
     public void visit( final Input input )
     {
         if ( InputTypeName.HTML_AREA.equals( input.getInputType() ) )
         {
-            paths.add( input.getPath() );
+            InputVisitorHelper.visitProperties( input, propertyTree, properties::add );
         }
 
     }
 
-    public Set<FormItemPath> getPaths()
+    public Set<Property> getProperties()
     {
-        return paths;
+        return properties.build();
     }
 }

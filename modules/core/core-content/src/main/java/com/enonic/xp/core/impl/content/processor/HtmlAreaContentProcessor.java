@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content.processor;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +30,6 @@ import com.enonic.xp.core.internal.processor.InternalHtmlSanitizer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -255,26 +253,21 @@ public class HtmlAreaContentProcessor
 
     private Collection<Property> getProperties( final PropertyTree data, final FormItems formItems )
     {
-        final Set<String> paths = getPaths( formItems );
 
-        if ( data == null || data.getTotalSize() == 0 || paths.isEmpty() )
+        if ( data == null || data.getTotalSize() == 0 )
         {
             return Collections.emptyList();
         }
 
-        return paths.stream()
-            .map( data::getProperty )
-            .filter( Objects::nonNull )
-            .filter( Property::hasNotNullValue )
-            .collect( Collectors.toList() );
+        return getProperties( formItems, data ).stream().filter( Property::hasNotNullValue ).collect( Collectors.toList() );
     }
 
-    private Set<String> getPaths( final FormItems formItems )
+    private Set<Property> getProperties( final FormItems formItems, final PropertyTree data )
     {
-        final HtmlAreaVisitor visitor = new HtmlAreaVisitor();
+        final HtmlAreaVisitor visitor = new HtmlAreaVisitor( data );
         visitor.traverse( formItems );
 
-        return visitor.getPaths().stream().map( FormItemPath::toString ).collect( Collectors.toSet() );
+        return visitor.getProperties();
     }
 
     private void processDataTree( final Collection<Property> properties, final ContentIds.Builder processedIds )
