@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 
-import java.util.List;
+import java.util.Collection;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
@@ -35,7 +35,7 @@ public interface NodeStorageService
 
     void storeCommit( StoreNodeCommitParams params, InternalContext context );
 
-    void delete( List<NodeBranchEntry> nodeBranchEntries, InternalContext context );
+    void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
     void updateVersion( Node node, NodeVersionId nodeVersionId, InternalContext context );
 

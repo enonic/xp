@@ -45,6 +45,7 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -233,10 +234,7 @@ public class NodeServiceImpl
             trace.put( "path", path );
             trace.put( "versionId", versionId );
             final Node node = executeGetByPathAndVersionId( path, versionId );
-            if ( node != null )
-            {
-                trace.put( "id", node.id() );
-            }
+            trace.put( "id", node.id() );
             return node;
         } );
     }
@@ -412,13 +410,11 @@ public class NodeServiceImpl
     public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
     {
         verifyContext();
-        return FindNodePathsByQueryCommand.create().
-            query( nodeQuery ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final FindNodesByQueryResult queryResult = executeFindByQuery( nodeQuery );
+
+        return FindNodePathsByQueryResult.create()
+            .paths( NodePaths.from( queryResult.getNodeHits().stream().map( NodeHit::getNodePath ).toArray( NodePath[]::new ) ) )
+            .build();
     }
 
     @Override

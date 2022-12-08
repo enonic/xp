@@ -83,7 +83,7 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
-        refresh( RefreshMode.ALL );
+        refresh( RefreshMode.SEARCH );
         final SearchResult result = nodeSearchService.query( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).

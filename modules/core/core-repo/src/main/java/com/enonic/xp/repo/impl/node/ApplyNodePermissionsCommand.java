@@ -10,11 +10,14 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -75,10 +78,11 @@ final class ApplyNodePermissionsCommand
 
             final AccessControlList parentPermissions = childApplied.getPermissions();
 
-            final FindNodesByParentResult result =
-                FindNodeIdsByParentCommand.create( this ).parentPath( childApplied.path() ).build().execute();
+            final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
+                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( childApplied.path() ).build(),
+                SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
 
-            final Nodes children = GetNodesByIdsCommand.create( this ).ids( result.getNodeIds() ).build().execute();
+            final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( ContextAccessor.current() ) );
 
             for ( Node child : children )
             {

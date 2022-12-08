@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.Collection;
+
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -15,7 +17,7 @@ public interface IndexDataService
 
     void delete( NodeId nodeId, InternalContext context );
 
-    void delete( NodeIds nodeIds, InternalContext context );
+    void delete( Collection<NodeId> nodeIds, InternalContext context );
 
     void store( Node node, InternalContext context );
 

@@ -1,12 +1,13 @@
 package com.enonic.xp.project;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.content.ContentConstants;
 
-@Beta
 public final class ProjectConstants
 {
+    private ProjectConstants()
+    {
+    }
+
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";
 
     public static final String PROJECT_NAME_PREFIX = "cms.project.";
