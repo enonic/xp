@@ -370,7 +370,6 @@ public class RepositoryServiceImpl
 
         final Node rootNode = this.nodeStorageService.store( Node.createRoot()
                                                                  .permissions( params.getRootPermissions() )
-                                                                 .inheritPermissions( false )
                                                                  .childOrder( params.getRootChildOrder() )
                                                                  .build(), rootNodeInternalContext );
 

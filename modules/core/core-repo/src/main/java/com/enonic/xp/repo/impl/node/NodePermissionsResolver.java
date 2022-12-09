@@ -40,15 +40,14 @@ final class NodePermissionsResolver
         }
     }
 
-    public static boolean contextUserHasPermissionOrAdmin( final Permission permission, final Node node )
+    public static boolean contextUserHasPermissionOrAdmin( final Permission permission, final AccessControlList nodePermissions )
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return authInfo.getPrincipals().contains( RoleKeys.ADMIN ) || userHasPermission( authInfo, permission, node );
-    }
-
-    private static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission, final Node node )
-    {
-        return doUserHasPermission( authInfo, permission, node.getPermissions() );
+        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
+        {
+            return true;
+        }
+        return doUserHasPermission( authInfo, permission, nodePermissions );
     }
 
     public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,

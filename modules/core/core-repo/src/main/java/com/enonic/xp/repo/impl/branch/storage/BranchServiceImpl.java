@@ -60,17 +60,6 @@ public class BranchServiceImpl
     @Override
     public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        return store( nodeBranchEntry, null, context );
-    }
-
-    @Override
-    public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
-    {
-        if ( previousPath != null && !previousPath.equals( nodeBranchEntry.getNodePath() ) )
-        {
-            this.pathCache.evict( createPath( previousPath, context ) );
-        }
-
         if ( context.isSkipConstraints() )
         {
             return doStore( nodeBranchEntry, context );
@@ -90,6 +79,16 @@ public class BranchServiceImpl
                 lock.unlock();
             }
         }
+    }
+
+    @Override
+    public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
+    {
+        if ( previousPath != null && !previousPath.equals( nodeBranchEntry.getNodePath() ) )
+        {
+            this.pathCache.evict( createPath( previousPath, context ) );
+        }
+        return store( nodeBranchEntry, context );
     }
 
     private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )

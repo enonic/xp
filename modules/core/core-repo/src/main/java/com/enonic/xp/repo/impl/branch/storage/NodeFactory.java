@@ -10,46 +10,25 @@ public class NodeFactory
 {
     public static Node create( final NodeVersion nodeVersion, final NodeBranchEntry nodeBranchEntry )
     {
-        if ( nodeBranchEntry.getNodeId().equals( Node.ROOT_UUID ) )
+        final Node.Builder builder =
+            Node.create( nodeVersion ).nodeVersionId( nodeBranchEntry.getVersionId() ).timestamp( nodeBranchEntry.getTimestamp() );
+        if ( !Node.ROOT_UUID.equals( nodeVersion.getId() ) )
         {
-            return Node.createRoot().
-                nodeType( nodeVersion.getNodeType() ).
-                nodeVersionId( nodeBranchEntry.getVersionId() ).
-                timestamp( nodeBranchEntry.getTimestamp() ).
-                permissions( nodeVersion.getPermissions() ).
-                nodeState( nodeBranchEntry.getNodeState() ).
-                childOrder( nodeVersion.getChildOrder() ).
-                manualOrderValue( nodeVersion.getManualOrderValue() ).
-                data( nodeVersion.getData() ).
-                attachedBinaries( nodeVersion.getAttachedBinaries() ).
-                indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
-                build();
+            builder.parentPath( nodeBranchEntry.getNodePath().getParentPath() ).name( nodeBranchEntry.getNodePath().getName() );
         }
-
-        return Node.create( nodeVersion ).
-            parentPath( nodeBranchEntry.getNodePath().getParentPath() ).
-            name( nodeBranchEntry.getNodePath().getLastElement().toString() ).
-            timestamp( nodeBranchEntry.getTimestamp() ).
-            nodeState( nodeBranchEntry.getNodeState() ).
-            nodeVersionId( nodeBranchEntry.getVersionId() ).
-            build();
+        return builder.build();
     }
 
     public static Node create( final NodeVersion nodeVersion, final NodeVersionMetadata nodeVersionMetadata )
     {
-        final Node.Builder builder = Node.create( nodeVersion ).
-            nodeVersionId( nodeVersionMetadata.getNodeVersionId() ).
-            parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).
-            timestamp( nodeVersionMetadata.getTimestamp() );
+        final Node.Builder builder = Node.create( nodeVersion )
+            .nodeVersionId( nodeVersionMetadata.getNodeVersionId() )
+            .timestamp( nodeVersionMetadata.getTimestamp() );
 
-        if ( Node.ROOT_UUID.equals( nodeVersionMetadata.getNodeId() ) )
+        if ( !Node.ROOT_UUID.equals( nodeVersion.getId() ) )
         {
-            builder.inheritPermissions( false );
-        } else {
-            builder.name( nodeVersionMetadata.getNodePath().getName() );
+            builder.parentPath( nodeVersionMetadata.getNodePath().getParentPath() ).name( nodeVersionMetadata.getNodePath().getName() );
         }
-
         return builder.build();
     }
-
 }

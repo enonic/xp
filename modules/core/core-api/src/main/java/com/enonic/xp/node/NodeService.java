@@ -35,6 +35,7 @@ public interface NodeService
 
     Node getByPath( NodePath path );
 
+    @Deprecated
     Node getByPathAndVersionId( NodePath path, NodeVersionId versionId );
 
     Nodes getByPaths( NodePaths paths );

@@ -37,7 +37,7 @@ public interface NodeStorageService
 
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
-    void updateVersion( Node node, NodeVersionId nodeVersionId, InternalContext context );
+    void updateVersion( Node node, InternalContext context );
 
     void push( Node node, Branch target, InternalContext context );
 
@@ -53,7 +53,7 @@ public interface NodeStorageService
 
     Nodes get( NodePaths nodePaths, InternalContext context );
 
-    Node get( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
+    Node get( NodeVersionId nodeVersionId, InternalContext context );
 
     NodeVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
 
@@ -76,6 +76,4 @@ public interface NodeStorageService
     void handleNodeMoved( NodeMovedParams params, InternalContext context );
 
     void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
-
-    Node getNode( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 }

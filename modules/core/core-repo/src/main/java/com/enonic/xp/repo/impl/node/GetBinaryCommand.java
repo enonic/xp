@@ -3,12 +3,9 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.util.BinaryReference;
 
 public class GetBinaryCommand
     extends AbstractGetBinaryCommand
@@ -30,14 +27,7 @@ public class GetBinaryCommand
             throw new NodeNotFoundException( "Cannot get binary reference, node with id: " + this.nodeId + " not found" );
         }
 
-        if ( binaryReference != null )
-        {
-            return getByBinaryReference( node );
-        }
-        else
-        {
-            return getByPropertyPath( node );
-        }
+        return getByBinaryReference( node.getAttachedBinaries() );
     }
 
     public static Builder create()
@@ -48,13 +38,7 @@ public class GetBinaryCommand
     public static class Builder
         extends AbstractGetBinaryCommand.Builder<Builder>
     {
-        private BinaryReference binaryReference;
-
-        private PropertyPath propertyPath;
-
         private NodeId nodeId;
-
-        private BinaryService binaryService;
 
         public Builder nodeId( final NodeId nodeId )
         {
