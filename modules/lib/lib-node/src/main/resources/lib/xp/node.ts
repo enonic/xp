@@ -313,12 +313,14 @@ export interface FulltextDslExpression {
     fields: string[];
     query: string;
     operator?: DslOperator;
+    boost?: number;
 }
 
 export interface NgramDslExpression {
     fields: string[];
     query: string;
     operator?: DslOperator;
+    boost?: number;
 }
 
 export interface StemmedDslExpression {
@@ -326,6 +328,7 @@ export interface StemmedDslExpression {
     query: string;
     language: string;
     operator?: DslOperator;
+    boost?: number;
 }
 
 export interface ExistsDslExpression {
