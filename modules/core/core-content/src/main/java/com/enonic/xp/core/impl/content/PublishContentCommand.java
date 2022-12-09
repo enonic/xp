@@ -164,27 +164,29 @@ public class PublishContentCommand
                 {
                     publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
                 }
-                else if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FIRST ) &&
-                    publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
+
+                final Instant currentPublishFirst = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST );
+                final Instant currentPublishFrom = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM );
+
+                if ( currentPublishFirst != null && currentPublishFrom != null )
                 {
                     return;
                 }
 
-                if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) == null )
+                if ( currentPublishFirst == null )
                 {
-                    final Instant publishFromPropertyValue = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM );
-                    if ( publishFromPropertyValue == null )
+                    if ( currentPublishFrom == null )
                     {
                         publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
                     }
                     else
                     {
                         //TODO Special case for Enonic XP 6.7 and 6.8 contents. Remove after 7.0
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFromPropertyValue );
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, currentPublishFrom );
                     }
                 }
 
-                if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) == null )
+                if ( currentPublishFrom == null )
                 {
                     publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
                     if ( publishTo == null )
