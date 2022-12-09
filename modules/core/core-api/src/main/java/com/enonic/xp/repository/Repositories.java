@@ -3,10 +3,8 @@ package com.enonic.xp.repository;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -16,22 +14,20 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Repositories
     extends AbstractImmutableEntitySet<Repository>
 {
-    private final ImmutableMap<RepositoryId, Repository> map;
-
     private Repositories( final Set<Repository> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( Repository::getId, Function.identity() ) );
     }
 
     public RepositoryIds getIds()
     {
-        return RepositoryIds.from( map.keySet() );
+        return RepositoryIds.from( set.stream().map( Repository::getId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
+    @Deprecated
     public Repository getRepositoryById( final RepositoryId repositoryId )
     {
-        return this.map.get( repositoryId );
+        return set.stream().filter( repository -> repository.getId().equals( repositoryId ) ).findAny().orElse( null );
     }
 
     public static Repositories empty()

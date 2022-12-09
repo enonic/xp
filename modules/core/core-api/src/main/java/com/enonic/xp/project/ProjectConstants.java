@@ -4,10 +4,6 @@ import com.enonic.xp.content.ContentConstants;
 
 public final class ProjectConstants
 {
-    private ProjectConstants()
-    {
-    }
-
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";
 
     public static final String PROJECT_NAME_PREFIX = "cms.project.";
@@ -29,4 +25,8 @@ public final class ProjectConstants
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
 
     public static final Project DEFAULT_PROJECT = Project.create().name( DEFAULT_PROJECT_NAME ).displayName( "Default" ).build();
+
+    private ProjectConstants()
+    {
+    }
 }

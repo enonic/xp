@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -197,12 +196,12 @@ public class RepositoryServiceImpl
     public Repositories list()
     {
         requireAdminRole();
-        final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+        final Repositories.Builder repositories = Repositories.create();
         repositoryEntryService.findRepositoryEntryIds().stream().
             map( this::doGet ).
             filter( Objects::nonNull ).
             forEach( repositories::add );
-        return Repositories.from( repositories.build() );
+        return repositories.build();
     }
 
     @Override

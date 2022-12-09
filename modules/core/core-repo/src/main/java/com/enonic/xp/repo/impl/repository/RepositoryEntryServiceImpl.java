@@ -28,6 +28,7 @@ import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -66,14 +67,15 @@ public class RepositoryEntryServiceImpl
     {
         final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
 
-        this.nodeSearchService.query( NodeQuery.create()
-                                          .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                          .parent( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
-                                          .setOrderExpressions( ChildOrder.defaultOrder().getOrderExpressions() )
-                                          .build(),
-                                      SingleRepoSearchSource.from( ContextAccessor.current() ) ).getHits().stream().
-                map( hit -> RepositoryId.from( hit.getId() ) ).
-                forEach( repositoryIds::add );
+        final SearchResult searchResult = this.nodeSearchService.query( NodeQuery.create()
+                                                                            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                            .parent( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
+                                                                            .setOrderExpressions(
+                                                                                ChildOrder.defaultOrder().getOrderExpressions() )
+                                                                            .build(),
+                                                                        SingleRepoSearchSource.from( createInternalContext() ) );
+
+        searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).forEach( repositoryIds::add );
 
         return repositoryIds.build();
     }

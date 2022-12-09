@@ -176,14 +176,14 @@ class RepositoryServiceImplTest
     @Test
     void delete_branch()
     {
-        createAdminContext(RepositoryId.from( "fisk" ), Branch.from( "my-branch" ) ).callWith( () -> {
+        final Node node = createAdminContext( RepositoryId.from( "fisk" ), Branch.from( "my-branch" ) ).callWith( () -> {
             doCreateRepo( "fisk" );
             this.repositoryService.createBranch( CreateBranchParams.from( "my-branch" ) );
             final Node myNode = createNode( NodePath.ROOT, "myNode" );
             this.repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "my-branch" ) ) );
-            assertNull( getNode( myNode.id() ) );
-            return null;
+            return getNode( myNode.id() );
         } );
+        assertNull( node );
     }
 
     @Test
@@ -309,6 +309,4 @@ class RepositoryServiceImplTest
             return this.repositoryService.get( RepositoryId.from( id ) );
         } );
     }
-
-
 }
