@@ -44,11 +44,11 @@ public class ProjectEventListenerTest
     public void testSingle()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         compareSynched( sourceContent, targetContent );
     }
@@ -57,14 +57,14 @@ public class ProjectEventListenerTest
     public void testChildren()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "name" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "name" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceChild1.getPath(), "name" ) );
 
         handleEvents();
 
-        final Content targetChild1 = targetContext.callWith( () -> contentService.getById( sourceChild1.getId() ) );
-        final Content targetChild2 = targetContext.callWith( () -> contentService.getById( sourceChild2.getId() ) );
+        final Content targetChild1 = layerContext.callWith( () -> contentService.getById( sourceChild1.getId() ) );
+        final Content targetChild2 = layerContext.callWith( () -> contentService.getById( sourceChild2.getId() ) );
 
         compareSynched( sourceChild1, targetChild1 );
         compareSynched( sourceChild2, targetChild2 );
@@ -74,17 +74,15 @@ public class ProjectEventListenerTest
     public void testNotLocalEvent()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        adminContext().runWith( () -> listener.onEvent( Event.create( ProjectEvents.CREATED_EVENT_TYPE ).
-            value( ProjectEvents.PROJECT_NAME_KEY, targetProject.getName() ).
-            localOrigin( false ).
+        adminContext().runWith( () -> listener.onEvent(
+            Event.create( ProjectEvents.CREATED_EVENT_TYPE ).value( ProjectEvents.PROJECT_NAME_KEY, layer.getName() ).localOrigin( false ).
             build() ) );
 
         Thread.sleep( 1000 );
 
-        assertThrows( ContentNotFoundException.class,
-                      () -> targetContext.runWith( () -> contentService.getById( sourceContent.getId() ) ) );
+        assertThrows( ContentNotFoundException.class, () -> layerContext.runWith( () -> contentService.getById( sourceContent.getId() ) ) );
     }
 
     private void handleEvents()
