@@ -14,7 +14,6 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -23,10 +22,13 @@ import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
@@ -154,13 +156,12 @@ public class PushNodesCommand
             repositoryId( context.getRepositoryId() ).
             build();
 
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this )
-            .parentPath( nodeBranchEntry.getNodePath() )
-            .build()
-            .execute();
+        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
+            NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( nodeBranchEntry.getNodePath() ).build(),
+            SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
 
         final NodeBranchEntries childEntries =
-            this.nodeStorageService.getBranchNodeVersions( result.getNodeIds(), InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.getBranchNodeVersions( childrenIds, InternalContext.from( ContextAccessor.current() ) );
 
         for ( final NodeBranchEntry child : childEntries )
         {

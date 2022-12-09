@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.repository;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -11,23 +10,25 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
-import com.enonic.xp.repo.impl.node.FindNodeIdsByParentCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -64,23 +65,19 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryIds findRepositoryEntryIds()
     {
-        final ImmutableList.Builder<RepositoryId> repositoryIds = ImmutableList.builder();
+        final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
 
-        final FindNodesByParentResult findNodesByParentResult = createContext().
-            callWith( () -> FindNodeIdsByParentCommand.create().
-                parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
-                indexServiceInternal( this.indexServiceInternal ).
-                storageService( this.nodeStorageService ).
-                searchService( this.nodeSearchService ).
-                build().
-                execute() );
+        final SearchResult searchResult = this.nodeSearchService.query( NodeQuery.create()
+                                                                            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                            .parent( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
+                                                                            .setOrderExpressions(
+                                                                                ChildOrder.defaultOrder().getOrderExpressions() )
+                                                                            .build(),
+                                                                        SingleRepoSearchSource.from( createInternalContext() ) );
 
-        findNodesByParentResult.getNodeIds().
-            stream().
-            map( nodeId -> RepositoryId.from( nodeId.toString() ) ).
-            forEach( repositoryIds::add );
+        searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).forEach( repositoryIds::add );
 
-        return RepositoryIds.from( repositoryIds.build() );
+        return repositoryIds.build();
     }
 
     @Override

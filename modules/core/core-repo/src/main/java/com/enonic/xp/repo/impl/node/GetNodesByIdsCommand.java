@@ -30,11 +30,6 @@ public class GetNodesByIdsCommand
 
     public Nodes execute()
     {
-        if ( ids.isEmpty() )
-        {
-            return Nodes.empty();
-        }
-
         return this.nodeStorageService.get( ids, InternalContext.from( ContextAccessor.current() ) );
     }
 

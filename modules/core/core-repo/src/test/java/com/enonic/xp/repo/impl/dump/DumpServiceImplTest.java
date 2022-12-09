@@ -87,6 +87,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -200,8 +201,7 @@ public class DumpServiceImplTest
         assertEquals( 7, oldRepos.getIds().getSize() );
         assertEquals( 6, newRepos.getIds().getSize() );
 
-        assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
-        assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
+        assertThat( newRepos ).map( Repository::getId ).contains( newRepoInsideDump.getId() ).doesNotContain( newRepoOutsideDump.getId() );
     }
 
     @Test
@@ -1092,7 +1092,7 @@ public class DumpServiceImplTest
 
     private Repositories doListRepositories()
     {
-        final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+        final Repositories.Builder repositories = Repositories.create();
 
         repositoryEntryService.findRepositoryEntryIds()
             .stream()
@@ -1100,7 +1100,7 @@ public class DumpServiceImplTest
             .filter( Objects::nonNull )
             .forEach( repositories::add );
 
-        return Repositories.from( repositories.build() );
+        return repositories.build();
     }
 
     private Node updateNode( final Node node )

@@ -7,22 +7,26 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -36,11 +40,13 @@ import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -190,12 +196,12 @@ public class RepositoryServiceImpl
     public Repositories list()
     {
         requireAdminRole();
-        final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+        final Repositories.Builder repositories = Repositories.create();
         repositoryEntryService.findRepositoryEntryIds().stream().
             map( this::doGet ).
             filter( Objects::nonNull ).
             forEach( repositories::add );
-        return Repositories.from( repositories.build() );
+        return repositories.build();
     }
 
     @Override
@@ -244,12 +250,26 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
-                               ( repositoryId, previousRepository ) -> doDeleteBranch( params, repositoryId, previousRepository ) );
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        final Branch branch = params.getBranch();
+        checkProtectedBranch( repositoryId, branch );
+
+        repositoryMap.compute( repositoryId,
+                               ( repo, previousRepository ) -> doDeleteBranch( params, repo, previousRepository ) );
 
         invalidatePathCache();
 
         return params.getBranch();
+    }
+
+    private static void checkProtectedBranch( final RepositoryId repositoryId, final Branch branchId )
+    {
+        if ( ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) && SystemConstants.BRANCH_SYSTEM.equals( branchId ) ) ||
+            ( repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) &&
+                ( ContentConstants.BRANCH_DRAFT.equals( branchId ) || ContentConstants.BRANCH_MASTER.equals( branchId ) ) ) )
+        {
+            throw new RepositoryExeption( "No allowed to delete branch [" + branchId + "] in repository [" + repositoryId + "]" );
+        }
     }
 
     private Repository doDeleteBranch( final DeleteBranchParams params, final RepositoryId repositoryId, Repository previousRepository )
@@ -271,7 +291,10 @@ public class RepositoryServiceImpl
         //If the root node exists, deletes it
         if ( getRootNode( previousRepository.getId(), branch ) != null )
         {
-            deleteRootNode( branch );
+            ContextBuilder.from( ContextAccessor.current() ).
+                branch( branch ).
+                build().
+                runWith( this::deleteAllNodes );
         }
 
         //Updates the repository entry
@@ -374,19 +397,17 @@ public class RepositoryServiceImpl
         this.nodeStorageService.push( rootNode, branch, internalContext );
     }
 
-    private void deleteRootNode( final Branch branch )
+    private void deleteAllNodes()
     {
-        ContextBuilder.from( ContextAccessor.current() ).
-            branch( branch ).
-            build().
-            runWith( () -> DeleteNodeByIdCommand.create().
-                nodeId( Node.ROOT_UUID ).
-                storageService( this.nodeStorageService ).
-                searchService( this.nodeSearchService ).
-                indexServiceInternal( this.indexServiceInternal ).
-                allowDeleteRoot( true ).
-                build().
-                execute() );
+        doRefresh();
+
+        final NodeIds nodeIds = NodeIds.from(
+            this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
+                                          SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
+
+        final InternalContext context = InternalContext.from( ContextAccessor.current() );
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( nodeIds, context );
+        this.nodeStorageService.delete( nodeBranchEntries.getSet(), context );
 
         doRefresh();
     }

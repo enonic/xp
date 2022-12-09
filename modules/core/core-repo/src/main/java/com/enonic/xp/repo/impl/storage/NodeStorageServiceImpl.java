@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
@@ -157,7 +158,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void delete( final List<NodeBranchEntry> entries, final InternalContext context )
+    public void delete( final Collection<NodeBranchEntry> entries, final InternalContext context )
     {
         if ( entries.isEmpty() )
         {
@@ -165,8 +166,7 @@ public class NodeStorageServiceImpl
         }
 
         branchService.delete( entries, context );
-        indexDataService.delete(
-            NodeIds.from( entries.stream().map( NodeBranchEntry::getNodeId ).collect( ImmutableSet.toImmutableSet() ) ), context );
+        indexDataService.delete( entries.stream().map( NodeBranchEntry::getNodeId ).collect( Collectors.toList() ), context );
     }
 
     @Override
@@ -268,6 +268,10 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodeIds nodeIds, final InternalContext context )
     {
+        if ( nodeIds.isEmpty() )
+        {
+            return Nodes.empty();
+        }
         final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context ).stream();
         return doReturnNodes( stream, context );
     }

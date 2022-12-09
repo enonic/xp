@@ -10,15 +10,23 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.DeleteNodeListener;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -26,19 +34,16 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
 {
-    private final boolean allowDeleteRootNode;
-
     private static final int BATCH_SIZE = 20;
 
     AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
-        this.allowDeleteRootNode = builder.allowDeleteRoot;
     }
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final DeleteNodeListener deleteNodeListener )
     {
-        if ( node.isRoot() && !allowDeleteRootNode )
+        if ( node.isRoot() )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }
@@ -51,12 +56,13 @@ abstract class AbstractDeleteNodeCommand
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
 
-        final FindNodesByParentResult result = adminContext.callWith( FindNodeIdsByParentCommand.create( this )
-                                   .parentPath( node.path() )
-                                   .recursive( true )
-                                   .build()::execute );
-
-        final NodeIds nodeIds = NodeIds.create().addAll( result.getNodeIds() ).add( node.id() ).build();
+        final SearchResult childrenSearchResult = this.nodeSearchService.query( NodeQuery.create()
+                                                                                    .query( QueryExpr.from( CompareExpr.like(
+                                                                                        FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                        ValueExpr.string( node.path() + "/*" ) ) ) )
+                                                                                    .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                                    .build(), SingleRepoSearchSource.from( adminContext ) );
+        final NodeIds nodeIds = NodeIds.create().add( node.id() ).addAll( NodeIds.from( childrenSearchResult.getIds() ) ).build();
 
         final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).nodeIds( nodeIds )
             .permission( Permission.DELETE )
@@ -94,8 +100,6 @@ abstract class AbstractDeleteNodeCommand
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {
-        boolean allowDeleteRoot = false;
-
         Builder()
         {
             super();
@@ -105,13 +109,5 @@ abstract class AbstractDeleteNodeCommand
         {
             super( source );
         }
-
-        @SuppressWarnings("unchecked")
-        public B allowDeleteRoot( final boolean allowDeleteRoot )
-        {
-            this.allowDeleteRoot = allowDeleteRoot;
-            return (B) this;
-        }
-
     }
 }

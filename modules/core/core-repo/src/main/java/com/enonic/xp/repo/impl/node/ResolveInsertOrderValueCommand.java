@@ -1,11 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 
 public class ResolveInsertOrderValueCommand
     extends AbstractNodeCommand
@@ -28,16 +31,22 @@ public class ResolveInsertOrderValueCommand
         final ChildOrder childOrder =
             InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
-        final FindNodesByParentResult findNodesByParentResult =
-            FindNodeIdsByParentCommand.create( this ).parentPath( parentPath ).childOrder( childOrder ).size( 1 ).build().execute();
+        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
+                                                                                    .size( 1 )
+                                                                                    .setOrderExpressions( childOrder.getOrderExpressions() )
+                                                                                    .accurateScoring( true )
+                                                                                    .parent( parentPath )
+                                                                                    .build(),
+                                                                                SingleRepoSearchSource.from( ContextAccessor.current() ) )
+                                                      .getIds() );
 
-        if ( findNodesByParentResult.isEmpty() )
+        if ( childrenIds.isEmpty() )
         {
             return NodeManualOrderValueResolver.START_ORDER_VALUE;
         }
         else
         {
-            final Node first = doGetById( findNodesByParentResult.getNodeIds().first() );
+            final Node first = doGetById( childrenIds.first() );
             if ( first.getManualOrderValue() == null )
             {
                 throw new IllegalArgumentException( "Expected that node " + first +

@@ -10,54 +10,45 @@ import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DeleteVersionCommandTest
+class DeleteVersionCommandTest
     extends AbstractNodeTest
 {
-
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         this.createDefaultRootNode();
     }
 
-
     @Test
-    public void not_allowed_to_delete_version_of_node_in_use()
-        throws Exception
+    void not_allowed_to_delete_version_of_node_in_use()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
 
-        assertThrows(NodeVersionDeleteException.class, () -> doDeleteVersion( node1 ));
+        assertThrows( NodeVersionDeleteException.class, () -> doDeleteVersion( node1 ) );
     }
 
     @Test
-    public void delete()
-        throws Exception
+    void delete()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
-        updateNode( UpdateNodeParams.create().
-            id( node1.id() ).
-            editor( n -> {
-                node1.data().setString( "myValue", "1" );
-            } ).
-            build() );
+        updateNode( UpdateNodeParams.create().id( node1.id() ).editor( n -> node1.data().setString( "myValue", "1" ) ).build() );
 
         doDeleteNode( node1.id() );
 
         doDeleteVersion( node1 );
     }
 
-    private void doDeleteVersion( final Node node1 )
+    private void doDeleteVersion( final Node node )
     {
-        DeleteVersionCommand.create().
-            nodeId( node1.id() ).
-            nodeVersionId( node1.getNodeVersionId() ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( storageService ).
-            searchService( searchService ).
-            repositoryService( repositoryService ).
-            build().
-            execute();
+        DeleteVersionCommand.create()
+            .nodeId( node.id() )
+            .nodeVersionId( node.getNodeVersionId() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( storageService )
+            .searchService( searchService )
+            .repositoryService( repositoryService )
+            .build()
+            .execute();
     }
 }

@@ -45,8 +45,10 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -76,6 +78,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -233,10 +236,7 @@ public class NodeServiceImpl
             trace.put( "path", path );
             trace.put( "versionId", versionId );
             final Node node = executeGetByPathAndVersionId( path, versionId );
-            if ( node != null )
-            {
-                trace.put( "id", node.id() );
-            }
+            trace.put( "id", node.id() );
             return node;
         } );
     }
@@ -412,13 +412,18 @@ public class NodeServiceImpl
     public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
     {
         verifyContext();
-        return FindNodePathsByQueryCommand.create().
-            query( nodeQuery ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final FindNodesByQueryResult queryResult = FindNodesByQueryCommand.create()
+            .query( nodeQuery )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .returnFields( ReturnFields.from( NodeIndexPath.PATH ) )
+            .build()
+            .execute();
+
+        return FindNodePathsByQueryResult.create()
+            .paths( NodePaths.from( queryResult.getNodeHits().stream().map( NodeHit::getNodePath ).toArray( NodePath[]::new ) ) )
+            .build();
     }
 
     @Override

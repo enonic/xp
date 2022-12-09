@@ -1,10 +1,7 @@
 package com.enonic.xp.project;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.content.ContentConstants;
 
-@Beta
 public final class ProjectConstants
 {
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";
@@ -28,4 +25,8 @@ public final class ProjectConstants
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
 
     public static final Project DEFAULT_PROJECT = Project.create().name( DEFAULT_PROJECT_NAME ).displayName( "Default" ).build();
+
+    private ProjectConstants()
+    {
+    }
 }

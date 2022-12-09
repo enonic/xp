@@ -85,9 +85,8 @@ public class IndexDataServiceImpl
             build() );
     }
 
-
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final Collection<NodeId> nodeIds, final InternalContext context )
     {
         this.storageDao.delete( DeleteRequests.create().
             settings( StorageSource.create().
