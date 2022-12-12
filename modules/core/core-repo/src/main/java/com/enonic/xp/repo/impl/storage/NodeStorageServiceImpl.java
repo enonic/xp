@@ -134,6 +134,7 @@ public class NodeStorageServiceImpl
     public Node move( final StoreMovedNodeParams params, final InternalContext context )
     {
         final Node node = params.getNode();
+
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );
 
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
@@ -156,12 +157,12 @@ public class NodeStorageServiceImpl
             nodeVersionId = node.getNodeVersionId();
         }
 
-        this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
-            nodeId( node.id() ).
-            timestamp( node.getTimestamp() ).
-            nodePath( node.path() ).
+        this.branchService.store( NodeBranchEntry.create()
+                                      .nodeId( node.id() )
+                                      .nodeVersionId( nodeVersionId )
+                                      .nodeVersionKey( nodeVersionKey )
+                                      .nodePath( node.path() )
+                                      .timestamp( node.getTimestamp() ).
             build(), nodeBranchEntry.getNodePath(), context );
 
         this.indexDataService.store( node, context );
@@ -222,7 +223,6 @@ public class NodeStorageServiceImpl
         this.indexDataService.push( IndexPushNodeParams.create()
                                         .nodeIds( nodeIds )
                                         .targetBranch( target )
-                                        .targetRepo(context.getRepositoryId() )
                                         .build(), context );
     }
 
@@ -238,7 +238,6 @@ public class NodeStorageServiceImpl
         this.indexDataService.push( IndexPushNodeParams.create().
             nodeIds( NodeIds.from( node.id() ) ).
             targetBranch( target ).
-            targetRepo( context.getRepositoryId() ).
             build(), context );
     }
 

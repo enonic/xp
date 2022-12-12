@@ -110,19 +110,18 @@ public class IndexDataServiceImpl
         this.storageDao.store( indexDocument );
     }
 
-
     @Override
     public void push( final IndexPushNodeParams pushNodeParams, final InternalContext context )
     {
-        this.storageDao.copy( CopyRequest.create().
-            storageSettings( StorageSource.create().
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                build() ).
-            nodeIds( pushNodeParams.getNodeIds() ).
-            targetBranch( pushNodeParams.getTargetBranch() ).
-            targetRepo( pushNodeParams.getTargetRepo() ).
-            build() );
+        this.storageDao.copy( CopyRequest.create()
+                                  .storageSettings( StorageSource.create()
+                                                        .storageName( SearchStorageName.from( context.getRepositoryId() ) )
+                                                        .storageType( SearchStorageType.from( context.getBranch() ) )
+                                                        .build() )
+                                  .nodeIds( pushNodeParams.getNodeIds() )
+                                  .targetBranch( pushNodeParams.getTargetBranch() )
+                                  .targetRepo( context.getRepositoryId() )
+                                  .build() );
     }
 
     @Reference
