@@ -32,7 +32,6 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionId;
@@ -134,24 +133,27 @@ public class NodeStorageServiceImpl
     @Override
     public Node move( final StoreMovedNodeParams params, final InternalContext context )
     {
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );
-
-        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
-
         final Node node = params.getNode();
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );
 
-        NodeVersionId nodeVersionId = params.getNodeVersionId();
-        if ( nodeVersionId == null )
+        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
+
+        final NodeVersionId nodeVersionId;
+        if ( params.isNewVersion() )
         {
             nodeVersionId = new NodeVersionId();
-            this.versionService.store( NodeVersionMetadata.create().
-                nodeId( node.id() ).
-                nodeVersionId( nodeVersionId ).
-                nodeVersionKey( nodeVersionKey ).
-                binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
-                nodePath( node.path() ).
-                timestamp( node.getTimestamp() ).
-                build(), context );
+            this.versionService.store( NodeVersionMetadata.create()
+                                           .nodeId( node.id() )
+                                           .nodeVersionId( nodeVersionId )
+                                           .nodeVersionKey( nodeVersionKey )
+                                           .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
+                                           .nodePath( node.path() )
+                                           .timestamp( node.getTimestamp() )
+                                           .build(), context );
+        }
+        else
+        {
+            nodeVersionId = node.getNodeVersionId();
         }
 
         this.branchService.store( NodeBranchEntry.create().
@@ -203,13 +205,14 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context )
+    public void push( final Collection<PushNodeEntry> entries, final Branch target, final PushNodesListener pushListener,
+                      final InternalContext context )
     {
         for ( final PushNodeEntry entry : entries )
         {
             final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
             this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(),
-                                      InternalContext.create( context ).branch( entries.getTargetBranch() ).build() );
+                                      InternalContext.create( context ).branch( target ).build() );
             pushListener.nodesPushed( 1 );
         }
 
@@ -218,8 +221,8 @@ public class NodeStorageServiceImpl
 
         this.indexDataService.push( IndexPushNodeParams.create()
                                         .nodeIds( nodeIds )
-                                        .targetBranch( entries.getTargetBranch() )
-                                        .targetRepo( entries.getTargetRepo() )
+                                        .targetBranch( target )
+                                        .targetRepo(context.getRepositoryId() )
                                         .build(), context );
     }
 

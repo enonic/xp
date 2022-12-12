@@ -55,7 +55,7 @@ public class PushNodesCommand
         return new Builder();
     }
 
-    public InternalPushNodesResult execute()
+    public PushNodesResult execute()
     {
         final Context context = ContextAccessor.current();
 
@@ -65,8 +65,7 @@ public class PushNodesCommand
 
         final NodeComparisons comparisons = getNodeComparisons( ids );
 
-        final InternalPushNodesResult.Builder builder =
-            InternalPushNodesResult.create().targetBranch( this.target ).targetRepo( context.getRepositoryId() );
+        final PushNodesResult.Builder builder = PushNodesResult.create();
 
         final List<NodeBranchEntry> list =
             nodeBranchEntries.getSet().stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
@@ -94,7 +93,7 @@ public class PushNodesCommand
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
-                builder.addSuccess( nodeBranchEntry );
+                builder.addSuccess( nodeBranchEntry, comparison.getTargetPath() );
                 alreadyAdded.add( nodeBranchEntry.getNodePath() );
                 pushListener.nodesPushed( 1 );
                 continue;
@@ -125,10 +124,10 @@ public class PushNodesCommand
             }
         }
 
-        final InternalPushNodesResult result = builder.build();
+        final PushNodesResult result = builder.build();
 
         final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
-        this.nodeStorageService.push( result.getPushNodeEntries(), pushListener, pushContext );
+        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, pushContext );
 
         refresh( RefreshMode.ALL );
 
@@ -145,7 +144,7 @@ public class PushNodesCommand
             execute();
     }
 
-    private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, final InternalPushNodesResult.Builder resultBuilder,
+    private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, final PushNodesResult.Builder resultBuilder,
                                                final Set<NodePath> alreadyAdded )
     {
         final Context context = ContextAccessor.current();
@@ -172,12 +171,10 @@ public class PushNodesCommand
             {
                 final Node childNode = doGetById( child.getNodeId() );
 
-                this.nodeStorageService.move( StoreMovedNodeParams.create().
-                    nodeVersionId( child.getVersionId() ).
-                    node( childNode ).
-                    build(), InternalContext.from( targetContext ) );
+                this.nodeStorageService.move( StoreMovedNodeParams.create().overrideVersion().node( childNode ).build(),
+                                              InternalContext.from( targetContext ) );
 
-                resultBuilder.addSuccess( child );
+                resultBuilder.addSuccess( child, targetNodeEntry.getNodePath() );
                 alreadyAdded.add( child.getNodePath() );
 
                 updateTargetChildrenMetaData( child, resultBuilder, alreadyAdded );

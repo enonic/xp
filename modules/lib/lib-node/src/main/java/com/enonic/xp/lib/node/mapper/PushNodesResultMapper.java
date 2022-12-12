@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.List;
 import java.util.Set;
 
 import com.enonic.xp.node.NodeBranchEntry;
@@ -36,9 +37,7 @@ public class PushNodesResultMapper
     {
         gen.array( "failed" );
 
-        final Set<PushNodesResult.Failed> failed = this.result.getFailed();
-
-        for ( final PushNodesResult.Failed entry : failed )
+        for ( final PushNodesResult.Failed entry : this.result.getFailedEntries() )
         {
             gen.map();
             gen.value( "id", entry.getNodeBranchEntry().getNodeId() );

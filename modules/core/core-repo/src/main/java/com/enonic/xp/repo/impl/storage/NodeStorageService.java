@@ -18,7 +18,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -41,7 +41,7 @@ public interface NodeStorageService
 
     void push( Node node, Branch target, InternalContext context );
 
-    void push( PushNodeEntries entries, PushNodesListener pushListener, InternalContext context );
+    void push( Collection<PushNodeEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
 
     NodeCommitEntry commit( NodeCommitEntry entry, RoutableNodeVersionIds routableNodeVersionIds, InternalContext context );
 

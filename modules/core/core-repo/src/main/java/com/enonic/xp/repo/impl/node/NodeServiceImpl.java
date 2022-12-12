@@ -565,7 +565,7 @@ public class NodeServiceImpl
         verifyContext();
         verifyBranchExists( target );
 
-        final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
+        final PushNodesResult pushNodesResult = PushNodesCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -575,9 +575,9 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
+        if ( !pushNodesResult.getSuccessfulEntries().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(), target ) );
         }
 
         return pushNodesResult;

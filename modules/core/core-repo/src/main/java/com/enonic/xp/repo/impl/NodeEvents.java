@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -14,9 +15,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
-import com.enonic.xp.repository.RepositoryId;
 
 public class NodeEvents
 {
@@ -48,9 +47,9 @@ public class NodeEvents
         return event( NODE_CREATED_EVENT, createdNode );
     }
 
-    public static Event pushed( final PushNodeEntries pushNodeEntries )
+    public static Event pushed( final Collection<PushNodeEntry> pushNodeEntries, Branch targetBranch )
     {
-        return event( NODE_PUSHED_EVENT, pushNodeEntries ).build();
+        return event( NODE_PUSHED_EVENT, pushNodeEntries, targetBranch ).build();
     }
 
     public static Event deleted( final NodeBranchEntries deletedNodes )
@@ -121,9 +120,9 @@ public class NodeEvents
         return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
     }
 
-    private static Event.Builder event( String type, PushNodeEntries nodes )
+    private static Event.Builder event( String type, Collection<PushNodeEntry> nodes, Branch targetBranch )
     {
-        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
+        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes, targetBranch ) );
     }
 
     private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes )
@@ -136,10 +135,11 @@ public class NodeEvents
         return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
     }
 
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final PushNodeEntries pushNodeEntries )
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Collection<PushNodeEntry> pushNodeEntries,
+                                                                            Branch targetBranch )
     {
         return pushNodeEntries.stream()
-            .map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch(), pushNodeEntries.getTargetRepo() ) )
+            .map( node -> NodeEvents.nodeToMap( node, targetBranch ) )
             .collect( ImmutableList.toImmutableList() );
     }
 
@@ -163,14 +163,13 @@ public class NodeEvents
             .build();
     }
 
-    private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final Branch targetBranch,
-                                                           final RepositoryId targetRepository )
+    private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final Branch targetBranch )
     {
         final ImmutableMap.Builder<String, String> nodeAsMap = ImmutableMap.<String, String>builder()
             .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
             .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
             .put( "branch", targetBranch.getValue() )
-            .put( "repo", targetRepository.toString() );
+            .put( "repo", ContextAccessor.current().getRepositoryId().toString() );
         if ( node.getCurrentTargetPath() != null )
         {
             nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );

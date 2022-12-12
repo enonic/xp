@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
@@ -10,7 +12,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,16 +58,14 @@ public class NodeEventsTest
             nodeVersionId( pushed3.getNodeVersionId() ).
             build();
 
-        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
-            targetRepo( ContentConstants.CONTENT_REPO_ID ).
-            targetBranch( ContentConstants.BRANCH_MASTER ).
-            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build() ).
-            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build() ).
-            add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry3 ).currentTargetPath(
-                NodePath.create( "/mynode1/pushed3/pushed3" ).build() ).build() ).
-            build();
+        final List<PushNodeEntry> pushNodeEntries = List.of( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build(),
+                                                             PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build(),
+                                                             PushNodeEntry.create()
+                                                                 .nodeBranchEntry( nodeBranchEntry3 )
+                                                                 .currentTargetPath( NodePath.create( "/mynode1/pushed3/pushed3" ).build() )
+                                                                 .build() );
 
-        Event event = NodeEvents.pushed( pushNodeEntries );
+        Event event = NodeEvents.pushed( pushNodeEntries, ContentConstants.BRANCH_MASTER );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );

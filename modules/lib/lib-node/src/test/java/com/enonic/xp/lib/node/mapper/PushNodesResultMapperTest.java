@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node.mapper;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
@@ -12,9 +13,7 @@ public class PushNodesResultMapperTest
     public void single_successful()
         throws Exception
     {
-        final PushNodesResult result = PushNodesResult.create().
-            addSuccess( createEntry( "a" ) ).
-            build();
+        final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() ).build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
         new PushNodesResultMapper( result ).serialize( jsonGenerator );
@@ -40,11 +39,11 @@ public class PushNodesResultMapperTest
     public void complex()
         throws Exception
     {
-        final PushNodesResult result = PushNodesResult.create().
-            addSuccess( createEntry( "a" ) ).
-            addSuccess( createEntry( "b" ) ).
-            addSuccess( createEntry( "c" ) ).
-            addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED ).
+        final PushNodesResult result = PushNodesResult.create()
+            .addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() )
+            .addSuccess( createEntry( "b" ), NodePath.create( "/b" ).build() )
+            .addSuccess( createEntry( "c" ), NodePath.create( "/c" ).build() )
+            .addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED ).
             addFailed( createEntry( "e" ), PushNodesResult.Reason.PARENT_NOT_FOUND ).
             addFailed( createEntry( "f" ), PushNodesResult.Reason.PARENT_NOT_FOUND ).
             build();

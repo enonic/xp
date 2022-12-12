@@ -131,9 +131,9 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( node.id(), child.id() ), WS_OTHER );
 
-        assertEquals( 1, result.getSuccessful().getSize() );
-        assertEquals( 1, result.getFailed().size() );
-        assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getReason() );
+        assertEquals( 1, result.getSuccessfulEntries().size() );
+        assertEquals( 1, result.getFailedEntries().size() );
+        assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailedEntries().iterator().next().getReason() );
     }
 
     @Test
@@ -152,9 +152,9 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
-        assertEquals( 1, result.getFailed().size() );
+        assertEquals( 1, result.getFailedEntries().size() );
         assertEquals( 0, result.getSuccessful().getSize() );
-        assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailed().iterator().next().getReason() );
+        assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailedEntries().iterator().next().getReason() );
     }
 
 
@@ -205,8 +205,8 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
-        assertEquals( 1, result.getFailed().size() );
-        assertEquals( PushNodesResult.Reason.PARENT_NOT_FOUND, result.getFailed().iterator().next().getReason() );
+        assertEquals( 1, result.getFailedEntries().size() );
+        assertEquals( PushNodesResult.Reason.PARENT_NOT_FOUND, result.getFailedEntries().iterator().next().getReason() );
     }
 
     @Test
@@ -241,7 +241,7 @@ public class PushNodesCommandTest
         final PushNodesResult result =
             pushNodes( NodeIds.from( child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() ), WS_OTHER );
 
-        assertTrue( result.getFailed().isEmpty() );
+        assertTrue( result.getFailedEntries().isEmpty() );
 
         ctxOther().runWith( () -> {
             assertNotNull( getNodeById( node.id() ) );
@@ -362,7 +362,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( NodeIds.from( b.id(), a.id() ), WS_OTHER );
 
-        assertEquals( 0, result.getFailed().size() );
+        assertEquals( 0, result.getFailedEntries().size() );
         assertEquals( 2, result.getSuccessful().getSize() );
     }
 
