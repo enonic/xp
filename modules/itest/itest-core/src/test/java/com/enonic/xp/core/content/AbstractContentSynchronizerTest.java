@@ -107,16 +107,13 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context layerContext;
 
-
     protected Context childLayerContext;
 
     protected Context projectArchiveContext;
 
     protected Context layerArchiveContext;
 
-
     protected Context childLayerArchiveContext;
-
 
     protected Project project;
 

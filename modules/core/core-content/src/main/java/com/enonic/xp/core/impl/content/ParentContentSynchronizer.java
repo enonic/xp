@@ -263,12 +263,6 @@ public final class ParentContentSynchronizer
                 return null;
             }
 
-            if ( targetContent != null && ( targetContent.getOriginProject() == null ||
-                !actualSourceContext.getRepositoryId().equals( targetContent.getOriginProject().getRepoId() ) ) )
-            {
-                return null; // do not sync contents without origin parent or from other source
-            }
-
             return ContentToSync.create()
                 .sourceContent( sourceContent )
                 .targetContent( targetContent )

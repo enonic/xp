@@ -538,7 +538,7 @@ public class ParentContentSynchronizerTest
     public void renameNotSynched()
         throws Exception
     {
-        final Content targetContent = layerContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        layerContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         assertNull( syncRenamed( ContentId.from( "source" ) ) );
     }

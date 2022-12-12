@@ -172,7 +172,7 @@ public class ProjectContentEventListenerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
-        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
+        projectContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
 
         handleEvents();
 
