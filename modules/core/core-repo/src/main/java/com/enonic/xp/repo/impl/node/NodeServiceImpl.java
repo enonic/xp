@@ -1116,8 +1116,6 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        refresh( RefreshMode.STORAGE );
-
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();

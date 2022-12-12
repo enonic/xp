@@ -17,7 +17,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -180,7 +179,8 @@ public class BranchServiceImpl
     @Override
     public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {
-        final BranchDocumentId branchDocumentId = this.pathCache.get( createPath( nodePath, context ) );
+        final BranchPath path = createPath( nodePath, context );
+        final BranchDocumentId branchDocumentId = this.pathCache.get( path );
 
         if ( branchDocumentId != null )
         {
@@ -188,10 +188,12 @@ public class BranchServiceImpl
 
             if ( nodeBranchEntry == null )
             {
-                throw new NodeNotFoundException( "Node with path [" + nodePath + "] found in path-cache but not in storage" );
+                pathCache.evict( path );
             }
-
-            return nodeBranchEntry;
+            else
+            {
+                return nodeBranchEntry;
+            }
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create()
@@ -206,9 +208,11 @@ public class BranchServiceImpl
             .size( 1 )
             .build();
 
+        storageDao.refresh( StoreStorageName.from( context.getRepositoryId() ) );
+
         final SearchResult result = this.searchDao.search( SearchRequest.create()
                                                                .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
-                                                                                                              SingleRepoStorageSource.Type.BRANCH ) )
+                                                                                                              StaticStorageType.BRANCH ) )
                                                                .returnFields( BRANCH_RETURN_FIELDS )
                                                                .query( query )
                                                                .searchPreference( context.getSearchPreference() )

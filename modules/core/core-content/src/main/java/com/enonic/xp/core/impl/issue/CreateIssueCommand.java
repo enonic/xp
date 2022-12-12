@@ -153,7 +153,7 @@ public class CreateIssueCommand
                 inheritPermissions( true ).
                 childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
                 nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
-                refresh( RefreshMode.ALL );
+                refresh( RefreshMode.SEARCH );
 
             return builder.build();
         }

@@ -68,7 +68,7 @@ final class RenameContentCommand
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName );
+        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH ).nodeName( nodeName );
 
         if ( params.stopInherit() )
         {

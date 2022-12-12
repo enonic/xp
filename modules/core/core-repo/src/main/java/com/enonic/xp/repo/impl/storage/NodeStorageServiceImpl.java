@@ -73,7 +73,7 @@ public class NodeStorageServiceImpl
     {
         final Node node = params.getNode();
 
-        final NodeVersionId nodeVersionId = params.isOverrideVersion() ? node.getNodeVersionId() : new NodeVersionId();
+        final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
 
         this.versionService.store( NodeVersionMetadata.create().
@@ -138,12 +138,12 @@ public class NodeStorageServiceImpl
 
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
 
-        NodeVersionId nodeVersionId = params.getNodeVersionId();
+        final Node node = params.getNode();
 
+        NodeVersionId nodeVersionId = params.getNodeVersionId();
         if ( nodeVersionId == null )
         {
             nodeVersionId = new NodeVersionId();
-            final Node node = params.getNode();
             this.versionService.store( NodeVersionMetadata.create().
                 nodeId( node.id() ).
                 nodeVersionId( nodeVersionId ).
@@ -154,7 +154,19 @@ public class NodeStorageServiceImpl
                 build(), context );
         }
 
-        return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
+        this.branchService.store( NodeBranchEntry.create().
+            nodeVersionId( nodeVersionId ).
+            nodeVersionKey( nodeVersionKey ).
+            nodeId( node.id() ).
+            timestamp( node.getTimestamp() ).
+            nodePath( node.path() ).
+            build(), nodeBranchEntry.getNodePath(), context );
+
+        this.indexDataService.store( node, context );
+
+        return Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build();
     }
 
     @Override
@@ -417,22 +429,6 @@ public class NodeStorageServiceImpl
             .forEach( filteredNodes::add );
 
         return filteredNodes.build();
-    }
-
-    private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
-                                         final NodePath previousPath, final InternalContext context )
-    {
-        this.branchService.store( NodeBranchEntry.create().
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
-            nodeId( node.id() ).
-            timestamp( node.getTimestamp() ).
-            nodePath( node.path() ).
-            build(), previousPath, context );
-
-        this.indexDataService.store( node, context );
-
-        return node;
     }
 
     private boolean canRead( final AccessControlList permissions )

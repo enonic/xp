@@ -115,7 +115,7 @@ final class CreateContentCommand
             .contentDataSerializer( this.contentDataSerializer )
             .siteService( this.siteService )
             .build()
-            .produce().refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE ).build();
+            .produce().refresh( params.isRefresh() ? RefreshMode.SEARCH : null ).build();
 
         final Node createdNode;
         try

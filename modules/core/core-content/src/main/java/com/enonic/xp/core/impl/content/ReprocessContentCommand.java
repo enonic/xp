@@ -93,7 +93,7 @@ final class ReprocessContentCommand
         final UpdateNodeParams update = UpdateNodeParams.create()
             .id( NodeId.from( content.getId() ) )
             .editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
         final Node node = this.nodeService.update( update );
 

@@ -4,7 +4,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
@@ -41,7 +40,7 @@ public class HasUnpublishedChildrenCommand
             excludes( ExcludeEntries.create().
                 add( new ExcludeEntry( parentNode.path(), false ) ).
                 build() ).
-            build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
+            build(), ContextAccessor.current().getRepositoryId() );
 
         return result.getTotalHits() > 0;
     }

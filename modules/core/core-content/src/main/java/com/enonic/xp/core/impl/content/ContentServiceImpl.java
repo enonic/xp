@@ -1062,7 +1062,7 @@ public class ContentServiceImpl
         {
             final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create()
                 .nodeId( NodeId.from( params.getContentId() ) )
-                .refresh( RefreshMode.ALL )
+                .refresh( RefreshMode.SEARCH )
                 .childOrder( params.getChildOrder() );
 
             if ( params.stopInherit() )
@@ -1089,7 +1089,7 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create().refresh( RefreshMode.ALL );
+        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create().refresh( RefreshMode.SEARCH );
 
         for ( final ReorderChildParams param : params )
         {

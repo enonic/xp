@@ -47,7 +47,7 @@ final class ImportContentCommand
             .dryRun( params.isDryRun() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
