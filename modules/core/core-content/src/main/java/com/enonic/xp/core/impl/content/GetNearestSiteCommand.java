@@ -23,7 +23,13 @@ final class GetNearestSiteCommand
 
     public Site execute()
     {
-        final Content content = GetContentByIdCommand.create( contentId, this ).build().execute();
+        final Content content = GetContentByIdCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
         if ( content == null )
         {
@@ -49,7 +55,13 @@ final class GetNearestSiteCommand
             return null;
         }
 
-        final Content content = GetContentByPathCommand.create( contentPath, this ).build().execute();
+        final Content content = GetContentByPathCommand.create( contentPath )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
         if ( content == null )
         {

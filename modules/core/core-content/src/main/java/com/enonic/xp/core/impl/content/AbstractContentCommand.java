@@ -68,7 +68,13 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentId contentId )
     {
-        final Content content = GetContentByIdCommand.create( contentId, this ).build().execute();
+        final Content content = GetContentByIdCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
         if ( content == null )
         {
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
@@ -187,7 +193,13 @@ abstract class AbstractContentCommand
             }
         }
 
-        final Content parent = GetContentByPathCommand.create( parentPath, this ).build().execute();
+        final Content parent = GetContentByPathCommand.create( parentPath )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
         if (parent == null)
         {
             throw new IllegalStateException( String.format( "Cannot read parent type with path %s", parentPath ) );
@@ -237,14 +249,6 @@ abstract class AbstractContentCommand
 
         Builder()
         {
-        }
-
-        Builder( final AbstractContentCommand source )
-        {
-            this.nodeService = source.nodeService;
-            this.contentTypeService = source.contentTypeService;
-            this.eventPublisher = source.eventPublisher;
-            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")

@@ -70,22 +70,33 @@ final class ReprocessContentCommand
             return media;
         }
         final ContentId id = media.getId();
-        final ByteSource binary = GetBinaryCommand.create( id, source.getBinaryReference(), this ).build().execute();
+        final ByteSource binary = GetBinaryCommand.create( id, source.getBinaryReference() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
         final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
             byteSource( binary ).
             mimeType( source.getMimeType() ).
             content( id ).
             name( source.getName() );
 
-        return UpdateMediaCommand.create( updateMediaParams, this ).
-            mediaInfoService( mediaInfoService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build().execute();
+        return UpdateMediaCommand.create( updateMediaParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .mediaInfoService( mediaInfoService )
+            .siteService( this.siteService )
+            .contentTypeService( this.contentTypeService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build()
+            .execute();
     }
 
     private Content revertModifiedTime( final Content content, final Instant modifiedTime )

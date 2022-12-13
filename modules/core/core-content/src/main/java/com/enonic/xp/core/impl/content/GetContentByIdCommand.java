@@ -41,11 +41,6 @@ final class GetContentByIdCommand
         return content;
     }
 
-    public static Builder create( final ContentId contentId, final AbstractContentCommand source )
-    {
-        return new Builder( contentId, source );
-    }
-
     public static Builder create( final ContentId contentId )
     {
         return new Builder( contentId );
@@ -58,12 +53,6 @@ final class GetContentByIdCommand
 
         Builder( final ContentId contentId )
         {
-            this.contentId = contentId;
-        }
-
-        Builder( final ContentId contentId, AbstractContentCommand source )
-        {
-            super( source );
             this.contentId = contentId;
         }
 

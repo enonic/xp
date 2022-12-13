@@ -8,8 +8,8 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.FileNames;
@@ -62,15 +62,6 @@ class AbstractCreatingOrUpdatingContentCommand
 
         Builder()
         {
-        }
-
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
-            this.xDataService = source.xDataService;
-            this.siteService = source.siteService;
-            this.contentProcessors = source.contentProcessors;
-            this.contentValidators = source.contentValidators;
         }
 
         @SuppressWarnings("unchecked")

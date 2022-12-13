@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.node.mapper;
 
-import java.util.List;
-import java.util.Set;
-
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.MapGenerator;

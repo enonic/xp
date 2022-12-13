@@ -1,17 +1,19 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class NodeType
 {
-    public static final NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );
+    public static final NodeType DEFAULT_NODE_COLLECTION = new NodeType( "default" );
 
     private final String name;
 
     private NodeType( final String name )
     {
-        this.name = name;
+        this.name = Objects.requireNonNull( name );
     }
 
     public static NodeType from( final String name )
@@ -38,13 +40,13 @@ public final class NodeType
 
         final NodeType that = (NodeType) o;
 
-        return name != null ? name.equals( that.name ) : that.name == null;
+        return name.equals( that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return name.hashCode();
     }
 
     @Override

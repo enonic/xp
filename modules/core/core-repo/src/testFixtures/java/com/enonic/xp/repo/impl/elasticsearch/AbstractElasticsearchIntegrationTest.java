@@ -83,7 +83,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
             elasticsearchTemporaryFolder = Files.createTempDirectory( "elasticsearchFixture" );
 
-            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
+            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder );
 
             client = server.getClient();
         }
