@@ -52,26 +52,24 @@ public class SyncContentServiceImplTest
     public void testRestoreSort()
         throws Exception
     {
-        final Content source = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
         syncCreated( source.getId() );
 
-        targetContext.runWith( () -> {
-            final Content changed = contentService.setChildOrder( SetContentChildOrderParams.create().
-                contentId( source.getId() ).
-                childOrder( ChildOrder.from( "_name ASC" ) ).
-                build() );
+        layerContext.runWith( () -> {
+            final Content changed = contentService.setChildOrder(
+                SetContentChildOrderParams.create().contentId( source.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() );
 
             assertFalse( changed.getInherit().contains( ContentInheritType.SORT ) );
         } );
 
-        syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.SORT ) ).
-            projectName( targetProject.getName() ).
-            build() );
+        syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                 .contentId( source.getId() )
+                                                 .inherit( EnumSet.of( ContentInheritType.SORT ) )
+                                                 .projectName( layer.getName() )
+                                                 .build() );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content changed = contentService.getById( source.getId() );
 
             assertTrue( changed.getInherit().contains( ContentInheritType.SORT ) );
@@ -84,26 +82,24 @@ public class SyncContentServiceImplTest
     public void testWorkflowInfo()
         throws Exception
     {
-        final Content source = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
         syncCreated( source.getId() );
 
-        targetContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().
-                contentId( source.getId() ).
-                editor( edit -> {
-                    edit.workflowInfo = WorkflowInfo.ready();
-                    edit.data = new PropertyTree();
-                } ) );
+        layerContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+                edit.data = new PropertyTree();
+            } ) );
         } );
 
-        syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
-            projectName( targetProject.getName() ).
-            build() );
+        syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                 .contentId( source.getId() )
+                                                 .inherit( EnumSet.of( ContentInheritType.CONTENT ) )
+                                                 .projectName( layer.getName() )
+                                                 .build() );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content changed = contentService.getById( source.getId() );
 
             assertTrue( changed.getInherit().contains( ContentInheritType.CONTENT ) );
@@ -116,47 +112,44 @@ public class SyncContentServiceImplTest
     public void resetWithRemovedSource()
         throws Exception
     {
-        final Content source = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
         syncCreated( source.getId() );
 
-        targetContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().
-                contentId( source.getId() ).
-                editor( edit -> {
-                    edit.workflowInfo = WorkflowInfo.ready();
-                    edit.data = new PropertyTree();
-                } ) );
+        layerContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.ready();
+                edit.data = new PropertyTree();
+            } ) );
         } );
 
-        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( source.getPath() ).
-            build() ) );
+        projectContext.runWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create().
-            contentId( source.getId() ).
-            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
-            projectName( targetProject.getName() ).
-            build() ) );
+        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                                                                     .contentId( source.getId() )
+                                                                                                     .inherit( EnumSet.of(
+                                                                                                         ContentInheritType.CONTENT ) )
+                                                                                                     .projectName( layer.getName() )
+                                                                                                     .build() ) );
     }
 
     @Test
     public void testSyncProject()
         throws Exception
     {
-        final Content missedParent = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
-        final Content missedChild = sourceContext.callWith( () -> createContent( missedParent.getPath() ) );
+        final Content missedParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content missedChild = projectContext.callWith( () -> createContent( missedParent.getPath() ) );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertFalse( contentService.contentExists( missedParent.getId() ) );
             assertFalse( contentService.contentExists( missedChild.getId() ) );
         } );
 
-        sourceContext.runWith( () -> syncContentService.syncProject( ProjectSyncParams.create().
-            targetProject( ProjectName.from( targetContext.getRepositoryId() ) ).
-            build() ) );
+        projectContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() ) );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertTrue( contentService.contentExists( missedParent.getId() ) );
             assertTrue( contentService.contentExists( missedChild.getId() ) );
         } );
@@ -165,13 +158,11 @@ public class SyncContentServiceImplTest
 
     private Content syncCreated( final ContentId contentId )
     {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
-                               .targetProject( targetProject.getName() )
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );
 
-        return targetContext.callWith( () -> contentService.getById( contentId ) );
+        return layerContext.callWith( () -> contentService.getById( contentId ) );
     }
 }

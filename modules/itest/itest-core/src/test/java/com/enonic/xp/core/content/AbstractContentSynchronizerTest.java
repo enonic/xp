@@ -80,13 +80,14 @@ public abstract class AbstractContentSynchronizerTest
     protected static final User REPO_TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
-    protected static final AuthenticationInfo REPO_TEST_ADMIN_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
-        principals( RoleKeys.ADMIN ).
-        user( REPO_TEST_DEFAULT_USER ).
-        build();
+    protected static final AuthenticationInfo REPO_TEST_ADMIN_USER_AUTHINFO = AuthenticationInfo.create()
+        .principals( RoleKeys.AUTHENTICATED )
+        .principals( RoleKeys.ADMIN )
+        .user( REPO_TEST_DEFAULT_USER )
+        .build();
 
     protected ProjectServiceImpl projectService;
+
 
     protected ContentServiceImpl contentService;
 
@@ -102,17 +103,23 @@ public abstract class AbstractContentSynchronizerTest
 
     protected TaskServiceImpl taskService;
 
-    protected Context sourceContext;
+    protected Context projectContext;
 
-    protected Context targetContext;
+    protected Context layerContext;
 
-    protected Context sourceArchiveContext;
+    protected Context childLayerContext;
 
-    protected Context targetArchiveContext;
+    protected Context projectArchiveContext;
 
-    protected Project sourceProject;
+    protected Context layerArchiveContext;
 
-    protected Project targetProject;
+    protected Context childLayerArchiveContext;
+
+    protected Project project;
+
+    protected Project layer;
+
+    protected Project childLayer;
 
     protected static Context adminContext()
     {
@@ -151,32 +158,48 @@ public abstract class AbstractContentSynchronizerTest
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
 
-            sourceProject = projectService.create(
+            project = projectService.create(
                 CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
 
-            targetProject = projectService.create( CreateProjectParams.create()
-                                                       .name( ProjectName.from( "target_project" ) )
-                                                       .displayName( "Target Project" )
-                                                       .parent( sourceProject.getName() )
-                                                       .build() );
+            layer = projectService.create( CreateProjectParams.create()
+                                               .name( ProjectName.from( "target_project" ) )
+                                               .displayName( "Target Project" )
+                                               .parent( project.getName() )
+                                               .build() );
 
-            this.targetContext = ContextBuilder.from( ContextAccessor.current() )
-                .repositoryId( targetProject.getName().getRepoId() )
+            childLayer = projectService.create( CreateProjectParams.create()
+                                                    .name( ProjectName.from( "child_layer" ) )
+                                                    .displayName( "Child Layer" )
+                                                    .parent( project.getName() )
+                                                    .build() );
+
+            this.projectContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( project.getName().getRepoId() )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.sourceContext = ContextBuilder.from( ContextAccessor.current() )
-                .repositoryId( sourceProject.getName().getRepoId() )
+            this.layerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( layer.getName().getRepoId() )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.targetArchiveContext = ContextBuilder.from( this.targetContext )
+            this.childLayerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( childLayer.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
+
+            this.projectArchiveContext = ContextBuilder.from( this.projectContext )
                 .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
                 .build();
 
-            this.sourceArchiveContext = ContextBuilder.from( this.sourceContext )
+            this.layerArchiveContext = ContextBuilder.from( this.layerContext )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .build();
+
+            this.childLayerArchiveContext = ContextBuilder.from( this.childLayerContext )
                 .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
                 .build();
 
@@ -189,13 +212,10 @@ public abstract class AbstractContentSynchronizerTest
         final Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
 
-        final ExtractedData extractedData = ExtractedData.create().
-            metadata( metadata ).
-            build();
+        final ExtractedData extractedData = ExtractedData.create().metadata( metadata ).build();
 
         final BinaryExtractor extractor = mock( BinaryExtractor.class );
-        when( extractor.extract( isA( ByteSource.class ) ) ).
-            thenReturn( extractedData );
+        when( extractor.extract( isA( ByteSource.class ) ) ).thenReturn( extractedData );
 
         mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );

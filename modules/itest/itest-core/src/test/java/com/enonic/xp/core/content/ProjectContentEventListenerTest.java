@@ -97,21 +97,21 @@ public class ProjectContentEventListenerTest
     public void testCreated()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         compareSynched( sourceContent, targetContent );
-        assertEquals( sourceProject.getName(), targetContent.getOriginProject() );
+        assertEquals( project.getName(), targetContent.getOriginProject() );
     }
 
     @Test
     public void testCreatedInMaster()
         throws InterruptedException
     {
-        final Content sourceContent = ContextBuilder.from( sourceContext )
+        final Content sourceContent = ContextBuilder.from( projectContext )
             .branch( ContentConstants.BRANCH_MASTER )
             .build()
             .callWith( () -> createContent( ContentPath.ROOT, "name" ) );
@@ -119,20 +119,20 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         assertThrows( ContentNotFoundException.class,
-                      () -> targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) ) );
+                      () -> layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) ) );
     }
 
     @Test
     public void testSyncCreateWithExistedLocalName()
         throws InterruptedException
     {
-        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+        layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content targetContent = contentService.getById( sourceContent.getId() );
             assertEquals( "localName-1", targetContent.getName().toString() );
         } );
@@ -142,21 +142,21 @@ public class ProjectContentEventListenerTest
     public void testSyncDuplicateWithExistedLocalName()
         throws InterruptedException
     {
-        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
-        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
+        layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
+        layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
 
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
         handleEvents();
 
-        final ContentId duplicatedContentId = sourceContext.callWith(
+        final ContentId duplicatedContentId = projectContext.callWith(
             () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
                 .getDuplicatedContents()
                 .first() );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
             assertEquals( "localName-copy-1-1", duplicatedTargetContent.getName().toString() );
             assertEquals( 3, duplicatedTargetContent.getInherit().size() );
@@ -168,16 +168,16 @@ public class ProjectContentEventListenerTest
     public void testDuplicateInherited()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
         handleEvents();
 
-        final ContentId duplicatedContentId = targetContext.callWith(
+        final ContentId duplicatedContentId = layerContext.callWith(
             () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
                 .getDuplicatedContents()
                 .first() );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
             assertEquals( "localName-copy", duplicatedTargetContent.getName().toString() );
             assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
@@ -188,18 +188,18 @@ public class ProjectContentEventListenerTest
     public void testDuplicateInheritedWithChildren()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
+        projectContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
 
         handleEvents();
 
-        final ContentId duplicatedContentId = targetContext.callWith(
+        final ContentId duplicatedContentId = layerContext.callWith(
             () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
                 .getDuplicatedContents()
                 .first() );
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
             final Content duplicatedTargetChild1 = contentService.getByPath( ContentPath.from( "/localContent-copy/localChild1" ) );
             final Content duplicatedTargetChild2 =
@@ -217,9 +217,9 @@ public class ProjectContentEventListenerTest
     public void testUpdated()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        final Content updatedContent = sourceContext.callWith( () -> {
+        final Content updatedContent = projectContext.callWith( () -> {
 
             final Content updated = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
@@ -237,7 +237,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         compareSynched( updatedContent, targetContent );
         assertEquals( 4, targetContent.getInherit().size() );
@@ -248,9 +248,9 @@ public class ProjectContentEventListenerTest
     public void testUpdatedFromReadyToInProgress()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        sourceContext.callWith( () -> {
+        projectContext.callWith( () -> {
 
             contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
                                        .editor(
@@ -259,8 +259,8 @@ public class ProjectContentEventListenerTest
             handleEvents();
 
             final Content sourceContentReady = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                          .editor( ( edit -> edit.workflowInfo = WorkflowInfo.create()
-                                                                              .state( WorkflowState.IN_PROGRESS )
+                                                                          .editor( ( edit -> edit.workflowInfo =
+                                                                              WorkflowInfo.create().state( WorkflowState.IN_PROGRESS )
                                                                               .build() ) ) );
 
             handleEvents();
@@ -269,7 +269,7 @@ public class ProjectContentEventListenerTest
 
         } );
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         assertEquals( WorkflowState.READY, targetContent.getWorkflowInfo().getState() );
     }
@@ -278,44 +278,44 @@ public class ProjectContentEventListenerTest
     public void testUpdatedLocally()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         handleEvents();
 
-        final Content updatedInChild = targetContext.callWith( () -> contentService.update(
+        final Content updatedInChild = layerContext.callWith( () -> contentService.update(
             new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
 
         assertEquals( 2, updatedInChild.getInherit().size() );
         assertFalse( updatedInChild.getInherit().contains( ContentInheritType.CONTENT ) );
         assertFalse( updatedInChild.getInherit().contains( ContentInheritType.NAME ) );
 
-        final Content updatedInParent = sourceContext.callWith( () -> contentService.update(
+        final Content updatedInParent = projectContext.callWith( () -> contentService.update(
             new UpdateContentParams().contentId( sourceContent.getId() )
                 .editor( ( edit -> edit.displayName = "new source display name" ) ) ) );
 
         handleEvents();
 
         assertNotEquals( updatedInParent.getDisplayName(),
-                         targetContext.callWith( () -> contentService.getById( updatedInChild.getId() ).getDisplayName() ) );
+                         layerContext.callWith( () -> contentService.getById( updatedInChild.getId() ).getDisplayName() ) );
     }
 
     @Test
     public void testMoved()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
-        final Content sourceFolder = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "folder" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+        final Content sourceFolder = projectContext.callWith( () -> createContent( ContentPath.ROOT, "folder" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.move(
+        projectContext.runWith( () -> contentService.move(
             MoveContentParams.create().contentId( sourceContent.getId() ).parentContentPath( sourceFolder.getPath() ).build() ) );
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
-        final Content targetChild = targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetChild = layerContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
 
         assertEquals( "/folder/content", targetContent.getPath().toString() );
         assertEquals( "/folder/content/child", targetChild.getPath().toString() );
@@ -325,46 +325,46 @@ public class ProjectContentEventListenerTest
     public void testMovedLocally()
         throws InterruptedException
     {
-        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
-        final Content sourceContent2 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
-        final Content sourceContent3 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content3" ) );
+        final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+        final Content sourceContent3 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content3" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.move(
+        layerContext.runWith( () -> contentService.move(
             MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent2.getPath() ).build() ) );
 
-        final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+        final Content targetMovedContent = layerContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
 
         assertEquals( 3, targetMovedContent.getInherit().size() );
         assertFalse( targetMovedContent.getInherit().contains( ContentInheritType.PARENT ) );
 
-        sourceContext.runWith( () -> contentService.move(
+        projectContext.runWith( () -> contentService.move(
             MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent3.getPath() ).build() ) );
 
         assertEquals( "/content3/content1",
-                      sourceContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
+                      projectContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
         assertEquals( "/content2/content1",
-                      targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
+                      layerContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
     }
 
     @Test
     public void testMovedToExistedPath()
         throws InterruptedException
     {
-        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceContent2 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+        final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
 
         handleEvents();
 
-        targetContext.callWith( () -> createContent( sourceContent2.getPath(), "content" ) );
+        layerContext.callWith( () -> createContent( sourceContent2.getPath(), "content" ) );
 
-        sourceContext.runWith( () -> contentService.move(
+        projectContext.runWith( () -> contentService.move(
             MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent2.getPath() ).build() ) );
 
         handleEvents();
 
-        final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+        final Content targetMovedContent = layerContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
 
         assertEquals( "/content2/content-1", targetMovedContent.getPath().toString() );
     }
@@ -373,17 +373,17 @@ public class ProjectContentEventListenerTest
     public void testArchived()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetContent = targetArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
-        final Content targetChild = targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+        final Content targetContent = layerArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetChild = layerArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
 
         assertEquals( "/content", targetContent.getPath().toString() );
         assertEquals( "/content/child", targetChild.getPath().toString() );
@@ -393,20 +393,20 @@ public class ProjectContentEventListenerTest
     public void testArchivedNotInherited()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.update(
+        layerContext.runWith( () -> contentService.update(
             new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.data = new PropertyTree() ) ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         assertEquals( "/content", targetContent.getPath().toString() );
     }
@@ -415,23 +415,23 @@ public class ProjectContentEventListenerTest
     public void testArchivedAndRestoreAlreadyArchived()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        layerContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetContent = targetArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         assertEquals( "/content", targetContent.getPath().toString() );
     }
@@ -440,26 +440,26 @@ public class ProjectContentEventListenerTest
     public void testArchivePublishedInLayer()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.publish( PushContentParams.create()
-                                                                 .contentIds( ContentIds.from( sourceContent.getId() ) )
-                                                                 .target( ContentConstants.BRANCH_MASTER )
-                                                                 .build() ) );
+        layerContext.runWith( () -> contentService.publish( PushContentParams.create()
+                                                                .target( ContentConstants.BRANCH_MASTER )
+                                                                .contentIds( ContentIds.from( sourceContent.getId() ) )
+                                                                .build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
         final ContentPublishInfo publishInfo = targetContent.getPublishInfo();
 
         assertNotNull( publishInfo.getFirst() );
@@ -471,56 +471,55 @@ public class ProjectContentEventListenerTest
     public void testArchiveAndCreateChild()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        layerContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
-
-        handleEvents();
-
-        assertEquals( "/content/child",
-                      targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
-
-        targetContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
 
         handleEvents();
 
         assertEquals( "/content/child",
-                      targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
+                      layerArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
+
+        layerContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        assertEquals( "/content/child", layerContext.callWith( () -> contentService.getById( sourceChild.getId() ) ).getPath().toString() );
     }
 
     @Test
     public void testRestored()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetChild = targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+        final Content targetChild = layerArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
 
-        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( targetChild.getId() ).build() ) );
+        projectContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( targetChild.getId() ).build() ) );
 
         handleEvents();
 
-        final Content targetRestoredChild = targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+        final Content targetRestoredChild = layerContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
 
-        sourceContext.runWith( () -> contentService.restore(
+        projectContext.runWith( () -> contentService.restore(
             RestoreContentParams.create().contentId( sourceContent.getId() ).path( targetRestoredChild.getPath() ).build() ) );
 
         handleEvents();
 
-        final Content targetRestoredContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetRestoredContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         assertEquals( "/child", targetRestoredChild.getPath().toString() );
         assertEquals( "/child/content", targetRestoredContent.getPath().toString() );
@@ -530,21 +529,21 @@ public class ProjectContentEventListenerTest
     public void testSorted()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
-        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
-                                                                       .contentId( sourceContent.getId() )
-                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                       .build() ) );
+        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                        .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final FindContentByParentResult result =
                 contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
 
@@ -561,25 +560,25 @@ public class ProjectContentEventListenerTest
     public void testSortedLocally()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        final Content sortedInChild = targetContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
-                                                                                                      .contentId( sourceContent.getId() )
-                                                                                                      .childOrder(
-                                                                                                          ChildOrder.from( "_name DESC" ) )
-                                                                                                      .build() ) );
+        final Content sortedInChild = layerContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                                                     .contentId( sourceContent.getId() )
+                                                                                                     .childOrder(
+                                                                                                         ChildOrder.from( "_name DESC" ) )
+                                                                                                     .build() ) );
 
         assertEquals( 3, sortedInChild.getInherit().size() );
         assertFalse( sortedInChild.getInherit().contains( ContentInheritType.SORT ) );
 
-        final Content sortedInParent = sourceContext.callWith( () -> contentService.setChildOrder(
+        final Content sortedInParent = projectContext.callWith( () -> contentService.setChildOrder(
             SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
 
         handleEvents();
 
-        assertNotEquals( sortedInParent.getChildOrder(), targetContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ) );
+        assertNotEquals( sortedInParent.getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ) );
 
     }
 
@@ -587,21 +586,21 @@ public class ProjectContentEventListenerTest
     public void testManualOrderUpdated()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
-        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
-                                                                       .contentId( sourceContent.getId() )
-                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                       .build() ) );
+        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                        .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final FindContentByParentResult result =
                 contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
 
@@ -612,26 +611,26 @@ public class ProjectContentEventListenerTest
             assertEquals( sourceChild1.getId(), iterator.next().getId() );
         } );
 
-        sourceContext.runWith( () -> contentService.setChildOrder(
+        projectContext.runWith( () -> contentService.setChildOrder(
             SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                         .contentId( sourceContent.getId() )
-                                                                         .add( ReorderChildParams.create()
-                                                                                   .contentToMove( sourceChild2.getId() )
-                                                                                   .contentToMoveBefore( sourceChild3.getId() )
-                                                                                   .build() )
-                                                                         .add( ReorderChildParams.create()
-                                                                                   .contentToMove( sourceChild1.getId() )
-                                                                                   .contentToMoveBefore( sourceChild3.getId() )
-                                                                                   .build() )
-                                                                         .build() ) );
+        projectContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                                          .contentId( sourceContent.getId() )
+                                                                          .add( ReorderChildParams.create()
+                                                                                    .contentToMove( sourceChild2.getId() )
+                                                                                    .contentToMoveBefore( sourceChild3.getId() )
+                                                                                    .build() )
+                                                                          .add( ReorderChildParams.create()
+                                                                                    .contentToMove( sourceChild1.getId() )
+                                                                                    .contentToMoveBefore( sourceChild3.getId() )
+                                                                                    .build() )
+                                                                          .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final FindContentByParentResult result =
                 contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
 
@@ -648,43 +647,43 @@ public class ProjectContentEventListenerTest
     public void testManualOrderLocally()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
-        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
-                                                                       .contentId( sourceContent.getId() )
-                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                       .build() ) );
+        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                        .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.setChildOrder(
+        layerContext.runWith( () -> contentService.setChildOrder(
             SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
 
-        targetContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                         .contentId( sourceContent.getId() )
-                                                                         .add( ReorderChildParams.create()
-                                                                                   .contentToMove( sourceChild2.getId() )
-                                                                                   .contentToMoveBefore( sourceChild3.getId() )
-                                                                                   .build() )
-                                                                         .add( ReorderChildParams.create()
-                                                                                   .contentToMove( sourceChild1.getId() )
-                                                                                   .contentToMoveBefore( sourceChild3.getId() )
-                                                                                   .build() )
-                                                                         .build() ) );
+        layerContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .add( ReorderChildParams.create()
+                                                                                  .contentToMove( sourceChild2.getId() )
+                                                                                  .contentToMoveBefore( sourceChild3.getId() )
+                                                                                  .build() )
+                                                                        .add( ReorderChildParams.create()
+                                                                                  .contentToMove( sourceChild1.getId() )
+                                                                                  .contentToMoveBefore( sourceChild3.getId() )
+                                                                                  .build() )
+                                                                        .build() ) );
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
-                                                                       .contentId( sourceContent.getId() )
-                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                       .build() ) );
+        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                        .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             final FindContentByParentResult result =
                 contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
 
@@ -703,40 +702,40 @@ public class ProjectContentEventListenerTest
     public void testRenamed()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.rename(
+        projectContext.runWith( () -> contentService.rename(
             RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "content-new" ) ).build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1", contentService.getById( sourceChild1.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        sourceContext.runWith( () -> contentService.rename(
+        projectContext.runWith( () -> contentService.rename(
             RenameContentParams.create().contentId( sourceChild1.getId() ).newName( ContentName.from( "child1-new" ) ).build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1-new", contentService.getById( sourceChild1.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1-new/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        sourceContext.runWith( () -> contentService.rename(
+        projectContext.runWith( () -> contentService.rename(
             RenameContentParams.create().contentId( sourceChild2.getId() ).newName( ContentName.from( "child2-new" ) ).build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1-new", contentService.getById( sourceChild1.getId() ).getPath().toString() );
             assertEquals( "/content-new/child1-new/child2-new", contentService.getById( sourceChild2.getId() ).getPath().toString() );
@@ -747,39 +746,39 @@ public class ProjectContentEventListenerTest
     public void testRenameToExisted()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             createContent( ContentPath.ROOT, "newName" );
         } );
 
-        sourceContext.runWith( () -> {
+        projectContext.runWith( () -> {
             contentService.rename(
                 RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
         } );
         handleEvents();
 
-        assertEquals( "newName-1", targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) ).getName().toString() );
+        assertEquals( "newName-1", layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) ).getName().toString() );
     }
 
     @Test
     public void testDeleted()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
 
         handleEvents();
 
-        sourceContext.runWith(
+        projectContext.runWith(
             () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertFalse( contentService.contentExists( sourceContent.getId() ) );
             assertFalse( contentService.contentExists( sourceChild1.getId() ) );
             assertFalse( contentService.contentExists( sourceChild2.getId() ) );
@@ -790,18 +789,18 @@ public class ProjectContentEventListenerTest
     public void testDeletedInherited()
         throws InterruptedException
     {
-        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
-        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
-        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = projectContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
 
         handleEvents();
 
-        targetContext.runWith(
+        layerContext.runWith(
             () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> {
+        layerContext.runWith( () -> {
             assertTrue( contentService.contentExists( sourceContent.getId() ) );
             assertTrue( contentService.contentExists( sourceChild1.getId() ) );
             assertTrue( contentService.contentExists( sourceChild2.getId() ) );
@@ -812,7 +811,7 @@ public class ProjectContentEventListenerTest
     public void testDeactivated()
     {
         listener.deactivate();
-        sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         assertThrows( RejectedExecutionException.class, this::handleEvents );
     }

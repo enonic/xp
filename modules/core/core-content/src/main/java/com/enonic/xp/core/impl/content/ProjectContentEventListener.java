@@ -128,13 +128,15 @@ public final class ProjectContentEventListener
                 return;
             }
 
-            final Project sourceProject = this.projectService.list()
-                .stream()
-                .filter( project -> currentProjectName.equals( project.getName() ) )
-                .findAny()
-                .orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
+            final Project sourceProject = this.projectService.get( currentProjectName );
+            if ( sourceProject == null )
+            {
+                throw new ProjectNotFoundException( currentProjectName );
+            }
 
-            this.projectService.list().stream().filter( project -> currentProjectName.equals( project.getParent() ) )
+            this.projectService.list()
+                .stream()
+                .filter( project -> currentProjectName.equals( project.getParent() ) )
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
