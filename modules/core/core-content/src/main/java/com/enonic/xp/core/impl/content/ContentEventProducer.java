@@ -14,10 +14,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.core.internal.concurrent.SimpleRecurringJobScheduler;
 import com.enonic.xp.event.EventPublisher;
 
-@Component(service = ContentPublisher.class)
-public class ContentPublisher
+@Component(service = ContentEventProducer.class)
+public class ContentEventProducer
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ContentPublisher.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentEventProducer.class );
 
     private final EventPublisher eventPublisher;
 
@@ -25,7 +25,7 @@ public class ContentPublisher
 
 
     @Activate
-    public ContentPublisher( @Reference final EventPublisher eventPublisher )
+    public ContentEventProducer( @Reference final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
         this.jobScheduler = new SimpleRecurringJobScheduler( Executors::newSingleThreadScheduledExecutor, "content-publisher-thread" );
@@ -50,4 +50,10 @@ public class ContentPublisher
         this.eventPublisher.publish( ContentEvents.offline( offline ) );
         this.eventPublisher.publish( ContentEvents.online( online ) );
     }
+
+    public void put( final List<Content> offline )
+    {
+        this.eventPublisher.publish( ContentEvents.offline( offline ) );
+    }
+
 }

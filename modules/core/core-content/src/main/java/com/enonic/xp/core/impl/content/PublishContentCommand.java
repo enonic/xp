@@ -49,7 +49,7 @@ public class PublishContentCommand
 
     private final PushContentListener publishContentListener;
 
-    private final ContentPublisher contentPublisher;
+    private final ContentEventProducer contentEventProducer;
 
     private final String message;
 
@@ -64,7 +64,7 @@ public class PublishContentCommand
         this.resultBuilder = PublishContentResult.create();
         this.publishContentListener = builder.publishContentListener;
         this.message = builder.message;
-        this.contentPublisher = builder.contentPublisher;
+        this.contentEventProducer = builder.contentEventProducer;
     }
 
     public static Builder create()
@@ -172,7 +172,7 @@ public class PublishContentCommand
                     .build(), false ) )
             .collect( Collectors.toList() );
 
-        this.contentPublisher.put( contents, contentsOffline );
+        this.contentEventProducer.put( contents, contentsOffline );
 
         this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailedEntries()
                                                                           .stream()
@@ -276,7 +276,7 @@ public class PublishContentCommand
 
         private String message;
 
-        private ContentPublisher contentPublisher;
+        private ContentEventProducer contentEventProducer;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -331,9 +331,9 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder contentPublisher( final ContentPublisher contentPublisher )
+        public Builder contentPublisher( final ContentEventProducer contentEventProducer )
         {
-            this.contentPublisher = contentPublisher;
+            this.contentEventProducer = contentEventProducer;
             return this;
         }
 

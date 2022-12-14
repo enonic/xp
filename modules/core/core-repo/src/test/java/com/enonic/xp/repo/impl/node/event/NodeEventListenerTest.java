@@ -137,7 +137,6 @@ public class NodeEventListenerTest
                                                                           .node( movedNode )
                                                                           .previousPath( sourceNode.path() )
                                                                           .build() )
-                                                       .sourceNode( sourceNode )
                                                        .build() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );

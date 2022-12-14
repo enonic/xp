@@ -129,7 +129,6 @@ public class NodeEventsTest
                                                                .node( targetNode )
                                                                .previousPath( sourceNode.path() )
                                                                .build() )
-                                            .sourceNode( sourceNode )
                                             .build() );
 
         assertNotNull( event );

@@ -27,6 +27,8 @@ public interface NodeService
 
     NodeIds deleteByPath( NodePath path );
 
+    DeleteNodeResult delete( final DeleteNodeParams deleteNodeParams );
+
     Node getById( NodeId id );
 
     Node getByIdAndVersionId( NodeId id, NodeVersionId versionId );

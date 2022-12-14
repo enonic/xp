@@ -153,7 +153,7 @@ public class ContentServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private ContentPublisher contentPublisher;
+    private ContentEventProducer contentEventProducer;
 
     private MediaInfoService mediaInfoService;
 
@@ -427,7 +427,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentPublisher( contentPublisher ).
+            contentPublisher( contentEventProducer ).
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             contentPublishInfo( params.getContentPublishInfo() ).
@@ -1408,9 +1408,9 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setContentPublisher( final ContentPublisher contentPublisher )
+    public void setContentPublisher( final ContentEventProducer contentEventProducer )
     {
-        this.contentPublisher = contentPublisher;
+        this.contentEventProducer = contentEventProducer;
     }
     @Reference
     public void setProjectService( final ProjectService projectService )
