@@ -1,13 +1,18 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -17,8 +22,14 @@ import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
@@ -37,6 +48,8 @@ public final class MappingHandler
 {
     private final ResourceService resourceService;
 
+    private final ProjectService projectService;
+
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final FilterScriptFactory filterScriptFactory;
@@ -51,15 +64,17 @@ public final class MappingHandler
     public MappingHandler( @Reference final SiteService siteService, @Reference final ContentService contentService,
                            @Reference final ResourceService resourceService,
                            @Reference final ControllerScriptFactory controllerScriptFactory,
-                           @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate )
+                           @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate,
+                           @Reference final ProjectService projectService )
     {
         this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-              new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+              new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ), projectService );
     }
 
     MappingHandler( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
                     final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                    final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver )
+                    final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver,
+                    final ProjectService projectService )
     {
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
@@ -67,6 +82,7 @@ public final class MappingHandler
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
         this.contentResolver = contentResolver;
+        this.projectService = projectService;
     }
 
     @Override
@@ -104,16 +120,28 @@ public final class MappingHandler
 
         final Site site = resolvedContent.getNearestSite();
 
-        if ( site == null )
-        {
-            return webHandlerChain.handle( request, webResponse );
-        }
-
         final Content content = resolvedContent.getContent();
 
+        final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
+
+        if ( site != null )
+        {
+            site.getSiteConfigs().forEach( siteConfigs::add );
+        }
+        else if ( content != null )
+        {
+            Optional.ofNullable( ProjectName.from( ( (PortalRequest) webRequest ).getRepositoryId() ) )
+                .map( projectName -> callAsAdmin( () -> projectService.get( projectName ) ) )
+                .map( Project::getSiteConfigs )
+                .ifPresent( configs -> configs.forEach( siteConfigs::add ) );
+        }
+        else
+        {
+            return webHandlerChain.handle( webRequest, webResponse );
+        }
+
         final Optional<ControllerMappingDescriptor> resolve =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content,
-                                                site.getSiteConfigs() );
+            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs.build() );
 
         if ( resolve.isPresent() )
         {
@@ -121,7 +149,8 @@ public final class MappingHandler
 
             request.setContent( content );
             request.setSite( site );
-            request.setContextPath( request.getBaseUri() + "/" + request.getBranch() + site.getPath() );
+            request.setContextPath(
+                request.getBaseUri() + "/" + request.getBranch() + ( site != null ? site.getPath() : ContentPath.ROOT ) );
             request.setApplicationKey( mapping.getApplication() );
 
             if ( mapping.isController() )
@@ -170,5 +199,15 @@ public final class MappingHandler
             return worker.execute();
         }
         return Tracer.traceEx( trace, worker::execute );
+    }
+
+    private <T> T callAsAdmin( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+
+        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 }

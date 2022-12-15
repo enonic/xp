@@ -24,18 +24,18 @@ final class ControllerMappingsResolver
         this.siteService = siteService;
     }
 
-    public Optional<ControllerMappingDescriptor> resolve( String siteRelativePath, Multimap<String, String> params,
-                                                         final Content content, final SiteConfigs siteConfigs )
+    public Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
+                                                          final Content content, final SiteConfigs siteConfigs )
     {
-        final String siteRelativeUrl = siteRelativePath + normalizedQueryParams( params );
+        final String contentPath = siteRelativePath != null ? siteRelativePath : content.getPath().toString();
+        final String contentUrl = contentPath + normalizedQueryParams( params );
 
-        return siteConfigs
-            .stream()
+        return siteConfigs.stream()
             .map( SiteConfig::getApplicationKey )
             .map( siteService::getDescriptor )
             .filter( Objects::nonNull )
             .flatMap( siteDescriptor -> siteDescriptor.getMappingDescriptors().stream() )
-            .filter( d -> matchesUrlPattern( d, siteRelativePath, siteRelativeUrl ) )
+            .filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) )
             .filter( d -> matchesContent( d, content ) )
             .min( Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) );
     }

@@ -1,14 +1,18 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -21,6 +25,9 @@ import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.Resource;
@@ -28,6 +35,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -44,6 +52,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -66,6 +75,8 @@ public class MappingHandlerTest
     private RendererDelegate rendererDelegate;
 
     private SiteService siteService;
+
+    private ProjectService projectService;
 
     @BeforeEach
     public final void setup()
@@ -93,9 +104,11 @@ public class MappingHandlerTest
         this.contentService = mock( ContentService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
+        this.projectService = mock( ProjectService.class );
 
         this.handler = new MappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                           new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+                                           new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ),
+                                           projectService );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -187,18 +200,81 @@ public class MappingHandlerTest
             ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).build();
 
         setupContentAndSite( mapping );
+
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
 
         when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).thenReturn(
-            PortalResponse.create().body( "Ok" ).build() );
+            PortalResponse.create().body( "Ok body" ).build() );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Ok body", response.getBody() );
+    }
 
-        assertNotNull( this.request.getApplicationKey() );
-        assertNotNull( this.request.getSite() );
-        assertNotNull( this.request.getContent() );
+    @Test
+    public void executeScriptFromProjectApp()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+
+        final ControllerMappingDescriptor projectMapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).build();
+
+        final String contentPath = "/some/path/content";
+        setupContentAndSiteAndProject( projectMapping, null, contentPath );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( contentPath ) );
+
+        when( rendererDelegate.render( eq( projectMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Project body" ).build() );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Project body", response.getBody() );
+
+        verify( rendererDelegate, Mockito.times( 1 ) ).render( isA( ControllerMappingDescriptor.class ), same( request ) );
+    }
+
+    @Test
+    public void executeScriptFromSiteOverProject()
+        throws Exception
+    {
+        final Resource resource = mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+
+        final ResourceKey controller1 = ResourceKey.from( "demo:/services/test1" );
+        final ResourceKey controller2 = ResourceKey.from( "demo:/services/test2" );
+
+        when( this.resourceService.getResource( controller1 ) ).thenReturn( resource );
+        when( this.resourceService.getResource( controller2 ) ).thenReturn( resource );
+
+        final ControllerMappingDescriptor siteMapping =
+            ControllerMappingDescriptor.create().controller( controller1 ).pattern( ".*/content" ).build();
+
+        final ControllerMappingDescriptor projectMapping =
+            ControllerMappingDescriptor.create().controller( controller2 ).pattern( ".*/content" ).build();
+
+        final String contentPath = "/site/somesite/content";
+
+        setupContentAndSiteAndProject( projectMapping, siteMapping, contentPath );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( contentPath ) );
+
+        when( rendererDelegate.render( eq( siteMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Site body" ).build() );
+
+        when( rendererDelegate.render( eq( projectMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Project body" ).build() );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Site body", response.getBody() );
+
+        verify( rendererDelegate, Mockito.times( 1 ) ).render( isA( ControllerMappingDescriptor.class ), same( request ) );
+
     }
 
     @Test
@@ -239,15 +315,52 @@ public class MappingHandlerTest
         when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
     }
 
+    private void setupContentAndSiteAndProject( final ControllerMappingDescriptor projectMapping,
+                                                final ControllerMappingDescriptor siteMapping, final String contentPath )
+    {
+        final Content content = createPage( "id", contentPath, "app1:ctype", true );
+
+        final Project project = createProject( "my-project", ApplicationKeys.from( ApplicationKey.from( "project-app1" ),
+                                                                                   ApplicationKey.from( "project-app2" ) ) );
+
+        when( projectService.get( isA( ProjectName.class ) ) ).then( ( answer ) -> {
+            assertTrue( ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN ) );
+
+            return project;
+        } );
+
+        this.request.setRepositoryId( project.getName().getRepoId() );
+
+        final ContentPath path = ContentPath.from( contentPath ).asAbsolute();
+
+        when( this.contentService.getByPath( path ) ).thenReturn( content );
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        if ( siteMapping != null )
+        {
+            final Site site = createSite( "id", "mysite", "myapplication:contenttypename" );
+            when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
+
+            final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
+            final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
+            when( this.siteService.getDescriptor( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( siteDescriptor );
+        }
+
+        if ( projectMapping != null )
+        {
+            final ControllerMappingDescriptors projectMappings = ControllerMappingDescriptors.from( projectMapping );
+            final SiteDescriptor projectDescriptor = SiteDescriptor.create().mappingDescriptors( projectMappings ).build();
+            when( this.siteService.getDescriptor( eq( ApplicationKey.from( "project-app1" ) ) ) ).thenReturn( projectDescriptor );
+        }
+    }
+
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create()
-            .id( ContentId.from( id ) )
-            .path( ContentPath.from( path ) )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
+        final Content.Builder content =
+            Content.create().id( ContentId.from( id ) ).path( ContentPath.from( path ) ).owner( PrincipalKey.from( "user:myStore:me" ) )
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) );
@@ -283,5 +396,17 @@ public class MappingHandlerTest
             .type( ContentTypeName.from( contentTypeName ) )
             .page( page )
             .build();
+    }
+
+    private Project createProject( final String name, final ApplicationKeys applicationKeys )
+    {
+        final Project.Builder project = Project.create().name( ProjectName.from( name ) ).displayName( name ).description( name );
+
+        Optional.ofNullable( applicationKeys )
+            .ifPresent( s -> s.stream()
+                .map( applicationKey -> SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() )
+                .forEach( project::addSiteConfig ) );
+
+        return project.build();
     }
 }
