@@ -1,10 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -70,7 +73,7 @@ public class UnpublishContentCommand
 
     private ContentIds delete()
     {
-        final ContentIds.Builder contentBuilder = ContentIds.create();
+        final NodeBranchEntries.Builder contentBuilder = NodeBranchEntries.create();
 
         for ( final ContentId contentId : contentIds )
         {
@@ -80,10 +83,24 @@ public class UnpublishContentCommand
             if ( nodeBranchEntries.isNotEmpty() )
             {
                 publishContentListener.contentPushed( nodeBranchEntries.getSize() );
-                contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeBranchEntries.getKeys() ) );
+                contentBuilder.addAll( nodeBranchEntries );
             }
         }
-        return contentBuilder.build();
+
+        final NodeBranchEntries allDeleted = contentBuilder.build();
+        final List<Content> contents = allDeleted.stream()
+            .map( nodeBranchEntry -> translator.fromNode(
+                Node.create( nodeService.getByNodeVersionKey( nodeBranchEntry.getNodeVersionKey() ) )
+                    .nodeVersionId( nodeBranchEntry.getVersionId() )
+                    .timestamp( nodeBranchEntry.getTimestamp() )
+                    .parentPath( nodeBranchEntry.getNodePath().getParentPath() )
+                    .name( nodeBranchEntry.getNodePath().getName() )
+                    .build(), false ) )
+            .collect( Collectors.toList() );
+
+        contentEventProducer.putOffline( contents );
+
+        return ContentNodeHelper.toContentIds( allDeleted.getKeys() );
     }
 
     private void removePublishInfoAndCommit( final ContentIds contentIds )

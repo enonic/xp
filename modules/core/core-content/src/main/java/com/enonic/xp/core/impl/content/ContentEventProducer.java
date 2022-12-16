@@ -45,15 +45,24 @@ public class ContentEventProducer
         jobScheduler.shutdownNow();
     }
 
-    public void put( final List<Content> online, final List<Content> offline )
+    public void putOnlineOffline( final List<Content> online, final List<Content> offline )
     {
-        this.eventPublisher.publish( ContentEvents.offline( offline ) );
-        this.eventPublisher.publish( ContentEvents.online( online ) );
+        if ( !offline.isEmpty() )
+        {
+            this.eventPublisher.publish( ContentEvents.offline( offline ) );
+        }
+        if ( !online.isEmpty() )
+        {
+            this.eventPublisher.publish( ContentEvents.online( online ) );
+        }
     }
 
-    public void put( final List<Content> offline )
+    public void putOffline( final List<Content> offline )
     {
-        this.eventPublisher.publish( ContentEvents.offline( offline ) );
+        if ( !offline.isEmpty() )
+        {
+            this.eventPublisher.publish( ContentEvents.offline( offline ) );
+        }
     }
 
 }
