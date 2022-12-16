@@ -74,7 +74,7 @@ final class ReprocessContentCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute();
         final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
@@ -87,7 +87,7 @@ final class ReprocessContentCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .mediaInfoService( mediaInfoService )
             .siteService( this.siteService )
             .contentTypeService( this.contentTypeService )

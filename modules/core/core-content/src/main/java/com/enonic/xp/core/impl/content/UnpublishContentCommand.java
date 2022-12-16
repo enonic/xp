@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -8,6 +9,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
@@ -15,10 +17,11 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -27,13 +30,17 @@ import com.enonic.xp.node.UpdateNodeParams;
 public class UnpublishContentCommand
     extends AbstractContentCommand
 {
-    private final UnpublishContentParams params;
+    private final ContentIds contentIds;
+
+    private final PushContentListener publishContentListener;
 
     private UnpublishContentCommand( final Builder builder )
     {
         super( builder );
 
-        this.params = builder.params;
+        this.contentIds = builder.params.getContentIds();
+        this.publishContentListener =
+            Objects.requireNonNullElseGet( builder.params.getPublishContentListener(), EmptyPushContentListener::new );
     }
 
     public static Builder create()
@@ -65,17 +72,15 @@ public class UnpublishContentCommand
     {
         final ContentIds.Builder contentBuilder = ContentIds.create();
 
-        for ( final ContentId contentId : this.params.getContentIds() )
+        for ( final ContentId contentId : contentIds )
         {
-            final NodeIds nodeIds = this.nodeService.deleteById( NodeId.from( contentId ) );
+            final NodeBranchEntries nodeBranchEntries =
+                this.nodeService.delete( DeleteNodeParams.create().nodeId( NodeId.from( contentId ) ).build() ).getNodeBranchEntries();
 
-            if ( nodeIds.isNotEmpty() )
+            if ( nodeBranchEntries.isNotEmpty() )
             {
-                if ( params.getPublishContentListener() != null )
-                {
-                    params.getPublishContentListener().contentPushed( nodeIds.getSize() );
-                }
-                contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeIds ) );
+                publishContentListener.contentPushed( nodeBranchEntries.getSize() );
+                contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeBranchEntries.getKeys() ) );
             }
         }
         return contentBuilder.build();
@@ -134,5 +139,20 @@ public class UnpublishContentCommand
         }
     }
 
+    private static class EmptyPushContentListener
+        implements PushContentListener
+    {
+        @Override
+        public void contentPushed( final int count )
+        {
+
+        }
+
+        @Override
+        public void contentResolved( final int count )
+        {
+
+        }
+    }
 }
 

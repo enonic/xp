@@ -106,7 +106,7 @@ final class UpdateMediaCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .mediaInfo( mediaInfo )
             .contentTypeService( this.contentTypeService )
             .siteService( this.siteService )

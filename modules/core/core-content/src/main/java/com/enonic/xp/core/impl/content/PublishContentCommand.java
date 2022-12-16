@@ -49,8 +49,6 @@ public class PublishContentCommand
 
     private final PushContentListener publishContentListener;
 
-    private final ContentEventProducer contentEventProducer;
-
     private final String message;
 
     private PublishContentCommand( final Builder builder )
@@ -64,7 +62,6 @@ public class PublishContentCommand
         this.resultBuilder = PublishContentResult.create();
         this.publishContentListener = builder.publishContentListener;
         this.message = builder.message;
-        this.contentEventProducer = builder.contentEventProducer;
     }
 
     public static Builder create()
@@ -115,7 +112,7 @@ public class PublishContentCommand
                                           .excludeChildrenIds( this.excludeChildrenIds )
                                           .includeDependencies( this.includeDependencies )
                                           .contentTypeService( this.contentTypeService )
-                                          .eventPublisher( this.eventPublisher )
+                                          .contentEventProducer( contentEventProducer )
                                           .translator( this.translator )
                                           .nodeService( this.nodeService )
                                           .build()::execute );
@@ -126,7 +123,7 @@ public class PublishContentCommand
         final ContentValidityResult result = CheckContentValidityCommand.create()
             .translator( this.translator )
             .nodeService( this.nodeService )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .contentTypeService( this.contentTypeService )
             .contentIds( pushContentsIds )
             .build()
@@ -276,8 +273,6 @@ public class PublishContentCommand
 
         private String message;
 
-        private ContentEventProducer contentEventProducer;
-
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -328,12 +323,6 @@ public class PublishContentCommand
         public Builder message( final String message )
         {
             this.message = message;
-            return this;
-        }
-
-        public Builder contentPublisher( final ContentEventProducer contentEventProducer )
-        {
-            this.contentEventProducer = contentEventProducer;
             return this;
         }
 

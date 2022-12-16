@@ -65,12 +65,12 @@ public class FindContentIdsByQueryCommandTest
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn( nodesByQueryResult );
 
-        FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create().
-            translator( translator ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            query( ContentQuery.create().
+        FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
+            .translator( translator )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .query( ContentQuery.create().
                 queryExpr( QueryExpr.from( null, new DynamicOrderExpr(
                     FunctionExpr.from( "geoDistance", ValueExpr.string( "my-value" ), ValueExpr.geoPoint( "83,80" ),
                                        ValueExpr.string( "km" ) ), OrderExpr.Direction.ASC ) ) ).

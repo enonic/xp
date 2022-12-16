@@ -109,13 +109,13 @@ public class GetContentByPathAndVersionIdCommandTest
 
     private GetContentByPathAndVersionIdCommand createInstance()
     {
-        return GetContentByPathAndVersionIdCommand.create().
-            contentPath( contentPath ).
-            versionId( versionId ).
-            nodeService( nodeService ).
-            translator( translator ).
-            eventPublisher( eventPublisher ).
-            contentTypeService( contentTypeService ).
+        return GetContentByPathAndVersionIdCommand.create()
+            .contentPath( contentPath )
+            .versionId( versionId )
+            .nodeService( nodeService )
+            .translator( translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentTypeService( contentTypeService ).
             build();
     }
 }

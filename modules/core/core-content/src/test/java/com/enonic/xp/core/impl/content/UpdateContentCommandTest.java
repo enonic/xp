@@ -60,12 +60,12 @@ public class UpdateContentCommandTest
             editor( edit -> {
             } );
 
-        UpdateContentCommand command = UpdateContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfo( this.mediaInfo ).
+        UpdateContentCommand command = UpdateContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .mediaInfo( this.mediaInfo ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
             build();
@@ -92,12 +92,12 @@ public class UpdateContentCommandTest
             editor( edit -> {
             } );
 
-        UpdateContentCommand command = UpdateContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfo( this.mediaInfo ).
+        UpdateContentCommand command = UpdateContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .mediaInfo( this.mediaInfo ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
             build();

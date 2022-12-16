@@ -109,7 +109,6 @@ final class RenameContentCommand
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
             .contentId( content.getId() )
-            .modifier( content.getModifier() )
             .stopInherit( false )
             .editor( edit -> edit.valid = !content.isValid() );
 
@@ -117,7 +116,7 @@ final class RenameContentCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .siteService( siteService )
             .contentTypeService( contentTypeService )
             .xDataService( this.xDataService )

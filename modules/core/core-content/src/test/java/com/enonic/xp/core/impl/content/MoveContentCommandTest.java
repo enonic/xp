@@ -50,12 +50,12 @@ public class MoveContentCommandTest
             parentContentPath( ContentPath.ROOT ).
             build();
 
-        MoveContentCommand command = MoveContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        MoveContentCommand command = MoveContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
@@ -79,12 +79,12 @@ public class MoveContentCommandTest
             parentContentPath( existingFolder.getPath() ).
             build();
 
-        final MoveContentCommand command = MoveContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        final MoveContentCommand command = MoveContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .build();
 
         final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
 
@@ -128,12 +128,12 @@ public class MoveContentCommandTest
             parentContentPath( ContentPath.ROOT ).
             build();
 
-        final MoveContentCommand command = MoveContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        final MoveContentCommand command = MoveContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .build();
 
         final Node mockNode = Node.create().name( existingContent.getName().toString() ).parentPath(
             ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();

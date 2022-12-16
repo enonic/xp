@@ -226,12 +226,12 @@ public class ContentServiceImpl
             requireValid( params.isRequireValid() ).
             build();
 
-        final Site site = (Site) CreateContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
+        final Site site = (Site) CreateContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( this.contentEventProducer )
+            .siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             contentValidators( this.contentValidators ).
@@ -266,12 +266,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = CreateContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
+        final Content content = CreateContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( this.contentEventProducer )
+            .siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             contentValidators( this.contentValidators ).
@@ -311,13 +311,13 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = CreateMediaCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
+        final Content content = CreateMediaCommand.create()
+            .params( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .mediaInfoService( this.mediaInfoService ).
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
@@ -341,12 +341,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = UpdateContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
+        final Content content = UpdateContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             contentValidators( this.contentValidators ).
@@ -368,12 +368,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = UpdateMediaCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
+        final Content content = UpdateMediaCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .mediaInfoService( this.mediaInfoService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -396,12 +396,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final DeleteContentsResult result = DeleteContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            params( params ).
+        final DeleteContentsResult result = DeleteContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .params( params ).
             build().
             execute();
 
@@ -422,13 +422,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final PublishContentResult result = PublishContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentPublisher( contentEventProducer ).
-            contentIds( params.getContentIds() ).
+        final PublishContentResult result = PublishContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             contentPublishInfo( params.getContentPublishInfo() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
@@ -446,12 +445,12 @@ public class ContentServiceImpl
     @Override
     public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
-        return ResolveContentsToBePublishedCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
+        return ResolveContentsToBePublishedCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
             build().
@@ -461,12 +460,12 @@ public class ContentServiceImpl
     @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
-        return ResolveRequiredDependenciesCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
+        return ResolveRequiredDependenciesCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentIds( params.getContentIds() ).
             build().
             execute();
     }
@@ -488,11 +487,11 @@ public class ContentServiceImpl
     @Override
     public ContentValidityResult getContentValidity( final ContentValidityParams params )
     {
-        return CheckContentValidityCommand.create().
-            translator( this.translator ).
-            nodeService( this.nodeService ).
-            eventPublisher( this.eventPublisher ).
-            contentTypeService( this.contentTypeService ).
+        return CheckContentValidityCommand.create()
+            .translator( this.translator )
+            .nodeService( this.nodeService )
+            .contentEventProducer( contentEventProducer )
+            .contentTypeService( this.contentTypeService ).
             contentIds( params.getContentIds() ).
             build().
             execute();
@@ -501,13 +500,13 @@ public class ContentServiceImpl
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
-        final UnpublishContentsResult result = UnpublishContentCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        final UnpublishContentsResult result = UnpublishContentCommand.create()
+            .params( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
 
         contentAuditLogSupport.unpublishContent( params, result );
@@ -548,7 +547,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute();
     }
@@ -561,7 +560,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.getNearestSite" );
@@ -638,7 +637,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.getByIds" );
@@ -686,7 +685,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute();
     }
@@ -709,7 +708,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.getByPaths" );
@@ -731,7 +730,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.findByParent" );
@@ -753,12 +752,12 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
-        return FindContentIdsByParentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return FindContentIdsByParentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
@@ -767,12 +766,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            duplicateListener( params.getDuplicateContentListener() ).
+        final DuplicateContentsResult result = DuplicateContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .duplicateListener( params.getDuplicateContentListener() ).
             build().
             execute();
 
@@ -786,12 +785,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final MoveContentsResult result = MoveContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            moveListener( params.getMoveContentListener() ).
+        final MoveContentsResult result = MoveContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .moveListener( params.getMoveContentListener() ).
             build().
             execute();
 
@@ -808,7 +807,7 @@ public class ContentServiceImpl
         final ArchiveContentsResult result = ArchiveContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
-            .eventPublisher( eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .contentTypeService( contentTypeService )
             .archiveListener( params.getArchiveContentListener() )
             .build()
@@ -827,7 +826,7 @@ public class ContentServiceImpl
         final RestoreContentsResult result = RestoreContentCommand.create( params )
             .nodeService( nodeService )
             .translator( translator )
-            .eventPublisher( eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .contentTypeService( contentTypeService )
             .restoreListener( params.getRestoreContentListener() )
             .build()
@@ -843,14 +842,14 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = RenameContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentProcessors( this.contentProcessors ).
+        final Content content = RenameContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentProcessors( this.contentProcessors ).
             contentValidators( this.contentValidators ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
@@ -868,13 +867,13 @@ public class ContentServiceImpl
     @Deprecated
     public FindContentByQueryResult find( final FindContentByQueryParams params )
     {
-        return FindContentByQueryCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return FindContentByQueryCommand.create()
+            .params( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
@@ -886,7 +885,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.find" );
@@ -923,13 +922,13 @@ public class ContentServiceImpl
     @Deprecated
     public ContentPaths findContentPaths( ContentQuery query )
     {
-        return FindContentPathsByQueryCommand.create().
-            params( new FindContentPathsByQueryParams( query ) ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return FindContentPathsByQueryCommand.create()
+            .params( new FindContentPathsByQueryParams( query ) )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute().
             getContentPaths();
     }
@@ -937,13 +936,13 @@ public class ContentServiceImpl
     @Override
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
-        return FindContentPathsByQueryCommand.create().
-            params( new FindContentPathsByQueryParams( query ) ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return FindContentPathsByQueryCommand.create()
+            .params( new FindContentPathsByQueryParams( query ) )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
@@ -1011,12 +1010,12 @@ public class ContentServiceImpl
     @Override
     public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
-        return FindContentVersionsCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentId( params.getContentId() ).
+        return FindContentVersionsCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentId( params.getContentId() ).
             from( params.getFrom() ).
             size( params.getSize() ).
             build().
@@ -1026,12 +1025,12 @@ public class ContentServiceImpl
     @Override
     public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
     {
-        return GetActiveContentVersionsCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentId( params.getContentId() ).
+        return GetActiveContentVersionsCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .contentId( params.getContentId() ).
             branches( params.getBranches() ).
             build().
             execute();
@@ -1127,12 +1126,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
 
         contentAuditLogSupport.applyPermissions( params, result );
@@ -1164,60 +1163,60 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        return ContentExistsCommand.create( contentId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return ContentExistsCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        return ContentExistsCommand.create( contentPath ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return ContentExistsCommand.create( contentPath )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return GetBinaryCommand.create( contentId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return GetBinaryCommand.create( contentId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final ContentVersionId contentVersionId, final BinaryReference binaryReference )
     {
-        return GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return GetBinaryKeyCommand.create( contentId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
+        return GetBinaryKeyCommand.create( contentId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build().
             execute();
     }
 
@@ -1226,12 +1225,12 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
+        final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .mediaInfoService( this.mediaInfoService ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -1257,7 +1256,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.getByIdAndVersionId" );
@@ -1284,7 +1283,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build();
 
         final Trace trace = Tracer.newTrace( "content.getByPathAndVersionId" );
@@ -1307,13 +1306,13 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        return ImportContentCommand.create().
-            params( params ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            contentDataSerializer( contentDataSerializer ).
-            eventPublisher( eventPublisher ).
-            translator( translator ).
+        return ImportContentCommand.create()
+            .params( params )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .contentDataSerializer( contentDataSerializer )
+            .contentEventProducer( contentEventProducer )
+            .translator( translator ).
             build().
             execute();
     }

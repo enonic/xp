@@ -111,7 +111,7 @@ final class CreateMediaCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .siteService( this.siteService )
             .xDataService( this.xDataService )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )

@@ -27,7 +27,7 @@ final class GetNearestSiteCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute();
 
@@ -59,7 +59,7 @@ final class GetNearestSiteCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute();
 

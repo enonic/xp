@@ -198,7 +198,7 @@ class RenameContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
