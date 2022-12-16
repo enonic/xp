@@ -30,6 +30,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 public class PushNodesCommand
@@ -61,14 +62,16 @@ public class PushNodesCommand
 
         refresh( RefreshMode.ALL );
 
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( ids, InternalContext.from( context ) );
+        final InternalContext internalContext = InternalContext.from( context );
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( ids, internalContext );
 
         final NodeComparisons comparisons = getNodeComparisons( ids );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
-        final List<NodeBranchEntry> list =
-            nodeBranchEntries.getSet().stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
+        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
+            .stream()
+            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
             .collect( Collectors.toList() );
 
         final Set<NodePath> alreadyAdded = new HashSet<>();
@@ -76,51 +79,46 @@ public class PushNodesCommand
         {
             final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
 
-            final NodeBranchEntry nodeBranchEntry = nodeBranchEntries.get( comparison.getNodeId() );
+            final AccessControlList nodePermissions =
+                this.nodeStorageService.getNodeVersion( branchEntry.getNodeVersionKey(), internalContext ).getPermissions();
 
-            final boolean hasPublishPermission = NodesHasPermissionResolver.create( this ).
-                nodeIds( NodeIds.from( nodeBranchEntry.getNodeId() ) ).
-                permission( Permission.PUBLISH ).
-                build().
-                execute();
-
-            if ( !hasPublishPermission )
+            if ( !NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.PUBLISH, nodePermissions ) )
             {
-                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ACCESS_DENIED );
+                builder.addFailed( branchEntry, PushNodesResult.Reason.ACCESS_DENIED );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
             if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
             {
-                builder.addSuccess( nodeBranchEntry, comparison.getTargetPath() );
-                alreadyAdded.add( nodeBranchEntry.getNodePath() );
+                builder.addSuccess( branchEntry, comparison.getTargetPath() );
+                alreadyAdded.add( branchEntry.getNodePath() );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
             if ( ( CompareStatus.NEW == comparison.getCompareStatus() || CompareStatus.MOVED == comparison.getCompareStatus() ) &&
-                targetAlreadyExists( nodeBranchEntry.getNodePath(), comparisons, context ) )
+                targetAlreadyExists( branchEntry.getNodePath(), comparisons, context ) )
             {
-                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.ALREADY_EXIST );
+                builder.addFailed( branchEntry, PushNodesResult.Reason.ALREADY_EXIST );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
-            if ( !alreadyAdded.contains( nodeBranchEntry.getNodePath().getParentPath() ) &&
-                !targetParentExists( nodeBranchEntry.getNodePath(), context ) )
+            if ( !alreadyAdded.contains( branchEntry.getNodePath().getParentPath() ) &&
+                !targetParentExists( branchEntry.getNodePath(), context ) )
             {
-                builder.addFailed( nodeBranchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
+                builder.addFailed( branchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
-            builder.addSuccess( nodeBranchEntry, comparison.getTargetPath() );
-            alreadyAdded.add( nodeBranchEntry.getNodePath() );
+            builder.addSuccess( branchEntry, comparison.getTargetPath() );
+            alreadyAdded.add( branchEntry.getNodePath() );
 
             if ( comparison.getCompareStatus() == CompareStatus.MOVED )
             {
-                updateTargetChildrenMetaData( nodeBranchEntry, builder, alreadyAdded );
+                updateTargetChildrenMetaData( branchEntry, builder, alreadyAdded );
             }
         }
 

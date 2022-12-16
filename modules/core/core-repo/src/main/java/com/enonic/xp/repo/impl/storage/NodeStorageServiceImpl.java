@@ -15,7 +15,6 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
@@ -40,12 +39,11 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.commit.CommitService;
+import com.enonic.xp.repo.impl.node.NodePermissionsResolver;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public class NodeStorageServiceImpl
@@ -435,14 +433,7 @@ public class NodeStorageServiceImpl
 
     private boolean canRead( final AccessControlList permissions )
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( authInfo.getPrincipals().contains( RoleKeys.ADMIN ) )
-        {
-            return true;
-        }
-
-        return permissions.isAllowedFor( authInfo.getPrincipals(), Permission.READ );
+        return NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.READ, permissions );
     }
 
     @Reference

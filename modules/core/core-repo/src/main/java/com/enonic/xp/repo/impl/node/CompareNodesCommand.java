@@ -7,6 +7,7 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -44,14 +45,16 @@ public class CompareNodesCommand
 
         for ( final NodeId id : Sets.union( sourceVersions.getKeys(), targetVersions.getKeys() ) )
         {
-            final CompareStatus compareStatus = CompareStatusResolver.create().
-                source( sourceVersions.get( id ) ).
-                target( targetVersions.get( id ) ).
-                storageService( this.nodeStorageService ).
-                build().
-                resolve();
+            final NodeBranchEntry sourceVersion = sourceVersions.get( id );
+            final NodeBranchEntry targetVersion = targetVersions.get( id );
+            final CompareStatus compareStatus = CompareStatusResolver.create()
+                .source( sourceVersion )
+                .target( targetVersion )
+                .storageService( this.nodeStorageService )
+                .build()
+                .resolve();
 
-            builder.add( new NodeComparison( sourceVersions.get( id ), targetVersions.get( id ), compareStatus ) );
+            builder.add( new NodeComparison( sourceVersion, targetVersion, compareStatus ) );
         }
 
         return builder.build();

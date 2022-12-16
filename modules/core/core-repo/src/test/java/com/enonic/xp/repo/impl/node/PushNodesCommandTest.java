@@ -45,13 +45,13 @@ public class PushNodesCommandTest
 
         Node testWsNode = ctxOther().callWith( () -> getNodeById( node.id() ) );
 
-        assertTrue( testWsNode == null );
+        assertNull( testWsNode );
 
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         testWsNode = ctxOther().callWith( () -> getNodeById( node.id() ) );
 
-        assertTrue( testWsNode != null );
+        assertNotNull( testWsNode );
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PushNodesCommandTest
 
         final Node prodNode = ctxOther().callWith( () -> getNodeById( child.id() ) );
 
-        assertTrue( prodNode != null );
+        assertNotNull( prodNode );
     }
 
     @Test
@@ -473,7 +473,7 @@ public class PushNodesCommandTest
 
         final Node prodNode = ctxOther().callWith( () -> getNodeById( child.id() ) );
 
-        assertTrue( prodNode != null );
+        assertNotNull( prodNode );
     }
 
     private void renameNode( final Node node, final String newName )
