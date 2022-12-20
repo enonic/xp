@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.audit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
@@ -18,12 +17,17 @@ import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
@@ -143,8 +147,15 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpOneEmpty()
     {
-        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
-            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
+                                              .nodePath( NodePath.ROOT )
+                                              .build() )
+                                    .build() )
+            .build() );
+
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).
@@ -165,8 +176,15 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpOneBatch()
     {
-        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
-            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
+                                              .nodePath( NodePath.ROOT )
+                                              .build() )
+                                    .build() )
+            .build() );
+
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
         final FindNodesByQueryResult.Builder queryResult = FindNodesByQueryResult.create().
@@ -194,8 +212,15 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpMultipleBatch()
     {
-        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
-            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
+                                              .nodePath( NodePath.ROOT )
+                                              .build() )
+                                    .build() )
+            .build() );
+
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
         final FindNodesByQueryResult.Builder queryResult1 = FindNodesByQueryResult.create().
