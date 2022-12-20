@@ -468,3 +468,122 @@ export interface BooleanFilter {
 }
 
 export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter | BooleanFilter;
+
+//
+// FORM ITEMS
+//
+export type InputType =
+    | 'Time'
+    | 'DateTime'
+    | 'CheckBox'
+    | 'ComboBox'
+    | 'Long'
+    | 'Double'
+    | 'RadioButton'
+    | 'TextArea'
+    | 'ContentTypeFilter'
+    | 'GeoPoint'
+    | 'TextLine'
+    | 'Tag'
+    | 'CustomSelector'
+    | 'AttachmentUploader'
+    | 'ContentSelector'
+    | 'MediaSelector'
+    | 'ImageSelector'
+    | 'Date'
+    | 'MediaUploader'
+    | 'SiteConfigurator'
+    | 'HtmlArea';
+
+export interface FormItemSet {
+    formItemType: 'ItemSet';
+    name: string;
+    label: string;
+    customText: string;
+    helpText: string;
+    maximize: boolean;
+    inputType: InputType;
+    occurrences: {
+        maximum: number;
+        minimum: number;
+    };
+    items: FormItem[];
+}
+
+export interface FormItemLayout {
+    formItemType: 'Layout';
+    name: string;
+    label: string;
+    items: FormItem[];
+}
+
+export type ValueType =
+    | 'BinaryReference'
+    | 'Boolean'
+    | 'DateTime'
+    | 'Double'
+    | 'GeoPoint'
+    | 'Link'
+    | 'LocalDateTime'
+    | 'LocalDate'
+    | 'LocalTime'
+    | 'Long'
+    | 'PropertySet'
+    | 'Reference'
+    | 'String'
+    | 'Xml';
+
+export interface FormItemInput {
+    formItemType: 'Input';
+    name: string;
+    label: string;
+    customText: string;
+    helpText: string;
+    validationRegexp: string;
+    maximize: boolean;
+    inputType: InputType;
+    occurrences: {
+        maximum: number;
+        minimum: number;
+    };
+    default: {
+        value: string;
+        type: ValueType;
+    }
+    config: {
+        [configName: string]: {
+            [attributeKey: string]: string;
+            value: string;
+        }[]
+    }
+}
+
+export interface FormItemOptionSet {
+    formItemType: 'OptionSet';
+    name: string;
+    label: string;
+    expanded: boolean;
+    helpText: string;
+    occurrences: {
+        maximum: number;
+        minimum: number;
+    };
+    selection: {
+        maximum: number;
+        minimum: number;
+    };
+    options: {
+        name: string;
+        label: string;
+        helpText: string;
+        default: boolean;
+        items: FormItem[]
+    }[];
+}
+
+export interface FormItemInlineMixin {
+    formItemType: 'InlineMixin';
+    name: string;
+}
+
+export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemInlineMixin;

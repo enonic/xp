@@ -143,8 +143,6 @@ export interface NodeMultiRepoQueryResult {
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
-// END AGGREGATIONS, FILTERS, QUERIES, SUGGESTIONS
-
 interface NodeHandleFactory {
     create(context: NodeHandleContext): NodeHandler;
 }
