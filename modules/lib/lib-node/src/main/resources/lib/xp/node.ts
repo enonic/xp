@@ -13,10 +13,7 @@ declare global {
     }
 }
 
-import type {
-    ByteSource,
-    PrincipalKey,
-} from '@enonic-types/core';
+import type {ByteSource, PrincipalKey, QueryDsl, SortDsl} from '@enonic-types/core';
 
 export type {
     ByteSource,
@@ -24,6 +21,19 @@ export type {
     PrincipalKey,
     RoleKey,
     UserKey,
+    QueryDsl,
+    SortDsl,
+    InDslExpression,
+    ExistsDslExpression,
+    FulltextDslExpression,
+    LikeDslExpression,
+    StemmedDslExpression,
+    TermDslExpression,
+    RangeDslExpression,
+    NgramDslExpression,
+    BooleanDslExpression,
+    MatchAllDslExpression,
+    PathMatchDslExpression,
   } from '@enonic-types/core';
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
@@ -262,154 +272,6 @@ export interface TermSuggestionOptions {
     minDocFreq?: number | null;
     maxTermFreq?: number | null;
 }
-
-export type DslQueryType = 'dateTime' | 'time';
-
-export type DslOperator = 'OR' | 'AND';
-
-export interface TermDslExpression {
-    field: string;
-    value: unknown;
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface InDslExpression {
-    field: string;
-    values: unknown[];
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface LikeDslExpression {
-    field: string;
-    value: string;
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface RangeDslExpression {
-    field: string;
-    type?: DslQueryType;
-    lt?: unknown;
-    lte?: unknown;
-    gt?: unknown;
-    gte?: unknown;
-    boost?: number;
-}
-
-export interface PathMatchDslExpression {
-    field: string;
-    path: string;
-    minimumMatch?: number;
-    boost?: number;
-}
-
-export interface MatchAllDslExpression {
-    boost?: number;
-}
-
-export interface FulltextDslExpression {
-    fields: string[];
-    query: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface NgramDslExpression {
-    fields: string[];
-    query: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface StemmedDslExpression {
-    fields: string[];
-    query: string;
-    language: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface ExistsDslExpression {
-    field: string;
-    boost?: number;
-}
-
-export interface BooleanDslExpression {
-    should?: QueryDsl | QueryDsl[];
-    must?: QueryDsl | QueryDsl[];
-    mustNot?: QueryDsl | QueryDsl[];
-    filter?: QueryDsl | QueryDsl[];
-    boost?: number;
-}
-
-export type QueryDsl = {
-    boolean: BooleanDslExpression;
-} | {
-    ngram: NgramDslExpression;
-} | {
-    stemmed: StemmedDslExpression;
-} | {
-    fulltext: FulltextDslExpression;
-} | {
-    matchAll: MatchAllDslExpression;
-} | {
-    pathMatch: PathMatchDslExpression;
-} | {
-    range: RangeDslExpression;
-} | {
-    like: LikeDslExpression;
-} | {
-    in: InDslExpression;
-} | {
-    term: TermDslExpression;
-} | {
-    exists: ExistsDslExpression;
-};
-
-export type SortDirection = 'ASC' | 'DESC';
-
-export type DistanceUnit =
-    | 'm'
-    | 'meters'
-    | 'in'
-    | 'inch'
-    | 'yd'
-    | 'yards'
-    | 'ft'
-    | 'feet'
-    | 'km'
-    | 'kilometers'
-    | 'NM'
-    | 'nmi'
-    | 'nauticalmiles'
-    | 'mm'
-    | 'millimeters'
-    | 'cm'
-    | 'centimeters'
-    | 'mi'
-    | 'miles';
-
-export interface FieldSortDsl {
-    field: string;
-
-    direction?: SortDirection;
-}
-
-export interface GeoDistanceSortDsl
-    extends FieldSortDsl {
-
-    unit?: DistanceUnit;
-
-    location?: {
-        lat: number;
-
-        lon: number;
-    }
-}
-
-export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 
 export interface Explanation {
     value: number;
