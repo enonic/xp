@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
@@ -70,7 +69,7 @@ class VersionTableVacuumTaskTest
     void version_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
-        pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
+        pushNodes( WS_OTHER, node1.id() );
 
         this.nodeService.deleteById( node1.id() );
         ctxOther().runWith( () -> this.nodeService.deleteById( node1.id() ) );
@@ -93,7 +92,7 @@ class VersionTableVacuumTaskTest
     void version_not_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
-        pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
+        pushNodes( WS_OTHER, node1.id() );
         refresh();
 
         this.nodeService.deleteById( node1.id() );

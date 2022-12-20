@@ -557,6 +557,8 @@ public class NodeServiceImpl
             build().
             execute();
 
+        refresh( RefreshMode.ALL );
+
         if ( deletedNodes.isNotEmpty() )
         {
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );

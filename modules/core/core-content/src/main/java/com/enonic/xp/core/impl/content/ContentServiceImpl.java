@@ -102,7 +102,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
@@ -150,8 +149,6 @@ public class ContentServiceImpl
     private ContentTypeService contentTypeService;
 
     private final NodeService nodeService;
-
-    private EventPublisher eventPublisher;
 
     private ContentEventProducer contentEventProducer;
 
@@ -1348,9 +1345,9 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
+    public void setContentEventProducer( final ContentEventProducer contentEventProducer )
     {
-        this.eventPublisher = eventPublisher;
+        this.contentEventProducer = contentEventProducer;
     }
 
     @Reference

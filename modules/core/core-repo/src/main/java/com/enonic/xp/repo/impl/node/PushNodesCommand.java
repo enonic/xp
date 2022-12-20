@@ -14,24 +14,29 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
@@ -58,14 +63,38 @@ public class PushNodesCommand
 
     public PushNodesResult execute()
     {
-        final Context context = ContextAccessor.current();
-
         refresh( RefreshMode.ALL );
 
-        final InternalContext internalContext = InternalContext.from( context );
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( ids, internalContext );
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+
+        final Context context = ContextAccessor.current();
+
+        NodeIds.Builder allIdsBuilder = NodeIds.create().addAll( ids );
 
         final NodeComparisons comparisons = getNodeComparisons( ids );
+
+        for ( NodeComparison comparison : comparisons )
+        {
+            if ( comparison.getCompareStatus() == CompareStatus.MOVED )
+            {
+                final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
+                                                                                            .query( QueryExpr.from( CompareExpr.like(
+                                                                                                FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                                ValueExpr.string(
+                                                                                                    comparison.getTargetPath() +
+                                                                                                        "/*" ) ) ) )
+                                                                                            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                                            .build(),
+                                                                                        SingleRepoSearchSource.from( targetContext() ) )
+                                                              .getIds() );
+                allIdsBuilder.addAll( childrenIds );
+            }
+        }
+
+        final NodeIds allIds = allIdsBuilder.build();
+        final NodeComparisons allComparisons = getNodeComparisons( allIds );
+
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( allIds, internalContext );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
@@ -77,7 +106,7 @@ public class PushNodesCommand
         final Set<NodePath> alreadyAdded = new HashSet<>();
         for ( final NodeBranchEntry branchEntry : list )
         {
-            final NodeComparison comparison = comparisons.get( branchEntry.getNodeId() );
+            final NodeComparison comparison = allComparisons.get( branchEntry.getNodeId() );
 
             final AccessControlList nodePermissions =
                 this.nodeStorageService.getNodeVersion( branchEntry.getNodeVersionKey(), internalContext ).getPermissions();
@@ -89,7 +118,9 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( comparison.getCompareStatus() == CompareStatus.EQUAL )
+            final CompareStatus compareStatus = comparison.getCompareStatus();
+
+            if ( compareStatus == CompareStatus.EQUAL )
             {
                 builder.addSuccess( branchEntry, comparison.getTargetPath() );
                 alreadyAdded.add( branchEntry.getNodePath() );
@@ -97,16 +128,15 @@ public class PushNodesCommand
                 continue;
             }
 
-            if ( ( CompareStatus.NEW == comparison.getCompareStatus() || CompareStatus.MOVED == comparison.getCompareStatus() ) &&
-                targetAlreadyExists( branchEntry.getNodePath(), comparisons, context ) )
+            if ( ( CompareStatus.NEW == compareStatus || CompareStatus.MOVED == compareStatus ) &&
+                targetAlreadyExists( branchEntry.getNodePath(), comparisons ) )
             {
                 builder.addFailed( branchEntry, PushNodesResult.Reason.ALREADY_EXIST );
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
-            if ( !alreadyAdded.contains( branchEntry.getNodePath().getParentPath() ) &&
-                !targetParentExists( branchEntry.getNodePath(), context ) )
+            if ( !alreadyAdded.contains( branchEntry.getNodePath().getParentPath() ) && !targetParentExists( branchEntry.getNodePath() ) )
             {
                 builder.addFailed( branchEntry, PushNodesResult.Reason.PARENT_NOT_FOUND );
                 pushListener.nodesPushed( 1 );
@@ -115,17 +145,11 @@ public class PushNodesCommand
 
             builder.addSuccess( branchEntry, comparison.getTargetPath() );
             alreadyAdded.add( branchEntry.getNodePath() );
-
-            if ( comparison.getCompareStatus() == CompareStatus.MOVED )
-            {
-                updateTargetChildrenMetaData( branchEntry, builder, alreadyAdded );
-            }
         }
 
         final PushNodesResult result = builder.build();
 
-        final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
-        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, pushContext );
+        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, InternalContext.create( context ).build() );
 
         refresh( RefreshMode.ALL );
 
@@ -134,60 +158,19 @@ public class PushNodesCommand
 
     private NodeComparisons getNodeComparisons( final NodeIds nodeIds )
     {
-        return CompareNodesCommand.create().
-            nodeIds( nodeIds ).
-            storageService( this.nodeStorageService ).
-            target( this.target ).
-            build().
-            execute();
+        return CompareNodesCommand.create()
+            .nodeIds( nodeIds )
+            .storageService( this.nodeStorageService )
+            .target( this.target )
+            .build()
+            .execute();
     }
 
-    private void updateTargetChildrenMetaData( final NodeBranchEntry nodeBranchEntry, final PushNodesResult.Builder resultBuilder,
-                                               final Set<NodePath> alreadyAdded )
-    {
-        final Context context = ContextAccessor.current();
-
-        final Context targetContext = ContextBuilder.create().
-            authInfo( context.getAuthInfo() ).
-            branch( this.target ).
-            repositoryId( context.getRepositoryId() ).
-            build();
-
-        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
-            NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( nodeBranchEntry.getNodePath() ).build(),
-            SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
-
-        final NodeBranchEntries childEntries =
-            this.nodeStorageService.getBranchNodeVersions( childrenIds, InternalContext.from( ContextAccessor.current() ) );
-
-        for ( final NodeBranchEntry child : childEntries )
-        {
-            final NodeBranchEntry targetNodeEntry =
-                this.nodeStorageService.getBranchNodeVersion( child.getNodeId(), InternalContext.from( targetContext ) );
-
-            if ( targetNodeEntry != null )
-            {
-                final Node childNode = doGetById( child.getNodeId() );
-
-                this.nodeStorageService.move( StoreMovedNodeParams.create().overrideVersion().node( childNode ).build(),
-                                              InternalContext.from( targetContext ) );
-
-                resultBuilder.addSuccess( child, targetNodeEntry.getNodePath() );
-                alreadyAdded.add( child.getNodePath() );
-
-                updateTargetChildrenMetaData( child, resultBuilder, alreadyAdded );
-            }
-        }
-    }
-
-    private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons, final Context currentContext )
+    private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons )
     {
         //Checks if a node exist
-        final Context targetContext = createTargetContext( currentContext );
-        final NodeId nodeId = targetContext.callWith( () -> GetNodeIdByPathCommand.create( this ).
-            nodePath( nodePath ).
-            build().
-            execute() );
+        final NodeId nodeId =
+            targetContext().callWith( () -> GetNodeIdByPathCommand.create( this ).nodePath( nodePath ).build().execute() );
 
         //If the node does not exist, returns false
         if ( nodeId == null )
@@ -200,30 +183,23 @@ public class PushNodesCommand
         return nodeComparison == null || CompareStatus.MOVED != nodeComparison.getCompareStatus();
     }
 
-    private boolean targetParentExists( final NodePath nodePath, final Context currentContext )
+    private boolean targetParentExists( final NodePath nodePath )
     {
         if ( nodePath.isRoot() || nodePath.getParentPath().equals( NodePath.ROOT ) )
         {
             return true;
         }
 
-        final Context targetContext = createTargetContext( currentContext );
-
-        return targetContext.callWith( CheckNodeExistsCommand.create( this ).nodePath( nodePath.getParentPath() ).build()::execute );
+        return targetContext().callWith( CheckNodeExistsCommand.create( this ).nodePath( nodePath.getParentPath() ).build()::execute );
     }
 
-    private Context createTargetContext( final Context currentContext )
+    private Context targetContext()
     {
-        final ContextBuilder targetContext = ContextBuilder.create().
-            repositoryId( currentContext.getRepositoryId() ).
-            branch( target );
-
-        if ( currentContext.getAuthInfo() != null )
-        {
-            targetContext.authInfo( currentContext.getAuthInfo() );
-        }
-
-        return targetContext.build();
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( context )
+            .branch( target )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
     }
 
     public static class Builder
