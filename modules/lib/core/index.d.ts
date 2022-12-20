@@ -266,3 +266,205 @@ export interface GeoDistanceSortDsl
 }
 
 export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
+
+//
+// START AGGREGATIONS, FILTERS
+//
+export interface Bucket {
+    [subAggregationName: string]: AggregationsResult | string | number | undefined;
+
+    key: string;
+    docCount: number;
+}
+
+export interface NumericBucket
+    extends Bucket {
+    from?: number;
+    to?: number;
+}
+
+export interface DateBucket
+    extends Bucket {
+    from?: string;
+    to?: string;
+}
+
+export interface BucketsAggregationResult {
+    buckets: (DateBucket | NumericBucket)[];
+}
+
+export interface StatsAggregationResult {
+    count: number;
+    min: number;
+    max: number;
+    avg: number;
+    sum: number;
+}
+
+export interface SingleValueMetricAggregationResult {
+    value: number;
+}
+
+export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
+
+export type Aggregation =
+    | TermsAggregation
+    | HistogramAggregation
+    | DateHistogramAggregation
+    | NumericRangeAggregation
+    | DateRangeAggregation
+    | StatsAggregation
+    | GeoDistanceAggregation
+    | MinAggregation
+    | MaxAggregation
+    | ValueCountAggregation;
+
+export interface TermsAggregation {
+    terms: {
+        field: string;
+        order?: string;
+        size?: number;
+        minDocCount?: number;
+    };
+    aggregations?: Record<string, Aggregation>;
+}
+
+export interface HistogramAggregation {
+    histogram: {
+        field: string;
+        order?: string;
+        interval?: number;
+        extendedBoundMin?: number;
+        extendedBoundMax?: number;
+        minDocCount?: number;
+    };
+    aggregations?: Record<string, Aggregation>;
+}
+
+export interface DateHistogramAggregation {
+    dateHistogram: {
+        field: string;
+        interval?: string;
+        minDocCount?: number;
+        format: string;
+    };
+    aggregations?: Record<string, Aggregation>;
+}
+
+export interface NumericRange {
+    from?: number;
+    to?: number;
+    key?: string;
+}
+
+export interface NumericRangeAggregation {
+    range: {
+        field: string;
+        ranges?: NumericRange[];
+    };
+    aggregations?: Record<string, Aggregation>;
+}
+
+export interface DateRange {
+    from?: string;
+    to?: string;
+    key?: string;
+}
+
+export interface DateRangeAggregation {
+    dateRange: {
+        field: string;
+        format: string;
+        ranges: DateRange[];
+    };
+    aggregations?: Record<string, Aggregation>;
+}
+
+export interface StatsAggregation {
+    stats: {
+        field: string;
+    };
+}
+
+export interface GeoDistanceAggregation {
+    geoDistance: {
+        field: string;
+        unit: string;
+        origin?: {
+            lat: string;
+            lon: string;
+        };
+        ranges?: NumericRange[];
+    };
+}
+
+export interface MinAggregation {
+    min: {
+        field: string;
+    };
+}
+
+export interface MaxAggregation {
+    max: {
+        field: string;
+    };
+}
+
+export interface ValueCountAggregation {
+    count: {
+        field: string;
+    };
+}
+
+export interface Highlight {
+    encoder?: 'default' | 'html';
+    tagsSchema?: 'styled';
+    fragmenter?: 'simple' | 'span';
+    fragmentSize?: number;
+    noMatchSize?: number;
+    numberOfFragments?: number;
+    order?: 'score' | 'none';
+    preTag?: string;
+    postTag?: string;
+    requireFieldMatch?: boolean;
+    properties?: Record<string, Highlight>;
+}
+
+export interface HighlightResult {
+    [highlightedFieldName: string]: string[];
+}
+
+export interface ExistsFilter {
+    exists: {
+        field: string;
+    };
+}
+
+export interface NotExistsFilter {
+    notExists: {
+        field: string;
+    };
+}
+
+export interface HasValueFilter {
+    hasValue: {
+        field: string;
+        values: unknown[];
+    };
+}
+
+export interface IdsFilter {
+    ids: {
+        values: string[];
+    };
+}
+
+export interface BooleanFilter {
+    boolean: {
+        must?: Filter[];
+        mustNot?: Filter[];
+        should?: Filter[];
+    };
+}
+
+export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter | BooleanFilter;
