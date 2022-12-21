@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import java.util.EnumSet;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,7 +32,7 @@ public final class ComponentServiceMappingHandler
                                            @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
                                            @Reference final ContentService contentService )
     {
-        super( -10, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "component" );
+        super( -10, HttpMethod.standard(), "component" );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,

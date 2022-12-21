@@ -46,7 +46,8 @@ public class ControllerMappingsResolverTest
         final Site site = newSite();
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs(), null );
 
         assertTrue( mapping.isEmpty() );
     }
@@ -64,7 +65,7 @@ public class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
         final Optional<ControllerMappingDescriptor> mapping =
-            resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
+            resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs(), null );
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -82,7 +83,8 @@ public class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/api", ImmutableMultimap.of("key", "123", "category", "foo"), content, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/api", ImmutableMultimap.of( "key", "123", "category", "foo" ), content, site.getSiteConfigs(), null );
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -100,7 +102,8 @@ public class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/api", ImmutableMultimap.of(), content, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/api", ImmutableMultimap.of(), content, site.getSiteConfigs(), null );
 
         assertTrue( mapping.isEmpty() );
     }
@@ -108,37 +111,38 @@ public class ControllerMappingsResolverTest
     @Test
     public void testPatternCatchAll_matches_anything()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
-            pattern( "/.*" ).
-            order( 10 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .pattern( "/.*" )
+            .order( 10 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
 
         final Content content = newContent();
         final Site site = newSite();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
 
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs(), null );
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
             .contains( "/other/controller1.js" );
 
-        final Optional<ControllerMappingDescriptor> mapping2 = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping2 =
+            resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs(), null );
 
         assertThat( mapping2 ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
             .contains( "/other/controller1.js" );
 
-        final Optional<ControllerMappingDescriptor> mapping3 = resolver.resolve( "/", ImmutableMultimap.of(), site, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping3 =
+            resolver.resolve( "/", ImmutableMultimap.of(), site, site.getSiteConfigs(), null );
 
         assertThat( mapping3 ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -148,24 +152,23 @@ public class ControllerMappingsResolverTest
     @Test
     public void testPatternCatchAllType_not_matches_missing()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
-            contentConstraint( "type:'.+:.+'" ).
-            order( 10 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .contentConstraint( "type:'.+:.+'" )
+            .order( 10 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
 
         final Site site = newSite();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
 
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs(), null );
 
         assertTrue( mapping.isEmpty() );
 
@@ -173,75 +176,67 @@ public class ControllerMappingsResolverTest
 
     private SiteDescriptor newSiteDescriptor()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey(), "/site/controllers/controller1.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "_id:'123456'" ).
-            order( 10 ).
-            build();
-        final ControllerMappingDescriptor mapping2 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey(), "/site/controllers/controller2.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "_path:'/mysite/landing-page'" ).
-            order( 5 ).
-            build();
-        final ControllerMappingDescriptor mapping3 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey(), "/site/controllers/controller3.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "_name:'landing-page'" ).
-            order( 15 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey(), "/site/controllers/controller1.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "_id:'123456'" )
+            .order( 10 )
+            .build();
+        final ControllerMappingDescriptor mapping2 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey(), "/site/controllers/controller2.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "_path:'/mysite/landing-page'" )
+            .order( 5 )
+            .build();
+        final ControllerMappingDescriptor mapping3 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey(), "/site/controllers/controller3.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "_name:'landing-page'" )
+            .order( 15 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2, mapping3 );
-        return SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newSiteDescriptor2()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "_id:'123456'" ).
-            order( 10 ).
-            build();
-        final ControllerMappingDescriptor mapping2 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey2(), "/other/controller2.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "_path:'/mysite/landing-page'" ).
-            order( 5 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "_id:'123456'" )
+            .order( 10 )
+            .build();
+        final ControllerMappingDescriptor mapping2 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller2.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "_path:'/mysite/landing-page'" )
+            .order( 5 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2 );
-        return SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newSiteDescriptor3()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
-            pattern( "/.*api.*\\?category=.*&key=\\d+" ).
-            order( 10 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .pattern( "/.*api.*\\?category=.*&key=\\d+" )
+            .order( 10 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
-        return SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newDescriptorForFragments()
     {
-        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
-            controller( ResourceKey.from( getAppKey(), "/site/controllers/controller1.js" ) ).
-            pattern( "/.*" ).
-            contentConstraint( "type:'portal:fragment'" ).
-            order( 10 ).
-            build();
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey(), "/site/controllers/controller1.js" ) )
+            .pattern( "/.*" )
+            .contentConstraint( "type:'portal:fragment'" )
+            .order( 10 )
+            .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
-        return SiteDescriptor.create().
-            mappingDescriptors( mappings ).
-            build();
+        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
     }
 
     private Content newContent()
@@ -278,15 +273,9 @@ public class ControllerMappingsResolverTest
 
     private Site newSite()
     {
-        final SiteConfig siteConfig = SiteConfig.create().
-            application( getAppKey() ).
-            config( new PropertyTree() ).
-            build();
+        final SiteConfig siteConfig = SiteConfig.create().application( getAppKey() ).config( new PropertyTree() ).build();
 
-        final SiteConfig siteConfig2 = SiteConfig.create().
-            application( getAppKey2() ).
-            config( new PropertyTree() ).
-            build();
+        final SiteConfig siteConfig2 = SiteConfig.create().application( getAppKey2() ).config( new PropertyTree() ).build();
 
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );

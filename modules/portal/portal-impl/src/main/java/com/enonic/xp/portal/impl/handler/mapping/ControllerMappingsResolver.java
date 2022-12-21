@@ -26,12 +26,6 @@ final class ControllerMappingsResolver
     }
 
     Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
-                                                   final Content content, final SiteConfigs siteConfigs )
-    {
-        return this.resolve( siteRelativePath, params, content, siteConfigs, null );
-    }
-
-    Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
                                                    final Content content, final SiteConfigs siteConfigs, final String serviceType )
     {
 
