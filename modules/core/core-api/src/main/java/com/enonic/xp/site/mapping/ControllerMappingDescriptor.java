@@ -24,6 +24,8 @@ public final class ControllerMappingDescriptor
 
     private final Pattern pattern;
 
+    private final String service;
+
     private final boolean invertPattern;
 
     private final ContentMappingConstraint contentConstraint;
@@ -36,6 +38,7 @@ public final class ControllerMappingDescriptor
     {
         Preconditions.checkArgument( builder.controller != null ^ builder.filter != null,
                                      "only one of either controller or filter must be specified" );
+        this.service = builder.service;
         this.controller = builder.controller;
         this.filter = builder.filter;
         this.applicationKey = builder.controller != null ? builder.controller.getApplicationKey() : builder.filter.getApplicationKey();
@@ -63,6 +66,11 @@ public final class ControllerMappingDescriptor
     public Pattern getPattern()
     {
         return pattern;
+    }
+
+    public String getService()
+    {
+        return service;
     }
 
     public boolean invertPattern()
@@ -102,18 +110,15 @@ public final class ControllerMappingDescriptor
             return false;
         }
         final ControllerMappingDescriptor that = (ControllerMappingDescriptor) o;
-        return order == that.order &&
-            invertPattern == that.invertPattern &&
-            Objects.equals( controller, that.controller ) &&
-            Objects.equals( filter, that.filter ) &&
-            Objects.equals( pattern.toString(), that.pattern.toString() ) &&
-            Objects.equals( contentConstraint, that.contentConstraint );
+        return order == that.order && invertPattern == that.invertPattern && Objects.equals( service, that.service ) &&
+            Objects.equals( controller, that.controller ) && Objects.equals( filter, that.filter ) &&
+            Objects.equals( pattern.toString(), that.pattern.toString() ) && Objects.equals( contentConstraint, that.contentConstraint );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( controller, filter, pattern.toString(), invertPattern, contentConstraint, order );
+        return Objects.hash( service, controller, filter, pattern.toString(), invertPattern, contentConstraint, order );
     }
 
     @Override
@@ -125,13 +130,15 @@ public final class ControllerMappingDescriptor
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "controller", controller ).
-            add( "filter", filter ).
-            add( "pattern", pattern ).
-            add( "invertPattern", invertPattern ).
-            add( "contentConstraint", contentConstraint ).
-            add( "order", order ).toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "service", service )
+            .add( "controller", controller )
+            .add( "filter", filter )
+            .add( "pattern", pattern )
+            .add( "invertPattern", invertPattern )
+            .add( "contentConstraint", contentConstraint )
+            .add( "order", order )
+            .toString();
     }
 
     public static ControllerMappingDescriptor.Builder create()
@@ -146,6 +153,8 @@ public final class ControllerMappingDescriptor
 
     public static class Builder
     {
+        private String service;
+
         private ResourceKey controller;
 
         private ResourceKey filter;
@@ -160,6 +169,7 @@ public final class ControllerMappingDescriptor
 
         private Builder( final ControllerMappingDescriptor mappingDescriptor )
         {
+            this.service = mappingDescriptor.getService();
             this.controller = mappingDescriptor.getController();
             this.filter = mappingDescriptor.getFilter();
             this.pattern = mappingDescriptor.getPattern();
@@ -170,6 +180,12 @@ public final class ControllerMappingDescriptor
 
         private Builder()
         {
+        }
+
+        public Builder service( final String service )
+        {
+            this.service = service;
+            return this;
         }
 
         public Builder controller( final ResourceKey controller )

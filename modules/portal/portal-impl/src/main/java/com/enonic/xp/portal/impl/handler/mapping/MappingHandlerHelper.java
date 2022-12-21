@@ -1,29 +1,52 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.enonic.xp.content.ContentService;
+import com.google.common.base.Strings;
+
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
-public final class MappingHandler
-    implements WebHandler
+class MappingHandlerHelper
 {
-/*    private final ResourceService resourceService;
+
+    private final Pattern PATTERN = Pattern.compile( "^/_/(\\w+)/.*" );
 
     private final ProjectService projectService;
+
+    private final ResourceService resourceService;
 
     private final ControllerScriptFactory controllerScriptFactory;
 
@@ -33,59 +56,27 @@ public final class MappingHandler
 
     private final ControllerMappingsResolver controllerMappingsResolver;
 
-    private final ContentResolver contentResolver;*/
+    private final ContentResolver contentResolver;
 
-    private final MappingHandlerHelper mappingHandlerHelper;
 
-    private final ControllerMappingsResolver controllerMappingsResolver;
-
-    @Activate
-    public MappingHandler( @Reference final SiteService siteService, @Reference final ContentService contentService,
-                           @Reference final ResourceService resourceService,
-                           @Reference final ControllerScriptFactory controllerScriptFactory,
-                           @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate,
-                           @Reference final ProjectService projectService )
+    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
+                          final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
+                          final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
+                          final ContentResolver contentResolver )
     {
-        this.mappingHandlerHelper =
-            new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
-
-        this.controllerMappingsResolver = new ControllerMappingsResolver( siteService );
-//        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-//              new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ), projectService );
-    }
-
-   /* MappingHandler( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
-                    final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                    final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver,
-                    final ProjectService projectService )
-    {
+        this.projectService = projectService;
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.filterScriptFactory = filterScriptFactory;
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
         this.contentResolver = contentResolver;
-        this.projectService = projectService;
-    }*/
-
-    @Override
-    public int getOrder()
-    {
-        return -10;
     }
 
-    @Override
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        if ( webRequest.getEndpointPath() != null )
-        {
-            return webHandlerChain.handle( webRequest, webResponse );
-        }
-
-        return this.mappingHandlerHelper.handle( webRequest, webResponse, webHandlerChain );
-       /* if ( !( webRequest instanceof PortalRequest ) || webRequest.getEndpointPath() != null )
+        if ( !( webRequest instanceof PortalRequest ) )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
@@ -131,7 +122,8 @@ public final class MappingHandler
         }
 
         final Optional<ControllerMappingDescriptor> resolve =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs.build() );
+            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs.build(),
+                                                getServiceType( request ) );
 
         if ( resolve.isPresent() )
         {
@@ -155,10 +147,11 @@ public final class MappingHandler
         else
         {
             return webHandlerChain.handle( request, webResponse );
-        }*/
+        }
     }
 
-   /* private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
+
+    private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
         throws Exception
     {
         final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest );
@@ -199,5 +192,24 @@ public final class MappingHandler
             AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
 
         return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
-    }*/
+    }
+
+    private String getServiceType( final PortalRequest req )
+    {
+        final String endpointPath = req.getEndpointPath();
+
+        if ( Strings.isNullOrEmpty( endpointPath ) )
+        {
+            return null;
+        }
+
+        final Matcher matcher = PATTERN.matcher( endpointPath );
+
+        if ( matcher.find() )
+        {
+            return matcher.group( 1 );
+        }
+
+        return null;
+    }
 }

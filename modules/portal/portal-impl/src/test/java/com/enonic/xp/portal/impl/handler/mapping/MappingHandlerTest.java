@@ -23,7 +23,6 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
-import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -106,9 +105,8 @@ public class MappingHandlerTest
         this.siteService = mock( SiteService.class );
         this.projectService = mock( ProjectService.class );
 
-        this.handler = new MappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                           new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ),
-                                           projectService );
+        this.handler = new MappingHandler( siteService, contentService, resourceService, controllerScriptFactory, filterScriptFactory,
+                                           rendererDelegate, projectService );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -359,8 +357,10 @@ public class MappingHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content =
-            Content.create().id( ContentId.from( id ) ).path( ContentPath.from( path ) ).owner( PrincipalKey.from( "user:myStore:me" ) )
+        final Content.Builder content = Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) );
