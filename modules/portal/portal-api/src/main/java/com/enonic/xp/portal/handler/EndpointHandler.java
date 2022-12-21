@@ -26,13 +26,6 @@ public abstract class EndpointHandler
         this.pathPrefix = path + "/";
     }
 
-    public EndpointHandler( final int order, final EnumSet<HttpMethod> methodsAllowed, final String endpointType )
-    {
-        super( order, methodsAllowed );
-        this.path = "/_/" + endpointType;
-        this.pathPrefix = path + "/";
-    }
-
     @Override
     public boolean canHandle( final WebRequest req )
     {

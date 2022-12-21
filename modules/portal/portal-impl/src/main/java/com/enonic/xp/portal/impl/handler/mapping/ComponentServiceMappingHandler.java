@@ -32,11 +32,17 @@ public final class ComponentServiceMappingHandler
                                            @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
                                            @Reference final ContentService contentService )
     {
-        super( -10, HttpMethod.standard(), "component" );
+        super( HttpMethod.standard(), "component" );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+    }
+
+    @Override
+    public int getOrder()
+    {
+        return -10;
     }
 
     @Override

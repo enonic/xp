@@ -21,23 +21,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class MappingHandler
     implements WebHandler
 {
-/*    private final ResourceService resourceService;
-
-    private final ProjectService projectService;
-
-    private final ControllerScriptFactory controllerScriptFactory;
-
-    private final FilterScriptFactory filterScriptFactory;
-
-    private final RendererDelegate rendererDelegate;
-
-    private final ControllerMappingsResolver controllerMappingsResolver;
-
-    private final ContentResolver contentResolver;*/
-
     private final MappingHandlerHelper mappingHandlerHelper;
-
-    private final ControllerMappingsResolver controllerMappingsResolver;
 
     @Activate
     public MappingHandler( @Reference final SiteService siteService, @Reference final ContentService contentService,
@@ -49,25 +33,7 @@ public final class MappingHandler
         this.mappingHandlerHelper =
             new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
-
-        this.controllerMappingsResolver = new ControllerMappingsResolver( siteService );
-//        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-//              new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ), projectService );
     }
-
-   /* MappingHandler( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
-                    final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                    final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver,
-                    final ProjectService projectService )
-    {
-        this.resourceService = resourceService;
-        this.controllerScriptFactory = controllerScriptFactory;
-        this.filterScriptFactory = filterScriptFactory;
-        this.rendererDelegate = rendererDelegate;
-        this.controllerMappingsResolver = controllerMappingsResolver;
-        this.contentResolver = contentResolver;
-        this.projectService = projectService;
-    }*/
 
     @Override
     public int getOrder()
@@ -85,119 +51,5 @@ public final class MappingHandler
         }
 
         return this.mappingHandlerHelper.handle( webRequest, webResponse, webHandlerChain );
-       /* if ( !( webRequest instanceof PortalRequest ) || webRequest.getEndpointPath() != null )
-        {
-            return webHandlerChain.handle( webRequest, webResponse );
-        }
-
-        final PortalRequest request = (PortalRequest) webRequest;
-
-        if ( request.getMode() == RenderMode.ADMIN || !request.isSiteBase() )
-        {
-            return webHandlerChain.handle( webRequest, webResponse );
-        }
-
-        WebHandlerHelper.checkAdminAccess( request );
-
-        final HttpMethod method = webRequest.getMethod();
-
-        if ( !HttpMethod.standard().contains( method ) )
-        {
-            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
-        }
-
-        final ContentResolverResult resolvedContent = contentResolver.resolve( request );
-
-        final Site site = resolvedContent.getNearestSite();
-
-        final Content content = resolvedContent.getContent();
-
-        final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
-
-        if ( site != null )
-        {
-            site.getSiteConfigs().forEach( siteConfigs::add );
-        }
-        else if ( content != null )
-        {
-            Optional.ofNullable( ProjectName.from( ( (PortalRequest) webRequest ).getRepositoryId() ) )
-                .map( projectName -> callAsAdmin( () -> projectService.get( projectName ) ) )
-                .map( Project::getSiteConfigs )
-                .ifPresent( configs -> configs.forEach( siteConfigs::add ) );
-        }
-        else
-        {
-            return webHandlerChain.handle( webRequest, webResponse );
-        }
-
-        final Optional<ControllerMappingDescriptor> resolve =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs.build() );
-
-        if ( resolve.isPresent() )
-        {
-            final ControllerMappingDescriptor mapping = resolve.get();
-
-            request.setContent( content );
-            request.setSite( site );
-            request.setContextPath(
-                request.getBaseUri() + "/" + request.getBranch() + ( site != null ? site.getPath() : ContentPath.ROOT ) );
-            request.setApplicationKey( mapping.getApplication() );
-
-            if ( mapping.isController() )
-            {
-                return handleController( request, mapping );
-            }
-            else
-            {
-                return handleFilter( request, webResponse, webHandlerChain, mapping );
-            }
-        }
-        else
-        {
-            return webHandlerChain.handle( request, webResponse );
-        }*/
     }
-
-   /* private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
-        throws Exception
-    {
-        final MappingHandlerWorker worker = new MappingHandlerWorker( portalRequest );
-        worker.mappingDescriptor = mapping;
-        worker.resourceService = this.resourceService;
-        worker.controllerScriptFactory = this.controllerScriptFactory;
-        worker.rendererDelegate = rendererDelegate;
-
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-        return Tracer.traceEx( trace, worker::execute );
-    }
-
-    private PortalResponse handleFilter( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain,
-                                         final ControllerMappingDescriptor mapping )
-        throws Exception
-    {
-        final MappingFilterHandlerWorker worker = new MappingFilterHandlerWorker( request, response, webHandlerChain );
-        worker.mappingDescriptor = mapping;
-        worker.resourceService = this.resourceService;
-        worker.filterScriptFactory = this.filterScriptFactory;
-        final Trace trace = Tracer.newTrace( "filter" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-        return Tracer.traceEx( trace, worker::execute );
-    }
-
-    private <T> T callAsAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
-
-        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
-    }*/
 }

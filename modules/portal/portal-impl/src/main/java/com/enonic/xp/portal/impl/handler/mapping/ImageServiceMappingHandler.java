@@ -34,11 +34,17 @@ public final class ImageServiceMappingHandler
                                        @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
                                        @Reference final ContentService contentService )
     {
-        super( -10, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
+        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+    }
+
+    @Override
+    public int getOrder()
+    {
+        return -10;
     }
 
     @Override
