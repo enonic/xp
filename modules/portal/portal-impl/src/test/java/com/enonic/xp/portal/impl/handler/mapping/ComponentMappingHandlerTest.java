@@ -125,16 +125,6 @@ class ComponentMappingHandlerTest
     }
 
     @Test
-    void methodNotAllowed()
-        throws Exception
-    {
-        assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.DELETE, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.PUT, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.TRACE, this.request );
-    }
-
-    @Test
     void notValidUrlPattern()
         throws Exception
     {
