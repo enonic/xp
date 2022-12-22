@@ -39,17 +39,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ImageMappingHandlerTest
+class ComponentServiceMappingHandlerTest
     extends BaseHandlerTest
 {
-    private ImageServiceMappingHandler handler;
+    private ComponentServiceMappingHandler handler;
 
     private ContentService contentService;
 
@@ -57,11 +56,11 @@ class ImageMappingHandlerTest
 
     private SiteService siteService;
 
-    private RendererDelegate rendererDelegate;
-
     private PortalRequest request;
 
     private WebHandlerChain webHandlerChain;
+
+    private FilterScript filterScript;
 
     @BeforeEach
     final void setup()
@@ -70,7 +69,7 @@ class ImageMappingHandlerTest
         this.contentService = mock( ContentService.class );
         ProjectService projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
-        this.rendererDelegate = mock( RendererDelegate.class );
+        RendererDelegate rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
         this.webHandlerChain = mock( WebHandlerChain.class );
 
@@ -81,18 +80,17 @@ class ImageMappingHandlerTest
         when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         FilterScriptFactory filterScriptFactory = mock( FilterScriptFactory.class );
-        FilterScript filterScript = mock( FilterScript.class );
+        filterScript = mock( FilterScript.class );
         when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.handler =
-            new ImageServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                            siteService, contentService );
+        this.handler = new ComponentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
+                                                           rendererDelegate, siteService, contentService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setEndpointPath( "/_/component/123456/scale-100-100/image-name.jpg" );
     }
 
     private void setupContentInsideSite( final SiteConfigs siteConfigs )
@@ -116,49 +114,39 @@ class ImageMappingHandlerTest
         this.request.setEndpointPath( null );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/other/123456/scale-100-100/image-name.jpg" );
+        this.request.setEndpointPath( "/_/other/123456/component" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setEndpointPath( "/component/123456/component" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setEndpointPath( "/_/component/123456/component" );
         assertTrue( this.handler.canHandle( this.request ) );
-    }
-
-    @Test
-    void methodNotAllowed()
-        throws Exception
-    {
-        assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.DELETE, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.PUT, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.TRACE, this.request );
     }
 
     @Test
     void notValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/image/" );
+        this.request.setEndpointPath( "/_/component/" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );
     }
 
     @Test
-    void controllerFromSiteConfig()
+    void filterFromSiteConfig()
         throws Exception
     {
         final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
 
-        final ResourceKey controller1 = ResourceKey.from( "demo:/services/test1" );
+        final ResourceKey filter = ResourceKey.from( "demo:/services/test1" );
 
-        when( this.resourceService.getResource( controller1 ) ).thenReturn( resource );
+        when( this.resourceService.getResource( filter ) ).thenReturn( resource );
 
         final ControllerMappingDescriptor siteMapping =
-            ControllerMappingDescriptor.create().controller( controller1 ).service( "image" ).build();
+            ControllerMappingDescriptor.create().filter( filter ).service( "component" ).build();
 
         final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
         final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
@@ -167,11 +155,12 @@ class ImageMappingHandlerTest
 
         final String body = "Project body";
 
-        when( rendererDelegate.render( eq( siteMapping ), same( request ) ) ).thenReturn( PortalResponse.create().body( body ).build() );
+        when( filterScript.execute( eq( request ), isA( PortalResponse.class ), eq( webHandlerChain ) ) ).thenReturn(
+            PortalResponse.create().body( body ).build() );
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/image/path/to/image-name.jpg" );
+        this.request.setEndpointPath( "/_/component/path/to/component" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 
@@ -187,7 +176,7 @@ class ImageMappingHandlerTest
         final ResourceKey controller1 = ResourceKey.from( "demo:/services/test1" );
 
         final ControllerMappingDescriptor siteMapping =
-            ControllerMappingDescriptor.create().controller( controller1 ).service( "not-image" ).build();
+            ControllerMappingDescriptor.create().controller( controller1 ).service( "not-component" ).build();
 
         final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
         final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
@@ -197,7 +186,7 @@ class ImageMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/image/path/to/image-name.jpg" );
+        this.request.setEndpointPath( "/_/component/path/to/component" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 

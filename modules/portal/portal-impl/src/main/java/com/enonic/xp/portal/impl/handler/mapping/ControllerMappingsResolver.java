@@ -39,6 +39,20 @@ final class ControllerMappingsResolver
             Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) );
     }
 
+    private static String normalizedQueryParams( final Multimap<String, String> params )
+    {
+        if ( params.isEmpty() )
+        {
+            return "";
+        }
+
+        return params.entries()
+            .stream()
+            .sorted( Map.Entry.comparingByKey() )
+            .map( entry -> urlEscape( entry.getKey() ) + "=" + urlEscape( entry.getValue() ) )
+            .collect( Collectors.joining( "&", "?", "" ) );
+    }
+
     private Stream<ControllerMappingDescriptor> addFilter( Stream<ControllerMappingDescriptor> stream, final String siteRelativePath,
                                                            final Multimap<String, String> params, final Content content,
                                                            final String serviceType )
@@ -48,20 +62,9 @@ final class ControllerMappingsResolver
 
         return serviceType != null
             ? stream.filter( d -> matchesService( d, serviceType ) )
-            : stream.filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) ).filter( d -> matchesContent( d, content ) );
-    }
-
-    private static String normalizedQueryParams( final Multimap<String, String> params )
-    {
-        if ( params.isEmpty() )
-        {
-            return "";
-        }
-
-        return params.entries().stream()
-            .sorted( Map.Entry.comparingByKey() )
-            .map( entry -> urlEscape( entry.getKey() ) + "=" + urlEscape( entry.getValue() ) )
-            .collect( Collectors.joining( "&", "?", "" ) );
+            : stream.filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) )
+                .filter( d -> matchesContent( d, content ) )
+                .filter( d -> d.getService() == null );
     }
 
     private static String urlEscape( final String value )
@@ -95,7 +98,7 @@ final class ControllerMappingsResolver
     {
         if ( descriptor.getService() == null )
         {
-            return true;
+            return false;
         }
 
         return descriptor.getService().equals( serviceType );
