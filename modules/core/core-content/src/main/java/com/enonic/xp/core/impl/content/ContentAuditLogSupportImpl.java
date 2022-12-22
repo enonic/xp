@@ -65,14 +65,18 @@ public class ContentAuditLogSupportImpl
 
     private final AuditLogService auditLogService;
 
+    private final ContentAuditLogFilterService contentAuditLogFilterService;
+
     @Activate
     public ContentAuditLogSupportImpl( final ContentConfig config,
                                        @Reference(service = ContentAuditLogExecutor.class) final Executor executor,
-                                       @Reference AuditLogService auditLogService )
+                                       @Reference final AuditLogService auditLogService,
+                                       @Reference final ContentAuditLogFilterService contentAuditLogFilterService )
     {
         this.executor = config.auditlog_enabled() ? executor : c -> {
         };
         this.auditLogService = auditLogService;
+        this.contentAuditLogFilterService = contentAuditLogFilterService;
     }
 
     @Override
@@ -121,13 +125,16 @@ public class ContentAuditLogSupportImpl
 
         if ( params.getProcessedIds() != null )
         {
-            paramsSet.addStrings( "processedIds", params.getProcessedIds().stream().
-                map( ContentId::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "processedIds",
+                                  params.getProcessedIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
         if ( params.getPermissions() != null )
         {
-            paramsSet.addStrings( "permissions", params.getPermissions().getEntries().stream().
-                map( AccessControlEntry::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "permissions", params.getPermissions()
+                .getEntries()
+                .stream()
+                .map( AccessControlEntry::toString )
+                .collect( Collectors.toList() ) );
         }
 
         addContent( resultSet, content );
@@ -239,10 +246,8 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, contents.getDeletedContents(), "deletedContents" );
         addContents( resultSet, contents.getUnpublishedContents(), "unpublishedContents" );
 
-        log( "system.content.delete", data, ContentIds.create().
-            addAll( contents.getDeletedContents() ).
-            addAll( contents.getUnpublishedContents() ).
-            build(), rootContext );
+        log( "system.content.delete", data,
+             ContentIds.create().addAll( contents.getDeletedContents() ).addAll( contents.getUnpublishedContents() ).build(), rootContext );
     }
 
     @Override
@@ -266,18 +271,17 @@ public class ContentAuditLogSupportImpl
 
         if ( params.getContentIds() != null )
         {
-            paramsSet.addStrings( "contentIds", params.getContentIds().stream().
-                map( ContentId::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "contentIds", params.getContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
         if ( params.getExcludedContentIds() != null )
         {
-            paramsSet.addStrings( "excludedContentIds", params.getExcludedContentIds().stream().
-                map( ContentId::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "excludedContentIds",
+                                  params.getExcludedContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
         if ( params.getExcludeChildrenIds() != null )
         {
-            paramsSet.addStrings( "excludeChildrenIds", params.getExcludeChildrenIds().stream().
-                map( ContentId::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "excludeChildrenIds",
+                                  params.getExcludeChildrenIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
         if ( params.getContentPublishInfo() != null )
         {
@@ -295,11 +299,11 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, result.getFailedContents(), "failedContents" );
         addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
-        log( "system.content.publish", data, ContentIds.create().
-            addAll( result.getPushedContents() ).
-            addAll( result.getDeletedContents() ).
-            addAll( result.getUnpublishedContents() ).
-            build(), rootContext );
+        log( "system.content.publish", data, ContentIds.create()
+            .addAll( result.getPushedContents() )
+            .addAll( result.getDeletedContents() )
+            .addAll( result.getUnpublishedContents() )
+            .build(), rootContext );
     }
 
     @Override
@@ -321,8 +325,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addStrings( "contentIds", params.getContentIds().stream().
-            map( ContentId::toString ).collect( Collectors.toList() ) );
+        paramsSet.addStrings( "contentIds", params.getContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
 
         addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
@@ -519,8 +522,11 @@ public class ContentAuditLogSupportImpl
 
         if ( params.getPermissions() != null )
         {
-            paramsSet.addStrings( "permissions", params.getPermissions().getEntries().stream().
-                map( AccessControlEntry::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "permissions", params.getPermissions()
+                .getEntries()
+                .stream()
+                .map( AccessControlEntry::toString )
+                .collect( Collectors.toList() ) );
         }
 
         addContents( resultSet, result.getSkippedContents(), "skippedContents" );
@@ -565,59 +571,59 @@ public class ContentAuditLogSupportImpl
             this.addContent( contentSet, content );
 
             return contentSet;
-        } ).
-            forEach( contentSet -> targetSet.addSet( name, contentSet ) );
+        } ).forEach( contentSet -> targetSet.addSet( name, contentSet ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )
     {
-        targetSet.addStrings( name, contents.stream().
-            map( ContentId::toString ).
-            collect( Collectors.toSet() ) );
+        targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentPaths contents, final String name )
     {
-        targetSet.addStrings( name, contents.stream().
-            map( ContentPath::toString ).
-            collect( Collectors.toSet() ) );
+        targetSet.addStrings( name, contents.stream().map( ContentPath::toString ).collect( Collectors.toSet() ) );
     }
 
     private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )
     {
-        log( type, data, AuditLogUris.from( contentPaths.
-            stream().
-            map( contentPath -> createAuditLogUri( contentPath, rootContext ) ).
-            collect( Collectors.toList() ) ), rootContext );
+        log( type, data, AuditLogUris.from(
+                 contentPaths.stream().map( contentPath -> createAuditLogUri( contentPath, rootContext ) ).collect( Collectors.toList() ) ),
+             rootContext );
     }
 
     private void log( final String type, final PropertyTree data, final ContentIds contentIds, final Context rootContext )
     {
-        log( type, data, AuditLogUris.from( contentIds.
-            stream().
-            map( contentId -> createAuditLogUri( contentId, rootContext ) ).
-            collect( Collectors.toList() ) ), rootContext );
+        log( type, data, AuditLogUris.from(
+                 contentIds.stream().map( contentId -> createAuditLogUri( contentId, rootContext ) ).collect( Collectors.toList() ) ),
+             rootContext );
     }
 
     private void log( final String type, final PropertyTree data, final AuditLogUris uris, final Context rootContext )
     {
+        if ( !contentAuditLogFilterService.accept( type ) )
+        {
+            return;
+        }
+
         final PrincipalKey userPrincipalKey =
             rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
 
-        final LogAuditLogParams logParams = LogAuditLogParams.create().
-            type( type ).
-            source( SOURCE_CORE_CONTENT ).
-            data( data ).
-            objectUris( uris ).
-            user( userPrincipalKey ).
-            build();
+        final LogAuditLogParams logParams = LogAuditLogParams.create()
+            .type( type )
+            .source( SOURCE_CORE_CONTENT )
+            .data( data )
+            .objectUris( uris )
+            .user( userPrincipalKey )
+            .build();
 
         runAsAuditLog( () -> auditLogService.log( logParams ), rootContext );
     }
 
     private void log( final String type, final PropertyTree data, final ContentId contentId, final Context rootContext )
     {
+
         log( type, data, ContentIds.from( contentId ), rootContext );
+
     }
 
     private void log( final String type, final PropertyTree data, final ContentPath contentPath, final Context rootContext )
@@ -642,11 +648,10 @@ public class ContentAuditLogSupportImpl
 
     private <T> T runAsAuditLog( final Callable<T> callable, final Context rootContext )
     {
-        return ContextBuilder.from( rootContext ).
-            authInfo( AuthenticationInfo.copyOf( rootContext.getAuthInfo() ).
-                principals( RoleKeys.AUDIT_LOG ).build() ).
-            build().
-            callWith( callable );
+        return ContextBuilder.from( rootContext )
+            .authInfo( AuthenticationInfo.copyOf( rootContext.getAuthInfo() ).principals( RoleKeys.AUDIT_LOG ).build() )
+            .build()
+            .callWith( callable );
     }
 
 }

@@ -43,6 +43,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_update
     extends AbstractContentServiceTest
@@ -581,5 +583,38 @@ public class ContentServiceImplTest_update
 
         assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
         assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
+    }
+
+    @Test
+    public void audit_data_disabled()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        when( contentAuditLogFilterService.accept( any() ) ).thenReturn( false );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "testString", "value" );
+        data.setString( "testString2", "value" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( data )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            final PropertyTree editData = edit.data;
+            editData.setString( "testString", "value-updated" );
+        } );
+
+        this.contentService.update( updateContentParams );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 14 ) ).log( captor.capture() );
+
+        assertTrue( captor.getAllValues().stream().filter( log -> log.getType().equals( "system.content.update" ) ).findFirst().isEmpty() );
     }
 }

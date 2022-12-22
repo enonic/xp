@@ -39,6 +39,8 @@ public class ContentAuditLogSupportImplTest
 
     private AuditLogService auditLogService;
 
+    private ContentAuditLogFilterService contentAuditLogFilterService;
+
     @BeforeEach
     public void setUp()
     {
@@ -46,13 +48,14 @@ public class ContentAuditLogSupportImplTest
         final ContentConfig config = Mockito.mock( ContentConfig.class );
 
         auditLogService = Mockito.mock( AuditLogService.class );
+        contentAuditLogFilterService = Mockito.mock( ContentAuditLogFilterService.class, invocation -> true );
 
         Mockito.when( config.auditlog_enabled() ).thenReturn( true );
 
         // prepare
         executor = Executors.newSingleThreadExecutor();
 
-        support = new ContentAuditLogSupportImpl( config, executor, auditLogService );
+        support = new ContentAuditLogSupportImpl( config, executor, auditLogService, contentAuditLogFilterService );
     }
 
     @Test

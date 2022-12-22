@@ -26,6 +26,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
+import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -236,11 +237,13 @@ public abstract class AbstractContentSynchronizerTest
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
+        final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
+
         final AuditLogService auditLogService = mock( AuditLogService.class );
         final ContentConfig contentConfig = mock( ContentConfig.class );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService );
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService, contentAuditLogFilterService );
 
         contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );
