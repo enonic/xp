@@ -7,4 +7,6 @@ public @interface ContentConfig
     boolean htmlarea_sanitizing_enabled() default false;
 
     boolean attachments_allowUnsafeNames() default false;
+
+    String auditlog_filter() default "!system.content.update,*";
 }

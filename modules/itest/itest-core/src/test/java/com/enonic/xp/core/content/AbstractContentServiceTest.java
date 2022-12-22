@@ -47,6 +47,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
+import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -152,15 +153,17 @@ public class AbstractContentServiceTest
 
     protected IndexServiceImpl indexService;
 
+    protected ContentAuditLogFilterService contentAuditLogFilterService;
+
     private ExecutorService executorService;
 
     protected static Context ctxDraft()
     {
-        return ContextBuilder.create().
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( TEST_REPO_ID ).
-            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .repositoryId( TEST_REPO_ID )
+            .authInfo( TEST_DEFAULT_USER_AUTHINFO )
+            .build();
     }
 
     protected static Context ctxMaster()
@@ -303,11 +306,13 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
 
+        contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
+
         final ContentConfig contentConfig = mock( ContentConfig.class );
         when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService );
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService, contentAuditLogFilterService );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
