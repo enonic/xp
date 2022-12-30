@@ -11,4 +11,6 @@ public @interface PortalConfig
     String media_contentSecurityPolicy() default "default-src 'none'; base-uri 'none'; form-action 'none'";
 
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
+
+    String draftBranchAllowedFor() default "role:system.admin.login";
 }
