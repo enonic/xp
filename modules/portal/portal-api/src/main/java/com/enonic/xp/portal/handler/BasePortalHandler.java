@@ -51,6 +51,10 @@ public abstract class BasePortalHandler
         {
             return handleError( portalRequest, e );
         }
+        finally
+        {
+            PortalRequestAccessor.remove();
+        }
     }
 
     protected abstract PortalRequest createPortalRequest( WebRequest webRequest, WebResponse webResponse );
