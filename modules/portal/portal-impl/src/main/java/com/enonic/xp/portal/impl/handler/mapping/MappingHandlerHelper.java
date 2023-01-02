@@ -42,7 +42,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 class MappingHandlerHelper
 {
 
-    private final Pattern PATTERN = Pattern.compile( "^/_/(\\w+)/.*" );
+    private static final Pattern PATTERN = Pattern.compile( "^/_/(\\w+)/.*" );
 
     private final ProjectService projectService;
 
