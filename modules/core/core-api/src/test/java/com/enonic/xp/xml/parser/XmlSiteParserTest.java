@@ -141,6 +141,34 @@ public class XmlSiteParserTest
     }
 
     @Test
+    public void testSiteXmlDeserializationWithMappingService()
+    {
+        final String xml = loadTestXml( "serialized-site-with-mapping-service.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 2, siteDescriptor.getMappingDescriptors().getSize() );
+
+        final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
+        final ControllerMappingDescriptor mapping2 = siteDescriptor.getMappingDescriptors().get( 1 );
+
+        assertEquals( "myapplication:/filter1.js", mapping1.getFilter().toString() );
+        assertEquals( "image", mapping1.getService() );
+        assertEquals( 50, mapping1.getOrder() );
+
+        assertEquals( "myapplication:/filter2.js", mapping2.getController().toString() );
+        assertEquals( "component", mapping2.getService() );
+        assertEquals( 5, mapping2.getOrder() );
+    }
+
+    @Test
     public void testSiteXmlWithUtf8BomEncoding()
     {
         final String xml = loadTestFile( "utf8bom.xml", StandardCharsets.UTF_8 );
