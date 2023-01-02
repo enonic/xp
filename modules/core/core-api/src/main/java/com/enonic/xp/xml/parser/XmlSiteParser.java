@@ -167,10 +167,10 @@ public final class XmlSiteParser
         final DomElement serviceElement = mappingElement.getChild( MAPPING_DESCRIPTOR_SERVICE_TAG_NAME );
         if ( serviceElement != null )
         {
-            final String match = serviceElement.getValue();
-            if ( !isNullOrEmpty( match ) )
+            final String service = serviceElement.getValue();
+            if ( !isNullOrEmpty( service ) )
             {
-                builder.service( match );
+                builder.service( service );
             }
         }
 
