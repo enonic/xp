@@ -12,9 +12,11 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
+import com.enonic.xp.xml.XmlException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XmlSiteParserTest
 {
@@ -166,6 +168,23 @@ public class XmlSiteParserTest
         assertEquals( "myapplication:/filter2.js", mapping2.getController().toString() );
         assertEquals( "component", mapping2.getService() );
         assertEquals( 5, mapping2.getOrder() );
+    }
+
+    @Test
+    public void testSiteXmlDeserializationWithMappingServiceInvalid()
+    {
+        final String xml = loadTestXml( "serialized-site-with-mapping-service-invalid.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        final XmlException exception = assertThrows( XmlException.class, () -> this.parser.source( xml )
+            .currentApplication( applicationKey )
+            .siteDescriptorBuilder( siteDescriptorBuilder )
+            .parse() );
+        assertEquals( "pattern and contentConstraint cannot be set together with service", exception.getMessage() );
     }
 
     @Test
