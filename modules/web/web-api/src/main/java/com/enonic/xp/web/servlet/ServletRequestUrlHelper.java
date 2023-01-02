@@ -3,6 +3,7 @@ package com.enonic.xp.web.servlet;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +11,7 @@ import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -20,6 +22,8 @@ public final class ServletRequestUrlHelper
 {
     private static final int[] RFC_8187_ATTR_CHAR =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$&+-.^_`|~".chars().sorted().toArray();
+
+    private static final String CUSTOM_SERVER_URL_CTX_ATTRIBUTE = "_customServerUrl";
 
     @Deprecated
     public static String createUri( final String path )
@@ -127,6 +131,12 @@ public final class ServletRequestUrlHelper
 
     public static String getServerUrl( final HttpServletRequest req )
     {
+        final String customServerUrl = (String) ContextAccessor.current().getAttribute( CUSTOM_SERVER_URL_CTX_ATTRIBUTE );
+        if ( !isNullOrEmpty( customServerUrl ) )
+        {
+            return customServerUrl;
+        }
+
         final StringBuilder str = new StringBuilder();
 
         //Appends the scheme part
