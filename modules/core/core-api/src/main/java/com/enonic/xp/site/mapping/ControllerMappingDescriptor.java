@@ -38,6 +38,8 @@ public final class ControllerMappingDescriptor
     {
         Preconditions.checkArgument( builder.controller != null ^ builder.filter != null,
                                      "only one of either controller or filter must be specified" );
+        Preconditions.checkArgument( builder.pattern == null && builder.contentConstraint == null || builder.service == null,
+                                     "pattern and contentConstraint cannot be set together with service" );
         this.service = builder.service;
         this.controller = builder.controller;
         this.filter = builder.filter;

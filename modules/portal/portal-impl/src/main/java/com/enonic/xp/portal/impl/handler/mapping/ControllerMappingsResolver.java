@@ -62,9 +62,7 @@ final class ControllerMappingsResolver
 
         return serviceType != null
             ? stream.filter( d -> matchesService( d, serviceType ) )
-            : stream.filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) )
-                .filter( d -> matchesContent( d, content ) )
-                .filter( d -> d.getService() == null );
+            : stream.filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) ).filter( d -> matchesContent( d, content ) );
     }
 
     private static String urlEscape( final String value )
