@@ -44,7 +44,7 @@ public final class ControllerMappingDescriptor
         this.controller = builder.controller;
         this.filter = builder.filter;
         this.applicationKey = builder.controller != null ? builder.controller.getApplicationKey() : builder.filter.getApplicationKey();
-        this.pattern = builder.pattern != null ? builder.pattern : DEFAULT_PATTERN;
+        this.pattern = builder.pattern != null ? builder.pattern : builder.service == null ? DEFAULT_PATTERN : null;
         this.invertPattern = builder.invertPattern;
         this.contentConstraint = builder.contentConstraint;
         this.order = builder.order;
