@@ -1,6 +1,7 @@
 package com.enonic.xp.site.mapping;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.google.common.base.MoreObjects;
@@ -114,13 +115,16 @@ public final class ControllerMappingDescriptor
         final ControllerMappingDescriptor that = (ControllerMappingDescriptor) o;
         return order == that.order && invertPattern == that.invertPattern && Objects.equals( service, that.service ) &&
             Objects.equals( controller, that.controller ) && Objects.equals( filter, that.filter ) &&
-            Objects.equals( pattern.toString(), that.pattern.toString() ) && Objects.equals( contentConstraint, that.contentConstraint );
+            Objects.equals( contentConstraint, that.contentConstraint ) &&
+            Objects.equals( Optional.ofNullable( pattern ).map( Pattern::toString ).orElse( null ),
+                            Optional.ofNullable( that.pattern ).map( Pattern::toString ).orElse( null ) );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( service, controller, filter, pattern.toString(), invertPattern, contentConstraint, order );
+        return Objects.hash( service, controller, filter, invertPattern, contentConstraint, order,
+                             Optional.ofNullable( pattern ).map( Pattern::toString ).orElse( null ) );
     }
 
     @Override
