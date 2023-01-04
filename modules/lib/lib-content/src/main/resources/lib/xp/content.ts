@@ -16,7 +16,19 @@ declare global {
     interface XpXData {}
 }
 
-import type {ByteSource, Content, PublishInfo} from '@enonic-types/core';
+import type {
+    Aggregation,
+    AggregationsResult,
+    ByteSource,
+    Content,
+    Filter,
+    FormItem,
+    Highlight,
+    HighlightResult,
+    PublishInfo,
+    QueryDsl,
+    SortDsl,
+} from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
 
@@ -48,6 +60,50 @@ export type {
     Content,
     Component,
     Region,
+    QueryDsl,
+    InDslExpression,
+    ExistsDslExpression,
+    FulltextDslExpression,
+    LikeDslExpression,
+    StemmedDslExpression,
+    TermDslExpression,
+    RangeDslExpression,
+    NgramDslExpression,
+    BooleanDslExpression,
+    MatchAllDslExpression,
+    PathMatchDslExpression,
+    DateBucket,
+    BucketsAggregationResult,
+    StatsAggregationResult,
+    SingleValueMetricAggregationResult,
+    AggregationsResult,
+    Aggregation,
+    TermsAggregation,
+    HistogramAggregation,
+    DateHistogramAggregation,
+    NumericRange,
+    NumericRangeAggregation,
+    DateRange,
+    DateRangeAggregation,
+    StatsAggregation,
+    GeoDistanceAggregation,
+    MinAggregation,
+    MaxAggregation,
+    ValueCountAggregation,
+    Highlight,
+    HighlightResult,
+    ExistsFilter,
+    NotExistsFilter,
+    HasValueFilter,
+    IdsFilter,
+    BooleanFilter,
+    Filter,
+    FormItemSet,
+    FormItemLayout,
+    FormItemInput,
+    FormItemOptionSet,
+    FormItemInlineMixin,
+    FormItem,
 } from '@enonic-types/core';
 
 type Attachments = Content['attachments'];
@@ -91,474 +147,6 @@ interface GetAttachmentsHandler {
 
     execute(): Attachments | null;
 }
-
-export interface Bucket {
-    [subAggregationName: string]: AggregationsResult | string | number | undefined;
-
-    key: string;
-    docCount: number;
-}
-
-export interface NumericBucket
-    extends Bucket {
-    from?: number;
-    to?: number;
-}
-
-export interface DateBucket
-    extends Bucket {
-    from?: string;
-    to?: string;
-}
-
-export interface BucketsAggregationResult {
-    buckets: (DateBucket | NumericBucket)[];
-}
-
-export interface StatsAggregationResult {
-    count: number;
-    min: number;
-    max: number;
-    avg: number;
-    sum: number;
-}
-
-export interface SingleValueMetricAggregationResult {
-    value: number;
-}
-
-export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
-
-export type Aggregation =
-    | TermsAggregation
-    | HistogramAggregation
-    | DateHistogramAggregation
-    | NumericRangeAggregation
-    | DateRangeAggregation
-    | StatsAggregation
-    | GeoDistanceAggregation
-    | MinAggregation
-    | MaxAggregation
-    | ValueCountAggregation;
-
-export interface TermsAggregation {
-    terms: {
-        field: string;
-        order?: string;
-        size?: number;
-        minDocCount?: number;
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface HistogramAggregation {
-    histogram: {
-        field: string;
-        order?: string;
-        interval?: number;
-        extendedBoundMin?: number;
-        extendedBoundMax?: number;
-        minDocCount?: number;
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface DateHistogramAggregation {
-    dateHistogram: {
-        field: string;
-        interval?: string;
-        minDocCount?: number;
-        format: string;
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface NumericRange {
-    from?: number;
-    to?: number;
-    key?: string;
-}
-
-export interface NumericRangeAggregation {
-    range: {
-        field: string;
-        ranges?: NumericRange[];
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface NumericRangeAggregation {
-    range: {
-        field: string;
-        ranges?: NumericRange[];
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface DateRange {
-    from?: string;
-    to?: string;
-    key?: string;
-}
-
-export interface DateRangeAggregation {
-    dateRange: {
-        field: string;
-        format: string;
-        ranges: DateRange[];
-    };
-    aggregations?: Record<string, Aggregation>;
-}
-
-export interface StatsAggregation {
-    stats: {
-        field: string;
-    };
-}
-
-export interface GeoDistanceAggregation {
-    geoDistance: {
-        field: string;
-        unit: string;
-        origin?: {
-            lat: string;
-            lon: string;
-        };
-        ranges?: NumericRange[];
-    };
-}
-
-export interface MinAggregation {
-    min: {
-        field: string;
-    };
-}
-
-export interface MaxAggregation {
-    max: {
-        field: string;
-    };
-}
-
-export interface ValueCountAggregation {
-    count: {
-        field: string;
-    };
-}
-
-export interface Highlight {
-    encoder?: 'default' | 'html';
-    tagsSchema?: 'styled';
-    fragmenter?: 'simple' | 'span';
-    fragmentSize?: number;
-    noMatchSize?: number;
-    numberOfFragments?: number;
-    order?: 'score' | 'none';
-    preTag?: string;
-    postTag?: string;
-    requireFieldMatch?: boolean;
-    properties?: Record<string, Highlight>;
-}
-
-export interface HighlightResult {
-    [highlightedFieldName: string]: string[];
-}
-
-export interface ExistsFilter {
-    exists: {
-        field: string;
-    };
-}
-
-export interface NotExistsFilter {
-    notExists: {
-        field: string;
-    };
-}
-
-export interface HasValueFilter {
-    hasValue: {
-        field: string;
-        values: unknown[];
-    };
-}
-
-export interface IdsFilter {
-    ids: {
-        values: string[];
-    };
-}
-
-export interface BooleanFilter {
-    boolean: {
-        must?: Filter[];
-        mustNot?: Filter[];
-        should?: Filter[];
-    };
-}
-
-export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter | BooleanFilter;
-
-export type FormItemType = 'Input' | 'ItemSet' | 'Layout' | 'OptionSet';
-
-export type InputType =
-    | 'Time'
-    | 'DateTime'
-    | 'CheckBox'
-    | 'ComboBox'
-    | 'Long'
-    | 'Double'
-    | 'RadioButton'
-    | 'TextArea'
-    | 'ContentTypeFilter'
-    | 'GeoPoint'
-    | 'TextLine'
-    | 'Tag'
-    | 'CustomSelector'
-    | 'AttachmentUploader'
-    | 'ContentSelector'
-    | 'MediaSelector'
-    | 'ImageSelector'
-    | 'Date'
-    | 'MediaUploader'
-    | 'SiteConfigurator'
-    | 'HtmlArea';
-
-export interface FormItemSet {
-    formItemType: string | FormItemType;
-    name: string;
-    label: string;
-    customText: string;
-    helpText: string;
-    maximize: boolean;
-    inputType: InputType;
-    occurrences: {
-        maximum: number;
-        minimum: number;
-    };
-    items: FormItem[];
-}
-
-export interface FormItemLayout {
-    formItemType: string | FormItemType;
-    name: string;
-    label: string;
-    items: FormItem[];
-}
-
-export type ValueType =
-    | 'BinaryReference'
-    | 'Boolean'
-    | 'DateTime'
-    | 'Double'
-    | 'GeoPoint'
-    | 'Link'
-    | 'LocalDateTime'
-    | 'LocalDate'
-    | 'LocalTime'
-    | 'Long'
-    | 'PropertySet'
-    | 'Reference'
-    | 'String'
-    | 'Xml';
-
-export interface FormItemInput {
-    formItemType: string | FormItemType;
-    name: string;
-    label: string;
-    customText: string;
-    helpText: string;
-    validationRegexp: string;
-    maximize: boolean;
-    inputType: InputType;
-    occurrences: {
-        maximum: number;
-        minimum: number;
-    };
-    default: {
-        value: string;
-        type: ValueType;
-    }
-    config: {
-        [configName: string]: {
-            [attributeKey: string]: string;
-            value: string;
-        }[]
-    }
-}
-
-export interface FormItemOptionSet {
-    formItemType: string | FormItemType;
-    name: string;
-    label: string;
-    expanded: boolean;
-    helpText: string;
-    occurrences: {
-        maximum: number;
-        minimum: number;
-    };
-    selection: {
-        maximum: number;
-        minimum: number;
-    };
-    options: {
-        name: string;
-        label: string;
-        helpText: string;
-        default: boolean;
-        items: FormItem[]
-    }[];
-}
-
-export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput;
-
-export type DslQueryType = 'dateTime' | 'time';
-
-export type DslOperator = 'OR' | 'AND';
-
-export interface TermDslExpression {
-    field: string;
-    value: unknown;
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface InDslExpression {
-    field: string;
-    values: unknown[];
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface LikeDslExpression {
-    field: string;
-    value: string;
-    type?: DslQueryType;
-    boost?: number;
-}
-
-export interface RangeDslExpression {
-    field: string;
-    type?: DslQueryType;
-    lt?: unknown;
-    lte?: unknown;
-    gt?: unknown;
-    gte?: unknown;
-    boost?: number;
-}
-
-export interface PathMatchDslExpression {
-    field: string;
-    path: string;
-    minimumMatch?: number;
-    boost?: number;
-}
-
-export interface MatchAllDslExpression {
-    boost?: number;
-}
-
-export interface FulltextDslExpression {
-    fields: string[];
-    query: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface NgramDslExpression {
-    fields: string[];
-    query: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface StemmedDslExpression {
-    fields: string[];
-    query: string;
-    language: string;
-    operator?: DslOperator;
-    boost?: number;
-}
-
-export interface ExistsDslExpression {
-    field: string;
-    boost?: number;
-}
-
-export interface BooleanDslExpression {
-    should?: QueryDsl | QueryDsl[];
-    must?: QueryDsl | QueryDsl[];
-    mustNot?: QueryDsl | QueryDsl[];
-    filter?: QueryDsl | QueryDsl[];
-    boost?: number;
-}
-
-export type QueryDsl = {
-    boolean: BooleanDslExpression;
-} | {
-    ngram: NgramDslExpression;
-} | {
-    stemmed: StemmedDslExpression;
-} | {
-    fulltext: FulltextDslExpression;
-} | {
-    matchAll: MatchAllDslExpression;
-} | {
-    pathMatch: PathMatchDslExpression;
-} | {
-    range: RangeDslExpression;
-} | {
-    like: LikeDslExpression;
-} | {
-    in: InDslExpression;
-} | {
-    term: TermDslExpression;
-} | {
-    exists: ExistsDslExpression;
-};
-
-export type SortDirection = 'ASC' | 'DESC';
-
-export type DistanceUnit =
-    | 'm'
-    | 'meters'
-    | 'in'
-    | 'inch'
-    | 'yd'
-    | 'yards'
-    | 'ft'
-    | 'feet'
-    | 'km'
-    | 'kilometers'
-    | 'NM'
-    | 'nmi'
-    | 'nauticalmiles'
-    | 'mm'
-    | 'millimeters'
-    | 'cm'
-    | 'centimeters'
-    | 'mi'
-    | 'miles';
-
-export interface FieldSortDsl {
-    field: string;
-
-    direction?: SortDirection;
-}
-
-export interface GeoDistanceSortDsl
-    extends FieldSortDsl {
-
-    unit?: DistanceUnit;
-
-    location?: {
-        lat: number;
-
-        lon: number;
-    }
-}
-
-export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 
 /**
  * This function fetches a content.
