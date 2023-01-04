@@ -45,6 +45,8 @@ public final class XmlSiteParser
 
     private static final String PROCESSOR_DESCRIPTOR_ORDER_ATTRIBUTE = "order";
 
+    private static final String MAPPING_DESCRIPTOR_SERVICE_TAG_NAME = "service";
+
     private static final String MAPPING_DESCRIPTOR_CONTROLLER_ATTRIBUTE = "controller";
 
     private static final String MAPPING_DESCRIPTOR_FILTER_ATTRIBUTE = "filter";
@@ -160,6 +162,16 @@ public final class XmlSiteParser
         if ( !isNullOrEmpty( orderValue ) )
         {
             builder.order( Integer.parseInt( orderValue ) );
+        }
+
+        final DomElement serviceElement = mappingElement.getChild( MAPPING_DESCRIPTOR_SERVICE_TAG_NAME );
+        if ( serviceElement != null )
+        {
+            final String service = serviceElement.getValue();
+            if ( !isNullOrEmpty( service ) )
+            {
+                builder.service( service );
+            }
         }
 
         final DomElement matchElement = mappingElement.getChild( MAPPING_DESCRIPTOR_MATCH_TAG_NAME );

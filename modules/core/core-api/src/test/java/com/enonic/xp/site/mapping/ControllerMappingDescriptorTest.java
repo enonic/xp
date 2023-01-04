@@ -82,8 +82,9 @@ public class ControllerMappingDescriptorTest
             build();
 
         assertEquals(
-            "ControllerMappingDescriptor{" + "controller=com.enonic.test.app:/site/controllers/mycontroller.js, " + "filter=null, " +
-                "pattern=/people/.*, " + "invertPattern=false, " + "contentConstraint=type:'com.enonic.test.app:people', " + "order=5}",
+            "ControllerMappingDescriptor{service=null, " + "controller=com.enonic.test.app:/site/controllers/mycontroller.js, " +
+                "filter=null, " + "pattern=/people/.*, " + "invertPattern=false, " +
+                "contentConstraint=type:'com.enonic.test.app:people', " + "order=5}",
             descriptor.toString() );
     }
 
