@@ -14,6 +14,7 @@ node_modules/
 .sass-cache
 npm-debug.log
 .tscache
+.eslintcache
 .tab
 .tmp
 generated-java
