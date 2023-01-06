@@ -5,9 +5,8 @@
     "description": "Root package for libs development.",
     "scripts": {
         "build": "tsc --declaration --project tsconfig.build.json",
-        "lint": "eslint .",
-        "lint:quiet": "eslint --quiet .",
-        "fix": "eslint --fix .",
+        "lint": "eslint . --quiet --cache",
+        "fix": "eslint . --fix --cache",
         "jsdoc": "jsdoc --configure jsdoc/conf.json"
     },
     "repository": {

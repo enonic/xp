@@ -19,7 +19,7 @@ clean {
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
     description = 'Lint TS, JS, and JSON'
-    args = ['run', 'lint:quiet']
+    args = ['run', 'lint']
 
     outputs.upToDateWhen { false }
 }
