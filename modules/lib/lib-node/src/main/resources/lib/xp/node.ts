@@ -550,7 +550,7 @@ export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & Node
 
 export interface ModifyNodeParams<NodeData = unknown> {
     key: string;
-    editor: (node: Node<NodeData>) => ModifyNode<NodeData>;
+    editor: (node: Node<NodeData>) => ModifiedNode<NodeData>;
 }
 
 export interface GetNodeParams {
@@ -832,7 +832,7 @@ export type NodePropertiesOnRead = CommonNodeProperties & {
     _parentPath?: never;
 };
 
-export type ModifyNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
+export type ModifiedNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
 
 export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
