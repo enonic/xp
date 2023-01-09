@@ -735,7 +735,6 @@ class ProjectServiceImplTest
     @Test
     void create_parent()
     {
-
         adminContext().runWith( () -> {
             doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
@@ -837,7 +836,7 @@ class ProjectServiceImplTest
         config1.addString( "a", "value1" );
 
         final PropertyTree config2 = new PropertyTree();
-        config1.addString( "a", "value2" );
+        config2.addString( "a", "value2" );
 
         adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), SiteConfigs.from(
             SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( config1 ).build() ) ) );

@@ -47,9 +47,15 @@ public final class Project
         return new Builder();
     }
 
+    @Deprecated
     public static Project from( final Repository repository )
     {
-        if ( repository == null )
+        return from( repository, new PropertyTree() );
+    }
+
+    public static Project from( final Repository repository, final PropertyTree nodeData )
+    {
+        if ( repository == null || nodeData == null )
         {
             return null;
         }
@@ -75,8 +81,9 @@ public final class Project
             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildParents( project, projectData );
-        buildSiteConfigs( project, projectData );
         buildIcon( project, projectData );
+
+        buildSiteConfigs( project, nodeData );
 
         return project.build();
     }
@@ -106,9 +113,9 @@ public final class Project
         }
     }
 
-    private static void buildSiteConfigs( final Project.Builder project, final PropertySet projectData )
+    private static void buildSiteConfigs( final Project.Builder project, final PropertyTree nodeData )
     {
-        SITE_CONFIGS_DATA_SERIALIZER.fromProperties( projectData ).build().forEach( project::addSiteConfig );
+        SITE_CONFIGS_DATA_SERIALIZER.fromProperties( nodeData.getSet( "data" ) ).build().forEach( project::addSiteConfig );
     }
 
     public ProjectName getName()

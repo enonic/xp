@@ -142,9 +142,9 @@ public class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.test" ), RepositoryId.from( "system-repo" ),
-                                          RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ),
-                                          RepositoryId.from( "system.app" ) ), newRepos.getIds() );
+        assertEquals(
+            RepositoryIds.from( RepositoryId.from( "com.test" ), RepositoryId.from( "system-repo" ), RepositoryId.from( "system.auditlog" ),
+                                RepositoryId.from( "system.scheduler" ), RepositoryId.from( "system.app" ) ), newRepos.getIds() );
     }
 
     @Test

@@ -15,7 +15,7 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindeNodesByQueryCommandTest_like
+public class FindNodesByQueryCommandTest_like
     extends AbstractNodeTest
 {
     @BeforeEach

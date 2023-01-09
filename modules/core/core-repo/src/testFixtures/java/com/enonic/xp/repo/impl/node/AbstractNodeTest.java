@@ -80,7 +80,7 @@ import static org.mockito.Mockito.mock;
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.test" );
+    protected static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.test" );
 
     protected static final Branches TEST_REPO_BRANCHES = Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER );
 

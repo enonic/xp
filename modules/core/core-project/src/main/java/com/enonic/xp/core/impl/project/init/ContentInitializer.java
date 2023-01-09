@@ -46,13 +46,16 @@ public final class ContentInitializer
 
     private final RepositoryService repositoryService;
 
-    private final PropertyTree data;
+    private final PropertyTree repositoryData;
+
+    private final PropertyTree contentData;
 
     private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
-        this.data = builder.data;
+        this.repositoryData = builder.repositoryData;
+        this.contentData = builder.contentData;
     }
 
     public static Builder create()
@@ -100,7 +103,7 @@ public final class ContentInitializer
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
             .repositoryId( repositoryId )
-            .data( data )
+            .data( repositoryData )
             .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
             .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
             .build();
@@ -118,7 +121,7 @@ public final class ContentInitializer
         {
             LOG.info( "Content root-node not found, creating" );
 
-            PropertyTree data = new PropertyTree();
+            final PropertyTree data = contentData != null ? contentData : new PropertyTree();
             data.setString( ContentPropertyNames.TYPE, "base:folder" );
             data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
             data.addSet( ContentPropertyNames.DATA );
@@ -147,7 +150,9 @@ public final class ContentInitializer
     {
         private RepositoryService repositoryService;
 
-        private PropertyTree data;
+        private PropertyTree repositoryData;
+
+        private PropertyTree contentData;
 
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
@@ -155,9 +160,15 @@ public final class ContentInitializer
             return this;
         }
 
-        public Builder setData( final PropertyTree data )
+        public Builder setRepositoryData( final PropertyTree repositoryData )
         {
-            this.data = data;
+            this.repositoryData = repositoryData;
+            return this;
+        }
+
+        public Builder setContentData( final PropertyTree contentData )
+        {
+            this.contentData = contentData;
             return this;
         }
 
