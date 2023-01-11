@@ -11,6 +11,9 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.Files;
 
 import jdk.nashorn.api.scripting.JSObject;
@@ -38,6 +41,8 @@ import com.enonic.xp.server.RunMode;
 public final class ScriptExecutorImpl
     implements ScriptExecutor
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ScriptExecutorImpl.class );
+
     private static final String PRE_SCRIPT = "(function(log, require, resolve, __, exports, module) { ";
 
     private static final String POST_SCRIPT = "\n});";
@@ -122,6 +127,7 @@ public final class ScriptExecutorImpl
         final Object mock = this.mocks.get( key.getPath() );
         if ( mock != null )
         {
+            LOG.debug( "require mock found {}", key );
             return mock;
         }
 
@@ -195,7 +201,11 @@ public final class ScriptExecutorImpl
 
     private Object requireJsOrJson( final Resource resource )
     {
-        return "json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
+        final ResourceKey resourceKey = resource.getKey();
+        LOG.debug( "require {}", resourceKey );
+        final Object result = "json".equals( resourceKey.getExtension() ) ? requireJson( resource ) : requireJs( resource );
+        LOG.debug( "require completed {}", resourceKey );
+        return result;
     }
 
     private Object requireJs( final Resource resource )
