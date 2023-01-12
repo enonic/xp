@@ -1119,7 +1119,7 @@ public class NodeServiceImpl
         refresh( RefreshMode.STORAGE );
 
         final InternalContext context =
-            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
+            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.LOCAL ).build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, context );
         branchNodeVersions.stream()
