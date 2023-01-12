@@ -68,6 +68,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
@@ -228,7 +229,7 @@ public class ProjectServiceImpl
 
             LOG.debug( "Project created: " + params.getName() );
 
-            return createProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
+            return initProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
         } );
     }
 
@@ -639,20 +640,20 @@ public class ProjectServiceImpl
 
         final Node updatedContentRootNode = updateProjectSiteConfigs( params.getName(), params.getSiteConfigs() );
 
-        return createProject( updatedRepository, getProjectSiteConfigs( updatedContentRootNode.data() ) );
+        return initProject( updatedRepository, getProjectSiteConfigs( updatedContentRootNode.data() ) );
     }
 
     private Projects doList()
     {
         return Projects.from( this.repositoryService.list().stream().map( repository -> {
             final ProjectName projectName = ProjectName.from( repository.getId() );
-            return projectName != null ? createProject( repository, getProjectSiteConfigs( projectName ) ) : null;
+            return projectName != null ? initProject( repository, getProjectSiteConfigs( projectName ) ) : null;
         } ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
     }
 
     private Project doGet( final ProjectName projectName )
     {
-        return createProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
+        return initProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
     }
 
     private PropertyTree createContentRootData( final CreateProjectParams params )
@@ -671,8 +672,16 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
     {
-        final PropertyTree contentRootData =
-            contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ).data() );
+        final PropertyTree contentRootData;
+        try
+        {
+            contentRootData =
+                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ).data() );
+        }
+        catch ( RepositoryNotFoundException e )
+        {
+            return null;
+        }
 
         return getProjectSiteConfigs( contentRootData );
     }
@@ -707,7 +716,7 @@ public class ProjectServiceImpl
                                                                                              .build() ) );
     }
 
-    private Project createProject( final Repository repository, final SiteConfigs siteConfigs )
+    private Project initProject( final Repository repository, final SiteConfigs siteConfigs )
     {
         if ( repository == null || siteConfigs == null )
         {
