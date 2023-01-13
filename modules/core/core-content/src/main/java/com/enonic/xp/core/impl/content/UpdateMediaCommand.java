@@ -49,11 +49,6 @@ final class UpdateMediaCommand
         return new Builder( params );
     }
 
-    public static Builder create( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( params, source );
-    }
-
     Content execute()
     {
         params.validate();
@@ -107,8 +102,11 @@ final class UpdateMediaCommand
                 editable.workflowInfo = params.getWorkflowInfo();
             } );
 
-        return UpdateContentCommand.create( this )
-            .params( updateParams )
+        return UpdateContentCommand.create( updateParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
             .mediaInfo( mediaInfo )
             .contentTypeService( this.contentTypeService )
             .siteService( this.siteService )
@@ -138,12 +136,6 @@ final class UpdateMediaCommand
 
         Builder( final UpdateMediaParams params )
         {
-            this.params = params;
-        }
-
-        Builder( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
             this.params = params;
         }
 

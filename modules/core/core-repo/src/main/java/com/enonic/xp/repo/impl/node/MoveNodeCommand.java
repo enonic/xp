@@ -170,8 +170,6 @@ public class MoveNodeCommand
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
             .timestamp( Instant.now( CLOCK ) );
 
-        final Node movedNode;
-
         final boolean isTheOriginalMovedNode = persistedNode.id().equals( this.nodeId );
         if ( isTheOriginalMovedNode )
         {
@@ -183,7 +181,8 @@ public class MoveNodeCommand
             }
         }
 
-        movedNode = doStore( nodeToMoveBuilder.build() );
+        final Node movedNode = this.nodeStorageService.move( StoreMovedNodeParams.create().node( nodeToMoveBuilder.build() ).build(),
+                                                  InternalContext.from( ContextAccessor.current() ) );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
@@ -225,12 +224,6 @@ public class MoveNodeCommand
                 nodeToMoveBuilder.manualOrderValue( newOrderValue );
             }
         }
-    }
-
-    private Node doStore( final Node movedNode )
-    {
-        return this.nodeStorageService.move( StoreMovedNodeParams.create().node( movedNode ).build(),
-                                             InternalContext.from( ContextAccessor.current() ) );
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

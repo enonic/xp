@@ -106,12 +106,11 @@ public class CopyExecutor
 
         for ( final org.elasticsearch.search.SearchHit hit : hits )
         {
-            bulkRequest.add( Requests.indexRequest().
-                id( hit.id() ).
-                index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo() ) ).
-                type( SearchStorageType.from( copyRequest.getTargetBranch() ).getName() ).
-                source( hit.source() ).
-                refresh( false ) );
+            bulkRequest.add( Requests.indexRequest()
+                                 .id( hit.id() )
+                                 .index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo() ) )
+                                 .type( SearchStorageType.from( copyRequest.getTargetBranch() ).getName() )
+                                 .source( hit.source() ) );
         }
 
         final Stopwatch timer = Stopwatch.createStarted();

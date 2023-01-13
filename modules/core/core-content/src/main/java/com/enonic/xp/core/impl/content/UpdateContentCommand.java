@@ -88,11 +88,6 @@ final class UpdateContentCommand
         return new Builder( params );
     }
 
-    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
-    }
-
     Content execute()
     {
         params.validate();
@@ -371,11 +366,6 @@ final class UpdateContentCommand
         Builder( final UpdateContentParams params )
         {
             this.params = params;
-        }
-
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
         }
 
         Builder params( final UpdateContentParams value )

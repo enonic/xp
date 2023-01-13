@@ -105,18 +105,22 @@ final class CreateMediaCommand
             inheritPermissions( true ).
             build();
 
-        final CreateContentCommand createCommand = CreateContentCommand.create( this ).
-            mediaInfo( mediaInfo ).
-            params( createContentParams ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames ).
-            build();
+        final CreateContentCommand createCommand = CreateContentCommand.create()
+            .mediaInfo( mediaInfo )
+            .params( createContentParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
+            .build();
 
         return createCommand.execute();
     }

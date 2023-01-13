@@ -156,7 +156,7 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        doMoveNode( node, node2 );
+        moveNode( node.id(), node2.path() );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -182,7 +182,7 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        ctxOther().runWith( () -> doMoveNode( node, node2 ) );
+        ctxOther().runWith( () -> moveNode( node.id(), node2.path() ) );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -306,18 +306,6 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
-    }
-
-    private void doMoveNode( final Node node, final Node newParent )
-    {
-        MoveNodeCommand.create().
-            newParent( newParent.path() ).
-            id( node.id() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
     }
 
     private NodeVersionDiffResult getDiff( final Branch source, final Branch target )

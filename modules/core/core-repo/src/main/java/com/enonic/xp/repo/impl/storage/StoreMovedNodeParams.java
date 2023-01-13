@@ -7,12 +7,12 @@ public class StoreMovedNodeParams
 {
     private final Node node;
 
-    private final NodeVersionId nodeVersionId;
+    private final boolean newVersion;
 
     private StoreMovedNodeParams( Builder builder )
     {
         node = builder.node;
-        nodeVersionId = builder.nodeVersionId;
+        newVersion = builder.newVersion;
     }
 
     public static Builder create()
@@ -25,16 +25,16 @@ public class StoreMovedNodeParams
         return node;
     }
 
-    public NodeVersionId getNodeVersionId()
+    public boolean isNewVersion()
     {
-        return nodeVersionId;
+        return newVersion;
     }
 
     public static final class Builder
     {
         private Node node;
 
-        private NodeVersionId nodeVersionId;
+        private boolean newVersion = true;
 
         private Builder()
         {
@@ -46,9 +46,9 @@ public class StoreMovedNodeParams
             return this;
         }
 
-        public Builder nodeVersionId( final NodeVersionId nodeVersionId )
+        public Builder overrideVersion()
         {
-            this.nodeVersionId = nodeVersionId;
+            this.newVersion = false;
             return this;
         }
 

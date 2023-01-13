@@ -82,11 +82,6 @@ final class CreateContentCommand
         return new Builder();
     }
 
-    static Builder create( AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
-    }
-
     Content execute()
     {
         return doExecute();
@@ -115,7 +110,7 @@ final class CreateContentCommand
             .contentDataSerializer( this.contentDataSerializer )
             .siteService( this.siteService )
             .build()
-            .produce().refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE ).build();
+            .produce().refresh( params.isRefresh() ? RefreshMode.SEARCH : null ).build();
 
         final Node createdNode;
         try
@@ -337,11 +332,6 @@ final class CreateContentCommand
 
         private Builder()
         {
-        }
-
-        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
         }
 
         Builder params( final CreateContentParams params )

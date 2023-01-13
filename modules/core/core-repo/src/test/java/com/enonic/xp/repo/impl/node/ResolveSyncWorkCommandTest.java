@@ -700,7 +700,7 @@ public class ResolveSyncWorkCommandTest
         pushAllNodesInS1S2Tree();
 
         updateNode( "a2_1_1" );
-        renameNode( "a2_1", "newName" );
+        renameNode( NodeId.from( "a2_1" ), "newName" );
 
         createNode( NodePath.ROOT, "s3" );
 
@@ -1151,7 +1151,8 @@ public class ResolveSyncWorkCommandTest
         createNode( node1.path(), "node1_4" );
         refresh();
 
-        pushNodes( NodeIds.from( ROOT_UUID.toString(), "node1", "node1_1", "node1_2", "node1_3", "node1_4" ), WS_OTHER );
+        pushNodes( WS_OTHER, ROOT_UUID, NodeId.from( "node1" ), NodeId.from( "node1_1" ), NodeId.from( "node1_2" ),
+                   NodeId.from( "node1_3" ), NodeId.from( "node1_4" ) );
 
         SetNodeChildOrderCommand.create().
             nodeId( node1.id() ).
@@ -1240,7 +1241,8 @@ public class ResolveSyncWorkCommandTest
 
     private void pushAllNodesInS1S2Tree()
     {
-        pushNodes( NodeIds.from( ROOT_UUID.toString(), "s1", "s2", "a1", "a2", "a2_1", "b1", "b2", "b2_1" ), WS_OTHER );
+        pushNodes( WS_OTHER, ROOT_UUID, NodeId.from( "s1" ), NodeId.from( "s2" ), NodeId.from( "a1" ), NodeId.from( "a2" ),
+                   NodeId.from( "a2_1" ), NodeId.from( "b1" ), NodeId.from( "b2" ), NodeId.from( "b2_1" ) );
     }
 
 
@@ -1268,18 +1270,6 @@ public class ResolveSyncWorkCommandTest
             newParent( newParent ).
             build().
             execute();
-    }
-
-    private void renameNode( final String nodeId, final String newName )
-    {
-        MoveNodeCommand.create()
-            .id( NodeId.from( nodeId ) )
-            .newNodeName( NodeName.from( newName ) )
-            .indexServiceInternal( this.indexServiceInternal )
-            .searchService( this.searchService )
-            .storageService( this.storageService )
-            .build()
-            .execute();
     }
 
 

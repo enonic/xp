@@ -100,29 +100,28 @@ public class IndexDataServiceImpl
     @Override
     public void store( final Node node, final InternalContext context )
     {
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
+        final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder().
             node( node ).
             branch( context.getBranch() ).
             repositoryId( context.getRepositoryId() ).
             build().
             create();
 
-        this.storageDao.store( indexDocuments );
+        this.storageDao.store( indexDocument );
     }
-
 
     @Override
     public void push( final IndexPushNodeParams pushNodeParams, final InternalContext context )
     {
-        this.storageDao.copy( CopyRequest.create().
-            storageSettings( StorageSource.create().
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                build() ).
-            nodeIds( pushNodeParams.getNodeIds() ).
-            targetBranch( pushNodeParams.getTargetBranch() ).
-            targetRepo( pushNodeParams.getTargetRepo() ).
-            build() );
+        this.storageDao.copy( CopyRequest.create()
+                                  .storageSettings( StorageSource.create()
+                                                        .storageName( SearchStorageName.from( context.getRepositoryId() ) )
+                                                        .storageType( SearchStorageType.from( context.getBranch() ) )
+                                                        .build() )
+                                  .nodeIds( pushNodeParams.getNodeIds() )
+                                  .targetBranch( pushNodeParams.getTargetBranch() )
+                                  .targetRepo( context.getRepositoryId() )
+                                  .build() );
     }
 
     @Reference

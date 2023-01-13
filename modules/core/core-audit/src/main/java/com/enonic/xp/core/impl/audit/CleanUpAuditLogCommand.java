@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeIndexPath;
@@ -74,11 +75,13 @@ public class CleanUpAuditLogCommand
         {
             for ( NodeHit nodeHit : nodesToDelete.getNodeHits() )
             {
-                result.deleted( nodeService.deleteById( nodeHit.getNodeId() ).getSize() );
+                result.deleted( nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() )
+                                    .getNodeBranchEntries()
+                                    .getSize() );
 
                 listener.processed();
             }
-
+            nodeService.refresh( RefreshMode.SEARCH );
             nodesToDelete = nodeService.findByQuery( query );
 
             hits = nodesToDelete.getHits();

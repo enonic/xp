@@ -68,7 +68,7 @@ final class RenameContentCommand
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName );
+        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH ).nodeName( nodeName );
 
         if ( params.stopInherit() )
         {
@@ -109,12 +109,14 @@ final class RenameContentCommand
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
             .contentId( content.getId() )
-            .modifier( content.getModifier() )
             .stopInherit( false )
             .editor( edit -> edit.valid = !content.isValid() );
 
-        return UpdateContentCommand.create( this )
-            .params( updateContentParams )
+        return UpdateContentCommand.create( updateContentParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
             .siteService( siteService )
             .contentTypeService( contentTypeService )
             .xDataService( this.xDataService )

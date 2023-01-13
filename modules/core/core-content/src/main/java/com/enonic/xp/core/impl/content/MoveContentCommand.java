@@ -83,7 +83,7 @@ final class MoveContentCommand
         final NodeId sourceNodeId = NodeId.from( contentId );
 
         final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).refresh( RefreshMode.ALL ).moveListener( this );
+            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).refresh( RefreshMode.SEARCH ).moveListener( this );
 
         if ( params.stopInherit() )
         {

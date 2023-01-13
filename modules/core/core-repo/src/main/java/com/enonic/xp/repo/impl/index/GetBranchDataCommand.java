@@ -8,7 +8,6 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -47,7 +46,7 @@ class GetBranchDataCommand
         return this.nodeSearchService.query( NodeBranchQuery.create().
             query( QueryExpr.from( compareExpr ) ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build(), SingleRepoStorageSource.create( this.repositoryId, SingleRepoStorageSource.Type.BRANCH ) );
+            build(), this.repositoryId );
     }
 
     public static Builder create()

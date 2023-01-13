@@ -9,7 +9,6 @@ import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
@@ -27,7 +26,7 @@ public class SyncContentServiceImpl
 
     private final NodeService nodeService;
 
-    private final EventPublisher eventPublisher;
+    private final ContentEventProducer contentEventProducer;
 
     private final ContentNodeTranslator translator;
 
@@ -37,7 +36,7 @@ public class SyncContentServiceImpl
 
     @Activate
     public SyncContentServiceImpl( @Reference final ContentTypeService contentTypeService, @Reference final NodeService nodeService,
-                                   @Reference final EventPublisher eventPublisher,
+                                   @Reference final ContentEventProducer contentEventProducer,
                                    @Reference final PageDescriptorService pageDescriptorService,
                                    @Reference final PartDescriptorService partDescriptorService,
                                    @Reference final LayoutDescriptorService layoutDescriptorService,
@@ -46,7 +45,7 @@ public class SyncContentServiceImpl
     {
         this.contentTypeService = contentTypeService;
         this.nodeService = nodeService;
-        this.eventPublisher = eventPublisher;
+        this.contentEventProducer = contentEventProducer;
         this.projectService = projectService;
         this.contentService = contentService;
         this.contentSynchronizer = contentSynchronizer;
@@ -63,13 +62,13 @@ public class SyncContentServiceImpl
     @Override
     public void resetInheritance( final ResetContentInheritParams params )
     {
-        ResetContentInheritanceCommand.create( params ).
-            contentService( contentService ).
-            projectService( projectService ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            translator( translator ).
+        ResetContentInheritanceCommand.create( params )
+            .contentService( contentService )
+            .projectService( projectService )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .contentEventProducer( contentEventProducer )
+            .translator( translator ).
             contentSynchronizer( contentSynchronizer ).
             build().
             execute();

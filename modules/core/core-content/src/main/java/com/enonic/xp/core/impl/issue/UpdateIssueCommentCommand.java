@@ -32,7 +32,7 @@ public class UpdateIssueCommentCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
             .id( this.params.getComment() )
             .editor( e -> ISSUE_COMMENT_DATA_SERIALIZER.updateNodeData( e.data, this.params ) )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
 
         final Node udpatedNode = nodeService.update( updateNodeParams );

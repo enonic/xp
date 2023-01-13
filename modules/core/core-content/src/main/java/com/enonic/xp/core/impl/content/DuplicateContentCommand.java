@@ -62,7 +62,7 @@ final class DuplicateContentCommand
             .nodeId( sourceNodeId )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo() ) )
             .includeChildren( params.getIncludeChildren() )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );

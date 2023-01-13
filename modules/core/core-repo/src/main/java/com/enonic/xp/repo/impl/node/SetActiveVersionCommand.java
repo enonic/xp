@@ -2,17 +2,18 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class SetActiveVersionCommand
     extends AbstractNodeCommand
 {
-    private static final Permission REQUIRED_PERMISSION = Permission.MODIFY;
-
     private final NodeId nodeId;
 
     private final NodeVersionId nodeVersionId;
@@ -33,7 +34,7 @@ public class SetActiveVersionCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        final Node node = this.nodeStorageService.get(nodeId, nodeVersionId, context );
+        final Node node = this.nodeStorageService.get( nodeVersionId, context );
 
         if ( node == null )
         {
@@ -46,9 +47,23 @@ public class SetActiveVersionCommand
             throw new NodeNotFoundException( "NodeVersionId [" + nodeVersionId + "] not a version of Node with id [" + nodeId + "]" );
         }
 
-        NodePermissionsResolver.requireContextUserPermissionOrAdmin( REQUIRED_PERMISSION, node );
+        final NodeBranchEntry nodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( nodeId, context );
 
-        this.nodeStorageService.updateVersion( node, nodeVersionId, context );
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        final boolean hasPermission = NodePermissionsResolver.userHasPermission( authInfo, Permission.MODIFY, node.getPermissions() );
+
+        if ( !hasPermission )
+        {
+            throw new NodeAccessException( authInfo.getUser(), nodeBranchEntry.getNodePath(), Permission.MODIFY );
+        }
+
+        final Node updatedNode = Node.create( node )
+            .parentPath( nodeBranchEntry.getNodePath().getParentPath() )
+            .name( nodeBranchEntry.getNodePath().getName() )
+            .build();
+
+        this.nodeStorageService.updateVersion( updatedNode, context );
 
         return nodeVersionId;
     }

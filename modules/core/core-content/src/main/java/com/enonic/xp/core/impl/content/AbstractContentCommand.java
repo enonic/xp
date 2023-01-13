@@ -28,7 +28,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -47,7 +46,7 @@ abstract class AbstractContentCommand
 
     final ContentTypeService contentTypeService;
 
-    final EventPublisher eventPublisher;
+    final ContentEventProducer contentEventProducer;
 
     final ContentNodeTranslator translator;
 
@@ -55,7 +54,7 @@ abstract class AbstractContentCommand
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
-        this.eventPublisher = builder.eventPublisher;
+        this.contentEventProducer = builder.contentEventProducer;
         this.translator = builder.translator;
     }
 
@@ -68,7 +67,13 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentId contentId )
     {
-        final Content content = GetContentByIdCommand.create( contentId, this ).build().execute();
+        final Content content = GetContentByIdCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build()
+            .execute();
         if ( content == null )
         {
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
@@ -187,7 +192,13 @@ abstract class AbstractContentCommand
             }
         }
 
-        final Content parent = GetContentByPathCommand.create( parentPath, this ).build().execute();
+        final Content parent = GetContentByPathCommand.create( parentPath )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build()
+            .execute();
         if (parent == null)
         {
             throw new IllegalStateException( String.format( "Cannot read parent type with path %s", parentPath ) );
@@ -231,20 +242,12 @@ abstract class AbstractContentCommand
 
         private ContentTypeService contentTypeService;
 
-        private EventPublisher eventPublisher;
+        private ContentEventProducer contentEventProducer;
 
         private ContentNodeTranslator translator;
 
         Builder()
         {
-        }
-
-        Builder( final AbstractContentCommand source )
-        {
-            this.nodeService = source.nodeService;
-            this.contentTypeService = source.contentTypeService;
-            this.eventPublisher = source.eventPublisher;
-            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
@@ -269,9 +272,9 @@ abstract class AbstractContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        public B eventPublisher( final EventPublisher eventPublisher )
+        public B contentEventProducer( final ContentEventProducer contentEventProducer )
         {
-            this.eventPublisher = eventPublisher;
+            this.contentEventProducer = contentEventProducer;
             return (B) this;
         }
 
@@ -279,7 +282,7 @@ abstract class AbstractContentCommand
         {
             Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
             Preconditions.checkNotNull( contentTypeService, "contentTypesService cannot be null" );
-            Preconditions.checkNotNull( eventPublisher, "eventPublisher cannot be null" );
+            Preconditions.checkNotNull( contentEventProducer, "contentEventProducer cannot be null" );
             Preconditions.checkNotNull( translator, "translator cannot be null" );
         }
     }

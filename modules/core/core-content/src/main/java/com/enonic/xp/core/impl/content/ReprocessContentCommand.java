@@ -70,22 +70,33 @@ final class ReprocessContentCommand
             return media;
         }
         final ContentId id = media.getId();
-        final ByteSource binary = GetBinaryCommand.create( id, source.getBinaryReference(), this ).build().execute();
+        final ByteSource binary = GetBinaryCommand.create( id, source.getBinaryReference() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .build()
+            .execute();
         final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
             byteSource( binary ).
             mimeType( source.getMimeType() ).
             content( id ).
             name( source.getName() );
 
-        return UpdateMediaCommand.create( updateMediaParams, this ).
-            mediaInfoService( mediaInfoService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build().execute();
+        return UpdateMediaCommand.create( updateMediaParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .mediaInfoService( mediaInfoService )
+            .siteService( this.siteService )
+            .contentTypeService( this.contentTypeService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build()
+            .execute();
     }
 
     private Content revertModifiedTime( final Content content, final Instant modifiedTime )
@@ -93,7 +104,7 @@ final class ReprocessContentCommand
         final UpdateNodeParams update = UpdateNodeParams.create()
             .id( NodeId.from( content.getId() ) )
             .editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
         final Node node = this.nodeService.update( update );
 

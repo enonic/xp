@@ -108,7 +108,7 @@ public class CreateIssueCommentCommand
                 inheritPermissions( true ).
                 childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER ).
                 nodeType( IssueCommentConstants.NODE_COLLECTION ).
-                refresh( RefreshMode.ALL );
+                refresh( RefreshMode.SEARCH );
 
             return builder.build();
         }

@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
@@ -44,11 +41,11 @@ public class NodeStoreDocumentFactory
         return new Builder();
     }
 
-    public Collection<IndexDocument> create()
+    public IndexDocument create()
     {
         this.node.validateForIndexing();
 
-        return Collections.singleton( createDataDocument() );
+        return createDataDocument();
     }
 
     private IndexDocument createDataDocument()

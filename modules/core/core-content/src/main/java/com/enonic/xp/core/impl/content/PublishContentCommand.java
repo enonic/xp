@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -17,6 +20,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -57,7 +61,7 @@ public class PublishContentCommand
         this.includeDependencies = builder.includeDependencies;
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.resultBuilder = PublishContentResult.create();
-        this.publishContentListener = builder.publishContentListener;
+        this.publishContentListener = Objects.requireNonNullElseGet( builder.publishContentListener, EmptyPushContentListener::new );
         this.message = builder.message;
     }
 
@@ -70,10 +74,7 @@ public class PublishContentCommand
     {
         final CompareContentResults results = getSyncWork();
 
-        if ( publishContentListener != null )
-        {
-            publishContentListener.contentResolved( results.size() );
-        }
+        publishContentListener.contentResolved( results.size() );
 
         doPush( results.contentIds() );
 
@@ -109,7 +110,7 @@ public class PublishContentCommand
                                           .excludeChildrenIds( this.excludeChildrenIds )
                                           .includeDependencies( this.includeDependencies )
                                           .contentTypeService( this.contentTypeService )
-                                          .eventPublisher( this.eventPublisher )
+                                          .contentEventProducer( contentEventProducer )
                                           .translator( this.translator )
                                           .nodeService( this.nodeService )
                                           .build()::execute );
@@ -120,7 +121,7 @@ public class PublishContentCommand
         final ContentValidityResult result = CheckContentValidityCommand.create()
             .translator( this.translator )
             .nodeService( this.nodeService )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .contentTypeService( this.contentTypeService )
             .contentIds( pushContentsIds )
             .build()
@@ -133,20 +134,41 @@ public class PublishContentCommand
     {
         setPublishInfo( nodesToPush );
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, count -> {
-            if ( publishContentListener != null )
-            {
-                publishContentListener.contentPushed( count );
-            }
-        } );
+        final PushNodesResult pushNodesResult =
+            nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, publishContentListener::contentPushed );
 
-        commitPushedNodes( pushNodesResult.getSuccessful() );
+        final NodeBranchEntries successful = pushNodesResult.getSuccessful();
 
-        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailed()
+        commitPushedNodes( successful );
+
+        final List<Content> contents = successful.stream()
+            .map( nodeBranchEntry -> translator.fromNode(
+                Node.create( nodeService.getByNodeVersionKey( nodeBranchEntry.getNodeVersionKey() ) )
+                    .nodeVersionId( nodeBranchEntry.getVersionId() )
+                    .timestamp( nodeBranchEntry.getTimestamp() )
+                    .parentPath( nodeBranchEntry.getNodePath().getParentPath() )
+                    .name( nodeBranchEntry.getNodePath().getName() )
+                    .build(), false ) )
+            .collect( Collectors.toList() );
+
+        final List<Content> contentsOffline = pushNodesResult.getSuccessfulEntries()
+            .stream()
+            .filter( e -> e.getCurrentTargetPath() != null && !e.getCurrentTargetPath().equals( e.getNodeBranchEntry().getNodePath() ) )
+            .map( e -> translator.fromNode( Node.create( nodeService.getByNodeVersionKey( e.getNodeBranchEntry().getNodeVersionKey() ) )
+                                                .nodeVersionId( e.getNodeBranchEntry().getVersionId() )
+                                                .timestamp( e.getNodeBranchEntry().getTimestamp() )
+                                                .parentPath( e.getCurrentTargetPath().getParentPath() )
+                                                .name( e.getCurrentTargetPath().getName() )
+                                                .build(), false ) )
+            .collect( Collectors.toList() );
+
+        this.contentEventProducer.putOnlineOffline( contents, contentsOffline );
+
+        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailedEntries()
                                                                           .stream()
                                                                           .map( failed -> failed.getNodeBranchEntry().getNodeId() )
                                                                           .collect( Collectors.toList() ) ) );
-        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful().getKeys() ) );
+        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( successful.getKeys() ) );
     }
 
     private void setPublishInfo( final NodeIds nodesToPush )
@@ -203,10 +225,8 @@ public class PublishContentCommand
                 }
 
             } ).id( id ).build() );
-            if ( publishContentListener != null )
-            {
-                publishContentListener.contentPushed( 1 );
-            }
+
+            publishContentListener.contentPushed( 1 );
         }
     }
 
@@ -297,6 +317,7 @@ public class PublishContentCommand
             return this;
         }
 
+
         @Override
         void validate()
         {
@@ -311,5 +332,21 @@ public class PublishContentCommand
             return new PublishContentCommand( this );
         }
 
+    }
+
+    private static class EmptyPushContentListener
+        implements PushContentListener
+    {
+        @Override
+        public void contentPushed( final int count )
+        {
+
+        }
+
+        @Override
+        public void contentResolved( final int count )
+        {
+
+        }
     }
 }

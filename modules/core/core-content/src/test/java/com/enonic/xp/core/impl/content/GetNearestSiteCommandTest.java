@@ -150,12 +150,12 @@ public class GetNearestSiteCommandTest
 
     private GetNearestSiteCommand createCommand( final ContentId contentId )
     {
-        return GetNearestSiteCommand.create().
-            contentId( contentId ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        return GetNearestSiteCommand.create()
+            .contentId( contentId )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .build();
     }
 }

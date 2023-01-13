@@ -9,13 +9,13 @@ public class StoreNodeParams
 
     final NodeCommitId nodeCommitId;
 
-    final boolean overrideVersion;
+    final boolean newVersion;
 
     private StoreNodeParams( final Builder builder )
     {
         node = builder.node;
         nodeCommitId = builder.nodeCommitId;
-        overrideVersion = builder.overrideVersion;
+        newVersion = builder.newVersion;
     }
 
     public Node getNode()
@@ -28,9 +28,9 @@ public class StoreNodeParams
         return nodeCommitId;
     }
 
-    public boolean isOverrideVersion()
+    public boolean isNewVersion()
     {
-        return overrideVersion;
+        return newVersion;
     }
 
     public static Builder create()
@@ -45,7 +45,7 @@ public class StoreNodeParams
 
         private NodeCommitId nodeCommitId;
 
-        private boolean overrideVersion;
+        private boolean newVersion = true;
 
         private Builder()
         {
@@ -64,7 +64,7 @@ public class StoreNodeParams
         }
 
         public Builder overrideVersion() {
-            this.overrideVersion = true;
+            this.newVersion = false;
             return this;
         }
 

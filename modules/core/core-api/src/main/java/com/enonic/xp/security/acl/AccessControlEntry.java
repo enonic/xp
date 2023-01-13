@@ -43,6 +43,11 @@ public final class AccessControlEntry
         return deniedPermissions;
     }
 
+    public boolean isAllowed( final Permission permission )
+    {
+        return this.allowedPermissions.contains( permission );
+    }
+
     public boolean isAllowed( final Permission... permissions )
     {
         return this.allowedPermissions.containsAll( Arrays.asList( permissions ) );

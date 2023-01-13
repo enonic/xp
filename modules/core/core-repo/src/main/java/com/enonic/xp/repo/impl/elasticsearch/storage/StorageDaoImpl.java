@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -19,20 +18,21 @@ import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.block.ClusterBlockException;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.SearchPreference;
+import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
-import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
+import com.enonic.xp.repo.impl.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
@@ -41,11 +41,14 @@ import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
+import com.enonic.xp.repository.IndexException;
 
 @Component
 public class StorageDaoImpl
     implements StorageDao
 {
+    private static final long DEFAULT_STORE_TIMEOUT_SECONDS = 10;
+
     private Client client;
 
     @Override
@@ -54,10 +57,10 @@ public class StorageDaoImpl
         final StorageSource settings = request.getSettings();
 
         final IndexRequest indexRequest = Requests.indexRequest().
+            id( request.getId() ).
             index( settings.getStorageName().getName() ).
             type( settings.getStorageType().getName() ).
             source( XContentBuilderFactory.create( request ) ).
-            id( request.getId() ).
             refresh( request.isForceRefresh() );
 
         if ( request.getRouting() != null )
@@ -70,15 +73,46 @@ public class StorageDaoImpl
             indexRequest.parent( request.getParent() );
         }
 
-        return doStore( indexRequest, request.getTimeout() );
+        final int timeout = request.getTimeout();
+        try
+        {
+            return this.client.index( indexRequest ).actionGet( timeout, TimeUnit.SECONDS ).getId();
+        }
+        catch ( ClusterBlockException e )
+        {
+            throw new NodeStorageException( "Cannot store node " + indexRequest.id() + ", Repository in 'READ-ONLY mode'" );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new NodeStorageException( "Cannot store node " + indexRequest.toString(), e );
+        }
     }
 
     @Override
-    public void store( final Collection<IndexDocument> indexDocuments )
+    public void store( final IndexDocument indexDocument )
     {
-        StoreExecutor.create( this.client ).
-            build().
-            execute( indexDocuments );
+        final String id = indexDocument.getId();
+
+        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
+
+        final IndexRequest req = Requests.indexRequest()
+            .id( id )
+            .index( indexDocument.getIndexName() )
+            .type( indexDocument.getIndexTypeName() )
+            .source( xContentBuilder )
+            .refresh( indexDocument.isRefreshAfterOperation() );
+
+        try
+        {
+            this.client.index( req ).actionGet( DEFAULT_STORE_TIMEOUT_SECONDS, TimeUnit.SECONDS );
+        }
+        catch ( Exception e )
+        {
+            final String msg = "Failed to store document with id [" + id + "] in index [" + indexDocument.getIndexName() + "] branch " +
+                indexDocument.getIndexTypeName();
+
+            throw new IndexException( msg, e );
+        }
     }
 
     @Override
@@ -140,26 +174,6 @@ public class StorageDaoImpl
                 throw new NodeStorageException( "Cannot delete node " + id, e );
             }
         }
-    }
-
-    private String doStore( final IndexRequest request, final int timeout )
-    {
-        final IndexResponse indexResponse;
-        try
-        {
-            indexResponse = this.client.index( request ).
-                actionGet( timeout, TimeUnit.SECONDS );
-        }
-        catch ( ClusterBlockException e )
-        {
-            throw new NodeStorageException( "Cannot store node " + request.id() + ", Repository in 'READ-ONLY mode'" );
-        }
-        catch ( ElasticsearchException e )
-        {
-            throw new NodeStorageException( "Cannot store node " + request.toString(), e );
-        }
-
-        return indexResponse.getId();
     }
 
     @Override
@@ -240,6 +254,12 @@ public class StorageDaoImpl
             request( request ).
             build().
             execute();
+    }
+
+    @Override
+    public void refresh( final StorageName storageName )
+    {
+        client.admin().indices().prepareRefresh( storageName.getName() ).execute().actionGet();
     }
 
     @Reference

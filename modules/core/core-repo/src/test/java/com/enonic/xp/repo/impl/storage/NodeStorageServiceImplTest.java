@@ -96,7 +96,7 @@ class NodeStorageServiceImplTest
             thenReturn( nodeVersionMetadata );
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
 
-        final Node result = instance.getNode( nodeId, nodeVersionId, context );
+        final Node result = instance.get( nodeVersionId, context );
 
         assertNotNull( result );
 
@@ -113,7 +113,7 @@ class NodeStorageServiceImplTest
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( null );
 
-        final Node result = instance.getNode( nodeId, nodeVersionId, context );
+        final Node result = instance.get( nodeVersionId, context );
 
         assertNull( result );
 
@@ -132,7 +132,7 @@ class NodeStorageServiceImplTest
 
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( null );
 
-        final Node result = instance.getNode( nodeId, nodeVersionId, context );
+        final Node result = instance.get( nodeVersionId, context );
 
         assertNull( result );
 

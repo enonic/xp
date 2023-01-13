@@ -106,14 +106,14 @@ public class GetContentByIdAndVersionIdCommandTest
 
     private GetContentByIdAndVersionIdCommand createInstance()
     {
-        return GetContentByIdAndVersionIdCommand.create().
-            contentId( contentId ).
-            versionId( versionId ).
-            nodeService( nodeService ).
-            translator( translator ).
-            eventPublisher( eventPublisher ).
-            contentTypeService( contentTypeService ).
-            build();
+        return GetContentByIdAndVersionIdCommand.create()
+            .contentId( contentId )
+            .versionId( versionId )
+            .nodeService( nodeService )
+            .translator( translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentTypeService( contentTypeService )
+            .build();
     }
 
 }

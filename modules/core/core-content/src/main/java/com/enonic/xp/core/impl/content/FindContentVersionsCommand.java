@@ -6,6 +6,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
@@ -39,6 +40,8 @@ public class FindContentVersionsCommand
     private FindContentVersionsResult doGetContentVersions()
     {
         final NodeId nodeId = NodeId.from( this.contentId );
+
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions( GetNodeVersionsParams.create().
             nodeId( nodeId ).

@@ -8,6 +8,7 @@ import com.enonic.xp.repo.impl.SearchSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
+import com.enonic.xp.repository.RepositoryId;
 
 public interface NodeSearchService
 {
@@ -17,11 +18,11 @@ public interface NodeSearchService
 
     SearchResult query( NodeQuery query, ReturnFields returnFields, SearchSource source );
 
-    SearchResult query( NodeVersionQuery query, SearchSource source );
+    SearchResult query( NodeVersionQuery query, RepositoryId repositoryId );
 
-    SearchResult query( NodeCommitQuery query, SearchSource source );
+    SearchResult query( NodeCommitQuery query, RepositoryId repositoryId );
 
-    SearchResult query( NodeBranchQuery nodeBranchQuery, SearchSource source );
+    SearchResult query( NodeBranchQuery nodeBranchQuery, RepositoryId repositoryId );
 
-    SearchResult query( NodeVersionDiffQuery query, SearchSource source );
+    SearchResult query( NodeVersionDiffQuery query, RepositoryId repositoryId );
 }

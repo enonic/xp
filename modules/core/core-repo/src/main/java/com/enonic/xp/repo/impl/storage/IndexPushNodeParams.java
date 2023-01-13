@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.repository.RepositoryId;
 
 public final class IndexPushNodeParams
 {
@@ -10,13 +9,10 @@ public final class IndexPushNodeParams
 
     private final Branch targetBranch;
 
-    private final RepositoryId targetRepo;
-
     private IndexPushNodeParams( Builder builder )
     {
         nodeIds = builder.nodeIds;
         targetBranch = builder.targetBranch;
-        targetRepo = builder.targetRepo;
     }
 
     public NodeIds getNodeIds()
@@ -29,11 +25,6 @@ public final class IndexPushNodeParams
         return targetBranch;
     }
 
-    public RepositoryId getTargetRepo()
-    {
-        return targetRepo;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -44,8 +35,6 @@ public final class IndexPushNodeParams
         private NodeIds nodeIds;
 
         private Branch targetBranch;
-
-        private RepositoryId targetRepo;
 
         private Builder()
         {
@@ -60,12 +49,6 @@ public final class IndexPushNodeParams
         public Builder targetBranch( final Branch targetBranch )
         {
             this.targetBranch = targetBranch;
-            return this;
-        }
-
-        public Builder targetRepo( final RepositoryId targetRepo )
-        {
-            this.targetRepo = targetRepo;
             return this;
         }
 
