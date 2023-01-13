@@ -36,15 +36,13 @@ public class NodeStoreDocumentFactoryTest
             data( data ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( Branch.from( "myBranch" ) ).
-            repositoryId( RepositoryId.from( "my-repo" ) ).
-            build().
-            create();
+        final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
+            .node( node )
+            .branch( Branch.from( "myBranch" ) )
+            .repositoryId( RepositoryId.from( "my-repo" ) )
+            .build()
+            .create();
 
-        assertEquals( 1, indexDocuments.size() );
-        final IndexDocument indexDocument = indexDocuments.iterator().next();
         final IndexItems indexItems = indexDocument.getIndexItems();
         final Collection<IndexValue> referenceValues = indexItems.get( NodeIndexPath.REFERENCE.getPath() );
         assertEquals( 1, referenceValues.size() );

@@ -11,6 +11,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Deprecated
 public class PushNodeEntries
     extends AbstractImmutableEntitySet<PushNodeEntry>
 {
@@ -33,9 +34,7 @@ public class PushNodeEntries
     @Deprecated
     public NodeIds getNodeIds()
     {
-        return NodeIds.from( this.set.stream().
-            map( ( entry ) -> entry.getNodeBranchEntry().getNodeId() ).
-            collect( ImmutableSet.toImmutableSet() ) );
+        return NodeIds.from( this.set.stream().map( ( entry ) -> entry.getNodeBranchEntry().getNodeId() ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public Branch getTargetBranch()

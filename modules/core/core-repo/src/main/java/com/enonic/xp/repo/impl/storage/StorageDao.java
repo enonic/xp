@@ -1,15 +1,15 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.Collection;
 import java.util.List;
 
+import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 
 public interface StorageDao
 {
     String store( StoreRequest request );
 
-    void store( Collection<IndexDocument> indexDocuments );
+    void store( IndexDocument indexDocument );
 
     boolean delete( DeleteRequest request );
 
@@ -20,4 +20,6 @@ public interface StorageDao
     List<GetResult> getByIds( GetByIdsRequest requests );
 
     void copy( CopyRequest request );
+
+    void refresh( StorageName storageName );
 }

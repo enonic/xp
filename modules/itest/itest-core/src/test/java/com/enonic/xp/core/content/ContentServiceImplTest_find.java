@@ -19,7 +19,6 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -462,8 +461,6 @@ public class ContentServiceImplTest_find
         final Content child1 = createContent( site.getPath(), "b", data1 );
         final Content child2 = createContent( site.getPath(), "c", data2 );
         createContent( site.getPath(), "d", data3 );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final PropertyTree request = new PropertyTree();
 

@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -7,9 +10,9 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public class PushNodesResult
 {
-    private final NodeBranchEntries successful;
+    private final ImmutableList<PushNodeEntry> successful;
 
-    private final ImmutableSet<Failed> failed;
+    private final ImmutableList<Failed> failed;
 
     protected PushNodesResult( Builder<?> builder )
     {
@@ -19,12 +22,25 @@ public class PushNodesResult
 
     public NodeBranchEntries getSuccessful()
     {
+        final NodeBranchEntries.Builder builder = NodeBranchEntries.create();
+        successful.stream().map( PushNodeEntry::getNodeBranchEntry ).forEach( builder::add );
+        return builder.build();
+    }
+
+    public List<PushNodeEntry> getSuccessfulEntries()
+    {
         return successful;
     }
 
-    public ImmutableSet<Failed> getFailed()
+    public List<Failed> getFailedEntries()
     {
         return failed;
+    }
+
+    @Deprecated
+    public ImmutableSet<Failed> getFailed()
+    {
+        return ImmutableSet.copyOf( failed );
     }
 
     public static Builder create()
@@ -34,17 +50,23 @@ public class PushNodesResult
 
     public static class Builder<T extends Builder>
     {
-        private final NodeBranchEntries.Builder successful = NodeBranchEntries.create();
+        private final ImmutableList.Builder<PushNodeEntry> successful = ImmutableList.builder();
 
-        private final ImmutableSet.Builder<Failed> failed = ImmutableSet.builder();
+        private final ImmutableList.Builder<Failed> failed = ImmutableList.builder();
 
         protected Builder()
         {
         }
 
+        public T addSuccess( final NodeBranchEntry nodeBranchEntry, NodePath currentTargetPath )
+        {
+            successful.add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).currentTargetPath( currentTargetPath ).build() );
+            return (T) this;
+        }
+
+        @Deprecated
         public T addSuccess( final NodeBranchEntry success )
         {
-            this.successful.add( success );
             return (T) this;
         }
 

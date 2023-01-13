@@ -9,12 +9,15 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
+import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class NodeSearchServiceImpl
@@ -62,49 +65,49 @@ public class NodeSearchServiceImpl
     }
 
     @Override
-    public SearchResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source )
+    public SearchResult query( final NodeBranchQuery nodeBranchQuery, final RepositoryId repositoryId )
     {
-        final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( source ).
-            returnFields( BRANCH_RETURN_FIELDS ).
-            query( nodeBranchQuery ).
-            build();
+        final SearchRequest searchRequest = SearchRequest.create()
+            .searchSource( SingleRepoStorageSource.create( repositoryId, StaticStorageType.BRANCH ) )
+            .returnFields( BRANCH_RETURN_FIELDS )
+            .query( nodeBranchQuery )
+            .build();
 
         return searchDao.search( searchRequest );
     }
 
     @Override
-    public SearchResult query( final NodeVersionQuery query, final SearchSource source )
+    public SearchResult query( final NodeVersionQuery query, final RepositoryId repositoryId )
     {
-        final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( source ).
-            returnFields( VERSION_RETURN_FIELDS ).
-            query( query ).
-            build();
+        final SearchRequest searchRequest = SearchRequest.create()
+            .searchSource( SingleRepoStorageSource.create( repositoryId, StaticStorageType.VERSION ) )
+            .returnFields( VERSION_RETURN_FIELDS )
+            .query( query )
+            .build();
 
         return searchDao.search( searchRequest );
     }
 
     @Override
-    public SearchResult query( final NodeCommitQuery query, final SearchSource source )
+    public SearchResult query( final NodeCommitQuery query, final RepositoryId repositoryId )
     {
-        final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( source ).
-            returnFields( COMMIT_RETURN_FIELDS ).
-            query( query ).
-            build();
+        final SearchRequest searchRequest = SearchRequest.create()
+            .searchSource( SingleRepoStorageSource.create( repositoryId, StaticStorageType.COMMIT ) )
+            .returnFields( COMMIT_RETURN_FIELDS )
+            .query( query )
+            .build();
 
         return searchDao.search( searchRequest );
     }
 
     @Override
-    public SearchResult query( final NodeVersionDiffQuery query, final SearchSource source )
+    public SearchResult query( final NodeVersionDiffQuery query, final RepositoryId repositoryId )
     {
-        final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( source ).
-            returnFields( VERSION_RETURN_FIELDS ).
-            query( query ).
-            build();
+        final SearchRequest searchRequest = SearchRequest.create()
+            .searchSource( SingleRepoStorageSource.create( repositoryId, StaticStorageType.VERSION ) )
+            .returnFields( VERSION_RETURN_FIELDS )
+            .query( query )
+            .build();
 
         return searchDao.search( searchRequest );
     }

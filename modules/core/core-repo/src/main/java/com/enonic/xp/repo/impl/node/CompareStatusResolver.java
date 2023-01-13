@@ -80,11 +80,6 @@ class CompareStatusResolver
 
     private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
     {
-        if ( nodeBranchEntry == null )
-        {
-            throw new IllegalArgumentException( "Expected branchNodeVersion to be != null when trying to fetch NodeVersion" );
-        }
-
         final NodeVersionMetadata version = nodeStorageService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(),
                                                                            InternalContext.from( ContextAccessor.current() ) );
 

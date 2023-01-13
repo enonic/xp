@@ -450,7 +450,6 @@ public class DumpServiceImpl
 
         this.nodeStorageService.store( Node.createRoot().
             permissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
-            inheritPermissions( false ).
             childOrder( RepositoryConstants.DEFAULT_CHILD_ORDER ).
             build(), rootNodeInternalContext );
 

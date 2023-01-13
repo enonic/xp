@@ -7,9 +7,7 @@ class SingleRepoStorageSourceAdaptor
 {
     public static ESSource adapt( final SingleRepoStorageSource source )
     {
-        return ESSource.create().
-            addIndexType( source.getType().name().toLowerCase() ).
-            addIndexName( createStorageIndexName( source.getRepositoryId() ) ).
+        return ESSource.create().addIndexType( source.getType().getName() ).addIndexName( createStorageIndexName( source.getRepositoryId() ) ).
             build();
     }
 }

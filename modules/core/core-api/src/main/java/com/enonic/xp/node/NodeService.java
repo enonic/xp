@@ -27,6 +27,8 @@ public interface NodeService
 
     NodeIds deleteByPath( NodePath path );
 
+    DeleteNodeResult delete( DeleteNodeParams deleteNodeParams );
+
     Node getById( NodeId id );
 
     Node getByIdAndVersionId( NodeId id, NodeVersionId versionId );
@@ -35,6 +37,7 @@ public interface NodeService
 
     Node getByPath( NodePath path );
 
+    @Deprecated
     Node getByPathAndVersionId( NodePath path, NodeVersionId versionId );
 
     Nodes getByPaths( NodePaths paths );

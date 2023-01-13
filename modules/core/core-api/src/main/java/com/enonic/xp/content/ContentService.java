@@ -137,6 +137,7 @@ public interface ContentService
 
     Content getByIdAndVersionId( ContentId contentId, ContentVersionId versionId );
 
+    @Deprecated
     Content getByPathAndVersionId( ContentPath contentPath, ContentVersionId versionId );
 
     ImportContentResult importContent( ImportContentParams params );

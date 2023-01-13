@@ -114,8 +114,7 @@ public final class IdProviderAccessControlList
 
         private Builder( final IdProviderAccessControlList acl )
         {
-            this.entries = new HashMap<>();
-            this.entries.putAll( acl.entries );
+            this.entries = new HashMap<>( acl.entries );
         }
 
         public Builder add( final IdProviderAccessControlEntry entry )

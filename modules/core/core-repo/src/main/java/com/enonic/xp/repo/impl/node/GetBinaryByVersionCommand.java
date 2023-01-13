@@ -26,23 +26,20 @@ public class GetBinaryByVersionCommand
 
     public ByteSource execute()
     {
-        final Node node = this.nodeStorageService.get( nodeId, nodeVersionId, InternalContext.from( ContextAccessor.current() ) );
+        final Node node = this.nodeStorageService.get( nodeVersionId, InternalContext.from( ContextAccessor.current() ) );
 
         if ( node == null )
         {
             throw new NodeNotFoundException( "Cannot get binary reference, node with versionId: " + this.nodeVersionId + " not found" );
         }
 
-        if ( binaryReference != null )
+        if ( !node.id().equals( nodeId ) )
         {
-            return getByBinaryReference( node );
+            throw new NodeNotFoundException( "NodeVersionId [" + nodeVersionId + "] not a version of Node with id [" + nodeId + "]" );
         }
-        else
-        {
-            return getByPropertyPath( node );
-        }
-    }
 
+        return getByBinaryReference( node.getAttachedBinaries() );
+    }
 
     public static GetBinaryByVersionCommand.Builder create()
     {

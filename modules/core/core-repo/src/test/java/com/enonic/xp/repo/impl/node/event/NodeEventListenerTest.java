@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,7 +14,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -136,7 +137,6 @@ public class NodeEventListenerTest
                                                                           .node( movedNode )
                                                                           .previousPath( sourceNode.path() )
                                                                           .build() )
-                                                       .sourceNode( sourceNode )
                                                        .build() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
@@ -220,13 +220,7 @@ public class NodeEventListenerTest
             currentTargetPath( previousNodePath ).
             build();
 
-        final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
-            targetRepo( ContentConstants.CONTENT_REPO_ID ).
-            targetBranch( ContentConstants.BRANCH_MASTER ).
-            add( pushNodeEntry ).
-            build();
-
-        final Event localEvent = NodeEvents.pushed( pushNodeEntries );
+        final Event localEvent = NodeEvents.pushed( List.of( pushNodeEntry ), ContentConstants.BRANCH_MASTER );
 
         nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).

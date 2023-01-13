@@ -6,7 +6,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SearchPreference;
 
@@ -42,11 +41,6 @@ public class CheckNodeExistsCommand
         final InternalContext context = InternalContext.create( ContextAccessor.current() )
             .searchPreference( Mode.ACCURACY.equals( mode ) ? SearchPreference.PRIMARY : SearchPreference.LOCAL )
             .build();
-
-        if ( Mode.ACCURACY.equals( mode ) )
-        {
-            refresh( RefreshMode.STORAGE );
-        }
 
         final NodeBranchEntry found = nodeStorageService.getBranchNodeVersion( nodePath, context );
 

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexConfig;
@@ -54,33 +52,23 @@ public class NodeIndexDocumentFactoryTest
             id( NodeId.from( "abc" ) ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( TEST_BRANCH ).
-            repositoryId( TEST_REPOSITORY_ID ).
-            build().
-            create();
+        final IndexDocument indexDocument =
+            NodeStoreDocumentFactory.createBuilder().node( node ).branch( TEST_BRANCH ).repositoryId( TEST_REPOSITORY_ID ).build().create();
 
-        assertNotNull( indexDocuments );
+        assertNotNull( indexDocument );
     }
 
     @Test
     public void index_node_document_created()
         throws Exception
     {
-        Node node = Node.create().
-            id( NodeId.from( "abc" ) ).
-            build();
+        Node node = Node.create().id( NodeId.from( "abc" ) ).build();
 
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( TEST_BRANCH ).
-            repositoryId( TEST_REPOSITORY_ID ).
-            build().
-            create();
+        final IndexDocument indexDocument =
+            NodeStoreDocumentFactory.createBuilder().node( node ).branch( TEST_BRANCH ).repositoryId( TEST_REPOSITORY_ID ).build().create();
 
-        assertNotNull( indexDocuments );
-        assertNotNull( getIndexDocumentOfType( indexDocuments, "test" ) );
+        assertNotNull( indexDocument );
+        assertEquals( "test", indexDocument.getIndexTypeName() );
     }
 
     @Test
@@ -97,15 +85,10 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( TEST_BRANCH ).
-            repositoryId( TEST_REPOSITORY_ID ).
-            build().
-            create();
+        final IndexDocument indexDocument =
+            NodeStoreDocumentFactory.createBuilder().node( node ).branch( TEST_BRANCH ).repositoryId( TEST_REPOSITORY_ID ).build().create();
 
-        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
-
+        assertEquals( "test", indexDocument.getIndexTypeName() );
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
     }
 
@@ -125,33 +108,11 @@ public class NodeIndexDocumentFactoryTest
                 build() ).
             build();
 
-        final Collection<IndexDocument> indexDocuments = NodeStoreDocumentFactory.createBuilder().
-            node( node ).
-            branch( TEST_BRANCH ).
-            repositoryId( TEST_REPOSITORY_ID ).
-            build().
-            create();
-
-        final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
+        final IndexDocument indexDocument =
+            NodeStoreDocumentFactory.createBuilder().node( node ).branch( TEST_BRANCH ).repositoryId( TEST_REPOSITORY_ID ).build().create();
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
         assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY_ID ), indexDocument.getIndexName() );
         assertEquals( "test", indexDocument.getIndexTypeName() );
     }
-
-    private IndexDocument getIndexDocumentOfType( final Collection<IndexDocument> indexDocuments, final String indexType )
-    {
-        for ( IndexDocument indexDocument : indexDocuments )
-        {
-            if ( indexType.equals( indexDocument.getIndexTypeName() ) )
-            {
-                return indexDocument;
-            }
-        }
-        return null;
-    }
-
-
-
-
 }

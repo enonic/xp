@@ -18,6 +18,8 @@ import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteNodeListener;
+import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
@@ -516,35 +518,46 @@ public class NodeServiceImpl
     @Override
     public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
     {
+        final DeleteNodeResult result =
+            delete( DeleteNodeParams.create().nodeId( id ).refresh( RefreshMode.ALL ).deleteNodeListener( deleteNodeListener ).build() );
+        return NodeIds.from( result.getNodeBranchEntries().getKeys() );
+    }
+
+    @Override
+    public DeleteNodeResult delete( final DeleteNodeParams deleteNodeParams )
+    {
         verifyContext();
-        final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create().
-            nodeId( id ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            deleteNodeListener( deleteNodeListener ).
-            build().
-            execute();
+        final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create()
+            .nodeId( deleteNodeParams.getNodeId() )
+            .deleteNodeListener( deleteNodeParams.getDeleteNodeListener() )
+            .refresh( deleteNodeParams.getRefresh() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( deletedNodes.isNotEmpty() )
         {
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
         }
 
-        return NodeIds.from( deletedNodes.getKeys() );
+        return DeleteNodeResult.create().nodeBranchEntries( deletedNodes ).build();
     }
 
     @Override
     public NodeIds deleteByPath( final NodePath path )
     {
         verifyContext();
-        final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create().
-            nodePath( path ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create()
+            .nodePath( path )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
+
+        refresh( RefreshMode.ALL );
 
         if ( deletedNodes.isNotEmpty() )
         {
@@ -565,19 +578,19 @@ public class NodeServiceImpl
         verifyContext();
         verifyBranchExists( target );
 
-        final InternalPushNodesResult pushNodesResult = PushNodesCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            ids( ids ).
-            target( target ).
-            pushListener( pushListener ).
-            build().
-            execute();
+        final PushNodesResult pushNodesResult = PushNodesCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .ids( ids )
+            .target( target )
+            .pushListener( pushListener )
+            .build()
+            .execute();
 
-        if ( pushNodesResult.getPushNodeEntries().isNotEmpty() )
+        if ( !pushNodesResult.getSuccessfulEntries().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getPushNodeEntries() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(), target ) );
         }
 
         return pushNodesResult;
@@ -1115,8 +1128,6 @@ public class NodeServiceImpl
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
     {
         verifyContext();
-
-        refresh( RefreshMode.STORAGE );
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();

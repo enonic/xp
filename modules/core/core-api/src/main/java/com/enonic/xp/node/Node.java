@@ -83,16 +83,8 @@ public final class Node
             this.path = null;
         }
 
-        if ( builder.indexConfigDocument != null )
-        {
-            this.indexConfigDocument = builder.indexConfigDocument;
-        }
-        else
-        {
-            this.indexConfigDocument = PatternIndexConfigDocument.create().
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build();
-        }
+        this.indexConfigDocument = Objects.requireNonNullElseGet( builder.indexConfigDocument, PatternIndexConfigDocument.create()
+            .defaultConfig( IndexConfig.BY_TYPE )::build );
     }
 
     public boolean isRoot()
