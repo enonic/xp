@@ -2,20 +2,24 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.NodePath;
 
 public class StoreNodeParams
 {
-    final Node node;
+    private final Node node;
 
-    final NodeCommitId nodeCommitId;
+    private final NodeCommitId nodeCommitId;
 
-    final boolean newVersion;
+    private final boolean newVersion;
+
+    private final NodePath movedFrom;
 
     private StoreNodeParams( final Builder builder )
     {
         node = builder.node;
         nodeCommitId = builder.nodeCommitId;
         newVersion = builder.newVersion;
+        movedFrom = builder.movedFrom;
     }
 
     public Node getNode()
@@ -33,6 +37,11 @@ public class StoreNodeParams
         return newVersion;
     }
 
+    public NodePath movedFrom()
+    {
+        return movedFrom;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -46,6 +55,8 @@ public class StoreNodeParams
         private NodeCommitId nodeCommitId;
 
         private boolean newVersion = true;
+
+        private NodePath movedFrom;
 
         private Builder()
         {
@@ -63,8 +74,15 @@ public class StoreNodeParams
             return this;
         }
 
-        public Builder overrideVersion() {
+        public Builder overrideVersion()
+        {
             this.newVersion = false;
+            return this;
+        }
+
+        public Builder movedFrom( final NodePath movedFrom)
+        {
+            this.movedFrom = movedFrom;
             return this;
         }
 

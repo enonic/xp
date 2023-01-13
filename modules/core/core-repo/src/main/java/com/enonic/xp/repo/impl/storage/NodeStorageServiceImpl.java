@@ -73,14 +73,15 @@ public class NodeStorageServiceImpl
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
 
-        this.versionService.store( NodeVersionMetadata.create().
-            nodeId( node.id() ).
-            nodeVersionId( nodeVersionId ).
-            nodeVersionKey( nodeVersionKey ).
-            binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
-            nodePath( node.path() ).
-            nodeCommitId( params.getNodeCommitId() ).
-            timestamp( node.getTimestamp() ).build(), context );
+        this.versionService.store( NodeVersionMetadata.create()
+                                       .nodeId( node.id() )
+                                       .nodeVersionId( nodeVersionId )
+                                       .nodeVersionKey( nodeVersionKey )
+                                       .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
+                                       .nodePath( node.path() )
+                                       .nodeCommitId( params.getNodeCommitId() )
+                                       .timestamp( node.getTimestamp() )
+                                       .build(), context );
 
         this.branchService.store( NodeBranchEntry.create()
                                       .nodeId( node.id() )
@@ -88,7 +89,7 @@ public class NodeStorageServiceImpl
                                       .nodeVersionKey( nodeVersionKey )
                                       .nodePath( node.path() )
                                       .timestamp( node.getTimestamp() )
-                                      .build(), context );
+                                      .build(), params.movedFrom(), context );
 
         final Node newNode = Node.create( node ).nodeVersionId( nodeVersionId ).build();
 
@@ -123,40 +124,6 @@ public class NodeStorageServiceImpl
             timestamp( params.getTimestamp() ).
             build();
         this.commitService.store( nodeCommitEntry, context );
-    }
-
-    @Override
-    public Node move( final StoreMovedNodeParams params, final InternalContext context )
-    {
-        final Node node = params.getNode();
-
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( node.id(), context );
-
-        final NodeVersionId nodeVersionId = new NodeVersionId();
-        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
-
-        this.versionService.store( NodeVersionMetadata.create()
-                                       .nodeId( node.id() )
-                                       .nodeVersionId( nodeVersionId )
-                                       .nodeVersionKey( nodeVersionKey )
-                                       .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
-                                       .nodePath( node.path() )
-                                       .timestamp( node.getTimestamp() )
-                                       .build(), context );
-
-        this.branchService.store( NodeBranchEntry.create()
-                                      .nodeId( node.id() )
-                                      .nodeVersionId( nodeVersionId )
-                                      .nodeVersionKey( nodeVersionKey )
-                                      .nodePath( node.path() )
-                                      .timestamp( node.getTimestamp() )
-                                      .build(), nodeBranchEntry.getNodePath(), context );
-
-        final Node newNode = Node.create( node ).nodeVersionId( nodeVersionId ).build();
-
-        this.indexDataService.store( newNode, context );
-
-        return newNode;
     }
 
     @Override

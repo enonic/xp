@@ -25,8 +25,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeStorageService
 {
-    Node move( StoreMovedNodeParams params, InternalContext context );
-
     Node store( Node node, InternalContext context );
 
     Node store( StoreNodeParams params, InternalContext context );

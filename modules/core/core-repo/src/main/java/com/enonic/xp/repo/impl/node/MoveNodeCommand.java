@@ -28,7 +28,7 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -181,8 +181,9 @@ public class MoveNodeCommand
             }
         }
 
-        final Node movedNode = this.nodeStorageService.move( StoreMovedNodeParams.create().node( nodeToMoveBuilder.build() ).build(),
-                                                             InternalContext.from( ContextAccessor.current() ) );
+        final Node movedNode = this.nodeStorageService.store(
+            StoreNodeParams.create().node( nodeToMoveBuilder.build() ).movedFrom( persistedNode.path() ).build(),
+            InternalContext.from( ContextAccessor.current() ) );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
