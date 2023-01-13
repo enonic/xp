@@ -6,6 +6,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
@@ -40,17 +41,16 @@ public class FindContentVersionsCommand
     {
         final NodeId nodeId = NodeId.from( this.contentId );
 
-        final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( nodeId ).
-            from( this.from ).
-            size( this.size ).
-            build() );
+        nodeService.refresh( RefreshMode.STORAGE );
 
-        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create().
-            hits( nodeVersionQueryResult.getHits() ).
-            totalHits( nodeVersionQueryResult.getTotalHits() ).
-            from( nodeVersionQueryResult.getFrom() ).
-            size( nodeVersionQueryResult.getSize() );
+        final NodeVersionQueryResult nodeVersionQueryResult =
+            nodeService.findVersions( GetNodeVersionsParams.create().nodeId( nodeId ).from( this.from ).size( this.size ).build() );
+
+        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create()
+            .hits( nodeVersionQueryResult.getHits() )
+            .totalHits( nodeVersionQueryResult.getTotalHits() )
+            .from( nodeVersionQueryResult.getFrom() )
+            .size( nodeVersionQueryResult.getSize() );
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.nodeService );
 

@@ -55,7 +55,7 @@ public class CheckContentValidityCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute()
             .getContentIds();
@@ -69,7 +69,7 @@ public class CheckContentValidityCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( contentEventProducer )
             .build()
             .execute()
             .getContentIds();

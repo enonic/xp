@@ -144,16 +144,16 @@ public class CreateIssueCommand
 
             final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
 
-            final CreateNodeParams.Builder builder = CreateNodeParams.create().
-                setNodeId( NodeId.from( params.getId() ) ).
-                name( issueName.toString() ).
-                parent( IssueConstants.ISSUE_ROOT_PATH ).
-                data( contentAsData ).
-                indexConfigDocument( indexConfigDocument ).
-                inheritPermissions( true ).
-                childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-                nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
-                refresh( RefreshMode.ALL );
+            final CreateNodeParams.Builder builder = CreateNodeParams.create()
+                .setNodeId( NodeId.from( params.getId() ) )
+                .name( issueName.toString() )
+                .parent( IssueConstants.ISSUE_ROOT_PATH )
+                .data( contentAsData )
+                .indexConfigDocument( indexConfigDocument )
+                .inheritPermissions( true )
+                .childOrder( IssueConstants.DEFAULT_CHILD_ORDER )
+                .nodeType( IssueConstants.ISSUE_NODE_COLLECTION )
+                .refresh( RefreshMode.SEARCH );
 
             return builder.build();
         }

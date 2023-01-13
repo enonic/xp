@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 
+@Deprecated
 public class GetContentByPathAndVersionIdCommand
     extends AbstractContentCommand
 {

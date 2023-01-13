@@ -101,14 +101,14 @@ public class CreateIssueCommentCommand
         {
             final PropertyTree commentAsData = ISSUE_COMMENT_DATA_SERIALIZER.toCreateNodeData( params );
 
-            final CreateNodeParams.Builder builder = CreateNodeParams.create().
-                name( commentName ).
-                parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, parentName.toString() ).build() ).
-                data( commentAsData ).
-                inheritPermissions( true ).
-                childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER ).
-                nodeType( IssueCommentConstants.NODE_COLLECTION ).
-                refresh( RefreshMode.ALL );
+            final CreateNodeParams.Builder builder = CreateNodeParams.create()
+                .name( commentName )
+                .parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, parentName.toString() ).build() )
+                .data( commentAsData )
+                .inheritPermissions( true )
+                .childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER )
+                .nodeType( IssueCommentConstants.NODE_COLLECTION )
+                .refresh( RefreshMode.SEARCH );
 
             return builder.build();
         }

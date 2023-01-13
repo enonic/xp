@@ -29,6 +29,7 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.core.impl.content.ContentEventProducer;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
@@ -65,8 +66,8 @@ public class ParentContentSynchronizerTest
         synchronizer = new ParentContentSynchronizer( this.contentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
-                                        layoutDescriptorService, projectService, contentService, synchronizer );
+            new SyncContentServiceImpl( contentTypeService, nodeService, new ContentEventProducer( eventPublisher ), pageDescriptorService,
+                                        partDescriptorService, layoutDescriptorService, projectService, contentService, synchronizer );
     }
 
     private Content syncCreated( final ContentId contentId )

@@ -46,36 +46,31 @@ public class FindContentIdsByQueryCommandTest
     @Test
     public void test()
     {
-        FindNodesByQueryResult nodesByQueryResult = FindNodesByQueryResult.create().
-            addNodeHit( NodeHit.create().
-                nodeId( NodeId.from( "nodeId" ) ).
-                score( 1.0f ).
-                sort( SortValuesProperty.create().
-                    values( 84 ).
-                    build() ).
-                highlight( HighlightedProperties.create().
-                    add( HighlightedProperty.create().
-                        name( "name" ).
-                        addFragment( "fragment" ).
-                        build() ).
-                    build() ).
-                build() ).
-            hits( 1 ).
-            build();
+        FindNodesByQueryResult nodesByQueryResult = FindNodesByQueryResult.create()
+            .addNodeHit( NodeHit.create()
+                             .nodeId( NodeId.from( "nodeId" ) )
+                             .score( 1.0f )
+                             .sort( SortValuesProperty.create().values( 84 ).build() )
+                             .highlight( HighlightedProperties.create()
+                                             .add( HighlightedProperty.create().name( "name" ).addFragment( "fragment" ).build() )
+                                             .build() )
+                             .build() )
+            .hits( 1 )
+            .build();
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn( nodesByQueryResult );
 
-        FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create().
-            translator( translator ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            query( ContentQuery.create().
-                queryExpr( QueryExpr.from( null, new DynamicOrderExpr(
-                    FunctionExpr.from( "geoDistance", ValueExpr.string( "my-value" ), ValueExpr.geoPoint( "83,80" ),
-                                       ValueExpr.string( "km" ) ), OrderExpr.Direction.ASC ) ) ).
-                build() ).
-            build();
+        FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
+            .translator( translator )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .query( ContentQuery.create()
+                        .queryExpr( QueryExpr.from( null, new DynamicOrderExpr(
+                            FunctionExpr.from( "geoDistance", ValueExpr.string( "my-value" ), ValueExpr.geoPoint( "83,80" ),
+                                               ValueExpr.string( "km" ) ), OrderExpr.Direction.ASC ) ) )
+                        .build() )
+            .build();
 
         FindContentIdsByQueryResult result = command.execute();
 

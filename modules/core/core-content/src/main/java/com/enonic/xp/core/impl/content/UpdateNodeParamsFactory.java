@@ -65,10 +65,8 @@ public class UpdateNodeParamsFactory
     {
         final NodeEditor nodeEditor = toNodeEditor();
 
-        final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
-            id( NodeId.from( editedContent.getId() ) ).
-            editor( nodeEditor ).
-            refresh( RefreshMode.ALL );
+        final UpdateNodeParams.Builder builder =
+            UpdateNodeParams.create().id( NodeId.from( editedContent.getId() ) ).editor( nodeEditor ).refresh( RefreshMode.SEARCH );
 
         for ( final CreateAttachment createAttachment : createAttachments )
         {

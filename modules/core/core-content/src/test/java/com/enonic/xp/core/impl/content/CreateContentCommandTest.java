@@ -595,7 +595,7 @@ public class CreateContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
             .mediaInfo( mediaInfo )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
