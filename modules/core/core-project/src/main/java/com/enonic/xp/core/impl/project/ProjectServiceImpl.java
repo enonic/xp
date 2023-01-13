@@ -227,7 +227,7 @@ public class ProjectServiceImpl
 
             eventPublisher.publish( ProjectEvents.created( params.getName() ) );
 
-            LOG.debug( "Project created: " + params.getName() );
+            LOG.debug( "Project created: {}", params.getName() );
 
             return initProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
         } );
