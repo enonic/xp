@@ -22,7 +22,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
-import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.contextUserHasPermissionOrAdmin;
 
 final class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
@@ -67,7 +66,7 @@ final class ApplyNodePermissionsCommand
 
     private void applyPermissions( final AccessControlList permissions, final Node node )
     {
-        if ( contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node ) )
+        if ( NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node.getPermissions() ) )
         {
             final Node childApplied = storePermissions( permissions, node );
 

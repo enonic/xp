@@ -18,15 +18,13 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntries;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeStorageService
 {
-    Node move( StoreMovedNodeParams params, InternalContext context );
-
     Node store( Node node, InternalContext context );
 
     Node store( StoreNodeParams params, InternalContext context );
@@ -37,11 +35,11 @@ public interface NodeStorageService
 
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
-    void updateVersion( Node node, NodeVersionId nodeVersionId, InternalContext context );
+    void updateVersion( Node node, InternalContext context );
 
     void push( Node node, Branch target, InternalContext context );
 
-    void push( PushNodeEntries entries, PushNodesListener pushListener, InternalContext context );
+    void push( Collection<PushNodeEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
 
     NodeCommitEntry commit( NodeCommitEntry entry, RoutableNodeVersionIds routableNodeVersionIds, InternalContext context );
 
@@ -53,7 +51,7 @@ public interface NodeStorageService
 
     Nodes get( NodePaths nodePaths, InternalContext context );
 
-    Node get( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
+    Node get( NodeVersionId nodeVersionId, InternalContext context );
 
     NodeVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
 
@@ -76,6 +74,4 @@ public interface NodeStorageService
     void handleNodeMoved( NodeMovedParams params, InternalContext context );
 
     void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
-
-    Node getNode( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 }

@@ -9,6 +9,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
 
+@Deprecated
 public class GetNodeByPathAndVersionIdCommand
     extends AbstractNodeCommand
 {
@@ -36,7 +37,13 @@ public class GetNodeByPathAndVersionIdCommand
             return null;
         }
 
-        return this.nodeStorageService.getNode( nodeBranchEntry.getNodeId(), versionId, context );
+        final Node node = this.nodeStorageService.get( versionId, context );
+
+        if ( node == null || !node.id().equals( nodeBranchEntry.getNodeId() ) )
+        {
+            return null;
+        }
+        return node;
     }
 
     public static Builder create()

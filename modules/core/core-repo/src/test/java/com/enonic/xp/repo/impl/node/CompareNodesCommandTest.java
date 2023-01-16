@@ -41,7 +41,7 @@ public class CompareNodesCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        pushNodes( NodeIds.from( node.id(), node2.id() ), WS_OTHER );
+        pushNodes( WS_OTHER, node.id(), node2.id() );
 
         doDeleteNode( node2.id() );
 

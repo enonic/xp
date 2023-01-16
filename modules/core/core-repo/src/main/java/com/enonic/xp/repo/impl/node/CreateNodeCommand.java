@@ -31,7 +31,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
-import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.requireContextUserPermission;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -71,7 +70,7 @@ public final class CreateNodeCommand
         }
         final Node parentNode = NodeHelper.runAsAdmin( this::getParentNode );
 
-        requireContextUserPermission( Permission.CREATE, parentNode );
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
 
         final PrincipalKey user = getCurrentPrincipalKey();
 

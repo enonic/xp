@@ -18,13 +18,13 @@ import static java.util.stream.Collectors.toSet;
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
 {
-    private static final AccessControlList EMPTY = AccessControlList.create().build();
+    private static final AccessControlList EMPTY = new AccessControlList( ImmutableMap.of() );
 
     private final ImmutableMap<PrincipalKey, AccessControlEntry> entries;
 
-    private AccessControlList( final Builder builder )
+    private AccessControlList( final ImmutableMap<PrincipalKey, AccessControlEntry> entries )
     {
-        this.entries = ImmutableMap.copyOf( builder.entries );
+        this.entries = entries;
     }
 
     public static AccessControlList empty()
@@ -49,14 +49,21 @@ public final class AccessControlList
 
     public boolean isAllowedFor( final PrincipalKey principal, final Permission... permissions )
     {
-        return doIsAllowedFor( principal, permissions );
+        final AccessControlEntry entry = this.entries.get( principal );
+        return entry != null && entry.isAllowed( permissions );
+    }
+
+    public boolean isAllowedFor( final PrincipalKey principal, final Permission permission )
+    {
+        final AccessControlEntry entry = this.entries.get( principal );
+        return entry != null && entry.isAllowed( permission );
     }
 
     public boolean isAllowedFor( final PrincipalKeys principals, final Permission... permissions )
     {
         for ( final PrincipalKey principal : principals )
         {
-            if ( doIsAllowedFor( principal, permissions ) )
+            if ( isAllowedFor( principal, permissions ) )
             {
                 return true;
             }
@@ -65,17 +72,22 @@ public final class AccessControlList
         return false;
     }
 
-    private boolean doIsAllowedFor( final PrincipalKey principal, final Permission[] permissions )
+    public boolean isAllowedFor( final PrincipalKeys principals, final Permission permission )
     {
-        final AccessControlEntry entry = this.entries.get( principal );
-        return entry != null && entry.isAllowed( permissions );
+        for ( final PrincipalKey principal : principals )
+        {
+            if ( isAllowedFor( principal, permission ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public PrincipalKeys getAllPrincipals()
     {
-        final Set<PrincipalKey> principals = this.entries.values().stream().
-            map( AccessControlEntry::getPrincipal ).
-            collect( toSet() );
+        final Set<PrincipalKey> principals = this.entries.values().stream().map( AccessControlEntry::getPrincipal ).collect( toSet() );
         return PrincipalKeys.from( principals );
     }
 
@@ -153,8 +165,7 @@ public final class AccessControlList
 
         private Builder( final AccessControlList acl )
         {
-            this.entries = new HashMap<>();
-            this.entries.putAll( acl.entries );
+            this.entries = new HashMap<>( acl.entries );
         }
 
         public Builder add( final AccessControlEntry entry )
@@ -189,7 +200,7 @@ public final class AccessControlList
 
         public AccessControlList build()
         {
-            return new AccessControlList( this );
+            return new AccessControlList( ImmutableMap.copyOf( entries ) );
         }
     }
 

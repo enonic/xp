@@ -370,15 +370,10 @@ public class RepositoryServiceImpl
 
         final Node rootNode = this.nodeStorageService.store( Node.createRoot()
                                                                  .permissions( params.getRootPermissions() )
-                                                                 .inheritPermissions( false )
                                                                  .childOrder( params.getRootChildOrder() )
                                                                  .build(), rootNodeInternalContext );
 
-        rootNodeContext.runWith( () -> RefreshCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
-            .refreshMode( RefreshMode.ALL )
-            .build()
-            .execute() );
+        doRefresh();
 
         LOG.info( "Created root node with id [{}] in repository [{}]", rootNode.id(), params.getRepositoryId() );
     }

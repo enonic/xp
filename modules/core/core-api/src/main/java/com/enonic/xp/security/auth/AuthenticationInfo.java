@@ -68,7 +68,11 @@ public final class AuthenticationInfo
 
     public boolean hasRole( final PrincipalKey role )
     {
-        return principals.stream().anyMatch( principal -> principal.isRole() && principal.equals( role ) );
+        if ( !role.isRole() )
+        {
+            return false;
+        }
+        return principals.contains( role );
     }
 
     public static Builder create()

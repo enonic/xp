@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.commit.search.NodeCommitQueryResultFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -24,8 +23,7 @@ public class FindNodeCommitsCommand
 
     public NodeCommitQueryResult execute()
     {
-        final SearchResult result = this.nodeSearchService.query( query, SingleRepoStorageSource.create(
-            ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.COMMIT ) );
+        final SearchResult result = this.nodeSearchService.query( query, ContextAccessor.current().getRepositoryId() );
 
         if ( result.isEmpty() )
         {

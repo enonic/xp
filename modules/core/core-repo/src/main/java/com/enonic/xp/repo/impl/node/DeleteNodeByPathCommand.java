@@ -21,7 +21,7 @@ final class DeleteNodeByPathCommand
     {
         final Node node = doGetByPath( nodePath );
 
-        return node != null ? deleteNodeWithChildren( node, null ) : NodeBranchEntries.empty();
+        return node != null ? deleteNodeWithChildren( node ) : NodeBranchEntries.empty();
     }
 
     static Builder create()

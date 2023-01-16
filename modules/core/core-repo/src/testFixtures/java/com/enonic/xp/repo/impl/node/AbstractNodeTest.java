@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -25,6 +26,7 @@ import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -32,6 +34,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
@@ -463,19 +466,7 @@ public abstract class AbstractNodeTest
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
-        return doPushNodes( NodeIds.from( nodeIds ), target );
-    }
-
-    protected PushNodesResult pushNodes( final NodeIds nodeIds, final Branch target )
-    {
-        return doPushNodes( nodeIds, target );
-    }
-
-    private PushNodesResult doPushNodes( final NodeIds nodeIds, final Branch target )
-    {
-        return PushNodesCommand.create().
-            ids( nodeIds ).
-            target( target ).
+        return PushNodesCommand.create().ids( NodeIds.from( nodeIds ) ).target( target ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -485,16 +476,43 @@ public abstract class AbstractNodeTest
 
     protected NodeIds doDeleteNode( final NodeId nodeId )
     {
-        final NodeBranchEntries result = DeleteNodeByIdCommand.create().
-            nodeId( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final NodeBranchEntries result = DeleteNodeByIdCommand.create().nodeId( nodeId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         return NodeIds.from( result.getKeys() );
     }
+
+    protected void renameNode( final NodeId nodeId, final String newName )
+    {
+        MoveNodeCommand.create()
+            .id( nodeId )
+            .newNodeName( NodeName.from( newName ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .build()
+            .execute();
+    }
+
+    protected Node moveNode( final NodeId nodeId, final NodePath newParent )
+    {
+        return MoveNodeCommand.create()
+            .id( nodeId )
+            .newParent( newParent )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute()
+            .getMovedNodes()
+            .get( 0 )
+            .getNode();
+    }
+
 
     protected void queryAndAssert( final String queryString, final int expected )
     {
@@ -570,13 +588,47 @@ public abstract class AbstractNodeTest
 
     protected Nodes getNodes( final NodeIds nodeIds )
     {
-        return GetNodesByIdsCommand.create().
-            ids( nodeIds ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( storageService ).
-            searchService( searchService ).
-            build().
-            execute();
+        return GetNodesByIdsCommand.create()
+            .ids( nodeIds )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( storageService )
+            .searchService( searchService )
+            .build()
+            .execute();
 
     }
+
+    protected void printContentTree( final Branch branch )
+    {
+        ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch )
+            .build()
+            .runWith( () -> doPrintContentTree( nodeService.getByPath( NodePath.ROOT ).id() ) );
+    }
+
+    private void doPrintContentTree( final NodeId rootId )
+    {
+        final Node root = this.nodeService.getById( rootId );
+
+        final Branch branch = ContextAccessor.current().getBranch();
+        System.out.println( "** Node-tree in branch [" + branch.getValue() + "], starting with path [" + root.path() + "]" );
+
+        doPrintChildren( 0, root );
+    }
+
+    private void doPrintChildren( int ident, final Node root )
+    {
+        System.out.println( " ".repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
+
+        ident += 3;
+
+        final FindNodesByParentResult result =
+            this.nodeService.findByParent( FindNodesByParentParams.create().parentId( root.id() ).size( -1 ).build() );
+
+        for ( final NodeId nodeId : result.getNodeIds() )
+        {
+            doPrintChildren( ident, this.nodeService.getById( nodeId ) );
+        }
+    }
+
 }

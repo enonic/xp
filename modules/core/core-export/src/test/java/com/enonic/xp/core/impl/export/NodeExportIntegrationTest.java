@@ -21,7 +21,6 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -229,8 +228,6 @@ public class NodeExportIntegrationTest
         createNode( root.path(), "child5" );
         createNode( root.path(), "child6" );
 
-        nodeService.refresh( RefreshMode.ALL );
-
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
@@ -255,8 +252,6 @@ public class NodeExportIntegrationTest
         final Node child1_1 = createNode( child1.path(), "child1_1" );
         createNode( child1_1.path(), "child1_1_1" );
         createNode( child1_1.path(), "child1_1_2" );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )
@@ -283,8 +278,6 @@ public class NodeExportIntegrationTest
         final Node child1_1 = createNode( child1.path(), "child1_1" );
         createNode( child1_1.path(), "child1_1_1" );
         createNode( child1_1.path(), "child1_1_2" );
-
-        nodeService.refresh( RefreshMode.ALL );
 
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )

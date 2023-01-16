@@ -8,7 +8,6 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -79,14 +78,7 @@ public class SetActiveVersionCommandTest
             editor( toBeEdited -> toBeEdited.data.setString( "property1", "ver2" ) ).
             build() );
 
-        MoveNodeCommand.create()
-            .id( node1.id() )
-            .newNodeName( NodeName.from( "renamedNode" ) )
-            .indexServiceInternal( this.indexServiceInternal )
-            .searchService( this.searchService )
-            .storageService( this.storageService )
-            .build()
-            .execute();
+        renameNode( node1.id(), "renamedNode" );
 
         final Node movedNode = getNodeById( node1.id() );
         assertEquals( "renamedNode", movedNode.name().toString() );

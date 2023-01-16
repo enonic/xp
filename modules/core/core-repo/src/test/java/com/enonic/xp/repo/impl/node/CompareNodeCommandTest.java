@@ -181,14 +181,7 @@ public class CompareNodeCommandTest
         ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        ctxDefault().runWith( () -> MoveNodeCommand.create().
-            id( createdNode.id() ).
-            newParent( mySecondNode.path() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute() );
+        ctxDefault().runWith( () -> moveNode( createdNode.id(), mySecondNode.path() ) );
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 

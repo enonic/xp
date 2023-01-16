@@ -103,14 +103,7 @@ public class FindNodeIdsByParentCommandTest
 
         nodeService.refresh( RefreshMode.ALL );
 
-        MoveNodeCommand.create().
-            newParent( node2.path() ).
-            id( node1_1.id() ).
-            indexServiceInternal( indexServiceInternal ).
-            searchService( searchService ).
-            storageService( storageService ).
-            build().
-            execute();
+        moveNode( node1_1.id(), node2.path() );
 
         final FindNodesByParentResult children = FindNodeIdsByParentCommand.create().
             parentPath( node.path() ).

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
@@ -36,12 +37,18 @@ abstract class AbstractDeleteNodeCommand
 {
     private static final int BATCH_SIZE = 20;
 
-    AbstractDeleteNodeCommand( final Builder builder )
+    private final DeleteNodeListener deleteNodeListener;
+
+    private final RefreshMode refresh;
+
+    AbstractDeleteNodeCommand( final Builder<?> builder )
     {
         super( builder );
+        this.deleteNodeListener = Objects.requireNonNullElseGet( builder.deleteNodeListener, EmptyDeleteNodeListener::new );
+        this.refresh = builder.refresh;
     }
 
-    NodeBranchEntries deleteNodeWithChildren( final Node node, final DeleteNodeListener deleteNodeListener )
+    NodeBranchEntries deleteNodeWithChildren( final Node node )
     {
         if ( node.isRoot() )
         {
@@ -86,13 +93,10 @@ abstract class AbstractDeleteNodeCommand
         {
             this.nodeStorageService.delete( batch, InternalContext.from( context ) );
 
-            if ( deleteNodeListener != null )
-            {
-                deleteNodeListener.nodesDeleted( batch.size() );
-            }
+            deleteNodeListener.nodesDeleted( batch.size() );
         }
 
-        refresh( RefreshMode.ALL );
+        refresh( refresh );
 
         return NodeBranchEntries.from( list );
     }
@@ -100,6 +104,10 @@ abstract class AbstractDeleteNodeCommand
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {
+        private DeleteNodeListener deleteNodeListener;
+
+        private RefreshMode refresh;
+
         Builder()
         {
             super();
@@ -108,6 +116,33 @@ abstract class AbstractDeleteNodeCommand
         Builder( final AbstractNodeCommand source )
         {
             super( source );
+        }
+
+        public Builder<B> deleteNodeListener( final DeleteNodeListener deleteNodeListener )
+        {
+            this.deleteNodeListener = deleteNodeListener;
+            return this;
+        }
+
+        public Builder<B> refresh( final RefreshMode refresh )
+        {
+            this.refresh = refresh;
+            return this;
+        }
+
+    }
+
+    private static class EmptyDeleteNodeListener
+        implements DeleteNodeListener
+    {
+        @Override
+        public void nodesDeleted( final int count )
+        {
+        }
+
+        @Override
+        public void totalToDelete( final int count )
+        {
         }
     }
 }

@@ -9,7 +9,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -42,7 +41,7 @@ public class GetActiveNodeVersionsCommandTest
             data( data ).
             build() );
 
-        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        pushNodes( WS_OTHER, node.id() );
 
         final GetActiveNodeVersionsResult result = GetActiveNodeVersionsCommand.create().
             storageService( this.storageService ).
