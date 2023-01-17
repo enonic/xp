@@ -10,7 +10,9 @@ import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -32,6 +34,8 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -44,7 +48,9 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -59,13 +65,16 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -105,15 +114,20 @@ public class ProjectServiceImpl
     {
         adminContext().runWith( () -> {
 
-            final Projects projects = this.doList();
+            final Repositories repositories = this.repositoryService.list();
 
-            projects.forEach( project -> doInitRootNodes( CreateProjectParams.create()
-                                                              .name( project.getName() )
-                                                              .displayName( project.getDisplayName() )
-                                                              .description( project.getDescription() )
-                                                              .build() ) );
+            getProjectRepositories( repositories ).forEach( repository -> {
+                final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
-            if ( projects.stream().noneMatch( project -> project.getName().equals( ProjectConstants.DEFAULT_PROJECT.getName() ) ) )
+                doInitRootNodes( CreateProjectParams.create()
+                                     .name( ProjectName.from( repository.getId() ) )
+                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                     .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+                                     .build() );
+            } );
+
+            if ( repositories.stream()
+                .noneMatch( repository -> repository.getId().equals( ProjectConstants.DEFAULT_PROJECT.getName().getRepoId() ) ) )
             {
                 doInitRootNodes( CreateProjectParams.create()
                                      .name( ProjectConstants.DEFAULT_PROJECT.getName() )
@@ -124,67 +138,61 @@ public class ProjectServiceImpl
         } );
     }
 
-    @Override
-    public Project create( CreateProjectParams params )
+    private List<Repository> getProjectRepositories( final Repositories repositories )
     {
-        return callWithCreateContext( () -> {
-            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+        return repositories.stream().map( repository -> {
+            final ProjectName projectName = ProjectName.from( repository.getId() );
+            if ( projectName == null )
             {
-                throw new ProjectAlreadyExistsException( params.getName() );
+                return null;
             }
-            final Project result = doInitRootNodes( params );
+            final PropertyTree repositoryData = repository.getData();
 
-            CreateProjectRolesCommand.create()
-                .securityService( securityService )
-                .projectName( params.getName() )
-                .projectDisplayName( params.getDisplayName() )
-                .build()
-                .execute();
+            if ( repositoryData == null )
+            {
+                return null;
+            }
 
-            eventPublisher.publish( ProjectEvents.created( params.getName() ) );
+            final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
-            LOG.debug( "Project created: " + params.getName() );
+            if ( projectData == null )
+            {
+                return null;
+            }
 
-            return result;
-        } );
+            return repository;
+
+        } ).filter( Objects::nonNull ).collect( Collectors.<Repository>toList() );
     }
 
-    private Project doInitRootNodes( final CreateProjectParams params )
+    private static void buildIcon( final Project.Builder project, final PropertySet projectData )
     {
-        ContentInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .setRepositoryService( repositoryService )
-            .repositoryId( params.getName().getRepoId() )
-            .setData( createProjectData( params ) )
-            .accessControlList( CreateProjectRootAccessListCommand.create()
-                                    .projectName( params.getName() )
-                                    .permissions( params.getPermissions() )
-                                    .build()
-                                    .execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
+        final PropertySet iconData = projectData.getPropertySet( ProjectConstants.PROJECT_ICON_PROPERTY );
 
-        IssueInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .repositoryId( params.getName().getRepoId() )
-            .accessControlList( CreateProjectIssuesAccessListCommand.create().projectName( params.getName() ).build().execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
+        if ( iconData != null )
+        {
+            project.icon( Attachment.create()
+                              .name( iconData.getString( ContentPropertyNames.ATTACHMENT_NAME ) )
+                              .label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
+                              .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
+                              .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                              .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
+                              .build() );
+        }
+    }
 
-        ArchiveInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .repositoryId( params.getName().getRepoId() )
-            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
+    private static void buildParents( final Project.Builder project, final PropertySet projectData )
+    {
+        final Iterator<String> projectNamesIterator = projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ).iterator();
+        if ( projectNamesIterator.hasNext() )
+        {
+            project.parent( ProjectName.from( projectNamesIterator.next() ) );
+        }
+    }
 
-        return Project.from( repositoryService.get( params.getName().getRepoId() ) );
+    private static void buildSiteConfigs( final Project.Builder project, final SiteConfigs siteConfigs )
+    {
+        siteConfigs.forEach( project::addSiteConfig );
     }
 
     @Override
@@ -198,26 +206,31 @@ public class ProjectServiceImpl
         }, params.getName() );
     }
 
-    private Project doModify( final ModifyProjectParams params )
+    @Override
+    public Project create( CreateProjectParams params )
     {
-        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create()
-            .repositoryId( params.getName().getRepoId() )
-            .editor( editableRepository -> modifyProjectData( params, editableRepository.data ) )
-            .build();
+        return callWithCreateContext( () -> {
+            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+            {
+                throw new ProjectAlreadyExistsException( params.getName() );
+            }
+            final PropertyTree contentRootData = createContentRootData( params );
 
-        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+            doInitRootNodes( params, contentRootData );
 
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
-        {
-            UpdateProjectRoleNamesCommand.create()
+            CreateProjectRolesCommand.create()
                 .securityService( securityService )
                 .projectName( params.getName() )
                 .projectDisplayName( params.getDisplayName() )
                 .build()
                 .execute();
-        }
 
-        return Project.from( updatedRepository );
+            eventPublisher.publish( ProjectEvents.created( params.getName() ) );
+
+            LOG.debug( "Project created: {}", params.getName() );
+
+            return initProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
+        } );
     }
 
     @Override
@@ -372,10 +385,9 @@ public class ProjectServiceImpl
         return result.build();
     }
 
-
-    private Projects doList()
+    private void doInitRootNodes( final CreateProjectParams params )
     {
-        return Projects.from( this.repositoryService.list() );
+        doInitRootNodes( params, null );
     }
 
     @Override
@@ -384,9 +396,41 @@ public class ProjectServiceImpl
         return callWithGetContext( () -> doGet( projectName ), projectName );
     }
 
-    private Project doGet( final ProjectName projectName )
+    private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
     {
-        return Project.from( this.repositoryService.get( projectName.getRepoId() ) );
+        ContentInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .setRepositoryService( repositoryService )
+            .repositoryId( params.getName().getRepoId() )
+            .setRepositoryData( createProjectData( params ) )
+            .setContentData( contentRootData )
+            .accessControlList( CreateProjectRootAccessListCommand.create()
+                                    .projectName( params.getName() )
+                                    .permissions( params.getPermissions() )
+                                    .build()
+                                    .execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
+        IssueInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectIssuesAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
+        ArchiveInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
     }
 
     @Override
@@ -470,10 +514,6 @@ public class ProjectServiceImpl
         {
             projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
         }
-        if ( !params.getSiteConfigs().getApplicationKeys().isEmpty() )
-        {
-            SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), projectData );
-        }
 
         return data;
     }
@@ -489,9 +529,6 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
-        projectData.removeProperties( ProjectConstants.PROJECT_SITE_CONFIG_PROPERTY );
-        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), projectData );
 
         return data;
     }
@@ -582,12 +619,150 @@ public class ProjectServiceImpl
         return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
     }
 
+    private Project doModify( final ModifyProjectParams params )
+    {
+        final UpdateRepositoryParams updateParams =
+            UpdateRepositoryParams.create().repositoryId( params.getName().getRepoId() ).editor( editableRepository -> {
+                modifyProjectData( params, editableRepository.data );
+            } ).build();
+
+        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            UpdateProjectRoleNamesCommand.create()
+                .securityService( securityService )
+                .projectName( params.getName() )
+                .projectDisplayName( params.getDisplayName() )
+                .build()
+                .execute();
+        }
+
+        final Node updatedContentRootNode = updateProjectSiteConfigs( params.getName(), params.getSiteConfigs() );
+
+        return initProject( updatedRepository, getProjectSiteConfigs( updatedContentRootNode.data() ) );
+    }
+
+    private Projects doList()
+    {
+        return Projects.from( this.repositoryService.list().stream().map( repository -> {
+            final ProjectName projectName = ProjectName.from( repository.getId() );
+            return projectName != null ? initProject( repository, getProjectSiteConfigs( projectName ) ) : null;
+        } ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+    }
+
+    private Project doGet( final ProjectName projectName )
+    {
+        return initProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
+    }
+
+    private PropertyTree createContentRootData( final CreateProjectParams params )
+    {
+        PropertyTree data = new PropertyTree();
+
+        final PropertySet contentRootData = data.addSet( "data" );
+
+        if ( !params.getSiteConfigs().getApplicationKeys().isEmpty() )
+        {
+            SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), contentRootData );
+        }
+
+        return data;
+    }
+
+    private SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
+    {
+        final PropertyTree contentRootData;
+        try
+        {
+            contentRootData =
+                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ).data() );
+        }
+        catch ( RepositoryNotFoundException e )
+        {
+            return null;
+        }
+
+        return getProjectSiteConfigs( contentRootData );
+    }
+
+    private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
+    {
+        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) )
+            .map( contentData -> SITE_CONFIGS_DATA_SERIALIZER.fromProperties( contentData ).build() )
+            .orElse( SiteConfigs.empty() );
+    }
+
+    private Node updateProjectSiteConfigs( final ProjectName projectName, final SiteConfigs siteConfigs )
+    {
+        return contentRootDataContext( projectName ).callWith( () -> nodeService.update( UpdateNodeParams.create()
+                                                                                             .path( ContentConstants.CONTENT_ROOT_PATH )
+                                                                                             .editor( edit -> Optional.ofNullable(
+                                                                                                     edit.data.getPropertySet( "data" ) )
+                                                                                                 .map( contentData -> {
+                                                                                                     contentData.removeProperties(
+                                                                                                         ContentPropertyNames.SITECONFIG );
+                                                                                                     SITE_CONFIGS_DATA_SERIALIZER.toProperties(
+                                                                                                         siteConfigs, contentData );
+
+                                                                                                     return contentData;
+
+                                                                                                 } )
+                                                                                                 .orElseThrow(
+                                                                                                     () -> new IllegalStateException(
+                                                                                                         "Cannot update project config" ) )
+
+                                                                                             )
+                                                                                             .build() ) );
+    }
+
+    private Project initProject( final Repository repository, final SiteConfigs siteConfigs )
+    {
+        if ( repository == null || siteConfigs == null )
+        {
+            return null;
+        }
+
+        final PropertyTree repositoryData = repository.getData();
+
+        //TODO: remove default project data for XP8
+        if ( repositoryData == null )
+        {
+            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+        }
+
+        final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        if ( projectData == null )
+        {
+            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+        }
+
+        final Project.Builder project = Project.create()
+            .name( ProjectName.from( repository.getId() ) )
+            .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+            .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
+
+        buildParents( project, projectData );
+        buildIcon( project, projectData );
+        buildSiteConfigs( project, siteConfigs );
+
+        return project.build();
+    }
+
+    private Context contentRootDataContext( final ProjectName projectName )
+    {
+        return ContextBuilder.create()
+            .repositoryId( projectName.getRepoId() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
+            .build();
+    }
+
     private Context adminContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
-                           .principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN )
-                           .build() )
+            .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
     }
 }

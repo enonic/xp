@@ -41,6 +41,7 @@ import com.enonic.xp.util.Reference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -72,6 +73,41 @@ public class ContentServiceImplTest_publish
         assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 0, push.getFailedContents().getSize() );
         assertEquals( 1, push.getPushedContents().getSize() );
+    }
+
+    @Test
+    public void root_is_published()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        Content draftRoot = this.contentService.getByPath( ContentPath.ROOT );
+        Content masterRoot = ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> this.contentService.getByPath( ContentPath.ROOT ) );
+
+        assertNotEquals( draftRoot, masterRoot );
+
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        draftRoot = this.contentService.getByPath( ContentPath.ROOT );
+        masterRoot = ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> this.contentService.getByPath( ContentPath.ROOT ) );
+
+        assertEquals( draftRoot, masterRoot );
+
     }
 
     @Test

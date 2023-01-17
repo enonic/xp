@@ -25,6 +25,7 @@ public final class Projects
         return create().build();
     }
 
+    @Deprecated
     public static Projects from( Repositories repositories )
     {
         if ( repositories == null )
@@ -32,11 +33,13 @@ public final class Projects
             return null;
         }
 
-        return create().addAll( repositories.stream().
-            map( Project::from ).
-            filter( Objects::nonNull ).
-            collect( Collectors.toList() ) ).
-            build();
+        return create().addAll( repositories.stream().map( Project::from ).filter( Objects::nonNull ).collect( Collectors.toList() ) )
+            .build();
+    }
+
+    public static Projects from( Collection<Project> projects )
+    {
+        return create().addAll( projects ).build();
     }
 
     public static Builder create()

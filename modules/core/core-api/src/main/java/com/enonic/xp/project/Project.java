@@ -13,13 +13,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @PublicApi
 public final class Project
 {
-    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
-
     private final ProjectName name;
 
     private final String displayName;
@@ -47,6 +44,7 @@ public final class Project
         return new Builder();
     }
 
+    @Deprecated
     public static Project from( final Repository repository )
     {
         if ( repository == null )
@@ -75,7 +73,6 @@ public final class Project
             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildParents( project, projectData );
-        buildSiteConfigs( project, projectData );
         buildIcon( project, projectData );
 
         return project.build();
@@ -104,11 +101,6 @@ public final class Project
         {
             project.parent( ProjectName.from( projectNamesIterator.next() ) );
         }
-    }
-
-    private static void buildSiteConfigs( final Project.Builder project, final PropertySet projectData )
-    {
-        SITE_CONFIGS_DATA_SERIALIZER.fromProperties( projectData ).build().forEach( project::addSiteConfig );
     }
 
     public ProjectName getName()

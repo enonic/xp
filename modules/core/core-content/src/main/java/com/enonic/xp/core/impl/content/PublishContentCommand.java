@@ -17,6 +17,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -77,7 +78,13 @@ public class PublishContentCommand
 
         doPush( results.contentIds() );
 
-        return resultBuilder.build();
+        final PublishContentResult result = resultBuilder.build();
+
+        if ( !result.getPushedContents().isEmpty() )
+        {
+            runAsAdmin( this::doPushRoot );
+        }
+        return result;
     }
 
     private void doPush( final ContentIds ids )
@@ -93,6 +100,12 @@ public class PublishContentCommand
             return;
         }
         doPushNodes( ContentNodeHelper.toNodeIds( ids ) );
+    }
+
+    private PushNodesResult doPushRoot()
+    {
+        final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+        return nodeService.push( NodeIds.from( contentRootNode.id() ), ContentConstants.BRANCH_MASTER );
     }
 
     private CompareContentResults getSyncWork()
