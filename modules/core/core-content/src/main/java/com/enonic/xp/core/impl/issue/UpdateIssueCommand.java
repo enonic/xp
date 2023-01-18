@@ -43,7 +43,7 @@ public class UpdateIssueCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
             .id( NodeId.from( editedIssue.getId() ) )
             .editor( editableNode -> editableNode.data = ISSUE_DATA_SERIALIZER.toUpdateNodeData( editedIssue ) )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 

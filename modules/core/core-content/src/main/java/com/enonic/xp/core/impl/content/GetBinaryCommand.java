@@ -45,11 +45,6 @@ final class GetBinaryCommand
         return new Builder( contentId, binaryReference );
     }
 
-    public static Builder create( final ContentId contentId, final BinaryReference binaryReference, final AbstractContentCommand source )
-    {
-        return new Builder( contentId, binaryReference, source );
-    }
-
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
@@ -59,13 +54,6 @@ final class GetBinaryCommand
 
         Builder( final ContentId contentId, final BinaryReference binaryReference )
         {
-            this.contentId = contentId;
-            this.binaryReference = binaryReference;
-        }
-
-        Builder( final ContentId contentId, final BinaryReference binaryReference, AbstractContentCommand source )
-        {
-            super( source );
             this.contentId = contentId;
             this.binaryReference = binaryReference;
         }

@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -106,14 +107,14 @@ public class GetContentByIdAndVersionIdCommandTest
 
     private GetContentByIdAndVersionIdCommand createInstance()
     {
-        return GetContentByIdAndVersionIdCommand.create().
-            contentId( contentId ).
-            versionId( versionId ).
-            nodeService( nodeService ).
-            translator( translator ).
-            eventPublisher( eventPublisher ).
-            contentTypeService( contentTypeService ).
-            build();
+        return GetContentByIdAndVersionIdCommand.create()
+            .contentId( contentId )
+            .versionId( versionId )
+            .nodeService( nodeService )
+            .translator( translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentTypeService( contentTypeService )
+            .build();
     }
 
 }

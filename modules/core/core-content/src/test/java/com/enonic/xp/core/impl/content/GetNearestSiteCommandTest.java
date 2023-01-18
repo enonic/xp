@@ -8,6 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -150,12 +151,12 @@ public class GetNearestSiteCommandTest
 
     private GetNearestSiteCommand createCommand( final ContentId contentId )
     {
-        return GetNearestSiteCommand.create().
-            contentId( contentId ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        return GetNearestSiteCommand.create()
+            .contentId( contentId )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .build();
     }
 }

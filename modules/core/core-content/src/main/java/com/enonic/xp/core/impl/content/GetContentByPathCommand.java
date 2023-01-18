@@ -3,9 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 
@@ -36,11 +34,6 @@ final class GetContentByPathCommand
         return filter( content );
     }
 
-    static Builder create( final ContentPath contentPath, final AbstractContentCommand source )
-    {
-        return new Builder( contentPath, source );
-    }
-
     public static Builder create( final ContentPath contentPath )
     {
         return new Builder( contentPath );
@@ -53,12 +46,6 @@ final class GetContentByPathCommand
 
         Builder( final ContentPath contentPath )
         {
-            this.contentPath = contentPath;
-        }
-
-        Builder( final ContentPath contentPath, AbstractContentCommand source )
-        {
-            super( source );
             this.contentPath = contentPath;
         }
 

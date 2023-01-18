@@ -34,6 +34,7 @@ import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.project.ProjectName;
@@ -65,8 +66,8 @@ public class ParentContentSynchronizerTest
         synchronizer = new ParentContentSynchronizer( this.contentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
-                                        layoutDescriptorService, projectService, contentService, synchronizer );
+            new SyncContentServiceImpl( contentTypeService, nodeService, new ContentEventProducer( eventPublisher ), pageDescriptorService,
+                                        partDescriptorService, layoutDescriptorService, projectService, contentService, synchronizer );
     }
 
     private Content syncCreated( final ContentId contentId )

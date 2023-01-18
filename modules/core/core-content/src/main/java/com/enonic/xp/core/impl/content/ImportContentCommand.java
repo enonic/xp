@@ -36,18 +36,17 @@ final class ImportContentCommand
 
     private ImportContentResult doExecute()
     {
-        final Node importNode = ImportContentFactory.create().
-            params( params ).
-            contentDataSerializer( contentDataSerializer ).
-            build().execute();
+        final Node importNode =
+            ImportContentFactory.create().params( params ).contentDataSerializer( contentDataSerializer ).build().execute();
 
-        final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
+        final ImportNodeParams importNodeParams = ImportNodeParams.create()
+            .importNode( importNode )
             .binaryAttachments( params.getBinaryAttachments() )
             .insertManualStrategy( params.getInsertManualStrategy() )
             .dryRun( params.isDryRun() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .refresh( RefreshMode.ALL )
+            .refresh( RefreshMode.SEARCH )
             .build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );

@@ -51,6 +51,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
@@ -332,7 +333,7 @@ public class AbstractContentServiceTest
         projectService.initialize();
 
         contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
-        contentService.setEventPublisher( eventPublisher );
+        contentService.setContentEventProducer( new ContentEventProducer( eventPublisher ) );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );

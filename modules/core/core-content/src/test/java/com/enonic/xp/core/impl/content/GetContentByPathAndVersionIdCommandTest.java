@@ -8,6 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -109,13 +110,13 @@ public class GetContentByPathAndVersionIdCommandTest
 
     private GetContentByPathAndVersionIdCommand createInstance()
     {
-        return GetContentByPathAndVersionIdCommand.create().
-            contentPath( contentPath ).
-            versionId( versionId ).
-            nodeService( nodeService ).
-            translator( translator ).
-            eventPublisher( eventPublisher ).
-            contentTypeService( contentTypeService ).
-            build();
+        return GetContentByPathAndVersionIdCommand.create()
+            .contentPath( contentPath )
+            .versionId( versionId )
+            .nodeService( nodeService )
+            .translator( translator )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentTypeService( contentTypeService )
+            .build();
     }
 }

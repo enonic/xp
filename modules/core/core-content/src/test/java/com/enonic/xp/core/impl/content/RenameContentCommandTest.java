@@ -17,6 +17,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyPath;
@@ -198,7 +199,7 @@ class RenameContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )

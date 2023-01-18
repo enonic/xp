@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.core.impl.content.event.ContentEventProducer;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
@@ -595,7 +596,7 @@ public class CreateContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
+            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
             .mediaInfo( mediaInfo )
             .xDataService( this.xDataService )
             .siteService( this.siteService )

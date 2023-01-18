@@ -75,48 +75,51 @@ final class CreateMediaCommand
                 : ContentTypeName.unknownMedia();
 
         final PropertyTree data = new PropertyTree();
-        new MediaFormDataBuilder().
-            type( type ).
-            attachment( params.getName() ).
-            focalX( params.getFocalX() ).
-            focalY( params.getFocalY() ).
-            caption( params.getCaption() ).
-            artist( params.getArtist() != null ? List.of( params.getArtist() ) : List.of() ).
-            copyright( params.getCopyright() ).
-            tags( params.getTags() != null ? List.of( params.getTags() ) : List.of() ).
-            build( data );
+        new MediaFormDataBuilder().type( type )
+            .attachment( params.getName() )
+            .focalX( params.getFocalX() )
+            .focalY( params.getFocalY() )
+            .caption( params.getCaption() )
+            .artist( params.getArtist() != null ? List.of( params.getArtist() ) : List.of() )
+            .copyright( params.getCopyright() )
+            .tags( params.getTags() != null ? List.of( params.getTags() ) : List.of() )
+            .build( data );
 
-        final CreateAttachment mediaAttachment = CreateAttachment.create().
-            name( params.getName() ).
-            mimeType( params.getMimeType() ).
-            label( "source" ).
-            byteSource( params.getByteSource() ).
-            text( type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
-            build();
+        final CreateAttachment mediaAttachment = CreateAttachment.create()
+            .name( params.getName() )
+            .mimeType( params.getMimeType() )
+            .label( "source" )
+            .byteSource( params.getByteSource() )
+            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
+            .build();
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            name( params.getName() ).
-            parent( params.getParent() ).
-            requireValid( true ).
-            type( type ).
-            displayName( trimExtension( params.getName() ) ).
-            contentData( data ).
-            createAttachments( CreateAttachments.from( mediaAttachment ) ).
-            inheritPermissions( true ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .name( params.getName() )
+            .parent( params.getParent() )
+            .requireValid( true )
+            .type( type )
+            .displayName( trimExtension( params.getName() ) )
+            .contentData( data )
+            .createAttachments( CreateAttachments.from( mediaAttachment ) )
+            .inheritPermissions( true )
+            .build();
 
-        final CreateContentCommand createCommand = CreateContentCommand.create( this ).
-            mediaInfo( mediaInfo ).
-            params( createContentParams ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames ).
-            build();
+        final CreateContentCommand createCommand = CreateContentCommand.create()
+            .mediaInfo( mediaInfo )
+            .params( createContentParams )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .contentEventProducer( contentEventProducer )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
+            .build();
 
         return createCommand.execute();
     }
