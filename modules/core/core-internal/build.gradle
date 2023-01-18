@@ -1,6 +1,6 @@
 dependencies {
     api 'org.osgi:osgi.core:8.0.0'
-    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.0'
+    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.1'
     implementation 'org.jsoup:jsoup:1.15.3'
 
     implementation( 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1' ) {
@@ -9,7 +9,7 @@ dependencies {
     compileOnly( 'com.google.guava:guava:26.0-jre' ) {
         exclude group: 'com.google.code.findbugs'
     }
-    
+
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation 'com.google.guava:guava:26.0-jre'
 }

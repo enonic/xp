@@ -11,8 +11,8 @@ dependencies {
     api "org.slf4j:slf4j-api:${slf4jVersion}"
     api "commons-lang:commons-lang:${commonsLangVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
-    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.0'
-    api 'org.osgi:org.osgi.service.component:1.5.0'
+    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.1'
+    api 'org.osgi:org.osgi.service.component:1.5.1'
 
     implementation project( ':core:core-internal' )
 

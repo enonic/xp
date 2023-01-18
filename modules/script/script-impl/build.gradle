@@ -2,7 +2,7 @@ dependencies {
     implementation project( ':script:script-api' )
     implementation project( ':core:core-internal' )
 
-    implementation "org.graalvm.js:js:22.1.0.1"
+    implementation "org.graalvm.js:js:22.3.1"
 
     testImplementation( testFixtures( project(":core:core-app") ) )
 

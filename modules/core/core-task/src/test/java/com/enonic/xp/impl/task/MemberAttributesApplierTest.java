@@ -12,6 +12,8 @@ import org.osgi.framework.BundleContext;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 
+import com.enonic.xp.core.internal.Dictionaries;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -75,7 +77,8 @@ class MemberAttributesApplierTest
     @Test
     void addingBundle_noApp()
     {
-        final Bundle bundle = mock( Bundle.class, withSettings().defaultAnswer( Answers.RETURNS_DEEP_STUBS ) );
+        final Bundle bundle = mock( Bundle.class );
+        when( bundle.getHeaders( ) ).thenReturn( Dictionaries.of() );
 
         final MemberAttributesApplier memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
         memberAttributesApplier.addingBundle( bundle, null );
