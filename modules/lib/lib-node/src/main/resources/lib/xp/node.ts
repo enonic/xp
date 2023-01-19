@@ -175,11 +175,9 @@ function argsToStringArray(argsArray: (string | string[])[]): string[] {
     return array;
 }
 
-function isString(value: unknown): value is string {
-    return typeof value === 'string' || value instanceof String;
-}
+const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
 
-function isObject(value: unknown): boolean {
+function isObject(value: unknown): value is object {
     return typeof value !== 'undefined' && value !== null && typeof value === 'object' && value.constructor === Object;
 }
 
@@ -187,12 +185,11 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
     params.forEach(param => {
         if (isString(param)) {
             bean.add(param);
-        } else if (isObject(param)) {
-            const getParams = param as GetNodeParams;
-            checkRequired(getParams, 'key');
-            bean.add(getParams.key, __.nullOrValue(getParams.versionId));
         } else if (Array.isArray(param)) {
             prepareGetParams(param, bean);
+        } else if (isObject(param)) {
+            checkRequired(param, 'key');
+            bean.add(param.key, __.nullOrValue(param.versionId));
         } else {
             throw 'Unsupported type';
         }
