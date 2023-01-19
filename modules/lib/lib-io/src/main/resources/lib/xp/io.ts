@@ -16,11 +16,13 @@ declare global {
 import type {
     ByteSource,
     Resource,
+    ResourceKey,
 } from '@enonic-types/core';
 
 export type {
     ByteSource,
     Resource,
+    ResourceKey,
 } from '@enonic-types/core';
 
 interface JavaResource {
@@ -46,7 +48,7 @@ interface IOHandlerBean {
 
     newStream(text: string): ByteSource;
 
-    getResource(key: string): JavaResource;
+    getResource(key: string | ResourceKey): JavaResource;
 }
 
 const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
@@ -62,7 +64,7 @@ class ResourceImpl
     implements Resource {
     private res: JavaResource;
 
-    constructor(key: string) {
+    constructor(key: string | ResourceKey) {
         this.res = bean.getResource(key);
     }
 
@@ -183,6 +185,6 @@ export function newStream(text: string): ByteSource {
  * @param {string} key Resource key to look up.
  * @returns {Resource} Resource reference.
  */
-export function getResource(key: string): Resource {
+export function getResource(key: string | ResourceKey): Resource {
     return new ResourceImpl(key);
 }

@@ -13,19 +13,14 @@ declare global {
     }
 }
 
+import type {ResourceKey} from '@enonic-types/core';
+
+export type {ResourceKey} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
     }
-}
-
-export interface ResourceKey {
-    applicationKey: string;
-    path: string;
-    uri: string;
-    root: boolean;
-    name: string;
-    extension: string;
 }
 
 export interface ImportNodesParams {
