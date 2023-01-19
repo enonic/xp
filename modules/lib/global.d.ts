@@ -193,11 +193,18 @@ declare const require: XpRequire;
  * var path = resolve('./other.html');
  *
  * @example
- * // Reslove absolute
+ * // Resolve absolute
  * var path = resolve('/path/to/other.html');
  *
  * @param {string} path Path to resolve.
  * @returns {*} Reference to an object.
  * @global
  */
-declare const resolve: (path: string) => object;
+declare const resolve: (path: string) => {
+    getApplicationKey(): string;
+    getPath(): string;
+    getUri(): string;
+    isRoot(): boolean;
+    getName(): string;
+    getExtension(): string;
+};

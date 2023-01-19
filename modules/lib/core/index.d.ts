@@ -109,6 +109,9 @@ type Brand<
 
 export type ByteSource = Brand<object, 'ByteSource'>;
 
+//
+// RESOURCES
+//
 export interface Resource {
     getSize(): number;
 
@@ -117,6 +120,15 @@ export interface Resource {
     getStream(): ByteSource;
 
     exists(): boolean;
+}
+
+export interface ResourceKey {
+    getApplicationKey(): string;
+    getPath(): string;
+    getUri(): string;
+    isRoot(): boolean;
+    getName(): string;
+    getExtension(): string;
 }
 
 //
