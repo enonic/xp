@@ -37,7 +37,7 @@ export interface CreateProjectParams {
     description?: string;
     language?: string;
     parent?: string;
-    siteConfig: Record<string, unknown>;
+    siteConfig?: Record<string, unknown>;
     applications?: string[];
     permissions?: ProjectPermission;
     readAccess?: ProjectReadAccess;
@@ -117,7 +117,7 @@ export interface ModifyProjectParams {
     displayName: string;
     description?: string;
     language?: string;
-    siteConfig: Record<string, unknown>;
+    siteConfig?: Record<string, unknown>;
     applications?: string[];
 }
 
@@ -146,7 +146,7 @@ interface ModifyProjectHandler {
  * @param {string} [params.displayName] Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {object} params.siteConfig Connected applications config.
+ * @param {object} [params.siteConfig] Connected applications config.
  *
  * @returns {Object} Modified project.
  */
