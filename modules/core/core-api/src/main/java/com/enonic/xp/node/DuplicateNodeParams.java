@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -17,6 +19,10 @@ public class DuplicateNodeParams
 
     private final Boolean includeChildren;
 
+    private final String name;
+
+    private final NodePath parent;
+
     private final RefreshMode refresh;
 
     private DuplicateNodeParams( Builder builder )
@@ -26,6 +32,8 @@ public class DuplicateNodeParams
         this.dataProcessor = builder.dataProcessor;
         this.duplicateListener = builder.duplicateListener;
         this.includeChildren = builder.includeChildren;
+        this.name = builder.name;
+        this.parent = builder.parent;
         this.refresh = builder.refresh;
     }
 
@@ -60,6 +68,16 @@ public class DuplicateNodeParams
         return includeChildren;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public NodePath getParent()
+    {
+        return parent;
+    }
+
     public RefreshMode getRefresh()
     {
         return refresh;
@@ -76,6 +94,10 @@ public class DuplicateNodeParams
         private DuplicateNodeListener duplicateListener;
 
         private Boolean includeChildren = true;
+
+        private String name;
+
+        private NodePath parent;
 
         private RefreshMode refresh;
 
@@ -110,7 +132,19 @@ public class DuplicateNodeParams
 
         public Builder includeChildren( final Boolean includeChildren )
         {
-            this.includeChildren = includeChildren;
+            this.includeChildren = Objects.requireNonNullElse( includeChildren, true );
+            return this;
+        }
+
+        public Builder name( final String nodeName )
+        {
+            this.name = nodeName;
+            return this;
+        }
+
+        public Builder parent( final NodePath parent )
+        {
+            this.parent = parent;
             return this;
         }
 

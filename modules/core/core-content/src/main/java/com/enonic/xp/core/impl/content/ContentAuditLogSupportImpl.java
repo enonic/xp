@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -353,6 +354,9 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", params.getContentId().toString() );
         paramsSet.addBoolean( "includeChildren", params.getIncludeChildren() );
+        paramsSet.addBoolean( "variant", params.isVariant() );
+        paramsSet.addString( "name", params.getName() );
+        paramsSet.addString( "parent", Objects.toString( params.getParent(), null ) );
         if ( params.getCreator() != null )
         {
             paramsSet.addString( "creator", params.getCreator().getId() );

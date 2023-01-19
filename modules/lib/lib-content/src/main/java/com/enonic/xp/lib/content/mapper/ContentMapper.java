@@ -62,6 +62,7 @@ public final class ContentMapper
         gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
         gen.value( "originProject", value.getOriginProject() );
+        gen.value( "variantOf", value.getVariantOf() );
         if ( value.getChildOrder() != null )
         {
             gen.value( "childOrder", value.getChildOrder().toString() );
