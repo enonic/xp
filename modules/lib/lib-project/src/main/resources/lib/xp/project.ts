@@ -31,31 +31,31 @@ export interface ProjectReadAccess {
     public: boolean;
 }
 
-export interface CreateProjectParams {
+export interface CreateProjectParams<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     displayName: string;
     description?: string;
     language?: string;
     parent?: string;
-    siteConfig?: Record<string, unknown>;
+    siteConfig?: CONFIG;
     applications?: string[];
     permissions?: ProjectPermission;
     readAccess?: ProjectReadAccess;
 }
 
-export interface Project {
+export interface Project<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     displayName: string;
     description: string;
     parent: string;
-    siteConfig: Record<string, unknown>;
+    siteConfig: CONFIG;
     applications?: string[];
     language?: string;
     permissions?: ProjectPermission;
     readAccess?: ProjectPermission;
 }
 
-interface CreateProjectHandler {
+interface CreateProjectHandler<CONFIG extends Record<string, unknown>> {
     setId(value: string): void;
 
     setDisplayName(value: string): void;
@@ -72,7 +72,7 @@ interface CreateProjectHandler {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    execute(): Project;
+    execute(): Project<CONFIG>;
 }
 
 /**
@@ -81,7 +81,7 @@ interface CreateProjectHandler {
  * @example-ref examples/project/create.js
  *
  * @param {Object} params JSON with the parameters.
- * @param {string} params.id Unique project id (alpha-numeric characters and hyphens allowed).
+ * @param {string} params.id Unique project id (alphanumeric characters and hyphens allowed).
  * @param {string} params.displayName Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
@@ -95,11 +95,11 @@ interface CreateProjectHandler {
  *
  * @returns {Object} Created project.
  */
-export function create(params: CreateProjectParams): Project {
+export function create<CONFIG extends Record<string, unknown>>(params: CreateProjectParams<CONFIG>): Project<CONFIG> {
     checkRequired(params, 'id');
     checkRequired(params, 'displayName');
 
-    const bean = __.newBean<CreateProjectHandler>('com.enonic.xp.lib.project.CreateProjectHandler');
+    const bean = __.newBean<CreateProjectHandler<CONFIG>>('com.enonic.xp.lib.project.CreateProjectHandler');
     bean.setId(params.id);
     bean.setDisplayName(params.displayName);
     bean.setDescription(__.nullOrValue(params.description));
@@ -112,16 +112,16 @@ export function create(params: CreateProjectParams): Project {
     return __.toNativeObject(bean.execute());
 }
 
-export interface ModifyProjectParams {
+export interface ModifyProjectParams<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     displayName: string;
     description?: string;
     language?: string;
-    siteConfig?: Record<string, unknown>;
+    siteConfig?: CONFIG;
     applications?: string[];
 }
 
-interface ModifyProjectHandler {
+interface ModifyProjectHandler<CONFIG extends Record<string, unknown>> {
     setId(value: string): void;
 
     setDisplayName(value?: string | null): void;
@@ -132,7 +132,7 @@ interface ModifyProjectHandler {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    execute(): Project;
+    execute(): Project<CONFIG>;
 }
 
 /**
@@ -150,10 +150,10 @@ interface ModifyProjectHandler {
  *
  * @returns {Object} Modified project.
  */
-export function modify(params: ModifyProjectParams): Project {
+export function modify<CONFIG extends Record<string, unknown>>(params: ModifyProjectParams<CONFIG>): Project<CONFIG> {
     checkRequired(params, 'id');
 
-    const bean = __.newBean<ModifyProjectHandler>('com.enonic.xp.lib.project.ModifyProjectHandler');
+    const bean = __.newBean<ModifyProjectHandler<CONFIG>>('com.enonic.xp.lib.project.ModifyProjectHandler');
     bean.setId(params.id);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
@@ -365,7 +365,7 @@ interface ModifyProjectReadAccessHandler {
 
 /**
  * Toggles public/private READ access for an existing Content Project.
- * This will modify permissions on ALL of the content items inside the project repository by adding or removing READ access for `system.everyone`.
+ * This will modify permissions on ALL the content items inside the project repository by adding or removing READ access for `system.everyone`.
  * To modify READ access, user must have `owner` permissions for the project, or either `system.admin` or `cms.admin` role.
  *
  * @example-ref examples/project/modifyReadAccess.js
