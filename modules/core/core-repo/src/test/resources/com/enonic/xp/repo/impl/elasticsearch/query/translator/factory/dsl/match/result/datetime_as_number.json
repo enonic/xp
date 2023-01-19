@@ -1,0 +1,9 @@
+{
+  "match" : {
+    "mynumber._datetime" : {
+      "query" : "1973-11-29T21:33:09Z",
+      "type" : "boolean",
+      "_name" : "mynumber._datetime"
+    }
+  }
+}

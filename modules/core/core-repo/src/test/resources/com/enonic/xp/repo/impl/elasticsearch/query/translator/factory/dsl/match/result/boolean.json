@@ -1,0 +1,9 @@
+{
+  "match" : {
+    "myboolean" : {
+      "query" : true,
+      "type" : "boolean",
+      "_name" : "myboolean"
+    }
+  }
+}

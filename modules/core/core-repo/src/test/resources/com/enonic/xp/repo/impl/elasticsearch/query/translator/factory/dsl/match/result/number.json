@@ -1,0 +1,9 @@
+{
+  "match" : {
+    "mynumber._number" : {
+      "query" : 4.2,
+      "type" : "boolean",
+      "_name" : "mynumber._number"
+    }
+  }
+}

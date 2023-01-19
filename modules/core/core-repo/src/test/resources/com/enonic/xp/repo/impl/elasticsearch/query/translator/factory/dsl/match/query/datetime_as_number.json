@@ -1,0 +1,7 @@
+{
+  "match" : {
+    "field" : "myNumber",
+    "type" : "dateTime",
+    "value" : 123456789
+  }
+}

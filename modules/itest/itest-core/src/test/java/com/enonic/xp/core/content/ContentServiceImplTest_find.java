@@ -2,6 +2,8 @@ package com.enonic.xp.core.content;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -205,6 +207,106 @@ public class ContentServiceImplTest_find
 
         fulltext.addString( "field", "data.geoPoint" );
         fulltext.addString( "value", "59.91273,10.74609" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_uppercase()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet fulltext = request.addSet( "term" );
+
+        fulltext.addString( "field", "displayName" );
+        fulltext.addString( "value", "My DisplayName" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 0, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_match_uppercase()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet fulltext = request.addSet( "match" );
+
+        fulltext.addString( "field", "displayName" );
+        fulltext.addString( "value", "My DisplayName" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_match_localdatetime()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet fulltext = request.addSet( "match" );
+
+        fulltext.addString( "field", "data.localDateTime" );
+        fulltext.addLocalDateTime( "value", LocalDateTime.of( 2015, 3, 13, 10, 0, 0 ) );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_match_localdate()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet fulltext = request.addSet( "match" );
+
+        fulltext.addString( "field", "data.date" );
+        fulltext.addLocalDate( "value", LocalDate.of( 2015, 3, 13 ) );
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 

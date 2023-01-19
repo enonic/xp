@@ -1,0 +1,7 @@
+{
+  "match" : {
+    "field" : "displayName",
+    "value" : "Fisk",
+    "boost" : 2.3
+  }
+}

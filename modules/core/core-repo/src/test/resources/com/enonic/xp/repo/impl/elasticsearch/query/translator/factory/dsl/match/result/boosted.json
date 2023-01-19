@@ -1,0 +1,10 @@
+{
+  "match" : {
+    "displayname" : {
+      "query" : "Fisk",
+      "type" : "boolean",
+      "boost" : 2.3,
+      "_name" : "displayname"
+    }
+  }
+}

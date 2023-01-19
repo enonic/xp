@@ -1,0 +1,6 @@
+{
+  "match" : {
+    "field" : "myBoolean",
+    "value" : true
+  }
+}

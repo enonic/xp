@@ -13,6 +13,7 @@ public class DslQueryParser
     private static final Map<String, Function<PropertySet, QueryBuilder>> QUERY_BUILDERS =
         Map.ofEntries( Map.entry( BooleanQueryBuilder.NAME, set -> new BooleanQueryBuilder( set ).create() ),
                        Map.entry( TermQueryBuilder.NAME, set -> new TermQueryBuilder( set ).create() ),
+                       Map.entry( MatchQueryBuilder.NAME, set -> new MatchQueryBuilder( set ).create() ),
                        Map.entry( InQueryBuilder.NAME, set -> new InQueryBuilder( set ).create() ),
                        Map.entry( LikeQueryBuilder.NAME, set -> new LikeQueryBuilder( set ).create() ),
                        Map.entry( FulltextQueryBuilder.NAME, set -> new FulltextQueryBuilder( set ).create() ),

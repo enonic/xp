@@ -1,0 +1,6 @@
+{
+  "match" : {
+    "field" : "myNumber",
+    "value" : 4.2
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "match" : {
+    "displayname" : {
+      "query" : "",
+      "type" : "boolean",
+      "_name" : "displayname"
+    }
+  }
+}
