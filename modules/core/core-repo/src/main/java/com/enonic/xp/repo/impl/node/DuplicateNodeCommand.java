@@ -55,42 +55,8 @@ public final class DuplicateNodeCommand
 
     public DuplicateNodeResult execute()
     {
-        final Node existingNode = doGetById( params.getNodeId() );
-
-        if ( existingNode == null )
-        {
-            throw new NodeNotFoundException( "Cannot duplicate node with id [" + params.getNodeId() + "]" );
-        }
-
-        if ( existingNode.isRoot() )
-        {
-            throw new OperationNotPermittedException( "Not allowed to duplicate root-node" );
-        }
-
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode );
-        attachBinaries( existingNode, createNodeParams );
-
-        Node duplicatedNode = null;
-        String newNodeName = existingNode.name().toString();
-        do
-        {
-            try
-            {
-                newNodeName = DuplicateValueResolver.name( newNodeName );
-                final CreateNodeParams processedParams = executeProcessors( createNodeParams.name( newNodeName ).build() );
-
-                duplicatedNode =
-                    CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
-
-            }
-            catch ( NodeAlreadyExistAtPathException e )
-            {
-                // try again with other name
-                LOG.debug( String.format( "[%s] node with [%s] parent already exist.", newNodeName, existingNode.parentPath().toString() ),
-                           e );
-            }
-        }
-        while ( duplicatedNode == null );
+        final Node existingNode = getExistingNode();
+        final Node duplicatedNode = doDuplicateNode( existingNode );
 
         result.node( duplicatedNode );
         nodeDuplicated( 1 );
@@ -112,6 +78,71 @@ public final class DuplicateNodeCommand
 
         refresh( params.getRefresh() );
         return result.build();
+    }
+
+    private Node getExistingNode()
+    {
+        final Node existingNode = doGetById( params.getNodeId() );
+
+        if ( existingNode == null )
+        {
+            throw new NodeNotFoundException( "Cannot duplicate node with id [" + params.getNodeId() + "]" );
+        }
+        if ( existingNode.isRoot() )
+        {
+            throw new OperationNotPermittedException( "Not allowed to duplicate root-node" );
+        }
+
+        return existingNode;
+    }
+
+    private Node doDuplicateNode( final Node existingNode )
+    {
+        final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( existingNode );
+        attachBinaries( existingNode, paramsBuilder );
+
+        if ( params.getName() != null )
+        {
+            paramsBuilder.name( params.getName() );
+        }
+        if ( params.getParent() != null )
+        {
+            paramsBuilder.parent( params.getParent() );
+        }
+
+        if ( params.getName() != null || params.getParent() != null )
+        {
+            final CreateNodeParams processedParams = executeProcessors( paramsBuilder.build() );
+
+            return CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
+        }
+
+        return doDuplicateNode( existingNode, paramsBuilder );
+    }
+
+    private Node doDuplicateNode( final Node existingNode, final CreateNodeParams.Builder paramsBuilder )
+    {
+        Node duplicatedNode = null;
+        String newNodeName = existingNode.name().toString();
+        do
+        {
+            try
+            {
+                newNodeName = DuplicateValueResolver.name( newNodeName );
+                final CreateNodeParams processedParams = executeProcessors( paramsBuilder.name( newNodeName ).build() );
+
+                duplicatedNode =
+                    CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
+            }
+            catch ( NodeAlreadyExistAtPathException e )
+            {
+                // try again with other name
+                LOG.debug( "[{}] node with [{}] parent already exist.", newNodeName, existingNode.parentPath().toString(), e );
+            }
+        }
+        while ( duplicatedNode == null );
+
+        return duplicatedNode;
     }
 
     private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
@@ -213,7 +244,7 @@ public final class DuplicateNodeCommand
         for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
         {
             final Reference reference = property.getReference();
-            if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference ) )
+            if ( reference != null && nodeReferenceUpdatesHolder.mustUpdate( reference, node.id() ) )
             {
                 changes = true;
                 data.setReference( property.getPath(), nodeReferenceUpdatesHolder.getNewReference( reference ) );

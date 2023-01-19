@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -17,9 +18,10 @@ final class NodeReferenceUpdatesHolder
         this.references = ImmutableMap.copyOf( builder.references );
     }
 
-    boolean mustUpdate( final Reference reference )
+    boolean mustUpdate( final Reference reference, final NodeId duplicatedNodeId )
     {
-        return this.references.containsKey( reference.getNodeId() );
+        return this.references.containsKey( reference.getNodeId() ) &&
+            !Objects.equals( this.references.get( reference.getNodeId() ), duplicatedNodeId );
     }
 
     Reference getNewReference( final Reference oldReference )

@@ -97,6 +97,7 @@ export interface Content<
         checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
+    variantOf?: string;
 }
 
 // Compliant with npm module ts-brand

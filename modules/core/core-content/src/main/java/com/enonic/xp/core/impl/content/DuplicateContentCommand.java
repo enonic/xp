@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.DuplicateContentException;
 import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.content.DuplicateContentParams;
@@ -50,22 +51,9 @@ final class DuplicateContentCommand
 
     private DuplicateContentsResult doExecute()
     {
-        final NodeId sourceNodeId = NodeId.from( params.getContentId() );
-        final Node sourceNode = nodeService.getById( sourceNodeId );
-        if ( sourceNode == null )
-        {
-            throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
-        }
+        final Node sourceNode = nodeService.getById( NodeId.from( params.getContentId() ) );
 
-        final DuplicateNodeParams duplicateNodeParams = DuplicateNodeParams.create()
-            .duplicateListener( this )
-            .nodeId( sourceNodeId )
-            .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo() ) )
-            .includeChildren( params.getIncludeChildren() )
-            .refresh( RefreshMode.ALL )
-            .build();
-
-        final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
+        final Node duplicatedNode = nodeService.duplicate( createDuplicateNodeParams( sourceNode ) );
 
         final Content duplicatedContent = translator.fromNode( duplicatedNode, true );
 
@@ -77,6 +65,28 @@ final class DuplicateContentCommand
             .addDuplicated( duplicatedContent.getId() )
             .addDuplicated( childrenIds )
             .build();
+    }
+
+    private DuplicateNodeParams createDuplicateNodeParams( final Node sourceNode )
+    {
+        final boolean isVariant = sourceNode.data().getReference( ContentPropertyNames.VARIANT_OF ) != null;
+
+        final NodeId sourceNodeId = ( !isVariant && params.isVariant() ) ? sourceNode.id() : null;
+
+        final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
+            .duplicateListener( this )
+            .nodeId( sourceNode.id() )
+            .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
+            .refresh( RefreshMode.SEARCH );
+
+        builder.name( params.getName() );
+        if ( params.getParent() != null )
+        {
+            builder.parent( ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) );
+        }
+        builder.includeChildren( params.getIncludeChildren() );
+
+        return builder.build();
     }
 
     @Override

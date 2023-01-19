@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -18,6 +20,12 @@ public final class DuplicateContentParams
 
     private final Boolean includeChildren;
 
+    private final boolean variant;
+
+    private final String name;
+
+    private final ContentPath parent;
+
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
@@ -25,6 +33,9 @@ public final class DuplicateContentParams
         this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = builder.includeChildren;
+        this.variant = builder.variant;
+        this.name = builder.name;
+        this.parent = builder.parent;
     }
 
     public static DuplicateContentParams.Builder create()
@@ -64,6 +75,21 @@ public final class DuplicateContentParams
         return includeChildren;
     }
 
+    public boolean isVariant()
+    {
+        return variant;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public ContentPath getParent()
+    {
+        return parent;
+    }
+
     @Deprecated
     public void validate()
     {
@@ -93,6 +119,12 @@ public final class DuplicateContentParams
         private DuplicateContentListener duplicateContentListener;
 
         private Boolean includeChildren = true;
+
+        private boolean variant;
+
+        private String name;
+
+        private ContentPath parent;
 
         private Builder()
         {
@@ -124,13 +156,33 @@ public final class DuplicateContentParams
 
         public Builder includeChildren( final Boolean includeChildren )
         {
-            this.includeChildren = includeChildren;
+            this.includeChildren = Objects.requireNonNullElse( includeChildren, true );
+            return this;
+        }
+
+        public Builder variant( final boolean variant )
+        {
+            this.variant = variant;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder parent( final ContentPath parent )
+        {
+            this.parent = parent;
             return this;
         }
 
         public DuplicateContentParams build()
         {
             Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            Preconditions.checkArgument( !( this.variant && this.includeChildren ),
+                                         "The \"includeChildren\" parameter must be false if duplicated content is a variant" );
             return new DuplicateContentParams( this );
         }
     }
