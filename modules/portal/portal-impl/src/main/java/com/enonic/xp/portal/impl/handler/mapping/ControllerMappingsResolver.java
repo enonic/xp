@@ -72,6 +72,10 @@ final class ControllerMappingsResolver
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final String relativePath, final String relativeUrl )
     {
+        if ( descriptor.getPattern() == null )
+        {
+            return false;
+        }
         final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
         final boolean patternMatches = descriptor.getPattern().matcher( patternWithQueryParameters ? relativeUrl : relativePath ).matches();
         return descriptor.invertPattern() != patternMatches;
