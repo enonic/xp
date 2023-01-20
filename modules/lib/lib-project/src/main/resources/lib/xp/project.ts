@@ -40,7 +40,7 @@ export interface CreateProjectParams {
     siteConfig?: Record<string, unknown>;
     applications?: string[];
     permissions?: ProjectPermission;
-    readAccess?: ProjectReadAccess;
+    readAccess: ProjectReadAccess;
 }
 
 export interface Project {
