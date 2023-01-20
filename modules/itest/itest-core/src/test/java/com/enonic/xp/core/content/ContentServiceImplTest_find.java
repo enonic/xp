@@ -2,6 +2,8 @@ package com.enonic.xp.core.content;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +28,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -205,6 +208,131 @@ public class ContentServiceImplTest_find
 
         fulltext.addString( "field", "data.geoPoint" );
         fulltext.addString( "value", "59.91273,10.74609" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_uppercase()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet term = request.addSet( "term" );
+
+        term.addString( "field", "displayName" );
+        term.addString( "value", "My DisplayName" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_localdatetime()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet term = request.addSet( "term" );
+
+        term.addString( "field", "data.localDateTime" );
+        term.addLocalDateTime( "value", LocalDateTime.of( 2015, 3, 13, 10, 0, 0 ) );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_localdate()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet term = request.addSet( "term" );
+
+        term.addString( "field", "data.date" );
+        term.addLocalDate( "value", LocalDate.of( 2015, 3, 13 ) );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_localdatetime_string()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet term = request.addSet( "term" );
+
+        term.addString( "field", "data.localDateTime" );
+        term.addString( "value", "2015-03-13T10:00:00" );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+    }
+
+    @Test
+    public void dsl_query_term_geopoint()
+    {
+        PropertyTree data = createPropertyTreeForAllInputTypes();
+
+        this.contentService.create( CreateContentParams.create()
+                                        .type( ContentTypeName.folder() )
+                                        .contentData( data )
+                                        .name( "myContent1" )
+                                        .parent( ContentPath.ROOT )
+                                        .displayName( "My DisplayName" )
+                                        .build() );
+
+        final PropertyTree request = new PropertyTree();
+
+        final PropertySet fulltext = request.addSet( "term" );
+
+        fulltext.addString( "field", "data.geoPoint" );
+        fulltext.addGeoPoint( "value", GeoPoint.from( "59.9127300, 10.7460900" ) );
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
