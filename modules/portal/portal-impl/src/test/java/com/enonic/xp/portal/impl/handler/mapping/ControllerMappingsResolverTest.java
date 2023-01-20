@@ -26,6 +26,7 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControllerMappingsResolverTest
@@ -106,6 +107,28 @@ public class ControllerMappingsResolverTest
             resolver.resolve( "/api", ImmutableMultimap.of(), content, site.getSiteConfigs(), null );
 
         assertTrue( mapping.isEmpty() );
+    }
+
+    @Test
+    public void testResolveService()
+    {
+        final Content content = newContent();
+        final Site site = newSite();
+
+        final SiteDescriptor siteDescriptor = newServiceMappingDescriptor();
+
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
+
+        final Optional<ControllerMappingDescriptor> serviceMapping =
+            resolver.resolve( "/api", ImmutableMultimap.of(), content, site.getSiteConfigs(), "image" );
+
+        final Optional<ControllerMappingDescriptor> patternMapping =
+            resolver.resolve( "/api", ImmutableMultimap.of( "key", "123", "category", "foo" ), content, site.getSiteConfigs(), null );
+
+        assertFalse( patternMapping.isEmpty() );
+        assertFalse( serviceMapping.isEmpty() );
     }
 
     @Test
@@ -236,6 +259,24 @@ public class ControllerMappingsResolverTest
             .order( 10 )
             .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
+        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
+    }
+
+    private SiteDescriptor newServiceMappingDescriptor()
+    {
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .service( "image" )
+            .order( 10 )
+            .build();
+
+        final ControllerMappingDescriptor mapping2 = ControllerMappingDescriptor.create()
+            .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
+            .pattern( "/.*api.*\\?category=.*&key=\\d+" )
+            .order( 10 )
+            .build();
+
+        final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2 );
         return SiteDescriptor.create().mappingDescriptors( mappings ).build();
     }
 
