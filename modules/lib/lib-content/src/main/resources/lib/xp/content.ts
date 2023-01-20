@@ -481,7 +481,7 @@ export interface CreateContentParams<Data, Type extends string> {
     contentType: Type;
     language?: string;
     childOrder?: string;
-    data?: Data;
+    data: Data;
     x?: XpXData;
     idGenerator?: IdGeneratorSupplier;
     workflow?: Workflow;
