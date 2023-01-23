@@ -32,7 +32,7 @@ public final class DuplicateContentParams
         this.creator = builder.creator;
         this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
-        this.includeChildren = builder.includeChildren;
+        this.includeChildren = !builder.variant ? builder.includeChildren : false;
         this.variant = builder.variant;
         this.name = builder.name;
         this.parent = builder.parent;
@@ -60,6 +60,7 @@ public final class DuplicateContentParams
         return duplicateContentListener;
     }
 
+    @Deprecated
     public PrincipalKey getCreator()
     {
         return creator;
@@ -136,6 +137,7 @@ public final class DuplicateContentParams
             return this;
         }
 
+        @Deprecated
         public Builder creator( PrincipalKey creator )
         {
             this.creator = creator;
@@ -181,8 +183,6 @@ public final class DuplicateContentParams
         public DuplicateContentParams build()
         {
             Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-            Preconditions.checkArgument( !( this.variant && this.includeChildren ),
-                                         "The \"includeChildren\" parameter must be false if duplicated content is a variant" );
             return new DuplicateContentParams( this );
         }
     }
