@@ -267,11 +267,10 @@ public class ContentServiceImplTest_duplicate
     {
         createDuplicatedParams( ContentId.from( "contentId" ), "name", true, false, ContentPath.ROOT );
         createDuplicatedParams( ContentId.from( "contentId" ), "name", false, true, ContentPath.ROOT );
-        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class,
-                                                    () -> createDuplicatedParams( ContentId.from( "contentId" ), "name", true, true,
-                                                                                  ContentPath.ROOT ) );
+        NullPointerException ex =
+            assertThrows( NullPointerException.class, () -> createDuplicatedParams( null, "name", true, true, ContentPath.ROOT ) );
 
-        assertEquals( "The \"includeChildren\" parameter must be false if duplicated content is a variant", ex.getMessage() );
+        assertEquals( "Content id cannot be null", ex.getMessage() );
     }
 
     private DuplicateContentParams createDuplicatedParams( ContentId contentId, String name, boolean includeChildren, boolean variant,

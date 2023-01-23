@@ -1313,3 +1313,72 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
 
     return __.toNativeObject(bean.execute());
 }
+
+export interface DuplicateContentParams {
+    contentId: string;
+    workflow?: Workflow;
+    includeChildren?: boolean;
+    variant?: boolean;
+    parent?: string;
+    name?: string;
+}
+
+export interface DuplicateContentsResult {
+    contentName: string;
+    sourceContentPath: string;
+    duplicatedContents: string[];
+}
+
+interface DuplicateContentHandler {
+    setContentId(value: string): void;
+
+    setWorkflow(value: ScriptValue): void;
+
+    setIncludeChildren(value: boolean);
+
+    setVariant(value: boolean);
+
+    setName(value?: string);
+
+    setParentPath(value?: string);
+
+    execute(): DuplicateContentsResult;
+}
+
+/** This function duplicates a content.
+ *
+ * @example-ref examples/content/duplicate.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.contentId Path or id to the content.
+ * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
+ * @param {boolean} [params.includeChildren=true] Indicates that children contents must be duplicated, too. Default value `true`. Ignored if `variant=true`.
+ * @param {boolean} [params.variant=false] Indicates that duplicated content is a variant. Default value `false`.
+ * @param {string} [params.parent] Destination parent path. By default, a duplicated content will be added as a sibling of the source content.
+ * @param {string} [params.name] New content name.
+ *
+ * @returns {object} summary about duplicated content.
+ */
+export function duplicate(params: DuplicateContentParams): DuplicateContentsResult {
+    checkRequired(params, 'contentId');
+
+    const {
+        contentId,
+        workflow,
+        includeChildren = true,
+        variant = false,
+        parent,
+        name,
+    } = params ?? {};
+
+    const bean = __.newBean<DuplicateContentHandler>('com.enonic.xp.lib.content.DuplicateContentHandler');
+
+    bean.setContentId(contentId);
+    bean.setWorkflow(__.toScriptValue(workflow));
+    bean.setName(__.nullOrValue(name));
+    bean.setParentPath(__.nullOrValue(parent));
+    bean.setIncludeChildren(includeChildren);
+    bean.setVariant(variant);
+
+    return __.toNativeObject(bean.execute());
+}
