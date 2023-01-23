@@ -23,26 +23,26 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-export interface AuditLogParams<DATA extends Record<string, unknown> = Record<string, unknown>> {
+export interface AuditLogParams<Data extends Record<string, unknown>> {
     type: string;
     time?: string;
     source?: string;
     user?: UserKey;
     objects?: string[];
-    data?: DATA;
+    data?: Data;
 }
 
-export interface AuditLog<DATA extends Record<string, unknown> = Record<string, unknown>> {
+export interface AuditLog<Data extends Record<string, unknown> = Record<string, unknown>> {
     _id: string;
     type: string;
     time: string;
     source: string;
     user: UserKey;
     objects: string[];
-    data: DATA;
+    data: Data;
 }
 
-interface CreateAuditLogHandler<DATA extends Record<string, unknown>> {
+interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
     setType(type: string): void;
 
     setTime(type?: string | null): void;
@@ -55,7 +55,7 @@ interface CreateAuditLogHandler<DATA extends Record<string, unknown>> {
 
     setData(data?: ScriptValue): void;
 
-    execute(): AuditLog<DATA>;
+    execute(): AuditLog<Data>;
 }
 
 /**
@@ -75,10 +75,10 @@ interface CreateAuditLogHandler<DATA extends Record<string, unknown>> {
  *
  * @returns {object} Audit log created as JSON.
  */
-export function log<DATA extends Record<string, unknown>>(params: AuditLogParams<DATA>): AuditLog<DATA> {
+export function log<Data extends Record<string, unknown> = Record<string, unknown>>(params: AuditLogParams<Data>): AuditLog<Data> {
     checkRequired(params, 'type');
 
-    const bean = __.newBean<CreateAuditLogHandler<DATA>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
+    const bean = __.newBean<CreateAuditLogHandler<Data>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.setType(params.type);
     bean.setTime(__.nullOrValue(params.time));
     bean.setSource(params.source ?? app.name);

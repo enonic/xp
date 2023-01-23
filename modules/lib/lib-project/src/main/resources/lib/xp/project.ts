@@ -31,31 +31,31 @@ export interface ProjectReadAccess {
     public: boolean;
 }
 
-export interface CreateProjectParams<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
+export interface CreateProjectParams<Config extends Record<string, unknown>> {
     id: string;
     displayName: string;
     description?: string;
     language?: string;
     parent?: string;
-    siteConfig?: CONFIG;
+    siteConfig?: Config;
     applications?: string[];
     permissions?: ProjectPermission;
     readAccess?: ProjectReadAccess;
 }
 
-export interface Project<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
+export interface Project<Config extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     displayName: string;
     description: string;
     parent: string;
-    siteConfig: CONFIG;
+    siteConfig: Config;
     applications?: string[];
     language?: string;
     permissions?: ProjectPermission;
     readAccess?: ProjectPermission;
 }
 
-interface CreateProjectHandler<CONFIG extends Record<string, unknown>> {
+interface CreateProjectHandler<Config extends Record<string, unknown>> {
     setId(value: string): void;
 
     setDisplayName(value: string): void;
@@ -72,7 +72,7 @@ interface CreateProjectHandler<CONFIG extends Record<string, unknown>> {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    execute(): Project<CONFIG>;
+    execute(): Project<Config>;
 }
 
 /**
@@ -95,11 +95,11 @@ interface CreateProjectHandler<CONFIG extends Record<string, unknown>> {
  *
  * @returns {Object} Created project.
  */
-export function create<CONFIG extends Record<string, unknown>>(params: CreateProjectParams<CONFIG>): Project<CONFIG> {
+export function create<Config extends Record<string, unknown> = Record<string, unknown>>(params: CreateProjectParams<Config>): Project<Config> {
     checkRequired(params, 'id');
     checkRequired(params, 'displayName');
 
-    const bean = __.newBean<CreateProjectHandler<CONFIG>>('com.enonic.xp.lib.project.CreateProjectHandler');
+    const bean = __.newBean<CreateProjectHandler<Config>>('com.enonic.xp.lib.project.CreateProjectHandler');
     bean.setId(params.id);
     bean.setDisplayName(params.displayName);
     bean.setDescription(__.nullOrValue(params.description));
@@ -112,16 +112,16 @@ export function create<CONFIG extends Record<string, unknown>>(params: CreatePro
     return __.toNativeObject(bean.execute());
 }
 
-export interface ModifyProjectParams<CONFIG extends Record<string, unknown> = Record<string, unknown>> {
+export interface ModifyProjectParams<Config extends Record<string, unknown>> {
     id: string;
     displayName: string;
     description?: string;
     language?: string;
-    siteConfig?: CONFIG;
+    siteConfig?: Config;
     applications?: string[];
 }
 
-interface ModifyProjectHandler<CONFIG extends Record<string, unknown>> {
+interface ModifyProjectHandler<Config extends Record<string, unknown>> {
     setId(value: string): void;
 
     setDisplayName(value?: string | null): void;
@@ -132,7 +132,7 @@ interface ModifyProjectHandler<CONFIG extends Record<string, unknown>> {
 
     setSiteConfig(value?: ScriptValue): void;
 
-    execute(): Project<CONFIG>;
+    execute(): Project<Config>;
 }
 
 /**
@@ -150,10 +150,10 @@ interface ModifyProjectHandler<CONFIG extends Record<string, unknown>> {
  *
  * @returns {Object} Modified project.
  */
-export function modify<CONFIG extends Record<string, unknown>>(params: ModifyProjectParams<CONFIG>): Project<CONFIG> {
+export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProjectParams<Config>): Project<Config> {
     checkRequired(params, 'id');
 
-    const bean = __.newBean<ModifyProjectHandler<CONFIG>>('com.enonic.xp.lib.project.ModifyProjectHandler');
+    const bean = __.newBean<ModifyProjectHandler<Config>>('com.enonic.xp.lib.project.ModifyProjectHandler');
     bean.setId(params.id);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
