@@ -23,26 +23,26 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-export interface AuditLogParams {
+export interface AuditLogParams<Data extends Record<string, unknown>> {
     type: string;
     time?: string;
     source?: string;
     user?: UserKey;
     objects?: string[];
-    data?: Record<string, unknown>;
+    data?: Data;
 }
 
-export interface AuditLog {
+export interface AuditLog<Data extends Record<string, unknown> = Record<string, unknown>> {
     _id: string;
     type: string;
     time: string;
     source: string;
     user: UserKey;
     objects: string[];
-    data: Record<string, unknown>;
+    data: Data;
 }
 
-interface CreateAuditLogHandler {
+interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
     setType(type: string): void;
 
     setTime(type?: string | null): void;
@@ -55,7 +55,7 @@ interface CreateAuditLogHandler {
 
     setData(data?: ScriptValue): void;
 
-    execute(): AuditLog;
+    execute(): AuditLog<Data>;
 }
 
 /**
@@ -71,14 +71,14 @@ interface CreateAuditLogHandler {
  * @param {string} [params.source] Log entry source. Defaults to the application ID.
  * @param {string} [params.user] Log entry user. Defaults to the user of current context.
  * @param {array}  [params.objects] URIs to objects that relate to this log entry. Defaults to empty array.
- * @param {object} [params.data] Custom extra data for the this log entry. Defaults to empty object.
+ * @param {object} [params.data] Custom extra data for this log entry. Defaults to empty object.
  *
  * @returns {object} Audit log created as JSON.
  */
-export function log(params: AuditLogParams): AuditLog {
+export function log<Data extends Record<string, unknown> = Record<string, unknown>>(params: AuditLogParams<Data>): AuditLog<Data> {
     checkRequired(params, 'type');
 
-    const bean = __.newBean<CreateAuditLogHandler>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
+    const bean = __.newBean<CreateAuditLogHandler<Data>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.setType(params.type);
     bean.setTime(__.nullOrValue(params.time));
     bean.setSource(params.source ?? app.name);

@@ -111,7 +111,7 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     return bean.executeFunction();
 }
 
-export interface SubmitNamedTaskParams<Config extends object = Record<string, unknown>> {
+export interface SubmitNamedTaskParams<Config extends Record<string, unknown>> {
     name: string;
     config?: Config;
 }
@@ -139,7 +139,7 @@ interface SubmitTaskHandler {
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-export function submitNamed<Config extends object = Record<string, unknown>>(params: SubmitNamedTaskParams<Config>): string {
+export function submitNamed<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitNamedTaskParams<Config>): string {
     checkRequired(params, 'name');
 
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
@@ -150,7 +150,7 @@ export function submitNamed<Config extends object = Record<string, unknown>>(par
     return bean.submitTask();
 }
 
-export interface SubmitTaskParams<Config extends object = Record<string, unknown>> {
+export interface SubmitTaskParams<Config extends Record<string, unknown>> {
     descriptor: string;
     config?: Config;
 }
@@ -168,7 +168,7 @@ export interface SubmitTaskParams<Config extends object = Record<string, unknown
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-export function submitTask<Config extends object = Record<string, unknown>>(params: SubmitTaskParams<Config>): string {
+export function submitTask<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitTaskParams<Config>): string {
     checkRequired(params, 'descriptor');
 
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
