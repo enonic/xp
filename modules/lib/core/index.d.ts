@@ -402,12 +402,12 @@ export interface StatsAggregation {
 export interface GeoDistanceAggregation {
     geoDistance: {
         field: string;
-        unit: string;
-        origin?: {
-            lat: string;
-            lon: string;
+        unit?: string; // Query works without it, but there is no documentation stating what is the default unit
+        origin: { // Without it java.lang.NullPointerException gets thrown
+            lat: string; // Without it java.lang.NullPointerException gets thrown
+            lon: string; // Without it java.lang.NullPointerException gets thrown
         };
-        ranges?: NumericRange[];
+        ranges: NumericRange[]; // Without it Elastic will throw SearchSourceBuilderException[at least one range must be defined for geo_distance aggregation]
     };
 }
 
