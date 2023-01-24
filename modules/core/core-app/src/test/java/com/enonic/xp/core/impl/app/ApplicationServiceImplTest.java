@@ -36,10 +36,13 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -59,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -192,24 +196,36 @@ public class ApplicationServiceImplTest
 
     @Test
     public void delete_virtual_application()
-        throws Exception
     {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
-        when( nodeService.deleteByPath( NodePath.create( "/app1" ).build() ) ).thenReturn( NodeIds.from( appNode.id() ) );
+        final DeleteNodeResult result = DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( NodeId.from( "nodeId" ) )
+                                              .nodePath( new NodePath( "/app1" ) )
+                                              .build() )
+                                    .build() )
+            .build();
+        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
         assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
     }
 
     @Test
     public void delete_virtual_application_without_admin()
-        throws Exception
     {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
-        when( nodeService.deleteByPath( NodePath.create( "/app1" ).build() ) ).thenReturn( NodeIds.from( appNode.id() ) );
+        final DeleteNodeResult result = DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( NodeId.from( "nodeId" ) )
+                                              .nodePath( new NodePath( "/app1" ) )
+                                              .build() )
+                                    .build() )
+            .build();
+        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
         assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
     }
@@ -296,9 +312,9 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.ACTIVE, bundle.getState() );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 
     @Test
@@ -309,7 +325,7 @@ public class ApplicationServiceImplTest
         this.service.startApplication( applicationKey, true );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verifyNoMoreInteractions( this.eventPublisher );
     }
 
@@ -328,9 +344,9 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.ACTIVE, bundle.getState() );
 
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 
     @Test
@@ -405,9 +421,9 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.RESOLVED, bundle.getState() );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
     }
 
     @Test
@@ -442,9 +458,9 @@ public class ApplicationServiceImplTest
         assertEquals( Bundle.RESOLVED, bundle.getState() );
 
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
     }
 
     @Test
@@ -715,9 +731,9 @@ public class ApplicationServiceImplTest
         assertNull( this.service.getInstalledApplication( application.getKey() ) );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
     }
 
     @Test
@@ -738,9 +754,9 @@ public class ApplicationServiceImplTest
         assertNull( this.service.getInstalledApplication( application.getKey() ) );
 
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
         verify( this.eventPublisher, never() ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
     }
 
     @Test
@@ -1006,16 +1022,16 @@ public class ApplicationServiceImplTest
     private void verifyInstalledEvents( final Node node, final VerificationMode never )
     {
         verify( this.eventPublisher, never ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( node ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( node ) ) ) );
     }
 
 
     private void verifyStartedEvent( final ApplicationKey applicationKey, final VerificationMode never )
     {
         verify( this.eventPublisher, never ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verify( this.eventPublisher, never ).publish(
-            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 
     private void mockRepoCreateNode( final Node node )

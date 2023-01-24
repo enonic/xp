@@ -78,6 +78,7 @@ jar {
          '-nouses': 'true',
          '-dsannotations': '*',
          'Implementation-Version': project.version )
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 task allDependencies(type: DependencyReportTask) {}

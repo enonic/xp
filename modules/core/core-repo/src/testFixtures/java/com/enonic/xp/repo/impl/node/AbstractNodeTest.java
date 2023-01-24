@@ -476,7 +476,8 @@ public abstract class AbstractNodeTest
 
     protected NodeIds doDeleteNode( final NodeId nodeId )
     {
-        final NodeBranchEntries result = DeleteNodeByIdCommand.create().nodeId( nodeId )
+        final NodeBranchEntries result = DeleteNodeCommand.create()
+            .nodeId( nodeId )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )

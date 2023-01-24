@@ -524,11 +524,19 @@ public class NodeServiceImpl
     }
 
     @Override
+    public NodeIds deleteByPath( final NodePath path )
+    {
+        final DeleteNodeResult result = delete( DeleteNodeParams.create().nodePath( path ).refresh( RefreshMode.ALL ).build() );
+        return NodeIds.from( result.getNodeBranchEntries().getKeys() );
+    }
+
+    @Override
     public DeleteNodeResult delete( final DeleteNodeParams deleteNodeParams )
     {
         verifyContext();
-        final NodeBranchEntries deletedNodes = DeleteNodeByIdCommand.create()
+        final NodeBranchEntries deletedNodes = DeleteNodeCommand.create()
             .nodeId( deleteNodeParams.getNodeId() )
+            .nodePath( deleteNodeParams.getNodePath() )
             .deleteNodeListener( deleteNodeParams.getDeleteNodeListener() )
             .refresh( deleteNodeParams.getRefresh() )
             .indexServiceInternal( this.indexServiceInternal )
@@ -543,27 +551,6 @@ public class NodeServiceImpl
         }
 
         return DeleteNodeResult.create().nodeBranchEntries( deletedNodes ).build();
-    }
-
-    @Override
-    public NodeIds deleteByPath( final NodePath path )
-    {
-        verifyContext();
-        final NodeBranchEntries deletedNodes = DeleteNodeByPathCommand.create()
-            .nodePath( path )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        refresh( RefreshMode.ALL );
-
-        if ( deletedNodes.isNotEmpty() )
-        {
-            this.eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
-        }
-        return NodeIds.from( deletedNodes.getKeys() );
     }
 
     @Override

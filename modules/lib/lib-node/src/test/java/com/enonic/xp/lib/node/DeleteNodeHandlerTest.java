@@ -1,31 +1,45 @@
 package com.enonic.xp.lib.node;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.node.DeleteNodeResult;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 public class DeleteNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mockGetNode()
     {
-        Mockito.when( this.nodeService.deleteById( Mockito.any() ) ).
-            thenReturn( NodeIds.empty() );
-        Mockito.when( this.nodeService.deleteByPath( Mockito.any() ) ).
-            thenReturn( NodeIds.empty() );
+        when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().build() );
 
-        final NodeIds nodeIds = NodeIds.from( "nodeId", "aSubNodeId" );
-        Mockito.when( this.nodeService.deleteById( NodeId.from( "nodeId" ) ) ).
-            thenReturn( nodeIds );
-        Mockito.when( this.nodeService.deleteByPath( NodePath.create( "/node2-path" ).build() ) ).
-            thenReturn( nodeIds );
+        final DeleteNodeResult result = DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( NodeId.from( "nodeId" ) )
+                                              .nodePath( new NodePath( "/node2-path" ) )
+                                              .build() )
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( NodeId.from( "aSubNodeId" ) )
+                                              .nodePath( new NodePath( "/node2-path/subNode" ) )
+                                              .build() )
+                                    .build() )
+            .build();
+        doReturn( result ).when( this.nodeService )
+            .delete( ArgumentMatchers.argThat( argument -> NodeId.from( "nodeId" ).equals( argument.getNodeId() ) ) );
+        doReturn( result ).when( this.nodeService )
+            .delete( ArgumentMatchers.argThat( argument -> new NodePath( "/node2-path" ).equals( argument.getNodePath() ) ) );
     }
 
     @Test
@@ -33,7 +47,7 @@ public class DeleteNodeHandlerTest
     {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
+        when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
             thenReturn( Repository.create().
                 id( RepositoryId.from( "com.enonic.cms.default" ) ).
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).

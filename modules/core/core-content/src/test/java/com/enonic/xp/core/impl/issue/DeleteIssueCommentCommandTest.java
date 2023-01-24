@@ -8,8 +8,11 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.node.DeleteNodeResult;
+import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,10 +36,13 @@ public class DeleteIssueCommentCommandTest
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
 
-        final NodeIds nodeIds = NodeIds.from( params.getComment() );
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );
 
-        Mockito.when( this.nodeService.deleteById( Mockito.any( NodeId.class ) ) ).thenReturn( nodeIds );
+        Mockito.when( this.nodeService.delete( Mockito.any() ) )
+            .thenReturn( DeleteNodeResult.create()
+                             .nodeBranchEntries(
+                                 NodeBranchEntries.create().add( NodeBranchEntry.create().nodeId( params.getComment() ).nodePath( new NodePath("/some/path") ).build() ).build() )
+                             .build() );
 
         final DeleteIssueCommentResult result = command.execute();
 

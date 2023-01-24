@@ -18,11 +18,14 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -33,6 +36,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
+import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
@@ -56,6 +60,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -468,6 +473,52 @@ public class NodeServiceImplTest
         final Node processedParent = this.nodeService.getById( parent.id() );
 
         assertEquals( "value", processedParent.data().getString( "processedValue" ) );
+    }
+
+    @Test
+    void delete_tree_by_path() {
+        final Node parent = createNode(
+            CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().name( "my-child-1" ).parent( parent.path() ).build() );
+
+        final Node child2 = createNode( CreateNodeParams.create().name( "my-child-2" ).parent( parent.path() ).build() );
+
+        final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
+
+        final DeleteNodeResult result = nodeService.delete( DeleteNodeParams.create().nodePath( parent.path() ).build() );
+        assertThat( result.getNodeBranchEntries() ).map( NodeBranchEntry::getNodeId, NodeBranchEntry::getNodePath )
+            .containsExactlyInAnyOrder( tuple( child3.id(), child3.path() ), tuple( child2.id(), child2.path() ),
+                                        tuple( child1.id(), child1.path() ), tuple( parent.id(), parent.path() ) );
+    }
+
+    @Test
+    void delete_tree_by_id() {
+        final Node parent = createNode(
+            CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().name( "my-child-1" ).parent( parent.path() ).build() );
+
+        final Node child2 = createNode( CreateNodeParams.create().name( "my-child-2" ).parent( parent.path() ).build() );
+
+        final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
+
+        final DeleteNodeResult result = nodeService.delete( DeleteNodeParams.create().nodeId( parent.id() ).build() );
+        assertThat( result.getNodeBranchEntries() ).map( NodeBranchEntry::getNodeId, NodeBranchEntry::getNodePath )
+            .containsExactlyInAnyOrder( tuple( child3.id(), child3.path() ), tuple( child2.id(), child2.path() ),
+                                        tuple( child1.id(), child1.path() ), tuple( parent.id(), parent.path() ) );
+    }
+
+    @Test
+    void delete_root_path_fail() {
+
+        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
+    }
+
+    @Test
+    void delete_root_id_fail() {
+
+        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
     }
 
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )

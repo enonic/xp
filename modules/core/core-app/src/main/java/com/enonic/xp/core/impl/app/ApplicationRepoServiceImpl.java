@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
@@ -56,7 +57,10 @@ public class ApplicationRepoServiceImpl
     @Override
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
-        this.nodeService.deleteByPath( NodePath.create( APPLICATION_PATH, applicationKey.getName() ).build() );
+        this.nodeService.delete( DeleteNodeParams.create()
+                                           .nodePath( NodePath.create( APPLICATION_PATH, applicationKey.getName() ).build() )
+                                           .refresh( RefreshMode.ALL )
+                                           .build() );
     }
 
     @Override

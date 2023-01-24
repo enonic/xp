@@ -2,7 +2,10 @@ package com.enonic.xp.core.impl.issue;
 
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.RefreshMode;
 
 public class DeleteIssueCommentCommand
     extends AbstractIssueCommand
@@ -24,9 +27,10 @@ public class DeleteIssueCommentCommand
     {
         validateBlockingChecks();
 
-        NodeIds deletedIds = nodeService.deleteById( params.getComment() );
+        final DeleteNodeResult deleteNodeResult =
+            nodeService.delete( DeleteNodeParams.create().nodeId( params.getComment() ).refresh( RefreshMode.ALL ).build() );
 
-        return new DeleteIssueCommentResult( deletedIds );
+        return new DeleteIssueCommentResult( NodeIds.from( deleteNodeResult.getNodeBranchEntries().getKeys() ) );
     }
 
     private void validateBlockingChecks()

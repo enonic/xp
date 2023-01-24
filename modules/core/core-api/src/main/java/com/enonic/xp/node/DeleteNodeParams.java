@@ -9,6 +9,8 @@ public final class DeleteNodeParams
 {
     private final NodeId nodeId;
 
+    private final NodePath nodePath;
+
     private final RefreshMode refresh;
 
     private final DeleteNodeListener deleteNodeListener;
@@ -16,6 +18,7 @@ public final class DeleteNodeParams
     private DeleteNodeParams( final Builder builder )
     {
         this.nodeId = builder.nodeId;
+        this.nodePath = builder.nodePath;
         this.refresh = builder.refresh;
         this.deleteNodeListener = builder.deleteNodeListener;
     }
@@ -28,6 +31,11 @@ public final class DeleteNodeParams
     public NodeId getNodeId()
     {
         return nodeId;
+    }
+
+    public NodePath getNodePath()
+    {
+        return nodePath;
     }
 
     public RefreshMode getRefresh()
@@ -43,6 +51,8 @@ public final class DeleteNodeParams
     public static final class Builder
     {
         private NodeId nodeId;
+
+        private NodePath nodePath;
 
         private RefreshMode refresh;
 
@@ -70,9 +80,16 @@ public final class DeleteNodeParams
             return this;
         }
 
+        public Builder nodePath( final NodePath nodePath )
+        {
+            this.nodePath = nodePath;
+            return this;
+        }
+
         public DeleteNodeParams build()
         {
-            Preconditions.checkNotNull( this.nodeId, "id cannot be null" );
+            Preconditions.checkArgument( this.nodePath != null ^ this.nodeId != null,
+                                         "Either nodePath or nodeId must be specified, but not both" );
             return new DeleteNodeParams( this );
         }
     }

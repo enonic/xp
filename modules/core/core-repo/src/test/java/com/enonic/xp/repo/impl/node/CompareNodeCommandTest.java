@@ -85,7 +85,7 @@ public class CompareNodeCommandTest
 
         assertNotNull( ctxDefault().callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        DeleteNodeByIdCommand.create().
+        DeleteNodeCommand.create().
             nodeId( createdNode.id() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).

@@ -2,8 +2,9 @@ package com.enonic.xp.impl.scheduler;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.scheduler.ScheduledJobName;
 
 public class DeleteScheduledJobCommand
@@ -29,9 +30,10 @@ public class DeleteScheduledJobCommand
 
     private boolean doExecute()
     {
-        final NodeIds result = nodeService.deleteByPath( NodePath.create( NodePath.ROOT, name.getValue() ).build() );
-
-        return !result.isEmpty();
+        return nodeService.delete( DeleteNodeParams.create()
+                                       .nodePath( NodePath.create( NodePath.ROOT, name.getValue() ).build() )
+                                       .refresh( RefreshMode.ALL )
+                                       .build() ).getNodeBranchEntries().isNotEmpty();
     }
 
     public static final class Builder

@@ -16,6 +16,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -115,8 +116,10 @@ public class VirtualAppService
 
     private boolean deleteVirtualAppNode( final ApplicationKey key )
     {
-        return nodeService.deleteByPath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
-            .isNotEmpty();
+        return nodeService.delete( DeleteNodeParams.create()
+                                       .nodePath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
+                                       .refresh( RefreshMode.ALL )
+                                       .build() ).getNodeBranchEntries().isNotEmpty();
     }
 
     private Application doGet( final ApplicationKey applicationKey )

@@ -67,15 +67,13 @@ public class LoadNodeCommand
 
     private void deleteIfExistsAtPath()
     {
-        final boolean existsAlready = nodeExistsAtPath( params.getNode().path() );
-
-        if ( existsAlready )
-        {
-            DeleteNodeByPathCommand.create( this ).
-                nodePath( params.getNode().path() ).
-                build().
-                execute();
-        }
+        DeleteNodeCommand.create()
+            .nodePath( params.getNode().path() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     private void verifyParentExists()

@@ -4,10 +4,9 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DeleteNodeHandler
@@ -52,39 +51,18 @@ public final class DeleteNodeHandler
 
     private NodeIds deleteByKey( final NodeKey key )
     {
+        final DeleteNodeParams.Builder params = DeleteNodeParams.create();
+
         if ( key.isId() )
         {
-            return deleteById( key.getAsNodeId() );
+            params.nodeId( key.getAsNodeId() );
 
         }
         else
         {
-            return deleteByPath( key.getAsPath() );
+            params.nodePath( key.getAsPath() );
         }
-    }
-
-    private NodeIds deleteByPath( final NodePath key )
-    {
-        try
-        {
-            return this.nodeService.deleteByPath( key );
-        }
-        catch ( final NodeNotFoundException e )
-        {
-            return NodeIds.empty();
-        }
-    }
-
-    private NodeIds deleteById( final NodeId key )
-    {
-        try
-        {
-            return this.nodeService.deleteById( key );
-        }
-        catch ( final NodeNotFoundException e )
-        {
-            return NodeIds.empty();
-        }
+        return NodeIds.from( this.nodeService.delete( params.build() ).getNodeBranchEntries().getKeys() );
     }
 
     public void setKeys( final String[] keys )

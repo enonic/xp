@@ -420,8 +420,7 @@ class SchedulerServiceImplTest
             config( new PropertyTree() ).
             build() ) );
 
-        final boolean deleted = schedulerService.delete( name );
-        assertFalse( deleted );
+        assertThrows( NodeAccessException.class, () -> schedulerService.delete( name ));
     }
 
     @Test

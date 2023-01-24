@@ -21,10 +21,13 @@ public interface NodeService
 
     PushNodesResult push( NodeIds ids, Branch target, PushNodesListener pushListener );
 
+    @Deprecated
     NodeIds deleteById( NodeId id );
 
+    @Deprecated
     NodeIds deleteById( NodeId id, DeleteNodeListener deleteListener );
 
+    @Deprecated
     NodeIds deleteByPath( NodePath path );
 
     DeleteNodeResult delete( DeleteNodeParams deleteNodeParams );
