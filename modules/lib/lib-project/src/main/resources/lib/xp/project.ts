@@ -38,7 +38,6 @@ export interface CreateProjectParams<Config extends Record<string, unknown>> {
     language?: string;
     parent?: string;
     siteConfig?: Config;
-    applications?: string[];
     permissions?: ProjectPermission;
     readAccess: ProjectReadAccess;
 }
@@ -49,7 +48,6 @@ export interface Project<Config extends Record<string, unknown> = Record<string,
     description: string;
     parent: string;
     siteConfig: Config;
-    applications?: string[];
     language?: string;
     permissions?: ProjectPermission;
     readAccess?: ProjectPermission;
@@ -118,7 +116,6 @@ export interface ModifyProjectParams<Config extends Record<string, unknown>> {
     description?: string;
     language?: string;
     siteConfig?: Config;
-    applications?: string[];
 }
 
 interface ModifyProjectHandler<Config extends Record<string, unknown>> {
