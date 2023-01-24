@@ -242,6 +242,21 @@ public class NodeHandler
         this.context.runWith( () -> nodeService.refresh( RefreshMode.valueOf( mode ) ) );
     }
 
+    @SuppressWarnings("unused")
+    public Object duplicate( final DuplicateNodeHandlerParams params )
+    {
+        return this.context.callWith( () -> DuplicateNodeHandler.create()
+            .nodeId( params.nodeId() )
+            .name( params.name() )
+            .parent( params.parent() )
+            .refresh( params.refresh() )
+            .dataProcessor( params.dataProcessor() )
+            .includeChildren( params.includeChildren() )
+            .nodeService( this.nodeService )
+            .build()
+            .execute() );
+    }
+
     private Object execute( final AbstractNodeHandler handler )
     {
         return this.context.callWith( handler::execute );

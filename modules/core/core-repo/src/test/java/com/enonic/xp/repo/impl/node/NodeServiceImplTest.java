@@ -279,6 +279,39 @@ public class NodeServiceImplTest
     }
 
     @Test
+    public void testDuplicateWithCustomParams()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "parent" ).parent( NodePath.ROOT ).data( data ).build() );
+
+        final Node node_1_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "child 1" ).parent( node_1.path() ).data( data ).build() );
+
+        final Node node_1_2 =
+            this.nodeService.create( CreateNodeParams.create().name( "child 2" ).parent( node_1.path() ).data( data ).build() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
+        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create()
+                                                                    .nodeId( node_1_1.id() )
+                                                                    .includeChildren( false )
+                                                                    .name( "duplicated-of-child-1" )
+                                                                    .parent( node_1_2.path() )
+                                                                    .dataProcessor( originalData -> {
+                                                                        originalData.setString( "extraProp", "extraPropValue" );
+                                                                        return originalData;
+                                                                    } )
+                                                                    .build() );
+
+        assertEquals( "duplicated-of-child-1", duplicatedNode.name().toString() );
+        assertEquals( node_1_2.path() + "/duplicated-of-child-1", duplicatedNode.path().toString() );
+        assertEquals( node_1_2.path(), duplicatedNode.parentPath() );
+        assertEquals( "extraPropValue", duplicatedNode.data().getString( "extraProp" ) );
+    }
+
+    @Test
     public void test_get_binary_key()
     {
 
