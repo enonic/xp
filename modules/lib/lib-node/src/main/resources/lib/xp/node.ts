@@ -238,6 +238,8 @@ interface NodeHandler {
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
     refresh(mode: RefreshMode): void;
+
+    duplicate<NodeData>(params: DuplicateNodeHandlerParams): Node<NodeData>;
 }
 
 export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & NodeData;
@@ -418,6 +420,29 @@ interface FindChildrenHandlerParams {
     setRecursive(recursive: boolean): void;
 }
 
+export interface DuplicateParams {
+    nodeId: string;
+    name?: string;
+    parent?: string;
+    includeChildren?: boolean
+    dataProcessor?: ScriptValue;
+    refresh?: RefreshMode;
+}
+
+interface DuplicateNodeHandlerParams {
+    setNodeId(value: string): void;
+
+    setName(value?: string): void;
+
+    setParent(value?: string): void;
+
+    setIncludeChildren(value: boolean): void;
+
+    setDataProcessor(value?: ScriptValue): void;
+
+    setRefresh(value?: string): void;
+}
+
 export interface FindNodesByParentResult {
     total: number;
     count: number;
@@ -536,8 +561,11 @@ export interface RepoConnection {
     modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData>;
 
     get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
+
     get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
+
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
+
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null;
 
     delete(...keys: (string | string[])[]): string[];
@@ -571,6 +599,8 @@ export interface RepoConnection {
     commit(params: CommitParams): NodeCommit;
 
     getCommit(params: GetCommitParams): NodeCommit | null;
+
+    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams): Node<NodeData>;
 }
 
 /**
@@ -997,6 +1027,45 @@ class RepoConnectionImpl
     getCommit(params: GetCommitParams): NodeCommit | null {
         checkRequired(params, 'id');
         return __.toNativeObject(this.nodeHandler.getCommit(params.id));
+    }
+
+    /**
+     * This function duplicates a node.
+     *
+     * @example-ref examples/node/duplicate.js
+     *
+     * @param {object} params JSON parameters.
+     * @param {string} params.nodeId Id to the node.
+     * @param {string} [params.name] New node name.
+     * @param {boolean} [params.includeChildren=true] Indicates that children nodes must be duplicated, too.
+     * @param {string} [params.parent] Destination parent path. By default, a duplicated node will be added as a sibling of the source node.
+     * @param {string} [params.refresh] Refresh the index for the current repoConnection.
+     * @param {function} [params.dataProcessor] Node data processor.
+     *
+     * @returns {object} Duplicated node.
+     */
+    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams): Node<NodeData> {
+        checkRequired(params, 'nodeId');
+
+        const {
+            nodeId,
+            name,
+            includeChildren = true,
+            parent,
+            dataProcessor,
+            refresh
+        } = params ?? {};
+
+        const handlerParams = __.newBean<DuplicateNodeHandlerParams>('com.enonic.xp.lib.node.DuplicateNodeHandlerParams');
+
+        handlerParams.setNodeId(nodeId);
+        handlerParams.setIncludeChildren(includeChildren);
+        handlerParams.setName(__.nullOrValue(name));
+        handlerParams.setParent(__.nullOrValue(parent));
+        handlerParams.setRefresh(__.nullOrValue(refresh));
+        handlerParams.setDataProcessor(__.toScriptValue(dataProcessor));
+
+        return __.toNativeObject(this.nodeHandler.duplicate(handlerParams));
     }
 }
 
