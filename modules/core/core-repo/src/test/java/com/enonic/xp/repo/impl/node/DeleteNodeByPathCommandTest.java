@@ -48,7 +48,7 @@ public class DeleteNodeByPathCommandTest
             parent( child1_1.path() ).
             build() );
 
-        DeleteNodeByPathCommand.create().
+        DeleteNodeCommand.create().
             nodePath( node.path() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).

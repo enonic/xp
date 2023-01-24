@@ -71,8 +71,9 @@ class VersionTableVacuumTaskTest
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( WS_OTHER, node1.id() );
 
-        this.nodeService.deleteById( node1.id() );
-        ctxOther().runWith( () -> this.nodeService.deleteById( node1.id() ) );
+        doDeleteNode( node1.id() );
+
+        ctxOther().runWith( () -> doDeleteNode( node1.id() ) );
 
         refresh();
         assertVersions( node1.id(), 1 );
@@ -95,7 +96,7 @@ class VersionTableVacuumTaskTest
         pushNodes( WS_OTHER, node1.id() );
         refresh();
 
-        this.nodeService.deleteById( node1.id() );
+        doDeleteNode( node1.id() );
 
         refresh();
         assertVersions( node1.id(), 1 );

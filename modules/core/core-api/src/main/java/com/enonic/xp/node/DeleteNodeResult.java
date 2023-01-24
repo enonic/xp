@@ -1,12 +1,14 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 public final class DeleteNodeResult
 {
     private final NodeBranchEntries nodeBranchEntries;
 
     private DeleteNodeResult( final Builder builder )
     {
-        this.nodeBranchEntries = builder.nodeBranchEntries;
+        this.nodeBranchEntries = Objects.requireNonNullElse( builder.nodeBranchEntries, NodeBranchEntries.empty() );
     }
 
     public static Builder create()

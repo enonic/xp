@@ -40,7 +40,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        DeleteNodeByIdCommand.create().nodeId( rootNode.id() ).searchService( this.searchService ).storageService( this.storageService ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+        DeleteNodeCommand.create().nodeId( rootNode.id() ).searchService( this.searchService ).storageService( this.storageService ).indexServiceInternal( this.indexServiceInternal ).build().execute();
 
         started.stop();
 

@@ -24,7 +24,7 @@ import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
+import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -127,7 +127,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
-        final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeByIdCommand.create().
+        final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeCommand.create().
             nodeId( NodeId.from( repositoryId ) ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).

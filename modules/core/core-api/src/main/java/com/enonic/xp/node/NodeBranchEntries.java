@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 public class NodeBranchEntries
     implements Iterable<NodeBranchEntry>
 {
+    private static final NodeBranchEntries EMPTY = new NodeBranchEntries( Collections.emptySet() );
+
     private final Map<NodeId, NodeBranchEntry> branchNodeVersionMap;
 
     private NodeBranchEntries( final Builder builder )
@@ -35,7 +37,7 @@ public class NodeBranchEntries
 
     public static NodeBranchEntries empty()
     {
-        return NodeBranchEntries.create().build();
+        return EMPTY;
     }
 
     public static Builder create()
@@ -97,10 +99,7 @@ public class NodeBranchEntries
 
         public NodeBranchEntries build()
         {
-            return new NodeBranchEntries( this );
+            return this.map.isEmpty() ? EMPTY : new NodeBranchEntries( this );
         }
-
     }
-
-
 }

@@ -30,14 +30,15 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -917,16 +918,22 @@ public final class SecurityServiceImpl
     @Override
     public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
-        final NodeIds deletedNodes = callWithContext( () -> {
-            final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
-            final Node node = this.nodeService.getByPath( idProviderNodePath );
-            if ( node == null )
-            {
-                return null;
-            }
-            return this.nodeService.deleteById( node.id() );
-        } );
-        if ( deletedNodes == null )
+        final Set<NodeId> deletedNodes;
+        try
+        {
+            deletedNodes = callWithContext( () -> {
+                final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
+                return this.nodeService.delete(
+                        DeleteNodeParams.create().nodePath( idProviderNodePath ).refresh( RefreshMode.ALL ).build() )
+                    .getNodeBranchEntries()
+                    .getKeys();
+            } );
+        }
+        catch ( NodeAccessException e )
+        {
+            throw new IdProviderNotFoundException( idProviderKey );
+        }
+        if ( deletedNodes.isEmpty() )
         {
             throw new IdProviderNotFoundException( idProviderKey );
         }
@@ -941,14 +948,17 @@ public final class SecurityServiceImpl
             throw new IllegalArgumentException( String.format( "[%s] principal cannot be removed", principalKey ) );
         }
 
-        final NodeIds deletedNodes;
+        final Set<NodeId> deletedNodes;
         try
         {
             deletedNodes = callWithContext( () -> {
                 nodeService.update( PrincipalNodeTranslator.removeAllRelationshipsToUpdateNodeParams( principalKey ) );
                 doRemoveMemberships( principalKey );
 
-                return this.nodeService.deleteByPath( principalKey.toPath() );
+                return this.nodeService.delete(
+                        DeleteNodeParams.create().nodePath( principalKey.toPath() ).refresh( RefreshMode.ALL ).build() )
+                    .getNodeBranchEntries()
+                    .getKeys();
             } );
         }
         catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions

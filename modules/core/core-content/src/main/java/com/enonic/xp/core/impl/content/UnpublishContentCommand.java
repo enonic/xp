@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -15,10 +16,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -67,13 +68,16 @@ public class UnpublishContentCommand
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            final NodeIds nodeIds = this.nodeService.deleteById( NodeId.from( contentId ) );
+            final Set<NodeId> nodeIds = this.nodeService.delete(
+                    DeleteNodeParams.create().nodeId( NodeId.from( contentId ) ).refresh( RefreshMode.SEARCH ).build() )
+                .getNodeBranchEntries()
+                .getKeys();
 
-            if ( nodeIds.isNotEmpty() )
+            if ( !nodeIds.isEmpty() )
             {
                 if ( params.getPublishContentListener() != null )
                 {
-                    params.getPublishContentListener().contentPushed( nodeIds.getSize() );
+                    params.getPublishContentListener().contentPushed( nodeIds.size() );
                 }
                 contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeIds ) );
             }

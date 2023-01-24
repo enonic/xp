@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -125,7 +126,10 @@ final class DynamicResourceManager
     boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
     {
         return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.deleteByPath( deleteFolder ? folderPath : NodePath.create( folderPath, name + ".xml" ).build() )
-                .isNotEmpty() );
+            .callWith( () -> nodeService.delete( DeleteNodeParams.create()
+                                                     .nodePath( deleteFolder ? folderPath : NodePath.create( folderPath, name + ".xml" ).build() )
+                                                     .refresh( RefreshMode.ALL )
+                                                     .build() )
+                 ).getNodeBranchEntries().isNotEmpty();
     }
 }
