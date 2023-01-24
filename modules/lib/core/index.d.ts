@@ -402,12 +402,12 @@ export interface StatsAggregation {
 export interface GeoDistanceAggregation {
     geoDistance: {
         field: string;
-        unit: string;
-        origin?: {
+        unit?: string;
+        origin: {
             lat: string;
             lon: string;
         };
-        ranges?: NumericRange[];
+        ranges: NumericRange[];
     };
 }
 
