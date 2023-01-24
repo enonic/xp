@@ -21,3 +21,6 @@ generated-java
 classes/
 out/
 .xp/
+
+# Visual Studio Code
+bin/
