@@ -4,7 +4,7 @@ declare global {
     }
 }
 
-export interface ListenerParams<EventData extends object = EnonicEventData> {
+export interface ListenerParams<EventData extends object> {
     /**
      * Event type pattern
      */
@@ -21,7 +21,7 @@ export interface ListenerParams<EventData extends object = EnonicEventData> {
     localOnly?: boolean;
 }
 
-export interface SendParams {
+export interface SendParams<EventData extends object> {
     /**
      * Event type
      */
@@ -35,7 +35,7 @@ export interface SendParams {
     /**
      * Additional data for event.
      */
-    data?: object;
+    data?: EventData;
 }
 
 export interface EnonicEvent<EventData extends object = EnonicEventData> {
@@ -112,7 +112,7 @@ export function listener<EventData extends object = EnonicEventData>(params: Lis
  * @param {boolean} event.distributed True if it should be distributed in cluster.
  * @param {object} event.data Additional data for event.
  */
-export function send(event: SendParams): void {
+export function send<EventData extends object = object>(event: SendParams<EventData>): void {
     const helper = __.newBean<EventSenderHelper>('com.enonic.xp.lib.event.EventSenderHelper');
 
     helper.setType(event.type ?? 'test');
