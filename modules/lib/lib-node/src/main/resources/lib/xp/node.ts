@@ -124,22 +124,22 @@ export interface SuggestionResult {
     }[];
 }
 
-export interface NodeQueryResult {
+export interface NodeQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
     total: number;
     count: number;
     hits: NodeQueryResultHit[];
-    aggregations?: Record<string, AggregationsResult>;
+    aggregations?: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
-export interface NodeMultiRepoQueryResult {
+export interface NodeMultiRepoQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
     total: number;
     count: number;
     hits: (NodeQueryResultHit & {
         repoId: string;
         branch: string;
     })[];
-    aggregations?: Record<string, AggregationsResult>;
+    aggregations?: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
@@ -197,7 +197,9 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
 }
 
 interface MultiRepoNodeHandler {
-    query(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult;
+    query<
+        AggregationOutput extends Record<string, AggregationsResult> = never
+    >(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult<AggregationOutput>;
 }
 
 interface NodeHandler {
@@ -217,7 +219,9 @@ interface NodeHandler {
 
     move(source: string, target: string): boolean;
 
-    query(params: QueryNodeHandlerParams): NodeQueryResult;
+    query<
+        AggregationOutput extends Record<string, AggregationsResult> = never
+    >(params: QueryNodeHandlerParams): NodeQueryResult<AggregationOutput>;
 
     exist(key: string): boolean;
 
@@ -552,7 +556,9 @@ export interface RepoConnection {
 
     setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData>;
 
-    query(params: QueryNodeParams): NodeQueryResult;
+    query<
+        AggregationOutput extends Record<string, AggregationsResult> = never
+    >(params: QueryNodeParams): NodeQueryResult<AggregationOutput>;
 
     exists(key: string): boolean;
 
@@ -801,7 +807,7 @@ class RepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): NodeQueryResult {
+    query<AggregationOutput extends Record<string, AggregationsResult>>(params: QueryNodeParams): NodeQueryResult<AggregationOutput> {
         const {
             start = 0,
             count = 10,
@@ -826,7 +832,7 @@ class RepoConnectionImpl
         handlerParams.setFilters(__.toScriptValue(filters));
         handlerParams.setExplain(explain);
 
-        return __.toNativeObject(this.nodeHandler.query(handlerParams));
+        return __.toNativeObject(this.nodeHandler.query<AggregationOutput>(handlerParams));
     }
 
     /**
@@ -1001,7 +1007,9 @@ class RepoConnectionImpl
 }
 
 export interface MultiRepoConnection {
-    query(params: QueryNodeParams): NodeMultiRepoQueryResult;
+    query<
+        AggregationOutput extends Record<string, AggregationsResult> = never
+    >(params: QueryNodeParams): NodeMultiRepoQueryResult<AggregationOutput>;
 }
 
 /**
@@ -1033,7 +1041,9 @@ class MultiRepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): NodeMultiRepoQueryResult {
+    query<
+        AggregationOutput extends Record<string, AggregationsResult> = never
+    >(params: QueryNodeParams): NodeMultiRepoQueryResult<AggregationOutput> {
         const {
             start = 0,
             count = 10,

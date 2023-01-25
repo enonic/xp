@@ -320,6 +320,31 @@ export interface SingleValueMetricAggregationResult {
 
 export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
 
+export type AggregationToAggregationResult<Type extends Aggregation> = Type extends BucketsAggregationsUnion
+                                                          ? BucketsAggregationResult
+                                                          : Type extends SingleValueMetricAggregationsUnion
+                                                            ? SingleValueMetricAggregationResult
+                                                            : Type extends StatsAggregation
+                                                              ? StatsAggregationResult
+                                                              : never;
+
+export type AggregationsToAggregationResults<AggregationInput extends Record<string, Aggregation> = never> = {
+    [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
+};
+
+export type BucketsAggregationsUnion =
+    | TermsAggregation
+    | GeoDistanceAggregation
+    | NumericRangeAggregation
+    | DateRangeAggregation
+    | HistogramAggregation
+    | DateHistogramAggregation;
+
+export type SingleValueMetricAggregationsUnion =
+    | MinAggregation
+    | MaxAggregation
+    | ValueCountAggregation;
+
 export type Aggregation =
     | TermsAggregation
     | HistogramAggregation
