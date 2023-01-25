@@ -283,27 +283,23 @@ export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 //
 // START AGGREGATIONS, FILTERS
 //
-export interface Bucket {
-    [subAggregationName: string]: AggregationsResult | string | number | undefined;
-
+export type Bucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = AggregationsToAggregationResults<SubAggregations> & {
     key: string;
     docCount: number;
-}
+};
 
-export interface NumericBucket
-    extends Bucket {
+export type NumericBucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = Bucket<SubAggregations> & {
     from?: number;
     to?: number;
-}
+};
 
-export interface DateBucket
-    extends Bucket {
+export type DateBucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = Bucket<SubAggregations> & {
     from?: string;
     to?: string;
-}
+};
 
-export interface BucketsAggregationResult {
-    buckets: (DateBucket | NumericBucket)[];
+export interface BucketsAggregationResult<SubAggregations extends Record<string, Aggregation> = Record<never, never>> {
+    buckets: (DateBucket<SubAggregations> | NumericBucket<SubAggregations>)[];
 }
 
 export interface StatsAggregationResult {
@@ -320,17 +316,17 @@ export interface SingleValueMetricAggregationResult {
 
 export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
 
+export type AggregationsToAggregationResults<AggregationInput extends Record<string, Aggregation> = never> = {
+    [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
+};
+
 export type AggregationToAggregationResult<Type extends Aggregation> = Type extends BucketsAggregationsUnion
-                                                          ? BucketsAggregationResult
+                                                          ? BucketsAggregationResult<Type['aggregations']>
                                                           : Type extends SingleValueMetricAggregationsUnion
                                                             ? SingleValueMetricAggregationResult
                                                             : Type extends StatsAggregation
                                                               ? StatsAggregationResult
                                                               : never;
-
-export type AggregationsToAggregationResults<AggregationInput extends Record<string, Aggregation> = never> = {
-    [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
-};
 
 export type BucketsAggregationsUnion =
     | TermsAggregation
