@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
@@ -25,20 +24,6 @@ final class ControllerMappingsResolver
         this.siteService = siteService;
     }
 
-    Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
-                                                   final Content content, final SiteConfigs siteConfigs, final String serviceType )
-    {
-
-        final Stream<ControllerMappingDescriptor> controllerMappingDescriptorStream = siteConfigs.stream()
-            .map( SiteConfig::getApplicationKey )
-            .map( siteService::getDescriptor )
-            .filter( Objects::nonNull )
-            .flatMap( siteDescriptor -> siteDescriptor.getMappingDescriptors().stream() );
-
-        return addFilter( controllerMappingDescriptorStream, siteRelativePath, params, content, serviceType ).min(
-            Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) );
-    }
-
     private static String normalizedQueryParams( final Multimap<String, String> params )
     {
         if ( params.isEmpty() )
@@ -53,18 +38,6 @@ final class ControllerMappingsResolver
             .collect( Collectors.joining( "&", "?", "" ) );
     }
 
-    private Stream<ControllerMappingDescriptor> addFilter( Stream<ControllerMappingDescriptor> stream, final String siteRelativePath,
-                                                           final Multimap<String, String> params, final Content content,
-                                                           final String serviceType )
-    {
-        final String contentPath = siteRelativePath != null ? siteRelativePath : content.getPath().toString();
-        final String contentUrl = contentPath + normalizedQueryParams( params );
-
-        return serviceType != null
-            ? stream.filter( d -> matchesService( d, serviceType ) )
-            : stream.filter( d -> matchesUrlPattern( d, contentPath, contentUrl ) ).filter( d -> matchesContent( d, content ) );
-    }
-
     private static String urlEscape( final String value )
     {
         return UrlEscapers.urlFormParameterEscaper().escape( value );
@@ -72,10 +45,6 @@ final class ControllerMappingsResolver
 
     private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final String relativePath, final String relativeUrl )
     {
-        if ( descriptor.getPattern() == null )
-        {
-            return false;
-        }
         final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
         final boolean patternMatches = descriptor.getPattern().matcher( patternWithQueryParameters ? relativeUrl : relativePath ).matches();
         return descriptor.invertPattern() != patternMatches;
@@ -104,5 +73,45 @@ final class ControllerMappingsResolver
         }
 
         return descriptor.getService().equals( serviceType );
+    }
+
+    Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
+                                                   final Content content, final SiteConfigs siteConfigs, final String serviceType )
+    {
+
+        return siteConfigs.stream()
+            .map( SiteConfig::getApplicationKey )
+            .map( siteService::getDescriptor )
+            .filter( Objects::nonNull )
+            .flatMap( siteDescriptor -> siteDescriptor.getMappingDescriptors().stream() )
+            .filter( controllerMappingDescriptor -> filterDescriptor( controllerMappingDescriptor, siteRelativePath, params, content,
+                                                                      serviceType ) )
+            .min( Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) );
+    }
+
+    private boolean filterDescriptor( final ControllerMappingDescriptor controllerMappingDescriptor, final String siteRelativePath,
+                                      final Multimap<String, String> params, final Content content, final String serviceType )
+    {
+        if ( serviceType != null )
+        {
+            if ( controllerMappingDescriptor.getService() != null )
+            {
+                return matchesService( controllerMappingDescriptor, serviceType );
+            }
+        }
+        else
+        {
+            if ( controllerMappingDescriptor.getService() == null )
+            {
+                if ( matchesContent( controllerMappingDescriptor, content ) )
+                {
+                    final String contentPath = siteRelativePath != null ? siteRelativePath : content.getPath().toString();
+                    final String contentUrl = contentPath + normalizedQueryParams( params );
+
+                    return matchesUrlPattern( controllerMappingDescriptor, contentPath, contentUrl );
+                }
+            }
+        }
+        return false;
     }
 }
