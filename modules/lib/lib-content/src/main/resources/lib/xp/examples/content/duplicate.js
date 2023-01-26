@@ -7,7 +7,7 @@ var result = contentLib.duplicate({
     contentId: '123456',
     includeChildren: false,
     variant: true,
-    name: 'variantName'
+    name: 'variant-name'
 });
 // END
 

@@ -1350,7 +1350,7 @@ interface DuplicateContentHandler {
  * @example-ref examples/content/duplicate.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.contentId Path or id to the content.
+ * @param {string} params.contentId Id to the content.
  * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
  * @param {boolean} [params.includeChildren=true] Indicates that children contents must be duplicated, too. Default value `true`. Ignored if `variant=true`.
  * @param {boolean} [params.variant=false] Indicates that duplicated content is a variant. Default value `false`.

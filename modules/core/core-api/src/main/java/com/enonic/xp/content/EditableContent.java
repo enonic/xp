@@ -55,6 +55,8 @@ public class EditableContent
 
     public EnumSet<ContentInheritType> inherit;
 
+    public ContentId variantOf;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -75,6 +77,7 @@ public class EditableContent
         this.workflowInfo = source.getWorkflowInfo();
         this.manualOrderValue = source.getManualOrderValue();
         this.inherit = source.getInherit().isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( source.getInherit() );
+        this.variantOf = source.getVariantOf();
     }
 
     public Content build()
@@ -97,6 +100,7 @@ public class EditableContent
             workflowInfo( workflowInfo ).
             manualOrderValue( manualOrderValue ).
             setInherit( inherit ).
+            variantOf( variantOf ).
             build();
     }
 }
