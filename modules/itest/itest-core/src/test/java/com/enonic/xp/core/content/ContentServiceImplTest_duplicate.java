@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
@@ -248,6 +249,12 @@ public class ContentServiceImplTest_duplicate
         assertEquals( content.getId(), duplicatedContent.getVariantOf() );
         assertEquals( duplicateParams.getName(), duplicatedContent.getName().toString() );
         assertEquals( duplicateParams.getParent(), duplicatedContent.getParentPath() );
+
+        Content updatedContent = this.contentService.update(
+            new UpdateContentParams().contentId( duplicatedContent.getId() ).editor( edit -> edit.displayName = "Display Name" ) );
+
+        assertEquals( duplicatedContent.getVariantOf(), updatedContent.getVariantOf() );
+        assertEquals( "Display Name", updatedContent.getDisplayName() );
 
         // try to create a variant for content which already is a variant, in result that must be a duplicated content
 
