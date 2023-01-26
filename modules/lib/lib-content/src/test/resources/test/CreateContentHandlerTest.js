@@ -1,5 +1,6 @@
 var assert = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
+var value = require('/lib/xp/value.js');
 
 var expectedJson = {
     '_id': '123456',
@@ -24,6 +25,12 @@ var expectedJson = {
                 'f': 3.6,
                 'g': true
             }
+        },
+        'times': {
+            'time': '10:23:30',
+            'date': '2016-12-06',
+            'dateTime': '2016-12-06T15:54:30',
+            'instant': '2016-12-06T15:54:30Z'
         }
     },
     'x': {
@@ -59,6 +66,11 @@ exports.createContent = function () {
                     f: 3.6,
                     g: true
                 }
+            }, times: {
+                time: value.localTime('10:23:30'),
+                date: value.localDate('2016-12-06'),
+                dateTime: value.localDateTime('2016-12-06T15:54:30'),
+                instant: value.instant('2016-12-06T15:54:30Z')
             }
         },
         x: {

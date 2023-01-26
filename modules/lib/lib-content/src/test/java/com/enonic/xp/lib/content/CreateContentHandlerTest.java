@@ -17,7 +17,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -39,46 +41,37 @@ public class CreateContentHandlerTest
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        final FormItemSet eSet = FormItemSet.create().
-            name( "e" ).
-            addFormItem( Input.create().
-                label( "f" ).
-                name( "f" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            addFormItem( Input.create().
-                label( "g" ).
-                name( "g" ).
-                inputType( InputTypeName.CHECK_BOX ).
-                build() ).
-            build();
+        final FormItemSet eSet = FormItemSet.create()
+            .name( "e" )
+            .addFormItem( Input.create().label( "f" ).name( "f" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().label( "g" ).name( "g" ).inputType( InputTypeName.CHECK_BOX ).build() )
+            .build();
 
-        final FormItemSet dSet = FormItemSet.create().
-            name( "d" ).
-            addFormItem( eSet ).
-            build();
+        final FormItemSet timeSet = FormItemSet.create()
+            .name( "times" )
+            .addFormItem( Input.create().label( "time" ).name( "time" ).inputType( InputTypeName.TIME ).build() )
+            .addFormItem( Input.create().label( "date" ).name( "date" ).inputType( InputTypeName.DATE ).build() )
+            .addFormItem( Input.create().label( "dateTime" ).name( "dateTime" ).inputType( InputTypeName.DATE_TIME ).build() )
+            .addFormItem( Input.create()
+                              .label( "instant" )
+                              .name( "instant" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .inputTypeConfig(
+                                  InputTypeConfig.create().property( InputTypeProperty.create( "timezone", "true" ).build() ).build() )
+                              .build() )
+            .build();
 
-        final ContentType contentType = ContentType.create().
-            name( "test:myContentType" ).
-            superType( ContentTypeName.structured() ).
-            addFormItem( Input.create().
-                label( "a" ).
-                name( "a" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            addFormItem( Input.create().
-                label( "b" ).
-                name( "b" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            addFormItem( Input.create().
-                label( "c" ).
-                name( "c" ).
-                occurrences( 0, 10 ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( dSet ).
-            build();
+        final FormItemSet dSet = FormItemSet.create().name( "d" ).addFormItem( eSet ).build();
+
+        final ContentType contentType = ContentType.create()
+            .name( "test:myContentType" )
+            .superType( ContentTypeName.structured() )
+            .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem( Input.create().label( "c" ).name( "c" ).occurrences( 0, 10 ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( dSet )
+            .addFormItem( timeSet )
+            .build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
@@ -87,44 +80,22 @@ public class CreateContentHandlerTest
         extraData.addDouble( "a", 1.0 );
         extraData.addBoolean( "b", true );
 
-        final XData xData = XData.create().
-            name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
-            addFormItem( Input.create().
-                label( "a" ).
-                name( "a" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            addFormItem( Input.create().
-                label( "b" ).
-                name( "b" ).
-                inputType( InputTypeName.CHECK_BOX ).
-                build() ).
-            build();
+        final XData xData = XData.create()
+            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+            .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
+            .build();
 
-        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create().
-            form( Form.create().
-                addFormItem( Input.create().
-                    label( "a" ).
-                    name( "a" ).
-                    inputType( InputTypeName.TEXT_LINE ).
-                    build() ).
-                addFormItem( Input.create().
-                    label( "b" ).
-                    name( "b" ).
-                    inputType( InputTypeName.CHECK_BOX ).
-                    build() ).
-                build() ).
-            build();
+        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create()
+            .form( Form.create()
+                       .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                       .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
+                       .build() )
+            .build();
 
-        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create().
-            form( Form.create().
-                addFormItem( Input.create().
-                    label( "c" ).
-                    name( "c" ).
-                    inputType( InputTypeName.LONG ).
-                    build() ).
-                build() ).
-            build();
+        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create()
+            .form( Form.create().addFormItem( Input.create().label( "c" ).name( "c" ).inputType( InputTypeName.LONG ).build() ).build() )
+            .build();
 
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
@@ -165,10 +136,7 @@ public class CreateContentHandlerTest
                                                Branch.from( "draft" ) );
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
 
-        final ContentType contentType = ContentType.create().
-            name( "test:myContentType" ).
-            superType( ContentTypeName.structured() ).
-            build();
+        final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
@@ -183,10 +151,7 @@ public class CreateContentHandlerTest
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        final ContentType contentType = ContentType.create().
-            name( "test:myContentType" ).
-            superType( ContentTypeName.structured() ).
-            build();
+        final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
@@ -205,10 +170,7 @@ public class CreateContentHandlerTest
         when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1" ) ) ) ).thenReturn( true );
         when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-2" ) ) ) ).thenReturn( true );
 
-        final ContentType contentType = ContentType.create().
-            name( "test:myContentType" ).
-            superType( ContentTypeName.structured() ).
-            build();
+        final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
@@ -223,10 +185,7 @@ public class CreateContentHandlerTest
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
-        final ContentType contentType = ContentType.create().
-            name( "test:myContentType" ).
-            superType( ContentTypeName.structured() ).
-            build();
+        final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );

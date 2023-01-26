@@ -5,4 +5,5 @@ dependencies {
 
     testImplementation project( ':tools:testing' )
     testImplementation( testFixtures( project( ':core:core-schema' ) ) )
+    testImplementation( testFixtures( project( ':lib:lib-value' ) ) )
 }
