@@ -11,13 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)
 public class PropertyTreeMarshallerServiceImpl
     implements PropertyTreeMarshallerService
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private final MixinService mixinService;
 
