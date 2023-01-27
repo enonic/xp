@@ -271,7 +271,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/error/500?message=Image+with+%5B123%5D+id+not+found\">Image</a>",
+        assertEquals( "<a href=\"/site/default/draft/context/path/_/error/500?message=Image+%5B123%5D+not+found\">Image</a>",
                       processedHtml );
     }
 
