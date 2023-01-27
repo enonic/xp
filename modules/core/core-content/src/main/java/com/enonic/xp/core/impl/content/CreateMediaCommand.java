@@ -11,7 +11,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -27,8 +26,6 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
     private final PageDescriptorService pageDescriptorService;
 
     private final PartDescriptorService partDescriptorService;
@@ -42,7 +39,6 @@ final class CreateMediaCommand
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -143,8 +139,6 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
-
         private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
@@ -162,12 +156,6 @@ final class CreateMediaCommand
         public Builder mediaInfoService( final MediaInfoService value )
         {
             this.mediaInfoService = value;
-            return this;
-        }
-
-        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
             return this;
         }
 

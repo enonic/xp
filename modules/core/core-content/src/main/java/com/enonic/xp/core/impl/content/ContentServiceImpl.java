@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -116,6 +118,8 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -123,17 +127,21 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.stream.Collectors.toList;
 
 @Component(configurationPid = "com.enonic.xp.content")
 public class ContentServiceImpl
@@ -158,6 +166,8 @@ public class ContentServiceImpl
     private XDataService xDataService;
 
     private SiteService siteService;
+
+    private ProjectService projectService;
 
     private final ContentNodeTranslator translator;
 
@@ -240,6 +250,7 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( createContentParams ).
+            applicationKeys( getApplicationKeysRelatedWithSiteOrProject( params.getParentContentPath() ) ).
             build().
             execute();
 
@@ -280,6 +291,7 @@ public class ContentServiceImpl
             contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( params ).
+            applicationKeys( getApplicationKeysRelatedWithSiteOrProject( params.getParent() ) ).
             build().
             execute();
 
@@ -1339,6 +1351,29 @@ public class ContentServiceImpl
         }
     }
 
+    private ApplicationKeys getApplicationKeysRelatedWithSiteOrProject( final ContentPath parentPath )
+    {
+        Site nearestSite = findNearestSiteByPath( parentPath );
+
+        List<ApplicationKey> applicationKeys = new ArrayList<>();
+
+        if ( nearestSite != null )
+        {
+            applicationKeys.addAll( nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() ) );
+        }
+        else
+        {
+            RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+            if ( repositoryId != null )
+            {
+                Project project = projectService.get( ProjectName.from( repositoryId ) );
+                applicationKeys.addAll( project.getSiteConfigs().getApplicationKeys() );
+            }
+        }
+
+        return applicationKeys.isEmpty() ? ApplicationKeys.empty() : ApplicationKeys.from( applicationKeys );
+    }
+
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
@@ -1407,8 +1442,7 @@ public class ContentServiceImpl
     @Reference
     public void setProjectService( final ProjectService projectService )
     {
-        //Many starters depend on ContentService available only when default cms repo is fully initialized.
-        // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
+        this.projectService = projectService;
     }
 
 }
