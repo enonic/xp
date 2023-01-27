@@ -1,13 +1,13 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -29,13 +29,12 @@ final class ImageUrlBuilder
     {
         super.buildUrl( url, params );
 
-        final ContentId id = resolveId();
-        final Media media = resolveMedia( id );
+        final Media media = resolveMedia();
         final String hash = resolveHash( media );
         final String name = resolveName( media );
         final String scale = resolveScale();
 
-        appendPart( url, id + ":" + hash );
+        appendPart( url, media.getId() + ":" + hash );
         appendPart( url, scale );
         appendPart( url, name );
 
@@ -52,22 +51,27 @@ final class ImageUrlBuilder
         }
     }
 
-    private Media resolveMedia( final ContentId id )
+    private Media resolveMedia()
     {
         final Content content;
-
         try
         {
-            content = this.contentService.getById( id );
+            content = new ContentResolver().portalRequest( this.portalRequest )
+                .contentService( this.contentService )
+                .id( this.params.getId() )
+                .path( this.params.getPath() )
+                .resolve();
         }
         catch ( ContentNotFoundException e )
         {
-            throw new WebException( HttpStatus.NOT_FOUND, String.format( "Image with [%s] id not found", id ), e );
+            throw new WebException( HttpStatus.NOT_FOUND, String.format( "Image [%s] not found",
+                                                                         Objects.requireNonNullElse( this.params.getId(),
+                                                                                                     this.params.getPath() ) ), e );
         }
-
         if ( !content.getType().isDescendantOfMedia() && !content.getType().isMedia() )
         {
-            throw WebException.notFound( String.format( "Image with [%s] id not found", id ) );
+            throw WebException.notFound( String.format( "Image with [%s] id not found", content.getId() ) );
+
         }
         return (Media) content;
     }
@@ -98,16 +102,6 @@ final class ImageUrlBuilder
             }
         }
         return name;
-    }
-
-    private ContentId resolveId()
-    {
-        return new ContentIdResolver().
-            portalRequest( this.portalRequest ).
-            contentService( this.contentService ).
-            id( this.params.getId() ).
-            path( this.params.getPath() ).
-            resolve();
     }
 
     private String resolveScale()

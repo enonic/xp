@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -13,10 +11,8 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_imageUrlTest
@@ -128,7 +124,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/error/500?message=Image+with+%5B123456%5D+id+not+found", url );
+        assertEquals( "/site/default/draft/context/path/_/error/500?message=Image+%5B123456%5D+not+found", url );
     }
 
     @Test

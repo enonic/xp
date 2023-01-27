@@ -62,7 +62,7 @@ public class ImageRendererTest
     public void imageComponentWithImage()
     {
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( createContent(), expected );
     }
@@ -74,7 +74,7 @@ public class ImageRendererTest
         content.getData().setString( "altText", "alternative" );
 
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/abcdef1234567890:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( content, expected );
     }
@@ -82,11 +82,10 @@ public class ImageRendererTest
     private void testImageComponentWithImage( final Content content, final String expected )
     {
         this.portalRequest.setContent( content );
-        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( true );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
-        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
+        imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
         renderer.setContentService( contentService );
@@ -125,7 +124,7 @@ public class ImageRendererTest
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
-        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
+        imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
         renderer.setContentService( contentService );
@@ -151,7 +150,7 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
 
-        imageComponent = ImageComponent.create().image( ContentId.from( "abcdef1234567890" ) ).config( config ).build();
+        imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
 
         renderer = new ImageRenderer();
         renderer.setUrlService( this.service );
@@ -169,7 +168,6 @@ public class ImageRendererTest
     @Test
     public void testRenderImageComponentWithReadPermission()
     {
-        Mockito.when( this.contentService.contentExists( Mockito.any( ContentId.class ) ) ).thenReturn( true );
         // simulate case when a user does not have a permission on read
         Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
             new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
