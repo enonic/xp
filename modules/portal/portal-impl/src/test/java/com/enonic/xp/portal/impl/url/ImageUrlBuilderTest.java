@@ -32,16 +32,6 @@ public class ImageUrlBuilderTest
     @BeforeEach
     public void init()
     {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
-        portalRequest.setBaseUri( "/site" );
-        portalRequest.setContentPath( ContentPath.from( "context/path" ) );
-
-        this.imageUrlParams = new ImageUrlParams().portalRequest( portalRequest ).scale( "testScale" );
-
-        urlBuilder = new ImageUrlBuilder();
-        urlBuilder.setParams( imageUrlParams );
 
         final Attachment attachment = Attachment.create().
             name( "attachmentName" ).
@@ -55,11 +45,23 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName" ) );
         Mockito.when( media.getType() ).thenReturn( ContentTypeName.imageMedia() );
         Mockito.when( media.getMediaAttachment() ).thenReturn( attachment );
+        Mockito.when( media.getPath() ).thenReturn( ContentPath.from( "context/path" ) );
 
         final ContentService contentService = Mockito.mock( ContentService.class );
         Mockito.when( contentService.getByPath( Mockito.any() ) ).thenReturn( media );
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( media );
         Mockito.when( contentService.getBinaryKey( contentId, attachment.getBinaryReference() ) ).thenReturn( "binaryHash" );
+
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setContent( media );
+
+        this.imageUrlParams = new ImageUrlParams().portalRequest( portalRequest ).scale( "testScale" );
+
+        urlBuilder = new ImageUrlBuilder();
+        urlBuilder.setParams( imageUrlParams );
 
         urlBuilder.contentService = contentService;
     }
