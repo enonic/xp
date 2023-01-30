@@ -26,7 +26,7 @@ public final class Attachments
 
     public Attachment byLabel( final String label )
     {
-        return list.stream().filter( a -> a.getLabel().equals( label ) ).findAny().orElse( null );
+        return list.stream().filter( a -> label.equals( a.getLabel() ) ).findAny().orElse( null );
     }
 
     public boolean hasByName( final String name )

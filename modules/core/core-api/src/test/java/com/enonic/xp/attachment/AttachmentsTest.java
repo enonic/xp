@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -129,6 +130,25 @@ public class AttachmentsTest
         assertEquals( 1, newAttachments.getSize() );
         assertEquals( 3, newestAttachments.getSize() );
         assertEquals( newAttachments.first(), newestAttachments.first() );
+    }
+
+    @Test
+    public void testByLabelForAttachmentWithoutLabel()
+    {
+        assertNull( Attachments.create()
+                        .add( Attachment.create().mimeType( "image/gif" ).name( "image1.gif" ).build() )
+                        .add( Attachment.create().mimeType( "image/gif" ).label( "source" ).name( "image2.gif" ).build() )
+                        .build()
+                        .byLabel( "anyLabel" ) );
+
+        Attachment attachment = Attachments.create()
+            .add( Attachment.create().mimeType( "image/gif" ).name( "image1.gif" ).build() )
+            .add( Attachment.create().mimeType( "image/gif" ).label( "source" ).name( "image2.gif" ).build() )
+            .build()
+            .byLabel( "source" );
+
+        assertNotNull( attachment );
+        assertEquals( "image2.gif", attachment.getName() );
     }
 
 }
