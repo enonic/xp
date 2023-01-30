@@ -79,14 +79,36 @@ public class SiteHandlerTest
         result = ContextBuilder.create()
             .authInfo( AuthenticationInfo.create()
                            .principals( RoleKeys.ADMIN_LOGIN )
-                           .user( User.create().
-                               key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
-                               login( "user1" ).
-                               build() )
+                           .user( User.create()
+                                      .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) )
+                                      .login( "user1" )
+                                      .build() )
                            .build() )
             .build()
             .callWith( () -> handler.createPortalRequest( request, response ) );
 
         assertNotNull( result );
+    }
+
+    @Test
+    public void testCreatePortalRequestForAssetAndIdproviderEndpoints()
+    {
+        this.request.setRawPath( "/site/myrepo/draft/mycontent/_/asset/demo/css/main.css" );
+        this.request.setEndpointPath( "/_/asset/demo/css/main.css" );
+
+        assertNotNull( createRequestWithAuthenticatedUser() );
+
+        this.request.setRawPath( "/site/default/draft/_/idprovider/system/login" );
+        this.request.setEndpointPath( "/_/idprovider/system/login" );
+
+        assertNotNull( createRequestWithAuthenticatedUser() );
+    }
+
+    private PortalRequest createRequestWithAuthenticatedUser()
+    {
+        return ContextBuilder.create()
+            .authInfo( AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).principals( PrincipalKey.ofAnonymous() ).build() )
+            .build()
+            .callWith( () -> handler.createPortalRequest( request, response ) );
     }
 }
