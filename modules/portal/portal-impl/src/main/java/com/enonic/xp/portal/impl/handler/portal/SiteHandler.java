@@ -60,6 +60,11 @@ public class SiteHandler
 
         if ( ContentConstants.BRANCH_DRAFT.equals( portalRequest.getBranch() ) )
         {
+            final String endpointPath = portalRequest.getEndpointPath();
+            if ( endpointPath != null && ( endpointPath.startsWith( "/_/asset/" ) || endpointPath.startsWith( "/_/idprovider/" ) ) )
+            {
+                return portalRequest;
+            }
             final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
             if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
             {
