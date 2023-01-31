@@ -15,7 +15,9 @@ declare global {
 
 import type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
+    AggregationsToAggregationResults,
     ByteSource,
     Filter,
     Highlight,
@@ -27,6 +29,7 @@ import type {
 
 export type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
     BooleanDslExpression,
     BooleanFilter,
@@ -130,7 +133,7 @@ export interface NodeQueryResult<AggregationOutput extends Record<string, Aggreg
     total: number;
     count: number;
     hits: NodeQueryResultHit[];
-    aggregations?: AggregationOutput;
+    aggregations: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
@@ -141,7 +144,7 @@ export interface NodeMultiRepoQueryResult<AggregationOutput extends Record<strin
         repoId: string;
         branch: string;
     })[];
-    aggregations?: AggregationOutput;
+    aggregations: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
@@ -200,8 +203,8 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
 
 interface MultiRepoNodeHandler {
     query<
-        AggregationOutput extends Record<string, AggregationsResult> = never
-    >(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult<AggregationOutput>;
+        AggregationInput extends Record<string, Aggregation> = never
+    >(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 }
 
 interface NodeHandler {
@@ -222,8 +225,8 @@ interface NodeHandler {
     move(source: string, target: string): boolean;
 
     query<
-        AggregationOutput extends Record<string, AggregationsResult> = never
-    >(params: QueryNodeHandlerParams): NodeQueryResult<AggregationOutput>;
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeHandlerParams): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 
     exist(key: string): boolean;
 
@@ -332,13 +335,13 @@ export interface SetChildOrderParams {
     childOrder: string;
 }
 
-export interface QueryNodeParams {
+export interface QueryNodeParams<AggregationInput extends Aggregations> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: AggregationInput;
     suggestions?: Record<string, TermSuggestion>;
     highlight?: Highlight;
     explain?: boolean;
@@ -559,8 +562,8 @@ export interface RepoConnection {
     setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData>;
 
     query<
-        AggregationOutput extends Record<string, AggregationsResult> = never
-    >(params: QueryNodeParams): NodeQueryResult<AggregationOutput>;
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 
     exists(key: string): boolean;
 
@@ -809,7 +812,9 @@ class RepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query<AggregationOutput extends Record<string, AggregationsResult>>(params: QueryNodeParams): NodeQueryResult<AggregationOutput> {
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>> {
         const {
             start = 0,
             count = 10,
@@ -834,7 +839,7 @@ class RepoConnectionImpl
         handlerParams.setFilters(__.toScriptValue(filters));
         handlerParams.setExplain(explain);
 
-        return __.toNativeObject(this.nodeHandler.query<AggregationOutput>(handlerParams));
+        return __.toNativeObject(this.nodeHandler.query<AggregationInput>(handlerParams));
     }
 
     /**
@@ -1010,8 +1015,8 @@ class RepoConnectionImpl
 
 export interface MultiRepoConnection {
     query<
-        AggregationOutput extends Record<string, AggregationsResult> = never
-    >(params: QueryNodeParams): NodeMultiRepoQueryResult<AggregationOutput>;
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 }
 
 /**
@@ -1044,8 +1049,8 @@ class MultiRepoConnectionImpl
      * @returns {object} Result of query.
      */
     query<
-        AggregationOutput extends Record<string, AggregationsResult> = never
-    >(params: QueryNodeParams): NodeMultiRepoQueryResult<AggregationOutput> {
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>> {
         const {
             start = 0,
             count = 10,
@@ -1070,7 +1075,7 @@ class MultiRepoConnectionImpl
         handlerParams.setFilters(__.toScriptValue(filters));
         handlerParams.setExplain(explain);
 
-        return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
+        return __.toNativeObject(this.multiRepoConnection.query<AggregationInput>(handlerParams));
     }
 }
 

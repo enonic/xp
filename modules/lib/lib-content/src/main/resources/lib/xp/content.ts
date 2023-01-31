@@ -18,6 +18,7 @@ declare global {
 
 import type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
     AggregationsToAggregationResults,
     BucketsAggregationResult,
@@ -58,6 +59,7 @@ function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
 
 export type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
     Attachment,
     BooleanDslExpression,
@@ -595,7 +597,7 @@ export function create<
     return __.toNativeObject(bean.execute<Data, Type>());
 }
 
-export interface QueryContentParams<AggregationInput extends Record<string, Aggregation>> {
+export interface QueryContentParams<AggregationInput extends Aggregations> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
@@ -625,7 +627,7 @@ interface QueryContentHandler {
 
     execute<
         Hit extends Content<unknown>,
-        AggregationInput extends Record<string, Aggregation> = never
+        AggregationInput extends Aggregations = never
     >(): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>>;
 }
 
@@ -648,7 +650,7 @@ interface QueryContentHandler {
 
 export function query<
     Hit extends Content<unknown> = Content,
-    AggregationInput extends Record<string, Aggregation> = never
+    AggregationInput extends Aggregations = never
 >(params: QueryContentParams<AggregationInput>): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>> {
     const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 

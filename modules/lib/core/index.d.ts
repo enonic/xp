@@ -283,22 +283,22 @@ export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 //
 // START AGGREGATIONS, FILTERS
 //
-export type Bucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = AggregationsToAggregationResults<SubAggregations> & {
+export type Bucket<SubAggregations extends Aggregations = Record<never, never>> = AggregationsToAggregationResults<SubAggregations> & {
     key: string;
     docCount: number;
 };
 
-export type NumericBucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = Bucket<SubAggregations> & {
+export type NumericBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
     from?: number;
     to?: number;
 };
 
-export type DateBucket<SubAggregations extends Record<string, Aggregation> = Record<never, never>> = Bucket<SubAggregations> & {
+export type DateBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
     from?: string;
     to?: string;
 };
 
-export interface BucketsAggregationResult<SubAggregations extends Record<string, Aggregation> = Record<never, never>> {
+export interface BucketsAggregationResult<SubAggregations extends Aggregations = Record<never, never>> {
     buckets: (DateBucket<SubAggregations> | NumericBucket<SubAggregations>)[];
 }
 
@@ -314,9 +314,12 @@ export interface SingleValueMetricAggregationResult {
     value: number;
 }
 
-export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
+export type AggregationsResult<SubAggregations extends Aggregations = Record<never, never>> =
+    | BucketsAggregationResult<SubAggregations>
+    | StatsAggregationResult
+    | SingleValueMetricAggregationResult;
 
-export type AggregationsToAggregationResults<AggregationInput extends Record<string, Aggregation> = never> = {
+export type AggregationsToAggregationResults<AggregationInput extends Aggregations = never> = {
     [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
 };
 
@@ -353,6 +356,8 @@ export type Aggregation =
     | MaxAggregation
     | ValueCountAggregation;
 
+export type Aggregations = Record<string, Aggregation>;
+
 export interface TermsAggregation {
     terms: {
         field: string;
@@ -360,7 +365,7 @@ export interface TermsAggregation {
         size?: number;
         minDocCount?: number;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface HistogramAggregation {
@@ -372,7 +377,7 @@ export interface HistogramAggregation {
         extendedBoundMax?: number;
         minDocCount?: number;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface DateHistogramAggregation {
@@ -382,7 +387,7 @@ export interface DateHistogramAggregation {
         minDocCount?: number;
         format: string;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface NumericRange {
@@ -396,7 +401,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface DateRange {
@@ -411,7 +416,7 @@ export interface DateRangeAggregation {
         format: string;
         ranges: DateRange[];
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface StatsAggregation {
