@@ -22,7 +22,7 @@ public class TermExpressionBuilderTest
 
         final QueryBuilder query =
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ),
-                                         new SearchQueryFieldNameResolver() );
+                                         SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -34,7 +34,7 @@ public class TermExpressionBuilderTest
         final String expected = load( "compare_eq_number.json" );
 
         final QueryBuilder query = TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.number( 1 ) ),
-                                                                new SearchQueryFieldNameResolver() );
+                                                                SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -47,7 +47,7 @@ public class TermExpressionBuilderTest
 
         final QueryBuilder query =
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T09:42:00Z" ) ),
-                                         new SearchQueryFieldNameResolver() );
+                                         SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -60,7 +60,7 @@ public class TermExpressionBuilderTest
 
         final QueryBuilder query =
             TermExpressionBuilder.build( CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.geoPoint( "59.9127300,10.746090" ) ),
-                                         new SearchQueryFieldNameResolver() );
+                                         SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }

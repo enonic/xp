@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,9 +20,11 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -185,7 +188,7 @@ public class RepositoryServiceImpl
         {
             pushRootNode( previousRepository, newBranch );
 
-            RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( RefreshMode.ALL ).build().execute();
+            doRefresh();
         }
 
         //Updates the repository entry
@@ -382,14 +385,16 @@ public class RepositoryServiceImpl
     {
         final Context context = ContextAccessor.current();
         final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
-        final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, internalContext );
+        final NodeBranchEntry rootNode = this.nodeStorageService.getBranchNodeVersion( Node.ROOT_UUID, internalContext );
 
         if ( rootNode == null )
         {
             throw new NodeNotFoundException( "Cannot find root-node in repository [" + currentRepo + "]" );
         }
 
-        this.nodeStorageService.push( rootNode, branch, internalContext );
+        this.nodeStorageService.push( Collections.singleton( PushNodeEntry.create().nodeBranchEntry( rootNode ).build()), branch,
+                                      c -> {
+        }, internalContext );
     }
 
     private void deleteAllNodes()

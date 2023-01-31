@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -16,6 +16,13 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
 {
+    private final Set<String> builtInFields;
+
+    protected AbstractQueryFieldNameResolver( final Set<String> builtInFields )
+    {
+        this.builtInFields = builtInFields;
+    }
+
     @Override
     public String resolve( final CompareExpr compareExpr )
     {
@@ -67,7 +74,7 @@ abstract class AbstractQueryFieldNameResolver
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( queryFieldName );
 
-        if ( getBuiltInFields().contains( normalizedFieldName ) )
+        if ( builtInFields.contains( normalizedFieldName ) )
         {
             return normalizedFieldName;
         }
@@ -94,8 +101,6 @@ abstract class AbstractQueryFieldNameResolver
 
         return IndexFieldNameNormalizer.normalize( baseFieldName );
     }
-
-    protected abstract List<String> getBuiltInFields();
 
     protected abstract String appendIndexValueType( String baseFieldName, IndexValueTypeInterface indexValueType );
 }

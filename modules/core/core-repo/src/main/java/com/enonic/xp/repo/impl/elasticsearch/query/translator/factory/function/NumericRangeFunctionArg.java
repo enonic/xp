@@ -9,6 +9,6 @@ public class NumericRangeFunctionArg
     @Override
     public String getFieldName()
     {
-        return new SearchQueryFieldNameResolver().resolve( this.fieldName, IndexValueType.NUMBER );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( this.fieldName, IndexValueType.NUMBER );
     }
 }

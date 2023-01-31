@@ -23,7 +23,7 @@ class NgramQueryBuilder
                 NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER ).analyzeWildcard( true );
 
         fields.forEach( field -> {
-            final String resolvedName = nameResolver.resolve( field.getBaseFieldName(), IndexValueType.NGRAM );
+            final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), IndexValueType.NGRAM );
             if ( field.getWeight() != null )
             {
                 builder.field( resolvedName, field.getWeight() );

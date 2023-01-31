@@ -15,8 +15,6 @@ public interface IndexDataService
 
     ReturnValues get( NodeIds nodeIds, ReturnFields returnFields, InternalContext context );
 
-    void delete( NodeId nodeId, InternalContext context );
-
     void delete( Collection<NodeId> nodeIds, InternalContext context );
 
     void store( Node node, InternalContext context );

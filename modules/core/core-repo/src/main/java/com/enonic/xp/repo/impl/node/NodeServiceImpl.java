@@ -429,7 +429,7 @@ public class NodeServiceImpl
         }
         else
         {
-            return nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) );
+            return doGetById( params.getNodeId() );
         }
     }
 
@@ -563,7 +563,7 @@ public class NodeServiceImpl
         }
         else
         {
-            return nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) );
+            return doGetById( params.getNodeId() );
         }
     }
 

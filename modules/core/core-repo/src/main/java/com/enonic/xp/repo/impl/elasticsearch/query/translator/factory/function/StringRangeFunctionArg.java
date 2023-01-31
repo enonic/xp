@@ -9,7 +9,7 @@ public class StringRangeFunctionArg
     @Override
     public String getFieldName()
     {
-        return new SearchQueryFieldNameResolver().resolve( this.fieldName, IndexValueType.STRING );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( this.fieldName, IndexValueType.STRING );
     }
 
 }

@@ -47,17 +47,15 @@ public class CopyExecutor
             values( copyRequest.getNodeIds() ).
             build();
 
-        final QueryBuilder idFilterBuilder = new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).
-            create( Filters.from( idFilter ) );
+        final QueryBuilder idFilterBuilder =
+            new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( idFilter ) );
 
-        QueryBuilder query = QueryBuilders.matchAllQuery();
-
-        return ElasticsearchQuery.create().
-            query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
-            addIndexName( copyRequest.getStorageSource().getStorageName().getName() ).
-            addIndexType( copyRequest.getStorageSource().getStorageType().getName() ).
-            size( copyRequest.getNodeIds().getSize() ).
-            batchSize( BATCH_SIZE ).
+        return ElasticsearchQuery.create()
+            .query( QueryBuilders.boolQuery().must( idFilterBuilder ) )
+            .addIndexName( copyRequest.getStorageSource().getStorageName().getName() )
+            .addIndexType( copyRequest.getStorageSource().getStorageType().getName() )
+            .size( copyRequest.getNodeIds().size() )
+            .batchSize( BATCH_SIZE ).
             from( 0 ).
             setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
             build();

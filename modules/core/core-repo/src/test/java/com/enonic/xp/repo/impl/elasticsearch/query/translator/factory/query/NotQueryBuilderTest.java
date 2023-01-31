@@ -23,7 +23,7 @@ public class NotQueryBuilderTest
 
         final CompareExpr compareExpr = CompareExpr.create( FieldExpr.from( "fisk" ), CompareExpr.Operator.EQ, ValueExpr.string( "ost" ) );
         final QueryBuilder query =
-            NotQueryBuilder.build( CompareExpressionBuilder.build( compareExpr, new SearchQueryFieldNameResolver() ) );
+            NotQueryBuilder.build( CompareExpressionBuilder.build( compareExpr, SearchQueryFieldNameResolver.INSTANCE ) );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }

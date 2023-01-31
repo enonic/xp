@@ -32,7 +32,7 @@ class StemmedQueryBuilder
                 .orElseThrow( () -> new IllegalArgumentException( "Invalid language: " + language ) );
 
         fields.getWeightedQueryFieldNames().forEach( field -> {
-            final String resolvedName = nameResolver.resolve( field.getBaseFieldName(), languageIndexType );
+            final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), languageIndexType );
 
             if ( field.getWeight() != null )
             {

@@ -22,7 +22,7 @@ public class LikeExpressionBuilderTest
 
         final QueryBuilder query =
             LikeExpressionBuilder.build( CompareExpr.like( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ),
-                                         new SearchQueryFieldNameResolver() );
+                                         SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
 

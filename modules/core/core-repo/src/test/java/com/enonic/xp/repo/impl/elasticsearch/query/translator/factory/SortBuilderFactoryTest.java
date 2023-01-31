@@ -33,7 +33,7 @@ public class SortBuilderFactoryTest
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( orderExprs );
 
         assertEquals( 1, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
@@ -45,7 +45,7 @@ public class SortBuilderFactoryTest
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), null ) );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( orderExprs );
 
         assertEquals( 1, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
@@ -58,7 +58,7 @@ public class SortBuilderFactoryTest
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "mySecondField" ), OrderExpr.Direction.DESC ) );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( orderExprs );
 
         assertEquals( 2, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
@@ -73,7 +73,7 @@ public class SortBuilderFactoryTest
                                                                 List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ),
                                                                          ValueExpr.string( "km" ) ) ), OrderExpr.Direction.ASC ) );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( orderExprs );
 
         assertEquals( 1, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof GeoDistanceSortBuilder );
@@ -87,7 +87,7 @@ public class SortBuilderFactoryTest
                                                                 List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ),
                                                                          ValueExpr.string( "km" ) ) ), null ) );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( orderExprs );
 
         assertEquals( 1, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof GeoDistanceSortBuilder );
@@ -96,7 +96,7 @@ public class SortBuilderFactoryTest
     @Test
     public void createEmpty()
     {
-        assertTrue( new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( List.of() ).isEmpty() );
+        assertTrue( new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of() ).isEmpty() );
     }
 
     @Test
@@ -137,8 +137,9 @@ public class SortBuilderFactoryTest
         final DslOrderExpr fieldWithDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithDirection );
         final DslOrderExpr fieldWithoutDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithoutDirection );
 
-        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create(
-            List.of( geoOrderExpr, geoOrderWithoutOptionalExpr, geoOrderWithoutTypeExpr, fieldWithDirectionOrderExpr, fieldWithoutDirectionOrderExpr ) );
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create(
+            List.of( geoOrderExpr, geoOrderWithoutOptionalExpr, geoOrderWithoutTypeExpr, fieldWithDirectionOrderExpr,
+                     fieldWithoutDirectionOrderExpr ) );
 
         assertEquals( 5, sortBuilders.size() );
         assertTrue( sortBuilders.get( 0 ) instanceof GeoDistanceSortBuilder );
@@ -158,7 +159,7 @@ public class SortBuilderFactoryTest
         final DslOrderExpr unknownOrderExpr = DslOrderExpr.from( geoExpression );
 
         assertThrows( IllegalArgumentException.class,
-                      () -> new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( List.of( unknownOrderExpr ) ) );
+                      () -> new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( unknownOrderExpr ) ) );
 
     }
 }

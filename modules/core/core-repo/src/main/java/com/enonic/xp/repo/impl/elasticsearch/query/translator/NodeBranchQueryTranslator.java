@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQuer
 class NodeBranchQueryTranslator
     implements QueryTypeTranslator
 {
-    private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
+    private final QueryFieldNameResolver fieldNameResolver = StoreQueryFieldNameResolver.INSTANCE;
 
     private final NodeBranchQuery query;
 

@@ -17,7 +17,7 @@ abstract class SimpleQueryStringBuilder
 
     protected final WeightedQueryFieldNames fields;
 
-    protected final SearchQueryFieldNameResolver nameResolver;
+    protected static final SearchQueryFieldNameResolver NAME_RESOLVER = SearchQueryFieldNameResolver.INSTANCE;
 
     SimpleQueryStringBuilder( final PropertySet expression )
     {
@@ -26,8 +26,6 @@ abstract class SimpleQueryStringBuilder
         this.query = getString( "query" );
         this.operator = getString( "operator" );
         this.fields = WeightedQueryFieldNames.from( getStrings( "fields" ) );
-
-        nameResolver = new SearchQueryFieldNameResolver();
     }
 
     public QueryBuilder create()

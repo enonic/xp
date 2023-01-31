@@ -16,7 +16,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 class NodeQueryTranslator
     implements QueryTypeTranslator
 {
-    private final QueryFieldNameResolver fieldNameResolver = new SearchQueryFieldNameResolver();
+    private final QueryFieldNameResolver fieldNameResolver = SearchQueryFieldNameResolver.INSTANCE;
 
     private final NodeQuery nodeQuery;
 

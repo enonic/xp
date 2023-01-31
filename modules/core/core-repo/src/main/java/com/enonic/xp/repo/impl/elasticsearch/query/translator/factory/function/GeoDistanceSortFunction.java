@@ -21,7 +21,7 @@ class GeoDistanceSortFunction
 
         final String baseFieldName = arguments.getFieldName();
 
-        final String queryFieldName = new SearchQueryFieldNameResolver().resolve( baseFieldName, IndexValueType.GEO_POINT );
+        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexValueType.GEO_POINT );
 
         GeoDistanceSortBuilder builder =
             new GeoDistanceSortBuilder( queryFieldName ).point( arguments.getLatitude(), arguments.getLongitude() );
@@ -40,7 +40,7 @@ class GeoDistanceSortFunction
 
     public static SortBuilder create( final DslOrderExpr orderExpr )
     {
-        final String queryFieldName = new SearchQueryFieldNameResolver().resolve( orderExpr.getField(), IndexValueType.GEO_POINT );
+        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( orderExpr.getField(), IndexValueType.GEO_POINT );
 
         final GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName ).point( orderExpr.getLat(), orderExpr.getLon() );
 

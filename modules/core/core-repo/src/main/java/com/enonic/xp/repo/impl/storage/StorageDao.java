@@ -11,8 +11,6 @@ public interface StorageDao
 
     void store( IndexDocument indexDocument );
 
-    boolean delete( DeleteRequest request );
-
     void delete( DeleteRequests request );
 
     GetResult getById( GetByIdRequest request );

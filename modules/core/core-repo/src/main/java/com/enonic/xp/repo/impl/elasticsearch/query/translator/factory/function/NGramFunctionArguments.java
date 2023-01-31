@@ -33,6 +33,6 @@ public class NGramFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        return new SearchQueryFieldNameResolver().resolve( baseFieldName, IndexValueType.NGRAM );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexValueType.NGRAM );
     }
 }

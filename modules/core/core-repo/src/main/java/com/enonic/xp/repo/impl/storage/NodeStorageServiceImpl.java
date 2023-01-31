@@ -9,8 +9,6 @@ import java.util.stream.Stream;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
@@ -99,6 +97,27 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public void push( final Collection<PushNodeEntry> entries, final Branch target, final PushNodesListener pushListener,
+                      final InternalContext context )
+    {
+        final InternalContext targetContext = InternalContext.create( context ).skipConstraints( true ).branch( target ).build();
+
+        for ( final PushNodeEntry entry : entries )
+        {
+            final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
+            final NodePath movedFrom = entry.getCurrentTargetPath();
+            this.branchService.store( nodeBranchEntry, movedFrom, targetContext );
+
+            pushListener.nodesPushed( 1 );
+        }
+
+        final Collection<NodeId> nodeIds =
+            entries.stream().map( entry -> entry.getNodeBranchEntry().getNodeId() ).collect( Collectors.toList() );
+
+        this.indexDataService.push( IndexPushNodeParams.create().nodeIds( nodeIds ).targetBranch( target ).build(), context );
+    }
+
+    @Override
     public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
         final NodeVersionKey nodeVersionKey = this.nodeVersionService.store( params.getNodeVersion(), context );
@@ -155,43 +174,9 @@ public class NodeStorageServiceImpl
                                       .nodeId( node.id() )
                                       .timestamp( node.getTimestamp() )
                                       .nodePath( node.path() )
-                                      .build(), context );
+                                      .build(), null, context );
 
         this.indexDataService.store( node, context );
-    }
-
-    @Override
-    public void push( final Collection<PushNodeEntry> entries, final Branch target, final PushNodesListener pushListener,
-                      final InternalContext context )
-    {
-        for ( final PushNodeEntry entry : entries )
-        {
-            final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
-            this.branchService.store( nodeBranchEntry, entry.getCurrentTargetPath(),
-                                      InternalContext.create( context ).skipConstraints( true ).branch( target ).build() );
-            pushListener.nodesPushed( 1 );
-        }
-
-        final NodeIds nodeIds = NodeIds.from(
-            entries.stream().map( entry -> entry.getNodeBranchEntry().getNodeId() ).collect( ImmutableSet.toImmutableSet() ) );
-
-        this.indexDataService.push( IndexPushNodeParams.create().nodeIds( nodeIds ).targetBranch( target )
-                                        .build(), context );
-    }
-
-    @Override
-    public void push( final Node node, final Branch target, final InternalContext context )
-    {
-        final NodeBranchEntry entry = this.branchService.get( node.id(), context );
-
-        this.branchService.store( entry, InternalContext.create( context ).
-            branch( target ).
-            build() );
-
-        this.indexDataService.push( IndexPushNodeParams.create().
-            nodeIds( NodeIds.from( node.id() ) ).
-            targetBranch( target ).
-            build(), context );
     }
 
     @Override
@@ -252,7 +237,7 @@ public class NodeStorageServiceImpl
         {
             return Nodes.empty();
         }
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context ).stream();
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds.getSet(), context ).stream();
         return doReturnNodes( stream, context );
     }
 
@@ -300,7 +285,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds, context );
+        return this.branchService.get( nodeIds.getSet(), context );
     }
 
     @Override
@@ -330,7 +315,6 @@ public class NodeStorageServiceImpl
     @Override
     public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
     {
-        this.branchService.cachePath( nodeId, nodePath, context );
     }
 
     @Override
@@ -343,20 +327,15 @@ public class NodeStorageServiceImpl
     public void handleNodeMoved( final NodeMovedParams params, final InternalContext context )
     {
         this.branchService.evictPath( params.getExistingPath(), context );
-        this.branchService.cachePath( params.getNodeId(), params.getNewPath(), context );
     }
 
     @Override
     public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath,
                                   final InternalContext context )
     {
-        if ( !nodePath.equals( currentTargetPath ) )
+        if ( currentTargetPath != null && !nodePath.equals( currentTargetPath ) )
         {
-            if ( currentTargetPath != null )
-            {
-                this.branchService.evictPath( currentTargetPath, context );
-            }
-            this.branchService.cachePath( nodeId, nodePath, context );
+            this.branchService.evictPath( currentTargetPath, context );
         }
     }
 

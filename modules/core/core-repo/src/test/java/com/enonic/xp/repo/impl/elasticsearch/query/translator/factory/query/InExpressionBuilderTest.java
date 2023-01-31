@@ -25,7 +25,7 @@ public class InExpressionBuilderTest
         final QueryBuilder query = InExpressionBuilder.build( CompareExpr.in( FieldExpr.from( "myField" ),
                                                                               List.of( ValueExpr.string( "myFirstValue" ),
                                                                                        ValueExpr.string( "mySecondValue" ) ) ),
-                                                              new SearchQueryFieldNameResolver() );
+                                                              SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }

@@ -95,12 +95,11 @@ public final class ChildOrder
 
     public static ChildOrder from( final String orderExpression )
     {
-        final ChildOrder.Builder builder = ChildOrder.create();
-
         if ( isNullOrEmpty( orderExpression ) )
         {
             return null;
         }
+        final ChildOrder.Builder builder = ChildOrder.create();
 
         final List<OrderExpr> orderExprs = QueryParser.parseOrderExpressions( orderExpression );
 

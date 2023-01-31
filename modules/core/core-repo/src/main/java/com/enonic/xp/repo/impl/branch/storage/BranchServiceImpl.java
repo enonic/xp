@@ -1,22 +1,26 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.util.concurrent.Striped;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -25,7 +29,6 @@ import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.cache.BranchCachePath;
 import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
@@ -48,78 +51,74 @@ public class BranchServiceImpl
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
                            BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
-    private static final Striped<Lock> PARENT_PATH_LOCKS = Striped.lazyWeakLock( 100 );
+    private final Cache<BranchPath, NodeId> cache =
+        CacheBuilder.newBuilder().maximumSize( 100000 ).expireAfterWrite( Duration.ofMinutes( 10 ) ).build();
 
-    private final BranchCachePath pathCache = new BranchCachePath();
+    private final StorageDao storageDao;
 
-    private StorageDao storageDao;
+    private final SearchDao searchDao;
 
-    private SearchDao searchDao;
-
-    @Override
-    public String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    @Activate
+    public BranchServiceImpl( @Reference final StorageDao storageDao, @Reference final SearchDao searchDao )
     {
-        if ( context.isSkipConstraints() )
-        {
-            return doStore( nodeBranchEntry, context );
-        }
-        else
-        {
-            final Lock lock = PARENT_PATH_LOCKS.get( nodeBranchEntry.getNodePath().getParentPath() );
-            lock.lock();
-            try
-            {
-                verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
-
-                return doStore( nodeBranchEntry, context );
-            }
-            finally
-            {
-                lock.unlock();
-            }
-        }
+        this.storageDao = storageDao;
+        this.searchDao = searchDao;
     }
 
     @Override
-    public String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context )
+    public void store( final NodeBranchEntry nodeBranchEntry, final NodePath movedFrom, final InternalContext context )
     {
-        if ( previousPath != null && !previousPath.equals( nodeBranchEntry.getNodePath() ) )
+        final RepositoryId repositoryId = context.getRepositoryId();
+        final Branch branch = context.getBranch();
+        final NodePath nodePath = nodeBranchEntry.getNodePath();
+
+        final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
+
+        final boolean checkAlreadyExists = !context.isSkipConstraints();
+        final NodeId nodeId = nodeBranchEntry.getNodeId();
+
+        final AtomicBoolean exists = new AtomicBoolean();
+        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
+            if ( checkAlreadyExists && inCache != null && !inCache.equals( nodeId ) )
+            {
+                exists.set( true );
+                return inCache;
+            }
+
+            this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, cK.getRepositoryId(), cK.getBranch() ) );
+            return nodeId;
+
+        } );
+        if ( exists.get() )
         {
-            this.pathCache.evict( createPath( previousPath, context ) );
+            throw new NodeAlreadyExistAtPathException( cacheKey.getPath(), cacheKey.getRepositoryId(), cacheKey.getBranch() );
         }
-        return store( nodeBranchEntry, context );
-    }
-
-    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
-    {
-        final String id = this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, context ) );
-
-        doCache( context.getRepositoryId(), nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
-
-        return id;
-    }
-
-    private void verifyNotExistingNodeWithOtherId( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
-    {
-        final BranchDocumentId branchDocumentId = this.pathCache.get( createPath( nodeBranchEntry.getNodePath(), context ) );
-
-        if ( branchDocumentId != null &&
-            !branchDocumentId.equals( BranchDocumentId.from( nodeBranchEntry.getNodeId(), context.getBranch() ) ) )
+        if ( movedFrom != null && !nodePath.equals( movedFrom ) )
         {
-            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), context.getRepositoryId(), context.getBranch() );
+            cache.invalidate( new BranchPath( repositoryId, branch, movedFrom ) );
         }
     }
 
     @Override
     public void delete( final Collection<NodeBranchEntry> entries, final InternalContext context )
     {
-        entries.stream().map( NodeBranchEntry::getNodePath ).forEach( path -> pathCache.evict( createPath( path, context ) ) );
-        storageDao.delete( DeleteRequests.create()
-                               .ids( entries.stream()
-                                         .map( entry -> BranchDocumentId.from( entry.getNodeId(), context.getBranch() ).toString() )
-                                         .collect( Collectors.toList() ) )
-                               .settings( createStorageSettings( context.getRepositoryId() ) )
-                               .build() );
+        final RepositoryId repositoryId = context.getRepositoryId();
+        final Branch branch = context.getBranch();
+
+        try
+        {
+            storageDao.delete( DeleteRequests.create()
+                                   .ids( entries.stream()
+                                             .map( entry -> BranchDocumentId.asString( entry.getNodeId(), branch ) )
+                                             .collect( Collectors.toList() ) )
+                                   .settings( createStorageSettings( repositoryId ) )
+                                   .build() );
+        }
+        finally
+        {
+            cache.invalidateAll(
+                entries.stream().map( nbe -> new BranchPath( repositoryId, branch, nbe.getNodePath() ) ).collect( Collectors.toList() ) );
+        }
     }
 
     @Override
@@ -131,7 +130,7 @@ public class BranchServiceImpl
     private NodeBranchEntry doGetById( final NodeId nodeId, final InternalContext context )
     {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create()
-            .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
+            .id( BranchDocumentId.asString( nodeId, context.getBranch() ) )
             .storageSettings( createStorageSettings( context.getRepositoryId() ) )
             .searchPreference( context.getSearchPreference() )
             .returnFields( BRANCH_RETURN_FIELDS )
@@ -148,15 +147,17 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchEntries get( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries get( final Collection<NodeId> nodeIds, final InternalContext context )
     {
         final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
+
+        final StorageSource storageSettings = createStorageSettings( context.getRepositoryId() );
 
         for ( final NodeId nodeId : nodeIds )
         {
             getByIdsRequest.add( GetByIdRequest.create()
-                                     .id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() )
-                                     .storageSettings( createStorageSettings( context.getRepositoryId() ) )
+                                     .id( BranchDocumentId.asString( nodeId, context.getBranch() ) )
+                                     .storageSettings( storageSettings )
                                      .searchPreference( context.getSearchPreference() )
                                      .returnFields( BRANCH_RETURN_FIELDS )
                                      .routing( nodeId.toString() )
@@ -179,103 +180,75 @@ public class BranchServiceImpl
     @Override
     public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {
-        final BranchPath path = createPath( nodePath, context );
-        final BranchDocumentId branchDocumentId = this.pathCache.get( path );
+        final RepositoryId repositoryId = context.getRepositoryId();
+        final Branch branch = context.getBranch();
+        final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
 
-        if ( branchDocumentId != null )
-        {
-            final NodeBranchEntry nodeBranchEntry = doGetById( branchDocumentId.getNodeId(), context );
-
-            if ( nodeBranchEntry == null )
+        final AtomicReference<NodeBranchEntry> found = new AtomicReference<>();
+        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
+            if ( inCache != null )
             {
-                pathCache.evict( path );
+                final NodeBranchEntry nodeBranchEntry = doGetById( inCache, context );
+
+                if ( nodeBranchEntry == null )
+                {
+                    return null;
+                }
+                else
+                {
+                    found.set( nodeBranchEntry );
+                    return nodeBranchEntry.getNodeId();
+                }
             }
-            else
+
+            storageDao.refresh( StoreStorageName.from( repositoryId ) );
+
+            final NodeBranchQuery query = NodeBranchQuery.create()
+                .addQueryFilter( ValueFilter.create()
+                                     .fieldName( BranchIndexPath.PATH.getPath() )
+                                     .addValue( ValueFactory.newString( nodePath.toString() ) )
+                                     .build() )
+                .addQueryFilter( ValueFilter.create()
+                                     .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                     .addValue( ValueFactory.newString( branch.getValue() ) )
+                                     .build() )
+                .size( 1 )
+                .build();
+
+            final SearchResult result = this.searchDao.search( SearchRequest.create()
+                                                                   .searchSource( SingleRepoStorageSource.create( repositoryId,
+                                                                                                                  StaticStorageType.BRANCH ) )
+                                                                   .returnFields( BRANCH_RETURN_FIELDS )
+                                                                   .query( query )
+                                                                   .searchPreference( context.getSearchPreference() )
+                                                                   .build() );
+            if ( result.isEmpty() )
             {
-                return nodeBranchEntry;
+                return null;
             }
-        }
-
-        final NodeBranchQuery query = NodeBranchQuery.create()
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( BranchIndexPath.PATH.getPath() )
-                                 .addValue( ValueFactory.newString( nodePath.toString() ) )
-                                 .build() )
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
-                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
-                                 .build() )
-            .size( 1 )
-            .build();
-
-        storageDao.refresh( StoreStorageName.from( context.getRepositoryId() ) );
-
-        final SearchResult result = this.searchDao.search( SearchRequest.create()
-                                                               .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
-                                                                                                              StaticStorageType.BRANCH ) )
-                                                               .returnFields( BRANCH_RETURN_FIELDS )
-                                                               .query( query )
-                                                               .searchPreference( context.getSearchPreference() )
-                                                               .build() );
-
-        if ( !result.isEmpty() )
-        {
             final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
-            doCache( context.getRepositoryId(), nodeBranchEntry.getNodePath(),
-                     BranchDocumentId.from( nodeBranchEntry.getNodeId(), context.getBranch() ) );
+            found.set( nodeBranchEntry );
+            return nodeBranchEntry.getNodeId();
+        } );
 
-            return nodeBranchEntry;
-        }
-
-        return null;
-    }
-
-    @Override
-    public void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
-    {
-        doCache( context.getRepositoryId(), nodePath, BranchDocumentId.from( nodeId, context.getBranch() ) );
+        return found.get();
     }
 
     @Override
     public void evictPath( final NodePath nodePath, final InternalContext context )
     {
-        pathCache.evict( createPath( nodePath, context ) );
+        cache.invalidate( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
     }
 
     @Override
     public void evictAllPaths()
     {
-        pathCache.evictAll();
-    }
-
-    private void doCache( final RepositoryId repositoryId, final NodePath nodePath, final BranchDocumentId branchDocumentId )
-    {
-        pathCache.cache( new BranchPath( repositoryId, branchDocumentId.getBranch(), nodePath ), branchDocumentId );
+        cache.invalidateAll();
     }
 
     private static StorageSource createStorageSettings( final RepositoryId repositoryId )
     {
-        return StorageSource.create()
-            .storageName( StoreStorageName.from( repositoryId ) )
-            .storageType( StaticStorageType.BRANCH )
-            .build();
-    }
-
-    private static BranchPath createPath( final NodePath previousPath, final InternalContext context )
-    {
-        return new BranchPath( context.getRepositoryId(), context.getBranch(), previousPath );
-    }
-
-    @Reference
-    public void setStorageDao( final StorageDao storageDao )
-    {
-        this.storageDao = storageDao;
-    }
-
-    @Reference
-    public void setSearchDao( final SearchDao searchDao )
-    {
-        this.searchDao = searchDao;
+        return StorageSource.create().storageName( StoreStorageName.from( repositoryId ) ).storageType( StaticStorageType.BRANCH ).build();
     }
 }
 

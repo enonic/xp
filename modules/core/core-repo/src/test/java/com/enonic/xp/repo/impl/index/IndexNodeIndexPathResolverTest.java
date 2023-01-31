@@ -34,7 +34,7 @@ public class IndexNodeIndexPathResolverTest
     @MethodSource("testParams")
     public void testResolve(final String field, final ValueExpr valueExpr, final String resolvedFieldName)
     {
-        final String result = new SearchQueryFieldNameResolver().resolve( CompareExpr.eq( FieldExpr.from( field ), valueExpr ) );
+        final String result = SearchQueryFieldNameResolver.INSTANCE.resolve( CompareExpr.eq( FieldExpr.from( field ), valueExpr ) );
         assertEquals( resolvedFieldName, result );
     }
 }

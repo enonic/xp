@@ -2,27 +2,27 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.time.Instant;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
+import com.enonic.xp.repository.RepositoryId;
 
 class BranchStorageRequestFactory
 {
-    public static StoreRequest create( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    public static StoreRequest create( final NodeBranchEntry nodeBranchEntry, final RepositoryId repositoryId, final Branch branch )
     {
-
         final StorageData data = StorageData.create().
             add( BranchIndexPath.VERSION_ID.getPath(), nodeBranchEntry.getVersionId().toString() ).
             add( BranchIndexPath.NODE_BLOB_KEY.getPath(), nodeBranchEntry.getNodeVersionKey().getNodeBlobKey().toString() ).
             add( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), nodeBranchEntry.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             add( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(),
                  nodeBranchEntry.getNodeVersionKey().getAccessControlBlobKey().toString() ).
-            add( BranchIndexPath.BRANCH_NAME.getPath(), context.getBranch().getValue() ).
+            add( BranchIndexPath.BRANCH_NAME.getPath(), branch.getValue() ).
             add( BranchIndexPath.NODE_ID.getPath(), nodeBranchEntry.getNodeId().toString() ).
             add( BranchIndexPath.STATE.getPath(), nodeBranchEntry.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), nodeBranchEntry.getNodePath().toString() ).
@@ -32,11 +32,9 @@ class BranchStorageRequestFactory
 
         final NodeId nodeId = nodeBranchEntry.getNodeId();
 
-        return StoreRequest.create().
-            id( BranchDocumentId.from( nodeId, context.getBranch() ).toString() ).
-            nodePath( nodeBranchEntry.getNodePath() ).
+        return StoreRequest.create().id( BranchDocumentId.asString( nodeId, branch ) ).nodePath( nodeBranchEntry.getNodePath() ).
             settings( StorageSource.create().
-                storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+                storageName( StoreStorageName.from( repositoryId ) ).
                 storageType( StaticStorageType.BRANCH ).
                 build() ).
             data( data ).
@@ -44,6 +42,4 @@ class BranchStorageRequestFactory
             routing( nodeId.toString() ).
             build();
     }
-
-
 }

@@ -33,6 +33,6 @@ public class FulltextFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        return new SearchQueryFieldNameResolver().resolve( baseFieldName, IndexValueType.ANALYZED );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexValueType.ANALYZED );
     }
 }

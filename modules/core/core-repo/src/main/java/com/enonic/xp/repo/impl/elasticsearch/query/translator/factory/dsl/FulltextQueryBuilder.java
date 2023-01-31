@@ -23,7 +23,7 @@ class FulltextQueryBuilder
                 NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER ).analyzeWildcard( true );
 
         fields.forEach( field -> {
-            final String resolvedName = nameResolver.resolve( field.getBaseFieldName(), IndexValueType.ANALYZED );
+            final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), IndexValueType.ANALYZED );
             if ( field.getWeight() != null )
             {
                 builder.field( resolvedName, field.getWeight() );

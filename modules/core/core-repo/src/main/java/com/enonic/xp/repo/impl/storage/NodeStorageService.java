@@ -37,8 +37,6 @@ public interface NodeStorageService
 
     void updateVersion( Node node, InternalContext context );
 
-    void push( Node node, Branch target, InternalContext context );
-
     void push( Collection<PushNodeEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
 
     NodeCommitEntry commit( NodeCommitEntry entry, RoutableNodeVersionIds routableNodeVersionIds, InternalContext context );
