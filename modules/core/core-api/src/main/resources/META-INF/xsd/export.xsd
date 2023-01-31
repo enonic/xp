@@ -73,6 +73,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element minOccurs="0" name="languages" type="languages"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -80,6 +81,12 @@
     <xs:sequence>
       <xs:element name="indexConfig" type="indexConfig"/>
       <xs:element name="path" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="languages">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="language" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -91,6 +98,13 @@
         <xs:complexType>
           <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="pathIndexConfig" type="pathIndexConfig"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="allTextIndexConfig">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="languages" type="languages"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>

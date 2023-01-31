@@ -10,7 +10,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.google.common.base.Preconditions;
@@ -29,9 +33,16 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 {
     private static final SchemaValidator VALIDATOR = new SchemaValidator();
 
+    private final String namespace;
+
     private String systemId;
 
     private CharSource source;
+
+    public XmlObjectParser( final String namespace )
+    {
+        this.namespace = namespace;
+    }
 
     @SuppressWarnings("unchecked")
     protected final P typecastThis()
@@ -114,11 +125,59 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     private Document validate( final Document doc )
         throws Exception
     {
-        final DOMSource source = new DOMSource( doc );
+        final Document processedDoc = processDocument( doc );
+
+        final DOMSource source = new DOMSource( processedDoc );
         source.setSystemId( this.systemId );
 
         final DOMResult result = VALIDATOR.validate( source );
         return (Document) result.getNode();
+    }
+
+    private Document processDocument( final Document doc )
+    {
+        Element originalDocumentElement = doc.getDocumentElement();
+
+        final String xmlNamespace = originalDocumentElement.getNamespaceURI();
+
+        if ( xmlNamespace == null )
+        {
+            doc.renameNode( doc.getDocumentElement(), namespace, doc.getDocumentElement().getTagName() );
+
+            NodeList list = originalDocumentElement.getChildNodes();
+
+            for ( int i = 0; i < list.getLength(); i++ )
+            {
+                renameNode( doc, list.item( i ) );
+            }
+
+        }
+        else if ( !namespace.equals( xmlNamespace ) )
+        {
+            throw new XmlException( "Invalid xml schema namespace [{0}]", xmlNamespace );
+        }
+
+        return doc;
+    }
+
+    private Node renameNode( final Document doc, final Node node )
+    {
+        final NodeList children = node.getChildNodes();
+
+        for ( int i = 0; i < children.getLength(); i++ )
+        {
+            renameNode( doc, children.item( i ) );
+        }
+
+        try
+        {
+            doc.renameNode( node, namespace, node.getLocalName() );
+        }
+        catch ( DOMException ignored )
+        {
+        }
+
+        return node;
     }
 
     protected abstract void doParse( DomElement root )

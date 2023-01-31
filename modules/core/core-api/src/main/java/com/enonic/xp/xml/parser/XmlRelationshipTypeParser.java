@@ -27,6 +27,7 @@ public final class XmlRelationshipTypeParser
         throws Exception
     {
         assertTagName( root, "relationship-type" );
+        this.builder.displayName( root.getChildValue( "display-name" ) );
         this.builder.description( root.getChildValue( "description" ) );
         this.builder.fromSemantic( root.getChildValueTrimmed( "from-semantic" ) );
         this.builder.toSemantic( root.getChildValueTrimmed( "to-semantic" ) );

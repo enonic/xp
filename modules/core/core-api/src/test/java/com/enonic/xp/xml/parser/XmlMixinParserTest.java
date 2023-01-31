@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.xml.XmlException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XmlMixinParserTest
     extends XmlModelParserTest
@@ -41,6 +43,12 @@ public class XmlMixinParserTest
     {
         parseRemoveNs( this.parser, ".xml" );
         assertResult();
+    }
+
+    @Test
+    public void testInvalidSchema()
+    {
+        assertThrows( XmlException.class, () -> parse( this.parser, "-invalid-schema.xml" ) );
     }
 
     private void assertResult()

@@ -9,6 +9,11 @@ public abstract class XmlModelParser<P extends XmlModelParser<P>>
 {
     protected ApplicationKey currentApplication;
 
+    public XmlModelParser()
+    {
+        super( "urn:enonic:xp:model:1.0" );
+    }
+
     public P currentApplication( final ApplicationKey value )
     {
         this.currentApplication = value;

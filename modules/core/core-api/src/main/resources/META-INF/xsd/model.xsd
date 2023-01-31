@@ -317,6 +317,7 @@
 
   <xs:complexType name="relationshipType">
     <xs:sequence>
+      <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="xs:string"/>
       <xs:element minOccurs="0" name="from-semantic" type="xs:string"/>
       <xs:element minOccurs="0" name="to-semantic" type="xs:string"/>
