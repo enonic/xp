@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.core.impl.content.event.ContentEventProducer;
+import com.enonic.xp.core.impl.content.event.ContentEventProducerImpl;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
@@ -65,7 +65,7 @@ public class FindContentIdsByQueryCommandTest
             .translator( translator )
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .query( ContentQuery.create()
                         .queryExpr( QueryExpr.from( null, new DynamicOrderExpr(
                             FunctionExpr.from( "geoDistance", ValueExpr.string( "my-value" ), ValueExpr.geoPoint( "83,80" ),

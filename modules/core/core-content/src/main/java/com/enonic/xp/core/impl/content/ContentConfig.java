@@ -9,4 +9,6 @@ public @interface ContentConfig
     boolean attachments_allowUnsafeNames() default false;
 
     String auditlog_filter() default "!system.content.update,*";
+
+    String event_period() default "PT1S";
 }

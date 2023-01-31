@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.core.impl.content.event.ContentEventProducer;
+import com.enonic.xp.core.impl.content.event.ContentEventProducerImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.MoveNodeParams;
@@ -52,7 +52,7 @@ public class MoveContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
@@ -79,7 +79,7 @@ public class MoveContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .build();
 
         final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
@@ -126,7 +126,7 @@ public class MoveContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .build();
 
         final Node mockNode = Node.create()

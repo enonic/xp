@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.core.impl.content.event.ContentEventProducer;
+import com.enonic.xp.core.impl.content.event.ContentEventProducerImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.media.MediaInfo;
@@ -63,7 +63,7 @@ public class UpdateContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .mediaInfo( this.mediaInfo )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
@@ -93,7 +93,7 @@ public class UpdateContentCommandTest
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
             .translator( this.translator )
-            .contentEventProducer( new ContentEventProducer( eventPublisher ) )
+            .contentEventProducer( new ContentEventProducerImpl( eventPublisher, nodeService ) )
             .mediaInfo( this.mediaInfo )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
