@@ -18,7 +18,10 @@ declare global {
 
 import type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
+    AggregationsToAggregationResults,
+    BucketsAggregationResult,
     ByteSource,
     Content,
     Filter,
@@ -27,6 +30,7 @@ import type {
     HighlightResult,
     PublishInfo,
     QueryDsl,
+    SingleValueMetricAggregationResult,
     SortDsl,
 } from '@enonic-types/core';
 
@@ -54,56 +58,59 @@ function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
 }
 
 export type {
-    Attachment,
-    ByteSource,
-    PublishInfo,
-    Content,
-    Component,
-    Region,
-    QueryDsl,
-    InDslExpression,
-    ExistsDslExpression,
-    FulltextDslExpression,
-    LikeDslExpression,
-    StemmedDslExpression,
-    TermDslExpression,
-    RangeDslExpression,
-    NgramDslExpression,
-    BooleanDslExpression,
-    MatchAllDslExpression,
-    PathMatchDslExpression,
-    DateBucket,
-    BucketsAggregationResult,
-    StatsAggregationResult,
-    SingleValueMetricAggregationResult,
-    AggregationsResult,
     Aggregation,
-    TermsAggregation,
-    HistogramAggregation,
+    Aggregations,
+    AggregationsResult,
+    Attachment,
+    BooleanDslExpression,
+    BooleanFilter,
+    BucketsAggregationResult,
+    BucketsAggregationsUnion,
+    ByteSource,
+    Component,
+    Content,
+    DateBucket,
     DateHistogramAggregation,
-    NumericRange,
-    NumericRangeAggregation,
     DateRange,
     DateRangeAggregation,
-    StatsAggregation,
+    ExistsDslExpression,
+    ExistsFilter,
+    Filter,
+    FormItem,
+    FormItemInlineMixin,
+    FormItemInput,
+    FormItemLayout,
+    FormItemOptionSet,
+    FormItemSet,
+    FulltextDslExpression,
     GeoDistanceAggregation,
-    MinAggregation,
-    MaxAggregation,
-    ValueCountAggregation,
+    HasValueFilter,
     Highlight,
     HighlightResult,
-    ExistsFilter,
-    NotExistsFilter,
-    HasValueFilter,
+    HistogramAggregation,
     IdsFilter,
-    BooleanFilter,
-    Filter,
-    FormItemSet,
-    FormItemLayout,
-    FormItemInput,
-    FormItemOptionSet,
-    FormItemInlineMixin,
-    FormItem,
+    InDslExpression,
+    LikeDslExpression,
+    MatchAllDslExpression,
+    MaxAggregation,
+    MinAggregation,
+    NgramDslExpression,
+    NotExistsFilter,
+    NumericRange,
+    NumericRangeAggregation,
+    PathMatchDslExpression,
+    PublishInfo,
+    QueryDsl,
+    RangeDslExpression,
+    Region,
+    SingleValueMetricAggregationResult,
+    SingleValueMetricAggregationsUnion,
+    StatsAggregation,
+    StatsAggregationResult,
+    StemmedDslExpression,
+    TermDslExpression,
+    TermsAggregation,
+    ValueCountAggregation,
 } from '@enonic-types/core';
 
 type Attachments = Content['attachments'];
@@ -412,11 +419,14 @@ export {
     _delete as delete,
 };
 
-export interface ContentsResult<Hit extends Content<unknown>> {
+export interface ContentsResult<
+    Hit extends Content<unknown>,
+    AggregationOutput extends Record<string, AggregationsResult>
+> {
     total: number;
     count: number;
     hits: Hit[];
-    aggregations?: Record<string, AggregationsResult>;
+    aggregations: AggregationOutput;
     highlight?: Record<string, HighlightResult>;
 }
 
@@ -436,7 +446,10 @@ interface GetChildContentHandler {
 
     setSort(value?: string | null): void;
 
-    execute<Hit extends Content<unknown>>(): ContentsResult<Hit>;
+    execute<
+        Hit extends Content<unknown>,
+        AggregationOutput extends Record<string, AggregationsResult>
+    >(): ContentsResult<Hit, AggregationOutput>;
 }
 
 /**
@@ -452,7 +465,10 @@ interface GetChildContentHandler {
  *
  * @returns {Object} Result (of content) fetched from the repository.
  */
-export function getChildren<Hit extends Content<unknown> = Content>(params: GetChildContentParams): ContentsResult<Hit> {
+export function getChildren<
+    Hit extends Content<unknown> = Content,
+    AggregationOutput extends Record<string, AggregationsResult> = never
+>(params: GetChildContentParams): ContentsResult<Hit, AggregationOutput> {
     checkRequired(params, 'key');
 
     const {
@@ -467,7 +483,7 @@ export function getChildren<Hit extends Content<unknown> = Content>(params: GetC
     bean.setStart(start);
     bean.setCount(count);
     bean.setSort(__.nullOrValue(sort));
-    return __.toNativeObject(bean.execute<Hit>());
+    return __.toNativeObject(bean.execute<Hit, AggregationOutput>());
 }
 
 export type IdGeneratorSupplier = (value: string) => string;
@@ -542,7 +558,10 @@ interface CreateContentHandler {
  *
  * @returns {object} Content created as JSON.
  */
-export function create<Data = Record<string, unknown>, Type extends string = string>(params: CreateContentParams<Data, Type>): Content<Data, Type> {
+export function create<
+    Data = Record<string, unknown>,
+    Type extends string = string
+>(params: CreateContentParams<Data, Type>): Content<Data, Type> {
     const {
         name,
         parentPath,
@@ -578,13 +597,13 @@ export function create<Data = Record<string, unknown>, Type extends string = str
     return __.toNativeObject(bean.execute<Data, Type>());
 }
 
-export interface QueryContentParams {
+export interface QueryContentParams<AggregationInput extends Aggregations> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: AggregationInput;
     contentTypes?: string[];
     highlight?: Highlight;
 }
@@ -606,7 +625,10 @@ interface QueryContentHandler {
 
     setHighlight(value: ScriptValue): void;
 
-    execute<Hit extends Content<unknown>>(): ContentsResult<Hit>;
+    execute<
+        Hit extends Content<unknown>,
+        AggregationInput extends Aggregations = never
+    >(): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>>;
 }
 
 /**
@@ -625,7 +647,11 @@ interface QueryContentHandler {
  *
  * @returns {object} Result of query.
  */
-export function query<Hit extends Content<unknown> = Content>(params: QueryContentParams): ContentsResult<Hit> {
+
+export function query<
+    Hit extends Content<unknown> = Content,
+    AggregationInput extends Aggregations = never
+>(params: QueryContentParams<AggregationInput>): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>> {
     const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(params.start);
@@ -637,7 +663,7 @@ export function query<Hit extends Content<unknown> = Content>(params: QueryConte
     bean.setFilters(__.toScriptValue(params.filters));
     bean.setHighlight(__.toScriptValue(params.highlight));
 
-    return __.toNativeObject(bean.execute<Hit>());
+    return __.toNativeObject(bean.execute<Hit, AggregationInput>());
 }
 
 export interface ModifyContentParams<Data, Type extends string> {

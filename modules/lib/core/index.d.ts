@@ -283,27 +283,23 @@ export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 //
 // START AGGREGATIONS, FILTERS
 //
-export interface Bucket {
-    [subAggregationName: string]: AggregationsResult | string | number | undefined;
-
+export type Bucket<SubAggregations extends Aggregations = Record<never, never>> = AggregationsToAggregationResults<SubAggregations> & {
     key: string;
     docCount: number;
-}
+};
 
-export interface NumericBucket
-    extends Bucket {
+export type NumericBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
     from?: number;
     to?: number;
-}
+};
 
-export interface DateBucket
-    extends Bucket {
+export type DateBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
     from?: string;
     to?: string;
-}
+};
 
-export interface BucketsAggregationResult {
-    buckets: (DateBucket | NumericBucket)[];
+export interface BucketsAggregationResult<SubAggregations extends Aggregations = Record<never, never>> {
+    buckets: (DateBucket<SubAggregations> | NumericBucket<SubAggregations>)[];
 }
 
 export interface StatsAggregationResult {
@@ -318,7 +314,35 @@ export interface SingleValueMetricAggregationResult {
     value: number;
 }
 
-export type AggregationsResult = BucketsAggregationResult | StatsAggregationResult | SingleValueMetricAggregationResult;
+export type AggregationsResult<SubAggregations extends Aggregations = Record<never, never>> =
+    | BucketsAggregationResult<SubAggregations>
+    | StatsAggregationResult
+    | SingleValueMetricAggregationResult;
+
+export type AggregationsToAggregationResults<AggregationInput extends Aggregations = never> = {
+    [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
+};
+
+export type AggregationToAggregationResult<Type extends Aggregation> = Type extends BucketsAggregationsUnion
+                                                          ? BucketsAggregationResult<Type['aggregations']>
+                                                          : Type extends SingleValueMetricAggregationsUnion
+                                                            ? SingleValueMetricAggregationResult
+                                                            : Type extends StatsAggregation
+                                                              ? StatsAggregationResult
+                                                              : never;
+
+export type BucketsAggregationsUnion =
+    | TermsAggregation
+    | GeoDistanceAggregation
+    | NumericRangeAggregation
+    | DateRangeAggregation
+    | HistogramAggregation
+    | DateHistogramAggregation;
+
+export type SingleValueMetricAggregationsUnion =
+    | MinAggregation
+    | MaxAggregation
+    | ValueCountAggregation;
 
 export type Aggregation =
     | TermsAggregation
@@ -332,6 +356,8 @@ export type Aggregation =
     | MaxAggregation
     | ValueCountAggregation;
 
+export type Aggregations = Record<string, Aggregation>;
+
 export interface TermsAggregation {
     terms: {
         field: string;
@@ -339,7 +365,7 @@ export interface TermsAggregation {
         size?: number;
         minDocCount?: number;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface HistogramAggregation {
@@ -351,7 +377,7 @@ export interface HistogramAggregation {
         extendedBoundMax?: number;
         minDocCount?: number;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface DateHistogramAggregation {
@@ -361,7 +387,7 @@ export interface DateHistogramAggregation {
         minDocCount?: number;
         format: string;
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface NumericRange {
@@ -375,7 +401,7 @@ export interface NumericRangeAggregation {
         field: string;
         ranges?: NumericRange[];
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface DateRange {
@@ -390,7 +416,7 @@ export interface DateRangeAggregation {
         format: string;
         ranges: DateRange[];
     };
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: Aggregations;
 }
 
 export interface StatsAggregation {
