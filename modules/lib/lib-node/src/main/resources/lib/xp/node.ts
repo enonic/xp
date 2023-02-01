@@ -15,7 +15,9 @@ declare global {
 
 import type {
     Aggregation,
+    Aggregations,
     AggregationsResult,
+    AggregationsToAggregationResults,
     ByteSource,
     Filter,
     Highlight,
@@ -26,50 +28,53 @@ import type {
 } from '@enonic-types/core';
 
 export type {
-    ByteSource,
-    GroupKey,
-    PrincipalKey,
-    RoleKey,
-    UserKey,
-    QueryDsl,
-    SortDsl,
-    InDslExpression,
-    ExistsDslExpression,
-    FulltextDslExpression,
-    LikeDslExpression,
-    StemmedDslExpression,
-    TermDslExpression,
-    RangeDslExpression,
-    NgramDslExpression,
-    BooleanDslExpression,
-    MatchAllDslExpression,
-    PathMatchDslExpression,
-    DateBucket,
-    BucketsAggregationResult,
-    StatsAggregationResult,
-    SingleValueMetricAggregationResult,
-    AggregationsResult,
     Aggregation,
-    TermsAggregation,
-    HistogramAggregation,
+    Aggregations,
+    AggregationsResult,
+    BooleanDslExpression,
+    BooleanFilter,
+    BucketsAggregationResult,
+    BucketsAggregationsUnion,
+    ByteSource,
+    DateBucket,
     DateHistogramAggregation,
-    NumericRange,
-    NumericRangeAggregation,
     DateRange,
     DateRangeAggregation,
-    StatsAggregation,
+    ExistsDslExpression,
+    ExistsFilter,
+    Filter,
+    FulltextDslExpression,
     GeoDistanceAggregation,
-    MinAggregation,
-    MaxAggregation,
-    ValueCountAggregation,
+    GroupKey,
+    HasValueFilter,
     Highlight,
     HighlightResult,
-    ExistsFilter,
-    NotExistsFilter,
-    HasValueFilter,
+    HistogramAggregation,
     IdsFilter,
-    BooleanFilter,
-    Filter,
+    InDslExpression,
+    LikeDslExpression,
+    MatchAllDslExpression,
+    MaxAggregation,
+    MinAggregation,
+    NgramDslExpression,
+    NotExistsFilter,
+    NumericRange,
+    NumericRangeAggregation,
+    PathMatchDslExpression,
+    PrincipalKey,
+    QueryDsl,
+    RangeDslExpression,
+    RoleKey,
+    SingleValueMetricAggregationResult,
+    SingleValueMetricAggregationsUnion,
+    SortDsl,
+    StatsAggregation,
+    StatsAggregationResult,
+    StemmedDslExpression,
+    TermDslExpression,
+    TermsAggregation,
+    UserKey,
+    ValueCountAggregation,
   } from '@enonic-types/core';
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
@@ -124,22 +129,22 @@ export interface SuggestionResult {
     }[];
 }
 
-export interface NodeQueryResult {
+export interface NodeQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
     total: number;
     count: number;
     hits: NodeQueryResultHit[];
-    aggregations?: Record<string, AggregationsResult>;
+    aggregations: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
-export interface NodeMultiRepoQueryResult {
+export interface NodeMultiRepoQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
     total: number;
     count: number;
     hits: (NodeQueryResultHit & {
         repoId: string;
         branch: string;
     })[];
-    aggregations?: Record<string, AggregationsResult>;
+    aggregations: AggregationOutput;
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
@@ -197,7 +202,9 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
 }
 
 interface MultiRepoNodeHandler {
-    query(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult;
+    query<
+        AggregationInput extends Record<string, Aggregation> = never
+    >(params: QueryNodeHandlerParams): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 }
 
 interface NodeHandler {
@@ -217,7 +224,9 @@ interface NodeHandler {
 
     move(source: string, target: string): boolean;
 
-    query(params: QueryNodeHandlerParams): NodeQueryResult;
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeHandlerParams): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 
     exist(key: string): boolean;
 
@@ -328,13 +337,13 @@ export interface SetChildOrderParams {
     childOrder: string;
 }
 
-export interface QueryNodeParams {
+export interface QueryNodeParams<AggregationInput extends Aggregations> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
-    aggregations?: Record<string, Aggregation>;
+    aggregations?: AggregationInput;
     suggestions?: Record<string, TermSuggestion>;
     highlight?: Highlight;
     explain?: boolean;
@@ -580,7 +589,9 @@ export interface RepoConnection {
 
     setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData>;
 
-    query(params: QueryNodeParams): NodeQueryResult;
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 
     exists(key: string): boolean;
 
@@ -831,7 +842,9 @@ class RepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): NodeQueryResult {
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeQueryResult<AggregationsToAggregationResults<AggregationInput>> {
         const {
             start = 0,
             count = 10,
@@ -856,7 +869,7 @@ class RepoConnectionImpl
         handlerParams.setFilters(__.toScriptValue(filters));
         handlerParams.setExplain(explain);
 
-        return __.toNativeObject(this.nodeHandler.query(handlerParams));
+        return __.toNativeObject(this.nodeHandler.query<AggregationInput>(handlerParams));
     }
 
     /**
@@ -1070,7 +1083,9 @@ class RepoConnectionImpl
 }
 
 export interface MultiRepoConnection {
-    query(params: QueryNodeParams): NodeMultiRepoQueryResult;
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>>;
 }
 
 /**
@@ -1102,7 +1117,9 @@ class MultiRepoConnectionImpl
      * @param {boolean} [params.explain=false] Return score calculation explanation.
      * @returns {object} Result of query.
      */
-    query(params: QueryNodeParams): NodeMultiRepoQueryResult {
+    query<
+        AggregationInput extends Aggregations = never
+    >(params: QueryNodeParams<AggregationInput>): NodeMultiRepoQueryResult<AggregationsToAggregationResults<AggregationInput>> {
         const {
             start = 0,
             count = 10,
@@ -1127,7 +1144,7 @@ class MultiRepoConnectionImpl
         handlerParams.setFilters(__.toScriptValue(filters));
         handlerParams.setExplain(explain);
 
-        return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
+        return __.toNativeObject(this.multiRepoConnection.query<AggregationInput>(handlerParams));
     }
 }
 
