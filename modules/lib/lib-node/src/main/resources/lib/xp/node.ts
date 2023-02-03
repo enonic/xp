@@ -669,6 +669,9 @@ class RepoConnectionImpl
         return __.toNativeObject(this.nodeHandler.modify(__.toScriptValue(params.editor), params.key));
     }
 
+    get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;
+    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
     /**
      * This function fetches nodes.
      *
@@ -676,13 +679,10 @@ class RepoConnectionImpl
      * @example-ref examples/node/get-2.js
      * @example-ref examples/node/get-3.js
      *
-     * @param {...(string|object|(string|object)[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
+     * @param {...(string|object|Array.<(string|object)>)} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
      *
      * @returns {object} The node or node array (as JSON) fetched from the repository.
      */
-    get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;
-    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
-    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null {
         const handlerParams = __.newBean<GetNodeHandlerParams>('com.enonic.xp.lib.node.GetNodeHandlerParams');
         prepareGetParams(keys, handlerParams);
