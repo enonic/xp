@@ -77,7 +77,6 @@ public class ContentEventProducerImpl
 
         while ( !eventQueue.isEmpty() )
         {
-
             final ContentEvent event = eventQueue.peek();
 
             if ( event.isValid() )
