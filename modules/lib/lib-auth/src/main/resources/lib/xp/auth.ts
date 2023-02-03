@@ -140,6 +140,8 @@ interface GetUserHandler {
     getUser(): User | null;
 }
 
+export function getUser(params?: { includeProfile?: false }): User | null;
+export function getUser<Profile extends Record<string, unknown> = Record<string, unknown>>(params: { includeProfile: true }): UserWithProfile<Profile> | null;
 /**
  * Returns the logged-in user. If not logged-in, this will return *undefined*.
  *
@@ -150,8 +152,6 @@ interface GetUserHandler {
  *
  * @returns {User} Information for logged-in user.
  */
-export function getUser(params?: { includeProfile?: false }): User | null;
-export function getUser<Profile extends Record<string, unknown> = Record<string, unknown>>(params: { includeProfile: true }): UserWithProfile<Profile> | null;
 export function getUser(params?: GetUserParams): User | null {
     const {
         includeProfile = false,
@@ -245,6 +245,9 @@ interface GetPrincipalHandler {
     getPrincipal(): Principal | null;
 }
 
+export function getPrincipal(userKey: UserKey): User | null;
+export function getPrincipal(groupKey: GroupKey): Group | null;
+export function getPrincipal(roleKey: RoleKey): Role | null;
 /**
  * Returns the principal with the specified key.
  *
@@ -253,9 +256,6 @@ interface GetPrincipalHandler {
  * @param {string} principalKey Principal key to look for.
  * @returns {User | Group | Role} the principal specified, or null if it doesn't exist.
  */
-export function getPrincipal(userKey: UserKey): User | null;
-export function getPrincipal(groupKey: GroupKey): Group | null;
-export function getPrincipal(roleKey: RoleKey): Role | null;
 export function getPrincipal(principalKey: PrincipalKey): Principal | null {
     checkRequiredValue(principalKey, 'principalKey');
 
@@ -732,6 +732,8 @@ interface FindUsersHandler {
     execute(): FindPrincipalsResult<User | UserWithProfile>;
 }
 
+export function findUsers(params: FindUsersParams & {includeProfile?: false}): FindPrincipalsResult<User>;
+export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {includeProfile: true}): FindPrincipalsResult<UserWithProfile<Profile>>;
 /**
  * Search for users matching the specified query.
  *
@@ -746,8 +748,6 @@ interface FindUsersHandler {
  *
  * @returns {FindPrincipalsResult} Result of query.
  */
-export function findUsers(params: FindUsersParams & {includeProfile?: false}): FindPrincipalsResult<User>;
-export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {includeProfile: true}): FindPrincipalsResult<UserWithProfile<Profile>>;
 export function findUsers(params: FindUsersParams): FindPrincipalsResult<User | UserWithProfile> {
     const {
         start = 0,
