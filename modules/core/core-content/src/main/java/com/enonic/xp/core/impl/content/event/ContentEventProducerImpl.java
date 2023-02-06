@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.ContentConfig;
@@ -143,6 +144,8 @@ public class ContentEventProducerImpl
 
         createOfflineMovedEvents( result.getSuccessfulEntries(),
                                   invalidatedOnline );  // send OFFLINE for published and moved, or republished to the future
+//        createOfflineMovedEvents( result.getSuccessfulEntries(),
+//                                  invalidatedOnline );
 
         createPublishedEvents( result.getSuccessful() );
     }
@@ -200,32 +203,32 @@ public class ContentEventProducerImpl
         final List<ContentEvent> events = result.stream()
             .filter( e -> e.getCurrentTargetPath() != null && !e.getCurrentTargetPath().equals( e.getNodeBranchEntry().getNodePath() ) )
             .filter( e -> !invalidated.contains( e.getNodeBranchEntry().getNodeId() ) )
-            .map( pushNodeEntry -> ContentEvent.create()
-                .type( ContentEventType.OFFLINE )
-                .nodeId( pushNodeEntry.getNodeBranchEntry().getNodeId() )
-                .nodePath( pushNodeEntry.getCurrentTargetPath() )
-                .nodeVersionId( pushNodeEntry.getNodeBranchEntry().getVersionId() )
-                .time( now )
-                .build() )
+            .map( pushNodeEntry -> {
+                final ContentPublishInfo publishInfo = fetchPublishInfo( pushNodeEntry.getNodeBranchEntry().getNodeVersionKey() );
+
+                return ContentEvent.create()
+                    .type( ContentEventType.OFFLINE )
+                    .nodeId( pushNodeEntry.getNodeBranchEntry().getNodeId() )
+                    .nodePath( pushNodeEntry.getCurrentTargetPath() )
+                    .nodeVersionId( pushNodeEntry.getNodeBranchEntry().getVersionId() )
+                    .time( publishInfo != null ? publishInfo.getFrom().minus( Duration.ofMillis( 1 ) ) : null ) // TODO: discuss
+                    .build();
+            } )
             .collect( Collectors.toList() );
 
         eventQueue.addAll( events );
     }
 
+    private ContentPublishInfo fetchPublishInfo( final NodeVersionKey nodeVersionKey )
+    {
+        final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionKey );
+        return publishInfoSerializer.serialize( nodeVersion.getData().getRoot() );
+    }
+
     private List<ContentEvent> createPublishedEvents( final NodeBranchEntries result, final ContentEventType type )
     {
         return result.stream().map( nodeBranchEntry -> {
-            final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeBranchEntry.getNodeVersionKey() );
-            if ( nodeVersion == null )
-            {
-                return null;
-            }
-            final ContentPublishInfo contentPublishInfo = publishInfoSerializer.serialize( nodeVersion.getData().getRoot() );
-
-            if ( contentPublishInfo == null )
-            {
-                return null;
-            }
+            final ContentPublishInfo contentPublishInfo = fetchPublishInfo( nodeBranchEntry.getNodeVersionKey() );
 
             switch ( type )
             {
