@@ -46,6 +46,7 @@ class ApplicationFactoryServiceImplTest
     public void init()
     {
         appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
     }
 
     @Test
