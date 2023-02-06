@@ -39,6 +39,11 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 
     private CharSource source;
 
+    public XmlObjectParser()
+    {
+        this( null );
+    }
+
     public XmlObjectParser( final String namespace )
     {
         this.namespace = namespace;
@@ -125,16 +130,16 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     private Document validate( final Document doc )
         throws Exception
     {
-        final Document processedDoc = processDocument( doc );
+        final Document docWithNamespace = forceNamespace( doc );
 
-        final DOMSource source = new DOMSource( processedDoc );
+        final DOMSource source = new DOMSource( docWithNamespace );
         source.setSystemId( this.systemId );
 
         final DOMResult result = VALIDATOR.validate( source );
         return (Document) result.getNode();
     }
 
-    private Document processDocument( final Document doc )
+    private Document forceNamespace( final Document doc )
     {
         Element originalDocumentElement = doc.getDocumentElement();
 
