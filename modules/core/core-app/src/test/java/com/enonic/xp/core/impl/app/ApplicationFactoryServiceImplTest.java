@@ -77,6 +77,8 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
