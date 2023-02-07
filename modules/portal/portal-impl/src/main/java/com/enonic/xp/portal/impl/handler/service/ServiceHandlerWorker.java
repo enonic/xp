@@ -68,6 +68,9 @@ final class ServiceHandlerWorker
         final ContentResolverResult resolvedContent = contentResolver.resolve( request );
 
         final Site site = resolvedContent.getNearestSite();
+        this.request.setSite( site );
+
+        this.request.setContent( resolvedContent.getContent() );
 
         //Checks if the application is set on the current site
         if ( site != null && site.getSiteConfigs().get( applicationKey ) == null )
@@ -82,12 +85,8 @@ final class ServiceHandlerWorker
             throw WebException.forbidden( String.format( "Service [%s] forbidden for this application", descriptorKey ) );
         }
 
-        //Prepares the request
         this.request.setApplicationKey( applicationKey );
-        this.request.setContent( resolvedContent.getContent() );
-        this.request.setSite( site );
 
-        //Executes the service
         final ControllerScript controllerScript = getScript();
         final PortalResponse portalResponse = controllerScript.execute( this.request );
 

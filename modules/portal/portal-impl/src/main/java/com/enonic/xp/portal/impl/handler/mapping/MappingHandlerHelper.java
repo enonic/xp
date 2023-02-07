@@ -100,8 +100,10 @@ class MappingHandlerHelper
         final ContentResolverResult resolvedContent = contentResolver.resolve( request );
 
         final Site site = resolvedContent.getNearestSite();
+        request.setSite( site );
 
         final Content content = resolvedContent.getContent();
+        request.setContent( content );
 
         final SiteConfigs siteConfigs;
 
@@ -132,8 +134,6 @@ class MappingHandlerHelper
         {
             final ControllerMappingDescriptor mapping = resolve.get();
 
-            request.setContent( content );
-            request.setSite( site );
             request.setContextPath(
                 request.getBaseUri() + "/" + request.getBranch() + ( site != null ? site.getPath() : ContentPath.ROOT ) );
             request.setApplicationKey( mapping.getApplication() );

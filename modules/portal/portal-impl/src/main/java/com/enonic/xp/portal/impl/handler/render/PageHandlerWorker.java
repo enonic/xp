@@ -50,6 +50,9 @@ final class PageHandlerWorker
     {
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
 
+        final Site site = resolvedContent.getNearestSiteOrElseThrow();
+        this.request.setSite( site );
+
         final Content content = resolvedContent.getContentOrElseThrow();
 
         if ( content.getType().isShortcut() )
@@ -57,15 +60,12 @@ final class PageHandlerWorker
             return renderShortcut( content );
         }
 
-        final Site site = resolvedContent.getNearestSiteOrElseThrow();
-
         final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
 
         final Content effectiveContent = Content.create( content ).page( resolvedPage.getEffectivePage() ).build();
+        this.request.setContent( effectiveContent );
 
         final DescriptorKey pageDescriptorKey = resolvedPage.getController();
-        this.request.setSite( site );
-        this.request.setContent( effectiveContent );
 
         this.request.setApplicationKey( pageDescriptorKey != null ? pageDescriptorKey.getApplicationKey() : null );
         this.request.setPageDescriptor( pageDescriptorKey != null ? this.pageDescriptorService.getByKey( pageDescriptorKey ) : null );

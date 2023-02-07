@@ -111,11 +111,13 @@ public final class PortalRequest
         this.content = content;
     }
 
+    @Deprecated
     public PageTemplate getPageTemplate()
     {
         return pageTemplate;
     }
 
+    @Deprecated
     public void setPageTemplate( final PageTemplate pageTemplate )
     {
         this.pageTemplate = pageTemplate;
