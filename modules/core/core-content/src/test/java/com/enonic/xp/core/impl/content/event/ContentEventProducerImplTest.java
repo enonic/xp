@@ -38,6 +38,8 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodesResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -154,7 +156,7 @@ public class ContentEventProducerImplTest
     }
 
     @Test
-    public void movedAndRepublishedToTheFuture()
+    public void movedAndRepublished()
         throws Exception
     {
         final Instant now = Instant.now();
@@ -202,6 +204,88 @@ public class ContentEventProducerImplTest
 
         assertThat( online2Fields ).hasSize( 1 )
             .anyMatch( stringStringMap -> stringStringMap.get( "path" ).equals( republishedToTheFuture.getNodePath().toString() ) );
+
+    }
+
+    @Test
+    public void invalidatedEvents()
+        throws Exception
+    {
+        final Instant now = Instant.now();
+        final NodeBranchEntry successPublished1 =
+            createNodeBranchEntry( now.plus( Duration.ofMillis( 100 ) ), now.plus( Duration.ofDays( 1 ) ), now );
+        final NodeBranchEntry successPublished2 =
+            copyNodeBranchEntry( successPublished1, NodePath.create().elements( "/new" ).build(), now, now.plus( Duration.ofDays( 2 ) ),
+                                 now );
+
+        producer.published( PushNodesResult.create().addSuccess( successPublished1, successPublished1.getNodePath() ).build() );
+
+        producer.published( PushNodesResult.create().addSuccess( successPublished2, successPublished2.getNodePath() ).build() );
+
+        Thread.sleep( 600 );
+
+        final ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 1 ) ).publish( argumentCaptor.capture() );
+
+        Assertions.assertEquals( "content.online", argumentCaptor.getValue().getType() );
+
+        final List<Map<String, String>> contents = (List<Map<String, String>>) argumentCaptor.getValue().getData().get( "contents" );
+
+        assertThat( contents ).hasSize( 1 ).anyMatch( stringStringMap -> stringStringMap.get( "path" ).equals( "/new" ) );
+    }
+
+    @Test
+    public void failWithException()
+        throws Exception
+    {
+        final Instant now = Instant.now();
+        final NodeBranchEntry successPublished1 = createNodeBranchEntry( now, now.plus( Duration.ofMillis( 1 ) ), now );
+
+        final PushNodesResult result = PushNodesResult.create().addSuccess( successPublished1, successPublished1.getNodePath() ).build();
+
+        doAnswer( a -> {
+            if ( ( (Event) a.getArgument( 0 ) ).isType( "content.online" ) )
+            {
+                throw new RuntimeException();
+            }
+            return null;
+        } ).when( eventPublisher ).publish( isA( Event.class ) );
+
+        producer.published( result );
+
+        Thread.sleep( 100 );
+
+        final ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 2 ) ).publish( argumentCaptor.capture() );
+
+    }
+
+    @Test
+    public void failWithError()
+        throws Exception
+    {
+        final Instant now = Instant.now();
+        final NodeBranchEntry successPublished1 = createNodeBranchEntry( now, now.plus( Duration.ofMillis( 1 ) ), now );
+
+        final PushNodesResult result = PushNodesResult.create().addSuccess( successPublished1, successPublished1.getNodePath() ).build();
+
+        doAnswer( a -> {
+            if ( ( (Event) a.getArgument( 0 ) ).isType( "content.online" ) )
+            {
+                throw new UnknownError();
+            }
+            return null;
+        } ).when( eventPublisher ).publish( isA( Event.class ) );
+
+        producer.published( result );
+
+        Thread.sleep( 100 );
+
+        final ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 1 ) ).publish( argumentCaptor.capture() );
 
     }
 

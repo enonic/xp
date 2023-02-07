@@ -117,7 +117,7 @@ public class ContentEventProducerImpl
 
     private void runEvents( final EventBatch batch )
     {
-        switch ( batch.type )
+        switch ( batch.getType() )
         {
             case ONLINE:
                 this.eventPublisher.publish( ContentEvents.online( batch.getEvents() ) );
@@ -142,9 +142,10 @@ public class ContentEventProducerImpl
         final Set<NodeId> invalidatedOnline = invalidate( result.getSuccessful().getKeys(), ContentEventType.ONLINE );
         invalidate( result.getSuccessful().getKeys(), ContentEventType.OFFLINE );
 
-        createOfflineMovedEvents( result.getSuccessfulEntries(),
-                                  invalidatedOnline );  // send OFFLINE for published and moved, or republished to the future
-//        createOfflineMovedEvents( result.getSuccessfulEntries(),
+        createOfflineEventsForMoved( result.getSuccessfulEntries(),
+                                     invalidatedOnline );  // send OFFLINE for published and moved, or republished to the future
+
+//        createOfflineRepublishedEvents( result.getSuccessfulEntries(),
 //                                  invalidatedOnline );
 
         createPublishedEvents( result.getSuccessful() );
@@ -196,10 +197,8 @@ public class ContentEventProducerImpl
         eventQueue.addAll( events );
     }
 
-    private void createOfflineMovedEvents( final List<PushNodeEntry> result, final Set<NodeId> invalidated )
+    private void createOfflineEventsForMoved( final List<PushNodeEntry> result, final Set<NodeId> invalidated )
     {
-        final Instant now = Instant.now();
-
         final List<ContentEvent> events = result.stream()
             .filter( e -> e.getCurrentTargetPath() != null && !e.getCurrentTargetPath().equals( e.getNodeBranchEntry().getNodePath() ) )
             .filter( e -> !invalidated.contains( e.getNodeBranchEntry().getNodeId() ) )
@@ -219,6 +218,11 @@ public class ContentEventProducerImpl
         eventQueue.addAll( events );
     }
 
+//    private void createOfflineEventsForRepublished( final List<PushNodeEntry> result, final Set<NodeId> invalidated )
+//    {
+//
+//    }
+
     private ContentPublishInfo fetchPublishInfo( final NodeVersionKey nodeVersionKey )
     {
         final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionKey );
@@ -233,7 +237,6 @@ public class ContentEventProducerImpl
             switch ( type )
             {
                 case ONLINE:
-
                     return contentPublishInfo.getFrom() != null ? ContentEvent.create()
                         .type( type )
                         .nodeId( nodeBranchEntry.getNodeId() )
