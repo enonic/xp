@@ -11,7 +11,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.IndexService;
@@ -19,17 +18,13 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.DslExpr;
-import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -99,11 +94,11 @@ public class VirtualAppService
         return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
     }
 
-    private Node initVirtualAppNode( final ApplicationKey key )
+    private Node initVirtualAppNode( final ApplicationKey applicationKey )
     {
         final Node virtualAppNode = nodeService.create( CreateNodeParams.create()
                                                             .data( new PropertyTree() )
-                                                            .name( key.toString() )
+                                                            .name( applicationKey.getName() )
                                                             .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
@@ -114,24 +109,19 @@ public class VirtualAppService
         return virtualAppNode;
     }
 
-    private boolean deleteVirtualAppNode( final ApplicationKey key )
+    private boolean deleteVirtualAppNode( final ApplicationKey applicationKey )
     {
         return nodeService.delete( DeleteNodeParams.create()
-                                       .nodePath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
+                                       .nodePath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, applicationKey.getName() )
+                                                      .build() )
                                        .refresh( RefreshMode.ALL )
                                        .build() ).getNodeBranchEntries().isNotEmpty();
     }
 
     private Application doGet( final ApplicationKey applicationKey )
     {
-        PropertyTree request = new PropertyTree();
-        final PropertySet likeExpression = request.addSet( "like" );
-        likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey );
-
-        final FindNodesByQueryResult nodes =
-            this.nodeService.findByQuery( NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
-        if ( nodes.getTotalHits() != 0 )
+        if ( this.nodeService.nodeExists(
+            NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, applicationKey.getName() ).build() ) )
         {
             return VirtualAppFactory.create( applicationKey, nodeService );
         }
@@ -139,7 +129,6 @@ public class VirtualAppService
         {
             return null;
         }
-
     }
 
     private NodeIds initSiteNodes( final NodePath parent )

@@ -720,6 +720,8 @@ public class NodeServiceImpl
     @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
+        verifyContext();
+
         return DeleteVersionCommand.create().
             nodeId( nodeId ).
             nodeVersionId( nodeVersionId ).
@@ -1017,6 +1019,20 @@ public class NodeServiceImpl
 
     @Override
     public boolean nodeExists( final NodeId nodeId )
+    {
+        final Trace trace = Tracer.newTrace( "node.nodeExists" );
+
+        if ( trace == null )
+        {
+            return executeNodeExists( nodeId );
+        }
+        return Tracer.trace( trace, () -> {
+            trace.put( "id", nodeId );
+            return executeNodeExists( nodeId );
+        } );
+    }
+
+    private boolean executeNodeExists( final NodeId nodeId )
     {
         verifyContext();
         return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;
