@@ -46,6 +46,7 @@ class ApplicationFactoryServiceImplTest
     public void init()
     {
         appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
     }
 
     @Test
@@ -77,6 +78,8 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
