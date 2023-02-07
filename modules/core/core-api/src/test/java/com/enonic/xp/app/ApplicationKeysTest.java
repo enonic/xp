@@ -1,16 +1,19 @@
 package com.enonic.xp.app;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ApplicationKeysTest
+class ApplicationKeysTest
 {
-    private static final ArrayList<ApplicationKey> list = new ArrayList();
+    private static final ArrayList<ApplicationKey> list = new ArrayList<>();
 
     @BeforeAll
     public static void initApplicationKeys()
@@ -43,7 +46,7 @@ public class ApplicationKeysTest
     @Test
     public void fromIterable()
     {
-        ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable) ApplicationKeysTest.list );
+        ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable<ApplicationKey>) ApplicationKeysTest.list );
 
         assertEquals( 3, applicationKeys.getSize() );
         assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
@@ -71,5 +74,20 @@ public class ApplicationKeysTest
         assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 0 ) ) );
         assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 1 ) ) );
         assertTrue( applicationKeys.contains( ApplicationKeysTest.list.get( 2 ) ) );
+    }
+
+    @Test
+    void deduplicate()
+    {
+        ApplicationKeys applicationKeys =
+            ApplicationKeys.from( ApplicationKey.from( "aaa" ), ApplicationKey.from( "aaa" ), ApplicationKey.from( "bbb" ) );
+
+        assertThat( applicationKeys ).containsExactly( ApplicationKey.from( "aaa" ), ApplicationKey.from( "bbb" ) );
+    }
+
+    @Test
+    void empty_from_same()
+    {
+        assertSame( ApplicationKeys.empty(), ApplicationKeys.from( Collections.emptyList() ) );
     }
 }

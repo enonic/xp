@@ -103,26 +103,29 @@ class MappingHandlerHelper
 
         final Content content = resolvedContent.getContent();
 
-        final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
+        final SiteConfigs siteConfigs;
 
         if ( site != null )
         {
-            site.getSiteConfigs().forEach( siteConfigs::add );
+            siteConfigs = site.getSiteConfigs();
         }
         else if ( content != null )
         {
-            Optional.ofNullable( ProjectName.from( ( (PortalRequest) webRequest ).getRepositoryId() ) )
-                .map( projectName -> callAsAdmin( () -> projectService.get( projectName ) ) )
-                .map( Project::getSiteConfigs )
-                .ifPresent( configs -> configs.forEach( siteConfigs::add ) );
+            final Project project = callAsAdmin( () -> projectService.get( ProjectName.from( request.getRepositoryId() ) ) );
+            siteConfigs = Optional.ofNullable( project ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
         }
         else
+        {
+            siteConfigs = SiteConfigs.empty();
+        }
+
+        if ( siteConfigs.isEmpty() )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
         final Optional<ControllerMappingDescriptor> resolve =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs.build(),
+            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs,
                                                 getServiceType( request ) );
 
         if ( resolve.isPresent() )

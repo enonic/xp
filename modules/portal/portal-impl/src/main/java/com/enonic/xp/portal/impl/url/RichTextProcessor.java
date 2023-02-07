@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -31,6 +30,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -313,20 +313,22 @@ public class RichTextProcessor
 
     private StyleDescriptors getStyleDescriptors( final PortalRequest portalRequest )
     {
-        final ImmutableList.Builder<ApplicationKey> applicationKeyList = new ImmutableList.Builder<ApplicationKey>().
-            add( SYSTEM_APPLICATION_KEY );
+        final ImmutableSet.Builder<ApplicationKey> appKeys =
+            ImmutableSet.<ApplicationKey>builder().add( SYSTEM_APPLICATION_KEY );
+
         if ( portalRequest != null )
         {
             final Site site = portalRequest.getSite();
             if ( site != null )
             {
-                final ImmutableSet<ApplicationKey> siteApplicationKeySet = site.getSiteConfigs().getApplicationKeys();
-                applicationKeyList.addAll( siteApplicationKeySet );
+                for ( SiteConfig siteConfig : site.getSiteConfigs() )
+                {
+                    appKeys.add( siteConfig.getApplicationKey() );
+                }
             }
         }
 
-        final ApplicationKeys applicationKeys = ApplicationKeys.from( applicationKeyList.build() );
-        return styleDescriptorService.getByApplications( applicationKeys );
+        return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys.build() ) );
     }
 
     private ImageStyle getImageStyle( final Map<String, ImageStyle> imageStyleMap, final Map<String, String> urlParams )

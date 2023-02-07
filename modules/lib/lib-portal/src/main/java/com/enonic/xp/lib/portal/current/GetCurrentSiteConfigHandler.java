@@ -33,7 +33,11 @@ public final class GetCurrentSiteConfigHandler
 
             if ( site != null )
             {
-                appConfigPropertyTree = site.getSiteConfig( applicationKey );
+                final SiteConfig config = site.getSiteConfigs().get( applicationKey );
+                if ( config != null )
+                {
+                    appConfigPropertyTree = config.getConfig();
+                }
             }
             else
             {
