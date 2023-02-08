@@ -382,17 +382,19 @@ public class NodeServiceImpl
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
         final Trace trace = Tracer.newTrace( "node.findByQuery" );
-        if ( trace == null )
+        if ( trace != null )
         {
-            return executeFindByQuery( nodeQuery );
-        }
-
-        return Tracer.trace( trace, () -> {
             trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
+        }
+
+        return Tracer.trace( trace, () -> {
             final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
-            trace.put( "hits", result.getTotalHits() );
+            if ( trace != null )
+            {
+                trace.put( "hits", result.getTotalHits() );
+            }
             return result;
         } );
     }
@@ -1020,13 +1022,8 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodeId nodeId )
     {
-        final Trace trace = Tracer.newTrace( "node.nodeExists" );
 
-        if ( trace == null )
-        {
-            return executeNodeExists( nodeId );
-        }
-        return Tracer.trace( trace, () -> {
+        return Tracer.trace( "node.exists", trace -> {
             trace.put( "id", nodeId );
             return executeNodeExists( nodeId );
         } );
