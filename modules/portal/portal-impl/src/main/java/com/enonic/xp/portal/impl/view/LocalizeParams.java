@@ -152,11 +152,6 @@ class LocalizeParams
         return locale;
     }
 
-    private PortalRequest getRequest()
-    {
-        return request;
-    }
-
     public Object[] getParams()
     {
         return params;

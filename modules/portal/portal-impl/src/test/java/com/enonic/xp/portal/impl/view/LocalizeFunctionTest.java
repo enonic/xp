@@ -11,8 +11,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.site.Site;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,8 +33,6 @@ public class LocalizeFunctionTest
             build();
 
         this.portalRequest.setSite( site );
-
-        PortalRequestAccessor.set( this.portalRequest );
     }
 
     @Override
@@ -118,25 +114,14 @@ public class LocalizeFunctionTest
     @Test
     public void not_in_request_context()
     {
-        final PortalRequest savedPortalRequest = PortalRequestAccessor.get();
-        PortalRequestAccessor.set( null );
+        Mockito.when(
+                localeService.getBundle( Mockito.eq( ApplicationKey.from( "com.enonic.myapp" ) ), Mockito.eq( new Locale( "en", "US" ) ) ) )
+            .thenReturn( messageBundle );
 
-        try
-        {
-            Mockito.when( localeService.getBundle( Mockito.eq( ApplicationKey.from( "com.enonic.myapp" ) ),
-                                                   Mockito.eq( new Locale( "en", "US" ) ) ) ).
-                thenReturn( messageBundle );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.any( Object[].class ) ) )
+            .thenReturn( "localizedString" );
 
-            Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.any( Object[].class ) ) ).thenReturn(
-                "localizedString" );
-
-            final Object result =
-                execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "_application=com.enonic.myapp", "a=5", "b=2" );
-            assertEquals( "localizedString", result );
-        }
-        finally
-        {
-            PortalRequestAccessor.set( savedPortalRequest );
-        }
+        final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "_application=com.enonic.myapp", "a=5", "b=2" );
+        assertEquals( "localizedString", result );
     }
 }

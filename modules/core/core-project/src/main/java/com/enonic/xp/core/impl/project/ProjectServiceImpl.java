@@ -8,7 +8,6 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,10 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
@@ -74,6 +73,7 @@ import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
@@ -313,10 +313,11 @@ public class ProjectServiceImpl
             throw new ProjectNotFoundException( projectName );
         }
 
-        final Collection<ApplicationKey> projectApps = project.getSiteConfigs().getApplicationKeys();
-
-        return callWithListContext( () -> ApplicationKeys.from( Stream.concat( projectApps.stream(), doGetParents( project ).stream()
-            .flatMap( parent -> parent.getSiteConfigs().getApplicationKeys().stream() ) ).distinct().collect( Collectors.toList() ) ) );
+        return callWithListContext( () -> ApplicationKeys.from( Stream.concat( Stream.of( project ), doGetParents( project ).stream() )
+                                                                    .map( Project::getSiteConfigs )
+                                                                    .flatMap( SiteConfigs::stream )
+                                                                    .map( SiteConfig::getApplicationKey )
+                                                                    .collect( ImmutableSet.toImmutableSet() ) ) );
     }
 
     @Override
@@ -662,7 +663,7 @@ public class ProjectServiceImpl
 
         final PropertySet contentRootData = data.addSet( "data" );
 
-        if ( !params.getSiteConfigs().getApplicationKeys().isEmpty() )
+        if ( !params.getSiteConfigs().isEmpty() )
         {
             SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), contentRootData );
         }

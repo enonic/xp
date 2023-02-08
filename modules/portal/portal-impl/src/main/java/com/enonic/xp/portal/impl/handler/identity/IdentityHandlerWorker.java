@@ -32,8 +32,8 @@ final class IdentityHandlerWorker
     {
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
 
-        this.request.setContent( resolvedContent.getContent() );
         this.request.setSite( resolvedContent.getNearestSite() );
+        this.request.setContent( resolvedContent.getContent() );
 
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             idProviderKey( idProviderKey ).

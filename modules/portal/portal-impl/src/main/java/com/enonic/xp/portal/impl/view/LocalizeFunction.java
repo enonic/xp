@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.view.ViewFunction;
 import com.enonic.xp.portal.view.ViewFunctionParams;
 
@@ -30,7 +29,7 @@ public final class LocalizeFunction
     @Override
     public Object execute( final ViewFunctionParams params )
     {
-        final LocalizeParams localizeParams = new LocalizeParams( PortalRequestAccessor.get() ).setAsMap( params.getArgs() );
+        final LocalizeParams localizeParams = new LocalizeParams( params.getPortalRequest() ).setAsMap( params.getArgs() );
 
         final MessageBundle bundle = this.localeService.getBundle( localizeParams.getApplicationKey(), localizeParams.getLocale() );
 

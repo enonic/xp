@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -69,15 +68,14 @@ final class ServiceHandlerWorker
         final ContentResolverResult resolvedContent = contentResolver.resolve( request );
 
         final Site site = resolvedContent.getNearestSite();
+        this.request.setSite( site );
+
+        this.request.setContent( resolvedContent.getContent() );
 
         //Checks if the application is set on the current site
-        if ( site != null )
+        if ( site != null && site.getSiteConfigs().get( applicationKey ) == null )
         {
-            final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
-            if ( siteConfig == null )
-            {
-                throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
-            }
+            throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
         }
 
         //Checks if the application is set on the current application
@@ -87,12 +85,8 @@ final class ServiceHandlerWorker
             throw WebException.forbidden( String.format( "Service [%s] forbidden for this application", descriptorKey ) );
         }
 
-        //Prepares the request
         this.request.setApplicationKey( applicationKey );
-        this.request.setContent( resolvedContent.getContent() );
-        this.request.setSite( site );
 
-        //Executes the service
         final ControllerScript controllerScript = getScript();
         final PortalResponse portalResponse = controllerScript.execute( this.request );
 

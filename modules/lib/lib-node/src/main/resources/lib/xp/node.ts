@@ -1066,7 +1066,7 @@ class RepoConnectionImpl
             includeChildren = true,
             parent,
             dataProcessor,
-            refresh
+            refresh,
         } = params ?? {};
 
         const handlerParams = __.newBean<DuplicateNodeHandlerParams>('com.enonic.xp.lib.node.DuplicateNodeHandlerParams');

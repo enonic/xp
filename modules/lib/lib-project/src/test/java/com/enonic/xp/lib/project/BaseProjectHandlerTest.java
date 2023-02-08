@@ -2,6 +2,7 @@ package com.enonic.xp.lib.project;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.mockito.Mockito;
 
@@ -29,6 +30,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -104,7 +106,8 @@ public abstract class BaseProjectHandlerTest
             {
                 throw new ProjectNotFoundException( (ProjectName) mock.getArguments()[0] );
             }
-            return ApplicationKeys.from( project.getSiteConfigs().getApplicationKeys() );
+            return ApplicationKeys.from(
+                project.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() ) );
         } );
 
         when( this.projectService.getPermissions( any( ProjectName.class ) ) ).thenReturn( ProjectPermissions.create().build() );

@@ -382,17 +382,19 @@ public class NodeServiceImpl
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
         final Trace trace = Tracer.newTrace( "node.findByQuery" );
-        if ( trace == null )
+        if ( trace != null )
         {
-            return executeFindByQuery( nodeQuery );
-        }
-
-        return Tracer.trace( trace, () -> {
             trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
+        }
+
+        return Tracer.trace( trace, () -> {
             final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
-            trace.put( "hits", result.getTotalHits() );
+            if ( trace != null )
+            {
+                trace.put( "hits", result.getTotalHits() );
+            }
             return result;
         } );
     }
@@ -720,6 +722,8 @@ public class NodeServiceImpl
     @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
+        verifyContext();
+
         return DeleteVersionCommand.create().
             nodeId( nodeId ).
             nodeVersionId( nodeVersionId ).
@@ -1017,6 +1021,15 @@ public class NodeServiceImpl
 
     @Override
     public boolean nodeExists( final NodeId nodeId )
+    {
+
+        return Tracer.trace( "node.exists", trace -> {
+            trace.put( "id", nodeId );
+            return executeNodeExists( nodeId );
+        } );
+    }
+
+    private boolean executeNodeExists( final NodeId nodeId )
     {
         verifyContext();
         return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;

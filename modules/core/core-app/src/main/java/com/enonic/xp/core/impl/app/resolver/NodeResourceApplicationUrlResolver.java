@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -7,18 +8,17 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.query.expr.DslExpr;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 public final class NodeResourceApplicationUrlResolver
     implements ApplicationUrlResolver
@@ -36,15 +36,11 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        PropertyTree request = new PropertyTree();
-
-        final PropertySet likeExpression = request.addSet( "like" );
-        likeExpression.addString( "field", "_path" );
-        likeExpression.addString( "value", "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" );
+        final QueryExpr query = QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
+            "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" ) ) );
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
-                NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
+            final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
 
             return nodes.getNodeHits()
                 .stream()
@@ -52,41 +48,39 @@ public final class NodeResourceApplicationUrlResolver
                     .removeFromBeginning( NodePath.create( applicationKey.toString() ).build() )
                     .asAbsolute()
                     .toString() )
-                .collect( Collectors.toSet() );
+                .collect( Collectors.toCollection( LinkedHashSet::new ) );
         } );
-
     }
 
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME ) )
+        if ( !path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" ) )
         {
             return null;
         }
 
-        Node applicationNode = VirtualAppContext.createContext()
-            .callWith( () -> nodeService.getByPath(
-                NodePath.create( NodePath.create( applicationKey.toString() ).build() ).build().asAbsolute() ) );
+        final NodePath appPath = NodePath.create( NodePath.ROOT, applicationKey.getName() ).build();
 
-        if ( applicationNode == null )
+        final Node resourceNode =
+            VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( NodePath.create( appPath, path ).build() ) );
+
+        if ( resourceNode == null )
         {
-            return null;
-        }
-
-        final Node resourceNode = VirtualAppContext.createContext()
-            .callWith( () -> nodeService.getByPath(
-                NodePath.create( NodePath.create( applicationKey.toString() ).build(), path ).build().asAbsolute() ) );
-
-        if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
-        {
-            if ( resourceNode == null || resourceNode.data().getValue( SchemaNodePropertyNames.RESOURCE ) == null )
+            if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
             {
-                return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
-                                              applicationNode.getTimestamp() );
+                final Node applicationNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( appPath ) );
+
+                return applicationNode != null ? new NodeValueResource( ResourceKey.from( applicationKey, path ),
+                                                                        VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
+                                                                        applicationNode.getTimestamp() ) : null;
+            }
+            else
+            {
+                return null;
             }
         }
 
-        return resourceNode != null ? new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode ) : null;
+        return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
     }
 }

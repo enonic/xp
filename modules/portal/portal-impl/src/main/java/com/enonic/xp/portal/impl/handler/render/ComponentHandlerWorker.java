@@ -54,20 +54,17 @@ final class ComponentHandlerWorker
     {
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
 
-        final Content content = resolvedContent.getContentOrElseThrow();
-
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
+        this.request.setSite( site );
 
-        Page page = content.getPage();
-
-        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+        final Content content = resolvedContent.getContentOrElseThrow();
 
         Component component = null;
 
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final Component fragmentComponent = page.getFragment();
+            final Component fragmentComponent = content.getPage().getFragment();
             if ( this.componentPath.isEmpty() )
             {
                 component = fragmentComponent;
@@ -78,6 +75,7 @@ final class ComponentHandlerWorker
             }
         }
 
+        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
         final Page effectivePage;
         if ( component == null )
         {
@@ -97,7 +95,6 @@ final class ComponentHandlerWorker
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
         final DescriptorKey controller = resolvedPage.getController();
 
-        this.request.setSite( site );
         this.request.setContent( effectiveContent );
         this.request.setComponent( component );
         this.request.setApplicationKey( controller != null ? controller.getApplicationKey() : null );
