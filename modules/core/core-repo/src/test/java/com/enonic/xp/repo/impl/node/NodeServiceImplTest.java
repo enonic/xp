@@ -36,6 +36,8 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
+import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
@@ -63,10 +65,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
@@ -519,6 +523,43 @@ public class NodeServiceImplTest
     void delete_root_id_fail() {
 
         assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
+    }
+
+    @Test
+    void nodes_has_children()
+    {
+        final Node parentNode1 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node-1" ).
+            build() );
+
+        final Node parentNode2 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node-2" ).
+            build() );
+
+        final Node parentNode3 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node-3" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( parentNode1.path() ).
+            name( "my-child-node-1" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( parentNode2.path() ).
+            name( "my-child-node-2" ).
+            build() );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final NodesHasChildrenResult result = nodeService.hasChildren( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
+
+        assertTrue( result.hasChild( parentNode1.id() ) );
+        assertTrue( result.hasChild( parentNode2.id() ) );
+        assertFalse( result.hasChild( parentNode3.id() ) );
     }
 
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )

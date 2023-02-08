@@ -1,7 +1,9 @@
 package com.enonic.xp.trace;
 
 import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class Tracer
 {
@@ -96,6 +98,41 @@ public final class Tracer
     public static <T> T trace( final String name, final TraceRunnable<T> runnable )
     {
         return trace( newTrace( name ), runnable );
+    }
+
+    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main, final BiConsumer<Trace, T> after )
+    {
+        final Trace trace = newTrace( name );
+
+        if ( trace != null )
+        {
+            before.accept( trace );
+            final Trace current = current();
+
+            try
+            {
+                setCurrent( trace );
+                startTrace( trace );
+                final T result = main.get();
+                after.accept( trace, result );
+                return result;
+            }
+            finally
+            {
+                endTrace( trace );
+                setCurrent( current );
+            }
+        }
+        else
+        {
+            return main.get();
+        }
+    }
+
+    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
+    {
+        return trace( name, before, main, ( trace, t ) -> {
+        } );
     }
 
     public static <T> T traceEx( final String name, final Callable<T> callable )

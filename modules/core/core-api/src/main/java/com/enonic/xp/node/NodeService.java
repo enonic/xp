@@ -112,6 +112,7 @@ public interface NodeService
 
     LoadNodeResult loadNode( LoadNodeParams params );
 
+    @Deprecated
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
