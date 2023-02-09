@@ -1,53 +1,55 @@
 package com.enonic.xp.task;
 
 import java.time.Instant;
+import java.util.Objects;
 
+@Deprecated
 public class TaskInfoJson
 {
     private final TaskInfo taskInfo;
 
     public TaskInfoJson( final TaskInfo taskInfo )
     {
-        this.taskInfo = taskInfo;
+        this.taskInfo = Objects.requireNonNull( taskInfo );
     }
 
     public String getId()
     {
-        return taskInfo != null ? taskInfo.getId().toString() : "";
+        return taskInfo.getId().toString();
     }
 
     public String getDescription()
     {
-        return taskInfo != null ? taskInfo.getDescription() : "";
+        return taskInfo.getDescription();
     }
 
     public String getName()
     {
-        return taskInfo != null ? taskInfo.getName() : "";
+        return taskInfo.getName();
     }
 
     public String getState()
     {
-        return taskInfo != null ? taskInfo.getState().name() : "";
+        return taskInfo.getState().name();
     }
 
     public String getApplication()
     {
-        return taskInfo != null ? taskInfo.getApplication().toString() : "";
+        return taskInfo.getApplication().toString();
     }
 
     public String getUser()
     {
-        return taskInfo != null ? taskInfo.getUser().toString() : "";
+        return taskInfo.getUser().toString();
     }
 
     public Instant getStartTime()
     {
-        return taskInfo != null ? taskInfo.getStartTime() : null;
+        return taskInfo.getStartTime();
     }
 
     public TaskProgressJson getProgress()
     {
-        return taskInfo != null && taskInfo.getProgress() != null ? new TaskProgressJson( taskInfo.getProgress() ) : null;
+        return taskInfo.getProgress() != null ? new TaskProgressJson( taskInfo.getProgress() ) : null;
     }
 }

@@ -10,14 +10,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
 
 public class AuditLogResourceTest
     extends JaxRsResourceTestSupport
@@ -60,7 +61,7 @@ public class AuditLogResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.taskService = Mockito.mock( TaskService.class );
+        this.taskService = mock( TaskService.class );
 
         resource = new AuditLogResource();
         resource.setTaskService( taskService );

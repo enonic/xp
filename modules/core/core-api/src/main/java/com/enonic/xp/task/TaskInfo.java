@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
@@ -33,17 +34,19 @@ public final class TaskInfo
 
     private final Instant startTime;
 
+    private final ClusterNodeId node;
+
     private TaskInfo( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.id, "TaskId cannot be null" );
-        id = builder.id;
-        name = builder.name == null || builder.name.isBlank() ? "task-" + builder.id.toString() : builder.name;
-        state = builder.state == null ? TaskState.WAITING : builder.state;
-        description = builder.description == null ? "" : builder.description;
-        progress = builder.progress == null ? TaskProgress.EMPTY : builder.progress;
-        application = builder.application == null ? ApplicationKey.SYSTEM : builder.application;
-        user = builder.user == null ? PrincipalKey.ofAnonymous() : builder.user;
-        startTime = builder.startTime == null ? Instant.now() : builder.startTime;
+        id = Preconditions.checkNotNull( builder.id, "Task id cannot be null" );
+        application = Preconditions.checkNotNull( builder.application, "Task application cannot be null" );
+        name = Preconditions.checkNotNull( builder.name, "Task name cannot be null" );
+        state = Objects.requireNonNullElse( builder.state, TaskState.WAITING );
+        description = Objects.requireNonNullElse( builder.description, "" );
+        progress = Objects.requireNonNullElse( builder.progress, TaskProgress.EMPTY );
+        user = Objects.requireNonNullElse( builder.user, PrincipalKey.ofAnonymous() );
+        startTime = Preconditions.checkNotNull( builder.startTime, "Task startTime cannot be null" );
+        node = builder.node;
     }
 
     public TaskId getId()
@@ -96,6 +99,11 @@ public final class TaskInfo
         return startTime;
     }
 
+    public ClusterNodeId getNode()
+    {
+        return node;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -107,13 +115,14 @@ public final class TaskInfo
         return Objects.equals( id, taskInfo.id ) && Objects.equals( name, taskInfo.name ) &&
             Objects.equals( description, taskInfo.description ) && state == taskInfo.state &&
             Objects.equals( progress, taskInfo.progress ) && Objects.equals( application, taskInfo.application ) &&
-            Objects.equals( user, taskInfo.user ) && Objects.equals( startTime, taskInfo.startTime );
+            Objects.equals( user, taskInfo.user ) && Objects.equals( startTime, taskInfo.startTime ) &&
+            Objects.equals( node, taskInfo.node );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, description, state, progress, application, user, startTime );
+        return Objects.hash( id, name, description, state, progress, application, user, startTime, node );
     }
 
     @Override
@@ -128,6 +137,7 @@ public final class TaskInfo
             add( "application", application ).
             add( "user", user ).
             add( "startTime", startTime ).
+            add( "node", node ).
             toString();
     }
 
@@ -159,6 +169,8 @@ public final class TaskInfo
 
         private Instant startTime;
 
+        private ClusterNodeId node;
+
         private Builder()
         {
         }
@@ -173,6 +185,7 @@ public final class TaskInfo
             application = source.application;
             user = source.user;
             startTime = source.startTime;
+            node = source.node;
         }
 
         public Builder id( final TaskId id )
@@ -223,61 +236,15 @@ public final class TaskInfo
             return this;
         }
 
+        public Builder node( final ClusterNodeId location )
+        {
+            this.node = location;
+            return this;
+        }
+
         public TaskInfo build()
         {
             return new TaskInfo( this );
-        }
-    }
-
-    private Object writeReplace()
-    {
-        return new SerializedForm( this );
-    }
-
-    private static class SerializedForm
-        implements Serializable
-    {
-        private static final long serialVersionUID = 0;
-
-        private final TaskId id;
-
-        private final String name;
-
-        private final String description;
-
-        private final TaskState state;
-
-        private final TaskProgress progress;
-
-        private final String application;
-
-        private final String user;
-
-        private final Instant startTime;
-
-        SerializedForm( TaskInfo taskInfo )
-        {
-            this.id = taskInfo.id;
-            this.name = taskInfo.name;
-            this.description = taskInfo.description;
-            this.progress = taskInfo.progress;
-            this.state = taskInfo.state;
-            this.application = taskInfo.application.toString();
-            this.user = taskInfo.user.toString();
-            this.startTime = taskInfo.startTime;
-        }
-
-        private Object readResolve()
-        {
-            return TaskInfo.create().id( id ).
-                name( name ).
-                description( description ).
-                state( state ).
-                application( ApplicationKey.from( application ) ).
-                user( PrincipalKey.from( user ) ).
-                startTime( startTime ).
-                progress( progress ).
-                build();
         }
     }
 }

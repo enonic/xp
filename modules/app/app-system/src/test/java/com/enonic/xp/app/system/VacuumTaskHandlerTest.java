@@ -1,5 +1,6 @@
 package com.enonic.xp.app.system;
 
+import java.time.Instant;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -7,12 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgressReporterContext;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
@@ -22,7 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class VacuumTaskHandlerTest
@@ -35,6 +41,9 @@ public class VacuumTaskHandlerTest
     private VacuumService vacuumService;
 
     @Mock
+    private TaskService taskService;
+
+    @Mock
     private ProgressReporter progressReporter;
 
     @Override
@@ -44,6 +53,7 @@ public class VacuumTaskHandlerTest
         super.initialize();
 
         addService( VacuumService.class, this.vacuumService );
+        addService( TaskService.class, this.taskService );
     }
 
     @Test
@@ -52,12 +62,18 @@ public class VacuumTaskHandlerTest
     {
         final TaskId taskId = TaskId.from( "task" );
 
-        Mockito.when( vacuumService.vacuum( isA( VacuumParameters.class ) ) ).thenReturn( VacuumResult.create().build() );
+        when( taskService.getTaskInfo( taskId ) ).thenReturn( TaskInfo.create()
+                                                                  .id( taskId )
+                                                                  .name( "com.enonic.xp.app.system:vacuum" )
+                                                                  .application( ApplicationKey.SYSTEM )
+                                                                  .startTime( Instant.now() )
+                                                                  .build() );
+        when( vacuumService.vacuum( any( VacuumParameters.class ) ) ).thenReturn( VacuumResult.create().build() );
 
-        TaskProgressReporterContext.withContext( ( id, progressReporter ) -> runFunction( "/test/VacuumTaskHandlerTest.js", "vacuum" ) ).
-            run( taskId, progressReporter );
+        TaskProgressReporterContext.withContext( ( id, progressReporter ) -> runFunction( "/test/VacuumTaskHandlerTest.js", "vacuum" ) )
+            .run( taskId, progressReporter );
 
-        Mockito.verify( vacuumService, Mockito.times( 1 ) ).vacuum( paramsCaptor.capture() );
+        verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertEquals( "PT2S", paramsCaptor.getValue().getAgeThreshold().toString() );
         assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );
@@ -71,13 +87,18 @@ public class VacuumTaskHandlerTest
     {
         final TaskId taskId = TaskId.from( "task" );
 
-        Mockito.when( vacuumService.vacuum( isA( VacuumParameters.class ) ) ).thenReturn( VacuumResult.create().build() );
+        when( taskService.getTaskInfo( taskId ) ).thenReturn( TaskInfo.create()
+                                                                  .id( taskId )
+                                                                  .name( "com.enonic.xp.app.system:vacuum" )
+                                                                  .application( ApplicationKey.SYSTEM )
+                                                                  .startTime( Instant.now() )
+                                                                  .build() );
+        when( vacuumService.vacuum( any( VacuumParameters.class ) ) ).thenReturn( VacuumResult.create().build() );
 
         TaskProgressReporterContext.withContext(
-            ( id, progressReporter ) -> runFunction( "/test/VacuumTaskHandlerTest.js", "vacuumDefault" ) ).
-            run( taskId, progressReporter );
+            ( id, progressReporter ) -> runFunction( "/test/VacuumTaskHandlerTest.js", "vacuumDefault" ) ).run( taskId, progressReporter );
 
-        Mockito.verify( vacuumService, Mockito.times( 1 ) ).vacuum( paramsCaptor.capture() );
+        verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertNull( paramsCaptor.getValue().getAgeThreshold() );
         assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );

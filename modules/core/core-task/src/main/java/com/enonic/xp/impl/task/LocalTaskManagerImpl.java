@@ -14,7 +14,11 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.core.internal.Local;
 import com.enonic.xp.core.internal.concurrent.RecurringJob;
 import com.enonic.xp.event.EventPublisher;
@@ -26,7 +30,6 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
 @Component(immediate = true)
@@ -46,7 +49,9 @@ public final class LocalTaskManagerImpl
 
     private Clock clock;
 
-    private RecurringJob recurringJob;
+    private RecurringJob cleaner;
+
+    private volatile ClusterConfig clusterConfig;
 
     @Activate
     public LocalTaskManagerImpl( @Reference(service = TaskManagerExecutor.class) final Executor executor,
@@ -61,13 +66,13 @@ public final class LocalTaskManagerImpl
     @Activate
     public void activate()
     {
-        recurringJob = cleanupScheduler.scheduleWithFixedDelay( this::removeExpiredTasks );
+        cleaner = cleanupScheduler.scheduleWithFixedDelay( this::removeExpiredTasks );
     }
 
     @Deactivate
     public void deactivate()
     {
-        recurringJob.cancel();
+        cleaner.cancel();
     }
 
     @Override
@@ -86,8 +91,11 @@ public final class LocalTaskManagerImpl
     @Override
     public List<TaskInfo> getRunningTasks()
     {
-        return tasks.values().stream().map( TaskInfoHolder::getTaskInfo ).filter( TaskInfo::isRunning ).collect(
-            Collectors.toUnmodifiableList() );
+        return tasks.values()
+            .stream()
+            .map( TaskInfoHolder::getTaskInfo )
+            .filter( TaskInfo::isRunning )
+            .collect( Collectors.toUnmodifiableList() );
     }
 
     private void updateProgress( final TaskId taskId, final int current, final int total )
@@ -154,47 +162,34 @@ public final class LocalTaskManagerImpl
     @Override
     public void submitTask( final DescribedTask runnableTask )
     {
-        final Trace trace = Tracer.newTrace( "task.submit" );
-        if ( trace == null )
-        {
-            doSubmitTask( runnableTask );
-        }
-        else
-        {
-            Tracer.trace( trace, () -> doSubmitTask( runnableTask ) );
+        Tracer.trace( "task.submit", trace -> {
             trace.put( "taskId", runnableTask.getTaskId() );
             trace.put( "name", runnableTask.getName() );
-        }
+        }, () -> doSubmitTask( runnableTask ) );
     }
 
     private void doSubmitTask( final DescribedTask runnableTask )
     {
-        executor.execute( prepareRunnable( runnableTask ) );
-    }
-
-    private Runnable prepareRunnable( final DescribedTask runnableTask )
-    {
         final TaskId id = runnableTask.getTaskId();
-
         final User user = Objects.requireNonNullElse( runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS );
-        final TaskInfo info = TaskInfo.create().
-            id( id ).
-            description( runnableTask.getDescription() ).
-            name( runnableTask.getName() ).
-            state( TaskState.WAITING ).
-            startTime( Instant.now( clock ) ).
-            application( runnableTask.getApplicationKey() ).
-            user( user.getKey() ).
-            build();
+        final TaskInfo info = TaskInfo.create()
+            .id( id )
+            .description( runnableTask.getDescription() )
+            .name( runnableTask.getName() )
+            .state( TaskState.WAITING )
+            .startTime( Instant.now( clock ) )
+            .application( runnableTask.getApplicationKey() )
+            .node( clusterConfig == null ? null : clusterConfig.name() )
+            .user( user.getKey() )
+            .build();
 
-        final TaskInfoHolder taskInfoHolder = TaskInfoHolder.create().
-            taskInfo( info ).
-            build();
+        final TaskInfoHolder taskInfoHolder = TaskInfoHolder.create().taskInfo( info ).build();
 
         tasks.put( id, taskInfoHolder );
 
         eventPublisher.publish( TaskEvents.submitted( info ) );
-        return new TaskRunnable( runnableTask, new ProgressReporterAdapter( id ) );
+
+        executor.execute( new TaskRunnable( runnableTask, new ProgressReporterAdapter( id ) ) );
     }
 
     private void removeExpiredTasks()
@@ -254,5 +249,16 @@ public final class LocalTaskManagerImpl
         {
             updateProgress( taskId, message );
         }
+    }
+
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+    public void setClusterConfig( final ClusterConfig clusterConfig )
+    {
+        this.clusterConfig = clusterConfig;
+    }
+
+    public void unsetClusterConfig( final ClusterConfig clusterConfig )
+    {
+        // Keep previous ClusterConfig until new is set
     }
 }

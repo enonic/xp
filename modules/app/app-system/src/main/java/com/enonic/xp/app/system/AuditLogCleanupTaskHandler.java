@@ -8,6 +8,8 @@ import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 
 public class AuditLogCleanupTaskHandler
     implements ScriptBean
@@ -16,25 +18,34 @@ public class AuditLogCleanupTaskHandler
 
     private AuditLogService auditLogService;
 
+    private TaskService taskService;
+
     private String ageThreshold;
+
+    private TaskId taskId;
 
     public void setAgeThreshold( final String ageThreshold )
     {
         this.ageThreshold = ageThreshold;
     }
 
+    public void setTaskId( final String taskId )
+    {
+        this.taskId = TaskId.from( taskId );
+    }
+
     public void execute()
     {
-        auditLogService.cleanUp( CleanUpAuditLogParams.create().
-            listener( new Listener() ).
-            ageThreshold( ageThreshold ).
-            build() );
+        TaskUtils.checkAlreadySubmitted( taskService.getTaskInfo( taskId ), taskService.getAllTasks() );
+
+        auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( new Listener() ).ageThreshold( ageThreshold ).build() );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
         this.auditLogService = context.getService( AuditLogService.class ).get();
+        this.taskService = context.getService( TaskService.class ).get();
     }
 
     private static class Listener

@@ -29,7 +29,8 @@ public class VacuumCommandTest
     {
         return VacuumCommand.create().
             taskService( taskService ).
-            params( vacuumRequestJson ).
+            ageThreshold( vacuumRequestJson.getAgeThreshold() ).
+            tasks( vacuumRequestJson.getTasks() ).
             build();
     }
 

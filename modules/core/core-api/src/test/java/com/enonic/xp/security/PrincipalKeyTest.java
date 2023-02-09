@@ -2,6 +2,8 @@ package com.enonic.xp.security;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.node.NodePath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalKeyTest
 {
-
-
     @Test
     public void testPrincipalUser()
         throws Exception
@@ -153,5 +153,11 @@ public class PrincipalKeyTest
         throws Exception
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my'<User" ));
+    }
+
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( PrincipalKey.class ).verify();
     }
 }

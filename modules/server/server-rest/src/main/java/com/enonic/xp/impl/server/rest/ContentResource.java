@@ -24,13 +24,15 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
 import com.enonic.xp.impl.server.rest.task.ReprocessRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 @Path("/content")
@@ -41,6 +43,8 @@ import com.enonic.xp.task.TaskService;
 public final class ContentResource
     implements JaxRsComponent
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
+
     private ContentService contentService;
 
     private TaskService taskService;
@@ -48,8 +52,6 @@ public final class ContentResource
     private ProjectService projectService;
 
     private SyncContentService syncContentService;
-
-    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     @POST
     @Path("reprocess")
@@ -59,15 +61,14 @@ public final class ContentResource
         final List<ContentPath> updated = new ArrayList<>();
         final List<String> errors = new ArrayList<>();
 
-        final Content content = this.contentService.getByPath( request.getSourceBranchPath().getContentPath() );
+        final Content content = this.contentService.getByPath( request.getContentPath() );
         try
         {
             reprocessContent( content, request.isSkipChildren(), updated, errors );
         }
         catch ( Exception e )
         {
-            errors.add(
-                String.format( "Content '%s' - %s: %s", content.getPath(), e.getClass().getCanonicalName(), e.getMessage() ) );
+            errors.add( String.format( "Content '%s' - %s: %s", content.getPath(), e.getClass().getCanonicalName(), e.getMessage() ) );
             LOG.warn( "Error reprocessing content [" + content.getPath() + "]", e );
         }
 
@@ -91,8 +92,8 @@ public final class ContentResource
         int resultCount;
         do
         {
-            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
-                from( from ).size( 5 ).build();
+            final FindContentByParentParams findParams =
+                FindContentByParentParams.create().parentId( content.getId() ).from( from ).size( 5 ).build();
             final FindContentByParentResult results = this.contentService.findByParent( findParams );
 
             for ( Content child : results.getContents() )
@@ -103,7 +104,7 @@ public final class ContentResource
                 }
                 catch ( Exception e )
                 {
-                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), e.getClass().getCanonicalName(),
+                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath(), e.getClass().getCanonicalName(),
                                                e.getMessage() ) );
                     LOG.warn( "Error reprocessing content [" + child.getPath() + "]", e );
                 }
@@ -116,25 +117,29 @@ public final class ContentResource
 
     @POST
     @Path("reprocessTask")
-    public TaskResultJson reprocessTask( final ReprocessContentRequestJson request )
+    public TaskResultJson reprocessTask( final ReprocessContentRequestJson params )
     {
-        return ReprocessRunnableTask.create().
-            description( "reprocess" ).
-            contentService( contentService ).
-            taskService( taskService ).
-            params( request ).
-            build().
-            createTaskResult();
+        final ReprocessRunnableTask task = ReprocessRunnableTask.create()
+            .contentService( contentService )
+            .branch( params.getBranch() )
+            .contentPath( params.getContentPath() )
+            .skipChildren( params.isSkipChildren() )
+            .build();
+        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                                               .runnableTask( task )
+                                                               .description(
+                                                                   "Reprocess " + params.getBranch() + ":" + params.getContentPath() )
+                                                               .build() );
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("syncAll")
     public TaskResultJson syncAll()
     {
-        final TaskId taskId = taskService.submitTask( ProjectsSyncTask.create().
-            projectService( projectService ).
-            syncContentService( syncContentService ).
-            build(), "Sync all projects" );
+        RunnableTask runnable = ProjectsSyncTask.create().projectService( projectService ).syncContentService( syncContentService ).build();
+        final TaskId taskId = taskService.submitLocalTask(
+            SubmitLocalTaskParams.create().runnableTask( runnable ).name( "sync-all-projects" ).description( "Sync all projects" ).build() );
 
         return new TaskResultJson( taskId );
     }

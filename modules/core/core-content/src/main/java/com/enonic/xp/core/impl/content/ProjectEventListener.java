@@ -21,6 +21,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
@@ -84,8 +85,11 @@ public final class ProjectEventListener
                     contentSynchronizer( contentSynchronizer ).
                     build();
 
-                taskService.submitTask( syncTask,
-                                        String.format( "sync [%s] project from parent [%s]", project.getName(), parentProject.getName() ) );
+                taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                            .runnableTask( syncTask )
+                                            .description( String.format( "sync [%s] project from parent [%s]", project.getName(),
+                                                                         parentProject.getName() ) )
+                                            .build() );
             }
         }
     }

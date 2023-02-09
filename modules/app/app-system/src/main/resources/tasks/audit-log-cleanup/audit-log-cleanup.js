@@ -8,8 +8,9 @@ function nullOrValue(value) {
     return value;
 }
 
-exports.run = function (params) {
+exports.run = function (params, taskId) {
     var bean = __.newBean('com.enonic.xp.app.system.AuditLogCleanupTaskHandler');
     bean.setAgeThreshold(nullOrValue(params.ageThreshold));
+    bean.setTaskId(nullOrValue(taskId));
     bean.execute();
 };

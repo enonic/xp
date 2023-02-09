@@ -1,6 +1,6 @@
 {
-  "updatedContent": [],
   "errors": [
     "Content '/path/to/content' - java.lang.RuntimeException: exceptionMessage"
-  ]
+  ],
+  "updatedContent": []
 }

@@ -3,28 +3,31 @@ package com.enonic.xp.impl.server.rest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
-import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
-import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
-import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
-import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RepositoryResourceTest
     extends JaxRsResourceTestSupport
@@ -49,8 +52,8 @@ public class RepositoryResourceTest
     @Override
     protected RepositoryResource getResourceInstance()
     {
-        taskService = Mockito.mock( TaskService.class );
-        repoService = Mockito.mock( RepositoryService.class );
+        taskService = mock( TaskService.class );
+        repoService = mock( RepositoryService.class );
 
         resource = new RepositoryResource();
         resource.setTaskService( taskService );
@@ -63,27 +66,42 @@ public class RepositoryResourceTest
     public void exportNodes()
         throws Exception
     {
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
-        Mockito.when( taskService.submitTask( Mockito.isA( ExportRunnableTask.class ), eq( "export" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        final String result = request().path( "repo/export" )
+            .entity( readFromFile( "export_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
-        final ExportNodesRequestJson json = Mockito.mock( ExportNodesRequestJson.class );
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
 
-        final TaskResultJson result = resource.exportNodes( json );
-        assertEquals( "task-id", result.getTaskId() );
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
+                                                                         SubmitLocalTaskParams::getDescription )
+            .containsExactly( null, "Export my_export" );
+
+        assertStringJson( "{\"taskId\" : \"task-id\"}", result );
     }
 
     @Test
     public void importNodes()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( ImportRunnableTask.class ), eq( "import" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
-        final ImportNodesRequestJson json = Mockito.mock( ImportNodesRequestJson.class );
+        final String result = request().path( "repo/import" )
+            .entity( readFromFile( "import_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
-        final TaskResultJson result = resource.importNodes( json );
-        assertEquals( "task-id", result.getTaskId() );
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
+                                                    SubmitLocalTaskParams::getDescription )
+            .containsExactly( null, "Import my_export" );
+
+        assertStringJson( "{\"taskId\" : \"task-id\"}", result );
     }
 
     @Test
@@ -94,7 +112,7 @@ public class RepositoryResourceTest
         {
             builder.add( Repository.create().id( RepositoryId.from( "repo-" + i ) ).branches( RepositoryConstants.MASTER_BRANCH ).build() );
         }
-        Mockito.when( repoService.list() ).thenReturn( builder.build() );
+        when( repoService.list() ).thenReturn( builder.build() );
 
         final RepositoriesJson result = resource.listRepositories();
         assertEquals( 5, result.repositories.size() );

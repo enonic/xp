@@ -1,7 +1,6 @@
 package com.enonic.xp.task;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -25,19 +24,13 @@ public final class TaskId
     @Override
     public boolean equals( final Object o )
     {
-        if ( !( o instanceof TaskId ) )
-        {
-            return false;
-        }
-
-        final TaskId other = (TaskId) o;
-        return Objects.equals( value, other.value );
+        return this == o || o instanceof TaskId && value.equals( ( ( (TaskId) o ).value ) );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( value );
+        return value.hashCode();
     }
 
     @Override

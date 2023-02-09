@@ -55,19 +55,19 @@ var expected = {
                 'deny': []
             },
             {
+                'principal': 'role:system.everyone',
+                'allow': [
+                    'READ'
+                ],
+                'deny': []
+            },
+            {
                 'principal': 'user:system:user1',
                 'allow': [
                     'READ',
                     'CREATE',
                     'MODIFY',
                     'DELETE'
-                ],
-                'deny': []
-            },
-            {
-                'principal': 'role:system.everyone',
-                'allow': [
-                    'READ'
                 ],
                 'deny': []
             }

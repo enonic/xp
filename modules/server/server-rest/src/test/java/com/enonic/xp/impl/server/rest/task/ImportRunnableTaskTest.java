@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
@@ -22,16 +22,21 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.task.AbstractRunnableTaskTest;
-import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class ImportRunnableTaskTest
-    extends AbstractRunnableTaskTest
+class ImportRunnableTaskTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @TempDir
     public Path temporaryFolder;
 
@@ -42,76 +47,68 @@ public class ImportRunnableTaskTest
     private NodeRepositoryService nodeRepositoryService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         HomeDirSupport.set( temporaryFolder );
-        this.exportService = Mockito.mock( ExportService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
+        this.exportService = mock( ExportService.class );
+        this.repositoryService = mock( RepositoryService.class );
+        this.nodeRepositoryService = mock( NodeRepositoryService.class );
     }
 
-    @Override
-    protected ImportRunnableTask createAndRunTask()
+    private ImportRunnableTask createTask( final ImportNodesRequestJson params )
     {
-        return null;
-    }
-
-    protected ImportRunnableTask createAndRunTask( final ImportNodesRequestJson params )
-    {
-        final ImportRunnableTask task = ImportRunnableTask.create().
-            description( "import" ).
-            taskService( taskService ).
-            exportService( exportService ).
-            repositoryService( repositoryService ).
-            nodeRepositoryService( nodeRepositoryService ).
-            params( params ).
-            build();
-
-        task.run( TaskId.from( "taskId" ), progressReporter );
-
-        return task;
+        return ImportRunnableTask.create()
+            .repositoryId( params.getTargetRepoPath().getRepositoryId() )
+            .branch( params.getTargetRepoPath().getBranch() )
+            .nodePath( params.getTargetRepoPath().getNodePath() )
+            .exportName( params.getExportName() )
+            .importWithIds( params.isImportWithIds() )
+            .importWithPermissions( params.isImportWithPermissions() )
+            .xslSource( params.getXslSource() )
+            .xslParams( params.getXslParams() )
+            .nodeRepositoryService( nodeRepositoryService )
+            .repositoryService( repositoryService )
+            .exportService( exportService )
+            .build();
     }
 
     @Test
-    public void importNodes()
+    void importNodes()
     {
-        NodeImportResult nodeImportResult =
-            NodeImportResult.create().added( NodePath.create().addElement( "node" ).addElement( "path" ).build() ).
-                addBinary( "binary", BinaryReference.from( "binaryRef" ) ).updated(
-                NodePath.create().addElement( "node2" ).addElement( "path2" ).build() ).build();
+        NodeImportResult nodeImportResult = NodeImportResult.create()
+            .added( NodePath.create().addElement( "node" ).addElement( "path" ).build() )
+            .addBinary( "binary", BinaryReference.from( "binaryRef" ) )
+            .updated( NodePath.create().addElement( "node2" ).addElement( "path2" ).build() )
+            .build();
 
-        Mockito.when( this.exportService.importNodes( isA( ImportNodesParams.class ) ) ).thenReturn( nodeImportResult );
+        when( this.exportService.importNodes( any( ImportNodesParams.class ) ) ).thenReturn( nodeImportResult );
 
         final PropertyTree repoData = new PropertyTree();
         repoData.addString( "key", "value" );
 
-        Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
-            id( RepositoryId.from( "system-repo" ) ).
-            data( repoData ).
-            build() ) );
+        when( this.repositoryService.list() ).thenReturn( Repositories.from(
+            Repository.create().branches( Branch.from( "master" ) ).id( RepositoryId.from( "system-repo" ) ).data( repoData ).build() ) );
 
         final ImportRunnableTask task =
-            createAndRunTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, true, "", null ) );
+            createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, true, "", null ) );
 
-        task.createTaskResult();
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
+        task.run( TaskId.from( "taskId" ), progressReporter );
 
-        Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
+        verify( repositoryService, times( 1 ) ).invalidateAll();
 
-        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).isInitialized( RepositoryId.from( "system-repo" ) );
+        verify( nodeRepositoryService, times( 1 ) ).isInitialized( RepositoryId.from( "system-repo" ) );
 
-        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "system-repo" ) ).
-            data( repoData ).
-            repositorySettings( RepositorySettings.create().
-                build() ).
-            build() );
+        verify( nodeRepositoryService, times( 1 ) ).create( CreateRepositoryParams.create()
+                                                                .repositoryId( RepositoryId.from( "system-repo" ) )
+                                                                .data( repoData )
+                                                                .repositorySettings( RepositorySettings.create().build() )
+                                                                .build() );
 
-        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "import" ) );
+        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
+        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
 
-        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "importNodes_result.json" ), jsonTestHelper.stringToJson( result ) );
     }
 

@@ -46,6 +46,18 @@ public final class ApplicationKey
         return name;
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        return this == o || o instanceof ApplicationKey && this.name.equals( ( (ApplicationKey) o ).name );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.name.hashCode();
+    }
+
     public static ApplicationKey from( final String name )
     {
         return new ApplicationKey( name );
@@ -64,17 +76,5 @@ public final class ApplicationKey
     public static ApplicationKey from( final String name, final String preffix )
     {
         return new ApplicationKey( name != null ? name.replace( preffix, "." ) : "" );
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return ( o instanceof ApplicationKey ) && this.name.equals( ( (ApplicationKey) o ).name );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return this.name.hashCode();
     }
 }

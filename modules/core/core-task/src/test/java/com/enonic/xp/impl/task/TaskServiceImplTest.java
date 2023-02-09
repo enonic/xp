@@ -21,6 +21,7 @@ import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
@@ -73,7 +74,10 @@ class TaskServiceImplTest
     {
         when( bundle.getSymbolicName() ).thenReturn( "some.app" );
 
-        final TaskId taskId = taskService.submitTask( mock( RunnableTask.class ), "someDescription" );
+        final RunnableTask runnable = mock( RunnableTask.class );
+        final TaskId taskId =
+            taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnable ).description( "someDescription" ).build() );
+
         verify( taskManager ).submitTask( describedTaskCaptor.capture() );
         final DescribedTask argument = describedTaskCaptor.getValue();
         assertEquals( "someDescription", argument.getDescription() );

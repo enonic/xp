@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -28,6 +29,15 @@ class MockTaskService
         this.description = description;
         this.progressHistory = new ArrayList<>();
         runnable.run( taskId, this );
+        return taskId;
+    }
+
+    @Override
+    public TaskId submitLocalTask( final SubmitLocalTaskParams params )
+    {
+        this.description = params.getDescription();
+        this.progressHistory = new ArrayList<>();
+        params.getRunnableTask().run( taskId, this );
         return taskId;
     }
 

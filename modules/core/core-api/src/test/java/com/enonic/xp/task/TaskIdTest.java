@@ -2,32 +2,16 @@ package com.enonic.xp.task;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TaskIdTest
 {
     @Test
-    public void testEquals()
+    void equalsContract()
     {
-        final TaskId id1 = TaskId.from( "123" );
-        final TaskId id2 = TaskId.from( "123" );
-        final TaskId id3 = TaskId.from( "321" );
-
-        assertEquals( true, id1.equals( id2 ) );
-        assertEquals( false, id1.equals( id3 ) );
-        assertEquals( false, id1.equals( "test" ) );
-    }
-
-    @Test
-    public void testHashCode()
-    {
-        final TaskId id1 = TaskId.from( "123" );
-        final TaskId id2 = TaskId.from( "123" );
-        final TaskId id3 = TaskId.from( "321" );
-
-        assertEquals( id1.hashCode(), id2.hashCode() );
-        assertNotEquals( id1.hashCode(), id3.hashCode() );
+        EqualsVerifier.forClass( TaskId.class ).withNonnullFields( "value" ).verify();
     }
 
     @Test

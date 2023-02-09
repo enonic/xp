@@ -1,7 +1,6 @@
 {
+  "errors": [],
   "updatedContent": [
     "/path/to/content"
-  ],
-  "errors": []
+  ]
 }
-

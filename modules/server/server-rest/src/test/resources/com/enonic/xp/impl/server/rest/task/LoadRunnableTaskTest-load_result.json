@@ -4,29 +4,29 @@
       "branches": [
         {
           "branch": "master",
-          "successful": 1,
-          "errors": []
+          "errors": [],
+          "successful": 1
         }
       ],
+      "repository": "system-repo",
       "versions": {
-        "successful": 0,
-        "errors": []
-      },
-      "repository": "system-repo"
+        "errors": [],
+        "successful": 0
+      }
     },
     {
       "branches": [
         {
           "branch": "master",
-          "successful": 1,
-          "errors": []
+          "errors": [],
+          "successful": 1
         }
       ],
+      "repository": "my-repo",
       "versions": {
-        "successful": 0,
-        "errors": []
-      },
-      "repository": "my-repo"
+        "errors": [],
+        "successful": 0
+      }
     }
   ]
 }

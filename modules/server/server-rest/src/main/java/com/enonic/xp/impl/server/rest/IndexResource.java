@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
@@ -26,7 +27,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -47,29 +49,37 @@ public final class IndexResource
 
     @POST
     @Path("reindex")
-    public ReindexResultJson reindex( final ReindexRequestJson request )
+    public ReindexResultJson reindex( final ReindexRequestJson params )
     {
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            setBranches( ReindexRunnableTask.parseBranches( request.branches ) ).
-            initialize( request.initialize ).
-            repositoryId( ReindexRunnableTask.parseRepositoryId( request.repository ) ).
-            listener( new ReindexListenerImpl() ).
-            build() );
+        final ReindexResult result = this.indexService.reindex( ReindexParams.create()
+                                                                    .repositoryId( params.getRepository() )
+                                                                    .setBranches( params.getBranches() )
+                                                                    .initialize( params.isInitialize() )
+                                                                    .listener( new ReindexListenerImpl() )
+                                                                    .build() );
 
         return ReindexResultJson.create( result );
     }
 
     @POST
     @Path("reindexTask")
-    public TaskResultJson reindexTask( final ReindexRequestJson request )
+    public TaskResultJson reindexTask( final ReindexRequestJson params )
     {
-        return ReindexRunnableTask.create().
-            description( "reindex" ).
-            indexService( indexService ).
-            taskService( taskService ).
-            params( request ).
-            build().
-            createTaskResult();
+        ReindexRunnableTask reindexRunnableTask = ReindexRunnableTask.create()
+            .indexService( indexService )
+            .taskService( taskService )
+            .repository( params.getRepository() )
+            .branches( params.getBranches() )
+            .initialize( params.isInitialize() )
+            .build();
+        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                                               .runnableTask( reindexRunnableTask )
+                                                               .name( "reindex-" + params.getRepository() )
+                                                               .description(
+                                                                   "Reindex " + params.getRepository() + " " + params.getBranches() )
+                                                               .build() );
+
+        return new TaskResultJson( taskId );
     }
 
     @POST

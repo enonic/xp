@@ -1,8 +1,8 @@
 package com.enonic.xp.security.acl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,8 +87,7 @@ public final class AccessControlList
 
     public PrincipalKeys getAllPrincipals()
     {
-        final Set<PrincipalKey> principals = this.entries.values().stream().map( AccessControlEntry::getPrincipal ).collect( toSet() );
-        return PrincipalKeys.from( principals );
+        return PrincipalKeys.from( this.entries.keySet() );
     }
 
     public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
@@ -160,12 +159,12 @@ public final class AccessControlList
 
         private Builder()
         {
-            this.entries = new HashMap<>();
+            this.entries = new LinkedHashMap<>();
         }
 
         private Builder( final AccessControlList acl )
         {
-            this.entries = new HashMap<>( acl.entries );
+            this.entries = new LinkedHashMap<>( acl.entries );
         }
 
         public Builder add( final AccessControlEntry entry )

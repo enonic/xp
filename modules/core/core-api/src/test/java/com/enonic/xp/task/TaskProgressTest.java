@@ -2,8 +2,10 @@ package com.enonic.xp.task;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TaskProgressTest
 {
@@ -23,32 +25,15 @@ public class TaskProgressTest
         final TaskProgress p1 = TaskProgress.create().current( 0 ).total( 100 ).build();
         final TaskProgress p2 = p1.copy().current( 30 ).build();
 
-        assertEquals( false, p1.equals( p2 ) );
+        assertFalse( p1.equals( p2 ) );
     }
 
     @Test
-    public void testEquals()
+    public void equalsContract()
     {
-        final TaskProgress p1 = TaskProgress.create().current( 0 ).total( 100 ).build();
-        final TaskProgress p2 = TaskProgress.create().current( 0 ).total( 100 ).build();
-        final TaskProgress p3 = TaskProgress.create().current( 30 ).total( 100 ).build();
-
-        assertEquals( true, p1.equals( p2 ) );
-        assertEquals( false, p1.equals( p3 ) );
-        assertEquals( false, p1.equals( "test" ) );
+        EqualsVerifier.forClass( TaskProgress.class ).withNonnullFields( "info" ).verify();
     }
-
-    @Test
-    public void testHashCode()
-    {
-        final TaskProgress p1 = TaskProgress.create().current( 0 ).total( 100 ).build();
-        final TaskProgress p2 = TaskProgress.create().current( 0 ).total( 100 ).build();
-        final TaskProgress p3 = TaskProgress.create().current( 30 ).total( 100 ).build();
-
-        assertEquals( p1.hashCode(), p2.hashCode() );
-        assertNotEquals( p1.hashCode(), p3.hashCode() );
-    }
-
+    
     @Test
     public void testToString()
     {

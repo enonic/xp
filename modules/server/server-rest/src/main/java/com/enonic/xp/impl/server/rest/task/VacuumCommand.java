@@ -1,23 +1,28 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.util.List;
+
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 public class VacuumCommand
 {
+    private static final DescriptorKey TASK_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.system:vacuum" );
+
     private final TaskService taskService;
 
-    private final VacuumRequestJson params;
+    private final String ageThreshold;
+
+    private final List<String> tasks;
 
     private VacuumCommand( Builder builder )
     {
         this.taskService = builder.taskService;
-        this.params = builder.params == null ? new VacuumRequestJson( null, null ) : builder.params;
+        this.ageThreshold = builder.ageThreshold;
+        this.tasks = builder.tasks;
     }
 
     public static Builder create()
@@ -25,32 +30,29 @@ public class VacuumCommand
         return new Builder();
     }
 
-    public TaskResultJson execute()
+    public TaskId execute()
     {
         PropertyTree config = new PropertyTree();
 
-        if ( params.getAgeThreshold() != null )
+        if ( ageThreshold != null )
         {
-            config.addString( "ageThreshold", params.getAgeThreshold() );
+            config.addString( "ageThreshold", ageThreshold );
         }
-        if ( params.getTasks() != null )
+        if ( tasks != null )
         {
-            config.addStrings( "tasks", params.getTasks() );
+            config.addStrings( "tasks", tasks );
         }
 
-        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().
-            descriptorKey( DescriptorKey.from( "com.enonic.xp.app.system:vacuum" ) ).
-            data( config ).
-            build() );
-
-        return new TaskResultJson( taskId );
+        return taskService.submitTask( SubmitTaskParams.create().descriptorKey( TASK_DESCRIPTOR_KEY ).data( config ).build() );
     }
 
     public static class Builder
     {
         private TaskService taskService;
 
-        private VacuumRequestJson params;
+        private String ageThreshold;
+
+        private List<String> tasks;
 
         public Builder taskService( final TaskService taskService )
         {
@@ -58,9 +60,15 @@ public class VacuumCommand
             return this;
         }
 
-        public Builder params( final VacuumRequestJson params )
+        public Builder ageThreshold( final String ageThreshold )
         {
-            this.params = params;
+            this.ageThreshold = ageThreshold;
+            return this;
+        }
+
+        public Builder tasks( final List<String> tasks )
+        {
+            this.tasks = tasks;
             return this;
         }
 

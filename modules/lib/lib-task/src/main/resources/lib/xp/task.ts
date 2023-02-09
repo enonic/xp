@@ -209,6 +209,7 @@ export interface TaskInfo {
     user: UserKey;
     startTime: string;
     progress: TaskProgress;
+    node: string;
 }
 
 /**

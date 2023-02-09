@@ -1,17 +1,14 @@
 package com.enonic.xp.security.acl;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
-
-import static java.util.stream.Collectors.toSet;
 
 @PublicApi
 public final class IdProviderAccessControlList
@@ -59,10 +56,7 @@ public final class IdProviderAccessControlList
 
     public PrincipalKeys getAllPrincipals()
     {
-        final Set<PrincipalKey> principals = this.entries.values().stream().
-            map( IdProviderAccessControlEntry::getPrincipal ).
-            collect( toSet() );
-        return PrincipalKeys.from( principals );
+        return PrincipalKeys.from( this.entries.keySet() );
     }
 
     @Override
@@ -109,12 +103,12 @@ public final class IdProviderAccessControlList
 
         private Builder()
         {
-            this.entries = new HashMap<>();
+            this.entries = new LinkedHashMap<>();
         }
 
         private Builder( final IdProviderAccessControlList acl )
         {
-            this.entries = new HashMap<>( acl.entries );
+            this.entries = new LinkedHashMap<>( acl.entries );
         }
 
         public Builder add( final IdProviderAccessControlEntry entry )

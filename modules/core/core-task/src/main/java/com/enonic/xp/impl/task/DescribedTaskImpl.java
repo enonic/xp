@@ -27,7 +27,7 @@ public class DescribedTaskImpl
 
     private final String name;
 
-    public DescribedTaskImpl( final RunnableTask runnableTask, final String description, final TaskContext context )
+    public DescribedTaskImpl( final RunnableTask runnableTask, final String name, final String description, final TaskContext context )
     {
         this.runnableTask = runnableTask;
         this.taskId = TaskId.from( UUID.randomUUID().toString() );
@@ -35,7 +35,7 @@ public class DescribedTaskImpl
 
         this.description = description;
         this.applicationKey = ApplicationKey.from( OsgiSupport.getBundle( runnableTask.getClass() ) );
-        this.name = "";
+        this.name = name == null ? "task-" + this.applicationKey + "-" + this.taskId : name;
     }
 
     public DescribedTaskImpl( final NamedTask namedTask, final TaskContext context )

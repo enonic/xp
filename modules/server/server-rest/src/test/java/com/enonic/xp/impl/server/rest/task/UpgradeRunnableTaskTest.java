@@ -2,72 +2,65 @@ package com.enonic.xp.impl.server.rest.task;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
-import com.enonic.xp.task.AbstractRunnableTaskTest;
-import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.Version;
 
-public class UpgradeRunnableTaskTest
-    extends AbstractRunnableTaskTest
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class UpgradeRunnableTaskTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     private DumpService dumpService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
-        this.dumpService = Mockito.mock( DumpService.class );
+        this.dumpService = mock( DumpService.class );
     }
 
-    @Override
-    protected UpgradeRunnableTask createAndRunTask()
+    private UpgradeRunnableTask createTask( final SystemDumpUpgradeRequestJson params )
     {
-        return null;
-    }
-
-    protected UpgradeRunnableTask createAndRunTask( final SystemDumpUpgradeRequestJson params )
-    {
-        final UpgradeRunnableTask task = UpgradeRunnableTask.create().
-            description( "upgrade" ).
-            taskService( taskService ).
-            dumpService( dumpService ).
-            params( params ).
-            build();
-
-        task.run( TaskId.from( "taskId" ), progressReporter );
-
-        return task;
+        return UpgradeRunnableTask.create().dumpService( dumpService ).name( params.getName() ).build();
     }
 
     @Test
-    public void upgrade()
+    void upgrade()
     {
-        final DumpUpgradeResult upgradeResult = DumpUpgradeResult.create().
-            initialVersion( Version.emptyVersion ).
-            upgradedVersion( new Version( 1 ) ).
-            stepResult( DumpUpgradeStepResult.create().
-                stepName( "Step1" ).
-                initialVersion( Version.emptyVersion ).
-                upgradedVersion( new Version( 1 ) ).
-                build() ).
-            build();
-        Mockito.when( this.dumpService.upgrade( Mockito.isA( SystemDumpUpgradeParams.class ) ) ).thenReturn( upgradeResult );
+        final DumpUpgradeResult upgradeResult = DumpUpgradeResult.create()
+            .initialVersion( Version.emptyVersion )
+            .upgradedVersion( new Version( 1 ) )
+            .stepResult( DumpUpgradeStepResult.create()
+                             .stepName( "Step1" )
+                             .initialVersion( Version.emptyVersion )
+                             .upgradedVersion( new Version( 1 ) )
+                             .build() )
+            .build();
+        when( this.dumpService.upgrade( any( SystemDumpUpgradeParams.class ) ) ).thenReturn( upgradeResult );
 
-        final UpgradeRunnableTask task = createAndRunTask( new SystemDumpUpgradeRequestJson( "dump-name" ) );
+        final UpgradeRunnableTask task = createTask( new SystemDumpUpgradeRequestJson( "dump-name" ) );
 
-        task.createTaskResult();
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
 
-        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "upgrade" ) );
+        task.run( TaskId.from( "taskId" ), progressReporter );
 
-        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
+        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+
+        final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "upgrade_result.json" ), jsonTestHelper.stringToJson( result ) );
     }
 

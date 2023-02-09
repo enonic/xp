@@ -22,6 +22,8 @@ import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 
+import static org.mockito.Mockito.mock;
+
 public class SchedulerResourceTest
     extends JaxRsResourceTestSupport
 {
@@ -30,7 +32,7 @@ public class SchedulerResourceTest
     @Override
     protected SchedulerResource getResourceInstance()
     {
-        schedulerService = Mockito.mock( SchedulerService.class );
+        schedulerService = mock( SchedulerService.class );
 
         return new SchedulerResource( schedulerService );
     }

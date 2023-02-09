@@ -8,15 +8,14 @@ public class VacuumListenerImpl
 {
     private final ProgressReporter progressReporter;
 
-    private int total = 0;
+    private int total;
 
-    private int current = 0;
+    private int current;
 
     public VacuumListenerImpl( final ProgressReporter progressReporter )
     {
         this.progressReporter = progressReporter;
     }
-
 
     @Override
     public void vacuumBegin( final long taskCount )

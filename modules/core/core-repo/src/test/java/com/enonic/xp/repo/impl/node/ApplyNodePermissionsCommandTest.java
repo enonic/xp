@@ -274,10 +274,14 @@ public class ApplyNodePermissionsCommandTest
         assertEquals( permissions, child1_2Updated.getPermissions() );
 
         final Node child1_1_1Updated = getNodeById( child1_1_1.id() );
-        assertEquals( "[user:system:anonymous[+read, +write_permissions], " +
-                          "group:system:group1[+read, +create, +modify, +delete], " +
-                          "user:system:user1[+read, +modify, +delete], " +
-                          "user:system:user2[+read, +create, +modify, +delete, +publish]]", child1_1_1Updated.getPermissions().toString() );
+
+        final AccessControlList mergedPermissions = AccessControlList.of(
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
+            AccessControlEntry.create().principal( user1 ).allow( READ, DELETE, MODIFY ).build(),
+            AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build(),
+            AccessControlEntry.create().principal( user2 ).allow( READ, CREATE, MODIFY, DELETE, PUBLISH ).build() );
+
+        assertEquals( mergedPermissions, child1_1_1Updated.getPermissions() );
 
         final Node child1_2_1Updated = getNodeById( child1_2_1.id() );
         assertEquals( permissions, child1_2_1Updated.getPermissions() );

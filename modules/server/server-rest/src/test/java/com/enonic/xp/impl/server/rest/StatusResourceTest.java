@@ -14,6 +14,8 @@ import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.status.StatusReporter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class StatusResourceTest
@@ -30,7 +32,7 @@ public class StatusResourceTest
     @Override
     protected StatusResource getResourceInstance()
     {
-        serverReporter = Mockito.mock( StatusReporter.class );
+        serverReporter = mock( StatusReporter.class );
         when( serverReporter.getName() ).thenReturn( "server" );
 
         final StatusResource resource = new StatusResource();
@@ -48,14 +50,14 @@ public class StatusResourceTest
         request().path( "status/server" ).get();
 
         Mockito.verify( serverReporter ).report( commentCaptor.capture() );
-        Mockito.verify( serverReporter, Mockito.times( 1 ) ).report( Mockito.any( OutputStream.class ) );
+        Mockito.verify( serverReporter, Mockito.times( 1 ) ).report( any( OutputStream.class ) );
     }
 
     @Test
     public void server_error()
         throws Exception
     {
-        Mockito.doThrow( new IOException( "error_message" ) ).when( serverReporter ).report( Mockito.isA( OutputStream.class ) );
+        Mockito.doThrow( new IOException( "error_message" ) ).when( serverReporter ).report( any( OutputStream.class ) );
 
         assertThrows( IOException.class, () -> request().path( "status/server" ).get() );
     }

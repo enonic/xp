@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -106,15 +107,30 @@ public abstract class JaxRsResourceTestSupport
     }
 
     protected final void assertStringJson( final String expectedJson, final String actualJson )
-        throws Exception
     {
-        final JsonNode expectedNode = MAPPER.readTree( expectedJson );
-        final JsonNode actualNode = MAPPER.readTree( actualJson );
+        final JsonNode actualNode;
+        try
+        {
+            actualNode = MAPPER.readTree( actualJson );
+        }
+        catch ( JsonProcessingException e )
+        {
+            Assertions.fail( "actualJson is not a JSON: " + actualJson, e );
+            return;
+        }
 
-        final String expectedStr = OBJECT_WRITER.writeValueAsString( expectedNode );
-        final String actualStr = OBJECT_WRITER.writeValueAsString( actualNode );
-
-        Assertions.assertEquals( expectedStr, actualStr );
+        final JsonNode expectedNode;
+        try
+        {
+            expectedNode = MAPPER.readTree( expectedJson );
+            final String expectedStr = OBJECT_WRITER.writeValueAsString( expectedNode );
+            final String actualStr = OBJECT_WRITER.writeValueAsString( actualNode );
+            Assertions.assertEquals( expectedStr, actualStr );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     protected String readFromFile( final String fileName )
