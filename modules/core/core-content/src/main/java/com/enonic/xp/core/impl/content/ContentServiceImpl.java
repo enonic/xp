@@ -635,6 +635,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public AccessControlList getPermissionsById( ContentId contentId )
     {
         Content content = doGetById( contentId );
@@ -815,10 +816,10 @@ public class ContentServiceImpl
             .build();
 
         return Tracer.trace( "content.find", trace -> {
-            trace.put( "query", query.getQueryExpr() != null ? query.getQueryExpr().toString() : "" );
+            trace.put( "query", query.getQueryExpr() );
+            trace.put( "filter", query.getQueryFilters() );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
-
         }, command::execute, ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
@@ -831,7 +832,6 @@ public class ContentServiceImpl
             .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( filedPath ), ValueExpr.string( key.toString() ) ) ) )
             .size( -1 )
             .build();
-
 
         return this.getByIds( new GetContentByIdsParams( this.find( query ).getContentIds() ) );
     }
@@ -1081,61 +1081,74 @@ public class ContentServiceImpl
     @Override
     public boolean contentExists( final ContentId contentId )
     {
-        return ContentExistsCommand.create( contentId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final ContentExistsCommand command = ContentExistsCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+        return Tracer.trace( "content.exists", trace -> trace.put( "id", contentId ), command::execute,
+         (trace, exists) -> trace.put( "exists", exists ) );
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        return ContentExistsCommand.create( contentPath ).
+        final ContentExistsCommand command = ContentExistsCommand.create( contentPath ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+            build();
+        return Tracer.trace( "content.exists", trace -> trace.put( "path", contentPath ), command::execute,
+                             (trace, exists) -> trace.put( "exists", exists ) );
     }
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return GetBinaryCommand.create( contentId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final GetBinaryCommand command = GetBinaryCommand.create( contentId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+        return Tracer.trace( "content.getBinary", trace -> {
+            trace.put( "id", contentId );
+            trace.put( "reference", binaryReference );
+        }, command::execute, ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
     }
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final ContentVersionId contentVersionId, final BinaryReference binaryReference )
     {
-        return GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference ).
+        final GetBinaryByVersionCommand command = GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+            build();
+        return Tracer.trace( "content.getBinary", trace -> {
+            trace.put( "id", contentId );
+            trace.put( "versionId", contentVersionId );
+            trace.put( "reference", binaryReference );
+        }, command::execute, ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
     }
 
     @Override
     public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
     {
-        return GetBinaryKeyCommand.create( contentId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final GetBinaryKeyCommand command = GetBinaryKeyCommand.create( contentId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
+        return Tracer.trace( "content.getBinaryKey", trace -> {
+            trace.put( "id", contentId );
+            trace.put( "reference", binaryReference );
+        }, command::execute, ( trace, binaryKey ) -> trace.put( "binaryKey", binaryKey ) );
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -299,7 +300,8 @@ public class NodeServiceImpl
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
         return Tracer.trace( "node.findByQuery", trace -> {
-            trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
+            trace.put( "query", nodeQuery.getQuery() );
+            trace.put( "filter", nodeQuery.getQueryFilters() );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
         }, () -> executeFindByQuery( nodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
@@ -337,11 +339,14 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
+    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery multiNodeQuery )
     {
         return Tracer.trace( "node.findByQueryMulti", trace -> {
-            trace.put( "query", nodeQuery.getNodeQuery() != null ? nodeQuery.getNodeQuery().toString() : "" );
-        }, () -> executeFindByQuery( nodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+            trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
+            trace.put( "filter", multiNodeQuery.getNodeQuery().getQueryFilters() );
+            trace.put( "from", Objects.toString( multiNodeQuery.getNodeQuery().getFrom(), "" ) );
+            trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
+        }, () -> executeFindByQuery( multiNodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
     private FindNodesByMultiRepoQueryResult executeFindByQuery( final MultiRepoNodeQuery nodeQuery )
