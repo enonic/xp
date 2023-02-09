@@ -59,7 +59,7 @@ class LocalizeParams
 
     private Locale resolveLocale()
     {
-        if ( request.getSite().getLanguage() != null )
+        if ( request.getSite() != null && request.getSite().getLanguage() != null )
         {
             return request.getSite().getLanguage();
         }
