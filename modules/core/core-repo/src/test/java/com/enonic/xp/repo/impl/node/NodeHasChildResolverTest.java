@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,48 +41,7 @@ public class NodeHasChildResolverTest
         assertTrue( NodeHasChildResolver.create().
             searchService( this.searchService ).
             build().
-            resolve( parentNode ) );
-    }
-
-    @Test
-    public void nodes_has_children()
-        throws Exception
-    {
-        final Node parentNode1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-1" ).
-            build() );
-
-        final Node parentNode2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-2" ).
-            build() );
-
-        final Node parentNode3 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-3" ).
-            build() );
-
-        createNode( CreateNodeParams.create().
-            parent( parentNode1.path() ).
-            name( "my-child-node-1" ).
-            build() );
-
-        createNode( CreateNodeParams.create().
-            parent( parentNode2.path() ).
-            name( "my-child-node-2" ).
-            build() );
-
-        nodeService.refresh( RefreshMode.ALL );
-
-        final NodesHasChildrenResult result = NodeHasChildResolver.create().
-            searchService( this.searchService ).
-            build().
-            resolve( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
-
-        assertTrue( result.hasChild( parentNode1.id() ) );
-        assertTrue( result.hasChild( parentNode2.id() ) );
-        assertFalse( result.hasChild( parentNode3.id() ) );
+            resolve( parentNode.path() ) );
     }
 
     @Test
@@ -100,7 +57,7 @@ public class NodeHasChildResolverTest
         assertFalse( NodeHasChildResolver.create().
             searchService( this.searchService ).
             build().
-            resolve( parentNode ) );
+            resolve( parentNode.path() ) );
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+@Deprecated
 public class NodesHasChildrenResult
 {
     private final ImmutableMap<NodeId, Boolean> valueMap;

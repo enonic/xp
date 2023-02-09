@@ -89,6 +89,7 @@ public final class GetNodeHandler
         }
     }
 
+    @Deprecated
     private NodeMapper getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
     {
         try

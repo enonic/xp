@@ -18,7 +18,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -66,9 +65,7 @@ public class ContentNodeTranslatorTest
         throws Exception
     {
         final Nodes nodes = createNodes();
-        final NodesHasChildrenResult hasChildrenResult =
-            NodesHasChildrenResult.create().add( ID_1, true ).add( ID_2, true ).add( ID_3, false ).build();
-        Mockito.when( this.nodeService.hasChildren( Mockito.any( Nodes.class ) ) ).thenReturn( hasChildrenResult );
+        Mockito.when( this.nodeService.hasChildren( Mockito.any( Node.class ) ) ).thenReturn( true ).thenReturn( true ).thenReturn( false );
 
         final Contents contents = this.contentNodeTranslator.fromNodes( nodes, true );
 

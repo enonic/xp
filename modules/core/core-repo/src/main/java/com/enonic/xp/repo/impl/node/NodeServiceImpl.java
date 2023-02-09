@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -93,7 +94,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -122,36 +122,8 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
-        final Trace trace = Tracer.newTrace( "node.getById" );
-        if ( trace == null )
-        {
-            return executeGetById( id );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "id", id );
-            final Node node = executeGetById( id );
-            trace.put( "path", node.path() );
-            return node;
-        } );
-    }
-
-    @Override
-    public Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
-    {
-        final Trace trace = Tracer.newTrace( "node.getByIdAndVersionId" );
-        if ( trace == null )
-        {
-            return executeGetByIdAndVersionId( id, versionId );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "id", id );
-            trace.put( "versionId", versionId );
-            final Node node = executeGetByIdAndVersionId( id, versionId );
-            trace.put( "path", node.path() );
-            return node;
-        } );
+        return Tracer.trace( "node.getById", trace -> trace.put( "id", id ), () -> executeGetById( id ),
+                             ( trace, node ) -> trace.put( "path", node.path() ) );
     }
 
     private Node executeGetById( final NodeId id )
@@ -168,10 +140,26 @@ public class NodeServiceImpl
         return node;
     }
 
+    @Override
+    public Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        return Tracer.trace( "node.getByIdAndVersionId", trace -> {
+            trace.put( "id", id );
+            trace.put( "versionId", versionId );
+        }, () -> executeGetByIdAndVersionId( id, versionId ), ( trace, node ) -> trace.put( "path", node.path() ) );
+    }
+
     private Node executeGetByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
     {
         verifyContext();
-        final Node node = doGetByIdAndVersionId( id, versionId );
+        final Node node = GetNodeByIdAndVersionIdCommand.create()
+            .nodeId( id )
+            .versionId( versionId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( node == null )
         {
@@ -193,70 +181,16 @@ public class NodeServiceImpl
             execute();
     }
 
-    private Node doGetByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
-    {
-        return GetNodeByIdAndVersionIdCommand.create().
-            nodeId( id ).
-            versionId( versionId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
-    }
-
     @Override
     public Node getByPath( final NodePath path )
     {
-        final Trace trace = Tracer.newTrace( "node.getByPath" );
-        if ( trace == null )
-        {
-            return executeGetByPath( path );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "path", path );
-            final Node node = executeGetByPath( path );
-            if ( node != null )
-            {
-                trace.put( "id", node.id() );
-            }
-            return node;
-        } );
-    }
-
-    @Override
-    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
-    {
-        final Trace trace = Tracer.newTrace( "node.getByPathAndVersionId" );
-        if ( trace == null )
-        {
-            return executeGetByPathAndVersionId( path, versionId );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "path", path );
-            trace.put( "versionId", versionId );
-            final Node node = executeGetByPathAndVersionId( path, versionId );
-            trace.put( "id", node.id() );
-            return node;
-        } );
+        return Tracer.trace( "node.getByPath", trace -> trace.put( "path", path ), () -> executeGetByPath( path ),
+                             ( trace, node ) -> trace.put( "id", node.id() ) );
     }
 
     private Node executeGetByPath( final NodePath path )
     {
         verifyContext();
-        return doGetByPath( path );
-    }
-
-    private Node executeGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
-    {
-        verifyContext();
-        return doGetByPathAndVersionId( path, versionId );
-    }
-
-    private Node doGetByPath( final NodePath path )
-    {
         return GetNodeByPathCommand.create().
             nodePath( path ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -266,8 +200,19 @@ public class NodeServiceImpl
             execute();
     }
 
-    private Node doGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    @Override
+    @Deprecated
+    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
     {
+        return Tracer.trace( "node.getByPathAndVersionId", trace -> {
+            trace.put( "path", path );
+            trace.put( "versionId", versionId );
+        }, () -> executeGetByPathAndVersionId( path, versionId ), ( trace, node ) -> trace.put( "id", node.id() ) );
+    }
+
+    private Node executeGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    {
+        verifyContext();
         final Node node = GetNodeByPathAndVersionIdCommand.create().
             nodePath( path ).
             versionId( versionId ).
@@ -289,16 +234,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
-        final Trace trace = Tracer.newTrace( "node.getByIds" );
-        if ( trace == null )
-        {
-            return executeGetByIds( ids );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "id", ids );
-            return executeGetByIds( ids );
-        } );
+        return Tracer.trace( "node.getByIds", trace -> trace.put( "id", ids ), () -> executeGetByIds( ids ) );
     }
 
     private Nodes executeGetByIds( final NodeIds ids )
@@ -316,16 +252,7 @@ public class NodeServiceImpl
     @Override
     public Nodes getByPaths( final NodePaths paths )
     {
-        final Trace trace = Tracer.newTrace( "node.getByPaths" );
-        if ( trace == null )
-        {
-            return executeGetByPaths( paths );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "path", paths );
-            return executeGetByPaths( paths );
-        } );
+        return Tracer.trace( "node.getByPaths", trace -> trace.put( "path", paths ), () -> executeGetByPaths( paths ) );
     }
 
     private Nodes executeGetByPaths( final NodePaths paths )
@@ -343,20 +270,11 @@ public class NodeServiceImpl
     @Override
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
-        final Trace trace = Tracer.newTrace( "node.findByParent" );
-        if ( trace == null )
-        {
-            return executeFindByParent( params );
-        }
-
-        return Tracer.trace( trace, () -> {
+        return Tracer.trace( "node.findByParent", trace -> {
             trace.put( "parent", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-            final FindNodesByParentResult result = executeFindByParent( params );
-            trace.put( "hits", result.getTotalHits() );
-            return result;
-        } );
+        }, () -> executeFindByParent( params ), ( ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) ) );
     }
 
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
@@ -381,20 +299,12 @@ public class NodeServiceImpl
     @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
-        final Trace trace = Tracer.newTrace( "node.findByQuery" );
-        if ( trace == null )
-        {
-            return executeFindByQuery( nodeQuery );
-        }
-
-        return Tracer.trace( trace, () -> {
-            trace.put( "query", nodeQuery.getQuery() != null ? nodeQuery.getQuery().toString() : "" );
+        return Tracer.trace( "node.findByQuery", trace -> {
+            trace.put( "query", nodeQuery.getQuery() );
+            trace.put( "filter", nodeQuery.getQueryFilters() );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
-            final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
-            trace.put( "hits", result.getTotalHits() );
-            return result;
-        } );
+        }, () -> executeFindByQuery( nodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
     private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
@@ -429,16 +339,26 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
+    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery multiNodeQuery )
+    {
+        return Tracer.trace( "node.findByQueryMulti", trace -> {
+            trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
+            trace.put( "filter", multiNodeQuery.getNodeQuery().getQueryFilters() );
+            trace.put( "from", Objects.toString( multiNodeQuery.getNodeQuery().getFrom(), "" ) );
+            trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
+        }, () -> executeFindByQuery( multiNodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+    }
+
+    private FindNodesByMultiRepoQueryResult executeFindByQuery( final MultiRepoNodeQuery nodeQuery )
     {
         verifyContext();
-        return FindNodesByMultiRepoQueryCommand.create().
-            query( nodeQuery ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodesByMultiRepoQueryCommand.create()
+            .query( nodeQuery )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -510,12 +430,14 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public NodeIds deleteById( final NodeId id )
     {
         return deleteById( id, null );
     }
 
     @Override
+    @Deprecated
     public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
     {
         final DeleteNodeResult result =
@@ -524,6 +446,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public NodeIds deleteByPath( final NodePath path )
     {
         final DeleteNodeResult result = delete( DeleteNodeParams.create().nodePath( path ).refresh( RefreshMode.ALL ).build() );
@@ -649,7 +572,6 @@ public class NodeServiceImpl
             nodeIds.stream().map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
     }
 
-
     @Override
     public NodeComparison compare( final NodeId nodeId, final Branch target )
     {
@@ -720,6 +642,8 @@ public class NodeServiceImpl
     @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
+        verifyContext();
+
         return DeleteVersionCommand.create().
             nodeId( nodeId ).
             nodeVersionId( nodeVersionId ).
@@ -845,12 +769,14 @@ public class NodeServiceImpl
     @Override
     public void refresh( final RefreshMode refreshMode )
     {
+        Tracer.trace( "node.refresh", trace -> trace.put( "refreshMode", refreshMode ), () -> executeRefresh( refreshMode ) );
+    }
+
+    private Void executeRefresh( final RefreshMode refreshMode )
+    {
         verifyContext();
-        RefreshCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            refreshMode( refreshMode ).
-            build().
-            execute();
+        RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( refreshMode ).build().execute();
+        return null;
     }
 
     @Override
@@ -877,46 +803,72 @@ public class NodeServiceImpl
     @Override
     public ByteSource getBinary( final NodeId nodeId, final BinaryReference reference )
     {
+        return Tracer.trace( "node.getBinary", trace -> {
+            trace.put( "id", nodeId );
+            trace.put( "reference", reference );
+        }, () -> executeGetBinary( nodeId, reference ), ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+    }
+
+    private ByteSource executeGetBinary( final NodeId nodeId, final BinaryReference reference )
+    {
         verifyContext();
-        return GetBinaryCommand.create().
-            binaryReference( reference ).
-            nodeId( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetBinaryCommand.create()
+            .binaryReference( reference )
+            .nodeId( nodeId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
     public ByteSource getBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
     {
+        return Tracer.trace( "node.getBinary", trace -> {
+                                 trace.put( "id", nodeId );
+                                 trace.put( "versionId", nodeVersionId );
+                                 trace.put( "reference", reference );
+                             }, () -> executeGetBinary( nodeId, nodeVersionId, reference ),
+                             ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+    }
+
+    private ByteSource executeGetBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
+    {
         verifyContext();
-        return GetBinaryByVersionCommand.create().
-            binaryReference( reference ).
-            nodeId( nodeId ).
-            nodeVersionId( nodeVersionId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetBinaryByVersionCommand.create()
+            .binaryReference( reference )
+            .nodeId( nodeId )
+            .nodeVersionId( nodeVersionId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
     public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
     {
+        return Tracer.trace( "node.getBinaryKey", trace -> {
+            trace.put( "id", nodeId );
+            trace.put( "reference", reference );
+        }, () -> executeGetBinaryKey( nodeId, reference ), ( trace, binaryKey ) -> trace.put( "binaryKey", binaryKey ) );
+    }
+
+    private String executeGetBinaryKey( final NodeId nodeId, final BinaryReference reference )
+    {
         verifyContext();
-        return GetBinaryKeyCommand.create().
-            binaryReference( reference ).
-            nodeId( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetBinaryKeyCommand.create()
+            .binaryReference( reference )
+            .nodeId( nodeId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -940,6 +892,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     public SetNodeStateResult setNodeState( final SetNodeStateParams params )
     {
         return SetNodeStateResult.create().build();
@@ -948,8 +901,7 @@ public class NodeServiceImpl
     @Override
     public Node getRoot()
     {
-        verifyContext();
-        final Node node = doGetByPath( NodePath.ROOT );
+        final Node node = executeGetByPath( NodePath.ROOT );
 
         if ( node == null || node.isRoot() )
         {
@@ -1018,35 +970,47 @@ public class NodeServiceImpl
     @Override
     public boolean nodeExists( final NodeId nodeId )
     {
-        verifyContext();
-        return NodeHelper.runAsAdmin( () -> this.doGetById( nodeId ) ) != null;
+        return Tracer.trace( "node.exists", trace -> trace.put( "id", nodeId ), () -> {
+            verifyContext();
+            return NodeHelper.runAsAdmin( () -> doGetById( nodeId ) ) != null;
+        }, (trace, exists) -> trace.put( "exists", exists ) );
     }
 
     @Override
     public boolean nodeExists( final NodePath nodePath )
     {
-        verifyContext();
-        return NodeHelper.runAsAdmin( () -> this.doGetByPath( nodePath ) ) != null;
+        return Tracer.trace( "node.exists", trace -> trace.put( "path", nodePath ),
+                             () -> NodeHelper.runAsAdmin( () -> executeGetByPath( nodePath ) ) != null,
+                             ( trace, exists ) -> trace.put( "exists", exists ) );
     }
 
     @Override
+    @Deprecated
     public NodesHasChildrenResult hasChildren( final Nodes nodes )
     {
         verifyContext();
-        return NodeHasChildResolver.create().
-            searchService( this.nodeSearchService ).
-            build().
-            resolve( nodes );
+        final NodesHasChildrenResult.Builder builder = NodesHasChildrenResult.create();
+
+        for ( final Node node : nodes )
+        {
+            builder.add( node.id(),
+                         NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ) );
+        }
+
+        return builder.build();
     }
 
     @Override
     public boolean hasChildren( final Node node )
     {
         verifyContext();
-        return NodeHasChildResolver.create().
-            searchService( this.nodeSearchService ).
-            build().
-            resolve( node );
+        return Tracer.trace( "node.hasChildren", trace -> trace.put( "path", node.path() ),
+                             () -> NodeHasChildResolver.create().
+                                 searchService( this.nodeSearchService ).
+                                 build().
+                                 resolve( node.path() ),
+                             ( trace, hasChildren ) -> trace.put( "hasChildren", hasChildren ) );
+
     }
 
     @Override

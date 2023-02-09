@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 
 public class ContentNodeTranslator
 {
@@ -34,12 +35,11 @@ public class ContentNodeTranslator
     {
         if ( resolveHasChildren )
         {
-            final NodesHasChildrenResult nodesHasChildren = this.nodeService.hasChildren( nodes );
-            return doTranslate( nodes, nodesHasChildren );
+            return doTranslate( nodes, nodeService::hasChildren );
         }
         else
         {
-            return doTranslate( nodes, NodesHasChildrenResult.empty() );
+            return doTranslate( nodes, n -> false );
         }
     }
 
@@ -54,7 +54,7 @@ public class ContentNodeTranslator
         return doTranslate( node, hasChildren, allowAltRootPath );
     }
 
-    private Contents doTranslate( final Nodes nodes, final NodesHasChildrenResult nodeHasChildren )
+    private Contents doTranslate( final Nodes nodes, final Function<Node, Boolean> hasChildrenFn )
     {
         final Contents.Builder contents = Contents.create();
 
@@ -62,7 +62,7 @@ public class ContentNodeTranslator
         {
             try
             {
-                contents.add( doTranslate( node, nodeHasChildren.hasChild( node.id() ) ) );
+                contents.add( doTranslate( node, hasChildrenFn.apply( node ) ) );
             }
             catch ( final ContentNotFoundException e )
             {

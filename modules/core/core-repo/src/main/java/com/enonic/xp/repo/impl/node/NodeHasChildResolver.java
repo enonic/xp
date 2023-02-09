@@ -1,10 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -19,28 +17,15 @@ public class NodeHasChildResolver
         this.nodeSearchService = builder.nodeSearchService;
     }
 
-    public NodesHasChildrenResult resolve( final Nodes nodes )
+    public boolean resolve( final NodePath nodePath )
     {
-
-        final NodesHasChildrenResult.Builder builder = NodesHasChildrenResult.create();
-
-        for ( final Node node : nodes )
-        {
-            builder.add( node.id(), doResolve( node ) );
-        }
-
-        return builder.build();
+        return doResolve( nodePath );
     }
 
-    public boolean resolve( final Node node )
-    {
-        return doResolve( node );
-    }
-
-    private boolean doResolve( final Node node )
+    private boolean doResolve( final NodePath nodePath )
     {
         final SearchResult result = this.nodeSearchService.query( NodeQuery.create().
-            parent( node.path() ).
+            parent( nodePath ).
             searchMode( SearchMode.COUNT ).
             build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
