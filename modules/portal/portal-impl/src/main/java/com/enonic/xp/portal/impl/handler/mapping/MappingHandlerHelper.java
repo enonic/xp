@@ -111,7 +111,7 @@ class MappingHandlerHelper
         }
         else if ( content != null )
         {
-            Optional.ofNullable( ProjectName.from( ( (PortalRequest) webRequest ).getRepositoryId() ) )
+            Optional.ofNullable( ProjectName.from( ( request.getRepositoryId() ) ) )
                 .map( projectName -> callAsAdmin( () -> projectService.get( projectName ) ) )
                 .map( Project::getSiteConfigs )
                 .ifPresent( configs -> configs.forEach( siteConfigs::add ) );

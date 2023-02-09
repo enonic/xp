@@ -109,4 +109,11 @@ public class ProcessorChainResolverTest
         assertEquals( 5, fd.getOrder() );
         assertEquals( ak1, fd.getApplication() );
     }
+
+    @Test
+    public void testEmptySite()
+    {
+        ResponseProcessorDescriptors filters = resolver.resolve( portalRequest );
+        assertEquals( 0, filters.getSize() );
+    }
 }
