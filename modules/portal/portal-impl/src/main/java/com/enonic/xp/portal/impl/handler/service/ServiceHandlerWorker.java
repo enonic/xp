@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -71,13 +70,9 @@ final class ServiceHandlerWorker
         final Site site = resolvedContent.getNearestSite();
 
         //Checks if the application is set on the current site
-        if ( site != null )
+        if ( site != null && site.getSiteConfigs().get( applicationKey ) == null )
         {
-            final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
-            if ( siteConfig == null )
-            {
-                throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
-            }
+            throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
         }
 
         //Checks if the application is set on the current application

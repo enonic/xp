@@ -79,8 +79,8 @@ public class SiteTest
         SiteConfigs siteConfigs = site.getSiteConfigs();
         assertNotNull( siteConfigs );
         assertEquals( 1, siteConfigs.getSize() );
-        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfig( ApplicationKey.from( "myapplication" ) ) );
-        assertNotNull( siteConfigs.get( "myapplication" ) );
+        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfigs().get( ApplicationKey.from( "myapplication" ) ).getConfig() );
+        assertNotNull( siteConfigs.get( ApplicationKey.from( "myapplication" ) ) );
         assertTrue( SiteConfigs.empty().isEmpty() );
         assertEquals( 1, SiteConfigs.from( siteConfig ).getSize() );
     }

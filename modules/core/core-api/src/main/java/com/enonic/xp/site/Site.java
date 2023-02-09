@@ -20,6 +20,7 @@ public final class Site
         return this.getData().getString( "description" );
     }
 
+    @Deprecated
     public PropertyTree getSiteConfig( final ApplicationKey applicationKey )
     {
         final SiteConfig siteConfig = this.getSiteConfigs().get( applicationKey );
