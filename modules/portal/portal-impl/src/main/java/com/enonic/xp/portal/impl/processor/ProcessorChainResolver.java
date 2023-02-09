@@ -27,14 +27,17 @@ public class ProcessorChainResolver
         SiteDescriptor siteDescriptor;
         List<ResponseProcessorDescriptor> filterChain = new ArrayList<>();
 
-        for ( SiteConfig siteConfig : request.getSite().getSiteConfigs() )
+        if ( request.getSite() != null )
         {
-            siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
-            if ( siteDescriptor != null )
+            for ( SiteConfig siteConfig : request.getSite().getSiteConfigs() )
             {
-                for ( ResponseProcessorDescriptor filterDescriptor : siteDescriptor.getResponseProcessors() )
+                siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+                if ( siteDescriptor != null )
                 {
-                    filterChain.add( this.findIndexToInsert( filterDescriptor, filterChain ), filterDescriptor );
+                    for ( ResponseProcessorDescriptor filterDescriptor : siteDescriptor.getResponseProcessors() )
+                    {
+                        filterChain.add( this.findIndexToInsert( filterDescriptor, filterChain ), filterDescriptor );
+                    }
                 }
             }
         }
