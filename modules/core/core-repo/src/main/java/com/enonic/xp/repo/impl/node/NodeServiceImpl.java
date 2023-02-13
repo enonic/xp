@@ -184,8 +184,12 @@ public class NodeServiceImpl
     @Override
     public Node getByPath( final NodePath path )
     {
-        return Tracer.trace( "node.getByPath", trace -> trace.put( "path", path ), () -> executeGetByPath( path ),
-                             ( trace, node ) -> trace.put( "id", node.id() ) );
+        return Tracer.trace( "node.getByPath", trace -> trace.put( "path", path ), () -> executeGetByPath( path ), ( trace, node ) -> {
+            if ( node != null )
+            {
+                trace.put( "id", node.id() );
+            }
+        } );
     }
 
     private Node executeGetByPath( final NodePath path )
@@ -806,7 +810,12 @@ public class NodeServiceImpl
         return Tracer.trace( "node.getBinary", trace -> {
             trace.put( "id", nodeId );
             trace.put( "reference", reference );
-        }, () -> executeGetBinary( nodeId, reference ), ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+        }, () -> executeGetBinary( nodeId, reference ), ( trace, byteSource ) -> {
+            if ( byteSource != null )
+            {
+                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+            }
+        } );
     }
 
     private ByteSource executeGetBinary( final NodeId nodeId, final BinaryReference reference )
@@ -827,11 +836,15 @@ public class NodeServiceImpl
     public ByteSource getBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
     {
         return Tracer.trace( "node.getBinary", trace -> {
-                                 trace.put( "id", nodeId );
-                                 trace.put( "versionId", nodeVersionId );
-                                 trace.put( "reference", reference );
-                             }, () -> executeGetBinary( nodeId, nodeVersionId, reference ),
-                             ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+            trace.put( "id", nodeId );
+            trace.put( "versionId", nodeVersionId );
+            trace.put( "reference", reference );
+        }, () -> executeGetBinary( nodeId, nodeVersionId, reference ), ( trace, byteSource ) -> {
+            if ( byteSource != null )
+            {
+                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+            }
+        } );
     }
 
     private ByteSource executeGetBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )

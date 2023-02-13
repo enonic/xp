@@ -1116,7 +1116,12 @@ public class ContentServiceImpl
         return Tracer.trace( "content.getBinary", trace -> {
             trace.put( "id", contentId );
             trace.put( "reference", binaryReference );
-        }, command::execute, ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+        }, command::execute, ( trace, byteSource ) -> {
+            if ( byteSource != null )
+            {
+                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+            }
+        } );
     }
 
     @Override
@@ -1132,7 +1137,12 @@ public class ContentServiceImpl
             trace.put( "id", contentId );
             trace.put( "versionId", contentVersionId );
             trace.put( "reference", binaryReference );
-        }, command::execute, ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+        }, command::execute, ( trace, byteSource ) -> {
+            if ( byteSource != null )
+            {
+                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+            }
+        } );
     }
 
     @Override
