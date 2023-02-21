@@ -155,8 +155,6 @@ public class DynamicSchemaServiceImplTest
 
         deleteAllIndices();
 
-        ContextAccessor.INSTANCE.set( ctxDefault() );
-
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         BinaryServiceImpl binaryService = new BinaryServiceImpl();

@@ -22,6 +22,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
 
 public class JsonIndexResourceTest
     extends JaxRsResourceTestSupport
@@ -77,8 +78,8 @@ public class JsonIndexResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.indexService = Mockito.mock( IndexService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
+        this.indexService = mock( IndexService.class );
+        this.repositoryService = mock( RepositoryService.class );
 
         final IndexResource resource = new IndexResource();
         resource.setIndexService( indexService );

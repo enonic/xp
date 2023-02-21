@@ -15,6 +15,7 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
@@ -24,7 +25,8 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 @Path("/system")
@@ -46,31 +48,38 @@ public final class SystemResource
 
     @POST
     @Path("dump")
-    public TaskResultJson systemDump( final SystemDumpRequestJson request )
+    public TaskResultJson dump( final SystemDumpRequestJson params )
     {
-        return DumpRunnableTask.create().
-            description( "dump" ).
-            taskService( taskService ).
-            dumpService( dumpService ).
-            params( request ).
-            build().
-            createTaskResult();
+        TaskId taskId = DumpRunnableTask.create()
+            .name( params.getName() )
+            .includeVersions( params.isIncludeVersions() )
+            .archive( params.isArchive() )
+            .maxAge( params.getMaxAge() )
+            .maxVersions( params.getMaxVersions() )
+            .taskService( taskService )
+            .dumpService( dumpService )
+            .build()
+            .execute();
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("load")
-    public TaskResultJson load( final SystemLoadRequestJson request )
+    public TaskResultJson load( final SystemLoadRequestJson params )
     {
-        return LoadRunnableTask.create().
-            description( "load" ).
-            taskService( taskService ).
-            dumpService( dumpService ).
-            exportService( exportService ).
-            nodeRepositoryService( nodeRepositoryService ).
-            repositoryService( repositoryService ).
-            params( request ).
-            build().
-            createTaskResult();
+        final LoadRunnableTask task = LoadRunnableTask.create()
+            .name( params.getName() )
+            .upgrade( params.isUpgrade() )
+            .archive( params.isArchive() )
+            .taskService( taskService )
+            .dumpService( dumpService )
+            .exportService( exportService )
+            .nodeRepositoryService( nodeRepositoryService )
+            .repositoryService( repositoryService )
+            .build();
+        final TaskId taskId = taskService.submitLocalTask(
+            SubmitLocalTaskParams.create().runnableTask( task ).name( "load" ).description( "Load " + params.getName() ).build() );
+        return new TaskResultJson( taskId );
     }
 
 
@@ -78,24 +87,24 @@ public final class SystemResource
     @Path("vacuum")
     public TaskResultJson vacuum( final VacuumRequestJson params )
     {
-        return VacuumCommand.create().
-            taskService( taskService ).
-            params( params ).
-            build().
-            execute();
+        final TaskId taskId = VacuumCommand.create()
+            .ageThreshold( params.getAgeThreshold() )
+            .tasks( params.getTasks() )
+            .taskService( taskService )
+            .build()
+            .execute();
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("upgrade")
     public TaskResultJson upgrade( final SystemDumpUpgradeRequestJson params )
     {
-        return UpgradeRunnableTask.create().
-            description( "upgrade" ).
-            taskService( taskService ).
-            dumpService( dumpService ).
-            params( params ).
-            build().
-            createTaskResult();
+        final UpgradeRunnableTask task =
+            UpgradeRunnableTask.create().dumpService( dumpService ).name( params.getName() ).build();
+        final TaskId taskId = taskService.submitLocalTask(
+            SubmitLocalTaskParams.create().runnableTask( task ).description( "Upgrade dump " + params.getName() ).build() );
+        return new TaskResultJson( taskId );
     }
 
     @SuppressWarnings("WeakerAccess")

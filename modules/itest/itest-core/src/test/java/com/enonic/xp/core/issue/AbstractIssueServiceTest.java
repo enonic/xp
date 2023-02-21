@@ -1,15 +1,10 @@
 package com.enonic.xp.core.issue;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
-import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -75,6 +70,8 @@ public class AbstractIssueServiceTest
 
     private ExecutorService executorService;
 
+    private Context initialContext;
+
     @BeforeEach
     public void setUp()
         throws Exception
@@ -89,6 +86,8 @@ public class AbstractIssueServiceTest
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
+
+        initialContext = ContextAccessor.current();
         ContextAccessor.INSTANCE.set( ctx );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
@@ -160,9 +159,6 @@ public class AbstractIssueServiceTest
         nodeService.setRepositoryService( repositoryService );
         nodeService.initialize();
 
-        Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
-
         issueService.setNodeService( nodeService );
 
         initializeRepository();
@@ -171,6 +167,7 @@ public class AbstractIssueServiceTest
     @AfterEach
     void tearDown()
     {
+        ContextAccessor.INSTANCE.set( initialContext );
         executorService.shutdownNow();
     }
 

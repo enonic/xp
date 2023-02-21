@@ -4,9 +4,9 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Objects;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
 
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
@@ -45,7 +45,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
-import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -152,6 +151,8 @@ public abstract class AbstractNodeTest
 
     protected SecurityServiceImpl securityService;
 
+    private Context initialContext;
+
     protected static Context ctxDefault()
     {
         return ContextBuilder.create().
@@ -182,17 +183,15 @@ public abstract class AbstractNodeTest
     protected void setUpNode()
         throws Exception
     {
-        eventPublisher = Mockito.mock( EventPublisher.class );
+        eventPublisher = mock( EventPublisher.class );
 
         deleteAllIndices();
 
-        final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( this.temporaryFolder.resolve( "repo" ).resolve( "snapshots" ) );
+        initialContext = ContextAccessor.current();
+        ContextAccessor.INSTANCE.set( ctxDefault() );
 
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
         System.setProperty( "mapper.allow_dots_in_name", "true" );
-
-        ContextAccessor.INSTANCE.set( ctxDefault() );
 
         this.blobStore = new MemoryBlobStore();
 
@@ -250,6 +249,12 @@ public abstract class AbstractNodeTest
         bootstrap();
 
         createTestRepository();
+    }
+
+    @AfterEach
+    void restoreContext()
+    {
+        ContextAccessor.INSTANCE.set( initialContext );
     }
 
     protected void bootstrap()

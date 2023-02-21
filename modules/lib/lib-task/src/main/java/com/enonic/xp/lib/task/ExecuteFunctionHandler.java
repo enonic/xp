@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
@@ -31,7 +32,8 @@ public final class ExecuteFunctionHandler
     {
         final TaskService taskService = taskServiceSupplier.get();
         final TaskWrapper taskWrapper = new TaskWrapper( taskFunction, description );
-        final TaskId taskId = taskService.submitTask( taskWrapper, description );
+        final TaskId taskId =
+            taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( taskWrapper ).description( description ).build() );
 
         return taskId.toString();
     }

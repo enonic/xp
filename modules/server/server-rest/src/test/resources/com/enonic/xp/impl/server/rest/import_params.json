@@ -1,0 +1,4 @@
+{
+  "targetRepoPath": "repo:branch:/path/to/content",
+  "exportName": "my_export"
+}

@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
@@ -13,68 +13,68 @@ import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.task.AbstractRunnableTaskTest;
-import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class ExportRunnableTaskTest
-    extends AbstractRunnableTaskTest
+class ExportRunnableTaskTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @TempDir
     public Path temporaryFolder;
 
     private ExportService exportService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         HomeDirSupport.set( temporaryFolder );
 
-        this.exportService = Mockito.mock( ExportService.class );
+        this.exportService = mock( ExportService.class );
     }
 
-    @Override
-    protected ExportRunnableTask createAndRunTask()
+    private ExportRunnableTask createTask( final ExportNodesRequestJson params )
     {
-        return null;
-    }
-
-    protected ExportRunnableTask createAndRunTask( final ExportNodesRequestJson params )
-    {
-        final ExportRunnableTask task = ExportRunnableTask.create().
-            description( "export" ).
-            taskService( taskService ).
-            exportService( exportService ).
-            params( params ).
-            build();
-
-        task.run( TaskId.from( "taskId" ), progressReporter );
-
-        return task;
+        return ExportRunnableTask.create()
+            .exportService( exportService )
+            .repositoryId( params.getSourceRepoPath().getRepositoryId() )
+            .branch( params.getSourceRepoPath().getBranch() )
+            .nodePath( params.getSourceRepoPath().getNodePath() )
+            .exportName( params.getExportName() )
+            .includeVersions( params.isIncludeVersions() )
+            .exportWithIds( params.isExportWithIds() )
+            .dryRun( params.isDryRun() )
+            .build();
     }
 
     @Test
-    public void exportNodes()
+    void exportNodes()
     {
-        final NodeExportResult nodeExportResult = NodeExportResult.create().
-            addNodePath( NodePath.create().addElement( "node" ).addElement( "path" ).build() ).
-            addBinary( NodePath.create().elements( "binary" ).build(), BinaryReference.from( "binaryRef" ) ).
-            build();
+        final NodeExportResult nodeExportResult = NodeExportResult.create()
+            .addNodePath( NodePath.create().addElement( "node" ).addElement( "path" ).build() )
+            .addBinary( NodePath.create().elements( "binary" ).build(), BinaryReference.from( "binaryRef" ) )
+            .build();
 
-        Mockito.when( this.exportService.exportNodes( isA( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
+        when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createAndRunTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true ) );
 
-        task.createTaskResult();
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
 
-        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "export" ) );
+        task.run( TaskId.from( "taskId" ), progressReporter );
 
-        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
+        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+
+        final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "exportNodes_result.json" ), jsonTestHelper.stringToJson( result ) );
     }
 

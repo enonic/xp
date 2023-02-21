@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.task;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,14 +73,16 @@ class ClusteredTaskManagerImplTest
         final TaskId taskId = TaskId.from( "someTask" );
         final Member member1 = mock( Member.class );
         final Member member2 = mock( Member.class );
+        final TaskInfo taskInfo =
+            TaskInfo.create().id( taskId ).name( "name" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build();
+
         when( executorService.submitToAllMembers( any( TasksReporterCallable.class ) ) ).thenReturn(
-            Map.of( member1, CompletableFuture.completedFuture( List.of( TaskInfo.create().id( taskId ).build() ) ), member2,
+            Map.of( member1, CompletableFuture.completedFuture( List.of( taskInfo ) ), member2,
                     CompletableFuture.completedFuture( List.of() ) ) );
 
-        final TaskInfo taskInfo = clusteredTaskManager.getTaskInfo( taskId );
+        final TaskInfo taskInfoResult = clusteredTaskManager.getTaskInfo( taskId );
 
-        assertNotNull( taskInfo );
-        assertEquals( taskId, taskInfo.getId() );
+        assertEquals( taskInfoResult, taskInfo );
     }
 
     @Test
@@ -101,9 +104,14 @@ class ClusteredTaskManagerImplTest
         final TaskId taskId2 = TaskId.from( "someTask2" );
         final Member member1 = mock( Member.class );
         final Member member2 = mock( Member.class );
+        final TaskInfo taskInfo1 =
+            TaskInfo.create().id( taskId1 ).name( "name" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build();
+        final TaskInfo taskInfo2 =
+            TaskInfo.create().id( taskId2 ).name( "name" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build();
+
         when( executorService.submitToAllMembers( any( TasksReporterCallable.class ) ) ).thenReturn(
-            Map.of( member1, CompletableFuture.completedFuture( List.of( TaskInfo.create().id( taskId1 ).build() ) ), member2,
-                    CompletableFuture.completedFuture( List.of( TaskInfo.create().id( taskId2 ).build() ) ) ) );
+            Map.of( member1, CompletableFuture.completedFuture( List.of( taskInfo1 ) ), member2,
+                    CompletableFuture.completedFuture( List.of( taskInfo2 ) ) ) );
 
         final List<TaskInfo> taskInfos = clusteredTaskManager.getAllTasks();
 
@@ -118,9 +126,14 @@ class ClusteredTaskManagerImplTest
         final TaskId taskId2 = TaskId.from( "someTask2" );
         final Member member1 = mock( Member.class );
         final Member member2 = mock( Member.class );
+        final TaskInfo taskInfo1 =
+            TaskInfo.create().id( taskId1 ).name( "name" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build();
+        final TaskInfo taskInfo2 =
+            TaskInfo.create().id( taskId2 ).name( "name" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build();
+
         when( executorService.submitToAllMembers( any( TasksReporterCallable.class ) ) ).thenReturn(
-            Map.of( member1, CompletableFuture.completedFuture( List.of( TaskInfo.create().id( taskId1 ).build() ) ), member2,
-                    CompletableFuture.completedFuture( List.of( TaskInfo.create().id( taskId2 ).build() ) ) ) );
+            Map.of( member1, CompletableFuture.completedFuture( List.of( taskInfo1 ) ), member2,
+                    CompletableFuture.completedFuture( List.of( taskInfo2 ) ) ) );
 
         final List<TaskInfo> taskInfos = clusteredTaskManager.getRunningTasks();
 

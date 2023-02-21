@@ -2,12 +2,14 @@ package com.enonic.xp.impl.server.rest.task;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchLoadResult;
@@ -30,17 +32,27 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
-import com.enonic.xp.task.AbstractRunnableTaskTest;
-import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskService;
 
-public class LoadRunnableTaskTest
-    extends AbstractRunnableTaskTest
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class LoadRunnableTaskTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
     @TempDir
     public Path temporaryFolder;
 
     private DumpService dumpService;
+
+    TaskService taskService;
 
     private ExportService exportService;
 
@@ -54,37 +66,30 @@ public class LoadRunnableTaskTest
     public void setUp()
         throws Exception
     {
-        this.dumpService = Mockito.mock( DumpService.class );
-        this.exportService = Mockito.mock( ExportService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
+        this.dumpService = mock( DumpService.class );
+        this.exportService = mock( ExportService.class );
+        this.repositoryService = mock( RepositoryService.class );
+        this.nodeRepositoryService = mock( NodeRepositoryService.class );
+        this.taskService = mock( TaskService.class );
 
         HomeDirSupport.set( temporaryFolder );
 
         this.dumpDir = Files.createDirectories( temporaryFolder.resolve( "data" ).resolve( "dump" ) );
     }
 
-    @Override
-    protected LoadRunnableTask createAndRunTask()
+
+    private LoadRunnableTask createTask( final SystemLoadRequestJson params )
     {
-        return null;
-    }
-
-    protected LoadRunnableTask createAndRunTask( final SystemLoadRequestJson params )
-    {
-        final LoadRunnableTask task = LoadRunnableTask.create().
-            description( "dump" ).
-            taskService( taskService ).
-            dumpService( dumpService ).
-            exportService( exportService ).
-            repositoryService( repositoryService ).
-            nodeRepositoryService( nodeRepositoryService ).
-            params( params ).
-            build();
-
-        task.run( TaskId.from( "taskId" ), progressReporter );
-
-        return task;
+        return LoadRunnableTask.create()
+            .taskService( taskService )
+            .dumpService( dumpService )
+            .exportService( exportService )
+            .repositoryService( repositoryService )
+            .nodeRepositoryService( nodeRepositoryService )
+            .name( params.getName() )
+            .upgrade( params.isUpgrade() )
+            .archive( params.isArchive() )
+            .build();
     }
 
     @Test
@@ -93,60 +98,58 @@ public class LoadRunnableTaskTest
     {
         Path nameDir = Files.createDirectory( dumpDir.resolve( "name" ) );
 
-        final NodeImportResult importResult = NodeImportResult.create().
-            added( NodePath.create( "/path/to/node1" ).build() ).
-            updated( NodePath.create( "/path/to/node2" ).build() ).
-            dryRun( true ).
-            build();
+        final NodeImportResult importResult = NodeImportResult.create()
+            .added( NodePath.create( "/path/to/node1" ).build() )
+            .updated( NodePath.create( "/path/to/node2" ).build() )
+            .dryRun( true )
+            .build();
 
         final PropertyTree repoData = new PropertyTree();
         repoData.addString( "key", "value" );
 
-        Mockito.when( this.exportService.importNodes( Mockito.isA( ImportNodesParams.class ) ) ).thenReturn( importResult );
+        when( this.exportService.importNodes( any( ImportNodesParams.class ) ) ).thenReturn( importResult );
 
-        Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
-            branches( Branch.from( "master" ) ).
-            id( RepositoryId.from( "my-repo" ) ).
-            data( repoData ).
-            build() ) );
+        when( this.repositoryService.list() ).thenReturn( Repositories.from(
+            Repository.create().branches( Branch.from( "master" ) ).id( RepositoryId.from( "my-repo" ) ).data( repoData ).build() ) );
 
         Files.writeString( nameDir.resolve( "export.properties" ), "a=b" );
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 
-        SystemLoadResult systemLoadResult = SystemLoadResult.create().
-            add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) ).
-                add( BranchLoadResult.create( Branch.create().
-                    value( "branch-value" ).
-                    build() ).
-                    error( LoadError.error( "error-message" ) ).
-                    successful( 2L ).
-                    build() ).
-                versions( VersionsLoadResult.create().
-                    error( LoadError.error( "version-load-error-message" ) ).
-                    successful( 1L ).
-                    build() ).
-                build() ).
-            build();
+        SystemLoadResult systemLoadResult = SystemLoadResult.create()
+            .add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) )
+                      .add( BranchLoadResult.create( Branch.create().value( "branch-value" ).build() )
+                                .error( LoadError.error( "error-message" ) )
+                                .successful( 2L )
+                                .build() )
+                      .versions(
+                          VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful( 1L ).build() )
+                      .build() )
+            .build();
 
-        Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
+        final TaskId taskId = TaskId.from( "taskId" );
+        when( taskService.getTaskInfo( taskId ) ).thenReturn(
+            TaskInfo.create().id( taskId ).name( "load" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build() );
+
+        when( this.dumpService.load( any( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task =
-            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
+            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
 
-        task.createTaskResult();
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
 
-        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "dump" ) );
+        task.run( TaskId.from( "taskId" ), progressReporter );
 
-        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "my-repo" ) ).
-            data( repoData ).
-            repositorySettings( RepositorySettings.create().
-                build() ).
-            build() );
+        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
+        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
 
-        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        verify( nodeRepositoryService, times( 1 ) ).create( CreateRepositoryParams.create()
+                                                                .repositoryId( RepositoryId.from( "my-repo" ) )
+                                                                .data( repoData )
+                                                                .repositorySettings( RepositorySettings.create().build() )
+                                                                .build() );
+
+        final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_result.json" ), jsonTestHelper.stringToJson( result ) );
     }
 
@@ -158,23 +161,34 @@ public class LoadRunnableTaskTest
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 
-        SystemLoadResult systemLoadResult = SystemLoadResult.create().add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) ).add(
-            BranchLoadResult.create( Branch.create().value( "branch-value" ).build() ).error(
-                LoadError.error( "error-message" ) ).successful( 2L ).build() ).versions(
-            VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful(
-                1L ).build() ).build() ).build();
+        SystemLoadResult systemLoadResult = SystemLoadResult.create()
+            .add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) )
+                      .add( BranchLoadResult.create( Branch.create().value( "branch-value" ).build() )
+                                .error( LoadError.error( "error-message" ) )
+                                .successful( 2L )
+                                .build() )
+                      .versions(
+                          VersionsLoadResult.create().error( LoadError.error( "version-load-error-message" ) ).successful( 1L ).build() )
+                      .build() )
+            .build();
 
-        Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
+        final TaskId taskId = TaskId.from( "taskId" );
+        when( taskService.getTaskInfo( taskId ) ).thenReturn(
+            TaskInfo.create().id( taskId ).name( "load" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build() );
+
+        when( this.dumpService.load( any( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task =
-            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
+            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
 
-        task.createTaskResult();
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
 
-        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "dump" ) );
+        task.run( taskId, progressReporter );
 
-        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
+        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+
+        final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_system_result.json" ), jsonTestHelper.stringToJson( result ) );
 
     }

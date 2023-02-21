@@ -1,17 +1,21 @@
 package com.enonic.xp.cluster;
 
-public class ClusterNodeId
-{
-    private final String value;
+import java.io.Serializable;
+import java.util.Objects;
 
-    public static ClusterNodeId from( final String name )
-    {
-        return new ClusterNodeId( name );
-    }
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
+public final class ClusterNodeId
+    implements Serializable
+{
+    private static final long serialVersionUID = 0;
+
+    private final String value;
 
     private ClusterNodeId( final String value )
     {
-        this.value = value;
+        this.value = Objects.requireNonNull( value );
     }
 
     @Override
@@ -23,23 +27,17 @@ public class ClusterNodeId
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final ClusterNodeId that = (ClusterNodeId) o;
-
-        return value != null ? value.equals( that.value ) : that.value == null;
+        return this == o || o instanceof ClusterNodeId && this.value.equals( ( (ClusterNodeId) o ).value );
     }
 
     @Override
     public int hashCode()
     {
-        return value != null ? value.hashCode() : 0;
+        return value.hashCode();
+    }
+
+    public static ClusterNodeId from( final String name )
+    {
+        return new ClusterNodeId( name );
     }
 }

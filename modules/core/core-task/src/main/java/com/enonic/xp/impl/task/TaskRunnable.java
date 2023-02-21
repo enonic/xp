@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.task;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,9 +9,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.task.TaskId;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.security.User;
 import com.enonic.xp.trace.Tracer;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
@@ -23,48 +23,46 @@ final class TaskRunnable
 
     private final InternalProgressReporter progressReporter;
 
-    private final TaskId id;
-
     TaskRunnable( final DescribedTask runnableTask, final InternalProgressReporter progressReporter )
     {
         this.runnableTask = runnableTask;
         this.progressReporter = progressReporter;
-        this.id = runnableTask.getTaskId();
     }
 
     @Override
     public void run()
     {
-        setThreadName();
-        final Trace trace = Tracer.newTrace( "task.run" );
-        if ( trace == null )
+        final String originalThreadName = Thread.currentThread().getName();
+        Thread.currentThread().setName( betterThreadName() );
+        try
         {
-            doRun();
+            Tracer.trace( "task.run", trace -> {
+                trace.put( "taskId", runnableTask.getTaskId() );
+                trace.put( "user",
+                           Objects.requireNonNullElse( runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ).getKey() );
+                trace.put( "app", runnableTask.getApplicationKey() );
+            }, this::doRun, ( ( trace, success ) -> trace.put( "success", success ) ) );
         }
-        else
+        finally
         {
-            trace.put( "taskId", id );
-            trace.put( "user", runnableTask.getTaskContext().getAuthInfo().getUser() != null ? runnableTask.getTaskContext()
-                .getAuthInfo()
-                .getUser()
-                .getKey() : PrincipalKey.ofAnonymous() );
-            trace.put( "app", runnableTask.getApplicationKey() );
-            Tracer.trace( trace, this::doRun );
+            Thread.currentThread().setName( originalThreadName );
         }
     }
 
-    private void doRun()
+    private boolean doRun()
     {
         progressReporter.running();
         try
         {
             newContext().runWith( () -> runnableTask.run( progressReporter ) );
             progressReporter.finished();
+            return true;
         }
         catch ( Throwable t )
         {
             progressReporter.failed( t.getMessage() );
-            LOG.error( "Error executing task [{}] '{}': {}", id, runnableTask.getDescription(), t.getMessage(), t );
+            LOG.error( "Error executing task [{}] '{}': {}", runnableTask.getTaskId(), runnableTask.getName(), t.getMessage(), t );
+            return false;
         }
     }
 
@@ -79,19 +77,17 @@ final class TaskRunnable
 
         if ( taskContext.getContentRootPath() != null )
         {
-
             context.attribute( CONTENT_ROOT_PATH_ATTRIBUTE, taskContext.getContentRootPath() );
         }
 
         return context.build();
     }
 
-    private void setThreadName()
+    private String betterThreadName()
     {
-        final String defaultName = "task-" + id;
-        final String threadName = defaultName.equalsIgnoreCase( runnableTask.getName() )
-            ? "Task " + runnableTask.getApplicationKey() + "-" + id
-            : "Task " + runnableTask.getName() + "-" + id;
-        Thread.currentThread().setName( threadName );
+        final String defaultName = "task-" + runnableTask.getApplicationKey() + "-" + runnableTask.getTaskId();
+        return defaultName.equals( runnableTask.getName() )
+            ? defaultName
+            : "task-" + runnableTask.getName() + "-" + runnableTask.getTaskId();
     }
 }

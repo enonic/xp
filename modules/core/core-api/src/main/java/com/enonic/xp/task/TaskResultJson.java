@@ -1,5 +1,6 @@
 package com.enonic.xp.task;
 
+@Deprecated
 public class TaskResultJson
 {
     private final TaskId taskId;

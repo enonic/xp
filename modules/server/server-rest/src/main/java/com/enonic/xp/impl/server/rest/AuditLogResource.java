@@ -12,10 +12,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.CleanUpAuditLogCommand;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 @Path("/auditlog")
@@ -32,11 +32,8 @@ public final class AuditLogResource
     @Path("cleanup")
     public TaskResultJson cleanup( final CleanUpAuditLogRequestJson params )
     {
-        return CleanUpAuditLogCommand.create().
-            taskService( taskService ).
-            params( params ).
-            build().
-            execute();
+        return new TaskResultJson(
+            CleanUpAuditLogCommand.create().taskService( taskService ).ageThreshold( params.getAgeThreshold() ).build().execute() );
     }
 
     @SuppressWarnings("WeakerAccess")

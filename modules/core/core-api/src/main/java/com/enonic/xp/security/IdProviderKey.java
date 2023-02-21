@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.io.Serializable;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -9,7 +11,10 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
 public final class IdProviderKey
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private static final IdProviderKey SYSTEM = IdProviderKey.from( "system" );
 
     private static final IdProviderKey DEFAULT = IdProviderKey.from( "default" );
@@ -26,20 +31,10 @@ public final class IdProviderKey
         this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
     }
 
-    public static IdProviderKey from( final String id )
-    {
-        return new IdProviderKey( id );
-    }
-
     @Override
-    public String toString()
+    public boolean equals( final Object o )
     {
-        return this.id;
-    }
-
-    public static IdProviderKey system()
-    {
-        return SYSTEM;
+        return this == o || o instanceof IdProviderKey && id.equals( ( (IdProviderKey) o ).id );
     }
 
     @Override
@@ -48,23 +43,24 @@ public final class IdProviderKey
         return id.hashCode();
     }
 
+    @Override
+    public String toString()
+    {
+        return this.id;
+    }
+
+    public static IdProviderKey from( final String id )
+    {
+        return new IdProviderKey( id );
+    }
+
+    public static IdProviderKey system()
+    {
+        return SYSTEM;
+    }
+
     public static IdProviderKey createDefault()
     {
         return DEFAULT;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof IdProviderKey ) )
-        {
-            return false;
-        }
-        final IdProviderKey idProviderKey = (IdProviderKey) o;
-        return id.equals( idProviderKey.id );
     }
 }

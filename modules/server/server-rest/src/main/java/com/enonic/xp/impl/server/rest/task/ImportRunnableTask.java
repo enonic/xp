@@ -1,30 +1,49 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.util.Map;
+
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
-import com.enonic.xp.impl.server.rest.model.RepoPath;
 import com.enonic.xp.impl.server.rest.task.listener.ImportListenerImpl;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 import static com.google.common.base.Strings.emptyToNull;
 
 public class ImportRunnableTask
-    extends AbstractRunnableTask
+    implements RunnableTask
 {
-    private final ImportNodesRequestJson params;
+    private final RepositoryId repositoryId;
+
+    private final Branch branch;
+
+    private final NodePath nodePath;
+
+    private final String exportName;
+
+    private final boolean dryRun;
+
+    private final boolean importWithIds;
+
+    private final boolean importWithPermissions;
+
+    private final String xslSource;
+
+    private final Map<String, Object> xslParams;
 
     private final ExportService exportService;
 
@@ -34,8 +53,16 @@ public class ImportRunnableTask
 
     private ImportRunnableTask( Builder builder )
     {
-        super( builder );
-        this.params = builder.params;
+        this.repositoryId = builder.repositoryId;
+        this.branch = builder.branch;
+        this.nodePath = builder.nodePath;
+        this.exportName = builder.exportName;
+        this.dryRun = builder.dryRun;
+        this.importWithIds = builder.importWithIds;
+        this.importWithPermissions = builder.importWithPermissions;
+        this.xslSource = builder.xslSource;
+        this.xslParams = builder.xslParams;
+
         this.exportService = builder.exportService;
         this.repositoryService = builder.repositoryService;
         this.nodeRepositoryService = builder.nodeRepositoryService;
@@ -49,23 +76,21 @@ public class ImportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final RepoPath targetRepoPath = params.getTargetRepoPath();
-
-        final NodeImportResult result = getContext( params.getTargetRepoPath() ).callWith( () -> {
+        final NodeImportResult result = getContext().callWith( () -> {
             final ImportNodesParams.Builder builder = ImportNodesParams.create()
-                .exportName( params.getExportName() )
-                .targetNodePath( targetRepoPath.getNodePath() )
-                .dryRun( params.isDryRun() )
-                .includeNodeIds( params.isImportWithIds() )
-                .includePermissions( params.isImportWithPermissions() )
-                .xsltFileName( emptyToNull( params.getXslSource() ) )
-                .xsltParams( params.getXslParams() )
+                .exportName( exportName )
+                .targetNodePath( nodePath )
+                .dryRun( dryRun )
+                .includeNodeIds( importWithIds )
+                .includePermissions( importWithPermissions )
+                .xsltFileName( emptyToNull( xslSource ) )
+                .xsltParams( xslParams )
                 .nodeImportListener( new ImportListenerImpl( progressReporter ) );
 
             return this.exportService.importNodes( builder.build() );
         } );
 
-        if ( targetIsSystemRepo( targetRepoPath ) )
+        if ( targetIsSystemRepo() )
         {
             initializeStoredRepositories();
         }
@@ -73,18 +98,18 @@ public class ImportRunnableTask
         progressReporter.info( NodeImportResultJson.from( result ).toString() );
     }
 
-    private Context getContext( final RepoPath repoPath )
+    private Context getContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .branch( repoPath.getBranch() )
-            .repositoryId( repoPath.getRepositoryId() )
+            .branch( branch )
+            .repositoryId( repositoryId )
             .build();
     }
 
-    private boolean targetIsSystemRepo( final RepoPath targetRepoPath )
+    private boolean targetIsSystemRepo()
     {
-        return SystemConstants.SYSTEM_REPO_ID.equals( targetRepoPath.getRepositoryId() ) &&
-            SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() );
+        return SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) &&
+            SystemConstants.BRANCH_SYSTEM.equals( branch );
     }
 
     private void initializeStoredRepositories()
@@ -105,9 +130,24 @@ public class ImportRunnableTask
     }
 
     public static class Builder
-        extends AbstractRunnableTask.Builder<Builder>
     {
-        private ImportNodesRequestJson params;
+        private RepositoryId repositoryId;
+
+        private Branch branch;
+
+        private NodePath nodePath;
+
+        private String exportName;
+
+        private boolean dryRun;
+
+        private boolean importWithIds;
+
+        private boolean importWithPermissions;
+
+        private String xslSource;
+
+        private Map<String, Object> xslParams;
 
         private ExportService exportService;
 
@@ -115,9 +155,57 @@ public class ImportRunnableTask
 
         private NodeRepositoryService nodeRepositoryService;
 
-        public Builder params( ImportNodesRequestJson params )
+        public Builder repositoryId( final RepositoryId repositoryId )
         {
-            this.params = params;
+            this.repositoryId = repositoryId;
+            return this;
+        }
+
+        public Builder branch( final Branch branch )
+        {
+            this.branch = branch;
+            return this;
+        }
+
+        public Builder nodePath( final NodePath nodePath )
+        {
+            this.nodePath = nodePath;
+            return this;
+        }
+
+        public Builder exportName( String exportName )
+        {
+            this.exportName = exportName;
+            return this;
+        }
+
+        public Builder dryRun( boolean dryRun )
+        {
+            this.dryRun = dryRun;
+            return this;
+        }
+
+        public Builder importWithIds( boolean importWithIds )
+        {
+            this.importWithIds = importWithIds;
+            return this;
+        }
+
+        public Builder importWithPermissions( boolean importWithPermissions )
+        {
+            this.importWithPermissions = importWithPermissions;
+            return this;
+        }
+
+        public Builder xslSource( String xslSource )
+        {
+            this.xslSource = xslSource;
+            return this;
+        }
+
+        public Builder xslParams( Map<String, Object> xslParams )
+        {
+            this.xslParams = xslParams;
             return this;
         }
 
@@ -139,7 +227,6 @@ public class ImportRunnableTask
             return this;
         }
 
-        @Override
         public ImportRunnableTask build()
         {
             return new ImportRunnableTask( this );

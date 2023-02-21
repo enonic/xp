@@ -1,23 +1,23 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 public class CleanUpAuditLogCommand
 {
+    private static final DescriptorKey TASK_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.system:audit-log-cleanup" );
+
     private final TaskService taskService;
 
-    private final CleanUpAuditLogRequestJson params;
+    private final String ageThreshold;
 
     private CleanUpAuditLogCommand( Builder builder )
     {
         this.taskService = builder.taskService;
-        this.params = builder.params == null ? new CleanUpAuditLogRequestJson( null ) : builder.params;
+        this.ageThreshold = builder.ageThreshold;
     }
 
     public static Builder create()
@@ -25,28 +25,23 @@ public class CleanUpAuditLogCommand
         return new Builder();
     }
 
-    public TaskResultJson execute()
+    public TaskId execute()
     {
         PropertyTree config = new PropertyTree();
 
-        if ( params.getAgeThreshold() != null )
+        if ( ageThreshold != null )
         {
-            config.addString( "ageThreshold", params.getAgeThreshold() );
+            config.addString( "ageThreshold", ageThreshold );
         }
 
-        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().
-            descriptorKey( DescriptorKey.from( "com.enonic.xp.app.system:audit-log-cleanup" ) ).
-            data( config ).
-            build() );
-
-        return new TaskResultJson( taskId );
+        return taskService.submitTask( SubmitTaskParams.create().descriptorKey( TASK_DESCRIPTOR_KEY ).data( config ).build() );
     }
 
     public static class Builder
     {
         private TaskService taskService;
 
-        private CleanUpAuditLogRequestJson params;
+        private String ageThreshold;
 
         public Builder taskService( final TaskService taskService )
         {
@@ -54,9 +49,9 @@ public class CleanUpAuditLogCommand
             return this;
         }
 
-        public Builder params( final CleanUpAuditLogRequestJson params )
+        public Builder ageThreshold( final String ageThreshold )
         {
-            this.params = params;
+            this.ageThreshold = ageThreshold;
             return this;
         }
 

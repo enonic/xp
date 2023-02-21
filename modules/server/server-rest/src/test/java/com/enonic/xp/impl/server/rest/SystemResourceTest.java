@@ -3,28 +3,31 @@ package com.enonic.xp.impl.server.rest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
-import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
-import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
-import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
-import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
-import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
-import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
+import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class SystemResourceTest
+class SystemResourceTest
     extends JaxRsResourceTestSupport
 {
     @TempDir
@@ -35,7 +38,7 @@ public class SystemResourceTest
     private SystemResource resource;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
@@ -43,58 +46,73 @@ public class SystemResourceTest
     }
 
     @Test
-    public void dumpTask()
+    void dump()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( DumpRunnableTask.class ), eq( "dump" ) ) )
-            .thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
-        final SystemDumpRequestJson json = Mockito.mock( SystemDumpRequestJson.class );
+        final String result =
+            request().path( "system/dump" ).entity( "{\"name\" : \"dump\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
-        final TaskResultJson result = resource.systemDump( json );
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
+            .containsExactly( "dump", "Dump dump" );
+
+        assertEquals( "{\"taskId\":\"task-id\"}", result );
+    }
+
+    @Test
+    void load()
+        throws Exception
+    {
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+
+        final String result =
+            request().path( "system/load" ).entity( "{\"name\" : \"dump\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
+
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
+            .containsExactly( "load", "Load dump" );
+
+        assertEquals( "{\"taskId\":\"task-id\"}", result );
+    }
+
+    @Test
+    void vacuum()
+    {
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
+
+        final TaskResultJson result = resource.vacuum( new VacuumRequestJson( null, null ) );
         assertEquals( "task-id", result.getTaskId() );
     }
 
     @Test
-    public void load()
+    void upgrade()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( LoadRunnableTask.class ), eq( "load" ) ) )
-            .thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
-        final SystemLoadRequestJson json = Mockito.mock( SystemLoadRequestJson.class );
+        final String result =
+            request().path( "system/upgrade" ).entity( "{\"name\" : \"dump-name\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
-        final TaskResultJson result = resource.load( json );
-        assertEquals( "task-id", result.getTaskId() );
-    }
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
 
-    @Test
-    public void vacuum()
-        throws Exception
-    {
-        Mockito.when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
+                                                                         SubmitLocalTaskParams::getDescription )
+            .containsExactly( null, "Upgrade dump dump-name" );
 
-        final TaskResultJson result = resource.vacuum( null );
-        assertEquals( "task-id", result.getTaskId() );
-    }
-
-    @Test
-    public void upgrade()
-        throws Exception
-    {
-        Mockito.when( taskService.submitTask( Mockito.isA( UpgradeRunnableTask.class ), eq( "upgrade" ) ) )
-            .thenReturn( TaskId.from( "task-id" ) );
-
-        final SystemDumpUpgradeRequestJson json = Mockito.mock( SystemDumpUpgradeRequestJson.class );
-
-        final TaskResultJson result = resource.upgrade( json );
-        assertEquals( "task-id", result.getTaskId() );
+        assertEquals( "{\"taskId\":\"task-id\"}", result );
     }
 
     @Override
     protected Object getResourceInstance()
     {
-        this.taskService = Mockito.mock( TaskService.class );
+        this.taskService = mock( TaskService.class );
 
         resource = new SystemResource();
         resource.setTaskService( taskService );

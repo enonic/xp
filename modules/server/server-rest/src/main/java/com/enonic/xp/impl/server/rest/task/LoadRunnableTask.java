@@ -21,7 +21,6 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.NodeImportResultTranslator;
-import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemLoadListenerImpl;
 import com.enonic.xp.node.NodePath;
@@ -32,17 +31,24 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.vfs.VirtualFiles;
 
 public class LoadRunnableTask
-    extends AbstractRunnableTask
+    implements RunnableTask
 {
     private final Path dumpsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
 
-    private final SystemLoadRequestJson params;
+    private final String name;
+
+    private final boolean upgrade;
+
+    private final boolean archive;
+
+    private final TaskService taskService;
 
     private final DumpService dumpService;
 
@@ -56,8 +62,10 @@ public class LoadRunnableTask
 
     private LoadRunnableTask( Builder builder )
     {
-        super( builder );
-        this.params = builder.params;
+        this.name = builder.name;
+        this.upgrade = builder.upgrade;
+        this.archive = builder.archive;
+        this.taskService = builder.taskService;
         this.dumpService = builder.dumpService;
         this.exportService = builder.exportService;
         this.repositoryService = builder.repositoryService;
@@ -72,18 +80,20 @@ public class LoadRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        SystemLoadResultJson result;
+        TaskUtils.checkAlreadySubmitted( taskService.getTaskInfo( id ), taskService.getAllTasks() );
+
         loadDumpListener = new SystemLoadListenerImpl( progressReporter );
 
-        final Path dumpRoot = getDumpRoot( params.getName() );
+        final Path dumpRoot = getDumpRoot( name );
 
+        final SystemLoadResultJson result;
         if ( isExport( dumpRoot ) )
         {
             result = doLoadFromExport( dumpRoot );
         }
         else
         {
-            result = doLoadFromSystemDump( params );
+            result = doLoadFromSystemDump();
         }
 
         progressReporter.info( result.toString() );
@@ -140,24 +150,24 @@ public class LoadRunnableTask
     {
         if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
         {
-            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                repositoryId( repository.getId() ).
-                repositorySettings( repository.getSettings() ).
-                data( repository.getData() ).
-                build();
+            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
+                .repositoryId( repository.getId() )
+                .repositorySettings( repository.getSettings() )
+                .data( repository.getData() )
+                .build();
             this.nodeRepositoryService.create( createRepositoryParams );
         }
     }
 
-    private SystemLoadResultJson doLoadFromSystemDump( final SystemLoadRequestJson request )
+    private SystemLoadResultJson doLoadFromSystemDump()
     {
-        final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create().
-            dumpName( request.getName() ).
-            upgrade( request.isUpgrade() ).
-            archive( request.isArchive() ).
-            includeVersions( true ).
-            listener( loadDumpListener ).
-            build() );
+        final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create()
+                                                                             .dumpName( name )
+                                                                             .upgrade( upgrade )
+                                                                             .archive( archive )
+                                                                             .includeVersions( true )
+                                                                             .listener( loadDumpListener )
+                                                                             .build() );
 
         return SystemLoadResultJson.from( systemLoadResult );
     }
@@ -183,10 +193,10 @@ public class LoadRunnableTask
 
     private Context getContext( final String branchName, final String repositoryName )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( Branch.from( branchName ) ).
-            repositoryId( RepositoryId.from( repositoryName ) ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( Branch.from( branchName ) )
+            .repositoryId( RepositoryId.from( repositoryName ) )
+            .build();
     }
 
     private RepoLoadResult importRepoBranches( final Path rootDir, final Repository repository )
@@ -207,11 +217,13 @@ public class LoadRunnableTask
         return builder.build();
     }
 
-
     public static class Builder
-        extends AbstractRunnableTask.Builder<Builder>
     {
-        private SystemLoadRequestJson params;
+        private String name;
+
+        private boolean upgrade;
+
+        private boolean archive;
 
         private DumpService dumpService;
 
@@ -221,9 +233,29 @@ public class LoadRunnableTask
 
         private ExportService exportService;
 
-        public Builder params( SystemLoadRequestJson params )
+        private TaskService taskService;
+
+        public Builder taskService( final TaskService taskService )
         {
-            this.params = params;
+            this.taskService = taskService;
+            return this;
+        }
+
+        public Builder name( String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder upgrade( boolean upgrade )
+        {
+            this.upgrade = upgrade;
+            return this;
+        }
+
+        public Builder archive( boolean archive )
+        {
+            this.archive = archive;
             return this;
         }
 
@@ -251,7 +283,6 @@ public class LoadRunnableTask
             return this;
         }
 
-        @Override
         public LoadRunnableTask build()
         {
             return new LoadRunnableTask( this );

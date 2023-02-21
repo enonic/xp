@@ -14,6 +14,7 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
 import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -21,7 +22,8 @@ import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 @Path("/repo")
@@ -41,32 +43,45 @@ public final class RepositoryResource
 
     @POST
     @Path("export")
-    public TaskResultJson exportNodes( final ExportNodesRequestJson request )
-        throws Exception
+    public TaskResultJson exportNodes( final ExportNodesRequestJson params )
     {
-        return ExportRunnableTask.create().
-            description( "export" ).
-            taskService( taskService ).
-            exportService( exportService ).
-            params( request ).
-            build().
-            createTaskResult();
+        final ExportRunnableTask task = ExportRunnableTask.create()
+            .repositoryId( params.getSourceRepoPath().getRepositoryId() )
+            .branch( params.getSourceRepoPath().getBranch() )
+            .nodePath( params.getSourceRepoPath().getNodePath() )
+            .exportName( params.getExportName() )
+            .includeVersions( params.isIncludeVersions() )
+            .exportWithIds( params.isExportWithIds() )
+            .dryRun( params.isDryRun() )
+            .exportService( exportService )
+            .build();
+        final TaskId taskId = taskService.submitLocalTask(
+            SubmitLocalTaskParams.create().runnableTask( task ).description( "Export " + params.getExportName() ).build() );
+
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("import")
-    public TaskResultJson importNodes( final ImportNodesRequestJson request )
-        throws Exception
+    public TaskResultJson importNodes( final ImportNodesRequestJson params )
     {
-        return ImportRunnableTask.create().
-            description( "import" ).
-            taskService( taskService ).
-            exportService( exportService ).
-            repositoryService( repositoryService ).
-            nodeRepositoryService( nodeRepositoryService ).
-            params( request ).
-            build().
-            createTaskResult();
+        final ImportRunnableTask task = ImportRunnableTask.create()
+            .repositoryId( params.getTargetRepoPath().getRepositoryId() )
+            .branch( params.getTargetRepoPath().getBranch() )
+            .nodePath( params.getTargetRepoPath().getNodePath() )
+            .exportName( params.getExportName() )
+            .importWithIds( params.isImportWithIds() )
+            .importWithPermissions( params.isImportWithPermissions() )
+            .xslSource( params.getXslSource() )
+            .xslParams( params.getXslParams() )
+            .nodeRepositoryService( nodeRepositoryService )
+            .exportService( exportService )
+            .repositoryService( repositoryService )
+            .build();
+        final TaskId taskId = taskService.submitLocalTask(
+            SubmitLocalTaskParams.create().runnableTask( task ).description( "Import " + params.getExportName() ).build() );
+
+        return new TaskResultJson( taskId );
     }
 
     @GET

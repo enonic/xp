@@ -21,6 +21,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.SnapshotService;
 
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
 
 public class SnapshotResourceTest
     extends JaxRsResourceTestSupport
@@ -160,7 +161,7 @@ public class SnapshotResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.snapshotService = Mockito.mock( SnapshotService.class );
+        this.snapshotService = mock( SnapshotService.class );
 
         final SnapshotResource resource = new SnapshotResource();
         resource.setSnapshotService( snapshotService );

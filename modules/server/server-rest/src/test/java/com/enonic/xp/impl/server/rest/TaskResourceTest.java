@@ -18,6 +18,7 @@ import com.enonic.xp.task.TaskState;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class TaskResourceTest
     extends JaxRsResourceTestSupport
@@ -29,7 +30,7 @@ public class TaskResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.taskService = Mockito.mock( TaskService.class );
+        this.taskService = mock( TaskService.class );
 
         taskResource = new TaskResource();
         taskResource.setTaskService( this.taskService );
@@ -44,6 +45,7 @@ public class TaskResourceTest
         final TaskId taskId = TaskId.from( "123" );
         final TaskInfo taskInfo = TaskInfo.create().
             id( taskId ).
+            name( "task-" + taskId ).
             description( "My task" ).
             state( TaskState.RUNNING ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).

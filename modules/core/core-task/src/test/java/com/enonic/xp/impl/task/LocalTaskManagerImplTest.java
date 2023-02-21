@@ -84,7 +84,7 @@ public class LocalTaskManagerImplTest
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNull( taskMan.getTaskInfo( TaskId.from( "1" ) ) );
 
-        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task 1", TEST_TASK_CONTEXT );
+        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task-1", "task 1", TEST_TASK_CONTEXT );
         taskMan.submitTask( describedTask );
 
         assertNotNull( taskMan.getTaskInfo( describedTask.getTaskId() ) );
@@ -116,7 +116,7 @@ public class LocalTaskManagerImplTest
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNull( taskMan.getTaskInfo( TaskId.from( "1" ) ) );
 
-        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task 1", TEST_TASK_CONTEXT );
+        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task-1", "task 1", TEST_TASK_CONTEXT );
         taskMan.submitTask( describedTask );
 
         assertNotNull( taskMan.getTaskInfo( describedTask.getTaskId() ) );
@@ -140,7 +140,7 @@ public class LocalTaskManagerImplTest
             latch.countDown();
         };
 
-        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task 1", TEST_TASK_CONTEXT );
+        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task-1", "task 1", TEST_TASK_CONTEXT );
         taskMan.submitTask( describedTask );
 
         cleanupScheduler.rerun();

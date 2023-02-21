@@ -4,17 +4,17 @@
       "branches": [
         {
           "branch": "branch-value",
-          "successful": 3,
           "errors": [
             {
               "message": "error-message"
             }
-          ]
+          ],
+          "successful": 3
         }
       ],
+      "repositoryId": "my-repo",
       "versions": 3,
-      "versionsErrors": [],
-      "repositoryId": "my-repo"
+      "versionsErrors": []
     }
   ]
 }

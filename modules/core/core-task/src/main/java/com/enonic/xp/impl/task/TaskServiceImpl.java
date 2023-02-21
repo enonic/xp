@@ -18,7 +18,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.concurrent.DynamicReference;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.DistributableTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.distributed.TaskManager;
@@ -27,6 +26,7 @@ import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -64,18 +64,29 @@ public final class TaskServiceImpl
     }
 
     @Override
+    @Deprecated
     public TaskId submitTask( final RunnableTask runnable, final String description )
     {
-        final DescribedTaskImpl task = new DescribedTaskImpl( runnable, description, buildContext() );
-        return submitLocal( task );
+        return submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnable ).description( description ).build() );
     }
 
     @Override
+    @Deprecated
     public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
         final NamedTask namedTask = namedTaskFactory.createLegacy( key, config );
         final DescribedTaskImpl task = new DescribedTaskImpl( namedTask, buildContext() );
-        return submitLocal( task );
+        localTaskManager.submitTask( task );
+        return task.getTaskId();
+    }
+
+    @Override
+    public TaskId submitLocalTask( final SubmitLocalTaskParams params )
+    {
+        final DescribedTaskImpl task =
+            new DescribedTaskImpl( params.getRunnableTask(), params.getName(), params.getDescription(), buildContext() );
+        localTaskManager.submitTask( task );
+        return task.getTaskId();
     }
 
     @Override
@@ -119,12 +130,6 @@ public final class TaskServiceImpl
             .setAuthInfo( userContext.getAuthInfo() )
             .setContentRootPath( (NodePath) userContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
             .build();
-    }
-
-    private TaskId submitLocal( final DescribedTask task )
-    {
-        localTaskManager.submitTask( task );
-        return task.getTaskId();
     }
 
     @Override

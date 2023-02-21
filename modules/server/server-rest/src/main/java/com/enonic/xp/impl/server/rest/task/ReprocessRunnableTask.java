@@ -6,40 +6,53 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.impl.server.rest.model.ReprocessContentRequestJson;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
-import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH;
 
 public class ReprocessRunnableTask
-    extends AbstractRunnableTask
+    implements RunnableTask
 {
-    private final ReprocessContentRequestJson params;
+    private static final Logger LOG = LoggerFactory.getLogger( ReprocessRunnableTask.class );
+
+    private final Branch branch;
+
+    private final ContentPath contentPath;
 
     private int total;
 
     private int current;
 
-    private static final Logger LOG = LoggerFactory.getLogger( ReprocessRunnableTask.class );
+    private final boolean skipChildren;
 
-    private ReprocessRunnableTask( Builder builder )
+    private final ContentService contentService;
+
+    private ReprocessRunnableTask( final Builder builder )
     {
-        super( builder );
-        this.params = builder.params;
+        this.branch = builder.branch;
+        this.contentPath = builder.contentPath;
+        this.skipChildren = builder.skipChildren;
+
+        this.contentService = builder.contentService;
     }
 
     public static Builder create()
@@ -50,39 +63,36 @@ public class ReprocessRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final List<ContentPath> updated = new ArrayList<>();
-        final List<String> errors = new ArrayList<>();
+        runWithContext( () -> {
+            final List<ContentPath> updated = new ArrayList<>();
+            final List<String> errors = new ArrayList<>();
 
-        final Content content = this.contentService.getByPath( params.getSourceBranchPath().getContentPath() );
-        try
-        {
-            if ( !params.isSkipChildren() )
+            final Content content = this.contentService.getByPath( contentPath );
+            try
             {
-                String nodePath = CONTENT_ROOT_PATH.asAbsolute().toString();
-                final ContentPath contentPath = params.getSourceBranchPath().getContentPath();
-                if ( !ContentPath.ROOT.equals( contentPath ) )
+                if ( !skipChildren )
                 {
-                    nodePath += content.getPath().
-                        asAbsolute().
-                        toString();
-                }
-                final ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
-                final ContentQuery countChildren =
-                    ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
+                    String nodePath = ContentConstants.CONTENT_ROOT_PATH.toString();
+                    if ( !ContentPath.ROOT.equals( contentPath ) )
+                    {
+                        nodePath += content.getPath().asAbsolute().toString();
+                    }
+                    final ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
+                    final ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
 
-                total = (int) contentService.find( countChildren ).getTotalHits() + 1;
+                    total = (int) contentService.find( countChildren ).getTotalHits() + 1;
+                }
+
+                reprocessContent( content, skipChildren, updated, errors, progressReporter );
+            }
+            catch ( Exception e )
+            {
+                errors.add( String.format( "Content '%s' - %s: %s", content.getPath(), e.getClass().getCanonicalName(), e.getMessage() ) );
+                LOG.warn( "Error reprocessing content [" + content.getPath() + "]", e );
             }
 
-            reprocessContent( content, params.isSkipChildren(), updated, errors, progressReporter );
-        }
-        catch ( Exception e )
-        {
-            errors.add(
-                String.format( "Content '%s' - %s: %s", content.getPath().toString(), e.getClass().getCanonicalName(), e.getMessage() ) );
-            LOG.warn( "Error reprocessing content [" + content.getPath() + "]", e );
-        }
-
-        progressReporter.info( new ReprocessContentResultJson( ContentPaths.from( updated ), errors ).toString() );
+            progressReporter.info( new ReprocessContentResultJson( ContentPaths.from( updated ), errors ).toString() );
+        } );
     }
 
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
@@ -104,8 +114,8 @@ public class ReprocessRunnableTask
         int resultCount;
         do
         {
-            final FindContentByParentParams findParams = FindContentByParentParams.create().parentId( content.getId() ).
-                from( from ).size( 5 ).build();
+            final FindContentByParentParams findParams =
+                FindContentByParentParams.create().parentId( content.getId() ).from( from ).size( 5 ).build();
             final FindContentByParentResult results = this.contentService.findByParent( findParams );
 
             for ( Content child : results.getContents() )
@@ -116,8 +126,8 @@ public class ReprocessRunnableTask
                 }
                 catch ( Exception e )
                 {
-                    errors.add( String.format( "Content '%s' - %s: %s", child.getPath().toString(), e.getClass().getCanonicalName(),
-                                               e.getMessage() ) );
+                    errors.add(
+                        String.format( "Content '%s' - %s: %s", child.getPath(), e.getClass().getCanonicalName(), e.getMessage() ) );
                     LOG.warn( "Error reprocessing content [" + child.getPath() + "]", e );
                 }
             }
@@ -127,18 +137,55 @@ public class ReprocessRunnableTask
         while ( resultCount > 0 );
     }
 
-    public static class Builder
-        extends AbstractRunnableTask.Builder<Builder>
-    {
-        private ReprocessContentRequestJson params;
 
-        public Builder params( ReprocessContentRequestJson params )
+    private void runWithContext( Runnable runnable )
+    {
+        createContext().runWith( runnable );
+    }
+
+    private Context createContext()
+    {
+        return ContextBuilder.create()
+            .branch( Branch.from( branch.getValue() ) )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .authInfo( ContextAccessor.current().getAuthInfo() )
+            .build();
+    }
+
+    public static class Builder
+    {
+        private Branch branch;
+
+        private ContentPath contentPath;
+
+        private boolean skipChildren;
+
+        private ContentService contentService;
+
+        public Builder branch( final Branch branch )
         {
-            this.params = params;
+            this.branch = branch;
             return this;
         }
 
-        @Override
+        public Builder contentPath( final ContentPath contentPath )
+        {
+            this.contentPath = contentPath;
+            return this;
+        }
+
+        public Builder skipChildren( final boolean skipChildren )
+        {
+            this.skipChildren = skipChildren;
+            return this;
+        }
+
+        public Builder contentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
         public ReprocessRunnableTask build()
         {
             return new ReprocessRunnableTask( this );

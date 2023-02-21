@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplicationKeyTest
@@ -47,5 +49,11 @@ public class ApplicationKeyTest
         ApplicationKey applicationKey = ApplicationKey.from( bundle );
 
         assertEquals( ApplicationKey.from( "myapplication" ).toString(), applicationKey.toString() );
+    }
+
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( ApplicationKey.class ).withNonnullFields( "name" ).verify();
     }
 }

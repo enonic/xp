@@ -12,11 +12,11 @@ import javax.ws.rs.core.Response;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.impl.server.rest.model.TaskInfoJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskInfoJson;
 import com.enonic.xp.task.TaskService;
 
 @Path("/task")
@@ -30,14 +30,13 @@ public final class TaskResource
 
     @GET
     @Path("/{taskId}")
-    public TaskInfoJson getTask( @PathParam("taskId") final String taskIdString )
+    public TaskInfoJson getTask( @PathParam("taskId") final String taskId )
     {
-        final TaskId taskId = TaskId.from( taskIdString );
-        final TaskInfo taskInfo = taskService.getTaskInfo( taskId );
+        final TaskInfo taskInfo = taskService.getTaskInfo( TaskId.from( taskId ) );
 
         if ( taskInfo == null )
         {
-            throw new WebApplicationException( String.format( "Task [%s] was not found", taskIdString ), Response.Status.NOT_FOUND );
+            throw new WebApplicationException( String.format( "Task [%s] was not found", taskId ), Response.Status.NOT_FOUND );
         }
 
         return new TaskInfoJson( taskInfo );

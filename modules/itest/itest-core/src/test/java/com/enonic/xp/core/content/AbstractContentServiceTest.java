@@ -157,6 +157,8 @@ public class AbstractContentServiceTest
 
     private ExecutorService executorService;
 
+    private Context initialContext;
+
     protected static Context ctxDraft()
     {
         return ContextBuilder.create()
@@ -202,6 +204,7 @@ public class AbstractContentServiceTest
 
         deleteAllIndices();
 
+        initialContext = ContextAccessor.current();
         ContextAccessor.INSTANCE.set( ctxDraft() );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
@@ -347,12 +350,13 @@ public class AbstractContentServiceTest
         contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
 
         contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
-
     }
 
     @AfterEach
     void tearDown()
     {
+        ContextAccessor.INSTANCE.set( initialContext );
+
         executorService.shutdownNow();
     }
 

@@ -74,6 +74,7 @@ public class ListTasksHandlerTest
         final TaskInfo taskInfo1 = TaskInfo.create().
             state( TaskState.RUNNING ).
             id( TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ) ).
+            name( "task-7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ).
             description( "Long running task" ).
             application( ApplicationKey.from( "com.enonic.app1" ) ).
             user( PrincipalKey.from( "user:store:user1" ) ).
@@ -83,6 +84,7 @@ public class ListTasksHandlerTest
         final TaskInfo taskInfo2 = TaskInfo.create().
             state( TaskState.FINISHED ).
             id( TaskId.from( "b6173bcb-bf54-409b-aa6b-96ae6fcec263" ) ).
+            name( "task-b6173bcb-bf54-409b-aa6b-96ae6fcec263" ).
             description( "Update statistics" ).
             application( ApplicationKey.from( "com.enonic.app2" ) ).
             user( PrincipalKey.from( "user:store:user2" ) ).
@@ -92,6 +94,7 @@ public class ListTasksHandlerTest
         final TaskInfo taskInfo3 = TaskInfo.create().
             state( TaskState.FAILED ).
             id( TaskId.from( "e1f57280-d672-4cd8-b674-98e26e5b69ae" ) ).
+            name( "task-e1f57280-d672-4cd8-b674-98e26e5b69ae" ).
             description( "Import remote data" ).
             application( ApplicationKey.from( "com.enonic.app3" ) ).
             user( PrincipalKey.from( "user:store:user3" ) ).

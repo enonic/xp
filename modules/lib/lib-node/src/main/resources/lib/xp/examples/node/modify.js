@@ -101,16 +101,16 @@ var expected = {
     '_inheritsPermissions': false,
     '_permissions': [
         {
-            'principal': 'role:newRole',
+            'principal': 'user:system:newUser',
             'allow': [
-                'MODIFY'
+                'CREATE'
             ],
             'deny': []
         },
         {
-            'principal': 'user:system:newUser',
+            'principal': 'role:newRole',
             'allow': [
-                'CREATE'
+                'MODIFY'
             ],
             'deny': []
         }

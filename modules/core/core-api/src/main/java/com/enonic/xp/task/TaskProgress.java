@@ -25,7 +25,7 @@ public final class TaskProgress
     {
         current = builder.current;
         total = builder.total;
-        info = builder.info != null ? builder.info : "";
+        info = Objects.requireNonNullElse( builder.info, "" );
     }
 
     public int getCurrent()
@@ -46,13 +46,17 @@ public final class TaskProgress
     @Override
     public boolean equals( final Object o )
     {
+        if ( this == o )
+        {
+            return true;
+        }
         if ( !( o instanceof TaskProgress ) )
         {
             return false;
         }
 
         final TaskProgress that = (TaskProgress) o;
-        return current == that.current && total == that.total && Objects.equals( info, that.info );
+        return current == that.current && total == that.total && info.equals( that.info );
     }
 
     @Override

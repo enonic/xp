@@ -41,11 +41,11 @@ final class NamedTaskScript
         try
         {
             final PropertyTreeMapper configMapper = new PropertyTreeMapper( config );
-            this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, configMapper );
+            this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, configMapper, id.toString() );
         }
         catch ( Throwable t )
         {
-            LOG.error( "Error executing named task [{}] '{}' with id {}: {}", taskDescriptor.getKey(), taskDescriptor.getDescription(), id,
+            LOG.error( "Error executing named task [{}] '{}' with id {}: {}", taskDescriptor.getKey(), taskDescriptor.getName(), id,
                        t.getMessage(), t );
             throw t;
         }

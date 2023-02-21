@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 
 public class ApplicationResourceTest
     extends JaxRsResourceTestSupport
@@ -34,7 +35,7 @@ public class ApplicationResourceTest
     @Override
     protected ApplicationResource getResourceInstance()
     {
-        applicationService = Mockito.mock( ApplicationService.class );
+        applicationService = mock( ApplicationService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( applicationService );
@@ -53,14 +54,14 @@ public class ApplicationResourceTest
 
         Application application = createApplication();
 
-        MultipartItem multipartItem = Mockito.mock( MultipartItem.class );
+        MultipartItem multipartItem = mock( MultipartItem.class );
         Mockito.when( multipartItem.getBytes() ).thenReturn( byteSource );
         String fileName = application.getDisplayName();
         Mockito.when( multipartItem.getFileName() ).thenReturn( fileName );
 
-        MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
+        MultipartForm multipartForm = mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( fileName ) ) ).thenReturn(
+        Mockito.when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( fileName ) ) ).thenReturn(
             application );
 
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
@@ -76,7 +77,7 @@ public class ApplicationResourceTest
     {
         ApplicationResource resource = getResourceInstance();
 
-        MultipartItem multipartItem = Mockito.mock( MultipartItem.class );
+        MultipartItem multipartItem = mock( MultipartItem.class );
 
         ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
         String fileName = "app-name";
@@ -84,9 +85,9 @@ public class ApplicationResourceTest
         Mockito.when( multipartItem.getBytes() ).thenReturn( byteSource );
         Mockito.when( multipartItem.getFileName() ).thenReturn( fileName );
 
-        MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
+        MultipartForm multipartForm = mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( Mockito.isA( ByteSource.class ), eq( "app-name" ) ) ).thenThrow(
+        Mockito.when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( "app-name" ) ) ).thenThrow(
             new RuntimeException() );
 
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
@@ -102,7 +103,7 @@ public class ApplicationResourceTest
     {
         ApplicationResource resource = getResourceInstance();
 
-        MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
+        MultipartForm multipartForm = mock( MultipartForm.class );
 
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> {
             resource.install( multipartForm );
@@ -223,7 +224,7 @@ public class ApplicationResourceTest
 
     private Application createApplication( final String url )
     {
-        final Application application = Mockito.mock( Application.class );
+        final Application application = mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
         Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
         Mockito.when( application.getDisplayName() ).thenReturn( "application name" );

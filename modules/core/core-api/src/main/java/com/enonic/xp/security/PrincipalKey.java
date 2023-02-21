@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,12 +15,15 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 public final class PrincipalKey
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private static final String SEPARATOR = ":";
 
-    private static final Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
+    private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group):([^:]+):([^:]+)$" );
 
-    private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
+    private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "anonymous" );
 
     private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "su" );
 
@@ -36,8 +41,6 @@ public final class PrincipalKey
 
     private final String principalId;
 
-    private final String refString;
-
     private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String principalId )
     {
         checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal id provider cannot be null" );
@@ -45,30 +48,18 @@ public final class PrincipalKey
         this.type = checkNotNull( type, "Principal type cannot be null" );
         checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
         this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
-        if ( type == PrincipalType.ROLE )
-        {
-            this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), principalId );
-        }
-        else
-        {
-            this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
-        }
-    }
-
-    private PrincipalKey()
-    {
-        this.idProviderKey = IdProviderKey.system();
-        this.type = PrincipalType.USER;
-        this.principalId = "anonymous";
-        this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
     }
 
     public static PrincipalKey from( final String principalKey )
     {
         checkArgument( !isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
-        if ( ANONYMOUS_PRINCIPAL.toString().equals( principalKey ) )
+        switch ( principalKey )
         {
-            return ANONYMOUS_PRINCIPAL;
+            case "user:system:anonymous":
+                return ANONYMOUS_PRINCIPAL;
+            case "user:system:su":
+                return SUPER_USER_PRINCIPAL;
+            default: // no predefined key found. Let's parse
         }
 
         final Matcher matcher = REF_PATTERN.matcher( principalKey );
@@ -147,19 +138,39 @@ public final class PrincipalKey
     @Override
     public String toString()
     {
-        return refString;
+        if ( type == PrincipalType.ROLE )
+        {
+            return String.join( SEPARATOR, type.toString().toLowerCase(), principalId );
+        }
+        else
+        {
+            return String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
+        }
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof PrincipalKey ) && ( (PrincipalKey) o ).refString.equals( this.refString );
+        if ( this == o )
+        {
+            return true;
+        }
+
+        if ( !( o instanceof PrincipalKey ) )
+        {
+            return false;
+        }
+
+        final PrincipalKey that = (PrincipalKey) o;
+
+        return Objects.equals( type, that.type ) && Objects.equals( idProviderKey, that.idProviderKey ) &&
+            Objects.equals( principalId, that.principalId );
     }
 
     @Override
     public int hashCode()
     {
-        return this.refString.hashCode();
+        return Objects.hash( type, idProviderKey, principalId );
     }
 
     public static PrincipalKey ofUser( final IdProviderKey idProvider, final String userId )
@@ -170,6 +181,11 @@ public final class PrincipalKey
     public static PrincipalKey ofGroup( final IdProviderKey idProvider, final String groupId )
     {
         return new PrincipalKey( idProvider, PrincipalType.GROUP, groupId );
+    }
+
+    public static PrincipalKey ofRole( final String roleId )
+    {
+        return new PrincipalKey( null, PrincipalType.ROLE, roleId );
     }
 
     public static PrincipalKey ofAnonymous()
@@ -191,26 +207,21 @@ public final class PrincipalKey
     {
         if ( this.isRole() )
         {
-            return NodePath.create( NodePath.ROOT ).
-                addElement( IDENTITY_NODE_NAME ).
-                addElement( ROLES_NODE_NAME ).
-                addElement( getId() ).
-                build();
+            return NodePath.create( NodePath.ROOT )
+                .addElement( IDENTITY_NODE_NAME )
+                .addElement( ROLES_NODE_NAME )
+                .addElement( getId() )
+                .build();
         }
         else
         {
             final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
-            return NodePath.create( NodePath.ROOT ).
-                addElement( IDENTITY_NODE_NAME ).
-                addElement( getIdProviderKey().toString() ).
-                addElement( folderName ).
-                addElement( getId() ).
-                build();
+            return NodePath.create( NodePath.ROOT )
+                .addElement( IDENTITY_NODE_NAME )
+                .addElement( getIdProviderKey().toString() )
+                .addElement( folderName )
+                .addElement( getId() )
+                .build();
         }
-    }
-
-    public static PrincipalKey ofRole( final String roleId )
-    {
-        return new PrincipalKey( null, PrincipalType.ROLE, roleId );
     }
 }

@@ -135,6 +135,15 @@ public final class Tracer
         } );
     }
 
+    public static <T> T trace( final String name, final Consumer<Trace> before, final Runnable main )
+    {
+        return trace( name, before, () -> {
+            main.run();
+            return null;
+        }, ( trace, t ) -> {
+        } );
+    }
+
     public static <T> T traceEx( final String name, final Callable<T> callable )
         throws Exception
     {

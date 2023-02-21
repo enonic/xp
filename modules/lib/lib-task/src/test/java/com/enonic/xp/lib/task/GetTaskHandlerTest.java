@@ -34,6 +34,7 @@ public class GetTaskHandlerTest
         final TaskInfo taskInfo = TaskInfo.create().
             state( TaskState.RUNNING ).
             id( TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ) ).
+            name( "task-7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ).
             description( "Long running task" ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).
@@ -52,6 +53,7 @@ public class GetTaskHandlerTest
         final TaskInfo taskInfo = TaskInfo.create().
             state( TaskState.RUNNING ).
             id( TaskId.from( "123" ) ).
+            name( "task-123" ).
             description( "Long running task" ).
             application( ApplicationKey.from( "com.enonic.myapp" ) ).
             user( PrincipalKey.from( "user:store:me" ) ).

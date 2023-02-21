@@ -2,6 +2,7 @@ package com.enonic.xp.task;
 
 import com.enonic.xp.content.ContentService;
 
+@Deprecated
 public abstract class AbstractRunnableTask
     implements RunnableTask
 {
@@ -18,10 +19,9 @@ public abstract class AbstractRunnableTask
         this.contentService = builder.contentService;
     }
 
-    public TaskResultJson createTaskResult()
+    public TaskId createTaskResult()
     {
-        final TaskId taskId = taskService.submitTask( this, this.description );
-        return new TaskResultJson( taskId );
+        return taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( this ).description( description ).build() );
     }
 
     public abstract static class Builder<T extends Builder>

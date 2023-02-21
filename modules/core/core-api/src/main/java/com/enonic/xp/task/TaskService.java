@@ -9,7 +9,10 @@ import com.enonic.xp.page.DescriptorKey;
 @PublicApi
 public interface TaskService
 {
+    @Deprecated
     TaskId submitTask( RunnableTask runnable, String description );
+
+    TaskId submitLocalTask( SubmitLocalTaskParams params );
 
     @Deprecated
     TaskId submitTask( DescriptorKey key, PropertyTree config );

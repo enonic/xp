@@ -1,35 +1,37 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import com.google.common.base.Splitter;
-
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 
 public class ReindexRunnableTask
-    extends AbstractRunnableTask
+    implements RunnableTask
 {
-    private final ReindexRequestJson params;
+    private final RepositoryId repository;
+
+    private final Branches branches;
+
+    private final boolean initialize;
 
     private final IndexService indexService;
 
+    private final TaskService taskService;
+
     private ReindexRunnableTask( Builder builder )
     {
-        super( builder );
-        this.params = builder.params;
+        this.repository = builder.repository;
+        this.branches = builder.branches;
+        this.initialize = builder.initialize;
+
+        this.taskService = builder.taskService;
         this.indexService = builder.indexService;
     }
 
@@ -41,39 +43,50 @@ public class ReindexRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            setBranches( parseBranches( params.branches ) ).
-            listener( new ReindexListenerImpl( progressReporter ) ).
-            initialize( params.initialize ).
-            repositoryId( parseRepositoryId( params.repository ) ).
-            build() );
+        TaskUtils.checkAlreadySubmitted( taskService.getTaskInfo( id ), taskService.getAllTasks() );
+        final ReindexResult result = this.indexService.reindex( ReindexParams.create()
+                                                                    .setBranches( branches )
+                                                                    .listener( new ReindexListenerImpl( progressReporter ) )
+                                                                    .initialize( initialize )
+                                                                    .repositoryId( repository )
+                                                                    .build() );
 
         progressReporter.info( ReindexResultJson.create( result ).toString() );
     }
 
-    public static Branches parseBranches( final String branches )
-    {
-        final List<Branch> parsed = StreamSupport.stream( Splitter.on( "," ).split( branches ).spliterator(), false ).
-            map( Branch::from ).collect( Collectors.toList() );
-        return Branches.from( parsed );
-    }
-
-    public static RepositoryId parseRepositoryId( final String repository )
-    {
-        return RepositoryId.from( repository );
-    }
-
-
     public static class Builder
-        extends AbstractRunnableTask.Builder<Builder>
     {
-        private ReindexRequestJson params;
+        private RepositoryId repository;
+
+        private boolean initialize;
+
+        private Branches branches;
 
         private IndexService indexService;
 
-        public Builder params( ReindexRequestJson params )
+        private TaskService taskService;
+
+        public Builder repository( final RepositoryId repository )
         {
-            this.params = params;
+            this.repository = repository;
+            return this;
+        }
+
+        public Builder initialize( final boolean initialize )
+        {
+            this.initialize = initialize;
+            return this;
+        }
+
+        public Builder branches( final Branches branches )
+        {
+            this.branches = branches;
+            return this;
+        }
+
+        public Builder taskService( final TaskService taskService )
+        {
+            this.taskService = taskService;
             return this;
         }
 
@@ -83,7 +96,6 @@ public class ReindexRunnableTask
             return this;
         }
 
-        @Override
         public ReindexRunnableTask build()
         {
             return new ReindexRunnableTask( this );

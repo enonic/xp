@@ -4,14 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.resource.ResourceProblemException;
-import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 public class ExecuteFunctionHandlerTest
     extends ScriptTestSupport
@@ -31,7 +29,7 @@ public class ExecuteFunctionHandlerTest
     public void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        Mockito.when( this.taskService.submitTask( any( RunnableTask.class ), anyString() ) ).thenReturn( taskId );
+        Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( taskId );
 
         runScript( "/lib/xp/examples/task/executeFunction.js" );
     }
@@ -40,7 +38,7 @@ public class ExecuteFunctionHandlerTest
     public void testExecuteFunction()
         throws Exception
     {
-        Mockito.when( this.taskService.submitTask( any( RunnableTask.class ), anyString() ) ).thenReturn( TaskId.from( "123" ) );
+        Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "123" ) );
 
         runFunction( "/test/executeFunction-test.js", "executeFunction" );
     }
@@ -49,7 +47,7 @@ public class ExecuteFunctionHandlerTest
     public void testSubmit()
         throws Exception
     {
-        Mockito.when( this.taskService.submitTask( any( RunnableTask.class ), anyString() ) ).thenReturn( TaskId.from( "123" ) );
+        Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "123" ) );
 
         runFunction( "/test/executeFunction-test.js", "submit" );
     }

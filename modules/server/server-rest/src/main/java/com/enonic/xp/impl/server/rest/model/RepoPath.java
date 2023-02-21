@@ -20,20 +20,11 @@ public class RepoPath
 
     private final NodePath nodePath;
 
-    private RepoPath( final Branch branch, final RepositoryId repositoryId, final NodePath nodePath )
+    private RepoPath( final RepositoryId repositoryId, final Branch branch, final NodePath nodePath )
     {
         this.branch = branch;
         this.repositoryId = repositoryId;
         this.nodePath = nodePath;
-    }
-
-    private static RepoPath from( final String repositoryId, final String branch, final String nodePath )
-    {
-        Preconditions.checkArgument( !isNullOrEmpty( branch ), "Branch cannot be empty" );
-        Preconditions.checkArgument( !isNullOrEmpty( repositoryId ), "repositoryId cannot be empty" );
-        Preconditions.checkArgument( !isNullOrEmpty( nodePath ), "nodePath cannot be empty" );
-
-        return new RepoPath( Branch.from( branch ), RepositoryId.from( repositoryId ), NodePath.create( nodePath ).build() );
     }
 
     public static RepoPath from( final String repoPath )
@@ -44,7 +35,17 @@ public class RepoPath
 
         Preconditions.checkArgument( elements.length == 3, "Not a valid repository path" );
 
-        return RepoPath.from( elements[0], elements[1], elements[2] );
+        Preconditions.checkArgument( !isNullOrEmpty( elements[0] ), "repositoryId cannot be empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( elements[1] ), "Branch cannot be empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( elements[2] ), "nodePath cannot be empty" );
+
+        return new RepoPath( RepositoryId.from( elements[0] ), Branch.from( elements[1] ), NodePath.create( elements[2] ).build() );
+    }
+
+    @Override
+    public String toString()
+    {
+        return repositoryId + SEPARATOR + branch + SEPARATOR + nodePath;
     }
 
     public Branch getBranch()
