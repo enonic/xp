@@ -15,19 +15,16 @@ public final class DescriptorKey
 {
     private static final long serialVersionUID = 0;
 
-    protected static final String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
     private final ApplicationKey applicationKey;
 
     private final String name;
 
-    private final String refString;
-
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
-        this.applicationKey = applicationKey;
+        this.applicationKey = Objects.requireNonNull( applicationKey );
         this.name = CharacterChecker.check( name, "Not a valid name for DescriptorKey [" + name + "]" );
-        this.refString = applicationKey.toString() + SEPARATOR + name;
     }
 
     public ApplicationKey getApplicationKey()
@@ -40,7 +37,6 @@ public final class DescriptorKey
         return name;
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
@@ -52,21 +48,20 @@ public final class DescriptorKey
         {
             return false;
         }
-
         final DescriptorKey that = (DescriptorKey) o;
-        return Objects.equals( this.refString, that.refString );
+        return applicationKey.equals( that.applicationKey ) && name.equals( that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.refString );
+        return Objects.hash( applicationKey, name );
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return applicationKey.toString() + SEPARATOR + name;
     }
 
     public static DescriptorKey from( final String key )

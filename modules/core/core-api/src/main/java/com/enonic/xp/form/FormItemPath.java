@@ -1,9 +1,7 @@
 package com.enonic.xp.form;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -12,82 +10,65 @@ import com.enonic.xp.annotation.PublicApi;
 
 
 @PublicApi
-public class FormItemPath
+public final class FormItemPath
     implements Iterable<String>
 {
-    public static final FormItemPath ROOT = new FormItemPath();
+    public static final FormItemPath ROOT = new FormItemPath( ImmutableList.of(), false );
 
     private static final String ELEMENT_DIVIDER = ".";
 
-    private final FormItemPath parentPath;
-
     private final ImmutableList<String> elements;
 
-    private final String refString;
+    @Deprecated
+    public FormItemPath( final FormItemPath parentPath, final String name )
+    {
+        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
+
+        this.elements = ImmutableList.<String>builder().addAll( parentPath.elements ).add( name ).build();
+    }
+
+    @Deprecated
+    public FormItemPath( final ImmutableList<String> elementNames )
+    {
+        this( Preconditions.checkNotNull( elementNames, "elementNames cannot be null" ), false );
+    }
+
+    private FormItemPath( final ImmutableList<String> elementNames, boolean ignore )
+    {
+        this.elements = elementNames;
+    }
 
     public static FormItemPath from( final FormItemPath parentPath, final String name )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( name, "name cannot be null" );
 
-        return new FormItemPath( parentPath, name );
+        return fromInternal( ImmutableList.<String>builder().addAll( parentPath.elements ).add( name ).build() );
     }
 
     public static FormItemPath from( final Iterable<String> pathElements )
     {
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
 
-        return new FormItemPath( ImmutableList.copyOf( pathElements ) );
+        return fromInternal( ImmutableList.copyOf( pathElements ) );
     }
 
     public static FormItemPath from( final String path )
     {
         Preconditions.checkNotNull( path, "path cannot be null" );
 
-        final List<String> pathElements = splitPathIntoElements( path );
-        return new FormItemPath( ImmutableList.copyOf( pathElements ) );
+        return fromInternal( ImmutableList.copyOf( path.split( Pattern.quote( ELEMENT_DIVIDER ), -1 ) ));
     }
 
-    public FormItemPath( final FormItemPath parentPath, final String name )
+    private static FormItemPath fromInternal( final ImmutableList<String> elementNames )
     {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( name, "name cannot be null" );
-
-        this.parentPath = parentPath;
-        final ImmutableList.Builder<String> elementBuilder = ImmutableList.builder();
-        elementBuilder.addAll( parentPath.elements ).add( name );
-        this.elements = elementBuilder.build();
-        this.refString = toString( this.elements );
-    }
-
-    public FormItemPath( final ImmutableList<String> elementNames )
-    {
-        Preconditions.checkNotNull( elementNames, "elementNames cannot be null" );
-
-        this.elements = elementNames;
-
-        final List<String> parentPathElements = new ArrayList<>();
-        for ( int i = 0; i < this.elements.size(); i++ )
-        {
-            if ( i < this.elements.size() - 1 )
-            {
-                parentPathElements.add( this.elements.get( i ) );
-            }
-        }
-        this.parentPath = parentPathElements.isEmpty() ? null : FormItemPath.from( parentPathElements );
-        this.refString = toString( this.elements );
-    }
-
-    private FormItemPath()
-    {
-        elements = ImmutableList.of();
-        parentPath = null;
-        refString = "";
+        return elementNames.isEmpty() ? ROOT : new FormItemPath( elementNames, false );
     }
 
     public FormItemPath getParent()
     {
-        return parentPath;
+        return elements.isEmpty() ? null : FormItemPath.fromInternal( elements.subList( 0, elements.size() - 1 ) );
     }
 
     public String getFirstElement()
@@ -112,20 +93,12 @@ public class FormItemPath
 
     public String[] getElementsAsArray()
     {
-        return this.elements.toArray( new String[this.elementCount()] );
+        return this.elements.toArray( String[]::new );
     }
 
     public FormItemPath asNewWithoutFirstPathElement()
     {
-        final List<String> pathElements = new ArrayList<>();
-        for ( int i = 0; i < elements.size(); i++ )
-        {
-            if ( i > 0 )
-            {
-                pathElements.add( elements.get( i ) );
-            }
-        }
-        return FormItemPath.from( pathElements );
+        return elements.isEmpty() ? ROOT : FormItemPath.fromInternal( elements.subList( 1, elements.size() ) );
     }
 
     @Override
@@ -137,18 +110,7 @@ public class FormItemPath
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final FormItemPath formItemPath = (FormItemPath) o;
-
-        return elements.equals( formItemPath.elements );
+        return this == o || o instanceof FormItemPath && elements.equals( ( (FormItemPath) o ).elements );
     }
 
     @Override
@@ -160,33 +122,7 @@ public class FormItemPath
     @Override
     public String toString()
     {
-        return refString;
-    }
-
-    private String toString( final ImmutableList<String> elements )
-    {
-        final StringBuilder s = new StringBuilder();
-        for ( int i = 0, size = elements.size(); i < size; i++ )
-        {
-            s.append( elements.get( i ) );
-
-            if ( i < elements.size() - 1 )
-            {
-                s.append( ELEMENT_DIVIDER );
-            }
-        }
-        return s.toString();
-    }
-
-    private static ImmutableList<String> splitPathIntoElements( final String path )
-    {
-        final ImmutableList.Builder<String> elements = ImmutableList.builder();
-        final StringTokenizer st = new StringTokenizer( path, ELEMENT_DIVIDER );
-        while ( st.hasMoreTokens() )
-        {
-            elements.add( st.nextToken() );
-        }
-        return elements.build();
+        return String.join( ELEMENT_DIVIDER, elements );
     }
 
     public static boolean hasNotPathElementDivider( final String s )

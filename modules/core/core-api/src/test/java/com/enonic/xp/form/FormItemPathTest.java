@@ -2,6 +2,8 @@ package com.enonic.xp.form;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FormItemPathTest
@@ -25,5 +27,11 @@ public class FormItemPathTest
         assertEquals( "", FormItemPath.from( "first" ).asNewWithoutFirstPathElement().toString() );
         assertEquals( "second", FormItemPath.from( "first.second" ).asNewWithoutFirstPathElement().toString() );
         assertEquals( "second.third", FormItemPath.from( "first.second.third" ).asNewWithoutFirstPathElement().toString() );
+    }
+
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( FormItemPath.class ).withNonnullFields( "elements" ).verify();
     }
 }

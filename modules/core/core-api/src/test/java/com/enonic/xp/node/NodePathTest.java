@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodePathTest
 {
@@ -47,29 +50,29 @@ public class NodePathTest
     @Test
     public void isEmpty()
     {
-        assertEquals( false, new NodePath( "first" ).isEmpty() );
-        assertEquals( true, new NodePath( "" ).isEmpty() );
+        assertFalse( new NodePath( "first" ).isEmpty() );
+        assertTrue( new NodePath( "" ).isEmpty() );
     }
 
     @Test
     public void isRoot()
     {
-        assertEquals( true, new NodePath( "/" ).isRoot() );
+        assertTrue( new NodePath( "/" ).isRoot() );
     }
 
     @Test
     public void isAbsolute()
     {
-        assertEquals( true, new NodePath( "/first" ).isAbsolute() );
-        assertEquals( false, new NodePath( "first" ).isAbsolute() );
+        assertTrue( new NodePath( "/first" ).isAbsolute() );
+        assertFalse( new NodePath( "first" ).isAbsolute() );
     }
 
     @Test
     public void hasTrailingDivider()
     {
-        assertEquals( true, new NodePath( "first/" ).hasTrailingDivider() );
-        assertEquals( false, new NodePath( "first" ).hasTrailingDivider() );
-        assertEquals( false, new NodePath( "/" ).hasTrailingDivider() );
+        assertTrue( new NodePath( "first/" ).hasTrailingDivider() );
+        assertFalse( new NodePath( "first" ).hasTrailingDivider() );
+        assertFalse( new NodePath( "/" ).hasTrailingDivider() );
     }
 
     @Test
@@ -96,10 +99,10 @@ public class NodePathTest
     public void ROOT()
     {
         assertEquals( "/", NodePath.ROOT.toString() );
-        assertEquals( true, NodePath.ROOT.isAbsolute() );
-        assertEquals( false, NodePath.ROOT.isRelative() );
-        assertEquals( true, NodePath.ROOT.isEmpty() );
-        assertEquals( false, NodePath.ROOT.hasTrailingDivider() );
+        assertTrue( NodePath.ROOT.isAbsolute() );
+        assertFalse( NodePath.ROOT.isRelative() );
+        assertTrue( NodePath.ROOT.isEmpty() );
+        assertFalse( NodePath.ROOT.hasTrailingDivider() );
     }
 
     @Test
@@ -126,6 +129,26 @@ public class NodePathTest
     public void removeFromBeginning_throws_IllegalStateException()
     {
         assertThrows(IllegalStateException.class, () -> assertEquals( "/", new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ).toString() ));
+    }
+
+    @Test
+    public void compareTo()
+    {
+        NodePath a = new NodePath( "/a" );
+        NodePath b = new NodePath( "/b" );
+        NodePath arel = new NodePath( "a" );
+        NodePath brel = new NodePath( "b" );
+        NodePath atrail = new NodePath( "/a/" );
+        NodePath btrail = new NodePath( "/b/" );
+
+        assertThat( a.compareTo( b ) ).isLessThanOrEqualTo( -1 );
+        assertThat( b.compareTo( a ) ).isGreaterThanOrEqualTo( 1 );
+
+        assertThat( arel.compareTo( brel ) ).isLessThanOrEqualTo( -1 );
+        assertThat( brel.compareTo( arel ) ).isGreaterThanOrEqualTo( 1 );
+
+        assertThat( atrail.compareTo( btrail ) ).isLessThanOrEqualTo( -1 );
+        assertThat( btrail.compareTo( atrail ) ).isGreaterThanOrEqualTo( 1 );
     }
 
 }

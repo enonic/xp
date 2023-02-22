@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.Locale;
 
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentDependenciesResolverTest
@@ -71,7 +73,6 @@ public class ContentDependenciesResolverTest
 
     @Test
     public void resolve_inbound_dependencies()
-        throws Exception
     {
         final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
@@ -106,7 +107,6 @@ public class ContentDependenciesResolverTest
 
     @Test
     public void resolve_outbound_dependencies()
-        throws Exception
     {
         final PropertyTree data = new PropertyTree();
 
@@ -140,20 +140,12 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        assertEquals( result.getOutbound().size(), 2 );
-
-        final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
-        assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        assertEquals( siteAggregation.getCount(), 1 );
-
-        final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[1];
-        assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 2 );
+        assertThat( result.getOutbound() ).extracting( ContentDependenciesAggregation::getType, ContentDependenciesAggregation::getCount )
+            .containsExactlyInAnyOrder( Tuple.tuple( ContentTypeName.site(), 1L ), Tuple.tuple( ContentTypeName.folder(), 2L ) );
     }
 
     @Test
     public void resolve_outbound_with_missing_dependency()
-        throws Exception
     {
         final PropertyTree data = new PropertyTree();
         final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );

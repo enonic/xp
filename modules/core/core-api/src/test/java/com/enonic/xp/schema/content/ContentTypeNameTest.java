@@ -3,7 +3,7 @@ package com.enonic.xp.schema.content;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.support.AbstractEqualsTest;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,35 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ContentTypeNameTest
 {
     @Test
-    public void equals()
+    public void equalsContract()
     {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                return ContentTypeName.from( "myapplication:mycontenttype" );
-            }
-
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                return new Object[]{ContentTypeName.from( "myapplication:myothercontenttype" )};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                return ContentTypeName.from( "myapplication:mycontenttype" );
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-                return ContentTypeName.from( "myapplication:mycontenttype" );
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
+        EqualsVerifier.forClass( ContentTypeName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
     }
 
     @Test

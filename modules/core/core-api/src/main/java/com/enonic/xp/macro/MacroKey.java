@@ -17,13 +17,10 @@ public final class MacroKey
 
     private final String name;
 
-    private final String refString;
-
     private MacroKey( final ApplicationKey applicationKey, final String name )
     {
-        this.applicationKey = applicationKey;
+        this.applicationKey = Objects.requireNonNull( applicationKey );
         this.name = CharacterChecker.check( name, "Not a valid Macro name [" + name + "]" );
-        this.refString = applicationKey.toString() + SEPARATOR + name;
     }
 
     public ApplicationKey getApplicationKey()
@@ -36,7 +33,6 @@ public final class MacroKey
         return name;
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
@@ -48,21 +44,19 @@ public final class MacroKey
         {
             return false;
         }
-
         final MacroKey that = (MacroKey) o;
-        return Objects.equals( this.refString, that.refString );
+        return applicationKey.equals( that.applicationKey ) && name.equals( that.name );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.refString );
+        return Objects.hash( applicationKey, name );
     }
-
     @Override
     public String toString()
     {
-        return refString;
+        return applicationKey + SEPARATOR + name;
     }
 
     public static MacroKey from( final String key )

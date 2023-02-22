@@ -1,5 +1,7 @@
 package com.enonic.xp.schema;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -9,8 +11,6 @@ import com.enonic.xp.app.ApplicationKey;
 public abstract class BaseSchemaName
 {
     private static final String SEPARATOR = ":";
-
-    private final String refString;
 
     private final ApplicationKey applicationKey;
 
@@ -22,14 +22,12 @@ public abstract class BaseSchemaName
         final int index = name.indexOf( SEPARATOR );
         this.applicationKey = ApplicationKey.from( index == -1 ? name : name.substring( 0, index ) );
         this.localName = index == -1 ? "" : name.substring( index + 1 );
-        this.refString = this.applicationKey + SEPARATOR + this.localName;
     }
 
     protected BaseSchemaName( final ApplicationKey applicationKey, final String localName )
     {
         this.applicationKey = applicationKey;
         this.localName = localName;
-        this.refString = this.applicationKey + SEPARATOR + this.localName;
     }
 
     public String getLocalName()
@@ -53,21 +51,19 @@ public abstract class BaseSchemaName
         {
             return false;
         }
-
-        final BaseSchemaName applicationBasedName = (BaseSchemaName) o;
-
-        return refString.equals( applicationBasedName.refString );
+        final BaseSchemaName that = (BaseSchemaName) o;
+        return applicationKey.equals( that.applicationKey ) && localName.equals( that.localName );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return Objects.hash( applicationKey, localName );
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return this.applicationKey + SEPARATOR + this.localName;
     }
 }

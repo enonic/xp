@@ -175,7 +175,7 @@ public final class JsonToPropertyTreeTranslator
         }
 
         final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().resetAllIndexesTo( 0 ).toString() );
-        return FormItemPath.from( FormItemPath.from( parentPath, key ) );
+        return FormItemPath.from( parentPath, key );
     }
 
     private boolean hasInput( final Property parentProperty, final String key )

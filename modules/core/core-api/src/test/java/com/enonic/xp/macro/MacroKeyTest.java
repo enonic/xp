@@ -2,6 +2,8 @@ package com.enonic.xp.macro;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,11 +28,8 @@ public class MacroKeyTest
     }
 
     @Test
-    public void testEquals()
+    void equalsContract()
     {
-        final MacroKey macroKey1 = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
-        final MacroKey macroKey2 = MacroKey.from( "my-app:macros1" );
-
-        assertEquals( macroKey1, macroKey2 );
+        EqualsVerifier.forClass( MacroKey.class ).withNonnullFields( "applicationKey", "name" ).verify();
     }
 }
