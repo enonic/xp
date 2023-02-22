@@ -19,9 +19,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class NodePath
     implements Comparable<NodePath>
 {
-    public static final NodePath ROOT = new NodePath( "/" );
+    private static final String ELEMENT_DIVIDER = "/";
 
-    private static final char ELEMENT_DIVIDER = '/';
+    public static final NodePath ROOT = new NodePath( ELEMENT_DIVIDER );
 
     private final boolean absolute;
 
@@ -54,7 +54,9 @@ public final class NodePath
             this.elements = builder.elementListBuilder.build();
         }
 
-        this.refString = doToString();
+        this.refString = this.elements.stream()
+            .map( Objects::toString )
+            .collect( Collectors.joining( ELEMENT_DIVIDER, absolute ? ELEMENT_DIVIDER : "", trailingDivider ? ELEMENT_DIVIDER : "" ) );
     }
 
     public boolean isRoot()
@@ -103,7 +105,7 @@ public final class NodePath
         List<NodePath> parentPaths = new ArrayList<>();
 
         final Builder builder = new Builder( this );
-        for ( int i = 0; i < elementCount(); i++ )
+        for ( int i = 0; i < this.elements.size(); i++ )
         {
             builder.removeLastElement();
             parentPaths.add( builder.build() );
@@ -147,16 +149,6 @@ public final class NodePath
         return elements.iterator();
     }
 
-    protected Element getFirstElement()
-    {
-        return elements.get( 0 );
-    }
-
-    protected Element getElement( final int index )
-    {
-        return elements.get( index );
-    }
-
     public String getElementAsString( final int index )
     {
         return elements.get( index ).toString();
@@ -179,54 +171,29 @@ public final class NodePath
 
     public NodePath removeFromBeginning( final NodePath path )
     {
-        Preconditions.checkState( this.elementCount() >= path.elementCount(),
+        Preconditions.checkState( this.elements.size() >= path.elements.size(),
                                   "No point in trying to remove [" + path + "] from [" + this.toString() + "]" );
 
-        if ( path.elementCount() == 0 )
+        if ( path.elements.isEmpty() )
         {
             return this;
         }
 
-        for ( int i = 0; i < path.elementCount(); i++ )
+        for ( int i = 0; i < path.elements.size(); i++ )
         {
-            if ( !path.getElement( i ).equals( this.getElement( i ) ) )
+            if ( !path.elements.get( i ).equals( elements.get( i ) ) )
             {
                 return this;
             }
         }
 
         final Builder builder = new Builder().absolute( this.isAbsolute() ).trailingDivider( this.hasTrailingDivider() );
-        for ( int i = path.elementCount(); i < this.elementCount(); i++ )
+        for ( int i = path.elements.size(); i < this.elements.size(); i++ )
         {
-            builder.addElement( this.getElement( i ) );
+            builder.addElement( elements.get( i ) );
         }
 
         return builder.build();
-    }
-
-    private String doToString()
-    {
-        final StringBuilder s = new StringBuilder( 25 * elements.size() );
-        if ( absolute )
-        {
-            s.append( ELEMENT_DIVIDER );
-        }
-
-        for ( int i = 0; i < this.elements.size(); i++ )
-        {
-            final Element element = this.elements.get( i );
-            s.append( element.toString() );
-            if ( i < this.elements.size() - 1 )
-            {
-                s.append( ELEMENT_DIVIDER );
-            }
-        }
-        if ( trailingDivider )
-        {
-            s.append( ELEMENT_DIVIDER );
-        }
-
-        return s.toString();
     }
 
     @Override
@@ -380,9 +347,9 @@ public final class NodePath
             }
             else
             {
-                final boolean absolute = elements.charAt( 0 ) == ELEMENT_DIVIDER;
+                final boolean absolute = elements.startsWith( ELEMENT_DIVIDER );
                 final boolean hasTrailingDivider =
-                    !( elements.length() == 1 && absolute ) && elements.charAt( elements.length() - 1 ) == ELEMENT_DIVIDER;
+                    !( elements.length() == 1 && absolute ) && elements.endsWith( ELEMENT_DIVIDER );
 
                 absolute( absolute );
                 trailingDivider( hasTrailingDivider );

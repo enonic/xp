@@ -19,13 +19,9 @@ public final class ComponentPath
 
     private final ImmutableList<RegionAndComponent> regionAndComponentList;
 
-    private final String refString;
-
     public ComponentPath( final ImmutableList<RegionAndComponent> regionAndComponentList )
     {
         this.regionAndComponentList = regionAndComponentList;
-        this.refString =
-            this.regionAndComponentList.stream().map( Objects::toString ).collect( Collectors.joining( DIVIDER, DIVIDER, "" ) );
     }
 
     public static ComponentPath from( final RegionPath parentPath, final int componentIndex )
@@ -114,19 +110,19 @@ public final class ComponentPath
             return false;
         }
         final ComponentPath that = (ComponentPath) o;
-        return refString.equals( that.refString );
+        return regionAndComponentList.equals( that.regionAndComponentList );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return regionAndComponentList.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return this.regionAndComponentList.stream().map( Objects::toString ).collect( Collectors.joining( DIVIDER, DIVIDER, "" ) );
     }
 
     public static class RegionAndComponent
@@ -137,13 +133,10 @@ public final class ComponentPath
 
         private final ComponentIndex componentIndex;
 
-        private final String refString;
-
         public RegionAndComponent( final RegionName regionName, final ComponentIndex componentIndex )
         {
             this.regionName = regionName;
             this.componentIndex = componentIndex;
-            this.refString = toString( this );
         }
 
         public static RegionAndComponent from( final String regionName, final int componentIndex )
@@ -170,15 +163,10 @@ public final class ComponentPath
             return componentIndex.index;
         }
 
-        private String toString( final RegionAndComponent regionAndComponent )
-        {
-            return regionAndComponent.regionName + DIVIDER + regionAndComponent.componentIndex;
-        }
-
         @Override
         public String toString()
         {
-            return this.refString;
+            return this.regionName + DIVIDER + this.componentIndex;
         }
     }
 
@@ -207,12 +195,9 @@ public final class ComponentPath
     {
         private final int index;
 
-        private final String refString;
-
         public ComponentIndex( final int index )
         {
             this.index = index;
-            this.refString = String.valueOf( this.index );
         }
 
         public static ComponentIndex fromString( final String str )
@@ -223,7 +208,7 @@ public final class ComponentPath
         @Override
         public String toString()
         {
-            return this.refString;
+            return Integer.toString( this.index );
         }
     }
 }

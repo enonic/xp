@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -27,8 +28,6 @@ public final class PropertyPath
     private final ImmutableList<Element> elements;
 
     private final boolean relative;
-
-    private final String refString;
 
     private final PropertyPath parentPath;
 
@@ -83,7 +82,6 @@ public final class PropertyPath
     private PropertyPath()
     {
         this.elements = ImmutableList.of();
-        this.refString = "";
         this.relative = false;
         this.parentPath = null;
     }
@@ -93,8 +91,7 @@ public final class PropertyPath
         Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
 
         this.elements = pathElements;
-        this.relative = this.elements.size() <= 0 || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
-        this.refString = toString( this.elements );
+        this.relative = this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
 
         final List<Element> parentPathElements = new ArrayList<>();
         for ( int i = 0; i < this.elements.size(); i++ )
@@ -116,8 +113,7 @@ public final class PropertyPath
         final ImmutableList.Builder<Element> elementBuilder = ImmutableList.builder();
         elementBuilder.addAll( parentPath.pathElements() ).add( element );
         this.elements = elementBuilder.build();
-        this.relative = this.elements.size() <= 0 || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
-        this.refString = toString( elements );
+        this.relative = this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
     }
 
     public PropertyPath getParent()
@@ -241,34 +237,19 @@ public final class PropertyPath
         }
 
         final PropertyPath other = (PropertyPath) o;
-        return refString.equals( other.refString );
+        return elements.equals( other.elements );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return elements.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return refString;
-    }
-
-    private String toString( final ImmutableList<Element> listOfElements )
-    {
-        final StringBuilder s = new StringBuilder();
-        for ( int i = 0, size = listOfElements.size(); i < size; i++ )
-        {
-            s.append( listOfElements.get( i ) );
-
-            if ( i < listOfElements.size() - 1 )
-            {
-                s.append( ELEMENT_DIVIDER );
-            }
-        }
-        return s.toString();
+        return elements.stream().map( String::valueOf ).collect( Collectors.joining( ELEMENT_DIVIDER ) );
     }
 
     private static ImmutableList<Element> splitPathIntoElements( final String path )

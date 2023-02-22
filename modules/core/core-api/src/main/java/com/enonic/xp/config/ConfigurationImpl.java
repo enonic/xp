@@ -95,16 +95,6 @@ final class ConfigurationImpl
 
     public static ConfigurationImpl create( final Map<String, String> map )
     {
-        return new ConfigurationImpl( toImmutableMap( map ) );
-    }
-
-    private static ImmutableMap<String, String> toImmutableMap( final Map<String, String> map )
-    {
-        if ( map instanceof ImmutableMap )
-        {
-            return (ImmutableMap<String, String>) map;
-        }
-
-        return ImmutableMap.copyOf( map );
+        return new ConfigurationImpl( ImmutableMap.copyOf( map ) );
     }
 }

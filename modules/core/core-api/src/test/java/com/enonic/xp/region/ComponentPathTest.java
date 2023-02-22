@@ -3,6 +3,8 @@ package com.enonic.xp.region;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,5 +30,11 @@ public class ComponentPathTest
     {
         assertEquals( "/my-region/1", ComponentPath.from( "my-other-region/0/my-region/1" ).removeFirstLevel().toString() );
         assertNull( ComponentPath.from( "my-region/0" ).removeFirstLevel() );
+    }
+
+    @Test
+    public void equalsContract()
+    {
+        EqualsVerifier.forClass( ComponentPath.class ).withNonnullFields( "regionAndComponentList" ).verify();
     }
 }

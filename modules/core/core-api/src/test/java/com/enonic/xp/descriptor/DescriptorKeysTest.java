@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 
@@ -60,5 +62,11 @@ public class DescriptorKeysTest
         final DescriptorKeys keys2 = keys1.concat( DescriptorKeys.from( key1, key2 ) );
 
         assertEquals( "[app1:abc, app2:abc]", keys2.toString() );
+    }
+
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( DescriptorKey.class ).withNonnullFields( "applicationKey", "name" ).verify();
     }
 }

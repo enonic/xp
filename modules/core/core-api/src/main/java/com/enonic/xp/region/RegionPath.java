@@ -1,5 +1,7 @@
 package com.enonic.xp.region;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -13,21 +15,12 @@ public final class RegionPath
 
     private final String regionName;
 
-    private final String refString;
-
     private RegionPath( final ComponentPath parentComponentPath, final String regionName )
     {
         checkNotNull( regionName, "regionName cannot be null" );
         this.parentComponentPath = parentComponentPath;
         this.regionName = regionName;
-        if ( parentComponentPath != null )
-        {
-            this.refString = parentComponentPath + "/" + regionName;
-        }
-        else
-        {
-            this.refString = regionName;
-        }
+
     }
 
     public ComponentPath getParentComponentPath()
@@ -43,7 +36,7 @@ public final class RegionPath
     @Override
     public String toString()
     {
-        return refString;
+        return parentComponentPath == null ? regionName : parentComponentPath + "/" + regionName;
     }
 
     @Override
@@ -58,13 +51,13 @@ public final class RegionPath
             return false;
         }
         final RegionPath that = (RegionPath) o;
-        return refString.equals( that.refString );
+        return Objects.equals( parentComponentPath, that.parentComponentPath ) && Objects.equals( regionName, that.regionName );
     }
 
     @Override
     public int hashCode()
     {
-        return refString.hashCode();
+        return Objects.hash( parentComponentPath, regionName );
     }
 
     public static RegionPath from( final String regionPath )

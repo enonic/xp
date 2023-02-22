@@ -32,7 +32,7 @@ public class IndicesFilter
 
     public String[] getIndices()
     {
-        return indices.toArray( new String[this.indices.size()] );
+        return indices.toArray( String[]::new );
     }
 
     public Filter getFilter()

@@ -10,7 +10,13 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class ClusterNodes
     extends AbstractImmutableEntitySet<ClusterNode>
 {
+    @Deprecated
     public ClusterNodes( final ImmutableSet<ClusterNode> set )
+    {
+        super( set );
+    }
+
+    private ClusterNodes( final ImmutableSet<ClusterNode> set, boolean ignore )
     {
         super( set );
     }
@@ -32,7 +38,7 @@ public class ClusterNodes
 
         public ClusterNodes build()
         {
-            return new ClusterNodes( ImmutableSet.copyOf( nodes ) );
+            return new ClusterNodes( ImmutableSet.copyOf( nodes ), false );
         }
     }
 
