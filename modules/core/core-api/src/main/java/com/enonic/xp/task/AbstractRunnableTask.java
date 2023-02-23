@@ -19,9 +19,10 @@ public abstract class AbstractRunnableTask
         this.contentService = builder.contentService;
     }
 
-    public TaskId createTaskResult()
+    public TaskResultJson createTaskResult()
     {
-        return taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( this ).description( description ).build() );
+        final TaskId taskId = taskService.submitTask( this, this.description );
+        return new TaskResultJson( taskId );
     }
 
     public abstract static class Builder<T extends Builder>
