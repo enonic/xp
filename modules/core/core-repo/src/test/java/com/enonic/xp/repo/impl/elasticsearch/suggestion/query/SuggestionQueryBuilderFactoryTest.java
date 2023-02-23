@@ -22,7 +22,7 @@ public class SuggestionQueryBuilderFactoryTest
     @BeforeEach
     public void init()
     {
-        suggestionQueryBuilderFactory = new SuggestionQueryBuilderFactory( new SearchQueryFieldNameResolver() );
+        suggestionQueryBuilderFactory = new SuggestionQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE );
     }
 
     @Test

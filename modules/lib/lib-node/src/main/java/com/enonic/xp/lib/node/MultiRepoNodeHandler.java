@@ -30,24 +30,19 @@ public class MultiRepoNodeHandler
     @SuppressWarnings("unused")
     public Object query( final QueryNodeHandlerParams params )
     {
-        return execute( FindNodesByMultiNodeQueryHandler.create().
-            searchTargets( this.searchTargets ).
-            query( params.getQuery() ).
-            aggregations( params.getAggregations() ).
-            suggestions( params.getSuggestions() ).
-            highlight( params.getHighlight() ).
-            count( params.getCount() ).
-            start( params.getStart() ).
-            sort( params.getSort() ).
-            filters( params.getFilters() ).
-            explain( params.isExplain() ).
-            nodeService( this.nodeService ).
-            build() );
-    }
-
-    private Object execute( final AbstractNodeHandler handler )
-    {
-        return this.context.callWith( handler::execute );
+        return this.context.callWith( FindNodesByMultiNodeQueryHandler.create()
+                                          .searchTargets( this.searchTargets )
+                                          .query( params.getQuery() )
+                                          .aggregations( params.getAggregations() )
+                                          .suggestions( params.getSuggestions() )
+                                          .highlight( params.getHighlight() )
+                                          .count( params.getCount() )
+                                          .start( params.getStart() )
+                                          .sort( params.getSort() )
+                                          .filters( params.getFilters() )
+                                          .explain( params.isExplain() )
+                                          .nodeService( this.nodeService )
+                                          .build()::execute );
     }
 
     public static final class Builder

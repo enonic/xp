@@ -37,7 +37,7 @@ public class CompareExpressionBuilderTest
         throws Exception
     {
         final String expected = load( fileName );
-        final String expression = CompareExpressionBuilder.build( expr, new SearchQueryFieldNameResolver() ).toString();
+        final String expression = CompareExpressionBuilder.build( expr, SearchQueryFieldNameResolver.INSTANCE ).toString();
 
         assertEquals( cleanString( expected ), cleanString( expression ) );
     }

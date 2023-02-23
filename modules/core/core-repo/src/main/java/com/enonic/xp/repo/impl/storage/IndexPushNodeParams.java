@@ -1,11 +1,13 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.Collection;
+
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeId;
 
 public final class IndexPushNodeParams
 {
-    private final NodeIds nodeIds;
+    private final Collection<NodeId> nodeIds;
 
     private final Branch targetBranch;
 
@@ -15,7 +17,7 @@ public final class IndexPushNodeParams
         targetBranch = builder.targetBranch;
     }
 
-    public NodeIds getNodeIds()
+    public Collection<NodeId> getNodeIds()
     {
         return nodeIds;
     }
@@ -32,7 +34,7 @@ public final class IndexPushNodeParams
 
     public static final class Builder
     {
-        private NodeIds nodeIds;
+        private Collection<NodeId> nodeIds;
 
         private Branch targetBranch;
 
@@ -40,7 +42,7 @@ public final class IndexPushNodeParams
         {
         }
 
-        public Builder nodeIds( final NodeIds nodeIds )
+        public Builder nodeIds( final Collection<NodeId> nodeIds )
         {
             this.nodeIds = nodeIds;
             return this;

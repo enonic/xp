@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.Collection;
+
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repository.RepositoryId;
@@ -11,7 +13,7 @@ public class CopyRequest
 {
     private final StorageSource storageSource;
 
-    private final NodeIds nodeIds;
+    private final Collection<NodeId> nodeIds;
 
     private final Branch targetBranch;
 
@@ -33,7 +35,7 @@ public class CopyRequest
         return storageSource;
     }
 
-    public NodeIds getNodeIds()
+    public Collection<NodeId> getNodeIds()
     {
         return nodeIds;
     }
@@ -67,7 +69,7 @@ public class CopyRequest
     {
         private StorageSource storageSource;
 
-        private NodeIds nodeIds;
+        private Collection<NodeId> nodeIds;
 
         private Branch targetBranch;
 
@@ -85,7 +87,7 @@ public class CopyRequest
             return this;
         }
 
-        public Builder nodeIds( final NodeIds val )
+        public Builder nodeIds( final Collection<NodeId> val )
         {
             nodeIds = val;
             return this;

@@ -103,9 +103,7 @@ public class AbstractIssueServiceTest
         SearchDaoImpl searchDao = new SearchDaoImpl();
         searchDao.setClient( client );
 
-        BranchServiceImpl branchService = new BranchServiceImpl();
-        branchService.setStorageDao( storageDao );
-        branchService.setSearchDao(searchDao);
+        BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
 
         VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );

@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteAction;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.get.MultiGetAction;
@@ -34,7 +33,6 @@ import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
-import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
@@ -114,36 +112,6 @@ public class StorageDaoImpl
     }
 
     @Override
-    public boolean delete( final DeleteRequest request )
-    {
-        final StorageSource settings = request.getSettings();
-        final String id = request.getId();
-
-        final DeleteRequestBuilder builder = new DeleteRequestBuilder( this.client, DeleteAction.INSTANCE ).
-            setId( id ).
-            setIndex( settings.getStorageName().getName() ).
-            setType( settings.getStorageType().getName() ).
-            setRefresh( request.isForceRefresh() );
-
-        final DeleteResponse deleteResponse;
-        try
-        {
-            deleteResponse = this.client.delete( builder.request() ).
-                actionGet( request.getTimeout(), TimeUnit.SECONDS );
-        }
-        catch ( ClusterBlockException e )
-        {
-            throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
-        }
-        catch ( Exception e )
-        {
-            throw new NodeStorageException( "Cannot delete node " + id, e );
-        }
-
-        return deleteResponse.isFound();
-    }
-
-    @Override
     public void delete( final DeleteRequests requests )
     {
         final StorageSource settings = requests.getSettings();
@@ -158,7 +126,7 @@ public class StorageDaoImpl
                         setType( settings.getStorageType().getName() ).
                         setRefresh( requests.isForceRefresh() ).
                         setId( id ).
-                        setRouting( id ). //TODO Java10
+                        setRouting( id ).
                         request();
 
                 this.client.delete( request ).actionGet( requests.getTimeout(), TimeUnit.SECONDS );

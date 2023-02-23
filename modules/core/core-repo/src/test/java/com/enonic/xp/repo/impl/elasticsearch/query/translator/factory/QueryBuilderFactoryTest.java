@@ -28,10 +28,10 @@ public class QueryBuilderFactoryTest
     {
         final String expected = load( fileContainingExpectedJson );
 
-        final String expression = QueryBuilderFactory.newBuilder().
-            queryExpr( QueryParser.parse( query ) ).
-            fieldNameResolver( new SearchQueryFieldNameResolver() ).
-            build().
+        final String expression = QueryBuilderFactory.newBuilder()
+            .queryExpr( QueryParser.parse( query ) )
+            .fieldNameResolver( SearchQueryFieldNameResolver.INSTANCE )
+            .build().
             create().
             toString();
 
@@ -55,11 +55,11 @@ public class QueryBuilderFactoryTest
 
         final QueryExpr query = QueryParser.parse( "not( myField > 1) " );
 
-        final QueryBuilder builtQuery = QueryBuilderFactory.newBuilder().
-            queryExpr( query ).
-            addQueryFilter( queryFilter ).
-            fieldNameResolver( new SearchQueryFieldNameResolver() ).
-            build().
+        final QueryBuilder builtQuery = QueryBuilderFactory.newBuilder()
+            .queryExpr( query )
+            .addQueryFilter( queryFilter )
+            .fieldNameResolver( SearchQueryFieldNameResolver.INSTANCE )
+            .build().
             create();
 
         final String expectedJson = cleanString( expected );

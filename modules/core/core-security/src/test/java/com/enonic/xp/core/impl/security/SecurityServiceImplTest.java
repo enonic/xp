@@ -108,9 +108,7 @@ public class SecurityServiceImplTest
         final SearchDaoImpl searchDao = new SearchDaoImpl();
         searchDao.setClient( client );
 
-        final BranchServiceImpl branchService = new BranchServiceImpl();
-        branchService.setStorageDao( storageDao );
-        branchService.setSearchDao( searchDao );
+        final BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
 
         final VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );

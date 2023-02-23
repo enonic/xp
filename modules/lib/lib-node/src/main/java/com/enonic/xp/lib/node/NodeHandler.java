@@ -245,16 +245,15 @@ public class NodeHandler
     @SuppressWarnings("unused")
     public Object duplicate( final DuplicateNodeHandlerParams params )
     {
-        return this.context.callWith( () -> DuplicateNodeHandler.create()
-            .nodeId( params.nodeId() )
-            .name( params.name() )
-            .parent( params.parent() )
-            .refresh( params.refresh() )
-            .dataProcessor( params.dataProcessor() )
-            .includeChildren( params.includeChildren() )
-            .nodeService( this.nodeService )
-            .build()
-            .execute() );
+        return execute( DuplicateNodeHandler.create()
+                            .nodeId( params.nodeId() )
+                            .name( params.name() )
+                            .parent( params.parent() )
+                            .refresh( params.refresh() )
+                            .dataProcessor( params.dataProcessor() )
+                            .includeChildren( params.includeChildren() )
+                            .nodeService( this.nodeService )
+                            .build() );
     }
 
     private Object execute( final AbstractNodeHandler handler )

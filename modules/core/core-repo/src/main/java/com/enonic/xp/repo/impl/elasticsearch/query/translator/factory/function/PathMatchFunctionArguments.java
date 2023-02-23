@@ -58,7 +58,7 @@ public class PathMatchFunctionArguments
 
     public String getFieldName()
     {
-        return new SearchQueryFieldNameResolver().resolve( fieldName, IndexValueType.PATH );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( fieldName, IndexValueType.PATH );
     }
 
     public String getPath()

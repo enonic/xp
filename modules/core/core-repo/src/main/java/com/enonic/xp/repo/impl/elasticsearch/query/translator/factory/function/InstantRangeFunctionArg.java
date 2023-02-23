@@ -11,6 +11,6 @@ public class InstantRangeFunctionArg
     @Override
     public String getFieldName()
     {
-        return new SearchQueryFieldNameResolver().resolve( this.fieldName, IndexValueType.DATETIME );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( this.fieldName, IndexValueType.DATETIME );
     }
 }

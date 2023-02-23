@@ -18,6 +18,7 @@ import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repo.impl.version.storage.VersionStorageDocFactory;
+import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class VersionServiceImpl
@@ -43,7 +44,7 @@ public class VersionServiceImpl
     {
         storageDao.delete( DeleteRequests.create()
                                .ids( List.of( nodeVersionId.toString() ) )
-                               .settings( createStorageSettings( context ) )
+                               .settings( createStorageSettings( context.getRepositoryId() ) )
                                .build() );
     }
 
@@ -58,7 +59,7 @@ public class VersionServiceImpl
         final GetByIdRequest getByIdRequest = GetByIdRequest.create()
             .id( nodeVersionId.toString() )
             .returnFields( VERSION_RETURN_FIELDS )
-            .storageSettings( createStorageSettings( context ) )
+            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
             .searchPreference( context.getSearchPreference() )
             .build();
 
@@ -72,10 +73,10 @@ public class VersionServiceImpl
         return NodeVersionFactory.create( getResult );
     }
 
-    private StorageSource createStorageSettings( final InternalContext context )
+    private StorageSource createStorageSettings( final RepositoryId repositoryId )
     {
         return StorageSource.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+            storageName( StoreStorageName.from( repositoryId ) ).
             storageType( StaticStorageType.VERSION ).
             build();
     }

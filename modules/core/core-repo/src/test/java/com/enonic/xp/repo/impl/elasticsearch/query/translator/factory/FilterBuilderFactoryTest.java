@@ -27,7 +27,7 @@ public class FilterBuilderFactoryTest
 
         final String expected = load( "filter_values_string.json" );
         final QueryBuilder filterBuilder =
-            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
+            new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( queryFilter ) );
 
         assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -44,7 +44,7 @@ public class FilterBuilderFactoryTest
 
         final String expected = load( "filter_values_number.json" );
         final QueryBuilder filterBuilder =
-            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
+            new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( queryFilter ) );
 
         assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -59,7 +59,7 @@ public class FilterBuilderFactoryTest
 
         final String expected = load( "filter_exists.json" );
         final QueryBuilder filterBuilder =
-            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( queryFilter ) );
+            new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( queryFilter ) );
 
         assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }
@@ -79,7 +79,7 @@ public class FilterBuilderFactoryTest
 
         final String expected = load( "filter_boolean.json" );
         final QueryBuilder filterBuilder =
-            new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).create( Filters.from( builder.build() ) );
+            new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( builder.build() ) );
 
         assertEquals( cleanString( expected ), cleanString( filterBuilder.toString() ) );
     }

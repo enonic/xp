@@ -22,7 +22,7 @@ public class RangeExpressionBuilderTest
         final String expected = load( "compare_gt_number.json" );
 
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
-                                                                 new SearchQueryFieldNameResolver() );
+                                                                 SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -35,7 +35,7 @@ public class RangeExpressionBuilderTest
         final String expected = load( "compare_lt_number.json" );
 
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.lt( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
-                                                                 new SearchQueryFieldNameResolver() );
+                                                                 SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -47,7 +47,7 @@ public class RangeExpressionBuilderTest
         final String expected = load( "compare_gte_number.json" );
 
         final QueryBuilder query = RangeExpressionBuilder.build( CompareExpr.gte( FieldExpr.from( "myField" ), ValueExpr.number( 3L ) ),
-                                                                 new SearchQueryFieldNameResolver() );
+                                                                 SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -60,7 +60,7 @@ public class RangeExpressionBuilderTest
 
         final QueryBuilder query =
             RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.instant( "2013-11-29T11:00:00.000Z" ) ),
-                                          new SearchQueryFieldNameResolver() );
+                                          SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
@@ -73,7 +73,7 @@ public class RangeExpressionBuilderTest
 
         final QueryBuilder query =
             RangeExpressionBuilder.build( CompareExpr.gt( FieldExpr.from( "myField" ), ValueExpr.string( "myString" ) ),
-                                          new SearchQueryFieldNameResolver() );
+                                          SearchQueryFieldNameResolver.INSTANCE );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }

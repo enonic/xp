@@ -40,6 +40,7 @@ import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -49,7 +50,7 @@ public abstract class AbstractDumpReader
 {
     private final DumpBlobStore dumpBlobStore;
 
-    private final NodeVersionFactory factory;
+    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create();
 
     private final SystemLoadListener listener;
 
@@ -59,7 +60,6 @@ public abstract class AbstractDumpReader
     {
         this.listener = Objects.requireNonNullElseGet( listener, NullSystemLoadListener::new );
         this.dumpBlobStore = dumpBlobStore;
-        this.factory = new NodeVersionFactory();
         this.filePaths = filePaths;
     }
 
@@ -174,7 +174,15 @@ public abstract class AbstractDumpReader
         final DumpBlobRecord accessControlRecord =
             this.dumpBlobStore.getRecord( accessControlSegment, nodeVersionKey.getAccessControlBlobKey() );
 
-        return this.factory.create( dataRecord.getBytes(), indexConfigRecord.getBytes(), accessControlRecord.getBytes() );
+        try
+        {
+            return this.serializer.toNodeVersion( dataRecord.getBytes().read(), indexConfigRecord.getBytes().read(),
+                                                  accessControlRecord.getBytes().read() );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot read node version", e );
+        }
     }
 
     @Override

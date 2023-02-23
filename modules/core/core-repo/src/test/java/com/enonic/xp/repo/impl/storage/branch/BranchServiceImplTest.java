@@ -46,9 +46,7 @@ public class BranchServiceImplTest
         this.storageDao = Mockito.mock( StorageDao.class );
         this.searchDao = Mockito.mock( SearchDao.class );
 
-        this.branchService = new BranchServiceImpl();
-        this.branchService.setStorageDao( storageDao );
-        this.branchService.setSearchDao( searchDao );
+        this.branchService = new BranchServiceImpl( storageDao, searchDao );
 
         context = InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
@@ -78,7 +76,7 @@ public class BranchServiceImplTest
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             timestamp( Instant.now() ).
-            build(), context );
+            build(), null, context );
 
         Mockito.when( this.storageDao.getById( Mockito.isA( GetByIdRequest.class ) ) ).
             thenReturn( GetResult.create().

@@ -28,7 +28,7 @@ abstract class ExpressionQueryBuilder
 
     private static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private static final SearchQueryFieldNameResolver FIELD_NAME_RESOLVER = new SearchQueryFieldNameResolver();
+    private static final SearchQueryFieldNameResolver FIELD_NAME_RESOLVER = SearchQueryFieldNameResolver.INSTANCE;
 
     protected final String type;
 

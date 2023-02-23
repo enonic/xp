@@ -50,6 +50,6 @@ class PathMatchQueryBuilder
 
     private String getFieldName()
     {
-        return new SearchQueryFieldNameResolver().resolve( field, IndexValueType.PATH );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( field, IndexValueType.PATH );
     }
 }

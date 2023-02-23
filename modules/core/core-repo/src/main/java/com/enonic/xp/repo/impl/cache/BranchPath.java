@@ -1,11 +1,12 @@
 package com.enonic.xp.repo.impl.cache;
 
+import java.util.Objects;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 
-public class BranchPath
-    implements CachePath
+public final class BranchPath
 {
     private final RepositoryId repositoryId;
 
@@ -15,21 +16,29 @@ public class BranchPath
 
     public BranchPath( final RepositoryId repositoryId, final Branch branch, final NodePath path )
     {
-        this.repositoryId = repositoryId;
-        this.branch = branch;
-        this.path = path;
+        this.repositoryId = Objects.requireNonNull( repositoryId );
+        this.branch = Objects.requireNonNull( branch );
+        this.path = Objects.requireNonNull( path );
     }
 
-    @Override
-    public CachePath getParentPath()
+    public RepositoryId getRepositoryId()
     {
-        return new BranchPath( this.repositoryId, this.branch, path.getParentPath() );
+        return repositoryId;
     }
 
-    @Override
+    public Branch getBranch()
+    {
+        return branch;
+    }
+
+    public NodePath getPath()
+    {
+        return path;
+    }
+
     public String toString()
     {
-        return ( repositoryId == null ? null : repositoryId.toString() ) + ":" + ( branch == null ? null : branch.getValue() ) + ":" + path;
+        return repositoryId + ":" + branch + ":" + path;
     }
 
     @Override
@@ -43,26 +52,13 @@ public class BranchPath
         {
             return false;
         }
-
         final BranchPath that = (BranchPath) o;
-
-        if ( repositoryId != null ? !repositoryId.equals( that.repositoryId ) : that.repositoryId != null )
-        {
-            return false;
-        }
-        if ( branch != null ? !branch.equals( that.branch ) : that.branch != null )
-        {
-            return false;
-        }
-        return !( path != null ? !path.equals( that.path ) : that.path != null );
+        return repositoryId.equals( that.repositoryId ) && branch.equals( that.branch ) && path.equals( that.path );
     }
 
     @Override
     public int hashCode()
     {
-        int result = repositoryId != null ? repositoryId.hashCode() : 0;
-        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
-        result = 31 * result + ( path != null ? path.hashCode() : 0 );
-        return result;
+        return Objects.hash( repositoryId, branch, path );
     }
 }

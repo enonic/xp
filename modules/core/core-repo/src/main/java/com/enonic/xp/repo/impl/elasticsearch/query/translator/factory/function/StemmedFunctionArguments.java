@@ -35,6 +35,6 @@ public class StemmedFunctionArguments
     {
         final IndexValueTypeInterface type = IndexStemmedController.resolveIndexValueType( this.language );
 
-        return type != null ? new SearchQueryFieldNameResolver().resolve( baseFieldName, type ) : "";
+        return type != null ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, type ) : "";
     }
 }

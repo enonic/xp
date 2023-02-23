@@ -8,7 +8,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -26,10 +25,7 @@ public class BranchStorageRequestFactoryTest
             nodePath( NodePath.create( "nodePath" ).build() ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
-            build(), InternalContext.create().
-            branch( Branch.from( "myBranch" ) ).
-            repositoryId( RepositoryId.from( "my-repo-id" ) ).
-            build() );
+            build(), RepositoryId.from( "my-repo-id" ), Branch.from( "myBranch" ) );
 
         assertEquals( storeRequest.getId(), "nodeId_myBranch" );
         assertEquals( storeRequest.getParent(), "nodeVersionId" );

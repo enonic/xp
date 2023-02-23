@@ -17,7 +17,7 @@ public class TermSuggestionQueryBuilderFactoryTest
     @BeforeEach
     public void init()
     {
-        termSuggestionQueryBuilderFactory = new TermSuggestionQueryBuilderFactory( new SearchQueryFieldNameResolver() );
+        termSuggestionQueryBuilderFactory = new TermSuggestionQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE );
     }
 
     @Test

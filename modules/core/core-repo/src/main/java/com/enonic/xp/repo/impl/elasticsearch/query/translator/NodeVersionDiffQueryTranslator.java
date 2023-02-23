@@ -15,7 +15,7 @@ class NodeVersionDiffQueryTranslator
 {
     private final NodeVersionDiffQuery query;
 
-    private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
+    private final QueryFieldNameResolver fieldNameResolver = StoreQueryFieldNameResolver.INSTANCE;
 
     NodeVersionDiffQueryTranslator( final NodeVersionDiffQuery query )
     {
