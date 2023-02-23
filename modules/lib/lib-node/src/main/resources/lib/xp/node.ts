@@ -571,9 +571,7 @@ export interface RepoConnection {
 
     get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
 
-    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData>[] | null;
-
-    get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData>[] | null;
+    get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData> | Node<NodeData>[] | null;
 
     get<NodeData = Record<string, unknown>>(...keys: (string | GetNodeParams | (string | GetNodeParams)[])[]): Node<NodeData> | Node<NodeData>[] | null;
 
