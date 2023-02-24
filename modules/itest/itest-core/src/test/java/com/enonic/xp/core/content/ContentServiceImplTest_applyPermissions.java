@@ -12,12 +12,15 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_applyPermissions
     extends AbstractContentServiceTest
@@ -29,7 +32,7 @@ public class ContentServiceImplTest_applyPermissions
     {
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
             contentId( ContentId.from( "id1" ) ).
-            applyContentPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
+            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
             build();
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
@@ -55,7 +58,7 @@ public class ContentServiceImplTest_applyPermissions
 
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
             contentId( content.getId() ).
-            applyContentPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
+            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
             build();
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
@@ -67,8 +70,7 @@ public class ContentServiceImplTest_applyPermissions
     }
 
     @Test
-    public void audit_data()
-        throws Exception
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -83,21 +85,17 @@ public class ContentServiceImplTest_applyPermissions
 
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
             contentId( content.getId() ).
-            applyContentPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
+            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
             build();
 
-        final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
+        Mockito.reset( auditLogService );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 16 ) ).log( captor.capture() );
+        this.contentService.applyPermissions( applyParams );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.applyPermissions" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
+        final LogAuditLogParams log = captor.getValue();
 
-        assertEquals( content.getPath().toString(), logResultSet.getStrings( "succeedContents" ).iterator().next() );
+        assertThat( log.getType() ).isEqualTo( "system.content.applyPermissions" );
+        assertThat( log.getData().getString( "result.succeedContents" ) ).isEqualTo( content.getPath().toString() );
     }
 }

@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,15 +48,27 @@ import com.enonic.xp.security.acl.Permission;
 public class NodeStorageServiceImpl
     implements NodeStorageService
 {
-    private VersionService versionService;
+    private final VersionService versionService;
 
-    private BranchService branchService;
+    private final BranchService branchService;
 
-    private CommitService commitService;
+    private final CommitService commitService;
 
-    private NodeVersionService nodeVersionService;
+    private final NodeVersionService nodeVersionService;
 
-    private IndexDataService indexDataService;
+    private final IndexDataService indexDataService;
+
+    @Activate
+    public NodeStorageServiceImpl( @Reference final VersionService versionService, @Reference final BranchService branchService,
+                                   @Reference final CommitService commitService, @Reference final NodeVersionService nodeVersionService,
+                                   @Reference final IndexDataService indexDataService )
+    {
+        this.versionService = versionService;
+        this.branchService = branchService;
+        this.commitService = commitService;
+        this.nodeVersionService = nodeVersionService;
+        this.indexDataService = indexDataService;
+    }
 
     @Override
     public Node store( final Node node, final InternalContext context )
@@ -368,35 +381,5 @@ public class NodeStorageServiceImpl
     private boolean canRead( final AccessControlList permissions )
     {
         return NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.READ, permissions );
-    }
-
-    @Reference
-    public void setVersionService( final VersionService versionService )
-    {
-        this.versionService = versionService;
-    }
-
-    @Reference
-    public void setBranchService( final BranchService branchService )
-    {
-        this.branchService = branchService;
-    }
-
-    @Reference
-    public void setCommitService( final CommitService commitService )
-    {
-        this.commitService = commitService;
-    }
-
-    @Reference
-    public void setNodeVersionService( final NodeVersionService nodeVersionService )
-    {
-        this.nodeVersionService = nodeVersionService;
-    }
-
-    @Reference
-    public void setIndexDataService( final IndexDataService indexDataService )
-    {
-        this.indexDataService = indexDataService;
     }
 }

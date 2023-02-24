@@ -15,15 +15,17 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.ContentConfig;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XDatas;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_media
@@ -198,8 +200,7 @@ public class ContentServiceImplTest_media
 
 
     @Test
-    public void audit_data()
-        throws Exception
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -208,20 +209,17 @@ public class ContentServiceImplTest_media
             name( "Small cat" ).
             parent( ContentPath.ROOT );
 
+        Mockito.reset( auditLogService );
+
         final Content content = this.contentService.create( createMediaParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 15 ) ).log( captor.capture() );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.create" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
-
-        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
-        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.create" ) ;
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getString( "id" ), result -> result.getString( "path" ) )
+            .containsExactly( content.getId().toString(), content.getPath().toString() );
     }
 
     @Test

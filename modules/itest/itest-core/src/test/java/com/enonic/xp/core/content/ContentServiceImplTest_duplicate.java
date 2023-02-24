@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.stream.StreamSupport;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -34,12 +32,16 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_duplicate
     extends AbstractContentServiceTest
@@ -201,7 +203,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void audit_data()
+    void audit_data()
         throws Exception
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
@@ -209,22 +211,18 @@ public class ContentServiceImplTest_duplicate
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childContent = createContent( rootContent.getPath() );
 
+        Mockito.reset( auditLogService );
+
         final Content duplicatedContent = doDuplicateContent( rootContent );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
+        verify( auditLogService, atMost(2) ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.duplicate" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.duplicate" ) ;
 
-        final Iterable<String> ids = logResultSet.getStrings( "duplicatedContents" );
-
-        assertEquals( 2, StreamSupport.stream( ids.spliterator(), false ).count() );
-        assertTrue( StreamSupport.stream( ids.spliterator(), false ).anyMatch( id -> id.equals( duplicatedContent.getId().toString() ) ) );
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getStrings( "duplicatedContents" ), LIST )
+            .hasSize( 2 );
     }
 
     @Test

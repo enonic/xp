@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +34,15 @@ class ContentServiceImplTest_importContent
     }
 
     @BeforeEach
-    void initDestinationRepository() {
-
+    void initDestinationRepository()
+    {
         projectService.create( CreateProjectParams.create().name( destProjectName ).displayName( "Destination project" ).build() );
+    }
+
+    @AfterEach
+    void deleteDestinationRepository()
+    {
+        projectService.delete( destProjectName );
     }
 
     @Test

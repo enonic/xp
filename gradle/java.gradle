@@ -6,10 +6,6 @@ apply plugin: 'maven-publish'
 
 def defaultEncoding = 'UTF-8'
 
-def integration = gradle.sharedServices.registerIfAbsent("integration", BuildService) {
-    maxParallelUsages = 1
-}
-
 compileJava {
     options.encoding = defaultEncoding
     options.compilerArgs = ['-Xlint:-options'] // , '-Xlint:unchecked', '-Xlint:deprecation']
@@ -48,25 +44,9 @@ test {
     jvmArgs '-noverify', '-XX:TieredStopAtLevel=1'
 }
 
-task integrationTest(type: Test) {
-    usesService(integration)
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    useJUnitPlatform {
-        includeTags 'elasticsearch'
-    }
-
-    systemProperty 'java.awt.headless', 'true'
-    maxHeapSize = '2G'
-
-    shouldRunAfter test
-}
-
-check.dependsOn integrationTest
 
 jacocoTestReport {
-    dependsOn test, integrationTest
+    dependsOn test
     executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
 }
 

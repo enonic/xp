@@ -81,16 +81,6 @@ public class RepositoryServiceImpl
         this.nodeSearchService = nodeSearchService;
     }
 
-    public void initialize()
-    {
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( this ).
-            setNodeStorageService( nodeStorageService ).
-            build().
-            initialize();
-    }
-
     @Override
     public Repository createRepository( final CreateRepositoryParams params )
     {

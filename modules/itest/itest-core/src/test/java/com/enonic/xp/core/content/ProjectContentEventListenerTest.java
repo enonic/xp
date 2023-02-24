@@ -1,12 +1,12 @@
 package com.enonic.xp.core.content;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -78,16 +78,13 @@ public class ProjectContentEventListenerTest
 
 
     @BeforeEach
-    protected void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
         listener = new ProjectContentEventListener( this.projectService, synchronizer );
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
-        handledEvents = Sets.newHashSet();
+        handledEvents = new HashSet<>();
     }
 
     @Test

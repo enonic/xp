@@ -15,15 +15,16 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_unpublish
     extends AbstractContentServiceTest
@@ -125,21 +126,16 @@ public class ContentServiceImplTest_unpublish
 
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
 
+        Mockito.reset( auditLogService );
+
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.unpublishContent" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
-
-        assertEquals( content.getId().toString(), logResultSet.getStrings( "unpublishedContents" ).iterator().next() );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log.getType() ).isEqualTo( "system.content.unpublishContent" );
+        assertThat( log.getData().getString( "result.unpublishedContents" ) ).isEqualTo( content.getId().toString() );
     }
-
 }

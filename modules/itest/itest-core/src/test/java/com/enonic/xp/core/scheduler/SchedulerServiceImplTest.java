@@ -21,19 +21,20 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
+import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
@@ -82,6 +83,12 @@ class SchedulerServiceImplTest
 
     private CalendarServiceImpl calendarService;
 
+
+    SchedulerServiceImplTest()
+    {
+        super( true );
+    }
+
     private static Context adminContext()
     {
         return ContextBuilder.create().
@@ -92,11 +99,8 @@ class SchedulerServiceImplTest
     }
 
     @BeforeEach
-    protected void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         final AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
 
         final SchedulerConfig schedulerConfig = Mockito.mock( SchedulerConfig.class );
@@ -106,9 +110,13 @@ class SchedulerServiceImplTest
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
         schedulerService =
-            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService, auditLogSupport );
+            new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
 
-        adminContext().runWith( () -> schedulerService.initialize() );
+        adminContext().runWith( () -> SchedulerRepoInitializer.create()
+            .setIndexService( indexService )
+            .setRepositoryService( repositoryService )
+            .build()
+            .initialize() );
 
         calendarService = new CalendarServiceImpl();
     }

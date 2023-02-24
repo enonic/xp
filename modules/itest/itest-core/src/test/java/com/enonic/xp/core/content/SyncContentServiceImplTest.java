@@ -36,11 +36,8 @@ public class SyncContentServiceImplTest
     private SyncContentServiceImpl syncContentService;
 
     @BeforeEach
-    public void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         synchronizer = new ParentContentSynchronizer( contentService );
 
         syncContentService =

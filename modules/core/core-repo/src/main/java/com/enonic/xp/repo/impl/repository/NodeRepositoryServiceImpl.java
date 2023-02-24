@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -24,18 +25,24 @@ import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
-@Component(immediate = true)
+@Component
 public class NodeRepositoryServiceImpl
     implements NodeRepositoryService
 {
-    private IndexServiceInternal indexServiceInternal;
-
     private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
     private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
+
+    private final IndexServiceInternal indexServiceInternal;
+
+    @Activate
+    public NodeRepositoryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal )
+    {
+        this.indexServiceInternal = indexServiceInternal;
+    }
 
     @Override
     public void create( final CreateRepositoryParams params )
@@ -154,11 +161,5 @@ public class NodeRepositoryServiceImpl
             default:
                 throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
         }
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
     }
 }

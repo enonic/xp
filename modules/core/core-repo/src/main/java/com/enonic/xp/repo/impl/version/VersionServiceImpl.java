@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.version;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -29,7 +30,13 @@ public class VersionServiceImpl
                            VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
                            VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
 
-    private StorageDao storageDao;
+    private final StorageDao storageDao;
+
+    @Activate
+    public VersionServiceImpl( @Reference final StorageDao storageDao )
+    {
+        this.storageDao = storageDao;
+    }
 
     @Override
     public void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context )
@@ -79,11 +86,5 @@ public class VersionServiceImpl
             storageName( StoreStorageName.from( repositoryId ) ).
             storageType( StaticStorageType.VERSION ).
             build();
-    }
-
-    @Reference
-    public void setStorageDao( final StorageDao storageDao )
-    {
-        this.storageDao = storageDao;
     }
 }
