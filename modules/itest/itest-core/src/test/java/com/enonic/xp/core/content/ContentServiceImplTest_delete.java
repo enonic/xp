@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.stream.StreamSupport;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -18,13 +16,15 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_delete
     extends AbstractContentServiceTest
@@ -439,22 +439,19 @@ public class ContentServiceImplTest_delete
             type( ContentTypeName.folder() ).
             build();
 
-        this.contentService.create( createChild1ContentParams );
+        final Content childContent = this.contentService.create( createChild1ContentParams );
 
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
-        this.contentService.deleteWithoutFetch( deleteContentParams );
+        Mockito.reset( auditLogService );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
+        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.delete" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
+        verify( auditLogService, atMost(2) ).log( captor.capture() );
 
-        final Iterable<String> deletedContents = logResultSet.getStrings( "deletedContents" );
-        assertEquals( 2, StreamSupport.stream( deletedContents.spliterator(), false ).count() );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.delete" ) ;
+
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getStrings( "deletedContents" ), LIST)
+            .containsExactly( childContent.getId().toString(), content.getId().toString() );
     }
 }

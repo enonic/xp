@@ -1,8 +1,8 @@
 package com.enonic.xp.core.content;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,16 +28,13 @@ public class ProjectEventListenerTest
     private Set<Event> handledEvents;
 
     @BeforeEach
-    protected void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
         listener = new ProjectEventListener( this.projectService, this.taskService, synchronizer );
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
-        handledEvents = Sets.newHashSet();
+        handledEvents = new HashSet<>();
     }
 
     @Test

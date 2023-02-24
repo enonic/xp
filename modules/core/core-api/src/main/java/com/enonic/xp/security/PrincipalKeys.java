@@ -63,6 +63,7 @@ public final class PrincipalKeys
         return ImmutableSet.copyOf( principalKeyList );
     }
 
+    @Deprecated
     public Set<String> asStrings()
     {
         return this.set.stream().map( PrincipalKey::toString ).collect( Collectors.toSet() );

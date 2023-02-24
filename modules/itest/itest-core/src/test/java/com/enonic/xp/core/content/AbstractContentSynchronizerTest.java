@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.osgi.framework.Bundle;
 
@@ -25,7 +26,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
+import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
@@ -36,6 +37,7 @@ import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.core.internal.concurrent.RecurringJob;
@@ -55,7 +57,6 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -131,11 +132,14 @@ public abstract class AbstractContentSynchronizerTest
             .build();
     }
 
-    protected void setUpNode()
-        throws Exception
+    public AbstractContentSynchronizerTest()
     {
-        super.setUpNode();
+        super( true );
+    }
 
+    @BeforeEach
+    void setUpAbstractContentSynchronizerTest()
+    {
         setUpProjectService();
         setUpContentService();
         setupTaskService();
@@ -152,9 +156,14 @@ public abstract class AbstractContentSynchronizerTest
             final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
             securityAuditLogSupport.activate( securityConfig );
 
-            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, indexService, securityAuditLogSupport );
+            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
 
-            securityService.initialize();
+            SecurityInitializer.create()
+                .setIndexService( indexService )
+                .setSecurityService( securityService )
+                .setNodeService( nodeService )
+                .build()
+                .initialize();
 
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
@@ -243,7 +252,7 @@ public abstract class AbstractContentSynchronizerTest
         final ContentConfig contentConfig = mock( ContentConfig.class );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService, contentAuditLogFilterService );
+            new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
         contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );

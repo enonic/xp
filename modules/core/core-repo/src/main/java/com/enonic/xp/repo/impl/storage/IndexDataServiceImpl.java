@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,7 +24,13 @@ import com.enonic.xp.repo.impl.search.SearchStorageType;
 public class IndexDataServiceImpl
     implements IndexDataService
 {
-    private StorageDao storageDao;
+    private final StorageDao storageDao;
+
+    @Activate
+    public IndexDataServiceImpl( @Reference final StorageDao storageDao )
+    {
+        this.storageDao = storageDao;
+    }
 
     @Override
     public ReturnValues get( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
@@ -110,11 +117,5 @@ public class IndexDataServiceImpl
                                   .targetBranch( pushNodeParams.getTargetBranch() )
                                   .targetRepo( context.getRepositoryId() )
                                   .build() );
-    }
-
-    @Reference
-    public void setStorageDao( final StorageDao storageDao )
-    {
-        this.storageDao = storageDao;
     }
 }

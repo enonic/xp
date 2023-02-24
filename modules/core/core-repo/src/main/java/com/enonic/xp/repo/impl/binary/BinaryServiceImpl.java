@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.binary;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -20,7 +21,13 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public class BinaryServiceImpl
     implements BinaryService
 {
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
+
+    @Activate
+    public BinaryServiceImpl( @Reference final BlobStore blobStore )
+    {
+        this.blobStore = blobStore;
+    }
 
     @Override
     public AttachedBinary store( final RepositoryId repositoryId, final BinaryAttachment binaryAttachment )
@@ -42,11 +49,5 @@ public class BinaryServiceImpl
         }
 
         return record.getBytes();
-    }
-
-    @Reference
-    public void setBlobStore( final BlobStore blobStore )
-    {
-        this.blobStore = blobStore;
     }
 }

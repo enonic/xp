@@ -27,7 +27,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -121,32 +120,18 @@ public final class SecurityServiceImpl
 
     private final NodeService nodeService;
 
-    private final IndexService indexService;
-
     private final SecurityAuditLogSupport securityAuditLogSupport;
 
     private String suPasswordHashing;
 
     private String suPasswordValue;
 
-    public SecurityServiceImpl( final NodeService nodeService, final IndexService indexService,
-                                final SecurityAuditLogSupport securityAuditLogSupport )
+    public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport )
     {
         this.nodeService = nodeService;
-        this.indexService = indexService;
         this.securityAuditLogSupport = securityAuditLogSupport;
         this.clock = Clock.systemUTC();
-    }
-
-    public void initialize()
-    {
         initializeSuPassword();
-        SecurityInitializer.create()
-            .setIndexService( indexService )
-            .setSecurityService( this )
-            .setNodeService( nodeService )
-            .build()
-            .initialize();
     }
 
     private void initializeSuPassword()

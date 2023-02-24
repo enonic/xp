@@ -22,16 +22,18 @@ import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.SiteConfigs;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_create
     extends AbstractContentServiceTest
@@ -243,19 +245,16 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.folder() ).
             build();
 
+        Mockito.reset( auditLogService );
+
         final Content content = this.contentService.create( createContentParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 15 ) ).log( captor.capture() );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.create" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
-
-        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
-        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.create" ) ;
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getString( "id" ), result -> result.getString( "path" ) )
+            .containsExactly( content.getId().toString(), content.getPath().toString() );
     }
 }

@@ -22,7 +22,7 @@ public class IssueServiceImplTest_findComments
     private Issue issue;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
         final User creator = User.ANONYMOUS;

@@ -50,7 +50,7 @@ import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 
-class RepoDumper
+public class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
@@ -137,7 +137,7 @@ class RepoDumper
         final FindNodesByParentResult children = this.nodeService.findByParent( FindNodesByParentParams.create().
             parentId( rootNode.id() ).
             recursive( true ).
-            childOrder( ChildOrder.from( "_path asc" ) ).
+            childOrder( ChildOrder.path() ).
             build() );
 
         final Branch branch = ContextAccessor.current().getBranch();

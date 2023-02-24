@@ -19,6 +19,7 @@ import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
+import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -29,6 +30,7 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
@@ -40,7 +42,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class AbstractIssueServiceTest
+public abstract class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
     public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
@@ -62,8 +64,6 @@ public class AbstractIssueServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected BinaryServiceImpl binaryService;
-
     private IndexServiceImpl indexService;
 
     private RepositoryServiceImpl repositoryService;
@@ -73,12 +73,11 @@ public class AbstractIssueServiceTest
     private Context initialContext;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUpAbstractIssueServiceTest()
     {
-        executorService = Executors.newSingleThreadExecutor();
-
         deleteAllIndices();
+
+        executorService = Executors.newSingleThreadExecutor();
 
         final Context ctx = ContextBuilder.create().
             branch( WS_DEFAULT ).
@@ -86,76 +85,57 @@ public class AbstractIssueServiceTest
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
 
-
         initialContext = ContextAccessor.current();
         ContextAccessor.INSTANCE.set( ctx );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
-        binaryService = new BinaryServiceImpl();
-        binaryService.setBlobStore( blobStore );
+        final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( client );
+        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( client );
+        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
         BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
 
-        VersionServiceImpl versionService = new VersionServiceImpl();
-        versionService.setStorageDao( storageDao );
+        VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
-        indexServiceInternal.setClient( client );
+        CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
+
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
         issueService = new IssueServiceImpl();
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
-        indexedDataService.setStorageDao( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
 
-        indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal(indexServiceInternal);
+        NodeStorageServiceImpl storageService =
+            new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
-        storageService.setBranchService(branchService);
-        storageService.setVersionService(versionService);
-        storageService.setNodeVersionService(nodeDao);
-        storageService.setIndexDataService(indexedDataService);
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
 
-        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
-        searchService.setSearchDao( searchDao );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( indexServiceInternal );
+        final RepositoryEntryServiceImpl repositoryEntryService =
+            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
-        elasticsearchIndexService.setClient( client );
+        indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
-        repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeStorageService( storageService );
-        repositoryEntryService.setNodeSearchService( searchService );
-        repositoryEntryService.setEventPublisher( eventPublisher );
-        repositoryEntryService.setBinaryService( binaryService );
 
         repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
                                        searchService );
-        repositoryService.initialize();
+        SystemRepoInitializer.create().
+            setIndexServiceInternal( indexServiceInternal ).
+            setRepositoryService( repositoryService ).
+            setNodeStorageService( storageService ).
+            build().
+            initialize();
 
-        nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexServiceInternal );
-        nodeService.setNodeStorageService( storageService );
-        nodeService.setNodeSearchService( searchService );
-        nodeService.setEventPublisher( eventPublisher );
-        nodeService.setBinaryService( binaryService );
-        nodeService.setRepositoryService( repositoryService );
-        nodeService.initialize();
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         issueService.setNodeService( nodeService );
 
@@ -163,7 +143,7 @@ public class AbstractIssueServiceTest
     }
 
     @AfterEach
-    void tearDown()
+    void tearDownAbstractIssueServiceTest()
     {
         ContextAccessor.INSTANCE.set( initialContext );
         executorService.shutdownNow();

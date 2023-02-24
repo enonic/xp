@@ -6,13 +6,13 @@ import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
@@ -29,13 +29,18 @@ class VersionTableVacuumTaskTest
     // Negative threshold queries versions timestamps in future, so nearly created nodes guaranteed to be found.
     private static final long NEGATIVE_AGE_THRESHOLD_MILLIS = -Duration.of( 1, ChronoUnit.HOURS ).toMillis();
 
+    public VersionTableVacuumTaskTest(  )
+    {
+        super( true );
+    }
+
     @BeforeEach
     void setUp()
     {
         createDefaultRootNode();
 
         this.task =
-            new VersionTableVacuumTask( this.nodeService, this.repositoryService, this.versionService, this.branchService, this.blobStore );
+            new VersionTableVacuumTask( this.nodeService, this.repositoryService, this.versionService, this.branchService, BLOB_STORE );
     }
 
     @Test

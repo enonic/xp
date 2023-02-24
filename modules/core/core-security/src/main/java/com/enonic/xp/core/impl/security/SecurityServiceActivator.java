@@ -34,8 +34,13 @@ public class SecurityServiceActivator
     @Activate
     public void activate( final BundleContext context )
     {
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
-        securityService.initialize();
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        SecurityInitializer.create()
+            .setIndexService( indexService )
+            .setSecurityService( securityService )
+            .setNodeService( nodeService )
+            .build()
+            .initialize();
         service = context.registerService( SecurityService.class, securityService, null );
     }
 

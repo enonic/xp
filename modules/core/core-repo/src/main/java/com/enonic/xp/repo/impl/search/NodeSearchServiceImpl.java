@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,6 +38,12 @@ public class NodeSearchServiceImpl
         ReturnFields.from( CommitIndexPath.COMMIT_ID, CommitIndexPath.MESSAGE, CommitIndexPath.COMMITTER, CommitIndexPath.TIMESTAMP );
 
     private SearchDao searchDao;
+
+    @Activate
+    public NodeSearchServiceImpl( @Reference final SearchDao searchDao )
+    {
+        this.searchDao = searchDao;
+    }
 
     @Override
     public SearchResult query( final NodeQuery query, final SearchSource source )

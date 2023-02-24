@@ -98,8 +98,12 @@ public class AuditLogServiceImplTest
         when( config.isEnabled() ).thenReturn( true );
         when( config.isOutputLogs() ).thenReturn( true );
 
-        auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, nodeService );
-        auditLogService.initialize();
+        auditLogService = new AuditLogServiceImpl( config, nodeService );
+        AuditLogRepoInitializer.create().
+            setIndexService( indexService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
     }
 
     @Test

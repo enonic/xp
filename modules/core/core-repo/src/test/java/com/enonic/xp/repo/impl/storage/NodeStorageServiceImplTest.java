@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
+import com.enonic.xp.repo.impl.commit.CommitService;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.repository.RepositoryId;
@@ -41,6 +42,9 @@ class NodeStorageServiceImplTest
 
     private BranchService branchService;
 
+    private CommitService commitService;
+
+    private IndexDataService indexDataService;
     private NodeId nodeId;
 
     private NodeVersionId nodeVersionId;
@@ -55,11 +59,10 @@ class NodeStorageServiceImplTest
         versionService = Mockito.mock( VersionService.class );
         nodeVersionService = Mockito.mock( NodeVersionService.class );
         branchService = Mockito.mock( BranchService.class );
+        commitService = Mockito.mock( CommitService.class );
+        indexDataService = Mockito.mock( IndexDataService.class );
 
-        instance = new NodeStorageServiceImpl();
-        instance.setNodeVersionService( nodeVersionService );
-        instance.setVersionService( versionService );
-        instance.setBranchService( branchService );
+        instance = new NodeStorageServiceImpl(versionService, branchService,commitService, nodeVersionService, indexDataService );
 
         nodeId = NodeId.from( "000-000-000-000" );
 

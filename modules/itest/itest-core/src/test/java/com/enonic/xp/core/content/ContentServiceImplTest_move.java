@@ -18,8 +18,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_move
     extends AbstractContentServiceTest
@@ -104,8 +107,7 @@ public class ContentServiceImplTest_move
     }
 
     @Test
-    public void audit_data()
-        throws Exception
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -117,19 +119,17 @@ public class ContentServiceImplTest_move
             parentContentPath( ContentPath.ROOT ).
             build();
 
-        final MoveContentsResult result = this.contentService.move( params );
+        Mockito.reset( auditLogService );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 17 ) ).log( captor.capture() );
+        this.contentService.move( params );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.move" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        assertEquals( child1.getId().toString(), logResultSet.getStrings( "movedContents" ).iterator().next() );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.move" ) ;
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getString( "movedContents" ) )
+            .isEqualTo( child1.getId().toString() );
     }
 
     private ExtraDatas createExtraDatas()

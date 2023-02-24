@@ -57,11 +57,8 @@ public class ParentContentSynchronizerTest
     private SyncContentServiceImpl syncContentService;
 
     @BeforeEach
-    protected void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         synchronizer = new ParentContentSynchronizer( this.contentService );
 
         syncContentService =

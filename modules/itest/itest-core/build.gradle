@@ -9,15 +9,56 @@ dependencies {
     testImplementation project( ':core:core-project' )
     testImplementation project( ':core:core-scheduler' )
     testImplementation project( ':core:core-app' )
+    testImplementation project( ':core:core-export' )
 
     testImplementation "com.hazelcast:hazelcast:${hazelcastVersion}"
 
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
-    testImplementation( testFixtures( project( ":core:core-repo" ) ) )
     testImplementation( testFixtures( project( ":core:core-security" ) ) )
     testImplementation( testFixtures( project( ":core:core-task" ) ) )
     testImplementation( testFixtures( project( ":core:core-internal" ) ) )
     testImplementation( testFixtures( project( ":core:core-app" ) ) )
 
     testImplementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
+
+    testFixturesApi project( ':core:core-api' )
+    testFixturesImplementation( project( ":core:core-audit" ) )
+    testFixturesImplementation( project( ":core:core-scheduler" ) )
+    testFixturesImplementation( project( ":core:core-app" ) )
+    testFixturesImplementation( project( ":core:core-security" ) )
+    testFixturesImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesApi ( 'org.elasticsearch:elasticsearch:2.4.6' ) {
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
+    }
+}
+
+def integration = gradle.sharedServices.registerIfAbsent("integration", BuildService) {
+    maxParallelUsages = 1
+}
+
+task integrationTest(type: Test) {
+    usesService(integration)
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'elasticsearch'
+    }
+
+    systemProperty 'java.awt.headless', 'true'
+    maxHeapSize = '2G'
+
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
+jacocoTestReport {
+    dependsOn integrationTest
+    executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
 }

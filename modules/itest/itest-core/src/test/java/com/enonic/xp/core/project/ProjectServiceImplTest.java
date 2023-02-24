@@ -20,12 +20,14 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -45,7 +47,6 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.CreateUserParams;
@@ -115,6 +116,11 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
+    public ProjectServiceImplTest()
+    {
+        super( true );
+    }
+
     private static Context adminContext()
     {
         return ContextBuilder.create()
@@ -161,11 +167,8 @@ class ProjectServiceImplTest
     }
 
     @BeforeEach
-    protected void setUpNode()
-        throws Exception
+    void setUp()
     {
-        super.setUpNode();
-
         SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
@@ -174,10 +177,15 @@ class ProjectServiceImplTest
         SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, indexService, securityAuditLogSupport );
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
 
         adminContext().runWith( () -> {
-            securityService.initialize();
+            SecurityInitializer.create()
+                .setIndexService( indexService )
+                .setSecurityService( securityService )
+                .setNodeService( nodeService )
+                .build()
+                .initialize();
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 

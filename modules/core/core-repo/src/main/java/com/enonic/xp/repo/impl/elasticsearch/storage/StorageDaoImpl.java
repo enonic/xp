@@ -21,6 +21,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,6 +49,13 @@ public class StorageDaoImpl
     private static final long DEFAULT_STORE_TIMEOUT_SECONDS = 10;
 
     private Client client;
+
+
+    @Activate
+    public StorageDaoImpl( @Reference final Client client )
+    {
+        this.client = client;
+    }
 
     @Override
     public String store( final StoreRequest request )

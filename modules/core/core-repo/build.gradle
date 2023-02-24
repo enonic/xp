@@ -14,20 +14,7 @@ dependencies {
 
     implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
-    testFixturesApi project( ':core:core-api' )
-    testFixturesImplementation( project( ":core:core-audit" ) )
-    testFixturesImplementation( project( ":core:core-scheduler" ) )
-    testFixturesImplementation( project( ":core:core-app" ) )
-    testFixturesImplementation( project( ":core:core-security" ) )
-    testFixturesImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testFixturesApi ( 'org.elasticsearch:elasticsearch:2.4.6' ) {
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
-    }
+
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
     testImplementation( testFixtures( project( ":core:core-schema" ) ) )

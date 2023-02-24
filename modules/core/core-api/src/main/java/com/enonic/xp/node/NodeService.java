@@ -74,6 +74,7 @@ public interface NodeService
 
     NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
 
+    @Deprecated
     boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );

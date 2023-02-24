@@ -48,7 +48,7 @@ public class SystemRepoInitializer
         createAdminContext().runWith( () -> {
             final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
                 repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                rootChildOrder( ChildOrder.from( "_name ASC" ) ).
+                rootChildOrder( ChildOrder.name() ).
                 rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
                 build();
 

@@ -25,7 +25,7 @@ public class IssueServiceImplTest_deleteComment
     private IssueComment comment;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
         final User creator = User.ANONYMOUS;
