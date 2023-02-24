@@ -21,6 +21,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.LayoutComponent;
@@ -33,7 +34,6 @@ import com.enonic.xp.region.PartComponentType;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.TextComponentType;
 
@@ -54,6 +54,8 @@ public class PageRegionsConfigProcessorTest
 
     private Form configFormWithHtmlArea;
 
+    private Form configFormWithTextInput;
+
     @BeforeEach
     public void setUp()
         throws Exception
@@ -61,15 +63,14 @@ public class PageRegionsConfigProcessorTest
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        Input myTextLine = Input.create().
-            name( "htmlArea" ).
-            inputType( InputTypeName.HTML_AREA ).
-            label( "htmlArea" ).
-            required( true ).
-            build();
-        this.configFormWithHtmlArea = Form.create().
-            addFormItem( myTextLine ).
-            build();
+        this.configFormWithHtmlArea = Form.create()
+            .addFormItem(
+                Input.create().name( "htmlArea" ).inputType( InputTypeName.HTML_AREA ).label( "htmlArea" ).required( true ).build() )
+            .build();
+        this.configFormWithTextInput = Form.create()
+            .addFormItem(
+                Input.create().name( "textArea" ).inputType( InputTypeName.TEXT_AREA ).label( "textArea" ).required( true ).build() )
+            .build();
     }
 
     @Test
@@ -103,25 +104,20 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey partDescriptorKey = DescriptorKey.from( "part1AppKey:name" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.
-            create().
-            regions( PageRegions.create().
-                add( Region.create().
-                    name( "region1" ).
-                    add( PartComponent.create().
-                        descriptor( partDescriptorKey ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final Page page = Page.create()
+            .regions( PageRegions.create()
+                          .add( Region.create()
+                                    .name( "region1" )
+                                    .add( PartComponent.create().descriptor( partDescriptorKey ).build() )
+                                    .build() )
+                          .build() )
+            .build();
 
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(), null );
+
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, partDescriptorKey.getApplicationKey().toString(),
-                               partDescriptorKey.getName(), htmlarea ) ).
-            getIndexValueProcessors().
-            get( 0 ).
-            getName() );
+                               partDescriptorKey.getName(), htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -131,23 +127,23 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutAppKey:name" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.
-            create().
-            regions( PageRegions.create().
-                add( Region.create().
-                    name( "region1" ).
-                    add( LayoutComponent.create().
-                        descriptor( layoutDescriptorKey ).
-                        regions( LayoutRegions.create().build() ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final Page page = Page.create()
+            .regions( PageRegions.create()
+                          .add( Region.create()
+                                    .name( "region1" )
+                                    .add( LayoutComponent.create()
+                                              .descriptor( layoutDescriptorKey )
+                                              .regions( LayoutRegions.create().build() )
+                                              .build() )
+                                    .build() )
+                          .build() )
+            .build();
 
         final PatternIndexConfigDocument result = processPage( page, null, Arrays.asList( configFormWithHtmlArea ).listIterator() );
+
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG,
-                               layoutDescriptorKey.getApplicationKey().toString(), layoutDescriptorKey.getName(), htmlarea ) )
+                PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG,
+                                   layoutDescriptorKey.getApplicationKey().toString(), layoutDescriptorKey.getName(), htmlarea ) )
             .getIndexValueProcessors()
             .get( 0 )
             .getName() );
@@ -157,59 +153,51 @@ public class PageRegionsConfigProcessorTest
     public void test_part_inside_layout_component()
         throws Exception
     {
-        final String appKeyLayout = "layoutAppKey";
-        final String appKeyPart = "partAppKey";
+        final DescriptorKey layoutKey = DescriptorKey.from( "app:layoutAppKey" );
+        final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.
-            create().
-            regions( PageRegions.create().
-                add( Region.create().
-                    name( "region1" ).
-                    add( LayoutComponent.create().
-                        descriptor( DescriptorKey.from( appKeyLayout ) ).
-                        regions( LayoutRegions.create().
-                            add( Region.create().
-                                name( "layoutRegion1" ).
-                                add( PartComponent.create().
-                                    descriptor( DescriptorKey.from( appKeyPart ) ).
-                                    build() ).
-                                build() ).
-                            build() ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final Page page = Page.create()
+            .regions( PageRegions.create()
+                          .add( Region.create()
+                                    .name( "region1" )
+                                    .add( LayoutComponent.create()
+                                              .descriptor( layoutKey )
+                                              .regions( LayoutRegions.create()
+                                                            .add( Region.create()
+                                                                      .name( "layoutRegion1" )
+                                                                      .add( PartComponent.create().descriptor( partKey ).build() )
+                                                                      .build() )
+                                                            .build() )
+                                              .build() )
+                                    .build() )
+                          .build() )
+            .build();
 
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(),
                                                                Arrays.asList( configFormWithHtmlArea ).listIterator() );
+
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG, appKeyLayout, htmlarea ) )
-            .getIndexValueProcessors()
-            .get( 0 )
-            .getName() );
+            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG, layoutKey.getApplicationKey().toString(),
+                               layoutKey.getName(), htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, appKeyPart, htmlarea ) )
-            .getIndexValueProcessors()
-            .get( 0 )
-            .getName() );
+            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, partKey.getApplicationKey().toString(),
+                               partKey.getName(), htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
     public void test_fragment_component()
         throws Exception
     {
-        final Page page = Page.
-            create().
-            regions( PageRegions.create().
-                add( Region.create().
-                    name( "region1" ).
-                    add( FragmentComponent.create().
-                        fragment( ContentId.from( "content-id" ) ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final Page page = Page.create()
+            .regions( PageRegions.create()
+                          .add( Region.create()
+                                    .name( "region1" )
+                                    .add( FragmentComponent.create().fragment( ContentId.from( "content-id" ) ).build() )
+                                    .build() )
+                          .build() )
+            .build();
 
         final PatternIndexConfigDocument result = processPage( page, singletonList( configFormWithHtmlArea ).listIterator(), null );
 
@@ -222,6 +210,42 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
+    public void test_fragment_page()
+        throws Exception
+    {
+        final DescriptorKey layoutKey = DescriptorKey.from( "app:layoutAppKey" );
+        final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
+
+        final Page page = Page.create()
+            .regions( PageRegions.create().build() )
+            .fragment( LayoutComponent.create()
+                           .descriptor( layoutKey )
+                           .regions( LayoutRegions.create()
+                                         .add( Region.create()
+                                                   .name( "layoutRegion1" )
+                                                   .add( PartComponent.create().descriptor( partKey ).build() )
+                                                   .build() )
+                                         .build() )
+                           .build() )
+            .build();
+
+        final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(),
+                                                               Arrays.asList( configFormWithHtmlArea ).listIterator() );
+
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( "components.part.config.app.partAppKey" ) ) );
+        assertEquals( "htmlStripper", result.getConfigForPath( PropertyPath.from( "components.part.config.app.partappkey.htmlarea" ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
+
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( "components.layout.config.app.layoutAppKey" ) ) );
+        assertEquals( "htmlStripper", result.getConfigForPath( PropertyPath.from( "components.layout.config.app.layoutAppKey.htmlarea" ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
+    }
+
+    @Test
     public void test_complex_component_config()
         throws Exception
     {
@@ -229,43 +253,42 @@ public class PageRegionsConfigProcessorTest
         final PropertySet items = config.addSet( "items" );
         items.addStrings( "input", "a", "b", "c" );
 
-        final Page page = Page.
-            create().
-            regions( PageRegions.create().
-                add( Region.create().
-                    name( "region1" ).
-                    add( PartComponent.create().
-                        descriptor( DescriptorKey.from( "appKey1:partName1" ) ).
-                        config( new PropertyTree() ).
-                        build() ).
-                    add( LayoutComponent.create().
-                        descriptor( DescriptorKey.from( "appKey2:layoutName" ) ).
-                        config( new PropertyTree() ).
-                        regions( LayoutRegions.create().
-                            add( Region.create().
-                                name( "region" ).
-                                add( PartComponent.create().
-                                    descriptor( DescriptorKey.from( "appKey3:partName2" ) ).
-                                    config( new PropertyTree() ).
-                                    build() ).
-                                build() ).
-                            build() ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final Page page = Page.create()
+            .regions( PageRegions.create()
+                          .add( Region.create()
+                                    .name( "region1" )
+                                    .add( PartComponent.create()
+                                              .descriptor( DescriptorKey.from( "appKey1:partName1" ) )
+                                              .config( new PropertyTree() )
+                                              .build() )
+                                    .add( LayoutComponent.create()
+                                              .descriptor( DescriptorKey.from( "appKey2:layoutName" ) )
+                                              .config( new PropertyTree() )
+                                              .regions( LayoutRegions.create()
+                                                            .add( Region.create()
+                                                                      .name( "region" )
+                                                                      .add( PartComponent.create()
+                                                                                .descriptor( DescriptorKey.from( "appKey3:partName2" ) )
+                                                                                .config( new PropertyTree() )
+                                                                                .build() )
+                                                                      .build() )
+                                                            .build() )
+                                              .build() )
+                                    .build() )
+                          .build() )
+            .build();
 
-        final Form form = Form.create().
-            addFormItem( FormItemSet.create().
-                name( "items" ).
-                addFormItem( Input.create().
-                    name( "input" ).
-                    label( "input" ).
-                    inputType( InputTypeName.TEXT_LINE ).
-                    occurrences( 0, 5 ).
-                    build() ).
-                build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( FormItemSet.create()
+                              .name( "items" )
+                              .addFormItem( Input.create()
+                                                .name( "input" )
+                                                .label( "input" )
+                                                .inputType( InputTypeName.TEXT_LINE )
+                                                .occurrences( 0, 5 )
+                                                .build() )
+                              .build() )
+            .build();
 
         final PatternIndexConfigDocument result =
             processPage( page, Arrays.asList( form, form ).listIterator(), singletonList( form ).listIterator() );
@@ -279,49 +302,51 @@ public class PageRegionsConfigProcessorTest
     private PatternIndexConfigDocument processPage( final Page page, final ListIterator<Form> partForms,
                                                     final ListIterator<Form> layoutForms )
     {
-        final RegionDescriptors.Builder regionDescriptorsBuilder = RegionDescriptors.create();
-        page.getRegions().forEach( region -> {
+        page.getRegions()
+            .forEach( region -> region.getComponents().forEach( component -> processComponent( partForms, layoutForms, component ) ) );
 
-            region.getComponents().forEach( component -> {
-                if ( PartComponentType.INSTANCE == component.getType() )
-                {
-                    if ( partForms != null && partForms.hasNext() )
-                    {
-                        final PartComponent partComponent = (PartComponent) component;
-
-                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) )
-                            .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
-                    }
-                }
-                else if ( LayoutComponentType.INSTANCE == component.getType() )
-                {
-                    if ( layoutForms != null && layoutForms.hasNext() )
-                    {
-                        final LayoutComponent layoutComponent = (LayoutComponent) component;
-
-                        Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) )
-                            .thenReturn( LayoutDescriptor.create()
-                                             .key( layoutComponent.getDescriptor() )
-                                             .config( layoutForms.next() )
-                                             .regions( RegionDescriptors.create().build() )
-                                             .build() );
-
-                        if ( layoutComponent.hasRegions() )
-                        {
-                            processLayoutRegions( layoutComponent.getRegions(), partForms );
-                        }
-                    }
-                }
-
-            } );
-
-            regionDescriptorsBuilder.add( RegionDescriptor.create().name( region.getName() ).build() );
-        } );
+        if ( page.isFragment() )
+        {
+            processComponent( partForms, layoutForms, page.getFragment() );
+        }
 
         final PageRegionsConfigProcessor configProcessor =
             new PageRegionsConfigProcessor( page, partDescriptorService, layoutDescriptorService );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+    }
+
+    private void processComponent( final ListIterator<Form> partForms, final ListIterator<Form> layoutForms, final Component component )
+    {
+        if ( PartComponentType.INSTANCE == component.getType() )
+        {
+            if ( partForms != null && partForms.hasNext() )
+            {
+                final PartComponent partComponent = (PartComponent) component;
+
+                Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) )
+                    .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
+            }
+        }
+        else if ( LayoutComponentType.INSTANCE == component.getType() )
+        {
+            if ( layoutForms != null && layoutForms.hasNext() )
+            {
+                final LayoutComponent layoutComponent = (LayoutComponent) component;
+
+                Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) )
+                    .thenReturn( LayoutDescriptor.create()
+                                     .key( layoutComponent.getDescriptor() )
+                                     .config( layoutForms.next() )
+                                     .regions( RegionDescriptors.create().build() )
+                                     .build() );
+
+                if ( layoutComponent.hasRegions() )
+                {
+                    processLayoutRegions( layoutComponent.getRegions(), partForms );
+                }
+            }
+        }
     }
 
     private void processLayoutRegions( final LayoutRegions layoutRegions, ListIterator<Form> partForms )
@@ -334,9 +359,7 @@ public class PageRegionsConfigProcessorTest
                     final PartComponent partComponent = (PartComponent) component;
 
                     Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) )
-                        .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).
-                            config( partForms.next() ).
-                            build() );
+                        .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                 }
             }
         } ) );
