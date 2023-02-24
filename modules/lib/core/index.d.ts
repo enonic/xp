@@ -83,7 +83,7 @@ export interface Content<
     type: Type;
     displayName: string;
     hasChildren: boolean;
-    language: string;
+    language?: string;
     valid: boolean;
     originProject: string;
     childOrder?: string;
