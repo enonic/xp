@@ -36,9 +36,8 @@ public class PageRegionsConfigProcessor
 
     static final String VALUE = "value";
 
-    static final IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
-        addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
-        build();
+    static final IndexConfig TEXT_COMPONENT_INDEX_CONFIG =
+        IndexConfig.create( IndexConfig.FULLTEXT ).addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).build();
 
     private final PartDescriptorService partDescriptorService;
 
@@ -71,6 +70,7 @@ public class PageRegionsConfigProcessor
         builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, LayoutComponentType.INSTANCE.toString(), DESCRIPTOR ), IndexConfig.MINIMAL );
 
         processPageRegions( page.getRegions(), builder );
+        processPageFragment( page.getFragment(), builder );
 
         return builder;
     }
@@ -85,6 +85,16 @@ public class PageRegionsConfigProcessor
         pageRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
     }
 
+    private void processPageFragment( final Component fragment, final PatternIndexConfigDocument.Builder builder )
+    {
+        if ( fragment == null )
+        {
+            return;
+        }
+
+        processComponents( List.of( fragment ), builder );
+    }
+
     private void processComponents( final List<Component> components, final PatternIndexConfigDocument.Builder builder )
     {
         if ( components == null )
@@ -92,11 +102,11 @@ public class PageRegionsConfigProcessor
             return;
         }
 
-        components.stream().
-            filter( component -> component instanceof DescriptorBasedComponent ).
-            map( component -> (DescriptorBasedComponent) component ).
-            filter( DescriptorBasedComponent::hasDescriptor ).
-            forEach( component -> processDescriptorBasedComponent( component, builder ) );
+        components.stream()
+            .filter( component -> component instanceof DescriptorBasedComponent )
+            .map( component -> (DescriptorBasedComponent) component )
+            .filter( DescriptorBasedComponent::hasDescriptor )
+            .forEach( component -> processDescriptorBasedComponent( component, builder ) );
     }
 
     private void processDescriptorBasedComponent( final DescriptorBasedComponent component,
@@ -108,6 +118,7 @@ public class PageRegionsConfigProcessor
         final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor(
             String.join( ELEMENT_DIVIDER, COMPONENTS, component.getType().toString(), CONFIG, appNameAsString, componentNameAsString ),
             builder );
+
         indexConfigVisitor.traverse( getComponentConfig( component ) );
 
         builder.add(
