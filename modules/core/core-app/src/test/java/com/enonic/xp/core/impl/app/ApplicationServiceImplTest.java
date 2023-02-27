@@ -34,7 +34,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -50,8 +49,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SecurityService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -107,13 +104,9 @@ public class ApplicationServiceImplTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        final IndexService indexService = mock( IndexService.class );
-        final RepositoryService repositoryService = mock( RepositoryService.class );
         nodeService = mock( NodeService.class );
 
-        SecurityService securityService = mock( SecurityService.class );
-
-        virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService, securityService );
+        virtualAppService = new VirtualAppService( nodeService );
 
         this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
                                                    virtualAppService, auditLogSupport );

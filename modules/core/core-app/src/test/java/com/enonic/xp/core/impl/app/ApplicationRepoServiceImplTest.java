@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
@@ -27,15 +26,13 @@ class ApplicationRepoServiceImplTest
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
-    private final IndexService indexService = Mockito.mock( IndexService.class );
-
     private ApplicationRepoServiceImpl service;
 
     @BeforeEach
     void setUp()
         throws Exception
     {
-        this.service = new ApplicationRepoServiceImpl( this.nodeService, this.indexService );
+        this.service = new ApplicationRepoServiceImpl( this.nodeService );
     }
 
     @Test

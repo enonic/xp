@@ -29,8 +29,12 @@ public class ApplicationRepoServiceActivator
     @Activate
     public void activate( final BundleContext context )
     {
-        final ApplicationRepoServiceImpl applicationRepoService = new ApplicationRepoServiceImpl( nodeService, indexService );
-        applicationRepoService.initialize();
+        final ApplicationRepoServiceImpl applicationRepoService = new ApplicationRepoServiceImpl( nodeService );
+        ApplicationRepoInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
         service = context.registerService( ApplicationRepoService.class, applicationRepoService, null );
     }
 
