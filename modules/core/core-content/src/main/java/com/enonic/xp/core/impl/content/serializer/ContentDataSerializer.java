@@ -317,7 +317,7 @@ public class ContentDataSerializer
     {
         if ( inherit != null )
         {
-            contentAsData.ifNotNull().addStrings( INHERIT, inherit.stream().map( Enum::name ).collect( Collectors.toSet() ) );
+            contentAsData.ifNotNull().addStrings( INHERIT, inherit.stream().map( Enum::name ).collect( Collectors.toList() ) );
         }
     }
 

@@ -15,14 +15,14 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class Projects
     extends AbstractImmutableEntityList<Project>
 {
-    private Projects( final Builder builder )
+    private Projects( final ImmutableList<Project> projects )
     {
-        super( builder.projects.build() );
+        super( projects );
     }
 
     public static Projects empty()
     {
-        return create().build();
+        return new Projects( ImmutableList.of() );
     }
 
     @Deprecated
@@ -39,7 +39,7 @@ public final class Projects
 
     public static Projects from( Collection<Project> projects )
     {
-        return create().addAll( projects ).build();
+        return new Projects( ImmutableList.copyOf( projects ) );
     }
 
     public static Builder create()
@@ -71,7 +71,7 @@ public final class Projects
 
         public Projects build()
         {
-            return new Projects( this );
+            return new Projects( projects.build() );
         }
     }
 }

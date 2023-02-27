@@ -363,7 +363,7 @@ public class ContentAuditLogSupportImpl
         }
 
         resultSet.addStrings( "duplicatedContents",
-                              result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
+                              result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
 
         log( "system.content.duplicate", data, result.getDuplicatedContents(), rootContext );
     }
@@ -580,12 +580,12 @@ public class ContentAuditLogSupportImpl
 
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )
     {
-        targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
+        targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toList() ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentPaths contents, final String name )
     {
-        targetSet.addStrings( name, contents.stream().map( ContentPath::toString ).collect( Collectors.toSet() ) );
+        targetSet.addStrings( name, contents.stream().map( ContentPath::toString ).collect( Collectors.toList() ) );
     }
 
     private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )

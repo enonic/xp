@@ -28,6 +28,8 @@ public final class ChildOrder
 
     private static final FieldOrderExpr PATH_DESC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.DESC );
 
+    private static final FieldOrderExpr NAME_ASC = FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC );
+
     private static final FieldOrderExpr PUBLISH_ASC = FieldOrderExpr.create( ContentIndexPath.PUBLISH_FIRST, OrderExpr.Direction.ASC );
 
     private static final FieldOrderExpr PUBLISH_DESC = FieldOrderExpr.create( ContentIndexPath.PUBLISH_FIRST, OrderExpr.Direction.DESC );
@@ -67,23 +69,22 @@ public final class ChildOrder
 
     public static ChildOrder path()
     {
-        return ChildOrder.create().
-            add( PATH_ASC ).
-            build();
+        return ChildOrder.create().add( PATH_ASC ).build();
     }
 
     public static ChildOrder reversePath()
     {
-        return ChildOrder.create().
-            add( PATH_DESC ).
-            build();
+        return ChildOrder.create().add( PATH_DESC ).build();
+    }
+
+    public static ChildOrder name()
+    {
+        return ChildOrder.create().add( NAME_ASC ).build();
     }
 
     public static ChildOrder publish()
     {
-        return ChildOrder.create().
-            add( PUBLISH_ASC ).
-            build();
+        return ChildOrder.create().add( PUBLISH_ASC ).build();
     }
 
     public static ChildOrder reversePublish()

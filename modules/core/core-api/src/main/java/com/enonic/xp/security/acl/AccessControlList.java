@@ -4,15 +4,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static java.util.stream.Collectors.toSet;
 
 @PublicApi
 public final class AccessControlList
@@ -92,11 +91,11 @@ public final class AccessControlList
 
     public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
     {
-        final Set<PrincipalKey> principals = this.entries.values().stream().
-            filter( ( entry ) -> entry.isAllowed( permission ) ).
-            map( AccessControlEntry::getPrincipal ).
-            collect( toSet() );
-        return PrincipalKeys.from( principals );
+        return PrincipalKeys.from( this.entries.values()
+                                       .stream()
+                                       .filter( ( entry ) -> entry.isAllowed( permission ) )
+                                       .map( AccessControlEntry::getPrincipal )
+                                       .collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public AccessControlEntry getEntry( final PrincipalKey principalKey )

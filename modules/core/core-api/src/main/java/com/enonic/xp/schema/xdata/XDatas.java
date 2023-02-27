@@ -49,7 +49,7 @@ public final class XDatas
 
     public Set<XDataName> getNames()
     {
-        return ImmutableSet.copyOf( this.list.stream().map( BaseSchema::getName ).iterator() );
+        return this.list.stream().map( BaseSchema::getName ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public XData getXData( final XDataName xDataName )

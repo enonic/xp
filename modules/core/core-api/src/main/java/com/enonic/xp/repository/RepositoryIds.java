@@ -58,6 +58,7 @@ public final class RepositoryIds
         return list.stream().map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
+    @Deprecated
     public Set<String> asStrings()
     {
         return this.set.stream().map( RepositoryId::toString ).collect( Collectors.toSet() );

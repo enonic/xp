@@ -55,7 +55,7 @@ public final class ExtraDatas
 
     public static ExtraDatas from( final Stream<? extends ExtraData> extradatas )
     {
-        return new ExtraDatas( ImmutableSet.copyOf( extradatas.collect( Collectors.toSet() ) ) );
+        return new ExtraDatas( extradatas.collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static ExtraDatas from( final ExtraDatas extraDatas, final ExtraData extraData )

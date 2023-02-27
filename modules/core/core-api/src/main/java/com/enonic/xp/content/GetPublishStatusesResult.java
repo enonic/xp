@@ -1,13 +1,10 @@
 package com.enonic.xp.content;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -15,13 +12,10 @@ import com.enonic.xp.annotation.PublicApi;
 public class GetPublishStatusesResult
     implements Iterable<GetPublishStatusResult>
 {
-    private final ImmutableSet<GetPublishStatusResult> getPublishStatusResults;
-
-    private final Map<ContentId, GetPublishStatusResult> getPublishStatusResultsMap;
+    private final ImmutableMap<ContentId, GetPublishStatusResult> getPublishStatusResultsMap;
 
     private GetPublishStatusesResult( Builder builder )
     {
-        getPublishStatusResults = ImmutableSet.copyOf( builder.compareResults );
         getPublishStatusResultsMap = ImmutableMap.copyOf( builder.compareResultsMap );
     }
 
@@ -33,7 +27,7 @@ public class GetPublishStatusesResult
     @Override
     public Iterator<GetPublishStatusResult> iterator()
     {
-        return getPublishStatusResults.iterator();
+        return getPublishStatusResultsMap.values().iterator();
     }
 
     public Map<ContentId, GetPublishStatusResult> getGetPublishStatusResultsMap()
@@ -53,9 +47,7 @@ public class GetPublishStatusesResult
 
     public static final class Builder
     {
-        private final Set<GetPublishStatusResult> compareResults = new HashSet<>();
-
-        private final Map<ContentId, GetPublishStatusResult> compareResultsMap = new HashMap<>();
+        private final Map<ContentId, GetPublishStatusResult> compareResultsMap = new LinkedHashMap<>();
 
         private Builder()
         {
@@ -63,20 +55,13 @@ public class GetPublishStatusesResult
 
         public Builder add( final GetPublishStatusResult result )
         {
-            this.compareResults.add( result );
             this.compareResultsMap.put( result.getContentId(), result );
             return this;
         }
 
         public Builder addAll( final GetPublishStatusesResult results )
         {
-            this.compareResults.addAll( results.getPublishStatusResults );
-
-            for ( final GetPublishStatusResult result : results )
-            {
-                this.compareResultsMap.put( result.getContentId(), result );
-            }
-
+            this.compareResultsMap.putAll( results.getPublishStatusResultsMap );
             return this;
         }
 

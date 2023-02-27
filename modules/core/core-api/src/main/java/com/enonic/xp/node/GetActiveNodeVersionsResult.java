@@ -1,8 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -15,7 +12,7 @@ public class GetActiveNodeVersionsResult
 
     private GetActiveNodeVersionsResult( Builder builder )
     {
-        nodeVersions = ImmutableMap.copyOf( builder.nodeVersions );
+        nodeVersions = builder.nodeVersions.build();
     }
 
     public static Builder create()
@@ -31,7 +28,7 @@ public class GetActiveNodeVersionsResult
 
     public static final class Builder
     {
-        private final Map<Branch, NodeVersionMetadata> nodeVersions = new HashMap<>();
+        private final ImmutableMap.Builder<Branch, NodeVersionMetadata> nodeVersions = ImmutableMap.builder();
 
         private Builder()
         {

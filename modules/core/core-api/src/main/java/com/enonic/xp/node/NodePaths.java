@@ -2,8 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -14,37 +12,39 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class NodePaths
     extends AbstractImmutableEntitySet<NodePath>
 {
+    private static final NodePaths EMPTY = new NodePaths( ImmutableSet.of() );
+
     private NodePaths( final ImmutableSet<NodePath> set )
     {
         super( set );
     }
 
-    private NodePaths( final Builder builder )
-    {
-        super( ImmutableSet.copyOf( builder.nodePaths ) );
-    }
-
     public static NodePaths empty()
     {
-        final ImmutableSet<NodePath> set = ImmutableSet.of();
-        return new NodePaths( set );
+        return EMPTY;
     }
 
     public static NodePaths from( final NodePath... paths )
     {
-        return new NodePaths( ImmutableSet.copyOf( paths ) );
+        return fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
     public static NodePaths from( final String... paths )
     {
-        return new NodePaths( parsePaths( paths ) );
+        return fromInternal( parsePaths( paths ) );
     }
 
     public static NodePaths from( final Iterable<NodePath> paths )
     {
-        return new NodePaths( ImmutableSet.copyOf( paths ) );
+        return fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
+    private static NodePaths fromInternal( final ImmutableSet<NodePath> nodePaths )
+    {
+        return nodePaths.isEmpty() ? EMPTY : new NodePaths( nodePaths );
+    }
+
+    @Deprecated
     public ImmutableSet<String> getAsStrings()
     {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
@@ -69,7 +69,7 @@ public class NodePaths
 
     public static class Builder
     {
-        private final Set<NodePath> nodePaths = new HashSet<>();
+        private final ImmutableSet.Builder<NodePath> nodePaths = ImmutableSet.builder();
 
         public Builder addNodePath( final NodePath nodePath )
         {
@@ -85,7 +85,7 @@ public class NodePaths
 
         public NodePaths build()
         {
-            return new NodePaths( this );
+            return fromInternal( nodePaths.build() );
         }
     }
 

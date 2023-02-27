@@ -58,6 +58,7 @@ public final class AuditLogUris
         return list.stream().map( AuditLogUri::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
+    @Deprecated
     public Set<String> asStrings()
     {
         return this.set.stream().map( AuditLogUri::toString ).collect( Collectors.toSet() );
