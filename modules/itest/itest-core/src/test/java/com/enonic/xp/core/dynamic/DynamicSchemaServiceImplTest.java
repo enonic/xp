@@ -38,11 +38,13 @@ import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
+import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.CreateDynamicSiteParams;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
+import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -229,8 +231,12 @@ public class DynamicSchemaServiceImplTest
         Felix felix = createFelixInstance( cacheDir );
         felix.start();
 
-        ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService, indexService );
-        repoService.initialize();
+        ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
+        ApplicationRepoInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
@@ -259,8 +265,13 @@ public class DynamicSchemaServiceImplTest
         SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
         securityService.initialize();
 
-        VirtualAppService virtualAppService = new VirtualAppService( indexService, repositoryService, nodeService, securityService );
-        virtualAppService.initialize();
+        final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
+        VirtualAppInitializer.create()
+            .setIndexService( indexService )
+            .setRepositoryService( repositoryService )
+            .setSecurityService( securityService )
+            .build()
+            .initialize();
 
         ApplicationService applicationService =
             new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,

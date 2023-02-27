@@ -4,7 +4,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -25,21 +24,9 @@ public class ApplicationRepoServiceImpl
 
     private final NodeService nodeService;
 
-    private final IndexService indexService;
-
-    public ApplicationRepoServiceImpl( final NodeService nodeService, final IndexService indexService )
+    public ApplicationRepoServiceImpl( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.indexService = indexService;
-    }
-
-    public void initialize()
-    {
-        ApplicationRepoInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            build().
-            initialize();
     }
 
     @Override

@@ -3,10 +3,6 @@ package com.enonic.xp.core.impl.app;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
@@ -14,7 +10,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -30,36 +25,16 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(immediate = true, service = VirtualAppService.class)
 public class VirtualAppService
 {
-    private final IndexService indexService;
-
-    private final RepositoryService repositoryService;
-
     private final NodeService nodeService;
 
-    private final SecurityService securityService;
-
-    @Activate
-    public VirtualAppService( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
-                              @Reference final NodeService nodeService, @Reference SecurityService securityService )
+    public VirtualAppService( final NodeService nodeService )
     {
-        this.indexService = indexService;
-        this.repositoryService = repositoryService;
         this.nodeService = nodeService;
-        this.securityService = securityService;
-    }
-
-    @Activate
-    public void initialize()
-    {
-        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).setSecurityService( securityService ).build().initialize();
     }
 
     public List<Application> list()

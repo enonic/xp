@@ -31,6 +31,7 @@ import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
+import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.VirtualAppService;
@@ -58,7 +59,7 @@ public class ApplicationServiceTest
     private Felix felix;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
@@ -68,8 +69,12 @@ public class ApplicationServiceTest
 
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
-        ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService, indexService );
-        repoService.initialize();
+        ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
+        ApplicationRepoInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            build().
+            initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
@@ -84,7 +89,7 @@ public class ApplicationServiceTest
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ),
-                                                              new VirtualAppService( indexService, repositoryService, nodeService, securityService ),
+                                                              new VirtualAppService(  nodeService ),
                                                               applicationAuditLogSupport );
     }
 

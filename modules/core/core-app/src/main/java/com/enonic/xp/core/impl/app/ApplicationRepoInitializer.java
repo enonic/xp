@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 
-class ApplicationRepoInitializer
+public class ApplicationRepoInitializer
     extends ExternalInitializer
 {
     private final NodeService nodeService;
