@@ -33,19 +33,19 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
@@ -458,22 +458,20 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PublishContentResult push = this.contentService.publish(
+        Mockito.reset( auditLogService );
+
+        this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 16 ) ).log( captor.capture() );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.publish" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.publish" ) ;
 
-        assertEquals( content.getId().toString(), logResultSet.getStrings( "pushedContents" ).iterator().next() );
-        assertFalse( logResultSet.getStrings( "deletedContents" ).iterator().hasNext() );
-        assertFalse( logResultSet.getStrings( "pendingContents" ).iterator().hasNext() );
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getString( "pushedContents" ), result -> result.getString( "deletedContents" ),
+                         result -> result.getString( "pendingContents" ) )
+            .containsExactly(content.getId().toString(), null, null);
     }
 
     @Test

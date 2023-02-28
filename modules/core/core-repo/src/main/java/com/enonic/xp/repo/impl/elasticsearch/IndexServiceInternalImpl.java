@@ -30,6 +30,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -70,7 +71,13 @@ public class IndexServiceInternalImpl
 
     private static final String CLUSTER_HEALTH_TIMEOUT = "10s";
 
-    private Client client;
+    private final Client client;
+
+    @Activate
+    public IndexServiceInternalImpl( @Reference final Client client )
+    {
+        this.client = client;
+    }
 
     @Override
     public void refresh( final String... indexNames )
@@ -308,11 +315,5 @@ public class IndexServiceInternalImpl
         {
             LOG.warn( "Failed to delete index {}", indexName );
         }
-    }
-
-    @Reference
-    public void setClient( final Client client )
-    {
-        this.client = client;
     }
 }

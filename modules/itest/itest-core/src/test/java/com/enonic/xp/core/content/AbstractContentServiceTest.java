@@ -16,8 +16,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -46,7 +48,6 @@ import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.ContentAuditLogExecutor;
 import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
@@ -63,6 +64,7 @@ import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
@@ -76,6 +78,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
@@ -91,11 +95,11 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -117,10 +121,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AbstractContentServiceTest
+public abstract class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
-    public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+    private static final AtomicInteger PROJECT_COUNTER = new AtomicInteger();
+
+    private static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
+
+    private final ProjectName testprojectName = ProjectName.from( "test" + PROJECT_COUNTER.incrementAndGet() );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -137,19 +145,12 @@ public class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected BinaryServiceImpl binaryService;
-
     protected MixinService mixinService;
 
     protected XDataService xDataService;
 
-    protected ContentTypeServiceImpl contentTypeService;
 
     protected AuditLogService auditLogService;
-
-    protected MediaInfoServiceImpl mediaInfoService;
-
-    protected RepositoryServiceImpl repositoryService;
 
     protected IndexServiceImpl indexService;
 
@@ -159,37 +160,37 @@ public class AbstractContentServiceTest
 
     private Context initialContext;
 
-    protected static Context ctxDraft()
+    protected Context ctxDraft()
     {
         return ContextBuilder.create()
             .branch( ContentConstants.BRANCH_DRAFT )
-            .repositoryId( TEST_REPO_ID )
+            .repositoryId( testprojectName.getRepoId() )
             .authInfo( TEST_DEFAULT_USER_AUTHINFO )
             .build();
     }
 
-    protected static Context ctxMaster()
+    protected Context ctxMaster()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( TEST_REPO_ID ).
+            repositoryId( testprojectName.getRepoId() ).
             authInfo( TEST_DEFAULT_USER_AUTHINFO ).
             build();
     }
 
-    public static Context ctxMasterAnonymous()
+    public Context ctxMasterAnonymous()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
+            repositoryId( testprojectName.getRepoId() ).
             build();
     }
 
-    public static Context ctxMasterSu()
+    public Context ctxMasterSu()
     {
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
+            repositoryId( testprojectName.getRepoId() ).
             authInfo( AuthenticationInfo.create().
                 principals( RoleKeys.ADMIN ).
                 user( ContentInitializer.SUPER_USER ).
@@ -197,84 +198,63 @@ public class AbstractContentServiceTest
             build();
     }
 
+    @BeforeAll
+    static void cleanupAbstractContentServiceTest()
+    {
+        BLOB_STORE.clear();
+        deleteAllIndices();
+    }
+
     @BeforeEach
-    public void setUpAbstractContentServiceTest()
+    void setUpAbstractContentServiceTest()
     {
         executorService = Executors.newSingleThreadExecutor();
-
-        deleteAllIndices();
 
         initialContext = ContextAccessor.current();
         ContextAccessor.INSTANCE.set( ctxDraft() );
 
-        final MemoryBlobStore blobStore = new MemoryBlobStore();
+        final BinaryServiceImpl binaryService = new BinaryServiceImpl( BLOB_STORE );
 
-        binaryService = new BinaryServiceImpl();
-        binaryService.setBlobStore( blobStore );
-
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( client );
+        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( client );
+        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
         BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
 
-        VersionServiceImpl versionService = new VersionServiceImpl();
-        versionService.setStorageDao( storageDao );
+        VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
 
-        CommitServiceImpl commitService = new CommitServiceImpl();
-        commitService.setStorageDao( storageDao );
+        CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
-        indexServiceInternal.setClient( client );
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
-        indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal( indexServiceInternal );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
-        indexedDataService.setStorageDao( storageDao );
+        final NodeStorageServiceImpl storageService =
+            new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
-        storageService.setBranchService( branchService );
-        storageService.setVersionService( versionService );
-        storageService.setCommitService( commitService );
-        storageService.setNodeVersionService( nodeDao );
-        storageService.setIndexDataService( indexedDataService );
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
+        final RepositoryEntryServiceImpl repositoryEntryService =
+            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
-        searchService.setSearchDao( searchDao );
+        indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
-        final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
-        elasticsearchIndexService.setClient( client );
-
-        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
-        repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeStorageService( storageService );
-        repositoryEntryService.setNodeSearchService( searchService );
-        repositoryEntryService.setEventPublisher( eventPublisher );
-        repositoryEntryService.setBinaryService( binaryService );
-
-        repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
+        RepositoryServiceImpl repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
                                        searchService );
-        repositoryService.initialize();
+        SystemRepoInitializer.create().
+            setIndexServiceInternal( indexServiceInternal ).
+            setRepositoryService( repositoryService ).
+            setNodeStorageService( storageService ).
+            build().
+            initialize();
 
-        nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexServiceInternal );
-        nodeService.setNodeStorageService( storageService );
-        nodeService.setNodeSearchService( searchService );
-        nodeService.setEventPublisher( eventPublisher );
-        nodeService.setBinaryService( binaryService );
-        nodeService.setRepositoryService( repositoryService );
-        nodeService.initialize();
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         mixinService = mock( MixinService.class );
         when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -292,7 +272,7 @@ public class AbstractContentServiceTest
         when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
             thenReturn( extractedData );
 
-        mediaInfoService = new MediaInfoServiceImpl();
+        MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );
 
         final ResourceService resourceService = mock( ResourceService.class );
@@ -300,7 +280,7 @@ public class AbstractContentServiceTest
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
-        contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
+        ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
         PageDescriptorService pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
@@ -313,7 +293,7 @@ public class AbstractContentServiceTest
         when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
-            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutor(), auditLogService, contentAuditLogFilterService );
+            new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
@@ -322,8 +302,13 @@ public class AbstractContentServiceTest
         securityAuditLogSupport.activate( securityConfig );
 
         final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
-        securityService.initialize();
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        SecurityInitializer.create()
+            .setIndexService( indexService )
+            .setSecurityService( securityService )
+            .setNodeService( nodeService )
+            .build()
+            .initialize();
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
@@ -331,6 +316,8 @@ public class AbstractContentServiceTest
             new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
                                     eventPublisher );
         projectService.initialize();
+
+        projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
         contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );
@@ -351,8 +338,10 @@ public class AbstractContentServiceTest
     }
 
     @AfterEach
-    void tearDown()
+    void tearDownAbstractContentServiceTest()
     {
+        projectService.delete( testprojectName );
+
         ContextAccessor.INSTANCE.set( initialContext );
 
         executorService.shutdownNow();

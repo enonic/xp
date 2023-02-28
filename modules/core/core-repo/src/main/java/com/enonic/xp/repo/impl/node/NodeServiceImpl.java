@@ -101,23 +101,31 @@ import com.enonic.xp.util.BinaryReference;
 public class NodeServiceImpl
     implements NodeService
 {
-    private IndexServiceInternal indexServiceInternal;
+    private final IndexServiceInternal indexServiceInternal;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeStorageService nodeStorageService;
 
-    private NodeSearchService nodeSearchService;
+    private final  NodeSearchService nodeSearchService;
 
-    private EventPublisher eventPublisher;
+    private final  EventPublisher eventPublisher;
 
-    private BinaryService binaryService;
+    private final BinaryService binaryService;
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    @SuppressWarnings("unused")
     @Activate
-    public void initialize()
+    public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
+                            @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
+                            @Reference final BinaryService binaryService, @Reference final RepositoryService repositoryService )
     {
+        this.indexServiceInternal = indexServiceInternal;
+        this.nodeStorageService = nodeStorageService;
+        this.nodeSearchService = nodeSearchService;
+        this.eventPublisher = eventPublisher;
+        this.binaryService = binaryService;
+        this.repositoryService = repositoryService;
     }
+
 
     @Override
     public Node getById( final NodeId id )
@@ -1138,41 +1146,5 @@ public class NodeServiceImpl
                 throw new BranchNotFoundException( branch );
             }
         } );
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setBinaryService( final BinaryService binaryService )
-    {
-        this.binaryService = binaryService;
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
     }
 }

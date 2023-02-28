@@ -48,7 +48,12 @@ public class RepositoryServiceActivator
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
                                        nodeSearchService );
-        repositoryService.initialize();
+        SystemRepoInitializer.create().
+            setIndexServiceInternal( indexServiceInternal ).
+            setRepositoryService( repositoryService ).
+            setNodeStorageService( nodeStorageService ).
+            build().
+            initialize();
         service = context.registerService( RepositoryService.class, repositoryService, null );
     }
 

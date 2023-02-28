@@ -51,6 +51,7 @@ import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -74,6 +75,7 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
@@ -153,78 +155,56 @@ public class DynamicSchemaServiceImplTest
     public void initService()
         throws Exception
     {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
         deleteAllIndices();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
-        BinaryServiceImpl binaryService = new BinaryServiceImpl();
-        binaryService.setBlobStore( blobStore );
+        BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( client );
+        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( client );
+        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
         BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
 
-        VersionServiceImpl versionService = new VersionServiceImpl();
-        versionService.setStorageDao( storageDao );
+        VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
 
-        CommitServiceImpl commitService = new CommitServiceImpl();
-        commitService.setStorageDao( storageDao );
+        CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
-        indexServiceInternal.setClient( client );
-
-        IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal( indexServiceInternal );
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
-        indexedDataService.setStorageDao( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
 
-        NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
-        storageService.setBranchService( branchService );
-        storageService.setVersionService( versionService );
-        storageService.setCommitService( commitService );
-        storageService.setNodeVersionService( nodeDao );
-        storageService.setIndexDataService( indexedDataService );
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
 
-        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
-        searchService.setSearchDao( searchDao );
+        NodeStorageServiceImpl storageService =
+            new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( indexServiceInternal );
+        final RepositoryEntryServiceImpl repositoryEntryService =
+            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
-        elasticsearchIndexService.setClient( client );
+        IndexServiceImpl indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
-        repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeStorageService( storageService );
-        repositoryEntryService.setNodeSearchService( searchService );
-        repositoryEntryService.setEventPublisher( eventPublisher );
-        repositoryEntryService.setBinaryService( binaryService );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
                                        searchService );
-        repositoryService.initialize();
+        SystemRepoInitializer.create().
+            setIndexServiceInternal( indexServiceInternal ).
+            setRepositoryService( repositoryService ).
+            setNodeStorageService( storageService ).
+            build().
+            initialize();
 
-        nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal( indexServiceInternal );
-        nodeService.setNodeStorageService( storageService );
-        nodeService.setNodeSearchService( searchService );
-        nodeService.setEventPublisher( eventPublisher );
-        nodeService.setBinaryService( binaryService );
-        nodeService.setRepositoryService( repositoryService );
-        nodeService.initialize();
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
@@ -262,8 +242,13 @@ public class DynamicSchemaServiceImplTest
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
         securityAuditLogSupport.activate( securityConfig );
 
-        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService, securityAuditLogSupport );
-        securityService.initialize();
+        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        SecurityInitializer.create()
+            .setIndexService( indexService )
+            .setSecurityService( securityService )
+            .setNodeService( nodeService )
+            .build()
+            .initialize();
 
         final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
         VirtualAppInitializer.create()

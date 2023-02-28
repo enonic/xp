@@ -39,8 +39,12 @@ public class AuditLogServiceActivator
     @Activate
     public void activate( final BundleContext context )
     {
-        final AuditLogServiceImpl auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, nodeService );
-        auditLogService.initialize();
+        final AuditLogServiceImpl auditLogService = new AuditLogServiceImpl( config, nodeService );
+        AuditLogRepoInitializer.create().
+            setIndexService( indexService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
         service = context.registerService( AuditLogService.class, auditLogService, null );
     }
 

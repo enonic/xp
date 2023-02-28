@@ -76,9 +76,14 @@ public final class SchedulerServiceActivator
     public void activate( final BundleContext context )
     {
         final SchedulerServiceImpl schedulerService =
-            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService, auditLogSupport );
+            new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
 
-        schedulerService.initialize();
+        SchedulerRepoInitializer.create().
+            setIndexService( indexService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
+
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
         try

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.commit;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -25,7 +26,13 @@ public class CommitServiceImpl
     private static final ReturnFields COMMIT_RETURN_FIELDS =
         ReturnFields.from( CommitIndexPath.COMMIT_ID, CommitIndexPath.MESSAGE, CommitIndexPath.TIMESTAMP, CommitIndexPath.COMMITTER );
 
-    private StorageDao storageDao;
+    private final StorageDao storageDao;
+
+    @Activate
+    public CommitServiceImpl( @Reference final StorageDao storageDao )
+    {
+        this.storageDao = storageDao;
+    }
 
     @Override
     public String store( final NodeCommitEntry nodeBranchEntry, final InternalContext context )
@@ -65,11 +72,5 @@ public class CommitServiceImpl
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.COMMIT ).
             build();
-    }
-
-    @Reference
-    public void setStorageDao( final StorageDao storageDao )
-    {
-        this.storageDao = storageDao;
     }
 }

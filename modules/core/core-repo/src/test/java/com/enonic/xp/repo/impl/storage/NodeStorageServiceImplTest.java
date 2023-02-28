@@ -2,18 +2,17 @@ package com.enonic.xp.repo.impl.storage;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
+import com.enonic.xp.repo.impl.commit.CommitService;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.repository.RepositoryId;
@@ -25,6 +24,7 @@ import com.enonic.xp.security.acl.Permission;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -32,16 +32,11 @@ import static org.mockito.Mockito.when;
 
 class NodeStorageServiceImplTest
 {
-
     private NodeStorageServiceImpl instance;
 
     private VersionService versionService;
 
     private NodeVersionService nodeVersionService;
-
-    private BranchService branchService;
-
-    private NodeId nodeId;
 
     private NodeVersionId nodeVersionId;
 
@@ -52,20 +47,17 @@ class NodeStorageServiceImplTest
     @BeforeEach
     void setUp()
     {
-        versionService = Mockito.mock( VersionService.class );
-        nodeVersionService = Mockito.mock( NodeVersionService.class );
-        branchService = Mockito.mock( BranchService.class );
+        versionService = mock( VersionService.class );
+        nodeVersionService = mock( NodeVersionService.class );
+        BranchService branchService = mock( BranchService.class );
+        CommitService commitService = mock( CommitService.class );
+        IndexDataService indexDataService = mock( IndexDataService.class );
 
-        instance = new NodeStorageServiceImpl();
-        instance.setNodeVersionService( nodeVersionService );
-        instance.setVersionService( versionService );
-        instance.setBranchService( branchService );
-
-        nodeId = NodeId.from( "000-000-000-000" );
+        instance = new NodeStorageServiceImpl( versionService, branchService, commitService, nodeVersionService, indexDataService );
 
         nodeVersionId = NodeVersionId.from( "000-000-000-000" );
 
-        versionKey = Mockito.mock( NodeVersionKey.class );
+        versionKey = mock( NodeVersionKey.class );
 
         context = InternalContext.create().
             repositoryId( RepositoryId.from( "repository-id" ) ).

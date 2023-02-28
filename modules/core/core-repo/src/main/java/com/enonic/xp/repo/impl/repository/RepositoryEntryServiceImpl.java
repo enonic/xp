@@ -51,6 +51,17 @@ public class RepositoryEntryServiceImpl
 
     private BinaryService binaryService;
 
+    public RepositoryEntryServiceImpl( final IndexServiceInternal indexServiceInternal, final NodeStorageService nodeStorageService,
+                                       final NodeSearchService nodeSearchService, final EventPublisher eventPublisher,
+                                       final BinaryService binaryService )
+    {
+        this.indexServiceInternal = indexServiceInternal;
+        this.nodeStorageService = nodeStorageService;
+        this.nodeSearchService = nodeSearchService;
+        this.eventPublisher = eventPublisher;
+        this.binaryService = binaryService;
+    }
+
     @Override
     public void createRepositoryEntry( final Repository repository )
     {

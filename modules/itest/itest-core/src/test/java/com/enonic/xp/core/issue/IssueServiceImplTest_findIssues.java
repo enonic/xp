@@ -21,7 +21,7 @@ public class IssueServiceImplTest_findIssues
 {
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         createIssue( 1, 1, 2 );
         createIssue( 2, 1, 3 );

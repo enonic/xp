@@ -12,9 +12,7 @@ import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
 
 public class AuditLogServiceImpl
     implements AuditLogService
@@ -23,28 +21,12 @@ public class AuditLogServiceImpl
 
     private final AuditLogConfig config;
 
-    private final IndexService indexService;
-
-    private final RepositoryService repositoryService;
-
     private final NodeService nodeService;
 
-    public AuditLogServiceImpl( final AuditLogConfig config, final IndexService indexService, final RepositoryService repositoryService,
-                                final NodeService nodeService )
+    public AuditLogServiceImpl( final AuditLogConfig config, final NodeService nodeService )
     {
         this.config = config;
-        this.indexService = indexService;
-        this.repositoryService = repositoryService;
         this.nodeService = nodeService;
-    }
-
-    public void initialize()
-    {
-        AuditLogRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
     }
 
     public AuditLogConfig getConfig()

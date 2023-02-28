@@ -38,7 +38,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 
-final class SecurityInitializer
+public final class SecurityInitializer
     extends ExternalInitializer
 {
     public static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();

@@ -40,10 +40,13 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_update
@@ -569,20 +572,17 @@ public class ContentServiceImplTest_update
                 editData.setString( "testString", "value-updated" );
             } );
 
+        Mockito.reset( auditLogService );
+
         this.contentService.update( updateContentParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 16 ) ).log( captor.capture() );
+        verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
-        final PropertySet logResultSet = captor.getAllValues()
-            .stream()
-            .filter( log -> log.getType().equals( "system.content.update" ) )
-            .findFirst()
-            .get()
-            .getData()
-            .getSet( "result" );
-
-        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
-        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
+        final LogAuditLogParams log = captor.getValue();
+        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.update" ) ;
+        assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
+            .extracting( result -> result.getString( "id" ), result -> result.getString( "path" ) )
+            .containsExactly( content.getId().toString(), content.getPath().toString() );
     }
 
     @Test
@@ -611,10 +611,10 @@ public class ContentServiceImplTest_update
             editData.setString( "testString", "value-updated" );
         } );
 
+        Mockito.reset( auditLogService );
+
         this.contentService.update( updateContentParams );
 
-        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).atLeast( 14 ) ).log( captor.capture() );
-
-        assertTrue( captor.getAllValues().stream().filter( log -> log.getType().equals( "system.content.update" ) ).findFirst().isEmpty() );
+        Mockito.verifyNoMoreInteractions( auditLogService );
     }
 }

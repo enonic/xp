@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -32,22 +33,34 @@ import com.enonic.xp.util.JsonHelper;
 public class IndexServiceImpl
     implements IndexService
 {
-    private IndexServiceInternal indexServiceInternal;
-
-    private IndexDataService indexDataService;
-
-    private NodeSearchService nodeSearchService;
-
-    private NodeVersionService nodeVersionService;
-
-    private RepositoryEntryService repositoryEntryService;
-
     private static final Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
     private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
+
+    private IndexServiceInternal indexServiceInternal;
+
+    private final IndexDataService indexDataService;
+
+    private final NodeSearchService nodeSearchService;
+
+    private final NodeVersionService nodeVersionService;
+
+    private final RepositoryEntryService repositoryEntryService;
+
+    @Activate
+    public IndexServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final IndexDataService indexDataService,
+                             @Reference final NodeSearchService nodeSearchService, @Reference final NodeVersionService nodeVersionService,
+                             @Reference final RepositoryEntryService repositoryEntryService )
+    {
+        this.indexServiceInternal = indexServiceInternal;
+        this.indexDataService = indexDataService;
+        this.nodeSearchService = nodeSearchService;
+        this.nodeVersionService = nodeVersionService;
+        this.repositoryEntryService = repositoryEntryService;
+    }
 
     @Override
     public ReindexResult reindex( final ReindexParams params )
@@ -201,33 +214,8 @@ public class IndexServiceImpl
         return defaultIndexMapping;
     }
 
-    @Reference
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Reference
-    public void setNodeVersionService( final NodeVersionService nodeVersionService )
-    {
-        this.nodeVersionService = nodeVersionService;
-    }
-
-    @Reference
-    public void setIndexDataService( final IndexDataService indexDataService )
-    {
-        this.indexDataService = indexDataService;
-    }
-
-    @Reference
-    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
-    {
-        this.repositoryEntryService = repositoryEntryService;
     }
 }
