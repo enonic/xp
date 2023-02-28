@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.audit;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class CleanUpAuditLogCommand
     {
         super( builder );
         until = builder.ageThreshold.isBlank() ? Instant.EPOCH : Instant.now().minus( Duration.parse( builder.ageThreshold ) );
-        listener = builder.listener;
+        listener = Objects.requireNonNullElseGet( builder.listener, EmptyCleanUpAuditLogListener::new );
     }
 
     @Override
@@ -94,23 +95,19 @@ public class CleanUpAuditLogCommand
 
     private NodeQuery createQuery()
     {
-        final NodeQuery.Builder builder = NodeQuery.create().
-            addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.NODE_TYPE.toString() ).
-                addValue( ValueFactory.newString( AuditLogConstants.NODE_TYPE.toString() ) ).
-                build() );
+        final NodeQuery.Builder builder = NodeQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( NodeIndexPath.NODE_TYPE.toString() )
+                                 .addValue( ValueFactory.newString( AuditLogConstants.NODE_TYPE.toString() ) )
+                                 .build() );
 
-        final RangeFilter timeToFilter = RangeFilter.create().
-            fieldName( AuditLogConstants.TIME.toString() ).
-            to( ValueFactory.newDateTime( until ) ).
-            build();
+        final RangeFilter timeToFilter =
+            RangeFilter.create().fieldName( AuditLogConstants.TIME.toString() ).to( ValueFactory.newDateTime( until ) ).build();
         builder.addQueryFilter( timeToFilter );
 
-        builder.addOrderBy( FieldOrderExpr.create( AuditLogConstants.TIME, OrderExpr.Direction.ASC ) ).
-            size( BATCH_SIZE );
+        builder.addOrderBy( FieldOrderExpr.create( AuditLogConstants.TIME, OrderExpr.Direction.ASC ) ).size( BATCH_SIZE );
 
-        return builder.
-            build();
+        return builder.build();
     }
 
     public static Builder create()
@@ -144,13 +141,31 @@ public class CleanUpAuditLogCommand
         private void validate()
         {
             Preconditions.checkNotNull( ageThreshold, "ageThreshold cannot be null" );
-            Preconditions.checkNotNull( listener, "listener cannot be null" );
         }
 
         public CleanUpAuditLogCommand build()
         {
             validate();
             return new CleanUpAuditLogCommand( this );
+        }
+    }
+
+    private static class EmptyCleanUpAuditLogListener
+        implements CleanUpAuditLogListener
+    {
+        @Override
+        public void start( final int batchSize )
+        {
+        }
+
+        @Override
+        public void processed()
+        {
+        }
+
+        @Override
+        public void finished()
+        {
         }
     }
 }

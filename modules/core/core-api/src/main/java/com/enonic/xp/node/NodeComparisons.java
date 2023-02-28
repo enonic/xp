@@ -2,7 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -62,17 +61,16 @@ public class NodeComparisons
 
     public NodePaths getSourcePaths()
     {
-        return NodePaths.from( this.comparisonMap.values().stream().
-            map( NodeComparison::getSourcePath ).
-            collect( Collectors.toSet() ) );
+        return NodePaths.from(
+            this.comparisonMap.values().stream().map( NodeComparison::getSourcePath ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public Set<NodeComparison> getWithStatus( final CompareStatus status )
     {
-        return new HashSet<>( this.comparisonMap.values().
-            stream().
-            filter( nodeComparison -> nodeComparison.getCompareStatus() == status ).
-            collect( Collectors.toList() ) );
+        return this.comparisonMap.values()
+            .stream()
+            .filter( nodeComparison -> nodeComparison.getCompareStatus() == status )
+            .collect( Collectors.toSet() );
     }
 
     public Collection<NodeComparison> getComparisons()

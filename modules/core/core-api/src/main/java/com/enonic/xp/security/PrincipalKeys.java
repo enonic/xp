@@ -11,8 +11,6 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-import static java.util.stream.Collectors.toSet;
-
 @PublicApi
 public final class PrincipalKeys
     extends AbstractImmutableEntitySet<PrincipalKey>
@@ -59,10 +57,10 @@ public final class PrincipalKeys
 
     private static ImmutableSet<PrincipalKey> parsePrincipalKeys( final String... principalKeys )
     {
-        final Set<PrincipalKey> principalKeyList = Stream.of( principalKeys ).map( PrincipalKey::from ).collect( toSet() );
-        return ImmutableSet.copyOf( principalKeyList );
+        return Stream.of( principalKeys ).map( PrincipalKey::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
+    @Deprecated
     public Set<String> asStrings()
     {
         return this.set.stream().map( PrincipalKey::toString ).collect( Collectors.toSet() );

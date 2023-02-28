@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryIds;
@@ -15,7 +15,7 @@ public class MultiRepoSearchSource
 
     private MultiRepoSearchSource( final Builder builder )
     {
-        sources = builder.sources;
+        sources = builder.sources.build();
     }
 
     public static Builder create()
@@ -30,12 +30,13 @@ public class MultiRepoSearchSource
 
     public RepositoryIds getRepositoryIds()
     {
-        return RepositoryIds.from( sources.stream().map( SingleRepoSearchSource::getRepositoryId ).collect( Collectors.toSet() ) );
+        return RepositoryIds.from(
+            sources.stream().map( SingleRepoSearchSource::getRepositoryId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public Branches getAllBranches()
     {
-        return Branches.from( sources.stream().map( SingleRepoSearchSource::getBranch ).collect( Collectors.toSet() ) );
+        return Branches.from( sources.stream().map( SingleRepoSearchSource::getBranch ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     @Override
@@ -47,7 +48,7 @@ public class MultiRepoSearchSource
 
     public static final class Builder
     {
-        private final Set<SingleRepoSearchSource> sources = new HashSet<>();
+        private final ImmutableSet.Builder<SingleRepoSearchSource> sources = ImmutableSet.builder();
 
         private Builder()
         {

@@ -1,7 +1,6 @@
 package com.enonic.xp.internal.blobstore;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -17,12 +16,7 @@ import com.enonic.xp.blob.Segment;
 public class MemoryBlobStore
     implements BlobStore
 {
-    private final Map<Segment, Map<BlobKey, BlobRecord>> store;
-
-    public MemoryBlobStore()
-    {
-        this.store = new ConcurrentHashMap<>();
-    }
+    private final Map<Segment, Map<BlobKey, BlobRecord>> store = new ConcurrentHashMap<>();
 
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
@@ -50,7 +44,7 @@ public class MemoryBlobStore
 
     private BlobRecord doStoreRecord( final Segment segment, final BlobKey key, final BlobRecord record )
     {
-        this.store.computeIfAbsent( segment, k -> new HashMap<>() ).put( key, record );
+        this.store.computeIfAbsent( segment, k -> new ConcurrentHashMap<>() ).put( key, record );
 
         return record;
     }
@@ -73,7 +67,7 @@ public class MemoryBlobStore
     @Override
     public Stream<BlobRecord> list( final Segment segment )
     {
-        final Map<BlobKey, BlobRecord> map = this.store.computeIfAbsent( segment, k -> new HashMap<>() );
+        final Map<BlobKey, BlobRecord> map = this.store.computeIfAbsent( segment, k -> new ConcurrentHashMap<>() );
         final Collection<BlobRecord> values = map.values();
         return values.stream();
     }

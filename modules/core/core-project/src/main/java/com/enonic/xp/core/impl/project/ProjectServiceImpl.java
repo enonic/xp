@@ -291,15 +291,13 @@ public class ProjectServiceImpl
         return callWithListContext( () -> {
             final Projects projects = this.doList();
 
-            return Projects.create()
-                .addAll( projects.stream()
-                             .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
-                                 ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                                     ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
-                                     : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
-                                                                                           EnumSet.allOf( ProjectRole.class ) ) ) )
-                             .collect( Collectors.toSet() ) )
-                .build();
+            return Projects.from( projects.stream()
+                                      .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
+                                          ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
+                                              ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
+                                              : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
+                                                                                                    EnumSet.allOf( ProjectRole.class ) ) ) )
+                                      .collect( ImmutableList.toImmutableList() ) );
         } );
     }
 

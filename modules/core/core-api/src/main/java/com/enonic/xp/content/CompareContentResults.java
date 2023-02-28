@@ -1,14 +1,11 @@
 package com.enonic.xp.content;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -16,13 +13,10 @@ import com.enonic.xp.annotation.PublicApi;
 public class CompareContentResults
     implements Iterable<CompareContentResult>
 {
-    private final ImmutableSet<CompareContentResult> compareContentResults;
-
     private final Map<ContentId, CompareContentResult> compareContentResultsMap;
 
     private CompareContentResults( Builder builder )
     {
-        compareContentResults = ImmutableSet.copyOf( builder.compareResults );
         compareContentResultsMap = ImmutableMap.copyOf( builder.compareResultsMap );
     }
 
@@ -33,13 +27,13 @@ public class CompareContentResults
 
     public Stream<CompareContentResult> stream()
     {
-        return this.compareContentResults.stream();
+        return this.compareContentResultsMap.values().stream();
     }
 
     @Override
     public Iterator<CompareContentResult> iterator()
     {
-        return compareContentResults.iterator();
+        return compareContentResultsMap.values().iterator();
     }
 
     public Map<ContentId, CompareContentResult> getCompareContentResultsMap()
@@ -59,9 +53,7 @@ public class CompareContentResults
 
     public static final class Builder
     {
-        private final Set<CompareContentResult> compareResults = new HashSet<>();
-
-        private final Map<ContentId, CompareContentResult> compareResultsMap = new HashMap<>();
+        private final Map<ContentId, CompareContentResult> compareResultsMap = new LinkedHashMap<>();
 
         private Builder()
         {
@@ -69,20 +61,13 @@ public class CompareContentResults
 
         public Builder add( final CompareContentResult result )
         {
-            this.compareResults.add( result );
             this.compareResultsMap.put( result.getContentId(), result );
             return this;
         }
 
         public Builder addAll( final CompareContentResults results )
         {
-            this.compareResults.addAll( results.compareContentResults );
-
-            for ( final CompareContentResult result : results )
-            {
-                this.compareResultsMap.put( result.getContentId(), result );
-            }
-
+            this.compareResultsMap.putAll( results.compareContentResultsMap );
             return this;
         }
 

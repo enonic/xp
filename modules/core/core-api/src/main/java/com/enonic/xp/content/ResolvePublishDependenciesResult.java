@@ -19,7 +19,7 @@ public class ResolvePublishDependenciesResult
 
     public ContentIds contentIds()
     {
-        return ContentIds.from( compareContents.getCompareContentResultsMap().keySet() );
+        return compareContents.contentIds();
     }
 
     public CompareContentResults getCompareContents()

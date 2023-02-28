@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.FindContentPathsByQueryParams;
@@ -36,13 +35,13 @@ final class FindContentPathsByQueryCommand
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
-        return FindContentPathsByQueryResult.create().
-            contentPaths( ContentPaths.from( result.getNodeHits().
-                stream().
-                map( NodeHit::getNodePath ).
-                map( ContentNodeHelper::translateNodePathToContentPath ).
-                collect( Collectors.toSet() ) ) ).
-            hits( result.getHits() ).
+        return FindContentPathsByQueryResult.create()
+            .contentPaths( ContentPaths.from( result.getNodeHits()
+                                                  .stream()
+                                                  .map( NodeHit::getNodePath )
+                                                  .map( ContentNodeHelper::translateNodePathToContentPath )
+                                                  .collect( ImmutableSet.toImmutableSet() ) ) )
+            .hits( result.getHits() ).
             totalHits( result.getTotalHits() ).
             build();
     }

@@ -40,10 +40,8 @@ public class ImportContentFactory
         if ( params.getInherit() != null )
         {
             nodeData.removeProperties( ContentPropertyNames.INHERIT );
-            nodeData.addStrings( ContentPropertyNames.INHERIT, params.getInherit().
-                stream().
-                map( Enum::name ).
-                collect( Collectors.toSet() ) );
+            nodeData.addStrings( ContentPropertyNames.INHERIT,
+                                 params.getInherit().stream().map( Enum::name ).collect( Collectors.toList() ) );
         }
 
         if ( params.getOriginProject() != null )

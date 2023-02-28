@@ -1,11 +1,8 @@
 package com.enonic.xp.inputtype;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 public final class InputTypes
@@ -40,7 +37,7 @@ public final class InputTypes
 
     private InputTypes( final Builder builder )
     {
-        this.map = ImmutableMap.copyOf( builder.map );
+        this.map = builder.map.build();
     }
 
     @Override
@@ -68,17 +65,15 @@ public final class InputTypes
 
     public static final class Builder
     {
-        private final Map<String, InputType> map;
+        private final ImmutableMap.Builder<String, InputType> map = ImmutableMap.builder();
 
         private Builder()
         {
-            this.map = new HashMap<>();
         }
 
         private void register( final InputType type )
         {
-            final Object previous = this.map.put( type.getName().toString().toLowerCase(), type );
-            Preconditions.checkState( previous == null, "InputType already registered: " + type.getName() );
+            this.map.put( type.getName().toString().toLowerCase(), type );
         }
 
         public Builder add( final InputType... types )

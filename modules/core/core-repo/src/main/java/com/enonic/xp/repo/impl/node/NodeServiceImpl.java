@@ -646,17 +646,7 @@ public class NodeServiceImpl
     @Override
     public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
-        verifyContext();
-
-        return DeleteVersionCommand.create().
-            nodeId( nodeId ).
-            nodeVersionId( nodeVersionId ).
-            repositoryService( this.repositoryService ).
-            searchService( this.nodeSearchService ).
-            storageService( this.nodeStorageService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        throw new UnsupportedOperationException( "deleteVersion is not supported" );
     }
 
     @Override
