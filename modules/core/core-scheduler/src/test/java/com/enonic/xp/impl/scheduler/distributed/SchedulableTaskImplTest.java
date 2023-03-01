@@ -1,11 +1,5 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
@@ -43,6 +37,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.support.SerializableUtils;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
@@ -81,25 +76,6 @@ public class SchedulableTaskImplTest
 
     @Mock(stubOnly = true)
     private BundleContext bundleContext;
-
-    private static byte[] serialize( Serializable serializable )
-        throws IOException
-    {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( serializable );
-            return baos.toByteArray();
-        }
-    }
-
-    private static SchedulableTaskImpl deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return (SchedulableTaskImpl) ois.readObject();
-        }
-    }
 
     @BeforeEach
     public void setUp()
@@ -210,9 +186,9 @@ public class SchedulableTaskImplTest
 
         final SchedulableTaskImpl task = createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), data );
 
-        byte[] serialized = serialize( task );
+        byte[] serialized = SerializableUtils.serialize( task );
 
-        final SchedulableTaskImpl deserializedTask = deserialize( serialized );
+        final SchedulableTaskImpl deserializedTask = (SchedulableTaskImpl) SerializableUtils.deserialize( serialized );
 
         assertEquals( task.getJob().getName(), deserializedTask.getJob().getName() );
         assertEquals( task.getJob().getConfig(), deserializedTask.getJob().getConfig() );

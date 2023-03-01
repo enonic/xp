@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -43,7 +44,7 @@ public class UpdateLastRunCommand
     private ScheduledJob doExecute()
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            path( NodePath.create( NodePath.ROOT, name.getValue() ).build() ).
+            path( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) ).
             editor( ( toBeEdited -> {
                 toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
                 toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId.toString() );

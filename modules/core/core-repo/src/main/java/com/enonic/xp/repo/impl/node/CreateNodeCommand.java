@@ -198,7 +198,7 @@ public final class CreateNodeCommand
             }
         }
 
-        NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
+        NodePath nodePath = new NodePath( params.getParent(), NodeName.from( params.getName() ) );
 
         CheckNodeExistsCommand.create( this ).
             nodePath( nodePath ).

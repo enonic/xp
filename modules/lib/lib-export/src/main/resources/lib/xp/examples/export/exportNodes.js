@@ -23,7 +23,7 @@ var expected = {
         '/content'
     ],
     'exportedBinaries': [
-        'binaryPath [ref]'
+        '/binaryPath [ref]'
     ],
     'exportErrors': [
         'some error'

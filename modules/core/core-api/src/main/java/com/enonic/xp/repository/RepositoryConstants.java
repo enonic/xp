@@ -2,6 +2,7 @@ package com.enonic.xp.repository;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -10,7 +11,7 @@ import com.enonic.xp.security.acl.Permission;
 
 public class RepositoryConstants
 {
-    public static final NodePath REPOSITORY_STORAGE_PARENT_PATH = NodePath.create( NodePath.ROOT, "repository" ).build();
+    public static final NodePath REPOSITORY_STORAGE_PARENT_PATH = new NodePath( NodePath.ROOT, NodeName.from( "repository" ) );
 
     public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.defaultOrder();
 

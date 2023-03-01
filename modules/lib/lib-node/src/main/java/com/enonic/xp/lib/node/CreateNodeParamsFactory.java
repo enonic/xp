@@ -48,7 +48,7 @@ class CreateNodeParamsFactory
         setUserData( properties, builder );
 
         builder.
-            parent( isNullOrEmpty( parentPath ) ? NodePath.ROOT : NodePath.create( parentPath ).build() ).
+            parent( isNullOrEmpty( parentPath ) ? NodePath.ROOT : new NodePath( parentPath ) ).
             manualOrderValue( manualOrderValue ).
             childOrder( ChildOrder.from( childOrder ) ).
             nodeType( isNullOrEmpty( nodeType ) ? NodeType.DEFAULT_NODE_COLLECTION : NodeType.from( nodeType ) ).

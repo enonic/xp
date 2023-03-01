@@ -109,7 +109,7 @@ public class GetNodeByPathCommandTest
     public void get_by_path_not_found()
         throws Exception
     {
-        final Node fetchedNode = doGetNodeByPath( NodePath.create( "/dummy" ).build() );
+        final Node fetchedNode = doGetNodeByPath( new NodePath( "/dummy" ) );
         assertNull( fetchedNode );
     }
 

@@ -517,7 +517,7 @@ public class ResolveSyncWorkCommandTest
 
         updateNode( "a2_1" );
 
-        moveNode( "b2_1", NodePath.create( "/s2" ).build(), "b2_1" );
+        moveNode( "b2_1", new NodePath( "/s2" ), "b2_1" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
@@ -636,7 +636,7 @@ public class ResolveSyncWorkCommandTest
         // Add child-node to B2
         createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "b2_2" ) ).
-            parent( NodePath.create( "/s2/b2" ).build() ).
+            parent( new NodePath( "/s2/b2" ) ).
             name( "b2_2" ).
             build() );
 
@@ -672,7 +672,7 @@ public class ResolveSyncWorkCommandTest
         pushAllNodesInS1S2Tree();
 
         updateNode( "a2_1_1" );
-        moveNode( "b2_1", NodePath.create( "/s2/b2" ).build(), "b2_1_renamed" );
+        moveNode( "b2_1", new NodePath( "/s2/b2" ), "b2_1_renamed" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
         assertNodes( result, ExpectedNodes.create().
@@ -899,9 +899,9 @@ public class ResolveSyncWorkCommandTest
 
         final Node s1d = duplicateNode( getNodeById( NodeId.from( "s1" ) ) );
 
-        getNodeByPath( NodePath.create( "/s1-copy/a1" ).build() );
-        getNodeByPath( NodePath.create( "/s1-copy/a2" ).build() );
-        getNodeByPath( NodePath.create( "/s1-copy/a2/a2_1" ).build() );
+        getNodeByPath( new NodePath( "/s1-copy/a1" ) );
+        getNodeByPath( new NodePath( "/s1-copy/a2" ) );
+        getNodeByPath( new NodePath( "/s1-copy/a2/a2_1" ) );
 
         refresh();
 

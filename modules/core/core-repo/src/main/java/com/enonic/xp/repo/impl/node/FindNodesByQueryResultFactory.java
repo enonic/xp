@@ -31,7 +31,7 @@ class FindNodesByQueryResultFactory
 
             if ( nodePath != null )
             {
-                nodeHit.nodePath( NodePath.create( nodePath ).build() );
+                nodeHit.nodePath( new NodePath( nodePath ) );
             }
 
             resultBuilder.addNodeHit( nodeHit.build() );

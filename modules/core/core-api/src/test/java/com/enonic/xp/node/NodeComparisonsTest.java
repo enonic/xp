@@ -40,7 +40,7 @@ public class NodeComparisonsTest
     {
         return NodeBranchEntry.create().
             nodeVersionId( NodeVersionId.from( "nodeVersionId_" + i ) ).
-            nodePath( NodePath.create( "path" + i ).build() ).
+            nodePath( new NodePath( "/path" + i ) ).
             nodeId( NodeId.from( "nodeId" + i ) ).
             timestamp( Instant.now() ).
             build();

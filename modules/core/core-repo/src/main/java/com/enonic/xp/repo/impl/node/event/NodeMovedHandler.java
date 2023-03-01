@@ -23,7 +23,7 @@ public class NodeMovedHandler
         {
             final InternalContext nodeContext = createNodeContext( map, context );
             final NodeMovedParams nodeMovedParams =
-                new NodeMovedParams( getPath( map ), NodePath.create( map.get( NEW_PATH ).toString() ).build(), getId( map ) );
+                new NodeMovedParams( getPath( map ), new NodePath( map.get( NEW_PATH ).toString() ), getId( map ) );
 
             nodeStorageService.handleNodeMoved( nodeMovedParams, nodeContext );
         }

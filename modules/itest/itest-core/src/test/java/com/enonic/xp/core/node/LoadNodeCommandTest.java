@@ -96,7 +96,7 @@ public class LoadNodeCommandTest
         final LoadNodeParams loadParams = LoadNodeParams.create().
             node( Node.create().
                 id( new NodeId() ).
-                parentPath( NodePath.create( "ost" ).build() ).
+                parentPath( new NodePath( "/ost" ) ).
                 name( "fisk" ).
                 timestamp( Instant.now() ).
                 nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).

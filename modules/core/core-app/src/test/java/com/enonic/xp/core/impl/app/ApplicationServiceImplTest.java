@@ -973,7 +973,7 @@ public class ApplicationServiceImplTest
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )
                     .name( createNodeParams.getName() )
-                    .parentPath( NodePath.create( "/app1" ).build() ).build();
+                    .parentPath( new NodePath( "/app1" ) ).build();
             }
 
             return null;

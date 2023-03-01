@@ -20,7 +20,7 @@ public class PushNodeHandlerTest
     public void testExample1()
     {
         Mockito.when( nodeService.push( Mockito.eq( NodeIds.from( "a" ) ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
-            thenReturn( PushNodesResult.create().addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() ).build() );
+            thenReturn( PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build() );
 
         runScript( "/lib/xp/examples/node/push-1.js" );
     }
@@ -37,9 +37,9 @@ public class PushNodeHandlerTest
 
         Mockito.when( nodeService.push( Mockito.isA( NodeIds.class ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), NodePath.create( "/b" ).build() )
-                            .addSuccess( createEntry( "b" ), NodePath.create( "/b" ).build() )
-                            .addSuccess( createEntry( "c" ), NodePath.create( "/c" ).build() )
+                            .addSuccess( createEntry( "a" ), new NodePath( "/b" ) )
+                            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
+                            .addSuccess( createEntry( "c" ), new NodePath( "/c" ) )
                             .addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED ).
                 build() );
 
@@ -58,8 +58,8 @@ public class PushNodeHandlerTest
 
         Mockito.when( nodeService.push( Mockito.isA( NodeIds.class ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() )
-                            .addSuccess( createEntry( "d" ), NodePath.create( "/d" ).build() )
+                            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
+                            .addSuccess( createEntry( "d" ), new NodePath( "/d" ) )
                             .build() );
 
         runScript( "/lib/xp/examples/node/push-3.js" );
@@ -81,8 +81,8 @@ public class PushNodeHandlerTest
             add( NodeId.from( "c" ) ).
             build() ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() )
-                            .addSuccess( createEntry( "b" ), NodePath.create( "/b" ).build() )
+                            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
+                            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
                             .addFailed( createEntry( "c" ), PushNodesResult.Reason.ACCESS_DENIED ).
                 build() );
 

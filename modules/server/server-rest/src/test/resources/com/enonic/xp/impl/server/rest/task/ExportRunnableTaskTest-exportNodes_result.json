@@ -2,7 +2,7 @@
   "dryRun": false,
   "exportErrors": [],
   "exportedBinaries": [
-    "binary [binaryRef]"
+    "/binary [binaryRef]"
   ],
   "exportedNodes": [
     "/node/path"

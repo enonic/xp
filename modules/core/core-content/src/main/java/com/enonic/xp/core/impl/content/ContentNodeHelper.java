@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentConstants;
@@ -14,15 +15,25 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
 import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 
 class ContentNodeHelper
 {
-    private static final String CONTENT_ROOT_NODE_NAME = "content";
-
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( getContentRoot() + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
+        return translateContentPathToNodePath( getContentRoot(), contentPath );
+    }
+
+    public static NodePath translateContentPathToNodePath( final NodePath contentRoot, final ContentPath contentPath )
+    {
+        final NodePath.Builder builder = NodePath.create( contentRoot );
+
+        for ( int i = 0; i < contentPath.elementCount(); i++ )
+        {
+            builder.addElement( contentPath.getElement( i ) );
+        }
+        return builder.build();
     }
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
@@ -43,21 +54,27 @@ class ContentNodeHelper
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        if ( nodePath.elementCount() == 0 )
+        if ( nodePath.isEmpty() )
         {
             throw new IllegalArgumentException( "Node path is not a content path: " + nodePath );
         }
 
-        final String rootNodeName = nodePath.asAbsolute().getElementAsString( 0 );
-        final String contentPathString = nodePath.asAbsolute().toString().substring( ( rootNodeName + "/" ).length() );
+        final String rootNodeName = getContentRootName( nodePath);
 
-        if ( CONTENT_ROOT_NODE_NAME.equals( rootNodeName ) || ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
+        if ( CONTENT_ROOT_NAME.equals( rootNodeName ) || ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
         {
-            return ContentPath.from( contentPathString ).asAbsolute();
+            final int beginIndex = nodePath.toString().indexOf( "/", 1 );
+            if ( beginIndex == -1 )
+            {
+                return ContentPath.ROOT;
+            }
+            else
+            {
+                return ContentPath.from( nodePath.toString().substring( beginIndex ) );
+            }
         }
 
         throw new IllegalArgumentException( "Node path is not a content path: " + nodePath );
-
     }
 
     public static NodePath translateContentParentToNodeParentPath( final ContentPath parentContentPath )
@@ -87,8 +104,15 @@ class ContentNodeHelper
 
     public static NodePath getContentRoot()
     {
-        final NodePath nodePath = (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE );
-        return nodePath != null ? nodePath.asAbsolute() : ContentConstants.CONTENT_ROOT_PATH;
+        return Objects.requireNonNullElse( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ),
+                                        ContentConstants.CONTENT_ROOT_PATH );
+    }
+
+    public static String getContentRootName( final NodePath nodePath )
+    {
+        final String pathString = nodePath.toString();
+        final int endIndex = pathString.indexOf( "/", 1 );
+        return pathString.substring( 1, endIndex == -1 ? pathString.length() : endIndex );
     }
 }
 

@@ -75,7 +75,7 @@ public class ReprocessRunnableTask
                     String nodePath = ContentConstants.CONTENT_ROOT_PATH.toString();
                     if ( !ContentPath.ROOT.equals( contentPath ) )
                     {
-                        nodePath += content.getPath().asAbsolute().toString();
+                        nodePath += content.getPath().toString();
                     }
                     final ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
                     final ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();

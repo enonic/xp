@@ -31,7 +31,8 @@ public class NodePaths
 
     public static NodePaths from( final String... paths )
     {
-        return fromInternal( parsePaths( paths ) );
+        return fromInternal(
+            Arrays.stream( paths ).map( NodePath::new ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static NodePaths from( final Iterable<NodePath> paths )
@@ -60,11 +61,6 @@ public class NodePaths
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private static ImmutableSet<NodePath> parsePaths( final String... paths )
-    {
-        return Arrays.stream( paths ).map( NodePath::new ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public static class Builder

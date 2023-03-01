@@ -9,6 +9,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -20,7 +21,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ApplicationRepoServiceImpl
     implements ApplicationRepoService
 {
-    static final NodePath APPLICATION_PATH = NodePath.create( NodePath.ROOT, "/applications" ).build();
+    static final NodePath APPLICATION_PATH = new NodePath( NodePath.ROOT, NodeName.from( "applications" ) );
 
     private final NodeService nodeService;
 
@@ -45,7 +46,7 @@ public class ApplicationRepoServiceImpl
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
         this.nodeService.delete( DeleteNodeParams.create()
-                                           .nodePath( NodePath.create( APPLICATION_PATH, applicationKey.getName() ).build() )
+                                           .nodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) )
                                            .refresh( RefreshMode.ALL )
                                            .build() );
     }
@@ -94,6 +95,6 @@ public class ApplicationRepoServiceImpl
 
     private Node doGetNodeByName( final String applicationName )
     {
-        return this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() );
+        return this.nodeService.getByPath( new NodePath( APPLICATION_PATH, NodeName.from( applicationName ) ) );
     }
 }

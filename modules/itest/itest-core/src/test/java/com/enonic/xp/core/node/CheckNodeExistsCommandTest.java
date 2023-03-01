@@ -59,7 +59,7 @@ public class CheckNodeExistsCommandTest
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
             storageService( this.storageService ).
-            nodePath( NodePath.create( NodePath.ROOT, "notExists" ).build() ).
+            nodePath( new NodePath( "/notExists" ) ).
             build().
             execute() );
 

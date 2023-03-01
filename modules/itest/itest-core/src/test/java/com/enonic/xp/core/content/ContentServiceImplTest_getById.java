@@ -103,7 +103,7 @@ public class ContentServiceImplTest_getById
         final Content content = ctxMasterSu().callWith( () -> createContent( ContentPath.ROOT, "my-content" ) );
 
         assertThrows( ContentNotFoundException.class, () -> ContextBuilder.from( ctxMasterSu() )
-            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
             .build()
             .callWith( () -> this.contentService.getById( content.getId() ) ) );
     }

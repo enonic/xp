@@ -31,7 +31,7 @@ public class MoveNodeHandlerTest
     private void mockGetNode()
     {
         Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).thenReturn( createNode() );
-        Mockito.when( this.nodeService.getByPath( NodePath.create( "/my-name" ).build() ) ).thenReturn( createNode() );
+        Mockito.when( this.nodeService.getByPath( new NodePath( "/my-name" ) ) ).thenReturn( createNode() );
 
         Mockito.when( this.nodeService.rename( Mockito.any() ) ).thenAnswer( invocation -> {
             final RenameNodeParams renameNodeParams = invocation.getArgument( 0 );
@@ -40,7 +40,7 @@ public class MoveNodeHandlerTest
         } );
         Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
             final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
-            parentPath = moveNodeParams.getParentNodePath().trimTrailingDivider();
+            parentPath = moveNodeParams.getParentNodePath();
             return createNode();
         } );
     }

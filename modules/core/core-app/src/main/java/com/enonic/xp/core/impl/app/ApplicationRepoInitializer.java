@@ -49,7 +49,7 @@ public class ApplicationRepoInitializer
 
         nodeService.create( CreateNodeParams.create().
             parent( applicationsRootPath.getParentPath() ).
-            name( applicationsRootPath.getLastElement().toString() ).
+            name( applicationsRootPath.getName() ).
             inheritPermissions( true ).
             refresh( RefreshMode.ALL ).
             build() );

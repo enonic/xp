@@ -23,7 +23,7 @@ public abstract class BaseMapperTest
     {
         return NodeBranchEntry.create().
             nodeId( NodeId.from( a ) ).
-            nodePath( NodePath.create( a ).build() ).
+            nodePath( new NodePath( "/" + a ) ).
             build();
     }
 

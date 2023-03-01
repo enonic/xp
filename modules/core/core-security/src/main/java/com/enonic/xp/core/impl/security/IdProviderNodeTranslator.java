@@ -46,13 +46,12 @@ abstract class IdProviderNodeTranslator
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
-    protected static final NodePath ID_PROVIDER_PARENT_PATH = NodePath.create( NodePath.ROOT ).
-        addElement( PrincipalKey.IDENTITY_NODE_NAME ).
-        build();
+    protected static final NodePath ID_PROVIDER_PARENT_PATH =
+        new NodePath( NodePath.ROOT, NodeName.from( PrincipalKey.IDENTITY_NODE_NAME ) );
 
     static NodePath getRolesNodePath()
     {
-        return NodePath.create( getIdProvidersParentPath(), PrincipalKey.ROLES_NODE_NAME ).build();
+        return new NodePath( ID_PROVIDER_PARENT_PATH, NodeName.from( PrincipalKey.ROLES_NODE_NAME ) );
     }
 
     static NodePath getIdProvidersParentPath()
@@ -68,8 +67,7 @@ abstract class IdProviderNodeTranslator
 
     static NodePath toIdProviderNodePath( final IdProviderKey idProviderKey )
     {
-        final NodePath idProviderParentPath = IdProviderNodeTranslator.getIdProvidersParentPath();
-        return new NodePath( idProviderParentPath, NodeName.from( idProviderKey.toString() ) );
+        return new NodePath( ID_PROVIDER_PARENT_PATH, NodeName.from( idProviderKey.toString() ) );
     }
 
     static NodePath toIdProviderUsersNodePath( final IdProviderKey idProviderKey )

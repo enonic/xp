@@ -20,12 +20,12 @@ public class GetNodeHandlerTest
         final Node node = createNode();
         Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).
             thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( NodePath.create( "/node2-path" ).build() ) ).
+        Mockito.when( this.nodeService.getByPath( new NodePath( "/node2-path" ) ) ).
             thenReturn( node );
         Mockito.when( this.nodeService.getByIdAndVersionId( NodeId.from( "nodeId" ), NodeVersionId.from( "versionKey" ) ) ).
             thenReturn( createNode() );
         Mockito.when(
-            this.nodeService.getByPathAndVersionId( NodePath.create( "/my-name" ).build(), NodeVersionId.from( "versionKey" ) ) ).
+            this.nodeService.getByPathAndVersionId( new NodePath( "/my-name" ), NodeVersionId.from( "versionKey" ) ) ).
             thenReturn( node );
     }
 

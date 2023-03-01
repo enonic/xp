@@ -1,11 +1,5 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
@@ -13,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.scheduler.ScheduleCalendarType;
+import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,24 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 public class CronCalendarTest
 {
-    private static CronCalendarImpl deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return (CronCalendarImpl) ois.readObject();
-        }
-    }
-
-    private static byte[] serialize( Serializable serializable )
-        throws IOException
-    {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( serializable );
-            return baos.toByteArray();
-        }
-    }
 
     @Test
     public void createWrongValue()
@@ -86,9 +63,9 @@ public class CronCalendarTest
             timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
             build();
 
-        byte[] serialized = serialize( calendar );
+        byte[] serialized = SerializableUtils.serialize( calendar );
 
-        final CronCalendarImpl deserializedCalendar = deserialize( serialized );
+        final CronCalendarImpl deserializedCalendar = (CronCalendarImpl) SerializableUtils.deserialize( serialized );
 
         assertEquals( calendar.getCronValue(), deserializedCalendar.getCronValue() );
         assertEquals( calendar.getTimeZone(), deserializedCalendar.getTimeZone() );

@@ -58,7 +58,7 @@ public class VersionDumpEntryJson
         final NodeVersionKey nodeVersionKey =
             NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
         return VersionMeta.create().
-            nodePath( NodePath.create( json.nodePath ).build() ).
+            nodePath( new NodePath( json.nodePath ) ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeVersionKey( nodeVersionKey ).

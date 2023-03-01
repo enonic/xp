@@ -25,7 +25,7 @@ class NodeEventData
         Preconditions.checkNotNull( valueMap.get( "id" ), "Expected field 'id' not found" );
         Preconditions.checkNotNull( valueMap.get( "path" ), "Expected field 'path' not found" );
 
-        return new NodeEventData( NodeId.from( valueMap.get( "id" ) ), NodePath.create( valueMap.get( "path" ) ).build() );
+        return new NodeEventData( NodeId.from( valueMap.get( "id" ) ), new NodePath( valueMap.get( "path" ) ) );
     }
 
     public NodeId getNodeId()

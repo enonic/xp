@@ -40,7 +40,7 @@ public class ImportHandler
     public NodeImportResultMapper execute()
     {
         final ImportNodesParams.Builder paramsBuilder = ImportNodesParams.create()
-            .targetNodePath( NodePath.create( targetNodePath ).build() )
+            .targetNodePath( new NodePath( targetNodePath ) )
             .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved ) );
 
         if ( source instanceof ResourceKey )

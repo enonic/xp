@@ -208,11 +208,11 @@ final class ArchiveContentCommand
 
     private void validateLocation()
     {
-        final Node nodeToArchive = nodeService.getById( NodeId.from( params.getContentId() ) );
-        if ( nodeToArchive.path().getElementAsString( 0 ).startsWith( ArchiveConstants.ARCHIVE_ROOT_NAME ) )
+        final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
+        if ( ContentNodeHelper.getContentRootName( node.path() ).equals( ArchiveConstants.ARCHIVE_ROOT_NAME ) )
         {
             throw new ArchiveContentException( String.format( "content [%s] is archived already", params.getContentId() ),
-                                               ContentNodeHelper.translateNodePathToContentPath( nodeToArchive.path() ) );
+                                               ContentNodeHelper.translateNodePathToContentPath( node.path() ) );
         }
     }
 
@@ -267,12 +267,11 @@ final class ArchiveContentCommand
             do
             {
                 newName = newName == null ? node.name().toString() : node.name() + " " + DATE_TIME_FORMATTER.format( Instant.now() );
-                newPath = NodePath.create( ArchiveConstants.ARCHIVE_ROOT_PATH, trim( newName ) ).build();
+                newPath = new NodePath( ArchiveConstants.ARCHIVE_ROOT_PATH, NodeName.from( trim( newName ) ) );
 
             }
-            while ( nodeService.nodeExists( newPath ) ||
-                ( nodeService.nodeExists( NodePath.create( node.parentPath(), newName ).build() ) &&
-                    !newName.equals( node.name().toString() ) ) );
+            while ( nodeService.nodeExists( newPath ) || !newName.equals( node.name().toString() ) &&
+                nodeService.nodeExists( new NodePath( node.parentPath(), NodeName.from( newName ) ) ) );
 
             return newPath;
         }

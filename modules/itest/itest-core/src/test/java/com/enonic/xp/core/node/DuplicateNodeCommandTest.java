@@ -1,7 +1,6 @@
 package com.enonic.xp.core.node;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -422,13 +421,7 @@ public class DuplicateNodeCommandTest
 
     private boolean isChildOrSamePath( final NodePath parent, final NodePath candidate )
     {
-        if ( parent.equals( candidate ) )
-        {
-            return true;
-        }
-
-        final List<NodePath> parentPaths = candidate.getParentPaths();
-        return parentPaths.contains( parent );
+        return parent.equals( candidate ) || candidate.getParentPaths().contains( parent );
     }
 
     private void assertOrder( final Node parentNode, final String first, final String second, final String third )

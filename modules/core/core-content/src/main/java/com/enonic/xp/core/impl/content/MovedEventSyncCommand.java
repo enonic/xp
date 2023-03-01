@@ -43,13 +43,13 @@ final class MovedEventSyncCommand
                 .getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE )
                 .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
             {
-                if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
-                    .equals( contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ).toString() ) )
+                if ( ArchiveConstants.ARCHIVE_ROOT_PATH
+                    .equals( contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toArchive.add( contentToSync );
                 }
-                else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
-                    .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ).toString() ) )
+                else if ( ArchiveConstants.ARCHIVE_ROOT_PATH
+                    .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toRestore.add( contentToSync );
                 }

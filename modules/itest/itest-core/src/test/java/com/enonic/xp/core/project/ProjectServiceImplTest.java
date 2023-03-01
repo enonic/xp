@@ -208,9 +208,9 @@ class ProjectServiceImplTest
                 final Projects projects = projectService.list();
 
                 assertEquals( 1, projects.getSize() );
-                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "content" ).build() ) );
-                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "issues" ).build() ) );
-                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "archive" ).build() ) );
+                assertTrue( nodeService.nodeExists( new NodePath( "/content" ) ) );
+                assertTrue( nodeService.nodeExists( new NodePath( "/issues" ) ) );
+                assertTrue( nodeService.nodeExists( new NodePath( "/archive" ) ) );
             } );
     }
 
@@ -399,7 +399,7 @@ class ProjectServiceImplTest
 
         ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build().runWith( () -> {
 
-            final Node rootIssuesNode = nodeService.getByPath( NodePath.create( NodePath.ROOT, "issues" ).build() );
+            final Node rootIssuesNode = nodeService.getByPath( new NodePath( "/issues" ) );
             final AccessControlList rootContentPermissions = rootIssuesNode.getPermissions();
 
             assertAll( () -> assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() ),

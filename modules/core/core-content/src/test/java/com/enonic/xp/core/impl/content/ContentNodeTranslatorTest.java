@@ -115,7 +115,7 @@ public class ContentNodeTranslatorTest
     {
         assertThrows( ContentNotFoundException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false ) );
         assertThrows( ContentNotFoundException.class,
-                      () -> this.contentNodeTranslator.fromNode( createNode( NodePath.create( "/non-content" ).build() ), false ) );
+                      () -> this.contentNodeTranslator.fromNode( createNode( new NodePath( "/non-content" ) ), false ) );
     }
 
     @Test

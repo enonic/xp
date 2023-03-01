@@ -58,7 +58,7 @@ public class DeleteNodeCommand
 
     public NodeBranchEntries execute()
     {
-        if ( this.nodeId == Node.ROOT_UUID || this.nodePath == NodePath.ROOT )
+        if ( Node.ROOT_UUID.equals( this.nodeId ) || NodePath.ROOT.equals( this.nodePath ) )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }

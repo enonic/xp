@@ -18,6 +18,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -46,8 +47,7 @@ public class VirtualAppService
             final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
 
             return nodes.stream()
-                .map( node -> node.path().getElementAsString( 0 ) )
-                .map( ApplicationKey::from )
+                .map( node -> DynamicResourceManager.appKeyFromNodePath( node.path() ) )
                 .map( key -> VirtualAppFactory.create( key, nodeService ) )
                 .collect( Collectors.toList() );
         } );
@@ -92,7 +92,7 @@ public class VirtualAppService
     private boolean deleteVirtualAppNode( final ApplicationKey key )
     {
         return nodeService.delete( DeleteNodeParams.create()
-                                       .nodePath( NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, key.toString() ).build() )
+                                       .nodePath( new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) ) )
                                        .refresh( RefreshMode.ALL )
                                        .build() ).getNodeBranchEntries().isNotEmpty();
     }

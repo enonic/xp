@@ -8,6 +8,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
@@ -59,11 +60,7 @@ final class DynamicResourceManager
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
 
-            final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
-            final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
-            final NodePath resourceKeyPath = schemaNode.path().removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
-
-            return new NodeValueResource( ResourceKey.from( applicationKey, resourceKeyPath.toString() ), schemaNode );
+            return new NodeValueResource( ResourceKey.from( appKeyFromNodePath( folderPath), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
         } );
     }
 
@@ -79,45 +76,34 @@ final class DynamicResourceManager
             }
 
             final Node schemaNode = nodeService.update( UpdateNodeParams.create()
-                                                            .path( NodePath.create( folderPath, name + ".xml" ).build() )
+                                                            .path( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
 
-            final String applicationKeyAsString = schemaNode.path().getElementAsString( 0 );
-            final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
-            final NodePath resourceKeyPath = schemaNode.path().removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
-
-            return new NodeValueResource( ResourceKey.from( applicationKey, resourceKeyPath.toString() ), schemaNode );
+            return new NodeValueResource(
+                ResourceKey.from( appKeyFromNodePath( schemaNode.path() ), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
         } );
     }
 
     boolean resourceNodeExists( final NodePath folderPath, final String name )
     {
         return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( NodePath.create( folderPath, name + ".xml" ).build() ) );
+            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) ) );
     }
 
     Resource getResource( final NodePath folderPath, final String name )
     {
-        final String applicationKeyAsString = folderPath.getElementAsString( 0 );
-        final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
-        final NodePath resourceFolderPath = folderPath.removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
-
-        final NodePath resourcePath = NodePath.create( resourceFolderPath, name + ".xml" ).build();
-
         return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.getResource( ResourceKey.from( applicationKey, resourcePath.toString() ) ) );
+            .callWith( () -> resourceService.getResource(
+                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".xml" ) ) );
     }
 
-    List<Resource> listResources( final NodePath resourceRootPath )
+    List<Resource> listResources( final NodePath folderPath )
     {
-        final String applicationKeyAsString = resourceRootPath.getElementAsString( 0 );
-        final ApplicationKey applicationKey = ApplicationKey.from( applicationKeyAsString );
-        final NodePath resourceFolderPath = resourceRootPath.removeFromBeginning( NodePath.create( applicationKeyAsString ).build() );
-
         return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.findFiles( applicationKey, resourceFolderPath + "/" + ".+/.+\\.xml" )
+            .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
+                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.xml" )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );
@@ -127,9 +113,26 @@ final class DynamicResourceManager
     {
         return VirtualAppContext.createContext()
             .callWith( () -> nodeService.delete( DeleteNodeParams.create()
-                                                     .nodePath( deleteFolder ? folderPath : NodePath.create( folderPath, name + ".xml" ).build() )
+                                                     .nodePath( deleteFolder
+                                                                    ? folderPath
+                                                                    : new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
                                                      .refresh( RefreshMode.ALL )
-                                                     .build() )
-                 ).getNodeBranchEntries().isNotEmpty();
+                                                     .build() ) )
+            .getNodeBranchEntries()
+            .isNotEmpty();
+    }
+
+    public static ApplicationKey appKeyFromNodePath( final NodePath path )
+    {
+        final String pathString = path.toString();
+        final int endIndex = pathString.indexOf( "/", 1 );
+        return ApplicationKey.from( pathString.substring( 1, endIndex == -1 ? pathString.length() : endIndex ) );
+    }
+
+    private static String resourcePathFromNodePath( final NodePath path )
+    {
+        final String pathString = path.toString();
+        final int beginIndex = pathString.indexOf( "/", 1 );
+        return pathString.substring( beginIndex == -1 ? 1 : beginIndex );
     }
 }

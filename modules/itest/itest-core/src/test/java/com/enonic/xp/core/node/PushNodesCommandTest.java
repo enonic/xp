@@ -144,23 +144,23 @@ public class PushNodesCommandTest
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
         result = pushNodes( WS_OTHER, node.id() );
         assertEquals( 1, result.getSuccessfulEntries().size() );
-        assertNotNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
-        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+        assertNotNull( getNodeByPath( new NodePath( "/my-node" ) ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
 
         //Renames the content
         renameNode( node.id(), "my-node-renamed" );
         nodeService.refresh( RefreshMode.ALL );
 
-        assertNull( getNodeByPath( NodePath.create( "/my-node" ).build() ) );
-        assertNotNull( getNodeByPath( NodePath.create( "/my-node-renamed" ).build() ) );
-        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
+        assertNull( getNodeByPath( new NodePath( "/my-node" ) ) );
+        assertNotNull( getNodeByPath( new NodePath( "/my-node-renamed" ) ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
 
         //Pushed the renames content
 
         result = pushNodes( WS_OTHER, node.id() );
         assertEquals( 1, result.getSuccessfulEntries().size() );
-        assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
-        assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node-renamed" ).build() ) );
+        assertNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( "/my-node-renamed" ) ) );
     }
 
     @Test
@@ -248,18 +248,18 @@ public class PushNodesCommandTest
         final PushNodesResult result =
             pushNodes( WS_OTHER, node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() );
 
-        assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( node1.path(), child1.name() ) ) );
 
         final Node movedNode = moveNode( node1.id(), node2.path() );
 
         pushNodes( WS_OTHER, node1.id() );
 
-        assertNotNull( getNodeByPathInOther( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( movedNode.path(), child1.name() ) ) );
 
-        assertNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
+        assertNull( getNodeByPathInOther( new NodePath( node1.path(), child1.name() ) ) );
 
         Node child1Node = ctxOther().callWith( () -> getNodeById( child1.id() ) );
-        assertNotNull( getNodeByPathInOther( NodePath.create( child1Node.path(), child1_1.name().toString() ).build() ) );
+        assertNotNull( getNodeByPathInOther( new NodePath( child1Node.path(), child1_1.name() ) ) );
     }
 
     @Test

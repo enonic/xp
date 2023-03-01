@@ -26,7 +26,7 @@ public class BranchDumpEntryJsonDumpSerializerTest
     {
         final BranchDumpEntry branchDumpEntry = BranchDumpEntry.create().
             meta( VersionMeta.create().
-                nodePath( NodePath.create( "/fisk/ost" ).build() ).
+                nodePath( new NodePath( "/fisk/ost" ) ).
                 timestamp( Instant.now() ).
                 version( NodeVersionId.from( "fisk" ) ).
                 nodeVersionKey( NodeVersionKey.from( "fiskKey", "fiskKey2", "fiskKey3" ) ).

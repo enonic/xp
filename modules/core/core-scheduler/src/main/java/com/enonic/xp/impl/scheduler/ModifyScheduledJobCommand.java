@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -40,7 +41,7 @@ public class ModifyScheduledJobCommand
             execute();
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            path( NodePath.create( NodePath.ROOT, params.getName().getValue() ).build() ).
+            path( new NodePath( NodePath.ROOT, NodeName.from( params.getName().getValue() ) ) ).
             editor( ( toBeEdited -> toBeEdited.data = SchedulerSerializer.toUpdateNodeData( params, original ) ) ).
             refresh( RefreshMode.ALL ).
             build();

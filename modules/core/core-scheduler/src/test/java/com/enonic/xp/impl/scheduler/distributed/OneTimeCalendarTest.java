@@ -1,11 +1,5 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.scheduler.ScheduleCalendarType;
+import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -24,24 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 public class OneTimeCalendarTest
 {
-    private static byte[] serialize( Serializable serializable )
-        throws IOException
-    {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( serializable );
-            return baos.toByteArray();
-        }
-    }
-
-    private static OneTimeCalendarImpl deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return (OneTimeCalendarImpl) ois.readObject();
-        }
-    }
 
     @Test
     public void createWrongValue()
@@ -77,9 +54,9 @@ public class OneTimeCalendarTest
             value( Instant.now() ).
             build();
 
-        byte[] serialized = serialize( calendar );
+        byte[] serialized = SerializableUtils.serialize( calendar );
 
-        final OneTimeCalendarImpl deserializedCalendar = deserialize( serialized );
+        final OneTimeCalendarImpl deserializedCalendar = (OneTimeCalendarImpl) SerializableUtils.deserialize( serialized );
 
         assertEquals( calendar.getValue(), deserializedCalendar.getValue() );
     }

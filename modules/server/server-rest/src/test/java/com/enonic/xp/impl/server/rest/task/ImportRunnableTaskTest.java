@@ -76,9 +76,9 @@ class ImportRunnableTaskTest
     void importNodes()
     {
         NodeImportResult nodeImportResult = NodeImportResult.create()
-            .added( NodePath.create().addElement( "node" ).addElement( "path" ).build() )
-            .addBinary( "binary", BinaryReference.from( "binaryRef" ) )
-            .updated( NodePath.create().addElement( "node2" ).addElement( "path2" ).build() )
+            .added( new NodePath( "/node/path" ) )
+            .addBinary( "/binary", BinaryReference.from( "binaryRef" ) )
+            .updated( new NodePath( "/node2/path2" ) )
             .build();
 
         when( this.exportService.importNodes( any( ImportNodesParams.class ) ) ).thenReturn( nodeImportResult );

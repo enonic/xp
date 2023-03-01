@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
@@ -351,36 +352,40 @@ public class DynamicSchemaServiceImpl
     private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )
     {
         final NodePath componentRootPath = createComponentRootPath( key.getApplicationKey(), dynamicType );
-        return NodePath.create( componentRootPath, key.getName() ).build();
+        return new NodePath( componentRootPath, NodeName.from( key.getName() ) );
     }
 
     private NodePath createComponentRootPath( final ApplicationKey key, final DynamicComponentType dynamicType )
     {
         final String resourceRootName = getComponentRootName( dynamicType );
-        return NodePath.create(
-            ( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" ) + VirtualAppConstants.SITE_ROOT_NAME + "/" +
-                resourceRootName ).build();
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            .addElement( key.toString() )
+            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( resourceRootName )
+            .build();
     }
 
     private NodePath createSchemaFolderPath( final BaseSchemaName key, final DynamicContentSchemaType dynamicType )
     {
         final NodePath schemaRootPath = createSchemaRootPath( key.getApplicationKey(), dynamicType );
-        return NodePath.create( schemaRootPath, key.getLocalName() ).build();
-
+        return new NodePath( schemaRootPath, NodeName.from( key.getLocalName() ) );
     }
 
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
     {
         final String resourceRootName = getSchemaRootName( dynamicType );
-        return NodePath.create(
-                VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" + resourceRootName )
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            .addElement( key.toString() )
+            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( resourceRootName )
             .build();
     }
 
-
     private NodePath createSiteFolderPath( final ApplicationKey key )
     {
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT + "/" + key + "/" + VirtualAppConstants.SITE_ROOT_NAME )
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            .addElement( key.toString() )
+            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
             .build();
     }
 

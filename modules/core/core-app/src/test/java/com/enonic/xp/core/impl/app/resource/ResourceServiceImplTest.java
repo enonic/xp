@@ -16,7 +16,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
@@ -160,13 +159,13 @@ class ResourceServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
 
-        final Node appNode = createNode( "myapp", NodePath.create( "/myapp" ).build(), timestamp, new PropertyTree() );
-        final Node partSchemaNode = createNode( "a.xml", NodePath.create( "/schemas/site/parts/a" ).build(), timestamp, data );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
+        final Node partSchemaNode = createNode( "a.xml", new NodePath( "/schemas/site/parts/a" ), timestamp, data );
 
         final NodeService nodeService = mock( NodeService.class );
 
-        when( nodeService.getByPath( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( appNode );
-        when( nodeService.getByPath( NodePath.create( "myapp/site/parts/a/a.xml" ).build().asAbsolute() ) ).thenReturn( partSchemaNode );
+        when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/a/a.xml" ) ) ).thenReturn( partSchemaNode );
 
         ContextBuilder.copyOf( ContextAccessor.current() )
             .attribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE, "node" )
@@ -195,11 +194,9 @@ class ResourceServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
 
-        final Node appNode = createNode( "myapp", NodePath.create( "/myapp" ).build(), timestamp, new PropertyTree() );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
 
-        final Node partSchemaNode = createNode( "my-part.xml", NodePath.create( "/schemas/site/parts/my-part" ).build(), timestamp, data );
-
-        final ApplicationAdaptor application = mock( ApplicationAdaptor.class );
+        final Node partSchemaNode = createNode( "my-part.xml", new NodePath( "/schemas/site/parts/my-part" ), timestamp, data );
 
         final Dictionary<String, String> headers = mock( Dictionary.class );
         when( bundle.getHeaders() ).thenReturn( headers );
@@ -216,8 +213,8 @@ class ResourceServiceImplTest
                 .build();
         } );
 
-        when( nodeService.getByPath( NodePath.create( "myapp" ).build().asAbsolute() ) ).thenReturn( appNode );
-        when( nodeService.getByPath( NodePath.create( "myapp/site/parts/my-part/my-part.xml" ).build().asAbsolute() ) ).thenReturn(
+        when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/my-part/my-part.xml" ) ) ).thenReturn(
             partSchemaNode );
 
         final ApplicationUrlResolver applicationUrlResolver =

@@ -169,7 +169,8 @@ public class NodeExporter
 
     private void writeVersion( final Node node, final Path baseFolder )
     {
-        final NodePath newParentPath = resolveNewParentPath( node );
+        final NodePath newParentPath =
+            new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
 
         final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
@@ -177,8 +178,6 @@ public class NodeExporter
         serializer.exportNodeIds( this.exportNodeIds );
         serializer.node( relativeNode );
         final String serializedNode = serializer.serialize();
-
-        //   final Path nodeDataFolder = resolveNodeDataFolder( node );
 
         if ( !dryRun )
         {
@@ -188,7 +187,6 @@ public class NodeExporter
 
         exportNodeBinaries( relativeNode, baseFolder );
     }
-
 
     private void doExportChildNodes( final NodePath parentPath )
     {
@@ -224,21 +222,6 @@ public class NodeExporter
         return children;
     }
 
-
-    private NodePath resolveNewParentPath( final Node node )
-    {
-        final NodePath newParentPath;
-
-        if ( node.path().equals( this.sourceNodePath ) )
-        {
-            newParentPath = NodePath.ROOT;
-        }
-        else
-        {
-            newParentPath = node.parentPath().removeFromBeginning( this.sourceNodePath );
-        }
-        return newParentPath;
-    }
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
     {
@@ -310,7 +293,7 @@ public class NodeExporter
 
         final Path exportBasePath;
 
-        if ( sourceNodePath.equals( NodePath.ROOT ) )
+        if ( sourceNodePath.isRoot() )
         {
             exportBasePath = Path.of( NodePath.ROOT.toString() );
         }

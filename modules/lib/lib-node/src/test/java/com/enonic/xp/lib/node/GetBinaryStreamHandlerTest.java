@@ -16,7 +16,7 @@ public class GetBinaryStreamHandlerTest
     private void mockGetBinary()
     {
         final Node node = createNode();
-        Mockito.when( this.nodeService.getByPath( NodePath.create( "/myNode" ).build() ) ).
+        Mockito.when( this.nodeService.getByPath( new NodePath( "/myNode" ) ) ).
             thenReturn( node );
 
         Mockito.when( this.nodeService.getBinary( Mockito.isA( NodeId.class ), Mockito.isA( BinaryReference.class ) ) ).

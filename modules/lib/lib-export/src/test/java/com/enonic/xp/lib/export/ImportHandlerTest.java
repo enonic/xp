@@ -55,8 +55,8 @@ class ImportHandlerTest
             mock( Application.class ) );
 
         final NodeImportResult result = NodeImportResult.create()
-            .updated( NodePath.create( "/updated" ).build() )
-            .added( NodePath.create( "/added" ).build() )
+            .updated( new NodePath( "/updated" ) )
+            .added( new NodePath( "/added" ) )
             .addBinary( "binaryPath", BinaryReference.from( "ref" ) )
             .addError( "error", new NoStacktraceException() )
             .build();

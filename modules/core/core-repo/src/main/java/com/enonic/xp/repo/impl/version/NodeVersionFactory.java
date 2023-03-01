@@ -35,7 +35,7 @@ class NodeVersionFactory
 
         return NodeVersionMetadata.create().
             nodeId( NodeId.from( id ) ).
-            nodePath( NodePath.create( path ).build() ).
+            nodePath( new NodePath( path ) ).
             timestamp( timestamp ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).

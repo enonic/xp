@@ -36,7 +36,7 @@ public class DuplicateNodeHandlerParams
 
     public void setParent( final String parent )
     {
-        this.parent = parent != null ? NodePath.create( parent ).build() : null;
+        this.parent = parent != null ? new NodePath( parent ) : null;
     }
 
     public void setIncludeChildren( final boolean includeChildren )

@@ -79,7 +79,7 @@ public class NodeVersionQueryResultFactory
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
             timestamp( isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
-            nodePath( NodePath.create( nodePath ).build() ).
+            nodePath( new NodePath( nodePath ) ).
             nodeId( NodeId.from( nodeId ) ).
             nodeCommitId( isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
             build();

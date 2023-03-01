@@ -110,8 +110,8 @@ public class ApplicationServiceTest
             assertEquals( "7.8.0", application.getVersion().toString() );
 
             systemRepoContext().callWith( () -> {
-                Node applicationNode =
-                    nodeService.getByPath( NodePath.create( NodePath.ROOT, "/applications/" + applicationName ).build() );
+                Node applicationNode = nodeService.getByPath(
+                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.0", applicationNode.data().getString( "version" ) );
                 return null;
@@ -121,8 +121,8 @@ public class ApplicationServiceTest
             assertEquals( "7.8.1", application.getVersion().toString() );
 
             systemRepoContext().callWith( () -> {
-                Node applicationNode =
-                    nodeService.getByPath( NodePath.create( NodePath.ROOT, "/applications/" + applicationName ).build() );
+                Node applicationNode = nodeService.getByPath(
+                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.1", applicationNode.data().getString( "version" ) );
                 return null;

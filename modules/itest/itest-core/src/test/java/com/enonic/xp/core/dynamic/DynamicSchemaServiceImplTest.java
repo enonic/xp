@@ -317,7 +317,7 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().getSize() > 0 );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/content-types/mytype/mytype.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/content-types/mytype/mytype.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -369,7 +369,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/content-types/mytype/mytype.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/content-types/mytype/mytype.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/content-types/mytype/mytype.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -410,7 +410,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/mixins/mymixin/mymixin.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/mixins/mymixin/mymixin.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/mixins/mymixin/mymixin.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -494,7 +494,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/mixins/mymixin/mymixin.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/mixins/mymixin/mymixin.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/mixins/mymixin/mymixin.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -586,7 +586,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/x-data/myxdata/myxdata.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/x-data/myxdata/myxdata.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -634,7 +634,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/x-data/myxdata/myxdata.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/x-data/myxdata/myxdata.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -680,7 +680,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/parts/mypart/mypart.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/parts/mypart/mypart.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/parts/mypart/mypart.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -734,7 +734,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/parts/mypart/mypart.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/parts/mypart/mypart.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/parts/mypart/mypart.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -778,7 +778,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/layouts/mylayout/mylayout.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/layouts/mylayout/mylayout.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -830,7 +830,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/layouts/mylayout/mylayout.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/layouts/mylayout/mylayout.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -874,7 +874,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/pages/mypage/mypage.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/pages/mypage/mypage.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -926,7 +926,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/pages/mypage/mypage.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/pages/mypage/mypage.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -957,7 +957,7 @@ public class DynamicSchemaServiceImplTest
         assertNotNull( siteDescriptor.getModifiedTime() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/site.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -997,7 +997,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/site.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1025,7 +1025,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/site.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1085,7 +1085,7 @@ public class DynamicSchemaServiceImplTest
         assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/styles.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1115,7 +1115,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/styles.xml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( NodePath.create( "/myapp/site/styles.xml" ).build() ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
