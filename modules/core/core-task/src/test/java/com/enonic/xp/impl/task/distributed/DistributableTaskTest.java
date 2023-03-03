@@ -111,9 +111,31 @@ class DistributableTaskTest
             propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
             config );
 
-        final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, null, config, TEST_TASK_CONTEXT );
 
         assertAll( () -> assertEquals( "app:a", describedTask.getName() ), () -> assertNotNull( describedTask.getTaskId() ),
+                   () -> assertNotNull( describedTask.getTaskContext() ),
+                   () -> assertEquals( "task description", describedTask.getDescription() ),
+                   () -> assertEquals( descriptorKey.getApplicationKey(), describedTask.getApplicationKey() ) );
+    }
+
+    @Test
+    void fields_with_name()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
+        final TaskDescriptor descriptor =
+            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.create().build() ).build();
+
+        final PropertyTree config = new PropertyTree();
+
+        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
+        when(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            config );
+
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, "name", config, TEST_TASK_CONTEXT );
+
+        assertAll( () -> assertEquals( "name", describedTask.getName() ), () -> assertNotNull( describedTask.getTaskId() ),
                    () -> assertNotNull( describedTask.getTaskContext() ),
                    () -> assertEquals( "task description", describedTask.getDescription() ),
                    () -> assertEquals( descriptorKey.getApplicationKey(), describedTask.getApplicationKey() ) );
@@ -136,7 +158,30 @@ class DistributableTaskTest
             propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
             config );
 
-        final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, null, config, TEST_TASK_CONTEXT );
+
+        describedTask.run( mock( ProgressReporter.class ) );
+        verify( namedTask ).run( any( TaskId.class ), any( ProgressReporter.class ) );
+    }
+
+    @Test
+    void run_with_name()
+    {
+        final NamedTask namedTask = mock( NamedTask.class );
+
+        final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
+        final TaskDescriptor descriptor = TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build();
+
+        final PropertyTree config = new PropertyTree();
+
+        when( namedTaskFactory.create( descriptor, config ) ).thenReturn( namedTask );
+
+        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
+        when(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            config );
+
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, "name", config, TEST_TASK_CONTEXT );
 
         describedTask.run( mock( ProgressReporter.class ) );
         verify( namedTask ).run( any( TaskId.class ), any( ProgressReporter.class ) );

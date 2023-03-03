@@ -119,6 +119,8 @@ export interface SubmitNamedTaskParams<Config extends Record<string, unknown>> {
 interface SubmitTaskHandler {
     setDescriptor(value?: string | null): void;
 
+    setName(value?: string | null): void;
+
     setConfig(value?: ScriptValue): void;
 
     submitTask(): string;
@@ -152,6 +154,7 @@ export function submitNamed<Config extends Record<string, unknown> = Record<stri
 
 export interface SubmitTaskParams<Config extends Record<string, unknown>> {
     descriptor: string;
+    name?: string;
     config?: Config;
 }
 
@@ -164,6 +167,7 @@ export interface SubmitTaskParams<Config extends Record<string, unknown>> {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.descriptor Descriptor of the task to execute.
+ * @param {string} [params.name] Optional name of the task. If not specified, descriptor name will be used instead.
  * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
@@ -174,6 +178,7 @@ export function submitTask<Config extends Record<string, unknown> = Record<strin
     const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
 
     bean.setDescriptor(__.nullOrValue(params.descriptor));
+    bean.setName(__.nullOrValue(params.name));
     bean.setConfig(__.toScriptValue(params.config));
 
     return bean.submitTask();
