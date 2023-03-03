@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.task.distributed;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -31,10 +32,10 @@ public final class DistributableTask
 
     private transient volatile TaskDescriptor taskDescriptor;
 
-    public DistributableTask( final DescriptorKey key, final PropertyTree data, final TaskContext context )
+    public DistributableTask( final DescriptorKey key, final String name, final PropertyTree data, final TaskContext context )
     {
         this.taskId = TaskId.from( UUID.randomUUID().toString() );
-        this.name = key.toString();
+        this.name = Objects.requireNonNullElseGet( name, key::toString );
         this.key = key;
         this.data = data;
         this.context = context;
@@ -83,8 +84,7 @@ public final class DistributableTask
     {
         if ( taskDescriptor == null )
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( name );
-            taskDescriptor = OsgiSupport.withService( TaskDescriptorService.class, tds -> tds.getTask( descriptorKey ) );
+            taskDescriptor = OsgiSupport.withService( TaskDescriptorService.class, tds -> tds.getTask( key ) );
 
             data = OsgiSupport.withService( PropertyTreeMarshallerService.class,
                                             ptms -> ptms.marshal( data.toMap(), taskDescriptor.getConfig(), true ) );

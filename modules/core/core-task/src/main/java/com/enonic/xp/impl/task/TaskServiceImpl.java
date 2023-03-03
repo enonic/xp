@@ -115,7 +115,8 @@ public final class TaskServiceImpl
             }
         }
 
-        final DistributableTask task = new DistributableTask( params.getDescriptorKey(), params.getData(), buildContext() );
+        final DistributableTask task =
+            new DistributableTask( params.getDescriptorKey(), params.getName(), params.getData(), buildContext() );
 
         taskManager.submitTask( task );
         return task.getTaskId();

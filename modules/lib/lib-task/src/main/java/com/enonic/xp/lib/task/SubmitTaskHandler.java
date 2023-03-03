@@ -27,11 +27,18 @@ public final class SubmitTaskHandler
 
     private String descriptor;
 
+    private String name;
+
     private ScriptValue config;
 
     public void setDescriptor( final String descriptor )
     {
         this.descriptor = descriptor;
+    }
+
+    public void setName( final String name )
+    {
+        this.name = name;
     }
 
     public void setConfig( final ScriptValue config )
@@ -53,7 +60,7 @@ public final class SubmitTaskHandler
             final ApplicationKey app = getApplication();
             if ( app == null )
             {
-                throw new RuntimeException( "Could not resolve current application for descriptord task: '" + descriptor + "'" );
+                throw new RuntimeException( "Could not resolve current application for task descriptor: '" + descriptor + "'" );
             }
             taskKey = DescriptorKey.from( app, descriptor );
         }
@@ -63,10 +70,7 @@ public final class SubmitTaskHandler
         PropertyTree data = propertyTreeMarshallerServiceSupplier.get().
             marshal( Optional.ofNullable( config ).map( ScriptValue::getMap ).orElse( Map.of() ) );
 
-        final SubmitTaskParams params = SubmitTaskParams.create().
-            descriptorKey( taskKey ).
-            data( data ).
-            build();
+        final SubmitTaskParams params = SubmitTaskParams.create().descriptorKey( taskKey ).name( name ).data( data ).build();
         final TaskId taskId = taskService.submitTask( params );
 
         return taskId.toString();

@@ -12,11 +12,14 @@ public final class SubmitTaskParams
 {
     private final DescriptorKey descriptorKey;
 
+    private final String name;
+
     private final PropertyTree data;
 
     private SubmitTaskParams( final Builder builder )
     {
         this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "descriptor key is required" );
+        this.name = builder.name;
         this.data = builder.data;
     }
 
@@ -30,6 +33,11 @@ public final class SubmitTaskParams
         return data;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -40,6 +48,8 @@ public final class SubmitTaskParams
         private DescriptorKey descriptorKey;
 
         private PropertyTree data;
+
+        private String name;
 
         private Builder()
         {
@@ -54,6 +64,12 @@ public final class SubmitTaskParams
         public Builder data( final PropertyTree data )
         {
             this.data = data;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
             return this;
         }
 
