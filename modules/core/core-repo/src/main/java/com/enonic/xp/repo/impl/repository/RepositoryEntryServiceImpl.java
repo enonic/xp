@@ -42,15 +42,15 @@ public class RepositoryEntryServiceImpl
     implements RepositoryEntryService
 {
 
-    private IndexServiceInternal indexServiceInternal;
+    private final IndexServiceInternal indexServiceInternal;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeStorageService nodeStorageService;
 
-    private NodeSearchService nodeSearchService;
+    private final NodeSearchService nodeSearchService;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
-    private BinaryService binaryService;
+    private final BinaryService binaryService;
 
     @Activate
     public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
@@ -207,35 +207,5 @@ public class RepositoryEntryServiceImpl
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setBinaryService( final BinaryService binaryService )
-    {
-        this.binaryService = binaryService;
     }
 }
