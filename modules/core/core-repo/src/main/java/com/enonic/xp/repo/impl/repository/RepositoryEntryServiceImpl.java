@@ -46,9 +46,10 @@ public class RepositoryEntryServiceImpl
 
     private final BinaryService binaryService;
 
-    public RepositoryEntryServiceImpl( final IndexServiceInternal indexServiceInternal, final NodeStorageService nodeStorageService,
-                                       final NodeSearchService nodeSearchService, final EventPublisher eventPublisher,
-                                       final BinaryService binaryService )
+    @Activate
+    public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
+                                       @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
+                                       @Reference final BinaryService binaryService )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
