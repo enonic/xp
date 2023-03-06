@@ -26,6 +26,7 @@ class LikeQueryBuilder
         Preconditions.checkArgument( !isNullOrEmpty( this.value ), "'Like' value cannot be empty" );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final String fieldName = getFieldName( value );

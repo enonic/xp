@@ -10,7 +10,7 @@ public final class GetAdminToolIconCommand
 {
     private DescriptorKey descriptorKey;
 
-    protected ResourceService resourceService;
+    private ResourceService resourceService;
 
     public GetAdminToolIconCommand descriptorKey( final DescriptorKey descriptorKey )
     {

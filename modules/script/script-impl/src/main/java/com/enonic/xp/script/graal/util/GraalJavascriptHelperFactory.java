@@ -36,7 +36,7 @@ public final class GraalJavascriptHelperFactory
             {
                 synchronized ( context )
                 {
-                    return ( context.eval( "js","f => a => f.apply(a)" ) ).execute( function );
+                    return context.eval( "js","f => a => f.apply(a)" ).execute( function );
                 }
             }
 

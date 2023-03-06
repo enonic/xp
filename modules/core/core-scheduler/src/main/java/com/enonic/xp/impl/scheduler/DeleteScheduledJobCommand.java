@@ -52,11 +52,13 @@ public class DeleteScheduledJobCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             Preconditions.checkNotNull( name, "name cannot be null." );
         }
 
+        @Override
         public DeleteScheduledJobCommand build()
         {
             validate();

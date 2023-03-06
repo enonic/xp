@@ -18,6 +18,7 @@ class BooleanQueryBuilder
         super( expression );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final BoolQueryBuilder builder = QueryBuilders.boolQuery();

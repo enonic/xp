@@ -10,9 +10,9 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 final class EndpointFactoryImpl
     implements EndpointFactory
 {
-    protected WebSocketEndpoint endpoint;
+    WebSocketEndpoint endpoint;
 
-    protected WebSocketRegistry registry;
+    WebSocketRegistry registry;
 
     @Override
     public Endpoint newEndpoint()

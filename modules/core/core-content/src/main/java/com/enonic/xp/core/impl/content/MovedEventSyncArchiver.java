@@ -30,6 +30,7 @@ final class MovedEventSyncArchiver
         return new Builder();
     }
 
+    @Override
     protected void execute()
     {
         getRoots().forEach( content -> content.getTargetContext()
@@ -102,6 +103,7 @@ final class MovedEventSyncArchiver
     static class Builder
         extends MovedEventSyncSynchronizer.Builder<Builder>
     {
+        @Override
         MovedEventSyncArchiver build()
         {
             validate();

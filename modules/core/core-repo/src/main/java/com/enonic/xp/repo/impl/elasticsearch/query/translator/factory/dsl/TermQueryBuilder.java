@@ -19,6 +19,7 @@ class TermQueryBuilder
         this.value = getObject( "value" );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final String fieldName = getFieldName( value );

@@ -1,7 +1,5 @@
 package com.enonic.xp.xml;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -14,7 +12,7 @@ final class NodeNamePredicate
 
     NodeNamePredicate( final String... names )
     {
-        this.set = new HashSet<>( Arrays.asList( names ) );
+        this.set = Set.of(names);
     }
 
     @Override

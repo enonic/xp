@@ -6,7 +6,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 final class GetContentTypeCommand
     extends AbstractCommand
 {
-    protected GetContentTypeParams params;
+    GetContentTypeParams params;
 
     public ContentType execute()
     {

@@ -41,7 +41,7 @@ final class TaskRunnable
                 trace.put( "user",
                            Objects.requireNonNullElse( runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ).getKey() );
                 trace.put( "app", runnableTask.getApplicationKey() );
-            }, this::doRun, ( ( trace, success ) -> trace.put( "success", success ) ) );
+            }, this::doRun, ( trace, success ) -> trace.put( "success", success ) );
         }
         finally
         {

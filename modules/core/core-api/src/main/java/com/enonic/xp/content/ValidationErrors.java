@@ -23,6 +23,7 @@ public final class ValidationErrors
     }
 
     /**
+     * Returns true if there were any errors.
      * @return true if there were any errors
      */
     public boolean hasErrors()
@@ -31,6 +32,7 @@ public final class ValidationErrors
     }
 
     /**
+     * Returns a stream of {@link ValidationError} instances.
      * @return a stream of {@link ValidationError} instances
      */
     public Stream<ValidationError> stream()

@@ -36,13 +36,7 @@ public final class ProcessingCache
             return null;
         }
 
-        return typecast( entry.value );
-    }
-
-    @SuppressWarnings("unchecked")
-    private <V> V typecast( final Object value )
-    {
-        return (V) value;
+        return (V) entry.value;
     }
 
     private ProcessingEntry doProcess( final ResourceProcessor<?, ?> processor )

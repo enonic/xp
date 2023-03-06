@@ -26,6 +26,7 @@ public final class OneTimeCalendarImpl
         return new Builder();
     }
 
+    @Override
     public Instant getValue()
     {
         return value;

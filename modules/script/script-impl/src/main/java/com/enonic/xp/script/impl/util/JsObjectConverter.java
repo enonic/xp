@@ -24,6 +24,7 @@ public final class JsObjectConverter
         this.helper = helper;
     }
 
+    @Override
     public Object toJs( final Object value )
     {
         if ( value instanceof MapSerializable )
@@ -44,6 +45,7 @@ public final class JsObjectConverter
         return value;
     }
 
+    @Override
     public Object[] toJsArray( final Object[] values )
     {
         final Object[] result = new Object[values.length];
@@ -73,6 +75,7 @@ public final class JsObjectConverter
         return array;
     }
 
+    @Override
     public Object fromJs( final Object value )
     {
         return toObject( value );
@@ -123,6 +126,7 @@ public final class JsObjectConverter
         return result;
     }
 
+    @Override
     public Map<String, Object> toMap( final Object source )
     {
         if ( source instanceof Bindings )

@@ -48,6 +48,7 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.project.CreateProjectParams;
@@ -694,25 +695,17 @@ public class ProjectServiceImpl
 
     private Node updateProjectSiteConfigs( final ProjectName projectName, final SiteConfigs siteConfigs )
     {
-        return contentRootDataContext( projectName ).callWith( () -> nodeService.update( UpdateNodeParams.create()
-                                                                                             .path( ContentConstants.CONTENT_ROOT_PATH )
-                                                                                             .editor( edit -> Optional.ofNullable(
-                                                                                                     edit.data.getPropertySet( "data" ) )
-                                                                                                 .map( contentData -> {
-                                                                                                     contentData.removeProperties(
-                                                                                                         ContentPropertyNames.SITECONFIG );
-                                                                                                     SITE_CONFIGS_DATA_SERIALIZER.toProperties(
-                                                                                                         siteConfigs, contentData );
-
-                                                                                                     return contentData;
-
-                                                                                                 } )
-                                                                                                 .orElseThrow(
-                                                                                                     () -> new IllegalStateException(
-                                                                                                         "Cannot update project config" ) )
-
-                                                                                             )
-                                                                                             .build() ) );
+        final NodeEditor editor = edit -> {
+            final PropertySet data = edit.data.getPropertySet( "data" );
+            if ( data == null )
+            {
+                throw new IllegalStateException( "Cannot update project config" );
+            }
+            data.removeProperties( ContentPropertyNames.SITECONFIG );
+            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfigs, data );
+        };
+        final UpdateNodeParams build = UpdateNodeParams.create().path( ContentConstants.CONTENT_ROOT_PATH ).editor( editor ).build();
+        return contentRootDataContext( projectName ).callWith( () -> nodeService.update( build ) );
     }
 
     private Project initProject( final Repository repository, final SiteConfigs siteConfigs )

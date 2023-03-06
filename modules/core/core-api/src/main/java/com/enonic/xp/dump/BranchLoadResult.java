@@ -37,7 +37,6 @@ public class BranchLoadResult
         @Override
         public BranchLoadResult build()
         {
-            super.build();
             return new BranchLoadResult( this );
         }
     }

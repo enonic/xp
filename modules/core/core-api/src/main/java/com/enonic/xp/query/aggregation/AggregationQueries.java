@@ -1,8 +1,6 @@
 package com.enonic.xp.query.aggregation;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -35,7 +33,7 @@ public class AggregationQueries
 
     public static final class Builder
     {
-        private final Set<AggregationQuery> aggregationQueries = new HashSet<>();
+        private final ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
 
         public Builder add( final AggregationQuery aggregationQuery )
         {
@@ -45,7 +43,7 @@ public class AggregationQueries
 
         public AggregationQueries build()
         {
-            return new AggregationQueries( ImmutableSet.copyOf( this.aggregationQueries ) );
+            return new AggregationQueries( this.aggregationQueries.build() );
         }
     }
 

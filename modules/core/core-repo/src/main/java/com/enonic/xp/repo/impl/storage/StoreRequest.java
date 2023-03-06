@@ -66,11 +66,6 @@ public class StoreRequest
         return id;
     }
 
-    private NodePath getPath()
-    {
-        return path;
-    }
-
     public String getParent()
     {
         return parent;

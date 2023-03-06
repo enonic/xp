@@ -148,7 +148,7 @@ public class FormItemSet
         final FormItemSet that = (FormItemSet) o;
         return super.equals( o ) &&
             Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.immutable, that.immutable ) &&
+            this.immutable == that.immutable &&
             Objects.equals( this.customText, that.customText ) &&
             Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.labelI18nKey, that.labelI18nKey ) &&

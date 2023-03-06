@@ -201,25 +201,26 @@ abstract class IdProviderNodeTranslator
 
     static AccessControlList idProviderPermissionsToGroupsNodePermissions( final IdProviderAccessControlList idProviderPermissions )
     {
-        final List<AccessControlEntry> entries = new ArrayList<>();
+        final AccessControlList.Builder builder = AccessControlList.create();
         for ( IdProviderAccessControlEntry entry : idProviderPermissions )
         {
-            final AccessControlEntry ace;
             switch ( entry.getAccess() )
             {
                 case ID_PROVIDER_MANAGER:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ, CREATE, MODIFY, DELETE ).build();
-                    entries.add( ace );
+                    builder.add(
+                        AccessControlEntry.create().principal( entry.getPrincipal() ).allow( READ, CREATE, MODIFY, DELETE ).build() );
                     break;
                 case ADMINISTRATOR:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
-                    entries.add( ace );
+                    builder.add( AccessControlEntry.create()
+                                     .principal( entry.getPrincipal() )
+                                     .allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS )
+                                     .build() );
+                    break;
+                default:
                     break;
             }
         }
-        return AccessControlList.create().addAll( entries ).build();
+        return builder.build();
     }
 
     static UpdateNodeParams toUpdateNodeParams( final IdProvider idProvider, final NodeId nodeId )

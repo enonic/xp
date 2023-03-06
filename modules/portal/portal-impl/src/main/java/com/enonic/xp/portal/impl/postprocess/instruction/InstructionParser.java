@@ -12,7 +12,7 @@ final class InstructionParser
         NAME, QUOTE, EQUALS
     }
 
-    private static final char EOF = (char) -1;
+    private static final char EOF = Character.MAX_VALUE;
 
     private String input;
 

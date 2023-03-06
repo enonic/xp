@@ -120,7 +120,7 @@ public class ApplicationRegistryImpl
                 final ApplicationAdaptor app = applicationFactoryService.getApplication( bundle );
                 if ( app == null )
                 {
-                    throw new IllegalStateException( "Can't configure application " + app );
+                    throw new IllegalStateException( "Can't configure application " + applicationKey );
                 }
                 app.setConfig( configuration );
                 return app;

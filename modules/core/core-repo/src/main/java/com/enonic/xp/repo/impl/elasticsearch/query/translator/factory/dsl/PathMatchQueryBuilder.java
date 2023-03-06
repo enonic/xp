@@ -32,6 +32,7 @@ class PathMatchQueryBuilder
         this.minimumMatch = getLong( "minimumMatch", 1L );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder( getFieldName(), path );

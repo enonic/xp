@@ -16,6 +16,7 @@ class NgramQueryBuilder
         super( expression );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =

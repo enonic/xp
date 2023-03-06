@@ -29,6 +29,7 @@ public class RepositorySegmentUtils
         return RepositoryId.from( repositoryId );
     }
 
+    @Deprecated
     public static boolean hasRepository( final Segment segment, final RepositoryId repositoryId )
     {
         return segment.getLevel( REPOSITORY_LEVEL ).equals( repositoryId );

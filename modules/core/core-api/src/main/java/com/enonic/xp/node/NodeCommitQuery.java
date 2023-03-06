@@ -24,8 +24,6 @@ public class NodeCommitQuery
     public static final class Builder
         extends AbstractQuery.Builder<Builder>
     {
-        private NodeId nodeId;
-
         private Builder()
         {
         }

@@ -24,7 +24,6 @@ public class VersionsLoadResult
         @Override
         public VersionsLoadResult build()
         {
-            super.build();
             return new VersionsLoadResult( this );
         }
     }

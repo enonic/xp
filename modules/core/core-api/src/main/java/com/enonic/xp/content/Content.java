@@ -405,12 +405,12 @@ public class Content
 
         return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
             Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
-            Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
+            valid == other.valid && Objects.equals( modifier, other.modifier ) &&
             Objects.equals( validationErrors, other.validationErrors ) && Objects.equals( creator, other.creator ) &&
             Objects.equals( owner, other.owner ) && Objects.equals( createdTime, other.createdTime ) &&
-            Objects.equals( modifiedTime, other.modifiedTime ) && Objects.equals( hasChildren, other.hasChildren ) &&
+            Objects.equals( modifiedTime, other.modifiedTime ) && hasChildren == other.hasChildren &&
             Objects.equals( inherit, other.inherit ) && Objects.equals( originProject, other.originProject ) &&
-            Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
+            inheritPermissions == other.inheritPermissions && Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
             Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&

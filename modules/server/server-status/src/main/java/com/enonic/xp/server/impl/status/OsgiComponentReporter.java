@@ -89,17 +89,17 @@ public final class OsgiComponentReporter
         return json;
     }
 
-    protected String toStateString( final int state )
+    String toStateString( final int state )
     {
         switch ( state )
         {
-            case ( ComponentConfigurationDTO.UNSATISFIED_REFERENCE ):
+            case ComponentConfigurationDTO.UNSATISFIED_REFERENCE:
                 return "UNSATISFIED_REFERENCE";
-            case ( ComponentConfigurationDTO.ACTIVE ):
+            case ComponentConfigurationDTO.ACTIVE:
                 return "ACTIVE";
-            case ( ComponentConfigurationDTO.SATISFIED ):
+            case ComponentConfigurationDTO.SATISFIED:
                 return "SATISFIED";
-            case ( ComponentConfigurationDTO.UNSATISFIED_CONFIGURATION ):
+            case ComponentConfigurationDTO.UNSATISFIED_CONFIGURATION:
                 return "UNSATISFIED_CONFIGURATION";
             default:
                 return "UNKNOWN";

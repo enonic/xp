@@ -18,9 +18,9 @@ public final class ShellActivator
 
     private ShellConfig config;
 
-    protected BundleContext context;
+    BundleContext context;
 
-    protected final List<BundleActivator> activators;
+    final List<BundleActivator> activators;
 
     public ShellActivator()
     {

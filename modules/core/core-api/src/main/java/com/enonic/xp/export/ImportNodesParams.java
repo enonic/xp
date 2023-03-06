@@ -21,7 +21,7 @@ public class ImportNodesParams
 
     private final String exportName;
 
-    private final boolean importNodeids;
+    private final boolean importNodeIds;
 
     private final boolean importPermissions;
 
@@ -36,7 +36,7 @@ public class ImportNodesParams
         this.targetNodePath = builder.targetNodePath;
         this.source = builder.source;
         this.dryRun = builder.dryRun;
-        this.importNodeids = builder.importNodeIds;
+        this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
         this.xslt = builder.xslt;
         this.xsltParams = builder.xsltParams;
@@ -71,7 +71,7 @@ public class ImportNodesParams
 
     public boolean isImportNodeids()
     {
-        return importNodeids;
+        return importNodeIds;
     }
 
     public boolean isImportPermissions()

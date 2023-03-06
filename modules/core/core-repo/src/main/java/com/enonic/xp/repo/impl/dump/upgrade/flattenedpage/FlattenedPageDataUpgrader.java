@@ -197,6 +197,8 @@ public class FlattenedPageDataUpgrader
             case SRC_TYPE_VALUE.FRAGMENT:
                 addFragmentComponentData( sourceComponentDataSet, targetComponentDataSet );
                 break;
+            default:
+                break;
         }
     }
 

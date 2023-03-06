@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeDataProcessor;
 public abstract class ContentDataProcessor
     implements NodeDataProcessor
 {
+    @Override
     public PropertyTree process( final PropertyTree originalData )
     {
         final PropertyTree data = originalData.copy();

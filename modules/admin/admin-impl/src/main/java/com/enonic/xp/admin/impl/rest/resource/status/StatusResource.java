@@ -30,9 +30,9 @@ import com.enonic.xp.server.ServerInfo;
 public final class StatusResource
     implements JaxRsComponent
 {
-    protected ServerInfo info;
+    ServerInfo info;
 
-    protected IndexService indexService;
+    IndexService indexService;
 
     public StatusResource()
     {

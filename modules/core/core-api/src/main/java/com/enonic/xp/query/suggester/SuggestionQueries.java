@@ -1,8 +1,6 @@
 package com.enonic.xp.query.suggester;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -16,11 +14,6 @@ public class SuggestionQueries
         super( set );
     }
 
-    private SuggestionQueries( final Set<SuggestionQuery> set )
-    {
-        super( ImmutableSet.copyOf( set ) );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -28,8 +21,7 @@ public class SuggestionQueries
 
     public static SuggestionQueries empty()
     {
-        final Set<SuggestionQuery> returnFields = new HashSet<>();
-        return new SuggestionQueries( returnFields );
+        return new SuggestionQueries( ImmutableSet.of() );
     }
 
     public static SuggestionQueries fromCollection( final Collection<SuggestionQuery> suggestionQueries )
@@ -39,7 +31,7 @@ public class SuggestionQueries
 
     public static final class Builder
     {
-        private final Set<SuggestionQuery> suggestionQueries = new HashSet<>();
+        private final ImmutableSet.Builder<SuggestionQuery> suggestionQueries = ImmutableSet.builder();
 
         public Builder add( final SuggestionQuery suggestionQuery )
         {
@@ -49,7 +41,7 @@ public class SuggestionQueries
 
         public SuggestionQueries build()
         {
-            return new SuggestionQueries( ImmutableSet.copyOf( this.suggestionQueries ) );
+            return new SuggestionQueries( this.suggestionQueries.build() );
         }
     }
 }

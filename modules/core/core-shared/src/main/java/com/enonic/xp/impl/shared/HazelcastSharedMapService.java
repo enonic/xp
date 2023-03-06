@@ -23,6 +23,7 @@ public class HazelcastSharedMapService
         this.hazelcastInstance = hazelcastInstance;
     }
 
+    @Override
     public <K, V> HazelcastSharedMap<K, V> getSharedMap( final String name )
     {
         final IMap<K, V> iMap = hazelcastInstance.getMap( name );

@@ -19,15 +19,15 @@ import static java.util.stream.Collectors.joining;
 
 final class PostProcessEvaluator
 {
-    protected PortalRequest portalRequest;
+    PortalRequest portalRequest;
 
-    protected PortalResponse portalResponse;
+    PortalResponse portalResponse;
 
-    protected String input;
+    String input;
 
-    protected List<PostProcessInstruction> instructions;
+    List<PostProcessInstruction> instructions;
 
-    protected List<PostProcessInjection> injections;
+    List<PostProcessInjection> injections;
 
     public PortalResponse evaluate()
     {

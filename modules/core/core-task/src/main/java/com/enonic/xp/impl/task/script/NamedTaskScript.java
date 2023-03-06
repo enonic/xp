@@ -51,6 +51,7 @@ final class NamedTaskScript
         }
     }
 
+    @Override
     public TaskDescriptor getTaskDescriptor()
     {
         return this.taskDescriptor;

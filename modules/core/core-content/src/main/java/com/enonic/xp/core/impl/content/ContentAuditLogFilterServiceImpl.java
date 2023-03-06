@@ -17,6 +17,7 @@ public class ContentAuditLogFilterServiceImpl
         contentAuditLogFilter = new ContentAuditLogFilter( config.auditlog_filter() );
     }
 
+    @Override
     public boolean accept( final String eventType )
     {
         return contentAuditLogFilter.accept( eventType );

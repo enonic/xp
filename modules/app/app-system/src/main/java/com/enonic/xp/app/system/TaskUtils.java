@@ -2,6 +2,7 @@ package com.enonic.xp.app.system;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.enonic.xp.task.TaskId;
@@ -20,7 +21,7 @@ public final class TaskUtils
         final Instant currentTaskStartTime = currentTaskInfo.getStartTime();
 
         final Optional<TaskInfo> priorTask = allTasks.stream()
-            .filter( ti -> ti.getId() != currentTaskId )
+            .filter( ti -> !Objects.equals( ti.getId(), currentTaskId ) )
             .filter( ti -> currentTaskName.equals( ti.getName() ) )
             .filter( ti -> !ti.isDone() )
             .filter( ti -> ti.getStartTime().isBefore( currentTaskStartTime ) ||

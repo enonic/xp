@@ -10,7 +10,7 @@ import com.enonic.xp.macro.Macro;
  */
 final class HtmlMacroEvaluator
 {
-    private static final char EOF = (char) -1;
+    private static final char EOF = Character.MAX_VALUE;
 
     private String input;
 
@@ -47,6 +47,8 @@ final class HtmlMacroEvaluator
 
                 case '[':
                     processMacro();
+                    break;
+                default:
                     break;
             }
         }

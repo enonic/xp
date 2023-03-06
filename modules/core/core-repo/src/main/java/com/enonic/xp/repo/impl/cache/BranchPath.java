@@ -36,6 +36,7 @@ public final class BranchPath
         return path;
     }
 
+    @Override
     public String toString()
     {
         return repositoryId + ":" + branch + ":" + path;

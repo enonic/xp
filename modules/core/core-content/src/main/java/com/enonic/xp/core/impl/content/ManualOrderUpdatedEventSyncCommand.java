@@ -21,6 +21,7 @@ final class ManualOrderUpdatedEventSyncCommand
         return new Builder();
     }
 
+    @Override
     protected void doSync()
     {
         params.getContents().forEach( this::doSync );
@@ -72,6 +73,7 @@ final class ManualOrderUpdatedEventSyncCommand
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
+        @Override
         void validate()
         {
             super.validate();
@@ -81,6 +83,7 @@ final class ManualOrderUpdatedEventSyncCommand
                                          "targetContent must be set." );
         }
 
+        @Override
         public ManualOrderUpdatedEventSyncCommand build()
         {
             validate();

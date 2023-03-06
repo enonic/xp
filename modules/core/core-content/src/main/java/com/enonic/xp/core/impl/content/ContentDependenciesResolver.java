@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.aggregation.BucketAggregation;
@@ -44,7 +44,7 @@ class ContentDependenciesResolver
     {
         if ( contentId == null )
         {
-            return new HashSet<>();
+            return List.of();
         }
 
         final FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().

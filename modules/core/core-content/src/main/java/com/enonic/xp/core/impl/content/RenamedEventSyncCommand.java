@@ -59,6 +59,7 @@ final class RenamedEventSyncCommand
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
+        @Override
         void validate()
         {
             super.validate();
@@ -68,6 +69,7 @@ final class RenamedEventSyncCommand
                                          "targetContent must be set." );
         }
 
+        @Override
         public RenamedEventSyncCommand build()
         {
             validate();

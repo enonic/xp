@@ -31,6 +31,7 @@ final class DeletedEventSyncCommand
         return new Builder();
     }
 
+    @Override
     protected void doSync()
     {
         doSync( params.getContents() );
@@ -124,6 +125,7 @@ final class DeletedEventSyncCommand
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
+        @Override
         void validate()
         {
             super.validate();
@@ -131,6 +133,7 @@ final class DeletedEventSyncCommand
                                          "targetContent must be set." );
         }
 
+        @Override
         public DeletedEventSyncCommand build()
         {
             validate();

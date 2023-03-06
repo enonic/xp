@@ -32,11 +32,13 @@ public class NamedTaskScriptFactoryImpl
         this.taskDescriptorService = taskDescriptorService;
     }
 
+    @Override
     public NamedTaskScript create( final TaskDescriptor descriptor, final PropertyTree data )
     {
         return doCreate( descriptor, data );
     }
 
+    @Override
     public NamedTaskScript createLegacy( final DescriptorKey key, final PropertyTree data )
     {
         final TaskDescriptor descriptor = taskDescriptorService.getTask( key );

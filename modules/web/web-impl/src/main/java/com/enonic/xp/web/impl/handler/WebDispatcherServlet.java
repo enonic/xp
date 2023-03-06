@@ -101,7 +101,7 @@ public final class WebDispatcherServlet
 
     private WebResponse filterResponse( final WebRequest webRequest, final WebResponse webResponse )
     {
-        if ( webRequest.getRawRequest().getAttribute( "error.handled" ) != Boolean.TRUE )
+        if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
         {
             this.exceptionMapper.throwIfNeeded( webResponse );
         }

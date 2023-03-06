@@ -37,8 +37,9 @@ public abstract class Name
 
     private static void checkValidName( final String value )
     {
-        for ( final char c : value.toCharArray() )
+        for ( int i = 0; i < value.length(); i++ )
         {
+            final char c = value.charAt( i );
             if ( !NameCharacterHelper.isValidCharacter( c ) )
             {
                 final String unicodeChar = c > 255 ? " (" + NameCharacterHelper.getUnicodeString( c ) + ")" : "";

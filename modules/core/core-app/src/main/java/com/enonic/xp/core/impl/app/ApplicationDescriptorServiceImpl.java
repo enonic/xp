@@ -74,6 +74,8 @@ public class ApplicationDescriptorServiceImpl
             case BundleEvent.UPDATED:
                 addBundle( bundle );
                 break;
+            default:
+                break;
         }
     }
 

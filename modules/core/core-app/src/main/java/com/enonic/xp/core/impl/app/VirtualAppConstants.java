@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
+import java.nio.charset.StandardCharsets;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -44,7 +46,7 @@ public final class VirtualAppConstants
 
     public static final String SITE_RESOURCE_PATH = "/" + SITE_ROOT_NAME + "/" + SITE_ROOT_NAME + ".xml";
 
-    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE = ByteSource.wrap( "<site></site>".getBytes() );
+    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE = ByteSource.wrap( "<site></site>".getBytes( StandardCharsets.UTF_8 ) );
 
     private VirtualAppConstants()
     {

@@ -25,14 +25,14 @@ public class NodeCommitQueryResultFactory
         nodeCommitQueryResult.from( query.getFrom() );
         nodeCommitQueryResult.to( query.getSize() );
 
-        final NodeCommitEntries nodeCommitEntries = buildNodeCommitEntries( query, searchResult );
+        final NodeCommitEntries nodeCommitEntries = buildNodeCommitEntries( searchResult );
 
         nodeCommitQueryResult.nodeCommitEntries( nodeCommitEntries );
 
         return nodeCommitQueryResult.build();
     }
 
-    private static NodeCommitEntries buildNodeCommitEntries( final NodeCommitQuery query, final SearchResult searchResult )
+    private static NodeCommitEntries buildNodeCommitEntries( final SearchResult searchResult )
     {
         final NodeCommitEntries.Builder nodeCommitEntries = NodeCommitEntries.create();
 

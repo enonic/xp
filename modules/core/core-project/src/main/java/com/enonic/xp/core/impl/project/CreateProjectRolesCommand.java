@@ -32,8 +32,10 @@ public final class CreateProjectRolesCommand
             final PrincipalKey roleKey = ProjectAccessHelper.createRoleKey( projectName, projectRole );
             final String roleDisplayName = createRoleDisplayName( projectRole );
 
-            securityService.getRole( roleKey ).
-                orElseGet( () -> doCreateRole( roleKey, roleDisplayName ) );
+            if ( securityService.getRole( roleKey ).isEmpty() )
+            {
+                doCreateRole( roleKey, roleDisplayName );
+            }
         }
     }
 

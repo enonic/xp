@@ -66,11 +66,13 @@ public class CreateScheduledJobCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             Preconditions.checkNotNull( params, "params cannot be null." );
         }
 
+        @Override
         public CreateScheduledJobCommand build()
         {
             validate();

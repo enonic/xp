@@ -180,9 +180,9 @@ public final class Input
 
         final Input that = (Input) o;
         return super.equals( o ) && Objects.equals( this.type, that.type ) && Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.defaultValue, that.defaultValue ) && Objects.equals( this.immutable, that.immutable ) &&
-            Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.indexed, that.indexed ) &&
-            Objects.equals( this.maximizeUIInputWidth, that.maximizeUIInputWidth ) && Objects.equals( this.customText, that.customText ) &&
+            Objects.equals( this.defaultValue, that.defaultValue ) && this.immutable == that.immutable &&
+            Objects.equals( this.occurrences, that.occurrences ) && this.indexed == that.indexed &&
+            this.maximizeUIInputWidth == that.maximizeUIInputWidth && Objects.equals( this.customText, that.customText ) &&
             Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.validationRegexp, that.validationRegexp ) &&
             Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
             Objects.equals( this.labelI18nKey, that.labelI18nKey );

@@ -80,6 +80,7 @@ final class ImageHandlerWorker
         return result;
     }
 
+    @Override
     protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
     {
         portalResponse.contentType( contentType );
