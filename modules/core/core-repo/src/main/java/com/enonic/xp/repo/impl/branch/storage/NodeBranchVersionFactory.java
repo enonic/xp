@@ -26,7 +26,7 @@ public class NodeBranchVersionFactory
             NodeVersionKey.from( nodeBlobKey.toString(), indexConfigBlobKey.toString(), accessControlBlobKey.toString() );
 
         return NodeBranchEntry.create().
-            nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
+            nodePath( path != null ? new NodePath( path.toString() ) : NodePath.ROOT ).
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             timestamp( Instant.parse( timestamp.toString() ) ).

@@ -5,7 +5,7 @@
   "dryRun": false,
   "importErrors": [],
   "importedBinaries": [
-    "binary [binaryRef]"
+    "/binary [binaryRef]"
   ],
   "updateNodes": [
     "/node2/path2"

@@ -232,7 +232,7 @@ public class MoveNodeCommandTest
         final NodePath previousChild1Path = child1_1.path();
         assertNull( getNodeByPath( previousChild1Path ) );
 
-        final NodePath newChild1Path = NodePath.create( movedNode.path(), child1_1.name().toString() ).build();
+        final NodePath newChild1Path = new NodePath( movedNode.path(), child1_1.name() );
         assertNotNull( getNodeByPath( newChild1Path ) );
 
         final Node movedChild1 = getNodeById( child1_1.id() );
@@ -300,7 +300,7 @@ public class MoveNodeCommandTest
         final NodePath previousChild1Path = child1_1.path();
         assertNull( getNodeByPath( previousChild1Path ) );
 
-        final NodePath newChild1Path = NodePath.create( movedNode.path(), child1_1.name().toString() ).build();
+        final NodePath newChild1Path = new NodePath( movedNode.path(), child1_1.name() );
         assertNotNull( getNodeByPath( newChild1Path ) );
 
         final Node movedChild1_1 = getNodeById( child1_1.id() );
@@ -460,7 +460,7 @@ public class MoveNodeCommandTest
     public void cannot_move_root_node()
         throws Exception
     {
-        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( NodePath.create( "/fisk" ).build(), Node.ROOT_UUID ) );
+        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), Node.ROOT_UUID ) );
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )

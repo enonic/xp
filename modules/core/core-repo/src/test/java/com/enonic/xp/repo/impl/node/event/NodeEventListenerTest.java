@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
@@ -19,6 +20,8 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeEventListenerTest
 {
@@ -66,12 +69,12 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath( "/nodeName"  );
 
         final Event localEvent = NodeEvents.created( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
+            name( nodePath.getName() ).
             build() );
 
         nodeEventListener.onEvent( localEvent );
@@ -85,12 +88,12 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
 
         final Event localEvent = NodeEvents.created( Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
+            name( nodePath.getName() ).
             build() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).
@@ -106,7 +109,7 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).build();
 
@@ -125,12 +128,12 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
 
         final Node sourceNode =
-            Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getLastElement().toString() ).build();
+            Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build();
 
-        final Node movedNode = Node.create( sourceNode ).parentPath( NodePath.create( "newParent" ).build() ).build();
+        final Node movedNode = Node.create( sourceNode ).parentPath( new NodePath( "/newParent" ) ).build();
 
         final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
                                                        .addMovedNode( MoveNodeResult.MovedNode.create()
@@ -141,10 +144,14 @@ public class NodeEventListenerTest
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
-        final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
+        ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodeMoved( Mockito.eq( nodeMovedParams ), Mockito.isA( InternalContext.class ) );
+            .handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
+        assertEquals( sourceNode.path(), captor.getValue().getExistingPath() );
+        assertEquals( movedNode.path(), captor.getValue().getNewPath() );
+        assertEquals( sourceNode.id(), captor.getValue().getNodeId() );
+
     }
 
     @Test
@@ -152,16 +159,16 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
 
         final Node sourceNode = Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
+            name( nodePath.getName() ).
             build();
 
         final Node movedNode = Node.create( sourceNode ).
-            parentPath( NodePath.create( "newParent" ).build() ).
+            parentPath( new NodePath( "/newParent" ) ).
             build();
 
         final Event localEvent = NodeEvents.renamed( sourceNode.path(), movedNode );
@@ -170,10 +177,11 @@ public class NodeEventListenerTest
             localOrigin( false ).
             build() );
 
-        final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
-
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
-                                                                                  Mockito.isA( InternalContext.class ) );
+        ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
+        assertEquals( sourceNode.path(), captor.getValue().getExistingPath() );
+        assertEquals( movedNode.path(), captor.getValue().getNewPath() );
+        assertEquals( sourceNode.id(), captor.getValue().getNodeId() );
     }
 
     @Test
@@ -181,16 +189,16 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
 
         final Node sourceNode = Node.create().
             id( nodeId ).
             parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
+            name( nodePath.getName() ).
             build();
 
         final Node movedNode = Node.create( sourceNode ).
-            parentPath( NodePath.create( "newParent" ).build() ).
+            parentPath( new NodePath( "/newParent" ) ).
             build();
 
         final Event localEvent = NodeEvents.duplicated( sourceNode );
@@ -208,8 +216,8 @@ public class NodeEventListenerTest
         throws Exception
     {
         final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
-        final NodePath previousNodePath = NodePath.create( NodePath.ROOT, "previousName" ).build();
+        final NodePath nodePath = new NodePath("/nodeName" );
+        final NodePath previousNodePath = new NodePath( "/previousName" );
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( nodeId ).

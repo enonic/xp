@@ -1,11 +1,5 @@
 package com.enonic.xp.security.auth;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -18,6 +12,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -135,8 +130,8 @@ public class AuthenticationInfoTest
             principals( PrincipalKeys.from( group2, role1 ) ).
             build();
 
-        final byte[] serializedObject = serialize( info );
-        final AuthenticationInfo deserializedObject = (AuthenticationInfo) deserialize( serializedObject );
+        final byte[] serializedObject = SerializableUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
 
         assertEquals( deserializedObject, info );
     }
@@ -171,8 +166,8 @@ public class AuthenticationInfoTest
             principals( PrincipalKeys.from( group2, role1 ) ).
             build();
 
-        final byte[] serializedObject = serialize( info );
-        final AuthenticationInfo deserializedObject = (AuthenticationInfo) deserialize( serializedObject );
+        final byte[] serializedObject = SerializableUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
 
         assertEquals( deserializedObject, info );
     }
@@ -190,8 +185,8 @@ public class AuthenticationInfoTest
             user( user ).
             build();
 
-        final byte[] serializedObject = serialize( info );
-        final AuthenticationInfo deserializedObject = (AuthenticationInfo) deserialize( serializedObject );
+        final byte[] serializedObject = SerializableUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
 
         assertEquals( deserializedObject, info );
     }
@@ -202,28 +197,9 @@ public class AuthenticationInfoTest
     {
         final AuthenticationInfo info = AuthenticationInfo.unAuthenticated();
 
-        final byte[] serializedObject = serialize( info );
-        final AuthenticationInfo deserializedObject = (AuthenticationInfo) deserialize( serializedObject );
+        final byte[] serializedObject = SerializableUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
 
         assertEquals( deserializedObject, info );
-    }
-
-    private static byte[] serialize( Serializable serializable )
-        throws IOException
-    {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( serializable );
-            return baos.toByteArray();
-        }
-    }
-
-    private static Object deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return ois.readObject();
-        }
     }
 }

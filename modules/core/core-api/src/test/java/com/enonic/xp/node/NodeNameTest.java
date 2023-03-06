@@ -45,6 +45,12 @@ public class NodeNameTest
     }
 
     @Test
+    public void slashNotAllowed()
+    {
+        assertThrows(IllegalArgumentException.class, () -> NodeName.from( "some/name" ));
+    }
+
+    @Test
     public void testNameCouldStartWithUnderscore()
         throws Exception
     {

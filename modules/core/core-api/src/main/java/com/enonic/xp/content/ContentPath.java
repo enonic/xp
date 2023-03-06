@@ -67,14 +67,16 @@ public final class ContentPath
         return absolute;
     }
 
+    @Deprecated
     public boolean isRelative()
     {
         return !absolute;
     }
 
+    @Deprecated
     public ContentPath asRelative()
     {
-        if ( isRelative() )
+        if ( !absolute )
         {
             return this;
         }
@@ -84,7 +86,7 @@ public final class ContentPath
 
     public ContentPath asAbsolute()
     {
-        if ( isAbsolute() )
+        if ( absolute )
         {
             return this;
         }

@@ -14,6 +14,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -50,7 +51,8 @@ class ApplicationRepoServiceImplTest
     {
         final MockApplication app = createApp();
 
-        Mockito.when( this.nodeService.getByPath( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, "myBundle" ).build() ) )
+        Mockito.when(
+                this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
                 Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
 
@@ -64,7 +66,7 @@ class ApplicationRepoServiceImplTest
     {
         final MockApplication app = createApp();
 
-        Mockito.when( this.nodeService.getByPath( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, "myBundle" ).build() ) )
+        Mockito.when( this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
                 Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
 
@@ -72,7 +74,7 @@ class ApplicationRepoServiceImplTest
 
         ArgumentCaptor<DeleteNodeParams> argCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).delete( argCaptor.capture() );
-        assertEquals( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, "myBundle" ).build(),
+        assertEquals( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ),
                       argCaptor.getValue().getNodePath() );
     }
 

@@ -22,7 +22,7 @@ public class BranchStorageRequestFactoryTest
     {
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchEntry.create().
             nodeId( NodeId.from( "nodeId" ) ).
-            nodePath( NodePath.create( "nodePath" ).build() ).
+            nodePath( new NodePath( "/nodePath" ) ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             build(), RepositoryId.from( "my-repo-id" ), Branch.from( "myBranch" ) );

@@ -25,7 +25,7 @@ public class NodeEventsTest
     @Test
     public void testCreated()
     {
-        final Node created = createNode( "created", NodePath.create( "/mynode1/child1" ).build(), "id" );
+        final Node created = createNode( "created", new NodePath( "/mynode1/child1" ), "id" );
 
         Event event = NodeEvents.created( created );
 
@@ -38,9 +38,9 @@ public class NodeEventsTest
     @Test
     public void testPushed()
     {
-        final Node pushed1 = createNode( "pushed1", NodePath.create( "/mynode1/pushed1" ).build(), "id1" );
-        final Node pushed2 = createNode( "pushed2", NodePath.create( "/mynode1/pushed2" ).build(), "id2" );
-        final Node pushed3 = createNode( "pushed3Renamed", NodePath.create( "/mynode1/pushed3" ).build(), "id3" );
+        final Node pushed1 = createNode( "pushed1", new NodePath( "/mynode1/pushed1" ), "id1" );
+        final Node pushed2 = createNode( "pushed2", new NodePath( "/mynode1/pushed2" ), "id2" );
+        final Node pushed3 = createNode( "pushed3Renamed", new NodePath( "/mynode1/pushed3" ), "id3" );
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
             nodeId( pushed1.id() ).
@@ -58,7 +58,7 @@ public class NodeEventsTest
                                                              PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build(),
                                                              PushNodeEntry.create()
                                                                  .nodeBranchEntry( nodeBranchEntry3 )
-                                                                 .currentTargetPath( NodePath.create( "/mynode1/pushed3/pushed3" ).build() )
+                                                                 .currentTargetPath( new NodePath( "/mynode1/pushed3/pushed3" ) )
                                                                  .build() );
 
         Event event = NodeEvents.pushed( pushNodeEntries, ContentConstants.BRANCH_MASTER );
@@ -76,7 +76,7 @@ public class NodeEventsTest
     @Test
     public void testDeleted()
     {
-        final Node deleted = createNode( "deleted", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myId" );
 
         Event event = NodeEvents.created( deleted );
 
@@ -89,7 +89,7 @@ public class NodeEventsTest
     @Test
     public void testDuplicated()
     {
-        final Node duplicated = createNode( "duplicated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myId" );
 
         Event event = NodeEvents.duplicated( duplicated );
 
@@ -103,7 +103,7 @@ public class NodeEventsTest
     @Test
     public void testUpdated()
     {
-        final Node updated = createNode( "updated", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myId" );
 
         Event event = NodeEvents.updated( updated );
 
@@ -117,8 +117,8 @@ public class NodeEventsTest
     @Test
     public void testMoved()
     {
-        final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
-        final Node targetNode = createNode( "after", NodePath.create( "/mynode1" ).build(), "myId" );
+        final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
 
         Event event = NodeEvents.moved( MoveNodeResult.create()
                                             .addMovedNode( MoveNodeResult.MovedNode.create()
@@ -137,8 +137,8 @@ public class NodeEventsTest
     @Test
     public void testRenamed()
     {
-        final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
-        final Node targetNode = createNode( "after", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node targetNode = createNode( "after", new NodePath( "/mynode1/child1" ), "myId" );
 
         Event event = NodeEvents.renamed( sourceNode.path(), targetNode );
 
@@ -152,7 +152,7 @@ public class NodeEventsTest
     @Test
     public void testSorted()
     {
-        final Node sorted = createNode( "sorted", NodePath.create( "/mynode1/child1" ).build(), "myId" );
+        final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );
 
         Event event = NodeEvents.sorted( sorted );
 

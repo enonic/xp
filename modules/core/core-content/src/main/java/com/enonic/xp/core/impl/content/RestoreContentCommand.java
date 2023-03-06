@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -86,7 +87,7 @@ final class RestoreContentCommand
 
         validateLocation( nodeToRestore );
 
-        final boolean isRootContent = nodeToRestore.path().asAbsolute().elementCount() == 2;
+        final boolean isRootContent = ArchiveConstants.ARCHIVE_ROOT_PATH.equals( nodeToRestore.parentPath() );
         final NodePath parentPathToRestore = getParentPathToRestore( nodeToRestore, isRootContent );
         final String originalSourceName = getOriginalSourceName( nodeToRestore, isRootContent );
 
@@ -113,7 +114,7 @@ final class RestoreContentCommand
 
     private void validateLocation( final Node node )
     {
-        if ( !ArchiveConstants.ARCHIVE_ROOT_NAME.equals( node.path().getElementAsString( 0 ) ) )
+        if ( !ArchiveConstants.ARCHIVE_ROOT_NAME.equals( ContentNodeHelper.getContentRootName( node.path() ) ) )
         {
             if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( node.getNodeType() ) )
             {
@@ -208,13 +209,14 @@ final class RestoreContentCommand
 
                 if ( params.getParentPath() != null )
                 {
-                    return NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getParentPath().toString() ).build();
+                    return ContentNodeHelper.translateContentPathToNodePath( ContentConstants.CONTENT_ROOT_PATH, params.getParentPath() );
                 }
                 else if ( !nullToEmpty( originalParentPath ).isBlank() )
                 {
-                    final NodePath parentPath =
-                        NodePath.create( ContentConstants.CONTENT_ROOT_PATH, originalParentPathProperty.getValue().asString() ).build();
-
+                    final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( ContentConstants.CONTENT_ROOT_PATH,
+                                                                                                  ContentPath.from(
+                                                                                                      originalParentPathProperty.getValue()
+                                                                                                          .asString() ) );
                     if ( nodeService.nodeExists( parentPath ) )
                     {
                         return parentPath;
@@ -295,14 +297,13 @@ final class RestoreContentCommand
             {
                 newName = newName != null ? NameValueResolver.name( newName ) : name;
 
-                final NodePath targetPath = NodePath.create( newParentPath, newName ).build();
+                final NodePath targetPath = new NodePath( newParentPath, NodeName.from( newName ) );
 
                 nameAlreadyExist = nodeService.nodeExists( targetPath ) && !nodeService.getByPath( targetPath ).id().equals( node.id() );
                 if ( !newParentPath.equals( node.parentPath() ) )
                 {
-                    nameAlreadyExist = nameAlreadyExist ||
-                        ( nodeService.nodeExists( NodePath.create( node.parentPath(), newName ).build() ) &&
-                            !node.name().toString().equals( newName ) );
+                    nameAlreadyExist = nameAlreadyExist || !node.name().toString().equals( newName ) &&
+                        nodeService.nodeExists( new NodePath( node.parentPath(), NodeName.from( newName ) ) );
                 }
 
             }

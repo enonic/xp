@@ -387,7 +387,7 @@ public class CreateContentCommandTest
             .data( parentNodeData )
             .build();
 
-        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content/parent" ).build() ) ) ).thenReturn( parentNode );
+        Mockito.when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/parent" ) ) ) ).thenReturn( parentNode );
 
         final CreateContentParams params = CreateContentParams.create()
             .type( ContentTypeName.templateFolder() )
@@ -419,7 +419,7 @@ public class CreateContentCommandTest
             .data( parentNodeData )
             .build();
 
-        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content" ).build() ) ) ).thenReturn( parentNode );
+        Mockito.when( nodeService.getByPath( Mockito.eq( new NodePath( "/content" ) ) ) ).thenReturn( parentNode );
 
         final CreateContentParams params = CreateContentParams.create()
             .type( ContentTypeName.folder() )
@@ -488,7 +488,7 @@ public class CreateContentCommandTest
             .data( parentNodeData )
             .build();
 
-        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content/parent" ).build() ) ) ).thenReturn( parentNode );
+        Mockito.when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/parent" ) ) ) ).thenReturn( parentNode );
 
         final CreateContentParams params = CreateContentParams.create()
             .type( ContentTypeName.templateFolder() )
@@ -522,7 +522,7 @@ public class CreateContentCommandTest
             .data( parentNodeData )
             .build();
 
-        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content/_templates" ).build() ) ) ).thenReturn( parentNode );
+        Mockito.when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/_templates" ) ) ) ).thenReturn( parentNode );
 
         final CreateContentParams params = CreateContentParams.create()
             .type( ContentTypeName.pageTemplate() )
@@ -556,7 +556,7 @@ public class CreateContentCommandTest
             .data( parentNodeData )
             .build();
 
-        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content/_templates" ).build() ) ) ).thenReturn( parentNode );
+        Mockito.when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/_templates" ) ) ) ).thenReturn( parentNode );
 
         final CreateContentParams params = CreateContentParams.create()
             .type( ContentTypeName.pageTemplate() )
@@ -661,7 +661,7 @@ public class CreateContentCommandTest
         data.addStrings( ContentPropertyNames.INHERIT, inherit.stream().map( ContentInheritType::name ).collect( Collectors.toList() ) );
 
         final Node contentNode =
-            Node.create().id( NodeId.from( "id1" ) ).name( name ).parentPath( NodePath.create( parentPath ).build() ).data( data ).build();
+            Node.create().id( NodeId.from( "id1" ) ).name( name ).parentPath( new NodePath( parentPath ) ).data( data ).build();
 
         Mockito.when( nodeService.getByPath( contentNode.path() ) ).thenReturn( contentNode );
 

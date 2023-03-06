@@ -5,84 +5,58 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.support.AbstractEqualsTest;
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+import com.enonic.xp.support.SerializableUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodePathTest
+class NodePathTest
 {
     @Test
-    public void equals()
-    {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                return new NodePath( "/myPath/myItem" );
-            }
-
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                return new Object[]{new NodePath( "/myPath" )};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                return new NodePath( "/myPath/myItem" );
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-                return new NodePath( "/myPath/myItem" );
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
-    }
-
-    @Test
-    public void isEmpty()
+    void isEmpty()
     {
         assertFalse( new NodePath( "first" ).isEmpty() );
         assertTrue( new NodePath( "" ).isEmpty() );
+        assertTrue( new NodePath( "/" ).isEmpty() );
+        assertTrue( NodePath.ROOT.isEmpty() );
     }
 
     @Test
-    public void isRoot()
+    void isRoot()
     {
         assertTrue( new NodePath( "/" ).isRoot() );
     }
 
     @Test
-    public void isAbsolute()
+    void isAbsolute()
     {
         assertTrue( new NodePath( "/first" ).isAbsolute() );
         assertFalse( new NodePath( "first" ).isAbsolute() );
     }
 
     @Test
-    public void hasTrailingDivider()
+    void hasTrailingDivider()
     {
         assertTrue( new NodePath( "first/" ).hasTrailingDivider() );
         assertFalse( new NodePath( "first" ).hasTrailingDivider() );
         assertFalse( new NodePath( "/" ).hasTrailingDivider() );
+        assertFalse( NodePath.ROOT.hasTrailingDivider() );
     }
 
     @Test
-    public void trimTrailingDivider()
+    void trimTrailingDivider()
     {
         assertEquals( "first", new NodePath( "first/" ).trimTrailingDivider().toString() );
     }
 
     @Test
-    public void tostring()
+    void tostring()
     {
         assertEquals( "", new NodePath( "" ).toString() );
         assertEquals( "/", new NodePath( "/" ).toString() );
@@ -96,17 +70,44 @@ public class NodePathTest
     }
 
     @Test
-    public void ROOT()
+    void getName()
+    {
+        assertNull( new NodePath( "" ).getName() );
+        assertNull( new NodePath( "/" ).getName() );
+        assertEquals( "first", new NodePath( "first" ).getName() );
+        assertEquals( "first", new NodePath( "/first" ).getName() );
+        assertEquals( "first", new NodePath( "first/" ).getName() );
+        assertEquals( "second", new NodePath( "first/second" ).getName() );
+        assertEquals( "second", new NodePath( "/first/second" ).getName() );
+        assertEquals( "second", new NodePath( "/first/second/" ).getName() );
+        assertEquals( "second", new NodePath( "first/second/" ).getName() );
+    }
+
+    @Test
+    void ROOT()
     {
         assertEquals( "/", NodePath.ROOT.toString() );
         assertTrue( NodePath.ROOT.isAbsolute() );
         assertFalse( NodePath.ROOT.isRelative() );
         assertTrue( NodePath.ROOT.isEmpty() );
-        assertFalse( NodePath.ROOT.hasTrailingDivider() );
     }
 
     @Test
-    public void getParentPaths()
+    void getParentPath()
+    {
+        assertEquals( "", new NodePath( "first/" ).getParentPath().toString() );
+        assertEquals( "", new NodePath( "" ).getParentPath().toString() );
+        assertEquals( "/", new NodePath( "/" ).getParentPath().toString() );
+        assertEquals( "", new NodePath( "first" ).getParentPath().toString() );
+        assertEquals( "/", new NodePath( "/first" ).getParentPath().toString() );
+        assertEquals( "first", new NodePath( "first/second" ).getParentPath().toString() );
+        assertEquals( "/first", new NodePath( "/first/second" ).getParentPath().toString() );
+        assertEquals( "/first/", new NodePath( "/first/second/" ).getParentPath().toString() );
+        assertEquals( "first/", new NodePath( "first/second/" ).getParentPath().toString() );
+    }
+
+    @Test
+    void getParentPaths()
     {
         NodePath nodePath = new NodePath( "/one/two/three" );
         List<NodePath> parentPaths = nodePath.getParentPaths();
@@ -114,25 +115,30 @@ public class NodePathTest
         assertEquals( "/one/two", parentPaths.get( 0 ).toString() );
         assertEquals( "/one", parentPaths.get( 1 ).toString() );
         assertEquals( "/", parentPaths.get( 2 ).toString() );
+
+        assertEquals( 0, new NodePath( "" ).getParentPaths().size() );
+        assertEquals( 0, NodePath.ROOT.getParentPaths().size() );
     }
 
     @Test
-    public void removeFromBeginning()
+    void removeFromBeginning()
     {
         assertEquals( "/three/four", new NodePath( "/one/two/three/four" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
         assertEquals( "/three", new NodePath( "/one/two/three" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
         assertEquals( "/", new NodePath( "/one/two" ).removeFromBeginning( new NodePath( "/one/two" ) ).toString() );
         assertEquals( "/", new NodePath( "/one" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
+        assertEquals( "/", new NodePath( "/one" ).removeFromBeginning( new NodePath( "/one" ) ).toString() );
+        assertThrows( IllegalStateException.class, () -> new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ) );
     }
 
     @Test
-    public void removeFromBeginning_throws_IllegalStateException()
+    void removeFirstElement()
     {
-        assertThrows(IllegalStateException.class, () -> assertEquals( "/", new NodePath( "/" ).removeFromBeginning( new NodePath( "/one" ) ).toString() ));
+        assertEquals( "/path", NodePath.create(new NodePath( "/content/path" )).removeFirstElement().build().toString() );
     }
 
     @Test
-    public void compareTo()
+    void compareTo()
     {
         NodePath a = new NodePath( "/a" );
         NodePath b = new NodePath( "/b" );
@@ -151,4 +157,65 @@ public class NodePathTest
         assertThat( btrail.compareTo( atrail ) ).isGreaterThanOrEqualTo( 1 );
     }
 
+    @Test
+    void getElementAsString()
+    {
+        assertEquals( "one", new NodePath( "/one/two/three/four" ).getElementAsString( 0 ) );
+        assertEquals( "three", new NodePath( "/one/two/three/four" ).getElementAsString( 2 ) );
+        assertEquals( "four", new NodePath( "/one/two/three/four/" ).getElementAsString( 3 ) );
+        assertEquals( "two", new NodePath( "one/two" ).getElementAsString( 1 ) );
+        assertEquals( "two", new NodePath( "one/two/" ).getElementAsString( 1 ) );
+    }
+
+    @Test
+    void elementCount()
+    {
+        assertEquals( 4, new NodePath( "/one/two/three/four" ).elementCount() );
+        assertEquals( 4, new NodePath( "/one/two/three/four" ).elementCount() );
+        assertEquals( 4, new NodePath( "/one/two/three/four/" ).elementCount() );
+        assertEquals( 2, new NodePath( "one/two" ).elementCount() );
+        assertEquals( 2, new NodePath( "one/two/" ).elementCount() );
+        assertEquals( 0, new NodePath( "/" ).elementCount() );
+    }
+
+    @Test
+    void asRelative()
+    {
+        assertEquals( new NodePath( "one/two/three/four" ), new NodePath( "/one/two/three/four" ).asRelative() );
+        assertEquals( new NodePath( "one/two/three/four" ), new NodePath( "one/two/three/four" ).asRelative() );
+        assertEquals( new NodePath( "" ), new NodePath( "" ).asRelative() );
+        assertEquals( new NodePath( "" ), new NodePath( "/" ).asRelative() );
+    }
+
+    @Test
+    void asAbsolute()
+    {
+        assertEquals( new NodePath( "/one/two/three/four" ), new NodePath( "one/two/three/four" ).asAbsolute() );
+        assertEquals( new NodePath( "/one/two/three/four" ), new NodePath( "/one/two/three/four" ).asAbsolute() );
+        assertEquals( new NodePath( "/" ), new NodePath( "" ).asAbsolute() );
+        assertEquals( new NodePath( "/" ), new NodePath( "/" ).asAbsolute() );
+    }
+
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( NodePath.class ).withNonnullFields( "path" ).verify();
+    }
+
+    @Test
+    public void serializable()
+    {
+        final NodePath nodePath = new NodePath( "/abc" );
+        final byte[] serializedObject = SerializableUtils.serialize( nodePath );
+        final NodePath deserializedObject = (NodePath) SerializableUtils.deserialize( serializedObject );
+        assertEquals( nodePath, deserializedObject );
+    }
+
+    @Test
+    public void nodeWithParent()
+    {
+        assertEquals( "/r/abc", new NodePath( new NodePath( "/r" ), NodeName.from( "abc" ) ).toString() );
+        assertEquals( "/r/abc", new NodePath( new NodePath( "/r/" ), NodeName.from( "abc" ) ).toString() );
+        assertEquals( "/abc", new NodePath( NodePath.ROOT, NodeName.from( "abc" ) ).toString() );
+    }
 }

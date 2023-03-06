@@ -79,12 +79,13 @@ public class ContentNodeTranslator
 
     private ContentPath getParent( final NodePath nodePath )
     {
-        if ( NodePath.ROOT.equals( nodePath.getParentPath() ) )
+        final NodePath parentPath = nodePath.getParentPath();
+        if ( parentPath.isRoot() )
         {
             return ContentPath.ROOT;
         }
 
-        return ContentNodeHelper.translateNodePathToContentPath( nodePath.getParentPath() );
+        return ContentNodeHelper.translateNodePathToContentPath( parentPath );
     }
 
     private Content doTranslate( final Node node, final boolean hasChildren )
@@ -115,9 +116,7 @@ public class ContentNodeTranslator
             .hasChildren( hasChildren )
             .manualOrderValue( node.getManualOrderValue() );
 
-        final boolean isRoot = NodePath.ROOT.equals( node.parentPath() );
-
-        if ( isRoot )
+        if ( node.parentPath().isRoot() )
         {
             builder.root();
         }

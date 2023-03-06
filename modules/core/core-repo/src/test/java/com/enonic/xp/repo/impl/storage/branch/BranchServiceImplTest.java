@@ -65,7 +65,7 @@ public class BranchServiceImplTest
             repositoryId( RepositoryId.from( "my-repo" ) ).
             build();
 
-        final NodePath path = NodePath.create( NodePath.ROOT, "fisk" ).build();
+        final NodePath path = new NodePath( "/fisk" );
 
         Mockito.when( this.storageDao.store( Mockito.isA( StoreRequest.class ) ) ).
             thenReturn( "123_myBranch" );

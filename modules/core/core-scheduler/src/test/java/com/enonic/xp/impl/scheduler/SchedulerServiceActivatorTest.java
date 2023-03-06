@@ -28,6 +28,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
@@ -151,7 +152,7 @@ class SchedulerServiceActivatorTest
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenThrow(
-            new NodeAlreadyExistAtPathException( NodePath.create( NodePath.ROOT, jobParams.getName().getValue() ).build(),
+            new NodeAlreadyExistAtPathException( new NodePath( NodePath.ROOT, NodeName.from( jobParams.getName().getValue() ) ),
                                                  RepositoryId.from( "repo" ), Branch.from( "branch" ) ) );
 
         activator.activate( bundleContext );

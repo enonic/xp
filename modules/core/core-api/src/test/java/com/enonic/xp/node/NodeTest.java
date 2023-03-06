@@ -36,7 +36,7 @@ public class NodeTest
         assertEquals( Node.ROOT_UUID.toString(), rootNode.id().toString() );
         assertEquals( "", rootNode.name().toString() );
         assertNull( rootNode.parentPath() );
-        assertEquals( NodePath.create( NodePath.ROOT ).addElement( "" ).build(), rootNode.path() );
+        assertEquals( NodePath.ROOT, rootNode.path() );
     }
 
     @Test

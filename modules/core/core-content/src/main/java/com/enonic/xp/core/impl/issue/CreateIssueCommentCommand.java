@@ -103,7 +103,7 @@ public class CreateIssueCommentCommand
 
             final CreateNodeParams.Builder builder = CreateNodeParams.create().
                 name( commentName ).
-                parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, parentName.toString() ).build() ).
+                parent( new NodePath( IssueConstants.ISSUE_ROOT_PATH, parentName ) ).
                 data( commentAsData ).
                 inheritPermissions( true ).
                 childOrder( IssueCommentConstants.DEFAULT_CHILD_ORDER ).

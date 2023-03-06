@@ -366,7 +366,7 @@ public final class NodeImporter
 
     private void verifyImportRoot()
     {
-        if ( NodePath.ROOT.equals( this.importRoot ) )
+        if ( importRoot.isRoot() )
         {
             return;
         }

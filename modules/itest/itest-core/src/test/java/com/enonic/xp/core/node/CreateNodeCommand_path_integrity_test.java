@@ -57,7 +57,7 @@ public class CreateNodeCommand_path_integrity_test
         refresh();
 
         final FindNodesByQueryResult result =
-            doFindByQuery( NodeQuery.create().withPath( true ).path( NodePath.create( NodePath.ROOT, "myNode" ).build() ).build() );
+            doFindByQuery( NodeQuery.create().withPath( true ).path( new NodePath( "/myNode" ) ).build() );
 
         assertEquals( 1, result.getTotalHits() );
     }

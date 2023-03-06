@@ -88,7 +88,7 @@ abstract class AbstractNodeEventHandler
 
     NodePath getPath( final Map<Object, Object> map )
     {
-        return NodePath.create( map.get( PATH ).toString() ).build();
+        return new NodePath( map.get( PATH ).toString() );
     }
 
     NodeId getId( final Map<Object, Object> map )

@@ -39,7 +39,7 @@ public class RepoPath
         Preconditions.checkArgument( !isNullOrEmpty( elements[1] ), "Branch cannot be empty" );
         Preconditions.checkArgument( !isNullOrEmpty( elements[2] ), "nodePath cannot be empty" );
 
-        return new RepoPath( RepositoryId.from( elements[0] ), Branch.from( elements[1] ), NodePath.create( elements[2] ).build() );
+        return new RepoPath( RepositoryId.from( elements[0] ), Branch.from( elements[1] ), new NodePath( elements[2] ) );
     }
 
     @Override

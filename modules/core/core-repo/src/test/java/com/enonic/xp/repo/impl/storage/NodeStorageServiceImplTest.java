@@ -68,7 +68,7 @@ class NodeStorageServiceImplTest
     @Test
     public void testGetNode()
     {
-        final NodePath nodePath = NodePath.create( "path" ).build();
+        final NodePath nodePath = new NodePath( "/path" );
 
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
             nodeVersionId( nodeVersionId ).

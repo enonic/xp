@@ -47,9 +47,11 @@ public class FindNodePathsByQueryResult
             return this;
         }
 
-        public Builder path(String path) {
-            if(path != null) {
-                nodePaths.addNodePath( NodePath.create( path ).build() );
+        public Builder path( String path )
+        {
+            if ( path != null )
+            {
+                nodePaths.addNodePath( new NodePath( path ) );
             }
             return this;
         }

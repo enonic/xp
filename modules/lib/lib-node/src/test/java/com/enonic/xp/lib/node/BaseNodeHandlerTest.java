@@ -56,8 +56,7 @@ public class BaseNodeHandlerTest
     {
         return NodeBranchEntry.create().
             nodeId( NodeId.from( id ) ).
-            nodePath( NodePath.create( NodePath.ROOT + path ).
-                build() ).
+            nodePath( new NodePath( "/" + path ) ).
             build();
     }
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -17,178 +17,258 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 public final class NodePath
-    implements Comparable<NodePath>
+    implements Comparable<NodePath>, Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private static final String ELEMENT_DIVIDER = "/";
 
-    public static final NodePath ROOT = new NodePath( ELEMENT_DIVIDER );
+    public static final NodePath ROOT = new NodePath( ELEMENT_DIVIDER, false );
 
-    private final boolean absolute;
+    private final String path;
 
-    private final boolean trailingDivider;
-
-    private final ImmutableList<Element> elements;
-
-    private final String refString;
+    private NodePath( final String path, boolean ignore )
+    {
+        this.path = path;
+    }
 
     public NodePath( final String path )
     {
-        this( new Builder( path ) );
-    }
-
-    public NodePath( final NodePath parent, final NodeName element )
-    {
-        this( new Builder( parent ).addElement( element.toString() ) );
-    }
-
-    private NodePath( final Builder builder )
-    {
-        this.absolute = builder.absolute;
-        this.trailingDivider = builder.trailingDivider;
-        if ( builder.elements != null )
+        if ( path.isEmpty() )
         {
-            this.elements = builder.elements;
+            this.path = "";
+        }
+        else if ( path.equals( ELEMENT_DIVIDER ) )
+        {
+            this.path = ELEMENT_DIVIDER;
         }
         else
         {
-            this.elements = builder.elementListBuilder.build();
+            this.path = toElements( path ).stream()
+                .collect( Collectors.joining( ELEMENT_DIVIDER, isAbsolute( path ) ? ELEMENT_DIVIDER : "",
+                                              hasTrailing( path ) ? ELEMENT_DIVIDER : "" ) );
         }
+    }
 
-        this.refString = this.elements.stream()
-            .map( Objects::toString )
-            .collect( Collectors.joining( ELEMENT_DIVIDER, absolute ? ELEMENT_DIVIDER : "", trailingDivider ? ELEMENT_DIVIDER : "" ) );
+    public NodePath( final NodePath parent, final NodeName name )
+    {
+        if ( name.isRoot() )
+        {
+            throw new IllegalArgumentException( "Can't add root name to path" );
+        }
+        final StringBuilder stringBuilder = new StringBuilder( parent.path );
+        if ( !parent.path.endsWith( ELEMENT_DIVIDER ) )
+        {
+            stringBuilder.append( ELEMENT_DIVIDER );
+        }
+        stringBuilder.append( name );
+        this.path = stringBuilder.toString();
     }
 
     public boolean isRoot()
     {
-        return this.equals( NodePath.ROOT );
+        return this.path.equals( ELEMENT_DIVIDER );
     }
 
+    @Deprecated
     public NodePath asRelative()
     {
-        if ( isRelative() )
+        if ( !isAbsolute( this.path ) )
         {
             return this;
         }
-        return create( this ).absolute( false ).build();
+        return new NodePath( this.path.substring( 1 ) );
     }
 
+    @Deprecated
     public NodePath asAbsolute()
     {
-        if ( isAbsolute() )
+        if ( isAbsolute( this.path ) )
         {
             return this;
         }
-        final Builder builder = create( this );
-        return builder.absolute( true ).build();
+        return new NodePath( ELEMENT_DIVIDER + this.path );
     }
 
     public NodePath getParentPath()
     {
-        return new NodePath( new Builder( this ).removeLastElement() );
-    }
+        if ( this.path.isEmpty() || this.path.equals( ELEMENT_DIVIDER ) )
+        {
+            return this;
+        }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
+        final boolean hasTrailing = hasTrailing( this.path );
+        final int endIndex = hasTrailing ? this.path.length() - 1 : this.path.length();
+        final String stringNoTrailing = this.path.substring( 0, endIndex );
 
-    public static Builder create( final NodePath parent, final String path )
-    {
-        return new Builder( parent ).
-            elements( path ).
-            absolute( true );
+        final int lastDivider = stringNoTrailing.lastIndexOf( ELEMENT_DIVIDER );
+
+        if ( lastDivider == 0 )
+        {
+            return NodePath.ROOT;
+        }
+        else if ( lastDivider == -1 )
+        {
+            return new NodePath( "", false );
+        }
+        else
+        {
+            return new NodePath( stringNoTrailing.substring( 0, hasTrailing ? lastDivider + 1 : lastDivider ), false );
+        }
     }
 
     public List<NodePath> getParentPaths()
     {
         List<NodePath> parentPaths = new ArrayList<>();
 
-        final Builder builder = new Builder( this );
-        for ( int i = 0; i < this.elements.size(); i++ )
+        if ( isEmpty() )
         {
-            builder.removeLastElement();
-            parentPaths.add( builder.build() );
+            return parentPaths;
         }
+
+        NodePath nodePath = this;
+        do
+        {
+            NodePath parent = nodePath.getParentPath();
+
+            parentPaths.add( parent );
+            nodePath = parent;
+        }
+        while ( !nodePath.isEmpty() );
 
         return parentPaths;
     }
 
     public boolean isEmpty()
     {
-        return this.elements.isEmpty();
+        return this.path.isEmpty() || this.path.equals( ELEMENT_DIVIDER );
     }
 
     public boolean isAbsolute()
     {
-        return this.absolute;
+        return isAbsolute( this.path );
     }
 
+    @Deprecated
     public boolean isRelative()
     {
-        return !this.absolute;
+        return !isAbsolute( this.path );
     }
 
+    @Deprecated
     public boolean hasTrailingDivider()
     {
-        return this.trailingDivider;
+        return hasTrailing( this.path );
     }
 
+    @Deprecated
     public NodePath trimTrailingDivider()
     {
-        return new Builder( this ).trailingDivider( false ).build();
-    }
-
-    public int elementCount()
-    {
-        return this.elements.size();
-    }
-
-    public Iterator<Element> iterator()
-    {
-        return elements.iterator();
-    }
-
-    public String getElementAsString( final int index )
-    {
-        return elements.get( index ).toString();
-    }
-
-    public Element getLastElement()
-    {
-        return elements.get( elements.size() - 1 );
-    }
-
-    public String getName()
-    {
-        return isEmpty() ? null : getLastElement().toString();
-    }
-
-    public Iterable<String> resolvePathElementNames()
-    {
-        return elements.stream().map( Element::toString ).collect( Collectors.toList() );
-    }
-
-    public NodePath removeFromBeginning( final NodePath path )
-    {
-        Preconditions.checkState( this.elements.size() >= path.elements.size(),
-                                  "No point in trying to remove [" + path + "] from [" + this.toString() + "]" );
-
-        if ( path.elements.isEmpty() )
+        if ( path.isEmpty() || path.equals( ELEMENT_DIVIDER ) )
         {
             return this;
         }
 
-        for ( int i = 0; i < path.elements.size(); i++ )
+        return hasTrailing( this.path ) ? new NodePath( this.path.substring( 0, this.path.length() - 1 ) ) : this;
+    }
+
+    @Deprecated
+    public int elementCount()
+    {
+        if ( path.isEmpty() || path.equals( ELEMENT_DIVIDER ) )
         {
-            if ( !path.elements.get( i ).equals( elements.get( i ) ) )
+            return 0;
+        }
+        int index = 0;
+        int count = 0;
+        while ( ( index = this.path.indexOf( ELEMENT_DIVIDER, index ) ) != -1 )
+        {
+            index += 1;
+            count++;
+        }
+        if ( !isAbsolute( this.path ) )
+        {
+            count++;
+        }
+
+        if ( hasTrailing( this.path ) )
+        {
+            count--;
+        }
+        return count;
+    }
+
+    @Deprecated
+    public Iterator<Element> iterator()
+    {
+        return toElements( this.path ).stream().map( Element::new ).iterator();
+    }
+
+    @Deprecated
+    public String getElementAsString( final int index )
+    {
+        int fromIndex = isAbsolute( this.path ) ? 1 : 0;
+        for ( int i = 0; i < index; i++ )
+        {
+            fromIndex = this.path.indexOf( ELEMENT_DIVIDER, fromIndex + 1 ) + 1;
+        }
+
+        final int toIndex = this.path.indexOf( ELEMENT_DIVIDER, fromIndex );
+        return this.path.substring( fromIndex, toIndex == -1 ? this.path.length() : toIndex );
+
+    }
+
+    @Deprecated
+    public Element getLastElement()
+    {
+        return new Element( getName() );
+    }
+
+    public String getName()
+    {
+        if ( isEmpty() )
+        {
+            return null;
+        }
+        else
+        {
+            final int stringIndex = isAbsolute( this.path ) ? 1 : 0;
+            final int endIndex = hasTrailing( this.path ) ? this.path.length() - 1 : this.path.length();
+            final String stringNoTrailing = this.path.substring( stringIndex, endIndex );
+            final int beginIndex = stringNoTrailing.lastIndexOf( ELEMENT_DIVIDER );
+            return stringNoTrailing.substring( beginIndex == -1 ? 0 : beginIndex + 1 );
+        }
+    }
+
+    @Deprecated
+    public Iterable<String> resolvePathElementNames()
+    {
+        return toElements( this.path );
+    }
+
+    @Deprecated
+    public NodePath removeFromBeginning( final NodePath path )
+    {
+        final List<String> elements = toElements( this.path );
+        final List<String> pathElements = toElements( path.path );
+        Preconditions.checkState( elements.size() >= pathElements.size(),
+                                  "No point in trying to remove [" + path + "] from [" + this.toString() + "]" );
+
+        if ( pathElements.isEmpty() )
+        {
+            return this;
+        }
+
+        for ( int i = 0; i < pathElements.size(); i++ )
+        {
+            if ( !pathElements.get( i ).equalsIgnoreCase( elements.get( i ) ) )
             {
                 return this;
             }
         }
 
-        final Builder builder = new Builder().absolute( this.isAbsolute() ).trailingDivider( this.hasTrailingDivider() );
-        for ( int i = path.elements.size(); i < this.elements.size(); i++ )
+        final Builder builder = create( NodePath.ROOT ).absolute( isAbsolute( this.path ) ).trailingDivider( hasTrailing( this.path ) );
+        for ( int i = pathElements.size(); i < elements.size(); i++ )
         {
             builder.addElement( elements.get( i ) );
         }
@@ -214,43 +294,51 @@ public final class NodePath
         }
 
         final NodePath path = (NodePath) o;
-        return Objects.equals( absolute, path.absolute ) &&
-            Objects.equals( trailingDivider, path.trailingDivider ) &&
-            Objects.equals( elements, path.elements );
+        return this.path.equalsIgnoreCase( path.path );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.absolute, this.trailingDivider, this.elements );
+        return path.toLowerCase().hashCode();
     }
 
     @Override
     public String toString()
     {
-        return refString;
+        return path;
+    }
+
+    public static Builder create()
+    {
+        return create( NodePath.ROOT );
+    }
+
+    @Deprecated
+    public static Builder create( final String path )
+    {
+        return create( NodePath.ROOT ).elements( path );
     }
 
     public static Builder create( final NodePath source )
     {
-        Preconditions.checkNotNull( source, "source to build copy from not given" );
         return new Builder( source );
     }
 
-    public static Builder create( final String path )
+    @Deprecated
+    public static Builder create( final NodePath parent, final String path )
     {
-        final Builder builder = new Builder();
-        builder.elements( path );
-        return builder;
+        return create( parent ).elements( path );
     }
 
+    @Deprecated
     public static final class Element
     {
         private final String name;
 
         public Element( final String name )
         {
-            this.name = name;
+            this.name = Objects.requireNonNull( name );
         }
 
         @Override
@@ -286,77 +374,80 @@ public final class NodePath
     @Override
     public int compareTo( final NodePath o )
     {
-        if ( o.equals( this ) )
-        {
-            return 0;
-        }
+        return this.path.compareTo( o.path );
+    }
 
-        return this.refString.compareTo( o.refString );
+    private static List<String> toElements( final String elements )
+    {
+        return Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().trimResults().splitToList( elements );
+    }
+
+    private static boolean isAbsolute( final String path )
+    {
+        return path.startsWith( ELEMENT_DIVIDER );
+    }
+
+    private static boolean hasTrailing( final String path )
+    {
+        return !path.equals( ELEMENT_DIVIDER ) && path.endsWith( ELEMENT_DIVIDER );
     }
 
     public static final class Builder
     {
-        private boolean absolute = true;
+        private boolean absolute;
 
-        private boolean trailingDivider = false;
+        private boolean trailingDivider;
 
-        private ImmutableList<Element> elements = null;
-
-        private ImmutableList.Builder<Element> elementListBuilder = new ImmutableList.Builder<>();
+        private final ArrayList<String> elementListBuilder;
 
         public Builder()
         {
+            this.absolute = true;
+            this.elementListBuilder = new ArrayList<>();
         }
 
         public Builder( final NodePath source )
         {
             Preconditions.checkNotNull( source, "source to build copy from not given" );
-            this.absolute = source.absolute;
-            this.trailingDivider = source.trailingDivider;
-            this.elements = source.elements;
+            this.absolute = isAbsolute( source.path );
+            this.trailingDivider = hasTrailing( source.path );
+            this.elementListBuilder = source.isEmpty() ? new ArrayList<>() : new ArrayList<>( toElements( source.path ) );
         }
 
+        @Deprecated
         public Builder( final String path )
         {
+            this.elementListBuilder = new ArrayList<>();
             this.elements( path );
         }
 
-        private Element newElement( String value )
-        {
-            return new Element( value );
-        }
-
+        @Deprecated
         public Builder trailingDivider( final boolean value )
         {
             this.trailingDivider = value;
             return this;
         }
 
+        @Deprecated
         public Builder absolute( final boolean value )
         {
             this.absolute = value;
             return this;
         }
 
+        @Deprecated
         public Builder elements( final String elements )
         {
-            if ( elements.length() == 0 )
+            if ( elements.isEmpty() )
             {
-                absolute( false );
-                trailingDivider( false );
+                this.absolute = false;
+                this.trailingDivider = false;
             }
             else
             {
-                final boolean absolute = elements.startsWith( ELEMENT_DIVIDER );
-                final boolean hasTrailingDivider =
-                    !( elements.length() == 1 && absolute ) && elements.endsWith( ELEMENT_DIVIDER );
-
-                absolute( absolute );
-                trailingDivider( hasTrailingDivider );
-                for ( final String pathElement : Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().trimResults().split( elements ) )
-                {
-                    addElement( pathElement );
-                }
+                this.absolute = isAbsolute( elements );
+                this.trailingDivider = hasTrailing( elements );
+                this.elementListBuilder.addAll( toElements( elements ) );
             }
             return this;
         }
@@ -368,94 +459,44 @@ public final class NodePath
                 return this;
             }
 
-            if ( this.elements != null )
-            {
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                newList.addAll( this.elements );
-                newList.add( newElement( value ) );
-                this.elementListBuilder = newList;
-                this.elements = null;
-            }
-            else
-            {
-                this.elementListBuilder.add( newElement( value ) );
-            }
+            this.elementListBuilder.add( NodeName.from( value ).toString() );
             return this;
         }
 
+        @Deprecated
         public Builder removeLastElement()
         {
-            if ( this.elements != null )
+            if ( !this.elementListBuilder.isEmpty() )
             {
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                for ( int i = 0; i < this.elements.size() - 1; i++ )
-                {
-                    newList.add( this.elements.get( i ) );
-                }
-                this.elementListBuilder = newList;
-                this.elements = null;
-            }
-            else if ( this.elementListBuilder != null )
-            {
-                final ImmutableList<Element> list = this.elementListBuilder.build();
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                for ( int i = 0; i < list.size() - 1; i++ )
-                {
-                    newList.add( list.get( i ) );
-                }
-                this.elementListBuilder = newList;
-                this.elements = null;
+                this.elementListBuilder.remove( this.elementListBuilder.size() - 1 );
             }
             return this;
         }
 
+        @Deprecated
         public Builder removeFirstElement()
         {
-            if ( this.elements != null )
+            if ( !this.elementListBuilder.isEmpty() )
             {
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                for ( int i = 1; i < this.elements.size(); i++ )
-                {
-                    newList.add( this.elements.get( i ) );
-                }
-                this.elementListBuilder = newList;
-                this.elements = null;
-            }
-            else if ( this.elementListBuilder != null )
-            {
-                final ImmutableList<Element> list = this.elementListBuilder.build();
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                for ( int i = 1; i < list.size(); i++ )
-                {
-                    newList.add( list.get( i ) );
-                }
-                this.elementListBuilder = newList;
-                this.elements = null;
+                this.elementListBuilder.remove( 0 );
             }
             return this;
         }
 
+        @Deprecated
         public Builder addElement( final Element value )
         {
-            if ( this.elements != null )
-            {
-                final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                this.elements.forEach( newList::add );
-                newList.add( value );
-                this.elementListBuilder = newList;
-                this.elements = null;
-            }
-            else
-            {
-                this.elementListBuilder.add( value );
-            }
-
+            addElement( value.name );
             return this;
         }
 
         public NodePath build()
         {
-            return new NodePath( this );
+            return new NodePath( this.elementListBuilder.stream()
+                                     .collect( Collectors.joining( ELEMENT_DIVIDER, this.absolute ? ELEMENT_DIVIDER : "",
+                                                                   this.trailingDivider && !this.elementListBuilder.isEmpty()
+                                                                       ? ELEMENT_DIVIDER
+                                                                       : "" ) ), false );
         }
     }
 }

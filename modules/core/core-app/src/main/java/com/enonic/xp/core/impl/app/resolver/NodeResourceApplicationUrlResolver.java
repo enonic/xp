@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -48,10 +51,8 @@ public final class NodeResourceApplicationUrlResolver
 
             return nodes.getNodeHits()
                 .stream()
-                .map( nodeHit -> nodeHit.getNodePath()
-                    .removeFromBeginning( NodePath.create( applicationKey.toString() ).build() )
-                    .asAbsolute()
-                    .toString() )
+                .map( NodeHit::getNodePath )
+                .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( "/", 1 ) ) )
                 .collect( Collectors.toSet() );
         } );
 
@@ -60,28 +61,25 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME ) )
+        if ( !path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" ) )
         {
             return null;
         }
 
-        Node applicationNode = VirtualAppContext.createContext()
-            .callWith( () -> nodeService.getByPath(
-                NodePath.create( NodePath.create( applicationKey.toString() ).build() ).build().asAbsolute() ) );
+        final NodePath.Builder builder =
+            NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT ).addElement( applicationKey.toString() );
 
-        if ( applicationNode == null )
-        {
-            return null;
-        }
+        Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = VirtualAppContext.createContext()
-            .callWith( () -> nodeService.getByPath(
-                NodePath.create( NodePath.create( applicationKey.toString() ).build(), path ).build().asAbsolute() ) );
+        final Node resourceNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( builder.build() ) );
 
         if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
         {
             if ( resourceNode == null || resourceNode.data().getValue( SchemaNodePropertyNames.RESOURCE ) == null )
             {
+                final NodePath appPath =
+                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+                final Node applicationNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( appPath ) );
                 return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE,
                                               applicationNode.getTimestamp() );
             }

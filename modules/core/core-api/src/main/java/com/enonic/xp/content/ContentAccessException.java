@@ -13,8 +13,6 @@ import com.enonic.xp.security.acl.Permission;
 public final class ContentAccessException
     extends BaseException
 {
-    private static final String CONTENT_ROOT_NODE_NAME = "content";
-
     private final User user;
 
     private final ContentPath contentPath;
@@ -59,7 +57,14 @@ public final class ContentAccessException
 
     private static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        final String contentPath = nodePath.asAbsolute().toString().substring( ( CONTENT_ROOT_NODE_NAME + "/" ).length() );
-        return ContentPath.from( contentPath ).asAbsolute();
+        final int beginIndex = nodePath.toString().indexOf( "/", 1 );
+        if ( beginIndex == -1 )
+        {
+            return ContentPath.ROOT;
+        }
+        else
+        {
+            return ContentPath.from( nodePath.toString().substring( beginIndex ) );
+        }
     }
 }

@@ -229,9 +229,7 @@ public class MoveNodeCommand
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )
     {
-        final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
-
-        CheckNodeExistsCommand.create( this ).nodePath( newNodePath ).throwIfExists().build().execute();
+        CheckNodeExistsCommand.create( this ).nodePath( new NodePath( newParentPath, newNodeName ) ).throwIfExists().build().execute();
     }
 
     public static class Builder

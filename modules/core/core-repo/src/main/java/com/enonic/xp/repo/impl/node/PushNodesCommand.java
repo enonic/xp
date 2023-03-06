@@ -185,7 +185,7 @@ public class PushNodesCommand
 
     private boolean targetParentExists( final NodePath nodePath )
     {
-        if ( nodePath.isRoot() || nodePath.getParentPath().equals( NodePath.ROOT ) )
+        if ( nodePath.isRoot() || nodePath.getParentPath().isRoot() )
         {
             return true;
         }

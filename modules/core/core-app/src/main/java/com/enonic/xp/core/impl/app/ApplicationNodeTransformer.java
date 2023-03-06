@@ -5,6 +5,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -43,11 +44,11 @@ class ApplicationNodeTransformer
 
     static UpdateNodeParams toUpdateNodeParams( final Application app, final ByteSource source )
     {
-        return UpdateNodeParams.create().
-            path( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, app.getKey().getName() ).build() ).
-            attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
-            editor( node -> node.data = createApplicationProperties( app ) ).
-            refresh( RefreshMode.ALL ).
-            build();
+        return UpdateNodeParams.create()
+            .path( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( app.getKey().getName() ) ) )
+            .attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source )
+            .editor( node -> node.data = createApplicationProperties( app ) )
+            .refresh( RefreshMode.ALL )
+            .build();
     }
 }

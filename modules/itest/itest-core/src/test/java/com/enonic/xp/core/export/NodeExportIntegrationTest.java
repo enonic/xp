@@ -254,7 +254,7 @@ public class NodeExportIntegrationTest
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() )
+            .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
             .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
             .build()
             .execute();
@@ -280,7 +280,7 @@ public class NodeExportIntegrationTest
         final NodeExportResult result = NodeExporter.create()
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( NodePath.create( "/mynode/child1" ).build() )
+            .sourceNodePath( new NodePath( "/mynode/child1" ) )
             .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
             .build()
             .execute();

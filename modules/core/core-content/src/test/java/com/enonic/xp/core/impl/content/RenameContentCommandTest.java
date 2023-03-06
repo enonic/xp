@@ -160,7 +160,7 @@ class RenameContentCommandTest
         final RepositoryId repositoryId = RepositoryId.from( "some.repo" );
         final Branch branch = Branch.from( "somebranch" );
         when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenThrow(
-            new NodeAlreadyExistAtPathException( NodePath.create( "/content/mycontent2" ).build(), repositoryId, branch ) );
+            new NodeAlreadyExistAtPathException( new NodePath( "/content/mycontent2" ), repositoryId, branch ) );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
 
         final Content content = createContent( true );

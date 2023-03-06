@@ -125,7 +125,7 @@ public final class MoveNodeHandler
 
         NodePath getAsNodePath()
         {
-            return NodePath.create( this.value ).trailingDivider( false ).build();
+            return new NodePath( this.value.endsWith( "/" ) ? this.value.substring( 0, this.value.length() - 1 ) : this.value );
         }
     }
 

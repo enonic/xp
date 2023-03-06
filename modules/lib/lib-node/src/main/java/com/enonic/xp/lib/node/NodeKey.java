@@ -20,7 +20,7 @@ public class NodeKey
             return null;
         }
 
-        return new NodeKey( !value.startsWith( "/" ), value );
+        return new NodeKey( value );
     }
 
     public static NodeKey from( final String value, final String versionId)
@@ -30,18 +30,18 @@ public class NodeKey
             return null;
         }
 
-        return new NodeKey( !value.startsWith( "/" ), value, versionId);
+        return new NodeKey( value, versionId);
     }
 
-    private NodeKey( final boolean isId, final String value )
+    private NodeKey(final String value )
     {
-        this.isId = isId;
+        this.isId = !value.startsWith( "/" );
         this.value = value;
     }
 
-    private NodeKey( final boolean isId, final String value, final String versionId )
+    private NodeKey( final String value, final String versionId )
     {
-        this( isId, value );
+        this( value );
         this.versionId = versionId;
     }
 
@@ -62,7 +62,7 @@ public class NodeKey
             throw new IllegalArgumentException( "Key not of type path" );
         }
 
-        return NodePath.create( this.value ).build();
+        return new NodePath( this.value );
     }
 
     public boolean isId()

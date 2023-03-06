@@ -47,7 +47,7 @@ public final class Node
 
     private final NodeVersionId nodeVersionId;
 
-    protected Node( final Builder builder )
+    private Node( final Builder builder )
     {
         Preconditions.checkNotNull( builder.permissions, "permissions are required" );
         Preconditions.checkNotNull( builder.data, "data are required" );

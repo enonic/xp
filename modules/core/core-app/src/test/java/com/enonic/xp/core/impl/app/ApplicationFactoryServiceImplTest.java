@@ -137,7 +137,7 @@ class ApplicationFactoryServiceImplTest
                                                                                   .addNodeHit( NodeHit.create()
                                                                                                    .nodeId( NodeId.from( "123" ) )
                                                                                                    .nodePath(
-                                                                                                       NodePath.create( "/app1" ).build() )
+                                                                                                       new NodePath( "/app1" ) )
                                                                                                    .build() )
                                                                                   .totalHits( 1 )
                                                                                   .hits( 1 )
@@ -161,7 +161,7 @@ class ApplicationFactoryServiceImplTest
                                                                                   .addNodeHit( NodeHit.create()
                                                                                                    .nodeId( NodeId.from( "123" ) )
                                                                                                    .nodePath(
-                                                                                                       NodePath.create( "/app1" ).build() )
+                                                                                                       new NodePath( "/app1" ) )
                                                                                                    .build() )
                                                                                   .totalHits( 1 )
                                                                                   .hits( 1 )

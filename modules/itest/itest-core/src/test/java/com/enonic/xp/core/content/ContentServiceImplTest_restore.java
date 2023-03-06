@@ -285,7 +285,7 @@ public class ContentServiceImplTest_restore
     private Context archiveContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
             .build();
     }
 

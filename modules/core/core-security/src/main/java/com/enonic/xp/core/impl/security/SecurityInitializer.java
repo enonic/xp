@@ -127,7 +127,7 @@ public final class SecurityInitializer
 
         nodeService.create( CreateNodeParams.create().
             parent( idProviderParentNodePath.getParentPath() ).
-            name( idProviderParentNodePath.getLastElement().toString() ).
+            name( idProviderParentNodePath.getName() ).
             permissions( AccessControlList.create().
                 addAll( SystemConstants.SYSTEM_REPO_DEFAULT_ACL.getEntries() ).
                 add( userManagerFullAccess ).
@@ -145,7 +145,7 @@ public final class SecurityInitializer
 
         nodeService.create( CreateNodeParams.create().
             parent( rolesNodePath.getParentPath() ).
-            name( rolesNodePath.getLastElement().toString() ).
+            name( rolesNodePath.getName() ).
             inheritPermissions( true ).
             build() );
     }

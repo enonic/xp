@@ -59,8 +59,8 @@ class ExportRunnableTaskTest
     void exportNodes()
     {
         final NodeExportResult nodeExportResult = NodeExportResult.create()
-            .addNodePath( NodePath.create().addElement( "node" ).addElement( "path" ).build() )
-            .addBinary( NodePath.create().elements( "binary" ).build(), BinaryReference.from( "binaryRef" ) )
+            .addNodePath( new NodePath( "/node/path" ) )
+            .addBinary( new NodePath( "/binary" ), BinaryReference.from( "binaryRef" ) )
             .build();
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );

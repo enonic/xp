@@ -63,7 +63,7 @@ public class CreateNodeCommandTest
     {
         assertThrows(NodeNotFoundException.class, () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
-            parent( NodePath.create( "/fisk" ).build() ).
+            parent( new NodePath( "/fisk" ) ).
             build() ) );
     }
 

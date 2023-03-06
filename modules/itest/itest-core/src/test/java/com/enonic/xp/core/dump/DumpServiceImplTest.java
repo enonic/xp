@@ -766,7 +766,7 @@ public class DumpServiceImplTest
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
             final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
             final NodeId postNodeId = NodeId.from( "1f798176-5868-411b-8093-242820c20620" );
-            final NodePath nodePath = NodePath.create( "/content/mysite" ).build();
+            final NodePath nodePath = new NodePath( "/content/mysite" );
             final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
             final NodeVersionId masterNodeVersionId = NodeVersionId.from( "02e61f29a57309834d96bbf7838207ac456bbf5c" );
 

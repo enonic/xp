@@ -13,7 +13,7 @@ public class PushNodesResultMapperTest
     public void single_successful()
         throws Exception
     {
-        final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() ).build();
+        final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build();
 
         final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
         new PushNodesResultMapper( result ).serialize( jsonGenerator );
@@ -40,9 +40,9 @@ public class PushNodesResultMapperTest
         throws Exception
     {
         final PushNodesResult result = PushNodesResult.create()
-            .addSuccess( createEntry( "a" ), NodePath.create( "/a" ).build() )
-            .addSuccess( createEntry( "b" ), NodePath.create( "/b" ).build() )
-            .addSuccess( createEntry( "c" ), NodePath.create( "/c" ).build() )
+            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
+            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
+            .addSuccess( createEntry( "c" ), new NodePath( "/c" ) )
             .addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED )
             .addFailed( createEntry( "e" ), PushNodesResult.Reason.PARENT_NOT_FOUND )
             .addFailed( createEntry( "f" ), PushNodesResult.Reason.PARENT_NOT_FOUND )

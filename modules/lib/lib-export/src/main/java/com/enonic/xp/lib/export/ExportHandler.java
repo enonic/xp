@@ -29,7 +29,7 @@ public class ExportHandler
     public NodeExportResultMapper execute()
     {
         final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
-            .sourceNodePath( NodePath.create( sourceNodePath ).build() )
+            .sourceNodePath( new NodePath( sourceNodePath ) )
             .exportName( exportName )
             .nodeExportListener( new FunctionBasedNodeExportListener( nodeExported, nodeResolved ) );
 

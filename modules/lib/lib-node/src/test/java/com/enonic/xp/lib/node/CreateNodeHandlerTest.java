@@ -78,7 +78,7 @@ public class CreateNodeHandlerTest
         data.setString( "displayName", "Child node inheriting permissions" );
         final Node node = Node.create().
             name( "myName" ).
-            parentPath( NodePath.create( "/parent" ).build() ).
+            parentPath( new NodePath( "/parent" ) ).
             id( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
             data( data ).
             inheritPermissions( true ).

@@ -21,7 +21,7 @@ public class NodePushedHandler
         {
             final InternalContext nodeContext = createNodeContext( map, context );
             final NodePath currentTargetPath =
-                map.containsKey( CURRENT_TARGET_PATH ) ? NodePath.create( map.get( CURRENT_TARGET_PATH ).toString() ).build() : null;
+                map.containsKey( CURRENT_TARGET_PATH ) ? new NodePath( map.get( CURRENT_TARGET_PATH ).toString() ) : null;
             storageService.handleNodePushed( getId( map ), getPath( map ), currentTargetPath, nodeContext );
         }
     }

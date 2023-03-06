@@ -6,6 +6,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.project.ProjectConstants;
@@ -56,7 +57,7 @@ public final class ContentConstants
 
     public static final NodePath CONTENT_ROOT_PARENT = NodePath.ROOT;
 
-    public static final NodePath CONTENT_ROOT_PATH = NodePath.create( CONTENT_ROOT_PARENT, CONTENT_ROOT_NAME ).build();
+    public static final NodePath CONTENT_ROOT_PATH = new NodePath( CONTENT_ROOT_PARENT, NodeName.from( CONTENT_ROOT_NAME ) );
 
     public static final NodeType CONTENT_NODE_COLLECTION = NodeType.from( "content" );
 

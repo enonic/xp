@@ -99,8 +99,8 @@ class LoadRunnableTaskTest
         Path nameDir = Files.createDirectory( dumpDir.resolve( "name" ) );
 
         final NodeImportResult importResult = NodeImportResult.create()
-            .added( NodePath.create( "/path/to/node1" ).build() )
-            .updated( NodePath.create( "/path/to/node2" ).build() )
+            .added( new NodePath( "/path/to/node1" ) )
+            .updated( new NodePath( "/path/to/node2" ) )
             .dryRun( true )
             .build();
 

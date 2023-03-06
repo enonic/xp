@@ -2,6 +2,7 @@ package com.enonic.xp.archive;
 
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -14,7 +15,7 @@ public final class ArchiveConstants
 {
     public static final String ARCHIVE_ROOT_NAME = "archive";
 
-    public static final NodePath ARCHIVE_ROOT_PATH = NodePath.create( NodePath.ROOT, ARCHIVE_ROOT_NAME ).build();
+    public static final NodePath ARCHIVE_ROOT_PATH = new NodePath( NodePath.ROOT, NodeName.from( ARCHIVE_ROOT_NAME ) );
 
     public static final ChildOrder DEFAULT_ARCHIVE_REPO_ROOT_ORDER = ChildOrder.from( "archivedTime DESC, _name ASC" );
 

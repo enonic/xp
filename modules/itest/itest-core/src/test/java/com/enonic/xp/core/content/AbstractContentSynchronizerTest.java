@@ -202,15 +202,15 @@ public abstract class AbstractContentSynchronizerTest
                 .build();
 
             this.projectArchiveContext = ContextBuilder.from( this.projectContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
                 .build();
 
             this.layerArchiveContext = ContextBuilder.from( this.layerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
                 .build();
 
             this.childLayerArchiveContext = ContextBuilder.from( this.childLayerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
                 .build();
 
             projectService.initialize();

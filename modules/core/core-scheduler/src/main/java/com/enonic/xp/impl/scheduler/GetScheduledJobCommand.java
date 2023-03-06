@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
@@ -31,7 +32,7 @@ public class GetScheduledJobCommand
 
     private ScheduledJob doExecute()
     {
-        final Node node = nodeService.getByPath( NodePath.create( NodePath.ROOT, name.getValue() ).build() );
+        final Node node = nodeService.getByPath( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) );
         if ( node != null )
         {
             return SchedulerSerializer.fromNode( node );

@@ -19,7 +19,7 @@ final class IssueCommentQueryNodeQueryTranslator
     {
         final NodeQuery.Builder builder = NodeQuery.create();
 
-        builder.parent( NodePath.create( IssueConstants.ISSUE_ROOT_PATH, parentName.toString() ).build() );
+        builder.parent( new NodePath( IssueConstants.ISSUE_ROOT_PATH, parentName ) );
 
         final ValueFilter issueCommentsCollectionFilter = ValueFilter.create().
             fieldName( NodeIndexPath.NODE_TYPE.getPath() ).

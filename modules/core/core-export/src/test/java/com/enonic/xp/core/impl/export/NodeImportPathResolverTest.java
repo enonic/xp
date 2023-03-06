@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFiles;
 
@@ -19,7 +20,7 @@ public class NodeImportPathResolverTest
         final NodePath resolvedPath =
             NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Path.of( "/var", "folder", "myExport", "mynode" ) ), //
                                                           VirtualFiles.from( Path.of( "/var", "folder", "myExport" ) ), //
-                                                          NodePath.create( NodePath.ROOT, "myimport" ).build() );
+                                                          new NodePath( NodePath.ROOT, NodeName.from( "myimport" ) ) );
 
         assertEquals( "/myimport/mynode", resolvedPath.toString() );
     }
@@ -31,7 +32,7 @@ public class NodeImportPathResolverTest
         final NodePath resolvedPath = NodeImportPathResolver.resolveNodeImportPath(
             VirtualFiles.from( Path.of( "/var", "folder", "myExport", "mynode", "mychild" ) ), //
             VirtualFiles.from( Path.of( "/var", "folder", "myExport" ) ), //
-            NodePath.create( NodePath.ROOT, "myimport" ).build() );
+            new NodePath( "/myimport" ) );
 
         assertEquals( "/myimport/mynode/mychild", resolvedPath.toString() );
         assertEquals( "/myimport/mynode", resolvedPath.getParentPath().toString() );

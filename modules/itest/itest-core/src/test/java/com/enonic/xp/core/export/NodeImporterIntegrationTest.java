@@ -19,6 +19,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.Permission;
@@ -180,11 +181,11 @@ public class NodeImporterIntegrationTest
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode", "mychild", "mychildchild" ), false );
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode", "mychild", "mychildchild", "mychildchildchild" ), false );
 
-        final NodePath importRoot = NodePath.create( NodePath.ROOT, "my-import-here" ).build();
+        final NodePath importRoot = new NodePath( "/my-import-here" );
 
         this.nodeService.create( CreateNodeParams.create().
             parent( importRoot.getParentPath() ).
-            name( importRoot.getLastElement().toString() ).
+            name( importRoot.getName() ).
             build() );
 
         final NodeImportResult result = NodeImporter.create().
@@ -208,7 +209,7 @@ public class NodeImporterIntegrationTest
     @Test
     public void import_node_non_existing_parent()
     {
-        final NodePath importRoot = NodePath.create( NodePath.ROOT, "non-existing-node" ).build();
+        final NodePath importRoot = new NodePath( "/non-existing-node" );
 
         assertThrows( ImportNodeException.class, () -> NodeImporter.create().
             nodeService( this.nodeService ).
@@ -325,7 +326,7 @@ public class NodeImporterIntegrationTest
         assertNodeExists( mynode.path(), "mychild1" );
         assertNodeExists( mynode.path(), "mychild2" );
 
-        final Node mychild3 = this.nodeService.getByPath( NodePath.create( mynode.path(), "mychild3" ).build() );
+        final Node mychild3 = this.nodeService.getByPath( new NodePath( mynode.path(), NodeName.from( "mychild3" ) ) );
         assertNull( mychild3 );
     }
 
@@ -445,7 +446,7 @@ public class NodeImporterIntegrationTest
             build().
             execute();
 
-        final Node addedNode = nodeService.getByPath( NodePath.create( "/mynode" ).build() );
+        final Node addedNode = nodeService.getByPath( new NodePath( "/mynode" ) );
 
         assertTrue( addedNode.inheritsPermissions() );
         assertTrue(
@@ -510,7 +511,7 @@ public class NodeImporterIntegrationTest
 
     private Node assertNodeExists( final NodePath parentPath, final String name )
     {
-        final Node node = nodeService.getByPath( NodePath.create( parentPath, name ).build() );
+        final Node node = nodeService.getByPath( new NodePath( parentPath, NodeName.from( name ) ) );
         assertNotNull( node );
         return node;
     }

@@ -44,8 +44,8 @@ public class ExportHandlerTest
     public void testExample()
     {
         final NodeExportResult result = NodeExportResult.create()
-            .addNodePath( NodePath.create( "/content" ).build() )
-            .addBinary( NodePath.create( "binaryPath" ).build(), BinaryReference.from( "ref" ) )
+            .addNodePath( new NodePath( "/content" ) )
+            .addBinary( new NodePath( "/binaryPath" ), BinaryReference.from( "ref" ) )
             .addError( new ExportError( "some error" ) )
             .build();
 

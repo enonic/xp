@@ -17,10 +17,15 @@ public class ContentNodeHelperTest
     @Test
     public void translateNodePathToContentPath()
     {
-        final ContentPath contentPath =
-            ContentNodeHelper.translateNodePathToContentPath( NodePath.create( "/content/site/myContent" ).build() );
+        assertEquals( ContentPath.from( "/site/myContent" ),
+                      ContentNodeHelper.translateNodePathToContentPath( new NodePath( "/content/site/myContent" ) ) );
+    }
 
-        assertEquals( ContentPath.from( "/site/myContent" ), contentPath );
+    @Test
+    public void translateNodePathToContentPath_archive()
+    {
+        assertEquals( ContentPath.from( "/site/myContent" ),
+                      ContentNodeHelper.translateNodePathToContentPath( new NodePath( "/archive/site/myContent" ) ) );
     }
 
     @Test
@@ -28,7 +33,7 @@ public class ContentNodeHelperTest
     {
         final NodePath nodePath = ContentNodeHelper.translateContentParentToNodeParentPath( ContentPath.from( "/site/myContent" ) );
 
-        assertEquals( NodePath.create( "/content/site/myContent" ).build(), nodePath );
+        assertEquals( new NodePath( "/content/site/myContent" ), nodePath );
     }
 
     @Test
