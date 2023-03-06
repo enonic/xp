@@ -2,7 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,14 +39,6 @@ public final class StatusServlet
 
     private final Map<String, StatusReporter> reporters = new ConcurrentHashMap<>();
 
-    private JsonNode getRootInfo()
-    {
-        final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        final Set<String> names = new TreeSet<>( this.reporters.keySet() );
-        names.forEach( json::add );
-        return json;
-    }
-
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
@@ -54,7 +46,7 @@ public final class StatusServlet
         final String path = req.getRequestURI();
         if ( path.equals( PATH_PREFIX ) )
         {
-            reportMainInfo( res );
+            serializeJson( res, 200, getRootInfo() );
             return;
         }
 
@@ -62,10 +54,12 @@ public final class StatusServlet
         reportFromReporter( req, res, name );
     }
 
-    private void reportMainInfo( final HttpServletResponse res )
-        throws IOException
+    private JsonNode getRootInfo()
     {
-        serializeJson( res, 200, getRootInfo() );
+        final ArrayNode json = JsonNodeFactory.instance.arrayNode();
+        final Set<String> names = new TreeSet<>( this.reporters.keySet() );
+        names.forEach( json::add );
+        return json;
     }
 
     private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, String name )
@@ -107,18 +101,17 @@ public final class StatusServlet
         final OutputStream out = res.getOutputStream();
         final StatusContextImpl context = new StatusContextImpl( req, out );
         reporter.report( context );
-        out.close();
     }
 
     private void serializeJson( final HttpServletResponse res, final int status, final JsonNode json )
         throws IOException
     {
+        res.reset();
         res.setStatus( status );
         res.setContentType( MediaType.JSON_UTF_8.toString() );
 
-        final PrintWriter out = res.getWriter();
-        out.println( json.toString() );
-        out.close();
+        final OutputStream out = res.getOutputStream();
+        out.write( json.toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
     private void serializeError( final HttpServletResponse res, final int status, final String message )
