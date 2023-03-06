@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -51,9 +52,10 @@ public class RepositoryEntryServiceImpl
 
     private BinaryService binaryService;
 
-    public RepositoryEntryServiceImpl( final IndexServiceInternal indexServiceInternal, final NodeStorageService nodeStorageService,
-                                       final NodeSearchService nodeSearchService, final EventPublisher eventPublisher,
-                                       final BinaryService binaryService )
+    @Activate
+    public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
+                                       @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
+                                       @Reference final BinaryService binaryService )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
