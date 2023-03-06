@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -36,20 +33,18 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
 
-@Component
 public class RepositoryEntryServiceImpl
     implements RepositoryEntryService
 {
+    private final IndexServiceInternal indexServiceInternal;
 
-    private IndexServiceInternal indexServiceInternal;
+    private final NodeStorageService nodeStorageService;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeSearchService nodeSearchService;
 
-    private NodeSearchService nodeSearchService;
+    private final EventPublisher eventPublisher;
 
-    private EventPublisher eventPublisher;
-
-    private BinaryService binaryService;
+    private final BinaryService binaryService;
 
     public RepositoryEntryServiceImpl( final IndexServiceInternal indexServiceInternal, final NodeStorageService nodeStorageService,
                                        final NodeSearchService nodeSearchService, final EventPublisher eventPublisher,
@@ -205,35 +200,5 @@ public class RepositoryEntryServiceImpl
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setBinaryService( final BinaryService binaryService )
-    {
-        this.binaryService = binaryService;
     }
 }
