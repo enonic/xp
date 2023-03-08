@@ -218,4 +218,11 @@ class NodePathTest
         assertEquals( "/r/abc", new NodePath( new NodePath( "/r/" ), NodeName.from( "abc" ) ).toString() );
         assertEquals( "/abc", new NodePath( NodePath.ROOT, NodeName.from( "abc" ) ).toString() );
     }
+
+    @Test
+    void create()
+    {
+        assertEquals( "/my-node", NodePath.create( NodePath.ROOT, "my-node" ).build().toString() );
+        assertEquals( "/my-node", NodePath.create( NodePath.ROOT, "/my-node" ).build().toString() );
+    }
 }
