@@ -328,7 +328,7 @@ public final class NodePath
     @Deprecated
     public static Builder create( final NodePath parent, final String path )
     {
-        return create( parent ).elements( path );
+        return create( parent ).elements( path ).absolute( true );
     }
 
     @Deprecated
