@@ -17,16 +17,18 @@ import type {ByteSource, FormItem, UserKey} from '@enonic-types/core';
 
 export type {
     ByteSource,
+    FormItem,
+    FormItemInlineMixin,
+    FormItemInput,
+    FormItemLayout,
+    FormItemOptionSet,
+    FormItemSet,
     GroupKey,
+    InputType,
     PrincipalKey,
     RoleKey,
     UserKey,
-    FormItemSet,
-    FormItemLayout,
-    FormItemInput,
-    FormItemOptionSet,
-    FormItemInlineMixin,
-    FormItem,
+    ValueType,
 } from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
