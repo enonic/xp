@@ -41,6 +41,7 @@ export type {
     DateHistogramAggregation,
     DateRange,
     DateRangeAggregation,
+    DistanceUnit,
     DslOperator,
     DslQueryType,
     ExistsDslExpression,
@@ -82,6 +83,7 @@ export type {
     TermsAggregation,
     UserKey,
     ValueCountAggregation,
+    ValueType,
   } from '@enonic-types/core';
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
