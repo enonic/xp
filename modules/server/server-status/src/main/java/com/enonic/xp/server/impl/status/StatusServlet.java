@@ -2,7 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -110,8 +110,9 @@ public final class StatusServlet
         res.setStatus( status );
         res.setContentType( MediaType.JSON_UTF_8.toString() );
 
-        final OutputStream out = res.getOutputStream();
-        out.write( json.toString().getBytes( StandardCharsets.UTF_8 ) );
+        final PrintWriter out = res.getWriter();
+        out.println( json.toString() );
+        out.close();
     }
 
     private void serializeError( final HttpServletResponse res, final int status, final String message )
