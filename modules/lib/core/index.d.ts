@@ -500,9 +500,9 @@ export interface IdsFilter {
 
 export interface BooleanFilter {
     boolean: {
-        must?: Filter[];
-        mustNot?: Filter[];
-        should?: Filter[];
+        must?: Filter | Filter[];
+        mustNot?: Filter | Filter[];
+        should?: Filter | Filter[];
     };
 }
 
