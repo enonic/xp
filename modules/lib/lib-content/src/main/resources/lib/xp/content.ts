@@ -87,6 +87,7 @@ export type {
     FulltextDslExpression,
     GeoDistanceAggregation,
     GeoDistanceSortDsl,
+    GroupKey,
     HasValueFilter,
     Highlight,
     HighlightResult,
@@ -108,6 +109,7 @@ export type {
     QueryDsl,
     RangeDslExpression,
     Region,
+    RoleKey,
     SingleValueMetricAggregationResult,
     SingleValueMetricAggregationsUnion,
     SortDirection,
@@ -117,6 +119,7 @@ export type {
     StemmedDslExpression,
     TermDslExpression,
     TermsAggregation,
+    UserKey,
     ValueCountAggregation,
     ValueType,
 } from '@enonic-types/core';
