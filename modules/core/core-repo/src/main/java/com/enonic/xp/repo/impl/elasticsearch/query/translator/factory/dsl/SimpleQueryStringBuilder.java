@@ -28,6 +28,7 @@ abstract class SimpleQueryStringBuilder
         this.fields = WeightedQueryFieldNames.from( getStrings( "fields" ) );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =

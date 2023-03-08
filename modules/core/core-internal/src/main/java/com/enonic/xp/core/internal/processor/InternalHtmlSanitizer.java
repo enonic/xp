@@ -136,7 +136,7 @@ public final class InternalHtmlSanitizer
                     }
                 }
 
-                attrs.removeAll( attrs );
+                attrs.clear( );
                 attrs.addAll( toRemain );
 
                 return elementName;

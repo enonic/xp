@@ -7,8 +7,6 @@ import com.enonic.xp.index.IndexPath;
 @PublicApi
 public class ContentIndexPath
 {
-    private static final String DIVIDER = ".";
-
     public static final IndexPath MODIFIED_TIME = IndexPath.from( ContentPropertyNames.MODIFIED_TIME );
 
     public static final IndexPath CREATED_TIME = IndexPath.from( ContentPropertyNames.CREATED_TIME );

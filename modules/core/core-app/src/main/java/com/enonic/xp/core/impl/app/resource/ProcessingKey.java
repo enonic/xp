@@ -15,19 +15,23 @@ final class ProcessingKey
     }
 
     @Override
-    public int hashCode()
+    public boolean equals( final Object o )
     {
-        return Objects.hash( this.segment, this.key );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof ProcessingKey ) )
+        {
+            return false;
+        }
+        final ProcessingKey that = (ProcessingKey) o;
+        return Objects.equals( this.segment, that.segment ) && Objects.equals( this.key, that.key );
     }
 
     @Override
-    public boolean equals( final Object o )
+    public int hashCode()
     {
-        return ( o instanceof ProcessingKey ) && equals( (ProcessingKey) o );
-    }
-
-    private boolean equals( final ProcessingKey o )
-    {
-        return Objects.equals( this.segment, o.segment ) && Objects.equals( this.key, o.key );
+        return Objects.hash( this.segment, this.key );
     }
 }

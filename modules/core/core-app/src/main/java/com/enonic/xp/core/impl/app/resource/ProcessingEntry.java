@@ -4,11 +4,11 @@ import com.enonic.xp.resource.ResourceKey;
 
 final class ProcessingEntry
 {
-    protected final ResourceKey key;
+    final ResourceKey key;
 
-    protected final Object value;
+    final Object value;
 
-    protected final long timestamp;
+    final long timestamp;
 
     ProcessingEntry( final ResourceKey key, final Object value, final long timestamp )
     {

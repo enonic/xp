@@ -151,7 +151,7 @@ public final class ContentVersion
             Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
             Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( path, that.path ) && Objects.equals( inheritPermissions, that.inheritPermissions );
+            Objects.equals( path, that.path ) && inheritPermissions == that.inheritPermissions;
     }
 
     @Override

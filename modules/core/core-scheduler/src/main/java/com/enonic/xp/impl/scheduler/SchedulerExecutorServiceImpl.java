@@ -59,11 +59,13 @@ public final class SchedulerExecutorServiceImpl
         getScheduler().dispose( name );
     }
 
+    @Override
     public ScheduledFuture<?> schedule( SchedulableTask task, long delay, TimeUnit unit )
     {
         return getScheduler().schedule( task, delay, unit );
     }
 
+    @Override
     public ScheduledFuture<?> scheduleAtFixedRate( final SchedulableTask task, final long initialDelay, final long period,
                                                    final TimeUnit unit )
     {

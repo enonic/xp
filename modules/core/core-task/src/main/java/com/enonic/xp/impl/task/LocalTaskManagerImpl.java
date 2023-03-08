@@ -227,11 +227,13 @@ public final class LocalTaskManagerImpl
             updateState( taskId, TaskState.RUNNING );
         }
 
+        @Override
         public void finished()
         {
             updateState( taskId, TaskState.FINISHED );
         }
 
+        @Override
         public void failed( final String message )
         {
             updateProgress( taskId, message );

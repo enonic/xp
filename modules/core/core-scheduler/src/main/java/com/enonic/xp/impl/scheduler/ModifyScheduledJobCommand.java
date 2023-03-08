@@ -42,7 +42,7 @@ public class ModifyScheduledJobCommand
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             path( new NodePath( NodePath.ROOT, NodeName.from( params.getName().getValue() ) ) ).
-            editor( ( toBeEdited -> toBeEdited.data = SchedulerSerializer.toUpdateNodeData( params, original ) ) ).
+            editor( toBeEdited -> toBeEdited.data = SchedulerSerializer.toUpdateNodeData( params, original ) ).
             refresh( RefreshMode.ALL ).
             build();
 
@@ -66,11 +66,13 @@ public class ModifyScheduledJobCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             Preconditions.checkNotNull( params, "params cannot be null" );
         }
 
+        @Override
         public ModifyScheduledJobCommand build()
         {
             validate();

@@ -158,6 +158,7 @@ final class ApplicationImpl
         return this.config;
     }
 
+    @Override
     public void setConfig( final Configuration config )
     {
         this.config = config;

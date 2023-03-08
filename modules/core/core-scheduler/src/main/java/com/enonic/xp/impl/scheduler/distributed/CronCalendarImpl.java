@@ -69,11 +69,13 @@ public final class CronCalendarImpl
         return ScheduleCalendarType.CRON;
     }
 
+    @Override
     public String getCronValue()
     {
         return cron.asString();
     }
 
+    @Override
     public TimeZone getTimeZone()
     {
         return timeZone;

@@ -15,6 +15,7 @@ class MatchAllQueryBuilder
         super( expression );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final org.elasticsearch.index.query.MatchAllQueryBuilder query = QueryBuilders.matchAllQuery();

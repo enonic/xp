@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,14 +16,14 @@ public class VersionsDumpEntryJson
     private String nodeId;
 
     @JsonProperty("versions")
-    private Collection<VersionDumpEntryJson> versions;
+    private List<VersionDumpEntryJson> versions;
 
     @SuppressWarnings("unused")
     public VersionsDumpEntryJson()
     {
     }
 
-    private VersionsDumpEntryJson( final String nodeId, final Collection<VersionDumpEntryJson> versions )
+    private VersionsDumpEntryJson( final String nodeId, final List<VersionDumpEntryJson> versions )
     {
         this.nodeId = nodeId;
         this.versions = versions;
@@ -45,8 +45,8 @@ public class VersionsDumpEntryJson
     public static VersionsDumpEntryJson from( final VersionsDumpEntry entry )
     {
         String nodeId = entry.getNodeId().toString();
-        Collection<VersionDumpEntryJson> versions =
-            entry.getVersions().stream().map( VersionDumpEntryJson::from ).collect( Collectors.toSet() );
+        List<VersionDumpEntryJson> versions =
+            entry.getVersions().stream().map( VersionDumpEntryJson::from ).collect( Collectors.toList() );
         return new VersionsDumpEntryJson( nodeId, versions );
     }
 
@@ -60,27 +60,6 @@ public class VersionsDumpEntryJson
         return versions;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final VersionsDumpEntryJson that = (VersionsDumpEntryJson) o;
-        return Objects.equals( nodeId, that.nodeId ) && Objects.equals( versions, that.versions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( nodeId, versions );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -90,7 +69,7 @@ public class VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private final Collection<VersionDumpEntryJson> versions = new ArrayList<>();
+        private final List<VersionDumpEntryJson> versions = new ArrayList<>();
 
         private Builder()
         {

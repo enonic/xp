@@ -27,7 +27,7 @@ public final class MacroParser
         RIGHT_BRACKET,
     }
 
-    private static final char EOF = (char) -1;
+    private static final char EOF = Character.MAX_VALUE;
 
     private String input;
 
@@ -310,9 +310,9 @@ public final class MacroParser
 
     private void match( final String text )
     {
-        for ( char x : text.toCharArray() )
+        for ( int i = 0; i < text.length(); i++ )
         {
-            if ( c == x )
+            if ( c == text.charAt( i ) )
             {
                 consume();
             }

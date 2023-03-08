@@ -1,24 +1,17 @@
 package com.enonic.xp.repo.impl.index;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IndexFieldNameNormalizerTest
+class IndexFieldNameNormalizerTest
 {
     @Test
-    public void normalize_collection()
-        throws Exception
+    void normalize_collection()
     {
-        Set<String> paths = new HashSet<>();
-        paths.add( "VaLue1" );
-        paths.add( "ValuE2" );
-        paths.add( "VALue3" );
-
-        final String[] normalizedPaths = IndexFieldNameNormalizer.normalize( paths );
+        final String[] normalizedPaths = IndexFieldNameNormalizer.normalize( List.of("VaLue1", "ValuE2", "VALue3") );
 
         for ( final String path : normalizedPaths )
         {

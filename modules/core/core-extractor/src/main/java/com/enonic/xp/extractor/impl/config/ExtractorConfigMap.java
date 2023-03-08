@@ -6,7 +6,7 @@ final class ExtractorConfigMap
 {
     private static final String BODY_SIZE_LIMIT_PROPERTY = "body.size.limit";
 
-    protected static final int BODY_SIZE_LIMIT_DEFAULT = 500_000;
+    static final int BODY_SIZE_LIMIT_DEFAULT = 500_000;
 
     private final Map<String, String> map;
 

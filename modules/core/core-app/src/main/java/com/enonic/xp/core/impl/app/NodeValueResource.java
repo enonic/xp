@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import com.google.common.io.ByteSource;
@@ -29,7 +30,7 @@ public final class NodeValueResource
         this.timestamp = node.getTimestamp();
 
         final Value resource = node.data().getValue( SchemaNodePropertyNames.RESOURCE );
-        this.value = resource != null ? ByteSource.wrap( resource.asString().getBytes() ) : ByteSource.empty();
+        this.value = resource != null ? ByteSource.wrap( resource.asString().getBytes( StandardCharsets.UTF_8 ) ) : ByteSource.empty();
     }
 
     public NodeValueResource( final ResourceKey key, final ByteSource resource, final Instant timestamp )

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class RescheduleTask
         } );
 
         final Set<String> scheduledJobs =
-            OsgiSupport.withService( SchedulerExecutorService.class, ( SchedulerExecutorService::getAllFutures ) );
+            OsgiSupport.withService( SchedulerExecutorService.class, SchedulerExecutorService::getAllFutures );
 
         LOG.debug( "Currently scheduled jobs {}", scheduledJobs );
 

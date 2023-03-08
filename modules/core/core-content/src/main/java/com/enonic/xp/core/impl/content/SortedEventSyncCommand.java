@@ -97,6 +97,7 @@ final class SortedEventSyncCommand
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
+        @Override
         void validate()
         {
             super.validate();
@@ -106,6 +107,7 @@ final class SortedEventSyncCommand
                                          "targetContent must be set." );
         }
 
+        @Override
         public SortedEventSyncCommand build()
         {
             validate();

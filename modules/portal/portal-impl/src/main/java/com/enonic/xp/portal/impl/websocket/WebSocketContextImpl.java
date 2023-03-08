@@ -12,13 +12,13 @@ import com.enonic.xp.web.websocket.WebSocketService;
 final class WebSocketContextImpl
     implements WebSocketContext
 {
-    protected WebSocketService webSocketService;
+    WebSocketService webSocketService;
 
-    protected HttpServletRequest request;
+    HttpServletRequest request;
 
-    protected HttpServletResponse response;
+    HttpServletResponse response;
 
-    protected WebSocketRegistry registry;
+    WebSocketRegistry registry;
 
     @Override
     public boolean apply( final WebSocketEndpoint endpoint )

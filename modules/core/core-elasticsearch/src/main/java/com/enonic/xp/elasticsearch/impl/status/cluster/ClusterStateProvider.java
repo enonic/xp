@@ -35,8 +35,7 @@ public final class ClusterStateProvider
         }
         catch ( ElasticsearchException ex )
         {
-            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" ).
-                build();
+            builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" );
         }
 
         return builder.build();

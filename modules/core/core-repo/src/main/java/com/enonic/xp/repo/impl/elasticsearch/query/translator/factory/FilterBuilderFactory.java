@@ -2,9 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -141,12 +139,6 @@ public class FilterBuilderFactory
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).forEach( builder::mustNot );
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getShould() ) ).forEach( builder::should );
 
-        //TODO Java10
-//        if ( booleanFilter.isCache() != null )
-//        {
-//            builder.cache( booleanFilter.isCache() );
-//        }
-
         return builder;
     }
 
@@ -172,19 +164,11 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
 
-        RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
+        return new RangeQueryBuilder( queryFieldName ).
             from( from ).
             to( to ).
             includeLower( filter.isIncludeLower() ).
             includeUpper( filter.isIncludeUpper() );
-
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
-
-        return builder;
     }
 
     private QueryBuilder createTermFilter( final ValueFilter filter )
@@ -196,18 +180,9 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
-        final Set<Object> values =
-            new HashSet<>( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
+        final List<Object> values = filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() );
 
-        final TermsQueryBuilder builder = new TermsQueryBuilder( queryFieldName, values );
-
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
-
-        return builder;
+        return new TermsQueryBuilder( queryFieldName, values );
     }
 
     private QueryBuilder createExistsFilter( final ExistsFilter filter )

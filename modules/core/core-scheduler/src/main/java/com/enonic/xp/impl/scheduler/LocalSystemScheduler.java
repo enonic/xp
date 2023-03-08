@@ -110,6 +110,7 @@ public final class LocalSystemScheduler
         }
     }
 
+    @Override
     public ScheduledFuture<?> schedule( final SchedulableTask task, final long delay, final TimeUnit unit )
     {
         return scheduledFutures.compute( task.getName(), ( name, value ) -> {
@@ -121,6 +122,7 @@ public final class LocalSystemScheduler
         } );
     }
 
+    @Override
     public ScheduledFuture<?> scheduleAtFixedRate( final SchedulableTask task, final long initialDelay, final long period,
                                                    final TimeUnit unit )
     {

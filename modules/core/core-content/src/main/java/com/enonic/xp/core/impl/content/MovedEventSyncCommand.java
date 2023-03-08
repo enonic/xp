@@ -129,6 +129,7 @@ final class MovedEventSyncCommand
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
+        @Override
         void validate()
         {
             super.validate();
@@ -138,6 +139,7 @@ final class MovedEventSyncCommand
                                          "targetContent must be set." );
         }
 
+        @Override
         public MovedEventSyncCommand build()
         {
             validate();

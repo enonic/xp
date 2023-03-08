@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Multimap;
@@ -12,7 +10,7 @@ public final class AssetUrlHandler
     extends AbstractUrlHandler
 {
     private static final Set<String> VALID_URL_PROPERTY_KEYS =
-        new HashSet<>( Arrays.asList( "path", "application", "contextPath", "type", "params" ) );
+        Set.of( "path", "application", "contextPath", "type", "params" );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )

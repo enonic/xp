@@ -90,8 +90,8 @@ public final class Cropping
             return false;
         }
         final Cropping cropping = (Cropping) o;
-        return Objects.equals( left, cropping.left ) && Objects.equals( top, cropping.top ) && Objects.equals( right, cropping.right ) &&
-            Objects.equals( bottom, cropping.bottom ) && Objects.equals( zoom, cropping.zoom );
+        return left == cropping.left && top == cropping.top && right == cropping.right &&
+            bottom == cropping.bottom && zoom == cropping.zoom;
     }
 
     @Override

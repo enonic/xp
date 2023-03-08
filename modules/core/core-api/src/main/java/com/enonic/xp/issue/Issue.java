@@ -1,9 +1,10 @@
 package com.enonic.xp.issue;
 
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -36,7 +37,7 @@ public class Issue
 
     private final IssueType issueType;
 
-    protected Issue( Builder builder )
+    protected Issue( Builder<?> builder )
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
         this.index = builder.index;
@@ -168,7 +169,6 @@ public class Issue
             this.id = source.id;
             this.index = source.index;
             this.title = source.title;
-            this.index = source.index;
             this.name = source.name;
             this.description = source.description;
             this.createdTime = source.createdTime;
@@ -176,7 +176,7 @@ public class Issue
             this.issueStatus = source.issueStatus;
             this.creator = source.creator;
             this.modifier = source.modifier;
-            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : new HashSet<>();
+            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : ImmutableSet.of();
             this.publishRequest = source.publishRequest;
             this.issueType = source.issueType;
         }

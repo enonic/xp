@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Multimap;
@@ -16,7 +14,7 @@ public final class LogoutUrlHandler
     extends AbstractUrlHandler
 {
     private static final Set<String> VALID_URL_PROPERTY_KEYS =
-        new HashSet<>( Arrays.asList( "redirect", "contextPath", "type", "params" ) );
+        Set.of( "redirect", "contextPath", "type", "params" );
 
     private Context context;
 

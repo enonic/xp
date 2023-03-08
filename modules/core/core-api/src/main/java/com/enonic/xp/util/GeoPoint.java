@@ -64,7 +64,7 @@ public final class GeoPoint
 
     public static GeoPoint from( final String value )
     {
-        final String[] parts = value.split( "," );
+        final String[] parts = value.split( ",", -1 );
         if ( parts.length != 2 )
         {
             throw new IllegalArgumentException( String.format( "Value [%s] is not a valid geo-point", value ) );

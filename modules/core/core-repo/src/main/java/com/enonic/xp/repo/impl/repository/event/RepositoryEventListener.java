@@ -69,6 +69,8 @@ public class RepositoryEventListener
                     handleEventType( event, repositoryInvalidateByIdHandler );
                 }
                 break;
+            default:
+                break;
         }
     }
 

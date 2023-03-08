@@ -63,7 +63,7 @@ public final class Occurrences
         }
 
         final Occurrences that = (Occurrences) o;
-        return Objects.equals( this.maximum, that.maximum ) && Objects.equals( this.minimum, that.minimum );
+        return this.maximum == that.maximum && this.minimum == that.minimum;
     }
 
     @Override

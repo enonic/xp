@@ -104,9 +104,9 @@ public final class ImageContentProcessor
 
     private ContentService contentService;
 
-    protected ContentTypeService contentTypeService;
+    private ContentTypeService contentTypeService;
 
-    protected XDataService xDataService;
+    private XDataService xDataService;
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -114,7 +114,7 @@ public final class ImageContentProcessor
         return contentType.getName().isImageMedia();
     }
 
-    protected XDatas getXDatas( final ContentTypeName contentTypeName )
+    private XDatas getXDatas( final ContentTypeName contentTypeName )
     {
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
         return xDataService.getFromContentType( contentType );

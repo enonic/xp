@@ -29,7 +29,7 @@ public abstract class OncePerRequestHandler
     private boolean isAlreadyHandled( final WebRequest webRequest )
     {
         final HttpServletRequest rawRequest = webRequest.getRawRequest();
-        return rawRequest.getAttribute( this.flag ) == Boolean.TRUE;
+        return Boolean.TRUE.equals( rawRequest.getAttribute( this.flag ) );
     }
 
     private void setAlreadyHandledFlag( final WebRequest webRequest )

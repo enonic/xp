@@ -24,7 +24,6 @@ public class CommitsLoadResult
         @Override
         public CommitsLoadResult build()
         {
-            super.build();
             return new CommitsLoadResult( this );
         }
     }

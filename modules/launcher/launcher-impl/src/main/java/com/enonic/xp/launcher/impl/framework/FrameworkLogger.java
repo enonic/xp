@@ -43,6 +43,8 @@ final class FrameworkLogger
             case LOG_ERROR:
                 logger.error( msg, cause );
                 break;
+            default:
+                break;
         }
     }
 }

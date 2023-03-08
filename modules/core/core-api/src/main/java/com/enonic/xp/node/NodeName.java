@@ -19,7 +19,7 @@ public final class NodeName
 
     public boolean isRoot()
     {
-        return this == ROOT;
+        return ROOT.equals( this );
     }
 
     public static NodeName from( final String name )

@@ -154,7 +154,7 @@ public class IdProviderResponseWrapper
 
     private boolean isErrorAlreadyHandled()
     {
-        return Boolean.TRUE == request.getAttribute( "error.handled" );
+        return Boolean.TRUE.equals( request.getAttribute( "error.handled" ) );
     }
 
 

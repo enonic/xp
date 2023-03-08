@@ -1,23 +1,26 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.node.NodeId;
 
-public class BranchDumpEntry
+public final class BranchDumpEntry
 {
     private final NodeId nodeId;
 
     private final VersionMeta meta;
 
-    private final Collection<String> binaryReferences;
+    private final ImmutableSet<String> binaryReferences;
 
     private BranchDumpEntry( final Builder builder )
     {
         nodeId = builder.nodeId;
         meta = builder.meta;
-        binaryReferences = builder.binaryReferences;
+        binaryReferences = builder.binaryReferences.build();
     }
 
     public NodeId getNodeId()
@@ -44,7 +47,7 @@ public class BranchDumpEntry
     {
         private NodeId nodeId;
 
-        private Collection<String> binaryReferences = new HashSet<>();
+        private ImmutableSet.Builder<String> binaryReferences = ImmutableSet.builder();
 
         private VersionMeta meta;
 
@@ -66,7 +69,7 @@ public class BranchDumpEntry
 
         public Builder setBinaryReferences( final Collection<String> references )
         {
-            this.binaryReferences = references;
+            this.binaryReferences = ImmutableSet.<String>builder().addAll( Objects.requireNonNullElse( references, List.of() )  );
             return this;
         }
 
@@ -93,23 +96,14 @@ public class BranchDumpEntry
         {
             return false;
         }
-
-        final BranchDumpEntry branchDumpEntry = (BranchDumpEntry) o;
-
-        if ( nodeId != null ? !nodeId.equals( branchDumpEntry.nodeId ) : branchDumpEntry.nodeId != null )
-        {
-            return false;
-        }
-
-        return binaryReferences != null ? binaryReferences.equals( branchDumpEntry.binaryReferences ) : branchDumpEntry.binaryReferences == null;
-
+        final BranchDumpEntry that = (BranchDumpEntry) o;
+        return Objects.equals( nodeId, that.nodeId ) && Objects.equals( meta, that.meta ) &&
+            Objects.equals( binaryReferences, that.binaryReferences );
     }
 
     @Override
     public int hashCode()
     {
-        int result = nodeId != null ? nodeId.hashCode() : 0;
-        result = 31 * result + ( binaryReferences != null ? binaryReferences.hashCode() : 0 );
-        return result;
+        return Objects.hash( nodeId, meta, binaryReferences );
     }
 }

@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Multimap;
@@ -11,7 +9,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 public final class PageUrlHandler
     extends AbstractUrlHandler
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "id", "path", "type", "params" ) );
+    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "id", "path", "type", "params" );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )

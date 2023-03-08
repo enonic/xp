@@ -1,19 +1,17 @@
 package com.enonic.xp.index;
 
-import java.util.Collection;
-
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 
 @PublicApi
-public class IndexPath
+public final class IndexPath
 {
     private final String path;
 
     private IndexPath( final String path )
     {
-        this.path = IndexFieldNameNormalizer.normalize( path );
+        this.path = path.toLowerCase().trim();
     }
 
     public static IndexPath from( final String path )
@@ -40,50 +38,12 @@ public class IndexPath
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final IndexPath indexPath = (IndexPath) o;
-
-        return path != null ? path.equalsIgnoreCase( indexPath.path ) : indexPath.path == null;
+        return this == o || o instanceof IndexPath && this.path.equals( ( (IndexPath) o ).path );
     }
 
     @Override
     public int hashCode()
     {
-        return path != null ? path.hashCode() : 0;
-    }
-
-    private static class IndexFieldNameNormalizer
-    {
-        private static final String FIELD_PATH_SEPARATOR = ".";
-
-        private static final String INDEX_PATH_SEPARATOR = "_";
-
-        public static String normalize( final String path )
-        {
-            return doNormalize( path );
-        }
-
-        private static String doNormalize( final String path )
-        {
-            String normalized = path;
-
-            normalized = normalized.toLowerCase().trim();
-            //normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
-
-            return normalized;
-        }
-
-        public static String[] normalize( final Collection<String> paths )
-        {
-            return paths.stream().map( IndexFieldNameNormalizer::doNormalize ).toArray( String[]::new );
-        }
+        return path.hashCode();
     }
 }

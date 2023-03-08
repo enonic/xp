@@ -17,6 +17,7 @@ class ExistsQueryBuilder
         super( expression );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final String fieldName = getFieldName( null );

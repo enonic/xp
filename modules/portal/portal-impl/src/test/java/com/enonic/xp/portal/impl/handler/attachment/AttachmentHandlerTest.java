@@ -195,7 +195,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
     }
@@ -262,7 +262,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
 
@@ -283,7 +283,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
 
@@ -304,7 +304,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
 
@@ -325,7 +325,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
 
@@ -377,7 +377,7 @@ class AttachmentHandlerTest
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
-        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( MediaType.PNG, res.getContentType() );
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
 
         assertNull( res.getBody() );

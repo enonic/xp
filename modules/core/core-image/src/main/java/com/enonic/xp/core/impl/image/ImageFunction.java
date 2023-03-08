@@ -6,5 +6,6 @@ import java.util.function.Function;
 public interface ImageFunction
     extends Function<BufferedImage, BufferedImage>
 {
+    @Override
     BufferedImage apply( BufferedImage source );
 }

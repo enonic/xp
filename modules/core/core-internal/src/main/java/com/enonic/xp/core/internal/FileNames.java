@@ -28,7 +28,7 @@ public class FileNames
     // All types of invisible characters, including surrogate to disallow non-BMP characters
     // Unassigned characters are can't be printed and also considered invisible
     // Sorted for binary search
-    public static final int[] INVISIBLE_CHARACTER_TYPES =
+    private static final int[] INVISIBLE_CHARACTER_TYPES =
         IntStream.of( Character.UNASSIGNED, Character.SPACE_SEPARATOR, Character.LINE_SEPARATOR, Character.PARAGRAPH_SEPARATOR,
                       Character.CONTROL, Character.FORMAT, Character.PRIVATE_USE, Character.SURROGATE ).sorted().toArray();
 

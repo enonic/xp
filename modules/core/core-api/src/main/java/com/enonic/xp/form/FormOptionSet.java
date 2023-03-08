@@ -140,10 +140,10 @@ public class FormOptionSet
             return false;
         }
         final FormOptionSet that = (FormOptionSet) o;
-        return super.equals( o ) && Objects.equals( expanded, that.expanded ) && Objects.equals( name, that.name ) &&
+        return super.equals( o ) && expanded == that.expanded && Objects.equals( name, that.name ) &&
             Objects.equals( label, that.label ) && Objects.equals( helpText, that.helpText ) &&
             Objects.equals( optionSetOptions, that.optionSetOptions ) && Objects.equals( occurrences, that.occurrences ) &&
-            Objects.equals( multiselection, that.multiselection ) && Objects.equals( helpText, that.helpText ) &&
+            Objects.equals( multiselection, that.multiselection )  &&
             Objects.equals( labelI18nKey, that.labelI18nKey ) && Objects.equals( helpTextI18nKey, that.helpTextI18nKey );
     }
 

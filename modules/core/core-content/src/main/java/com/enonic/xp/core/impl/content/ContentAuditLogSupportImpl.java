@@ -25,7 +25,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -566,16 +565,6 @@ public class ContentAuditLogSupportImpl
     {
         targetSet.setString( "id", content.getId().toString() );
         targetSet.setString( "path", content.getPath().toString() );
-    }
-
-    private void addContents( final PropertySet targetSet, final Contents contents, final String name )
-    {
-        contents.stream().map( content -> {
-            final PropertySet contentSet = new PropertySet();
-            this.addContent( contentSet, content );
-
-            return contentSet;
-        } ).forEach( contentSet -> targetSet.addSet( name, contentSet ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )

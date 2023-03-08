@@ -17,7 +17,7 @@ import com.enonic.xp.status.StatusReporter;
 public final class ServerReporter
     extends JsonStatusReporter
 {
-    protected ServerInfo serverInfo;
+    ServerInfo serverInfo;
 
     public ServerReporter()
     {

@@ -56,8 +56,7 @@ public final class Thumbnail
         final Thumbnail other = (Thumbnail) o;
 
         return Objects.equals( binaryReference, other.binaryReference ) &&
-            Objects.equals( mimeType, other.mimeType ) &&
-            Objects.equals( size, other.size );
+            Objects.equals( mimeType, other.mimeType ) && size == other.size;
     }
 
     @Override

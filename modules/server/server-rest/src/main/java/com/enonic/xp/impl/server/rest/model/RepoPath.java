@@ -31,7 +31,7 @@ public class RepoPath
     {
         Preconditions.checkArgument( !isNullOrEmpty( repoPath ) );
 
-        final String[] elements = repoPath.split( Pattern.quote( SEPARATOR ) );
+        final String[] elements = repoPath.split( Pattern.quote( SEPARATOR ), -1 );
 
         Preconditions.checkArgument( elements.length == 3, "Not a valid repository path" );
 

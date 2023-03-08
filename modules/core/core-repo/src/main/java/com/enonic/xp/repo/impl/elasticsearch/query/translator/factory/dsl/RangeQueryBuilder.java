@@ -41,6 +41,7 @@ class RangeQueryBuilder
                                      "'gt' and 'gte' cannot be set both" );
     }
 
+    @Override
     public QueryBuilder create()
     {
         final String lowerFieldName = gt != null ? getFieldName( gt ) : gte != null ? getFieldName( gte ) : null;

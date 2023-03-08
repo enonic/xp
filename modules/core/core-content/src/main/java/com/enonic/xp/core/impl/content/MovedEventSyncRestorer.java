@@ -25,6 +25,7 @@ final class MovedEventSyncRestorer
         return new Builder();
     }
 
+    @Override
     protected void execute()
     {
         final List<ContentToSync> contentToSync =
@@ -71,6 +72,7 @@ final class MovedEventSyncRestorer
     static class Builder
         extends MovedEventSyncSynchronizer.Builder<Builder>
     {
+        @Override
         MovedEventSyncRestorer build()
         {
             validate();

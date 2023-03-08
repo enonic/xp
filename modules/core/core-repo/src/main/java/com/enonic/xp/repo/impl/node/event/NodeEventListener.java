@@ -73,6 +73,8 @@ public class NodeEventListener
             case NodeEvents.NODE_PUSHED_EVENT:
                 handleEventType( event, nodePushedHandler );
                 break;
+            default:
+                break;
         }
     }
 

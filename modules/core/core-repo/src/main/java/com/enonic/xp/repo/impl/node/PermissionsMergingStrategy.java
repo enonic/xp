@@ -6,6 +6,8 @@ interface PermissionsMergingStrategy
 {
 
     /**
+     * Returns resulting permissions after merging child and parent permissions.
+     *
      * @param childAcl  permissions of the child node
      * @param parentAcl permissions of the parent node
      * @return resulting permissions after merging child and parent permissions

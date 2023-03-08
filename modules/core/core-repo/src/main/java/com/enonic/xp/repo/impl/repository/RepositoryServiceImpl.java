@@ -176,7 +176,18 @@ public class RepositoryServiceImpl
         //If the root node does not exist, creates it
         if ( getRootNode( previousRepository.getId(), newBranch ) == null )
         {
-            pushRootNode( previousRepository, newBranch );
+            final Context context = ContextAccessor.current();
+            final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
+            final NodeBranchEntry rootNode = this.nodeStorageService.getBranchNodeVersion( Node.ROOT_UUID, internalContext );
+
+            if ( rootNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot find root-node in repository [" + previousRepository.getId() + "]" );
+            }
+
+            this.nodeStorageService.push( Collections.singleton( PushNodeEntry.create().nodeBranchEntry( rootNode ).build()), newBranch,
+                                          c -> {
+            }, internalContext );
 
             doRefresh();
         }
@@ -369,22 +380,6 @@ public class RepositoryServiceImpl
         doRefresh();
 
         LOG.info( "Created root node with id [{}] in repository [{}]", rootNode.id(), params.getRepositoryId() );
-    }
-
-    private void pushRootNode( final Repository currentRepo, final Branch branch )
-    {
-        final Context context = ContextAccessor.current();
-        final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
-        final NodeBranchEntry rootNode = this.nodeStorageService.getBranchNodeVersion( Node.ROOT_UUID, internalContext );
-
-        if ( rootNode == null )
-        {
-            throw new NodeNotFoundException( "Cannot find root-node in repository [" + currentRepo + "]" );
-        }
-
-        this.nodeStorageService.push( Collections.singleton( PushNodeEntry.create().nodeBranchEntry( rootNode ).build()), branch,
-                                      c -> {
-        }, internalContext );
     }
 
     private void deleteAllNodes()

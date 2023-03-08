@@ -11,7 +11,7 @@ public final class VersionInfo
 
     private final Properties props;
 
-    protected VersionInfo( final Properties props )
+    VersionInfo( final Properties props )
     {
         this.props = props;
     }

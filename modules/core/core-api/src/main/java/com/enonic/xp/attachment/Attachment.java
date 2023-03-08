@@ -95,7 +95,7 @@ public final class Attachment
         }
         final Attachment that = (Attachment) o;
         return Objects.equals( this.name, that.name ) && Objects.equals( this.mimeType, that.mimeType ) &&
-            Objects.equals( this.label, that.label ) && Objects.equals( this.size, that.size ) &&
+            Objects.equals( this.label, that.label ) && this.size == that.size &&
             Objects.equals( this.sha512, that.sha512 ) &&
             Objects.equals( this.textContent, that.textContent );
     }

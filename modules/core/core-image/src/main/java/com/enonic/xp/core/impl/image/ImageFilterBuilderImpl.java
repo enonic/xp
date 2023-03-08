@@ -57,6 +57,7 @@ public final class ImageFilterBuilderImpl
         imageFilterRegistry = map;
     }
 
+    @Override
     public ImageFunction build( final FilterSetExpr set )
     {
         final List<FilterExpr> list = set.getList();

@@ -515,7 +515,7 @@ public class ContentServiceImpl
     public Content getById( final ContentId contentId )
     {
         return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
-                             ( ( trace, content ) -> trace.put( "path", content.getPath() ) ) );
+                             ( trace, content ) -> trace.put( "path", content.getPath() ) );
     }
 
     private Content doGetById( final ContentId contentId )

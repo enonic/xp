@@ -47,6 +47,7 @@ public final class DistributableTask
         return taskId;
     }
 
+    @Override
     public String getName()
     {
         return name;

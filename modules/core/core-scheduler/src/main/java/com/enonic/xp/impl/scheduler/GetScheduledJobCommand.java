@@ -56,11 +56,13 @@ public class GetScheduledJobCommand
             return this;
         }
 
+        @Override
         protected void validate()
         {
             Preconditions.checkNotNull( name, "name cannot be null." );
         }
 
+        @Override
         public GetScheduledJobCommand build()
         {
             validate();

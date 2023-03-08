@@ -1,16 +1,15 @@
 package com.enonic.xp.core.impl.export.validator;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class ContentImportValidator
     implements ImportValidator
 {
+    private static final ChildOrder OLD_DEFAULT_CHILD_ORDER = ChildOrder.from( "_modifiedtime DESC" );
+
     @Override
     public CreateNodeParams ensureValid( final CreateNodeParams original )
     {
@@ -35,26 +34,12 @@ public class ContentImportValidator
         }
         else
         {
-            final ChildOrder oldDefaultChildOrder = ChildOrder.from( "_modifiedtime DESC" );
 
-            if ( childOrder.equals( ChildOrder.defaultOrder() ) || childOrder.equals( oldDefaultChildOrder ) )
+            if ( childOrder.equals( ChildOrder.defaultOrder() ) || childOrder.equals( OLD_DEFAULT_CHILD_ORDER ) )
             {
                 builder.childOrder( ContentConstants.DEFAULT_CHILD_ORDER );
             }
         }
-    }
-
-    private User getUser()
-    {
-
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( authInfo == null || authInfo.getUser() == null )
-        {
-            return User.ANONYMOUS;
-        }
-
-        return authInfo.getUser();
     }
 
     @Override

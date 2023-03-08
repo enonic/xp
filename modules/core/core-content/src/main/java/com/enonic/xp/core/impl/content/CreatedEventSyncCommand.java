@@ -34,6 +34,7 @@ final class CreatedEventSyncCommand
         return new Builder();
     }
 
+    @Override
     protected void doSync()
     {
         params.getContents().forEach( this::doSync );
@@ -113,6 +114,7 @@ final class CreatedEventSyncCommand
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
 
+        @Override
         void validate()
         {
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
@@ -121,6 +123,7 @@ final class CreatedEventSyncCommand
                                          "targetContent must be null." );
         }
 
+        @Override
         public CreatedEventSyncCommand build()
         {
             validate();

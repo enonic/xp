@@ -1,8 +1,5 @@
 package com.enonic.xp.aggregation;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -12,11 +9,10 @@ public abstract class Aggregation
 
     private final Aggregations subAggregations;
 
-    @SuppressWarnings("unchecked")
-    protected Aggregation( final Builder builder )
+    protected Aggregation( final Builder<?> builder )
     {
         this.name = builder.name;
-        this.subAggregations = Aggregations.from( builder.subAggregations );
+        this.subAggregations = Aggregations.from( builder.subAggregations.build() );
     }
 
     public Aggregations getSubAggregations()
@@ -43,7 +39,7 @@ public abstract class Aggregation
 
         private final String name;
 
-        private final Set<Aggregation> subAggregations = new HashSet<>();
+        private final Aggregations.Builder subAggregations = Aggregations.create();
 
         @SuppressWarnings("unchecked")
         public T addSubAggregation( final Aggregation aggregation )
@@ -55,7 +51,7 @@ public abstract class Aggregation
         @SuppressWarnings("unchecked")
         public T addAggregations( final Aggregations aggregations )
         {
-            this.subAggregations.addAll( aggregations.getSet() );
+            aggregations.stream().forEach( this.subAggregations::add );
             return (T) this;
         }
 

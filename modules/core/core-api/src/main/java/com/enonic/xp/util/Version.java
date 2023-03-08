@@ -148,8 +148,9 @@ public class Version
         {
             throw new IllegalArgumentException( "invalid version \"" + toString0() + "\": negative number \"" + micro + "\"" );
         }
-        for ( char ch : qualifier.toCharArray() )
+        for ( int i = 0; i < qualifier.length(); i++ )
         {
+            final char ch = qualifier.charAt(i);
             if ( ( 'A' <= ch ) && ( ch <= 'Z' ) )
             {
                 continue;
