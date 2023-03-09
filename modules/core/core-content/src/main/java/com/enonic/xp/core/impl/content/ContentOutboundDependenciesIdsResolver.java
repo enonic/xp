@@ -65,6 +65,10 @@ class ContentOutboundDependenciesIdsResolver
         {
             contentIds.addAll( content.getProcessedReferences() );
         }
+        if ( content.getVariantOf() != null )
+        {
+            contentIds.add( content.getVariantOf() );
+        }
 
         return contentIds.build();
     }
