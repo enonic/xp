@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FlattenedPageIndexUpgraderTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     @Test
     public void testPageFlattened()
@@ -72,9 +72,8 @@ public class FlattenedPageIndexUpgraderTest
         final JsonNode jsonNode = loadJson( name );
         try
         {
-            final IndexConfigDocumentJson indexConfigDocumentJson =
-                ObjectMapperHelper.create().readValue( jsonNode.toString(), IndexConfigDocumentJson.class );
-            return indexConfigDocumentJson.fromJson();
+            return IndexConfigDocumentJson.fromJson(
+                ObjectMapperHelper.create().readValue( jsonNode.toString(), IndexConfigDocumentJson.class ) );
         }
         catch ( IOException e )
         {

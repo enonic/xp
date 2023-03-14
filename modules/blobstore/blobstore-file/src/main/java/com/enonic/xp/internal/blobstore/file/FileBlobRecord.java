@@ -1,6 +1,7 @@
 package com.enonic.xp.internal.blobstore.file;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -39,7 +40,7 @@ final class FileBlobRecord
         }
         catch ( IOException e )
         {
-            return 0;
+            throw new UncheckedIOException( e );
         }
     }
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.security;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
+import com.enonic.xp.repo.impl.config.RepoConfigurationImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -112,7 +114,7 @@ public class SecurityServiceImplTest
 
         final CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
 
-        final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore );
+        final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfigurationImpl( Map.of() ) );
 
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 

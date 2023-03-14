@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.node.json;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,10 +31,9 @@ public final class AccessControlJson
 
     public static AccessControlJson toJson( final NodeVersion nodeVersion )
     {
-        return create().
-            inheritPermissions( nodeVersion.isInheritPermissions() ).
-            permissions( toJson( nodeVersion.getPermissions() ) ).
-            build();
+        return create().inheritPermissions( nodeVersion.isInheritPermissions() )
+            .permissions( toJson( nodeVersion.getPermissions() ) )
+            .build();
     }
 
     private static List<AccessControlEntryJson> toJson( final AccessControlList acl )
@@ -53,28 +51,21 @@ public final class AccessControlJson
         return entryJsonList;
     }
 
-    @JsonIgnore
-    public AccessControlList getAccessControlList()
-    {
-        final AccessControlList.Builder builder = AccessControlList.create();
-        for ( final AccessControlEntryJson entryJson : permissions )
-        {
-            builder.add( entryJson.fromJson() );
-        }
-
-        return builder.build();
-    }
-
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public static Builder create()
     {
         return new Builder();
     }
 
+    public static NodeVersionAccessControl fromJson( final AccessControlJson json )
+    {
+        final AccessControlList.Builder builder = AccessControlList.create();
+        for ( final AccessControlEntryJson entryJson : json.permissions )
+        {
+            builder.add( entryJson.fromJson() );
+        }
+
+        return new NodeVersionAccessControl( builder.build(), json.inheritPermissions );
+    }
 
     public static final class Builder
     {

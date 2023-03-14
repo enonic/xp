@@ -49,8 +49,6 @@ public class RepositoryIdDumpUpgrader
     private static final Segment SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
-    private static final NodeVersionJsonSerializer NODE_VERSION_JSON_SERIALIZER = NodeVersionJsonSerializer.create();
-
     public RepositoryIdDumpUpgrader( final Path basePath )
     {
         super( basePath );
@@ -129,10 +127,9 @@ public class RepositoryIdDumpUpgrader
 
         final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
 
-        final NodeVersion updatedNodeVersion = sourceNodeVersion.fromJson().
-            id( NodeId. from( upgradeString( sourceNodeVersion.getId() ) ) ).
-            build();
-
+        final NodeVersion updatedNodeVersion = NodeVersion.create( NodeVersionDataJson.fromJson( sourceNodeVersion ) )
+            .id( NodeId.from( upgradeString( sourceNodeVersion.getId() ) ) )
+            .build();
         writeNodeVersion( updatedNodeVersion, dumpBlobRecord );
     }
 
@@ -259,7 +256,7 @@ public class RepositoryIdDumpUpgrader
     {
         try
         {
-            dumpBlobRecord.getByteSink().write( NODE_VERSION_JSON_SERIALIZER.toNodeString( nodeVersion ) );
+            dumpBlobRecord.getByteSink().write( NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) );
         }
         catch ( IOException e )
         {

@@ -31,20 +31,20 @@ public final class IndexConfigDocumentJson
         return json;
     }
 
-    public PatternIndexConfigDocument fromJson()
+    public static PatternIndexConfigDocument fromJson( final IndexConfigDocumentJson json )
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().
-            analyzer( this.analyzer ).
-            defaultConfig( this.defaultConfig.fromJson() );
+            analyzer( json.analyzer ).
+            defaultConfig( json.defaultConfig.fromJson() );
 
-        for ( final PatternConfigJson patternConfigJson : this.patternConfigs )
+        for ( final PatternConfigJson patternConfigJson : json.patternConfigs )
         {
             builder.addPattern( patternConfigJson.fromJson() );
         }
 
-        if ( this.allTextConfig != null )
+        if ( json.allTextConfig != null )
         {
-            this.allTextConfig.fromJson().getLanguages().forEach( builder::addAllTextConfigLanguage );
+            json.allTextConfig.fromJson().getLanguages().forEach( builder::addAllTextConfigLanguage );
         }
         return builder.build();
     }

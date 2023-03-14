@@ -44,11 +44,11 @@ final class BlobStoreFactory
             return builtStore;
         }
 
-        return CachedBlobStore.create().
-            memoryCapacity( this.config.memoryCapacity() ).
-            sizeTreshold( this.config.cacheSizeThreshold() ).
-            blobStore( builtStore ).
-            build();
+        return CachedBlobStore.create()
+            .memoryCapacity( this.config.memoryCapacity() )
+            .sizeThreshold( this.config.cacheSizeThreshold() )
+            .blobStore( builtStore )
+            .build();
     }
 
     private BlobStore populateWithReadThroughIfApplicable( final ProviderConfig config, final BlobStore providerStore )

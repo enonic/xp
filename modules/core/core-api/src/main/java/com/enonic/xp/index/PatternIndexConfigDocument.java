@@ -15,7 +15,7 @@ import com.enonic.xp.util.GlobPatternMatcher;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
-public class PatternIndexConfigDocument
+public final class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
@@ -105,22 +105,23 @@ public class PatternIndexConfigDocument
         {
             return true;
         }
-        if ( !( o instanceof PatternIndexConfigDocument ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
-
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
         final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
+        return Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) &&
+            Objects.equals( defaultConfig, that.defaultConfig ) && Objects.equals( allTextConfig, that.allTextConfig );
+    }
 
-        if ( !Objects.equals( defaultConfig, that.defaultConfig ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) )
-        {
-            return false;
-        }
-        return Objects.equals( this.allTextConfig, that.allTextConfig );
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), pathIndexConfigs, defaultConfig, allTextConfig );
     }
 
     public static final class Builder
@@ -208,13 +209,5 @@ public class PatternIndexConfigDocument
         {
             return new PatternIndexConfigDocument( this );
         }
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = pathIndexConfigs != null ? pathIndexConfigs.hashCode() : 0;
-        result = 31 * result + ( defaultConfig != null ? defaultConfig.hashCode() : 0 );
-        return result;
     }
 }

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,10 @@ public final class ClassLoaderApplicationUrlResolver
         {
             throw new UncheckedIOException( e );
         }
-        return cp.getResources().stream().map( ClassPath.ResourceInfo::getResourceName ).collect( Collectors.toSet() );
+        return cp.getResources()
+            .stream()
+            .map( ClassPath.ResourceInfo::getResourceName )
+            .collect( Collectors.toCollection( LinkedHashSet::new ) );
     }
 
     @Override

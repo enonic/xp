@@ -29,18 +29,7 @@ public final class NodeType
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final NodeType that = (NodeType) o;
-
-        return name.equals( that.name );
+        return this == o || o instanceof NodeType && name.equals( ( (NodeType) o ).name );
     }
 
     @Override

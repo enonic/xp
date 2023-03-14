@@ -303,6 +303,7 @@ public class Content
         return this instanceof PageTemplate;
     }
 
+    @Deprecated
     public boolean hasPage()
     {
         return page != null;

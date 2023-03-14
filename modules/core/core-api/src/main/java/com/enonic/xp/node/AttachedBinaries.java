@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -56,7 +55,7 @@ public class AttachedBinaries
 
     public static class Builder
     {
-        private final Set<AttachedBinary> nodeAttachedBinaries = new HashSet<>();
+        private final ImmutableSet.Builder<AttachedBinary> nodeAttachedBinaries = ImmutableSet.builder();
 
         public Builder add( final AttachedBinary attachedBinary )
         {
@@ -67,12 +66,12 @@ public class AttachedBinaries
         @Deprecated
         public Set<AttachedBinary> getNodeAttachedBinaries()
         {
-            return nodeAttachedBinaries;
+            return nodeAttachedBinaries.build();
         }
 
         public AttachedBinaries build()
         {
-            return fromInternal( ImmutableSet.copyOf( nodeAttachedBinaries ) );
+            return fromInternal( nodeAttachedBinaries.build() );
         }
     }
 

@@ -9,7 +9,6 @@ import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.Page;
@@ -107,18 +106,20 @@ public final class FragmentRenderer
 
     private Component getFragmentComponent( final FragmentComponent component )
     {
-        final ContentId contentId = component.getFragment();
+        final Content fragmentContent;
         try
         {
-            final Content fragmentContent = contentService.getById( contentId );
-            if ( !fragmentContent.hasPage() || !fragmentContent.getType().isFragment() )
-            {
-                return null;
-            }
-            final Page page = fragmentContent.getPage();
-            return page.getFragment();
+            fragmentContent = contentService.getById( component.getFragment() );
         }
         catch ( ContentNotFoundException e )
+        {
+            return null;
+        }
+        if ( fragmentContent.getType().isFragment() || fragmentContent.getPage() != null )
+        {
+            return fragmentContent.getPage().getFragment();
+        }
+        else
         {
             return null;
         }

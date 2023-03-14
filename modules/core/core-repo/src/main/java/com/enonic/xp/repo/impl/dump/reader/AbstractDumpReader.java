@@ -50,8 +50,6 @@ public abstract class AbstractDumpReader
 {
     private final DumpBlobStore dumpBlobStore;
 
-    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create();
-
     private final SystemLoadListener listener;
 
     protected final FilePaths filePaths;
@@ -176,8 +174,7 @@ public abstract class AbstractDumpReader
 
         try
         {
-            return this.serializer.toNodeVersion( dataRecord.getBytes().read(), indexConfigRecord.getBytes().read(),
-                                                  accessControlRecord.getBytes().read() );
+            return NodeVersionJsonSerializer.toNodeVersion( dataRecord.getBytes(), indexConfigRecord.getBytes(), accessControlRecord.getBytes() );
         }
         catch ( IOException e )
         {

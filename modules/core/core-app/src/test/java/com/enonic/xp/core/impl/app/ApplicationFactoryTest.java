@@ -11,7 +11,6 @@ import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.RealOverVirtualApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -89,7 +88,6 @@ public class ApplicationFactoryTest
         final ApplicationUrlResolver resolver =
             new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof RealOverVirtualApplicationUrlResolver );
     }
 
     @Test
@@ -105,7 +103,6 @@ public class ApplicationFactoryTest
         final ApplicationUrlResolver resolver =
             new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof RealOverVirtualApplicationUrlResolver );
     }
 
     @Test

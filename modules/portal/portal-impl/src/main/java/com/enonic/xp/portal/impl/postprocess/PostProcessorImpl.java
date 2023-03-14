@@ -67,8 +67,8 @@ public final class PostProcessorImpl
 
     private boolean skipPostprocess( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        return !portalResponse.isPostProcess() || !( portalResponse.getBody() instanceof String ) ||
-            !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) || !isHtmlResponse( portalResponse );
+        return !( portalResponse.isPostProcess() && portalResponse.getBody() instanceof String &&
+            METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) && isHtmlResponse( portalResponse ) );
     }
 
     private boolean isHtmlResponse( final PortalResponse portalResponse )
@@ -82,7 +82,6 @@ public final class PostProcessorImpl
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.portalRequest = portalRequest;
         evaluator.portalResponse = portalResponse;
-        evaluator.input = (String) portalResponse.getBody();
         evaluator.instructions = this.instructions;
         evaluator.injections = this.injections;
         return evaluator;

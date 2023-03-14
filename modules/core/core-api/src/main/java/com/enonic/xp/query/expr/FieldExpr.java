@@ -1,5 +1,7 @@
 package com.enonic.xp.query.expr;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
@@ -11,7 +13,7 @@ public final class FieldExpr
 
     private FieldExpr( final IndexPath indexPath )
     {
-        this.indexPath = indexPath;
+        this.indexPath = Objects.requireNonNull( indexPath );
     }
 
     public String getFieldPath()
@@ -39,23 +41,12 @@ public final class FieldExpr
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final FieldExpr fieldExpr = (FieldExpr) o;
-
-        return indexPath != null ? indexPath.equals( fieldExpr.indexPath ) : fieldExpr.indexPath == null;
+        return this == o || o instanceof FieldExpr && indexPath.equals( ( (FieldExpr) o ).indexPath );
     }
 
     @Override
     public int hashCode()
     {
-        return indexPath != null ? indexPath.hashCode() : 0;
+        return indexPath.hashCode();
     }
 }

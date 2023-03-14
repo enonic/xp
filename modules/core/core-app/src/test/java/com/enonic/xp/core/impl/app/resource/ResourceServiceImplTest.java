@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Dictionary;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_PROJECT_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,16 +103,13 @@ class ResourceServiceImplTest
         newFile( "c/d/e.png" );
 
         final ResourceKeys keys1 = this.resourceService.findFiles( this.appKey, ".+" );
-        assertEquals( 3, keys1.getSize() );
-        assertEquals( "[myapp:/b/c.txt, myapp:/a.txt, myapp:/c/d/e.png]", keys1.toString() );
+        assertThat( keys1 ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp:/b/c.txt", "myapp:/a.txt", "myapp:/c/d/e.png" );
 
         final ResourceKeys keys2 = this.resourceService.findFiles( this.appKey, "b/c\\.txt" );
-        assertEquals( 1, keys2.getSize() );
-        assertEquals( "[myapp:/b/c.txt]", keys2.toString() );
+        assertThat( keys2 ).map( Objects::toString ).containsExactly( "myapp:/b/c.txt" );
 
         final ResourceKeys keys3 = this.resourceService.findFiles( this.appKey, ".+\\.txt" );
-        assertEquals( 2, keys3.getSize() );
-        assertEquals( "[myapp:/b/c.txt, myapp:/a.txt]", keys3.toString() );
+        assertThat( keys3 ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp:/b/c.txt", "myapp:/a.txt" );
     }
 
     private String processResource( final String segment, final String key, final String suffix )

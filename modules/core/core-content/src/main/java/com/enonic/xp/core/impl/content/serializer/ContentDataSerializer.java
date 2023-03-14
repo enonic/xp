@@ -165,7 +165,7 @@ public class ContentDataSerializer
 
         applyAttachmentsAsData( attachments, contentAsData );
 
-        if ( content.hasPage() )
+        if ( content.getPage() != null )
         {
             pageDataSerializer.toData( content.getPage(), contentAsData );
         }

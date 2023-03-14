@@ -10,7 +10,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
@@ -109,15 +108,13 @@ public final class ComponentInstruction
         {
             return null;
         }
-        final Page page = content.getPage();
 
         if ( content.getType().isFragment() )
         {
-            return resolveComponentInFragment( page, path );
+            return resolveComponentInFragment( content, path );
         }
 
-        final PageRegions pageRegions = page.getRegions();
-        Component component = pageRegions.getComponent( path );
+        Component component = content.getPage().getRegions().getComponent( path );
         if ( component == null )
         {
             throw new RenderException( "Component not found: [{0}]", path );
@@ -126,9 +123,9 @@ public final class ComponentInstruction
         return component;
     }
 
-    private Component resolveComponentInFragment( final Page page, final ComponentPath path )
+    private Component resolveComponentInFragment( final Content content, final ComponentPath path )
     {
-        final Component fragmentComponent = page.getFragment();
+        final Component fragmentComponent = content.getPage().getFragment();
         if ( !( fragmentComponent instanceof LayoutComponent ) )
         {
             throw new RenderException( "Component not found: [{0}]", path );
@@ -157,7 +154,6 @@ public final class ComponentInstruction
         {
             return null;
         }
-        final Component fragment = page.getFragment();
-        return fragment;
+        return page.getFragment();
     }
 }

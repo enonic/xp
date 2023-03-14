@@ -11,7 +11,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -40,7 +39,8 @@ final class FilterScriptImpl
 
         try
         {
-            return Tracer.traceEx( "filterScript", () -> doExecute( request, response, webHandlerChain ) );
+            return Tracer.trace( "filterScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),
+                                 () -> doExecute( request, response, webHandlerChain ) );
         }
         catch ( ResourceProblemException | WebException e )
         {
@@ -58,11 +58,6 @@ final class FilterScriptImpl
         }
     }
 
-    private void addTraceInfo( final Trace trace )
-    {
-        trace.put( "script", this.scriptExports.getScript().toString() );
-    }
-
     private PortalResponse doExecute( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
         if ( !this.scriptExports.hasMethod( FILTER_SCRIPT_METHOD ) )
@@ -72,7 +67,6 @@ final class FilterScriptImpl
                                         scriptExports.getScript() );
         }
 
-        Tracer.withCurrent( this::addTraceInfo );
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final FilterNextFunctionWrapper nextHandler =
             new FilterNextFunctionWrapper( webHandlerChain, request, response, scriptExports.getScript(), scriptService );

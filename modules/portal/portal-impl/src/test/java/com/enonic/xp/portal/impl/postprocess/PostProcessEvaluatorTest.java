@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.postprocess;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,10 +29,9 @@ public class PostProcessEvaluatorTest
         throws Exception
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource1.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = Collections.emptyList();
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource1.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), result.getAsString() );
     }
@@ -56,10 +57,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource2.html" );
         evaluator.injections = List.of( contributionsInjection );
         evaluator.instructions = Collections.emptyList();
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource2.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
     }
@@ -96,10 +96,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource4.html" );
         evaluator.injections = List.of( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource4.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), result.getAsString() );
     }
@@ -136,10 +135,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource5.html" );
         evaluator.injections = List.of( contributionsInjection, contributionsInjection2 );
         evaluator.instructions = Collections.emptyList();
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource5.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), result.getAsString() );
     }
@@ -165,10 +163,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource2.html" );
         evaluator.injections = List.of( contributionsInjection );
         evaluator.instructions = Collections.emptyList();
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource2.html" ) ).build();
         evaluator.evaluateInstructions();
         final PortalResponse result = evaluator.evaluateContributions();
         assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
@@ -198,10 +195,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource3.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = List.of( uppercaseInstruction, expandInstruction );
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource3.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result.getAsString() );
     }
@@ -221,10 +217,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource6.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = List.of( setCookieInstruction );
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource6.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEquals( 1, result.getCookies().size() );
         assertEquals( "cookie-name", result.getCookies().get( 0 ).getName() );
@@ -246,10 +241,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource6.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = List.of( setCookieInstruction );
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource6.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEquals( 1, result.getHeaders().size() );
         assertEquals( "header-value", result.getHeaders().get( "header-name" ) );
@@ -270,10 +264,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource6.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = List.of( setCookieInstruction );
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource6.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEquals( false, result.applyFilters() );
     }
@@ -293,10 +286,9 @@ public class PostProcessEvaluatorTest
         };
 
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
-        evaluator.input = readResource( "postProcessEvalSource6.html" );
         evaluator.injections = Collections.emptyList();
         evaluator.instructions = List.of( setCookieInstruction );
-        evaluator.portalResponse = PortalResponse.create().build();
+        evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource6.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
         assertEquals( 1, result.getContributions( HtmlTag.BODY_END ).size() );
         assertEquals( "<script src='my-script.js'/>", result.getContributions( HtmlTag.BODY_END ).get( 0 ) );
@@ -315,11 +307,14 @@ public class PostProcessEvaluatorTest
     }
 
     private String readResource( final String resourceName )
-        throws Exception
     {
         try (InputStream stream = getClass().getResourceAsStream( resourceName ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
         }
     }
 

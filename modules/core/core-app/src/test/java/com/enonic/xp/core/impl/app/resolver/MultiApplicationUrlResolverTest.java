@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.resource.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,31 +66,5 @@ class MultiApplicationUrlResolverTest
 
         final Resource resource3 = this.resolver.findResource( "other.txt" );
         assertNull( resource3 );
-    }
-
-    @Test
-    void testSiteVirtualPlaceholder()
-        throws Exception
-    {
-        final Resource first = mock( Resource.class );
-
-        when( first.getResolverName() ).thenReturn( "node" );
-        when( first.getBytes() ).thenReturn( VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE );
-
-        when( this.delegate1.findResource( "/site/site.xml" ) ).thenReturn( first );
-
-        final Resource second = mock( Resource.class );
-        when( this.delegate2.findResource( "/site/site.xml" ) ).thenReturn( second );
-
-        assertSame( second, this.resolver.findResource( "/site/site.xml" ) );
-
-        when( first.getResolverName() ).thenReturn( "bundle" );
-
-        assertSame( first, this.resolver.findResource( "/site/site.xml" ) );
-
-        when( first.getResolverName() ).thenReturn( "node" );
-        when( this.delegate2.findResource( "/site/site.xml" ) ).thenReturn( null );
-
-        assertSame( first, this.resolver.findResource( "/site/site.xml" ) );
     }
 }

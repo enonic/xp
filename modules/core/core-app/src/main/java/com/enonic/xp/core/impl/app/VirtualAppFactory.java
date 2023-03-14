@@ -11,6 +11,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeSiteXmlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.VersionInfo;
@@ -24,7 +26,8 @@ public class VirtualAppFactory
             @Override
             public ApplicationUrlResolver getUrlResolver()
             {
-                return new NodeResourceApplicationUrlResolver( applicationKey, nodeService );
+                return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
+                                                        new FakeSiteXmlUrlResolver(applicationKey, nodeService) );
             }
 
             @Override

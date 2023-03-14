@@ -7,6 +7,7 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertyPathTest
@@ -47,7 +48,16 @@ public class PropertyPathTest
     @Test
     public void root_is_absolute()
     {
-        assertEquals( false, PropertyPath.ROOT.isRelative() );
+        assertFalse( PropertyPath.ROOT.isRelative() );
+    }
+
+    @Test
+    public void parentPath()
+    {
+        assertNull( PropertyPath.from( "a" ).getParent() );
+        assertEquals( PropertyPath.from( "a" ) , PropertyPath.from( "a.b" ).getParent() );
+        assertEquals( PropertyPath.from( "a.b" ) , PropertyPath.from( "a.b.c" ).getParent() );
+        assertEquals( PropertyPath.from( "a.b" ) , PropertyPath.from( PropertyPath.from( "a.b" ), "c" ).getParent() );
     }
 
     @Test

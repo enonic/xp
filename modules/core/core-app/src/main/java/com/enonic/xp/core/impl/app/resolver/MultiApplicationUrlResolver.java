@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.resource.Resource;
 
 public final class MultiApplicationUrlResolver
@@ -19,35 +21,16 @@ public final class MultiApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        final Set<String> set = new HashSet<>();
-        for ( final ApplicationUrlResolver resolver : this.list )
-        {
-            set.addAll( resolver.findFiles() );
-        }
-
-        return set;
+        return Arrays.stream( this.list ).flatMap( r -> r.findFiles().stream() ).collect( Collectors.toCollection( LinkedHashSet::new ) );
     }
 
     @Override
     public Resource findResource( final String path )
     {
-        Resource resourceToReturn = null;
-
-        for ( final ApplicationUrlResolver resolver : this.list )
-        {
-            final Resource resource = resolver.findResource( path );
-            if ( resource != null )
-            {
-                resourceToReturn = resource;
-
-                if ( !"node".equals( resourceToReturn.getResolverName() ) || !VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) ||
-                    !VirtualAppConstants.DEFAULT_SITE_RESOURCE_VALUE.equals( resourceToReturn.getBytes() ) )
-                {
-                    return resourceToReturn;
-                }
-            }
-        }
-
-        return resourceToReturn;
+        return Arrays.stream( this.list )
+            .map( resolver -> resolver.findResource( path ) )
+            .filter( Objects::nonNull )
+            .findFirst()
+            .orElse( null );
     }
 }

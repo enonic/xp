@@ -20,6 +20,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 import com.enonic.xp.repo.impl.node.json.NodeVersionDataJson;
+import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.util.Version;
@@ -110,7 +111,7 @@ public class HtmlAreaDumpUpgrader
         try
         {
             final NodeVersionDataJson nodeVersionDataJson = deserializeValue( charSource.read(), NodeVersionDataJson.class );
-            return nodeVersionDataJson.fromJson().build();
+            return NodeVersionDataJson.fromJson( nodeVersionDataJson );
         }
         catch ( IOException e )
         {
@@ -123,8 +124,7 @@ public class HtmlAreaDumpUpgrader
         final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
-            final IndexConfigDocumentJson indexConfigDocumentJson = deserializeValue( charSource.read(), IndexConfigDocumentJson.class );
-            return indexConfigDocumentJson.fromJson();
+            return IndexConfigDocumentJson.fromJson( deserializeValue( charSource.read(), IndexConfigDocumentJson.class ) );
         }
         catch ( IOException e )
         {
@@ -134,7 +134,7 @@ public class HtmlAreaDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final byte[] serializedUpgradedNodeVersion = serialize( NodeVersionDataJson.toJson( nodeVersion ) );
+        final byte[] serializedUpgradedNodeVersion = NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) ;
         try
         {
             dumpBlobRecord.getByteSink().write( serializedUpgradedNodeVersion );

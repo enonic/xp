@@ -23,15 +23,13 @@ final class PostProcessEvaluator
 
     PortalResponse portalResponse;
 
-    String input;
-
     List<PostProcessInstruction> instructions;
 
     List<PostProcessInjection> injections;
 
     public PortalResponse evaluate()
     {
-        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( (String) portalResponse.getBody() );
 
         while ( htmlBlocks.hasInstructions() )
         {
@@ -48,7 +46,7 @@ final class PostProcessEvaluator
 
     public PortalResponse evaluateInstructions()
     {
-        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( (String) portalResponse.getBody() );
 
         while ( htmlBlocks.hasInstructions() )
         {
@@ -60,7 +58,7 @@ final class PostProcessEvaluator
 
     public PortalResponse evaluateContributions()
     {
-        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
+        HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( (String) portalResponse.getBody() );
 
         if ( htmlBlocks.hasTagMarkers() )
         {

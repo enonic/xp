@@ -2,6 +2,7 @@ package com.enonic.xp.core;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.jupiter.api.AfterEach;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.enonic.xp.blob.Segment;
-import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
@@ -42,10 +41,10 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
+import com.enonic.xp.repo.impl.config.RepoConfigurationImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -77,7 +76,6 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -141,8 +139,6 @@ public abstract class AbstractNodeTest
     protected Path temporaryFolder;
 
     protected BinaryServiceImpl binaryService;
-
-    protected NodeVersionServiceImpl nodeDao;
 
     protected VersionServiceImpl versionService;
 
@@ -229,9 +225,9 @@ public abstract class AbstractNodeTest
 
         this.binaryService = new BinaryServiceImpl( BLOB_STORE );
 
-        this.nodeDao = new NodeVersionServiceImpl( BLOB_STORE );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfigurationImpl( Map.of() ) );
 
-        storageDao = new StorageDaoImpl( client );
+        this.storageDao = new StorageDaoImpl( client );
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
@@ -321,19 +317,6 @@ public abstract class AbstractNodeTest
                 refresh();
                 return null;
             } );
-    }
-
-    protected InternalContext createInternalContext()
-    {
-        final Context currentContext = ContextAccessor.current();
-        return InternalContext.create( currentContext ).
-            build();
-    }
-
-    protected Segment createSegment( SegmentLevel blobTypeLevel )
-    {
-        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        return RepositorySegmentUtils.toSegment( repositoryId, blobTypeLevel );
     }
 
     protected Node createDefaultRootNode()

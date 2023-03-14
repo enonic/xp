@@ -35,8 +35,7 @@ public class CachedBlobStoreTest
         this.blobStore = Mockito.mock( BlobStore.class );
         this.cachedBlobStore = CachedBlobStore.create().
             blobStore( this.blobStore ).
-            memoryCapacity( 100 ).
-            sizeTreshold( 10 ).
+            memoryCapacity( 100 ).sizeThreshold( 10 ).
             build();
     }
 
@@ -165,11 +164,7 @@ public class CachedBlobStoreTest
 
         final BlobRecord record = memoryBlobStore.addRecord( this.segment, source );
 
-        this.cachedBlobStore = CachedBlobStore.create().
-            blobStore( memoryBlobStore ).
-            memoryCapacity( 100 ).
-            sizeTreshold( 10 ).
-            build();
+        this.cachedBlobStore = CachedBlobStore.create().blobStore( memoryBlobStore ).memoryCapacity( 100 ).sizeThreshold( 10 ).build();
 
         // Cache this
         this.cachedBlobStore.getRecord( this.segment, record.getKey() );

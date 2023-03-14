@@ -69,17 +69,17 @@ public final class Pre4NodeVersionJson
 
     public NodeVersion fromJson()
     {
-        return NodeVersion.create().
-            id( NodeId.from( this.id ) ).
-            data( PropertyTreeJson.fromJson( this.data ) ).
-            indexConfigDocument( this.indexConfigDocument.fromJson() ).
-            childOrder( ChildOrder.from( this.childOrder ) ).
-            manualOrderValue( this.manualOrderValue ).
-            permissions( fromJson( this.permissions ) ).
-            inheritPermissions( this.inheritPermissions ).
-            nodeType( NodeType.from( this.nodeType ) ).
-            attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) ).
-            build();
+        return NodeVersion.create()
+            .id( NodeId.from( this.id ) )
+            .data( PropertyTreeJson.fromJson( this.data ) )
+            .indexConfigDocument( IndexConfigDocumentJson.fromJson( indexConfigDocument ) )
+            .childOrder( ChildOrder.from( this.childOrder ) )
+            .manualOrderValue( this.manualOrderValue )
+            .permissions( fromJson( this.permissions ) )
+            .inheritPermissions( this.inheritPermissions )
+            .nodeType( NodeType.from( this.nodeType ) )
+            .attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) )
+            .build();
     }
 
     private AccessControlList fromJson( final List<AccessControlEntryJson> list )
@@ -98,7 +98,7 @@ public final class Pre4NodeVersionJson
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
         for ( final AttachedBinaryJson entry : list )
         {
-            builder.add( entry.fromJson() );
+            builder.add( AttachedBinaryJson.fromJson( entry ) );
         }
 
         return builder.build();
