@@ -227,7 +227,7 @@ export interface TaskInfo {
  * @param {object} [params.state] Filter by task state ('WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED').
  * @returns {TaskInfo[]} List with task information for every task.
  */
-export function list(params: ListTasksParams): TaskInfo[] {
+export function list(params?: ListTasksParams): TaskInfo[] {
     const {name, state} = params ?? {};
 
     const bean = __.newBean<ListTasksHandler>('com.enonic.xp.lib.task.ListTasksHandler');
