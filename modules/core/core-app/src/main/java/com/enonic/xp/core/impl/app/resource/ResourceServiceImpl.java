@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.app.resource;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
@@ -22,7 +24,6 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -32,14 +33,14 @@ public final class ResourceServiceImpl
 
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
-    private final ProcessingCache cache;
+    private final ConcurrentMap<ProcessingKey, ProcessingEntry> cache;
 
     private final ApplicationFactoryService applicationFactoryService;
 
     @Activate
     public ResourceServiceImpl( @Reference final ApplicationFactoryService applicationFactoryService )
     {
-        this.cache = new ProcessingCache( this::getResource, RunMode.get() );
+        this.cache = new ConcurrentHashMap<>();
         this.applicationFactoryService = applicationFactoryService;
     }
 
@@ -77,7 +78,25 @@ public final class ResourceServiceImpl
     @Override
     public <K, V> V processResource( final ResourceProcessor<K, V> processor )
     {
-        return this.cache.process( processor );
+        final ProcessingEntry entry = this.cache.compute( new ProcessingKey( processor.getSegment(), processor.getKey() ), ( k, v ) -> {
+            final Resource resource = this.getResource( processor.toResourceKey() );
+            if ( v == null || !resource.exists() || resource.getTimestamp() > v.timestamp )
+            {
+                final V value = processor.process( resource );
+                if ( value == null )
+                {
+                    return null;
+                }
+
+                return new ProcessingEntry( processor.toResourceKey(), value, resource.getTimestamp() );
+            }
+            else
+            {
+                return v;
+            }
+        } );
+
+        return entry != null ? (V) entry.value : null;
     }
 
     @Override
@@ -91,6 +110,6 @@ public final class ResourceServiceImpl
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         LOG.debug( "Cleanup Resource cache for {}", key );
-        this.cache.invalidate( key );
+        this.cache.entrySet().removeIf( entry -> entry.getValue().key.getApplicationKey().equals( key ) );
     }
 }

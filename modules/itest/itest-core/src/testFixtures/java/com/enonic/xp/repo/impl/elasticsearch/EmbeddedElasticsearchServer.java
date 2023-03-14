@@ -60,6 +60,8 @@ public class EmbeddedElasticsearchServer
             .put( "http.enabled", false )
             .put( "index.translog.durability", "async" )
             .put( "index.translog.sync_interval", "15m" )
+            .put( "index.search.slowlog.threshold.query.trace", "0s")
+            .put( "index.search.slowlog.threshold.fetch.trace", "0s")
             .put( "discovery.zen.ping.multicast.enabled", false );
 
         node = nodeBuilder().

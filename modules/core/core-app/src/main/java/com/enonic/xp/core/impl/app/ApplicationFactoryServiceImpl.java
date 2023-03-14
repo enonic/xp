@@ -18,13 +18,9 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.query.expr.DslExpr;
-import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.app")
@@ -113,19 +109,10 @@ public class ApplicationFactoryServiceImpl
         }
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final PropertyTree request = new PropertyTree();
-            final PropertySet likeExpression = request.addSet( "like" );
-
-            likeExpression.addString( "field", "_path" );
-            likeExpression.addString( "value", "/" + applicationKey );
-
-            final FindNodesByQueryResult nodes = this.nodeService.findByQuery(
-                NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
-            if ( nodes.getTotalHits() != 0 )
-            {
-                return Optional.of( VirtualAppFactory.create( applicationKey, nodeService ) );
-            }
-            return Optional.empty();
+            final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) );
+            return this.nodeService.nodeExists( appPath )
+                ? Optional.of( VirtualAppFactory.create( applicationKey, nodeService ) )
+                : Optional.empty();
         } );
     }
 

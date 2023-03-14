@@ -1,9 +1,14 @@
 package com.enonic.xp.internal.blobstore.cache;
 
+import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.Weigher;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -16,20 +21,19 @@ import com.enonic.xp.blob.Segment;
 public final class CachedBlobStore
     implements BlobStore, CachingBlobStore
 {
+    private static final Logger LOG = LoggerFactory.getLogger( CachedBlobStore.class );
+
     private final BlobStore store;
 
-    private final Cache<BlobKey, BlobRecord> cache;
+    private final Cache<BlobKey, CacheBlobRecord> cache;
 
-    private final long sizeTreshold;
+    private final long sizeThreshold;
 
     private CachedBlobStore( final Builder builder )
     {
         this.store = builder.store;
-        this.sizeTreshold = builder.sizeTreshold;
-        this.cache = CacheBuilder.newBuilder().
-            maximumWeight( builder.capacity ).
-            weigher( new BlobRecordWeigher() ).
-            build();
+        this.sizeThreshold = builder.sizeThreshold;
+        this.cache = CacheBuilder.newBuilder().maximumWeight( builder.capacity ).weigher( BlobRecordWeigher.INSTANCE ).build();
     }
 
     @Override
@@ -48,8 +52,7 @@ public final class CachedBlobStore
             return null;
         }
 
-        addToCache( record );
-        return record;
+        return addToCache( record );
     }
 
     @Override
@@ -57,8 +60,7 @@ public final class CachedBlobStore
         throws BlobStoreException
     {
         final BlobRecord record = this.store.addRecord( segment, in );
-        addToCache( record );
-        return record;
+        return addToCache( record );
     }
 
     @Override
@@ -66,8 +68,7 @@ public final class CachedBlobStore
         throws BlobStoreException
     {
         this.store.addRecord( segment, record );
-        addToCache( record );
-        return record;
+        return addToCache( record );
     }
 
     @Override
@@ -84,14 +85,23 @@ public final class CachedBlobStore
         this.cache.invalidate( key );
     }
 
-    private void addToCache( final BlobRecord record )
+    private BlobRecord addToCache( final BlobRecord record )
     {
-        if ( record.getLength() > this.sizeTreshold )
+        if ( record.getLength() <= this.sizeThreshold )
         {
-            return;
+            try
+            {
+                final CacheBlobRecord cacheBlobRecord = new CacheBlobRecord( record );
+                this.cache.put( record.getKey(), cacheBlobRecord );
+                return record;
+            }
+            catch ( IOException e )
+            {
+                LOG.error( "Could not create cache blob-record", e );
+            }
         }
 
-        this.cache.put( record.getKey(), new CacheBlobRecord( record ) );
+        return record;
     }
 
     @Override
@@ -122,7 +132,7 @@ public final class CachedBlobStore
     {
         private BlobStore store;
 
-        private long sizeTreshold = 1000L;
+        private long sizeThreshold = 1024L;
 
         private long capacity = 10 * 1024L * 1024L;
 
@@ -132,9 +142,9 @@ public final class CachedBlobStore
             return this;
         }
 
-        public Builder sizeTreshold( final long size )
+        public Builder sizeThreshold( final long size )
         {
-            this.sizeTreshold = size;
+            this.sizeThreshold = size;
             return this;
         }
 
@@ -147,6 +157,18 @@ public final class CachedBlobStore
         public CachedBlobStore build()
         {
             return new CachedBlobStore( this );
+        }
+    }
+
+    private enum BlobRecordWeigher
+        implements Weigher<BlobKey, BlobRecord>
+    {
+        INSTANCE;
+
+        @Override
+        public int weigh( final BlobKey key, final BlobRecord record )
+        {
+            return (int) record.getLength();
         }
     }
 }

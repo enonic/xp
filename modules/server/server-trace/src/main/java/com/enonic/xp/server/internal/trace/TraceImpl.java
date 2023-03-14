@@ -20,7 +20,11 @@ final class TraceImpl
 
     private Instant startTime;
 
+    private long startTimeNano;
+
     private Instant endTime;
+
+    private long endTimeNano;
 
     private final TraceLocation location;
 
@@ -78,10 +82,10 @@ final class TraceImpl
 
         if ( this.endTime == null )
         {
-            return Duration.between( this.startTime, Instant.now() );
+            return Duration.ofNanos( System.nanoTime() - this.startTimeNano );
         }
 
-        return Duration.between( this.startTime, this.endTime );
+        return Duration.ofNanos( this.endTimeNano - this.startTimeNano );
     }
 
     @Override
@@ -94,11 +98,13 @@ final class TraceImpl
     public void start()
     {
         this.startTime = Instant.now();
+        this.startTimeNano = System.nanoTime();
     }
 
     @Override
     public void end()
     {
         this.endTime = Instant.now();
+        this.endTimeNano = System.nanoTime();
     }
 }

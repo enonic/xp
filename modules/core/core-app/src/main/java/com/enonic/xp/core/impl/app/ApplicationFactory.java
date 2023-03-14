@@ -13,9 +13,9 @@ import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeSiteXmlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.RealOverVirtualApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -50,33 +50,25 @@ public final class ApplicationFactory
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )
     {
-        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
-            new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
-        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-
-        final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
-
         if ( source != null )
         {
             return createUrlResolverBySource( bundle, source );
         }
 
-        if ( appConfig.virtual_enabled() )
+        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final ApplicationKey appKey = ApplicationKey.from( bundle );
+        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
+            new NodeResourceApplicationUrlResolver( appKey, nodeService );
+        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
+        final FakeSiteXmlUrlResolver fakeSiteXmlUrlResolver = new FakeSiteXmlUrlResolver( appKey, nodeService );
+
+        final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+
+        if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
         {
-            if ( appConfig.virtual_schema_override() )
-            {
-                return addCLR
-                    ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver )
-                    : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
-            }
-            else
-            {
-                return addCLR
-                    ? new RealOverVirtualApplicationUrlResolver(
-                    new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ), nodeResourceApplicationResolver )
-                    : new RealOverVirtualApplicationUrlResolver( bundleUrlResolver, nodeResourceApplicationResolver );
-            }
+            return addCLR ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver,
+                                                             fakeSiteXmlUrlResolver )
+                : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver, fakeSiteXmlUrlResolver );
         }
         else
         {

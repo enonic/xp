@@ -26,9 +26,7 @@ public class RepoConfigurationTest
 
     private RepoConfiguration createConfig()
     {
-        final RepoConfigurationImpl config = new RepoConfigurationImpl();
-        config.activate( this.map );
-        return config;
+        return new RepoConfigurationImpl( this.map );
     }
 
     @Test

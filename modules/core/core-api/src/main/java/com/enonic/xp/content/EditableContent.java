@@ -63,7 +63,7 @@ public class EditableContent
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
         this.extraDatas = source.getAllExtraData().copy();
-        this.page = source.hasPage() ? source.getPage().copy() : null;
+        this.page = source.getPage() != null ? source.getPage().copy() : null;
         this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
         this.inheritPermissions = source.inheritsPermissions();

@@ -13,9 +13,9 @@ public final class AttachedBinaryJson
     @JsonProperty("blobKey")
     private String blobKey;
 
-    public AttachedBinary fromJson()
+    public static AttachedBinary fromJson( final AttachedBinaryJson json )
     {
-        return new AttachedBinary( BinaryReference.from( binaryReference ), blobKey );
+        return new AttachedBinary( BinaryReference.from( json.binaryReference ), json.blobKey );
     }
 
     public static AttachedBinaryJson toJson( final AttachedBinary attachedBinary )

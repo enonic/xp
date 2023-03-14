@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-public class NodeVersionKey
+public final class NodeVersionKey
 {
     private final BlobKey nodeBlobKey;
 
@@ -41,7 +41,7 @@ public class NodeVersionKey
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof NodeVersionKey ) )
         {
             return false;
         }
@@ -58,11 +58,10 @@ public class NodeVersionKey
 
     public static NodeVersionKey from( final BlobKey nodeBlobKey, final BlobKey indexConfigBlobKey, final BlobKey accessControlBlobKey )
     {
-        return create().
-            nodeBlobKey( nodeBlobKey ).
-            indexConfigBlobKey( indexConfigBlobKey ).
-            accessControlBlobKey( accessControlBlobKey ).
-            build();
+        return create().nodeBlobKey( nodeBlobKey )
+            .indexConfigBlobKey( indexConfigBlobKey )
+            .accessControlBlobKey( accessControlBlobKey )
+            .build();
     }
 
     public static NodeVersionKey from( final String nodeBlobKey, final String indexConfigBlobKey, final String accessControlBlobKey )

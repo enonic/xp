@@ -58,8 +58,6 @@ final class ComponentHandlerWorker
 
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
 
-        Page page = content.getPage();
-
         final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
 
         Component component = null;
@@ -67,7 +65,7 @@ final class ComponentHandlerWorker
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final Component fragmentComponent = page.getFragment();
+            final Component fragmentComponent = content.getPage().getFragment();
             if ( this.componentPath.isEmpty() )
             {
                 component = fragmentComponent;
@@ -149,16 +147,14 @@ final class ComponentHandlerWorker
         {
             return null;
         }
-
         try
         {
             final Content fragmentContent = contentService.getById( contentId );
-            if ( !fragmentContent.hasPage() || !fragmentContent.getType().isFragment() )
+            if ( fragmentContent.getPage() == null || !fragmentContent.getType().isFragment() )
             {
                 return null;
             }
-            final Page page = fragmentContent.getPage();
-            return page.getFragment();
+            return fragmentContent.getPage().getFragment();
         }
         catch ( ContentNotFoundException e )
         {

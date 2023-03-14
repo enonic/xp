@@ -1,18 +1,16 @@
 package com.enonic.xp.index;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
 public final class AllTextIndexConfig
 {
-    private final List<String> languages;
+    private final ImmutableList<String> languages;
 
-    private AllTextIndexConfig( final Builder builder )
+    private AllTextIndexConfig( final ImmutableList<String> languages )
     {
-        this.languages = ImmutableList.copyOf( builder.languages );
+        this.languages = languages;
     }
 
     public static Builder create()
@@ -30,38 +28,31 @@ public final class AllTextIndexConfig
         return languages;
     }
 
+
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final AllTextIndexConfig that = (AllTextIndexConfig) o;
-        return Objects.equals( languages, that.languages );
+        return this == o || o instanceof AllTextIndexConfig && languages.equals( ( (AllTextIndexConfig) o ).languages );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( languages );
+        return languages.hashCode();
     }
 
     public static class Builder
     {
-        private List<String> languages = new ArrayList<>();
+        private final ImmutableList.Builder<String> languages;
 
         Builder()
         {
+            languages = ImmutableList.builder();
         }
 
         Builder( final AllTextIndexConfig source )
         {
-            this.languages = new ArrayList<>( source.languages );
+            this.languages = ImmutableList.<String>builder().addAll( source.languages );
         }
 
         public Builder addLanguage( final String language )
@@ -72,7 +63,7 @@ public final class AllTextIndexConfig
 
         public AllTextIndexConfig build()
         {
-            return new AllTextIndexConfig( this );
+            return new AllTextIndexConfig( languages.build() );
         }
     }
 }

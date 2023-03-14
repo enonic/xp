@@ -11,14 +11,16 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class ReturnFields
     extends AbstractImmutableEntitySet<ReturnField>
 {
-    private ReturnFields( final Builder builder )
+    private static final ReturnFields EMPTY = new ReturnFields( ImmutableSet.of() );
+
+    private ReturnFields( final ImmutableSet<ReturnField> set )
     {
-        super( builder.set.build() );
+        super( set );
     }
 
     public static ReturnFields empty()
     {
-        return create().build();
+        return EMPTY;
     }
 
     public static ReturnFields from( final IndexPath... indexPath )
@@ -59,7 +61,7 @@ public class ReturnFields
 
         public ReturnFields build()
         {
-            return new ReturnFields( this );
+            return new ReturnFields( set.build() );
         }
     }
 }

@@ -14,7 +14,16 @@ import com.enonic.xp.config.Configuration;
 public final class RepoConfigurationImpl
     implements RepoConfiguration
 {
-    private Configuration config;
+    private final Configuration config;
+
+    @Activate
+    public RepoConfigurationImpl(final Map<String, String> map)
+    {
+        this.config = new ConfigInterpolator().interpolate( ConfigBuilder.create().
+            load( getClass(), "default.properties" ).
+            addAll( map ).
+            build() );
+    }
 
     @Override
     public Path getSnapshotsDir()
@@ -22,14 +31,9 @@ public final class RepoConfigurationImpl
         return Path.of( this.config.get( "snapshots.dir" ) );
     }
 
-    @Activate
-    public void activate( final Map<String, String> map )
+    @Override
+    public int cacheSize()
     {
-        this.config = ConfigBuilder.create().
-            load( getClass(), "default.properties" ).
-            addAll( map ).
-            build();
-
-        this.config = new ConfigInterpolator().interpolate( this.config );
+        return Integer.parseInt( this.config.get( "cache.size" ) );
     }
 }

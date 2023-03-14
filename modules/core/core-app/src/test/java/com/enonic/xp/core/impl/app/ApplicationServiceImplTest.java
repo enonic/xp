@@ -42,9 +42,9 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -140,16 +140,10 @@ public class ApplicationServiceImplTest
     public void get_virtual_application()
         throws Exception
     {
-        NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create()
-                                                                                  .totalHits( 1L )
-                                                                                  .hits( 1L )
-                                                                                  .addNodeHit(
-                                                                                      NodeHit.create().nodeId( virtualAppNodeId ).build() )
-                                                                                  .build() );
-
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( nodeService.nodeExists(
+            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+
 
         final Application virtualApp = this.service.get( applicationKey );
 
@@ -955,11 +949,9 @@ public class ApplicationServiceImplTest
             if ( applicationKey.toString().equals( createNodeParams.getName() ) )
             {
 
-                when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create()
-                    .addNodeHit( NodeHit.create().nodeId( NodeId.from( createNodeParams.getName() ) ).build() )
-                    .totalHits( 1 )
-                    .hits( 1 )
-                    .build() );
+                when( nodeService.nodeExists(
+                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+
 
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )

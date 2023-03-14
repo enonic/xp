@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.CharSource;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
@@ -37,8 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NodeVersionJsonDumpSerializerTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
-
-    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create();
 
     @Test
     public void serialize_deserialize()
@@ -113,16 +112,16 @@ public class NodeVersionJsonDumpSerializerTest
         final String expectedNodeStr = readJson( "serialized-node.json" );
         final String expectedIndexConfigStr = readJson( "serialized-index.json" );
         final String expectedAccessControlStr = readJson( "serialized-access.json" );
-        final String serializedNode = new String( this.serializer.toNodeString( nodeVersion ), StandardCharsets.UTF_8 );
+        final String serializedNode = new String( NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ), StandardCharsets.UTF_8 );
         final String serializedIndexConfig =
-            new String( this.serializer.toIndexConfigDocumentString( nodeVersion ), StandardCharsets.UTF_8 );
-        final String serializedAccessControl = new String( this.serializer.toAccessControlString( nodeVersion ), StandardCharsets.UTF_8 );
+            new String( NodeVersionJsonSerializer.toIndexConfigDocumentBytes( nodeVersion ), StandardCharsets.UTF_8 );
+        final String serializedAccessControl = new String( NodeVersionJsonSerializer.toAccessControlBytes( nodeVersion ), StandardCharsets.UTF_8 );
         assertEquals( expectedNodeStr, serializedNode );
         assertEquals( expectedIndexConfigStr, serializedIndexConfig );
         assertEquals( expectedAccessControlStr, serializedAccessControl );
-        final NodeVersion deSerializedNode = this.serializer.toNodeVersion( expectedNodeStr.getBytes( StandardCharsets.UTF_8 ),
-                                                                            expectedIndexConfigStr.getBytes( StandardCharsets.UTF_8 ),
-                                                                            expectedAccessControlStr.getBytes( StandardCharsets.UTF_8 ) );
+        final NodeVersion deSerializedNode = NodeVersionJsonSerializer.toNodeVersion( CharSource.wrap( expectedNodeStr ).asByteSource( StandardCharsets.UTF_8 ),
+                                                                                      CharSource.wrap(expectedIndexConfigStr).asByteSource( StandardCharsets.UTF_8 ),
+                                                                                      CharSource.wrap(expectedAccessControlStr).asByteSource( StandardCharsets.UTF_8 ) );
         assertEquals( nodeVersion, deSerializedNode );
     }
 

@@ -5,4 +5,6 @@ import java.nio.file.Path;
 public interface RepoConfiguration
 {
     Path getSnapshotsDir();
+
+    int cacheSize();
 }

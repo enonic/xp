@@ -81,8 +81,7 @@ public abstract class AbstractDumpUpgrader
 
     protected BlobKey addRecord( final Segment segment, final byte[] serializedData )
     {
-        final ByteSource byteSource = ByteSource.wrap( serializedData );
-        return dumpReader.getDumpBlobStore().addRecord( segment, byteSource );
+        return dumpReader.getDumpBlobStore().addRecord( segment, ByteSource.wrap( serializedData ) );
     }
 
     public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )

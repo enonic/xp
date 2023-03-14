@@ -119,7 +119,7 @@ public class IndexConfigUpgrader
 
         final NodeVersionDataJson nodeVersionDataJson = getNode( nodeBlobRecord );
 
-        final NodeVersion nodeVersion = nodeVersionDataJson.fromJson().build();
+        final NodeVersion nodeVersion = NodeVersionDataJson.fromJson( nodeVersionDataJson );
 
         if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() ) )
         {
@@ -152,8 +152,7 @@ public class IndexConfigUpgrader
         final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
-            final IndexConfigDocumentJson indexConfigDocumentJson = deserializeValue( charSource.read(), IndexConfigDocumentJson.class );
-            return indexConfigDocumentJson.fromJson();
+            return IndexConfigDocumentJson.fromJson( deserializeValue( charSource.read(), IndexConfigDocumentJson.class ) );
         }
         catch ( IOException e )
         {

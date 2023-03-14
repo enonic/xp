@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKeys;
@@ -8,8 +10,10 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DescriptorServiceImplTest
     extends ApplicationTestSupport
@@ -37,26 +41,26 @@ public class DescriptorServiceImplTest
     public void testAddRemove()
     {
         final DescriptorKeys keys1 = this.service.findAll( MyDescriptor.class );
-        assertEquals( "[myapp:type2, myapp:type1]", keys1.toString() );
+        assertThat( keys1 ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp:type1", "myapp:type2" );
 
         this.service.removeLoader( this.loader );
 
         final DescriptorKeys keys2 = this.service.findAll( MyDescriptor.class );
-        assertEquals( "[]", keys2.toString() );
+        assertTrue( keys2.isEmpty() );
     }
 
     @Test
     public void testFind()
     {
         final DescriptorKeys keys = this.service.find( MyDescriptor.class, ApplicationKeys.from( "myapp" ) );
-        assertEquals( "[myapp:type2, myapp:type1]", keys.toString() );
+        assertThat( keys ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp:type1", "myapp:type2" );
     }
 
     @Test
     public void testFindAll()
     {
         final DescriptorKeys keys = this.service.findAll( MyDescriptor.class );
-        assertEquals( "[myapp:type2, myapp:type1]", keys.toString() );
+        assertThat( keys ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp:type1", "myapp:type2" );
     }
 
     @Test

@@ -64,7 +64,6 @@ public final class Page
         return regions != null;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Region getRegion( final String name )
     {
         return hasRegions() ? this.regions.getRegion( name ) : null;

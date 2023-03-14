@@ -29,8 +29,6 @@ public final class PropertyPath
 
     private final boolean relative;
 
-    private final PropertyPath parentPath;
-
     public static PropertyPath from( final PropertyPath parentPath, final String element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
@@ -83,7 +81,6 @@ public final class PropertyPath
     {
         this.elements = ImmutableList.of();
         this.relative = false;
-        this.parentPath = null;
     }
 
     private PropertyPath( final ImmutableList<Element> pathElements )
@@ -92,23 +89,12 @@ public final class PropertyPath
 
         this.elements = pathElements;
         this.relative = this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
-
-        final List<Element> parentPathElements = new ArrayList<>();
-        for ( int i = 0; i < this.elements.size(); i++ )
-        {
-            if ( i < this.elements.size() - 1 )
-            {
-                parentPathElements.add( this.elements.get( i ) );
-            }
-        }
-        this.parentPath = parentPathElements.isEmpty() ? null :PropertyPath.from( parentPathElements );
     }
 
     private PropertyPath( final PropertyPath parentPath, final Element element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( element, "element cannot be null" );
-        this.parentPath = parentPath;
 
         final ImmutableList.Builder<Element> elementBuilder = ImmutableList.builder();
         elementBuilder.addAll( parentPath.pathElements() ).add( element );
@@ -118,7 +104,7 @@ public final class PropertyPath
 
     public PropertyPath getParent()
     {
-        return parentPath;
+        return this.elements.size() <= 1 ? null : PropertyPath.from( this.elements.subList( 0, this.elements.size() - 1 ) );
     }
 
     public boolean isRelative()
@@ -203,9 +189,9 @@ public final class PropertyPath
     public PropertyPath removeIndexFromLastElement()
     {
 
-        if ( this.parentPath != null )
+        if ( this.elements.size() > 1 )
         {
-            return PropertyPath.from( this.parentPath, this.getLastElement().getName() );
+            return PropertyPath.from( this.getParent(), this.getLastElement().getName() );
         }
         else
         {

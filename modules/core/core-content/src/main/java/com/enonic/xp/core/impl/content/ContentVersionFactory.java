@@ -50,7 +50,7 @@ class ContentVersionFactory
 
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )
     {
-        final NodeVersion nodeVersion = getNodeVersion( nodeVersionMetadata );
+        final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
         return doCreateContentVersion( nodeVersionMetadata, nodeVersion );
     }
 
@@ -146,11 +146,6 @@ class ContentVersionFactory
         }
 
         return ContentVersionPublishInfo.CommitType.CUSTOM;
-    }
-
-    private NodeVersion getNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
-    {
-        return nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
     }
 
 }

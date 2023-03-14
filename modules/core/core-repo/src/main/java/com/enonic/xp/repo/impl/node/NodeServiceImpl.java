@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -356,7 +355,7 @@ public class NodeServiceImpl
         return Tracer.trace( "node.findByQueryMulti", trace -> {
             trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
             trace.put( "filter", multiNodeQuery.getNodeQuery().getQueryFilters() );
-            trace.put( "from", Objects.toString( multiNodeQuery.getNodeQuery().getFrom(), "" ) );
+            trace.put( "from", multiNodeQuery.getNodeQuery().getFrom() );
             trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
         }, () -> executeFindByQuery( multiNodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }

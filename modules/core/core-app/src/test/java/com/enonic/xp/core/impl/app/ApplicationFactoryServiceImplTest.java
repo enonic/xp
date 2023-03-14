@@ -17,8 +17,7 @@ import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeHit;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -132,22 +131,16 @@ class ApplicationFactoryServiceImplTest
     void findDisabledVirtualApplication()
         throws Exception
     {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create()
-                                                                                  .addNodeHit( NodeHit.create()
-                                                                                                   .nodeId( NodeId.from( "123" ) )
-                                                                                                   .nodePath(
-                                                                                                       new NodePath( "/app1" ) )
-                                                                                                   .build() )
-                                                                                  .totalHits( 1 )
-                                                                                  .hits( 1 )
-                                                                                  .build() );
+        when( nodeService.nodeExists(
+            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+
         when( appConfig.virtual_enabled() ).thenReturn( false );
 
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
         service.activate();
 
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
         assertTrue( service.findActiveApplication( applicationKey ).isEmpty() );
     }
@@ -156,24 +149,16 @@ class ApplicationFactoryServiceImplTest
     void findVirtualApplication()
         throws Exception
     {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create()
-                                                                                  .addNodeHit( NodeHit.create()
-                                                                                                   .nodeId( NodeId.from( "123" ) )
-                                                                                                   .nodePath(
-                                                                                                       new NodePath( "/app1" ) )
-                                                                                                   .build() )
-                                                                                  .totalHits( 1 )
-                                                                                  .hits( 1 )
-                                                                                  .build() );
+        when( nodeService.nodeExists(
+            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( false );
 
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
         service.activate();
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
         assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
     }

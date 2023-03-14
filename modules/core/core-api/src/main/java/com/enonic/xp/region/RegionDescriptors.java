@@ -3,7 +3,7 @@ package com.enonic.xp.region;
 
 import java.util.Iterator;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -11,27 +11,28 @@ import com.enonic.xp.annotation.PublicApi;
 public final class RegionDescriptors
     implements Iterable<RegionDescriptor>
 {
-    private final ImmutableMap<String, RegionDescriptor> regionByName;
+    private final ImmutableSet<RegionDescriptor> regionDescriptors;
 
-    public RegionDescriptors( final Builder builder )
+    public RegionDescriptors( final ImmutableSet<RegionDescriptor> regionDescriptors )
     {
-        this.regionByName = builder.regionsByName.build();
+        this.regionDescriptors = regionDescriptors;
     }
 
+    @Deprecated
     public RegionDescriptor getRegionDescriptor( final String name )
     {
-        return regionByName.get( name );
+        return regionDescriptors.stream().filter( regionDescriptor -> regionDescriptor.getName().equals( name ) ).findAny().orElse( null );
     }
 
     public int numberOfRegions()
     {
-        return this.regionByName.size();
+        return this.regionDescriptors.size();
     }
 
     @Override
     public Iterator<RegionDescriptor> iterator()
     {
-        return regionByName.values().iterator();
+        return regionDescriptors.iterator();
     }
 
     public static Builder create()
@@ -41,17 +42,17 @@ public final class RegionDescriptors
 
     public static class Builder
     {
-        private final ImmutableMap.Builder<String, RegionDescriptor> regionsByName = new ImmutableMap.Builder<>();
+        private final ImmutableSet.Builder<RegionDescriptor> regionsDescriptors = new ImmutableSet.Builder<>();
 
         public Builder add( final RegionDescriptor value )
         {
-            regionsByName.put( value.getName(), value );
+            regionsDescriptors.add( value );
             return this;
         }
 
         public RegionDescriptors build()
         {
-            return new RegionDescriptors( this );
+            return new RegionDescriptors( regionsDescriptors.build() );
         }
     }
 }

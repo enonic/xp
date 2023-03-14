@@ -29,15 +29,15 @@ public class NodeVersion
 
     private NodeVersion( Builder builder )
     {
-        id = builder.id;
-        nodeType = builder.nodeType;
-        data = builder.data;
-        indexConfigDocument = builder.indexConfigDocument;
-        childOrder = builder.childOrder;
-        manualOrderValue = builder.manualOrderValue;
-        permissions = builder.permissions;
-        inheritPermissions = builder.inheritPermissions;
-        attachedBinaries = builder.attachedBinaries;
+        this.id = builder.id;
+        this.nodeType = builder.nodeType;
+        this.data = builder.data;
+        this.indexConfigDocument = builder.indexConfigDocument;
+        this.childOrder = builder.childOrder;
+        this.manualOrderValue = builder.manualOrderValue;
+        this.permissions = builder.permissions;
+        this.inheritPermissions = builder.inheritPermissions;
+        this.attachedBinaries = builder.attachedBinaries;
     }
 
     public static NodeVersion from( final Node node )
@@ -115,9 +115,9 @@ public class NodeVersion
     {
         private NodeId id;
 
-        private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
+        private NodeType nodeType;
 
-        private PropertyTree data = new PropertyTree();
+        private PropertyTree data;
 
         private IndexConfigDocument indexConfigDocument;
 
@@ -125,21 +125,25 @@ public class NodeVersion
 
         private Long manualOrderValue;
 
-        private AccessControlList permissions = AccessControlList.empty();
+        private AccessControlList permissions;
 
         private boolean inheritPermissions;
 
-        private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
+        private AttachedBinaries attachedBinaries;
 
         private Builder()
         {
+            this.nodeType = NodeType.DEFAULT_NODE_COLLECTION;
+            this.data = new PropertyTree();
+            this.permissions = AccessControlList.empty();
+            this.attachedBinaries = AttachedBinaries.empty();
         }
 
         private Builder( NodeVersion nodeVersion )
         {
             this.id = nodeVersion.id;
             this.nodeType = nodeVersion.nodeType;
-            this.data = nodeVersion.data;
+            this.data = nodeVersion.data.copy();
             this.indexConfigDocument = nodeVersion.indexConfigDocument;
             this.childOrder = nodeVersion.childOrder;
             this.manualOrderValue = nodeVersion.manualOrderValue;

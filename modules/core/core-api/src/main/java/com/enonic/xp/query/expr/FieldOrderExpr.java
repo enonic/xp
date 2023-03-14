@@ -1,5 +1,7 @@
 package com.enonic.xp.query.expr;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
@@ -12,7 +14,7 @@ public final class FieldOrderExpr
     public FieldOrderExpr( final FieldExpr field, final Direction direction )
     {
         super( direction );
-        this.field = field;
+        this.field = Objects.requireNonNull( field );
     }
 
     public FieldExpr getField()
@@ -43,7 +45,7 @@ public final class FieldOrderExpr
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof FieldOrderExpr ) )
         {
             return false;
         }
@@ -51,17 +53,13 @@ public final class FieldOrderExpr
         {
             return false;
         }
-
         final FieldOrderExpr that = (FieldOrderExpr) o;
-
-        return field != null ? field.equals( that.field ) : that.field == null;
+        return field.equals( that.field );
     }
 
     @Override
     public int hashCode()
     {
-        int result = super.hashCode();
-        result = 31 * result + ( field != null ? field.hashCode() : 0 );
-        return result;
+        return Objects.hash( super.hashCode(), field );
     }
 }

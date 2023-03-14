@@ -2,6 +2,8 @@ package com.enonic.xp.index;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.data.PropertyPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,4 +61,9 @@ public class PatternIndexConfigDocumentTest
         assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "page", "region" ) ) );
     }
 
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( PatternIndexConfigDocument.class ).withRedefinedSuperclass().withIgnoredFields( "pathIndexConfigMap" ).verify();
+    }
 }

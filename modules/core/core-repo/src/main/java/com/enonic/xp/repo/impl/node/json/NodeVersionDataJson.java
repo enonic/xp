@@ -41,23 +41,24 @@ public final class NodeVersionDataJson
         return data;
     }
 
-    public NodeVersion.Builder fromJson()
+    public static NodeVersion fromJson( final NodeVersionDataJson json )
     {
-        return NodeVersion.create().
-            id( NodeId.from( this.id ) ).
-            data( PropertyTreeJson.fromJson( this.data ) ).
-            childOrder( ChildOrder.from( this.childOrder ) ).
-            manualOrderValue( this.manualOrderValue ).
-            nodeType( NodeType.from( this.nodeType ) ).
-            attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) );
+        return NodeVersion.create()
+            .id( NodeId.from( json.id ) )
+            .data( PropertyTreeJson.fromJson( json.data ) )
+            .childOrder( ChildOrder.from( json.childOrder ) )
+            .manualOrderValue( json.manualOrderValue )
+            .nodeType( NodeType.from( json.nodeType ) )
+            .attachedBinaries( fromNodeAttachedBinaryJsonList( json.attachedBinaries ) )
+            .build();
     }
 
-    private AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
+    private static AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
     {
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
         for ( final AttachedBinaryJson entry : list )
         {
-            builder.add( entry.fromJson() );
+            builder.add( AttachedBinaryJson.fromJson( entry ) );
         }
 
         return builder.build();
