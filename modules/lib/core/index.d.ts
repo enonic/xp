@@ -323,13 +323,17 @@ export type AggregationsToAggregationResults<AggregationInput extends Aggregatio
     [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
 };
 
-export type AggregationToAggregationResult<Type extends Aggregation> = Type extends BucketsAggregationsUnion
-                                                          ? BucketsAggregationResult<Type['aggregations']>
-                                                          : Type extends SingleValueMetricAggregationsUnion
-                                                            ? SingleValueMetricAggregationResult
-                                                            : Type extends StatsAggregation
-                                                              ? StatsAggregationResult
-                                                              : never;
+type AggregationOrNone<T> = T extends Aggregation ? T : Record<never, never>;
+
+export type AggregationToAggregationResult<Type extends Aggregation> = Type extends GeoDistanceAggregation
+                                                                       ? BucketsAggregationResult
+                                                                       : Type extends Exclude<BucketsAggregationsUnion, GeoDistanceAggregation>
+                                                                         ? BucketsAggregationResult<AggregationOrNone<Type['aggregations']>>
+                                                                         : Type extends SingleValueMetricAggregationsUnion
+                                                                           ? SingleValueMetricAggregationResult
+                                                                           : Type extends StatsAggregation
+                                                                             ? StatsAggregationResult
+                                                                             : never;
 
 export type BucketsAggregationsUnion =
     | TermsAggregation
