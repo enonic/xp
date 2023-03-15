@@ -438,12 +438,12 @@ interface FindChildrenHandlerParams {
     setRecursive(recursive: boolean): void;
 }
 
-export interface DuplicateParams {
+export interface DuplicateParams<NodeData = Record<string, unknown>> {
     nodeId: string;
     name?: string;
     parent?: string;
     includeChildren?: boolean
-    dataProcessor?: ScriptValue;
+    dataProcessor?: (v: NodeData) => NodeData;
     refresh?: RefreshMode;
 }
 
@@ -618,7 +618,7 @@ export interface RepoConnection {
 
     getCommit(params: GetCommitParams): NodeCommit | null;
 
-    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams): Node<NodeData>;
+    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData>;
 }
 
 /**
@@ -1064,7 +1064,7 @@ class RepoConnectionImpl
      *
      * @returns {object} Duplicated node.
      */
-    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams): Node<NodeData> {
+    duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData> {
         checkRequired(params, 'nodeId');
 
         const {
