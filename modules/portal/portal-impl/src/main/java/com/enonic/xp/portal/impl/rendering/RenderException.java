@@ -10,8 +10,8 @@ public final class RenderException
         super( message );
     }
 
-    public RenderException( final String message, final Object... args )
+    public RenderException( final String message, final Throwable cause )
     {
-        super( message, args );
+        super( cause, message );
     }
 }

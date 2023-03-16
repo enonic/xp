@@ -18,7 +18,7 @@ import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 
-class ContentNodeHelper
+public class ContentNodeHelper
 {
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {

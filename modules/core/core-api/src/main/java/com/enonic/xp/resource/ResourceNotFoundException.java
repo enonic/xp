@@ -1,5 +1,7 @@
 package com.enonic.xp.resource;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.NotFoundException;
 
@@ -11,7 +13,7 @@ public final class ResourceNotFoundException
 
     public ResourceNotFoundException( final ResourceKey resource )
     {
-        super( "Resource [{0}] was not found", resource );
+        super( MessageFormat.format( "Resource [{0}] was not found", resource ) );
         this.resource = resource;
     }
 

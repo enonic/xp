@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.processor;
 
+import java.text.MessageFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +56,9 @@ public final class ResponseProcessorExecutor
         final boolean exists = filterExports.hasMethod( RESPONSE_PROCESSOR_METHOD );
         if ( !exists )
         {
-            throw new RenderException( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_PROCESSOR_METHOD,
-                                       filterJsPath );
+            throw new RenderException(
+                MessageFormat.format( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_PROCESSOR_METHOD,
+                                      filterJsPath ) );
         }
 
         final ApplicationKey previousApp = request.getApplicationKey();

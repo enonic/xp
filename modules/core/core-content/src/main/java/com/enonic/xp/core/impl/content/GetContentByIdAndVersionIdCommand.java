@@ -38,31 +38,20 @@ public final class GetContentByIdAndVersionIdCommand
 
         try
         {
-            return getContentByIdAndVersionId( nodeId, nodeVersionId );
+            final Node node = nodeService.getByIdAndVersionId( nodeId, nodeVersionId );
+
+            return translator.fromNode( node, true, true );
         }
         catch ( NodeNotFoundException e )
         {
-            throw createContentNotFoundException();
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .cause( e )
+                .build();
         }
-    }
-
-    private Content getContentByIdAndVersionId( final NodeId nodeId, final NodeVersionId nodeVersionId )
-    {
-        final Node node = nodeService.getByIdAndVersionId( nodeId, nodeVersionId );
-
-        final Content content = filter( translator.fromNode( node, true, true ) );
-
-        if ( content != null )
-        {
-            return content;
-        }
-
-        throw createContentNotFoundException();
-    }
-
-    private ContentNotFoundException createContentNotFoundException()
-    {
-        return new ContentNotFoundException( contentId, versionId, ContextAccessor.current().getBranch() );
     }
 
     public static class Builder

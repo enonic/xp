@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.script.ScriptValue;
 
 public class GetContentHandlerTest
@@ -64,7 +63,9 @@ public class GetContentHandlerTest
         throws Exception
     {
         final ContentId id = ContentId.from( "123456" );
-        Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
+        Mockito.when( this.contentService.getById( Mockito.any() ) )
+            .thenThrow( ContentNotFoundException.class );
+
 
         runFunction( "/test/GetContentHandlerTest.js", "getById_notFound" );
     }
@@ -74,7 +75,8 @@ public class GetContentHandlerTest
         throws Exception
     {
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
-        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
+        Mockito.when( this.contentService.getByPath( path ) )
+            .thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/GetContentHandlerTest.js", "getByPath_notFound" );
     }
@@ -97,7 +99,7 @@ public class GetContentHandlerTest
         final ContentId contentId = ContentId.from( "mycontentId" );
         final ContentVersionId versionId = ContentVersionId.from( "versionId" );
         Mockito.when( this.contentService.getByIdAndVersionId( contentId, versionId ) ).thenThrow(
-            new ContentNotFoundException( contentId, versionId, ContextAccessor.current().getBranch() ) );
+            ContentNotFoundException.class );
 
         runFunction( "/test/GetContentHandlerTest.js", "getByIdAndVersionId_notFound" );
     }
@@ -122,7 +124,7 @@ public class GetContentHandlerTest
         final ContentVersionId versionId = ContentVersionId.from( "versionId" );
 
         Mockito.when( this.contentService.getByPathAndVersionId( path, versionId ) ).thenThrow(
-            new ContentNotFoundException( path, versionId, ContextAccessor.current().getBranch() ) );
+            ContentNotFoundException.class );
 
         runFunction( "/test/GetContentHandlerTest.js", "getByPathAndVersionId_notFound" );
     }

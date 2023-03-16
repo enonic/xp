@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -162,7 +161,7 @@ public class ComponentHandlerTest
         this.request.setEndpointPath( "/_/component/main-region/666" );
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
         this.request.setContentPath( path );
 
         final WebException e =

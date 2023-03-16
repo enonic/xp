@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -119,8 +118,10 @@ public class ImageRendererTest
     {
         // setup
         this.portalRequest.setContent( createContent() );
-        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
+        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) )
+            .thenThrow(
+                ContentNotFoundException.class );
+
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
@@ -145,7 +146,7 @@ public class ImageRendererTest
         this.portalRequest.setContent( createContent() );
 
         Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
+            ContentNotFoundException.class );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
@@ -169,8 +170,9 @@ public class ImageRendererTest
     public void testRenderImageComponentWithReadPermission()
     {
         // simulate case when a user does not have a permission on read
-        Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "id" ), Branch.from( "branch" ) ) );
+        Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) )
+            .thenThrow(
+                ContentNotFoundException.class );
 
         imageComponent = ImageComponent.create().image( ContentId.from( "id" ) ).build();
 

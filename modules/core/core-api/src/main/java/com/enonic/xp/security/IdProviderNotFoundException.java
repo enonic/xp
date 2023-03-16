@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
@@ -12,7 +14,7 @@ public class IdProviderNotFoundException
 
     public IdProviderNotFoundException( final IdProviderKey idProviderKey )
     {
-        super( "IdProvider [{0}] not found", idProviderKey );
+        super( MessageFormat.format( "IdProvider [{0}] not found", idProviderKey ) );
         this.idProviderKey = idProviderKey;
     }
 

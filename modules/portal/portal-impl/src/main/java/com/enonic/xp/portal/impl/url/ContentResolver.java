@@ -47,15 +47,15 @@ final class ContentResolver
             return this.contentService.getById( this.id );
         }
 
-        if ( path == null )
+        if ( this.path == null )
         {
             return this.portalRequest.getContent();
         }
 
         final ContentPath contentPath;
-        if ( path.isAbsolute() )
+        if ( this.path.isAbsolute() )
         {
-            contentPath = path;
+            contentPath = this.path;
         }
         else
         {

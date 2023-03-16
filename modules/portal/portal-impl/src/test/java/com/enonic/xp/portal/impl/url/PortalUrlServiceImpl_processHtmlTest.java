@@ -15,10 +15,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -27,6 +27,7 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.isA;
@@ -220,8 +221,12 @@ public class PortalUrlServiceImpl_processHtmlTest
     public void process_unknown_content()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
-            final ContentId id = params.getArgument( 0 );
-            throw new ContentNotFoundException( id, ContextAccessor.current().getBranch() );
+            final ContentId contentId = params.getArgument( 0 );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .build();
         } );
 
         //Process an html text containing a link to an unknown content
@@ -231,17 +236,19 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<a href=\"/site/default/draft/context/path/_/error/404?message=Content+with+id+%5B123%5D+was+not+found+in+branch+%5Bdraft%5D\">Content</a>",
-            processedHtml );
+        assertThat( processedHtml).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
     }
 
     @Test
     public void process_unknown_media()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
-            final ContentId id = params.getArgument( 0 );
-            throw new ContentNotFoundException( id, ContextAccessor.current().getBranch() );
+            final ContentId contentId = params.getArgument( 0 );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .build();
         } );
 
         //Process an html text containing a link to an unknown media
@@ -251,17 +258,19 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<a href=\"/site/default/draft/context/path/_/error/404?message=Content+with+id+%5B123%5D+was+not+found+in+branch+%5Bdraft%5D\">Media</a>",
-            processedHtml );
+        assertThat( processedHtml).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
     }
 
     @Test
     public void process_unknown_image()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
-            final ContentId id = params.getArgument( 0 );
-            throw new ContentNotFoundException( id, ContextAccessor.current().getBranch() );
+            final ContentId contentId = params.getArgument( 0 );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .build();
         } );
 
         //Process an html text containing a link to an unknown media
@@ -271,8 +280,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/default/draft/context/path/_/error/500?message=Image+%5B123%5D+not+found\">Image</a>",
-                      processedHtml );
+        assertThat( processedHtml).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
 
     @Test

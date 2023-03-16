@@ -342,7 +342,7 @@ public class PageResolverTest
             .build();
 
         when( pageTemplateService.getByKey( PageTemplateKey.from( "t-not-exists" ) ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), null ) );
+            ContentNotFoundException.class );
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
         PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );

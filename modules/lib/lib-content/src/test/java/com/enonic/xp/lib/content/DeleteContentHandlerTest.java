@@ -46,7 +46,8 @@ public class DeleteContentHandlerTest
         throws Exception
     {
         final ContentId id = ContentId.from( "123456" );
-        Mockito.when( this.contentService.getById( Mockito.any() ) ).thenThrow( new ContentNotFoundException( id, null ) );
+        Mockito.when( this.contentService.getById( Mockito.any() ) )
+            .thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/DeleteContentHandlerTest.js", "deleteById_notFound" );
     }
@@ -56,7 +57,7 @@ public class DeleteContentHandlerTest
         throws Exception
     {
         final ContentPath path = ContentPath.from( "/a/b" );
-        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenThrow( new ContentNotFoundException( path, null ) );
+        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
     }

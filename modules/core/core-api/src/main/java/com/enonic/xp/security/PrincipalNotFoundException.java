@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
@@ -12,7 +14,7 @@ public class PrincipalNotFoundException
 
     public PrincipalNotFoundException( final PrincipalKey principalKey )
     {
-        super( "Principal [{0}] not found", principalKey );
+        super( MessageFormat.format( "Principal [{0}] not found", principalKey ) );
         this.principalKey = principalKey;
     }
 

@@ -18,11 +18,13 @@ public abstract class BaseException
         super( message, t );
     }
 
+    @Deprecated
     public BaseException( final String message, final Object... args )
     {
         this( null, message, args );
     }
 
+    @Deprecated
     public BaseException( final Throwable cause, final String message, final Object... args )
     {
         super( message == null ? "" : MessageFormat.format( message, args ), cause );
