@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.widget;
 
+import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -11,6 +13,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -62,7 +65,7 @@ public class WidgetDescriptorLoaderTest
     public void testFind()
     {
         final DescriptorKeys keys = this.loader.find( ApplicationKey.from( "myapp1" ) );
-        assertEquals( "[myapp1:widget1, myapp1:widget2]", keys.toString() );
+        assertThat( keys ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp1:widget1", "myapp1:widget2" );
     }
 
     @Test
