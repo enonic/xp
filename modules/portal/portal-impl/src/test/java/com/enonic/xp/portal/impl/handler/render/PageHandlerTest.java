@@ -21,7 +21,11 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpMethod;
@@ -132,8 +136,21 @@ public class PageHandlerTest
     public void getContentExistsButNeedsAuthentication()
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
-        when( this.contentService.contentExists( path ) ).thenReturn( true );
+
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( path )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.shortcut() )
+            .data( new PropertyTree() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+
+        when( this.contentService.getByPath( path ) ).thenReturn( content );
         this.request.setContentPath( path );
 
         final WebException e =
@@ -149,8 +166,21 @@ public class PageHandlerTest
         final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
-        when( this.contentService.contentExists( path ) ).thenReturn( true );
+
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( path )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.shortcut() )
+            .data( new PropertyTree() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+
+        when( this.contentService.getByPath( path ) ).thenReturn( content );
         this.request.setContentPath( path );
 
         final WebException e = assertThrows( WebException.class, () -> authenticatedContext.callWith(
@@ -230,6 +260,9 @@ public class PageHandlerTest
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.shortcut() )
             .data( rootDataSet )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() )
             .build();
 
         when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
@@ -267,6 +300,9 @@ public class PageHandlerTest
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.shortcut() )
             .data( rootDataSet )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() )
             .build();
 
         when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );

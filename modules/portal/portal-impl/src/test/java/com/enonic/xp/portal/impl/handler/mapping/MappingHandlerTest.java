@@ -35,6 +35,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -363,6 +366,9 @@ public class MappingHandlerTest
             .owner( PrincipalKey.from( "user:myStore:me" ) )
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .permissions( AccessControlList.create()
+                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                               .build() )
             .type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )

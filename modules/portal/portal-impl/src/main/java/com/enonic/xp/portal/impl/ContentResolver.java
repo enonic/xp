@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl;
 
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import com.enonic.xp.content.Content;
@@ -14,6 +13,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 
@@ -42,55 +42,78 @@ public class ContentResolver
 
     private ContentResolverResult resolveInNonEditMode( final ContentPath contentPath )
     {
-        Content content = getContentByPath( contentPath );
-
-        final boolean contentExists = content != null || contentExistsByPath( contentPath );
+        final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
 
         final Site site = callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
 
-        return new ContentResolverResult( content, contentExists, site, siteRelativePath( site, contentPath ), contentPath.toString() );
+        final String siteRelativePath = siteRelativePath( site, contentPath );
+        return new ContentResolverResult( visibleContent( content ), content != null, site, siteRelativePath, contentPath.toString() );
     }
 
     private ContentResolverResult resolveInEditMode( final ContentPath contentPath )
     {
         final String contentPathString = contentPath.toString();
 
-        ContentId contentId;
+        final ContentId contentId = tryConvertToContentId( contentPathString );
 
-        try
-        {
-            contentId = ContentId.from( contentPathString.substring( 1 ) );
-        }
-        catch ( Exception e )
-        {
-            contentId = null;
-        }
+        final Content contentById = contentId != null ? callAsContentAdmin( () -> getContentById( contentId ) ) : null;
 
-        final Content content =
-            Optional.ofNullable( contentId ).map( this::getContentById ).orElseGet( () -> getContentByPath( contentPath ) );
+        final Content content = contentById != null ? contentById : callAsContentAdmin( () -> this.getContentByPath( contentPath ) );
 
-        final boolean contentExists = content != null || contentExistsById( contentId ) || contentExistsByPath( contentPath );
+        final Site site = getNearestSite( content );
 
-        final Site site = content != null ? callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) ) : null;
-
-        return new ContentResolverResult( content, contentExists, site,
-                                          siteRelativePath( site, content == null ? null : content.getPath() ), contentPathString );
+        final String siteRelativePath = siteRelativePath( site, content != null ? content.getPath() : contentPath );
+        return new ContentResolverResult( visibleContent( content ), content != null, site, siteRelativePath, contentPathString );
     }
-    private Content getContentById( final ContentId contentId )
+
+    private Site getNearestSite( final Content content )
     {
-        try
+        if ( content != null )
         {
-            final Content content = this.contentService.getById( contentId );
             if ( ContentPath.ROOT.equals( content.getPath() ) )
             {
                 return null;
             }
             else
             {
-                return content;
+                return content.isSite()
+                    ? (Site) content
+                    : callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) );
             }
         }
-        catch ( final Exception e )
+        else
+        {
+            return null;
+        }
+    }
+
+    private static ContentId tryConvertToContentId( final String contentPathString )
+    {
+        try
+        {
+            return ContentId.from( contentPathString.substring( 1 ) );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
+    }
+
+    private Content visibleContent( final Content content )
+    {
+        return content == null || ContentPath.ROOT.equals( content.getPath() ) ||
+            !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ )
+            ? null
+            : content;
+    }
+
+    private Content getContentById( final ContentId contentId )
+    {
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( final ContentNotFoundException e )
         {
             return null;
         }
@@ -98,10 +121,6 @@ public class ContentResolver
 
     private Content getContentByPath( final ContentPath contentPath )
     {
-        if ( contentPath.equals( ContentPath.ROOT ) )
-        {
-            return null;
-        }
         try
         {
             return this.contentService.getByPath( contentPath );
@@ -110,16 +129,6 @@ public class ContentResolver
         {
             return null;
         }
-    }
-
-    private boolean contentExistsById( final ContentId contentId )
-    {
-        return this.contentService.contentExists( contentId );
-    }
-
-    private boolean contentExistsByPath( final ContentPath contentPath )
-    {
-        return !ContentPath.ROOT.equals( contentPath ) && this.contentService.contentExists( contentPath );
     }
 
     private static <T> T callAsContentAdmin( final Callable<T> callable )
@@ -133,14 +142,17 @@ public class ContentResolver
 
     private static String siteRelativePath( final Site site, final ContentPath contentPath )
     {
-        if ( site == null || contentPath == null)
+        if ( site == null )
         {
-            return null;
+            return contentPath.toString();
         }
-        if ( site.getPath().equals( contentPath ) )
+        else if ( site.getPath().equals( contentPath ) )
         {
             return "/";
         }
-        return contentPath.toString().substring( site.getPath().toString().length() );
+        else
+        {
+            return contentPath.toString().substring( site.getPath().toString().length() );
+        }
     }
 }
