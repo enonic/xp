@@ -18,16 +18,21 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,10 +68,9 @@ class ContentResolverTest
 
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c9" ) );
+        request.setContentPath( ContentPath.from( "/site0c10-0002-4b68-b407-87412f3e45c9" ) );
 
-        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) ) ).thenReturn( site );
-        when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) ) ).thenReturn( site );
+        when( this.contentService.getById( site.getId() ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
@@ -93,7 +97,7 @@ class ContentResolverTest
 
         assertNull( result.getContent() );
         assertNull( result.getNearestSite() );
-        assertNull( result.getSiteRelativePath() );
+        assertEquals( "/c8da0c10-0002-4b68-b407-87412f3e45c8", result.getSiteRelativePath() );
     }
 
     @Test
@@ -104,11 +108,11 @@ class ContentResolverTest
 
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        request.setContentPath( ContentPath.from( "/some-page" ) );
 
-        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
-        when( this.contentService.getByPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( content );
+        when( this.contentService.getById( ContentId.from( "some-page" ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "some-page" ), null ) );
+        when( this.contentService.getByPath( ContentPath.from( "/some-page" ) ) ).thenReturn( content );
 
         when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( site );
 
@@ -124,18 +128,17 @@ class ContentResolverTest
     {
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        request.setContentPath( ContentPath.from( "/root0c10-0002-4b68-b407-87412f3e45c8" ) );
 
-        final Content rootContent = mock( Content.class );
-        when( rootContent.getPath() ).thenReturn( ContentPath.ROOT );
+        final Content rootContent = newRootContent();
 
-        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( rootContent );
+        when( this.contentService.getById( ContentId.from( "root0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( rootContent );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
         assertNull( result.getContent() );
         assertNull( result.getNearestSite() );
-        assertNull( result.getSiteRelativePath() );
+        assertEquals( "/", result.getSiteRelativePath() );
     }
 
     @Test
@@ -145,16 +148,16 @@ class ContentResolverTest
 
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        request.setContentPath( ContentPath.from( "/site0c10-0002-4b68-b407-87412f3e45c9" ) );
 
-        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( content );
-        when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( null );
+        when( this.contentService.getById( ContentId.from( "site0c10-0002-4b68-b407-87412f3e45c9" ) ) ).thenReturn( content );
+        when( this.contentService.getNearestSite( any() ) ).thenReturn( null );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
         assertSame( content, result.getContent() );
         assertNull( result.getNearestSite() );
-        assertNull( result.getSiteRelativePath() );
+        assertEquals( "/mysite/landing-page", result.getSiteRelativePath() );
     }
 
     @Test
@@ -227,7 +230,6 @@ class ContentResolverTest
         request.setContentPath( contentPath );
 
         when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
-        when( this.contentService.contentExists( contentPath ) ).thenReturn( false );
         when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
@@ -243,20 +245,20 @@ class ContentResolverTest
     void resolve_existing_but_needs_authentication_in_live_mode()
     {
         final Site site = newSite();
+        final Content content = newPrivilegedContent();
 
         final PortalRequest request = new PortalRequest();
-        final ContentPath contentPath = ContentPath.from( "/mysite/landing-page/non-existing" );
+        final ContentPath contentPath = ContentPath.from( "/mysite/privileged-page" );
         request.setContentPath( contentPath );
 
-        when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
-        when( this.contentService.contentExists( contentPath ) ).thenReturn( true );
+        when( this.contentService.getByPath( contentPath ) ).thenReturn( content );
         when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
         assertNull( result.getContent() );
         assertSame( site, result.getNearestSite() );
-        assertEquals( "/landing-page/non-existing", result.getSiteRelativePath() );
+        assertEquals( "/privileged-page", result.getSiteRelativePath() );
         final WebException e = assertThrows( WebException.class, result::getContentOrElseThrow );
         assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
     }
@@ -276,7 +278,7 @@ class ContentResolverTest
 
         assertSame( content, result.getContent() );
         assertNull( result.getNearestSite() );
-        assertNull( result.getSiteRelativePath() );
+        assertNotNull( result.getSiteRelativePath() );
     }
 
     private Content newContent()
@@ -292,6 +294,47 @@ class ContentResolverTest
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( new PropertyTree() );
+        builder.permissions( AccessControlList.create()
+                                 .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                                 .build() );
+        return builder.build();
+    }
+
+    private Content newPrivilegedContent()
+    {
+        final Content.Builder builder = Content.create();
+        builder.id( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) );
+        builder.name( "privileged-page" );
+        builder.displayName( "My Privileged Page" );
+        builder.parentPath( ContentPath.from( "/mysite" ) );
+        builder.type( ContentTypeName.from( ApplicationKey.from( "com.enonic.test.app" ), "landing-page" ) );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.data( new PropertyTree() );
+        builder.permissions( AccessControlList.create()
+                                 .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                                 .build() );
+        return builder.build();
+    }
+
+
+    private Content newRootContent()
+    {
+        final Content.Builder builder = Content.create();
+        builder.root();
+        builder.id( ContentId.from( "root0c10-0002-4b68-b407-87412f3e45c8" ) );
+        builder.displayName( "" );
+        builder.type( ContentTypeName.folder() );
+        builder.modifier( PrincipalKey.from( "user:system:admin" ) );
+        builder.modifiedTime( Instant.ofEpochSecond( 0 ) );
+        builder.creator( PrincipalKey.from( "user:system:admin" ) );
+        builder.createdTime( Instant.ofEpochSecond( 0 ) );
+        builder.data( new PropertyTree() );
+        builder.permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() );
         return builder.build();
     }
 
@@ -299,10 +342,13 @@ class ContentResolverTest
     {
 
         final Site.Builder site = Site.create();
-        site.id( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) );
+        site.id( ContentId.from( "site0c10-0002-4b68-b407-87412f3e45c9" ) );
         site.siteConfigs( SiteConfigs.empty() );
         site.name( "mysite" );
         site.parentPath( ContentPath.ROOT );
+        site.permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() );
         return site.build();
     }
 }
