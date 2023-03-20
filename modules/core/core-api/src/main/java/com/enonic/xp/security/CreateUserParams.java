@@ -30,7 +30,7 @@ public final class CreateUserParams
             checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
         }
         this.email = builder.email;
-        this.login = checkNotNull( builder.login, "login is required for a user" );
+        this.login = builder.login;
         this.password = builder.password;
     }
 

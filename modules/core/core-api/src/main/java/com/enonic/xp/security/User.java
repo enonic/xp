@@ -171,7 +171,6 @@ public final class User
         {
             super.validate();
             Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: " + this.key.getType() );
-            Preconditions.checkNotNull( this.login, "login is required for a User" );
             if ( !isNullOrEmpty( this.email ) )
             {
                 Preconditions.checkArgument( EmailValidator.isValid( this.email ), "Email [" + this.email + "] is not valid" );
