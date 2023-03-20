@@ -109,14 +109,10 @@ class MappingHandlerHelper
         {
             siteConfigs = site.getSiteConfigs();
         }
-        else if ( content != null )
+        else
         {
             final Project project = callAsAdmin( () -> projectService.get( ProjectName.from( request.getRepositoryId() ) ) );
             siteConfigs = Optional.ofNullable( project ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
-        }
-        else
-        {
-            siteConfigs = SiteConfigs.empty();
         }
 
         if ( siteConfigs.isEmpty() )

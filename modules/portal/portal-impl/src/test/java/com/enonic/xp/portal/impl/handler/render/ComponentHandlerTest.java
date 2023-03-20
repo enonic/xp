@@ -21,6 +21,10 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -236,7 +240,10 @@ public class ComponentHandlerTest
             .owner( PrincipalKey.from( "user:myStore:me" ) )
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .type( ContentTypeName.from( contentTypeName ) );
+            .type( ContentTypeName.from( contentTypeName ) )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() );
 
         if ( withPage )
         {

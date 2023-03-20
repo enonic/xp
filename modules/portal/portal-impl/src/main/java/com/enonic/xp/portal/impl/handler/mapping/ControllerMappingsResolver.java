@@ -43,10 +43,13 @@ final class ControllerMappingsResolver
         return UrlEscapers.urlFormParameterEscaper().escape( value );
     }
 
-    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final String relativePath, final String relativeUrl )
+    private boolean matchesUrlPattern( final ControllerMappingDescriptor descriptor, final String relativePath,
+                                       final Multimap<String, String> params )
     {
-        final boolean patternWithQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
-        final boolean patternMatches = descriptor.getPattern().matcher( patternWithQueryParameters ? relativeUrl : relativePath ).matches();
+        final boolean patternHasQueryParameters = descriptor.getPattern().toString().contains( "\\?" );
+        final boolean patternMatches = descriptor.getPattern()
+            .matcher( patternHasQueryParameters ? relativePath + normalizedQueryParams( params ) : relativePath )
+            .matches();
         return descriptor.invertPattern() != patternMatches;
     }
 
@@ -105,10 +108,7 @@ final class ControllerMappingsResolver
             {
                 if ( matchesContent( controllerMappingDescriptor, content ) )
                 {
-                    final String contentPath = siteRelativePath != null ? siteRelativePath : content.getPath().toString();
-                    final String contentUrl = contentPath + normalizedQueryParams( params );
-
-                    return matchesUrlPattern( controllerMappingDescriptor, contentPath, contentUrl );
+                    return matchesUrlPattern( controllerMappingDescriptor, siteRelativePath, params );
                 }
             }
         }
