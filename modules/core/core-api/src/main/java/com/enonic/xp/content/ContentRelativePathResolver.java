@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.site.Site;
 
+@Deprecated
 public class ContentRelativePathResolver
 {
 
@@ -51,14 +52,11 @@ public class ContentRelativePathResolver
         }
         else if ( "../".equals( path ) || "../*".equals( path ) )
         {
-            return content.getParentPath().isRoot()
-                ? content.getParentPath() + "*"
-                : content.getParentPath() + "/*"; // siblings and children of current item
+            return content.getParentPath().isRoot() ? content.getParentPath() + "*" : content.getParentPath() + "/*"; // siblings and children of current item
         }
         else if ( path.startsWith( "../" ) )
         {
-            return makeEndWithStar(
-                makeStartWithSlash( getPathStartedSomeLevelsHigher( content, path ) ) ); // path starting x levels higher
+            return makeEndWithStar( makeStartWithSlash( getPathStartedSomeLevelsHigher( content, path ) ) ); // path starting x levels higher
         }
         else if ( path.startsWith( "./" ) )
         {
