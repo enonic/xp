@@ -75,6 +75,7 @@ public final class SecurityInitializer
 
             initializeIdProviderParentFolder();
             initializeRoleFolder();
+            initializeServiceAccountFolder();
             initializeSystemIdProvider();
 
             createRoles();
@@ -142,6 +143,18 @@ public final class SecurityInitializer
     {
         final NodePath rolesNodePath = IdProviderNodeTranslator.getRolesNodePath();
         LOG.info( "Initializing [" + rolesNodePath + "] folder" );
+
+        nodeService.create( CreateNodeParams.create().
+            parent( rolesNodePath.getParentPath() ).
+            name( rolesNodePath.getName() ).
+            inheritPermissions( true ).
+            build() );
+    }
+
+    private void initializeServiceAccountFolder()
+    {
+        final NodePath rolesNodePath = IdProviderNodeTranslator.getServiceAccountsParentPath();
+        LOG.info( "Initializing [{}] folder", rolesNodePath );
 
         nodeService.create( CreateNodeParams.create().
             parent( rolesNodePath.getParentPath() ).

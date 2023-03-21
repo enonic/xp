@@ -106,11 +106,13 @@ public class PrincipalKeyTest
         final PrincipalKey user = PrincipalKey.from( "user:myIdProvider:myUser" );
         final PrincipalKey group = PrincipalKey.from( "group:myIdProvider:mygroup" );
         final PrincipalKey role = PrincipalKey.from( "role:myrole" );
+        final PrincipalKey serviceAccount = PrincipalKey.from( "sa:myIdProvider:enonic.service.account" );
 
         assertEquals( new NodePath( "/identity/system/users/anonymous" ), anonymous.toPath() );
         assertEquals( new NodePath( "/identity/roles/myrole" ), role.toPath() );
         assertEquals( new NodePath( "/identity/myIdProvider/groups/mygroup" ), group.toPath() );
         assertEquals( new NodePath( "/identity/myIdProvider/users/myUser" ), user.toPath() );
+        assertEquals( new NodePath( "/identity/myIdProvider/service-accounts/enonic.service.account" ), serviceAccount.toPath() );
     }
 
     @Test

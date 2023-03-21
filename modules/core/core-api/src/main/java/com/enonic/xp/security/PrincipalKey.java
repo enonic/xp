@@ -21,7 +21,7 @@ public final class PrincipalKey
 
     private static final String SEPARATOR = ":";
 
-    private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group):([^:]+):([^:]+)$" );
+    private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group|sa):([^:]+):([^:]+)$" );
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "anonymous" );
 
@@ -34,6 +34,8 @@ public final class PrincipalKey
     public static final String GROUPS_NODE_NAME = "groups";
 
     public static final String USERS_NODE_NAME = "users";
+
+    public static final String SERVICE_ACCOUNTS_NODE_NAME = "service-accounts";
 
     private final IdProviderKey idProviderKey;
 
@@ -114,6 +116,11 @@ public final class PrincipalKey
         return this.type == PrincipalType.ROLE;
     }
 
+    public boolean isServiceAccount()
+    {
+        return this.type == PrincipalType.SA;
+    }
+
     public boolean isAnonymous()
     {
         return this.equals( ANONYMOUS_PRINCIPAL );
@@ -127,6 +134,8 @@ public final class PrincipalKey
                 return PrincipalKey.ofUser( idProviderKey, id );
             case GROUP:
                 return PrincipalKey.ofGroup( idProviderKey, id );
+            case SA:
+                return PrincipalKey.ofServiceAccount( idProviderKey, id );
             case ROLE:
                 return PrincipalKey.ofRole( id );
 
@@ -188,6 +197,11 @@ public final class PrincipalKey
         return new PrincipalKey( null, PrincipalType.ROLE, roleId );
     }
 
+    public static PrincipalKey ofServiceAccount( final IdProviderKey idProvider, final String serviceAccountId )
+    {
+        return new PrincipalKey( idProvider, PrincipalType.SA, serviceAccountId );
+    }
+
     public static PrincipalKey ofAnonymous()
     {
         return ANONYMOUS_PRINCIPAL;
@@ -215,7 +229,7 @@ public final class PrincipalKey
         }
         else
         {
-            final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
+            final String folderName = this.isGroup() ? GROUPS_NODE_NAME : ( this.isUser() ? USERS_NODE_NAME : SERVICE_ACCOUNTS_NODE_NAME );
             return NodePath.create( NodePath.ROOT )
                 .addElement( IDENTITY_NODE_NAME )
                 .addElement( getIdProviderKey().toString() )

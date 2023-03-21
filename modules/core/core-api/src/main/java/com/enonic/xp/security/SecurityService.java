@@ -171,4 +171,13 @@ public interface SecurityService
     @Deprecated
     void removeRelationships( PrincipalKey from );
 
+    /**
+     * Creates a service account on the specified id provider.
+     *
+     * @param params details of the service account to be created
+     * @return the service account created
+     * @throws PrincipalAlreadyExistsException if a service account with the same key already exists
+     */
+    ServiceAccount createServiceAccount( CreateServiceAccountParams params );
+
 }

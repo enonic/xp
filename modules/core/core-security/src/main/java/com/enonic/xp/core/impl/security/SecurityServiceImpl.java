@@ -54,6 +54,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.CreateServiceAccountParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProvider;
@@ -77,6 +78,7 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.ServiceAccount;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
@@ -243,6 +245,32 @@ public final class SecurityServiceImpl
 
             return null;
         } );
+    }
+
+    @Override
+    public ServiceAccount createServiceAccount( final CreateServiceAccountParams params )
+    {
+        final ServiceAccount serviceAccount = ServiceAccount.create()
+            .key( params.getKey() )
+            .displayName( params.getDisplayName() )
+            .description( params.getDescription() )
+            .data( params.getData() )
+            .modifiedTime( Instant.now( clock ) )
+            .build();
+
+        final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( serviceAccount );
+        try
+        {
+            final Node node = callWithContext( () -> this.nodeService.create( createNodeParams ) );
+
+            securityAuditLogSupport.createServiceAccount( params );
+
+            return PrincipalNodeTranslator.serviceAccountFromNode( node );
+        }
+        catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
+        {
+            throw new PrincipalAlreadyExistsException( params.getKey() );
+        }
     }
 
     private void doRemoveMemberships( final PrincipalKey member )
@@ -1019,6 +1047,8 @@ public final class SecurityServiceImpl
                     IdProviderNodeTranslator.idProviderPermissionsToUsersNodePermissions( permissions );
                 AccessControlList groupsNodePermissions =
                     IdProviderNodeTranslator.idProviderPermissionsToGroupsNodePermissions( permissions );
+                AccessControlList serviceAccountNodePermissions =
+                    IdProviderNodeTranslator.idProviderPermissionsToServiceAccountsNodePermissions( permissions );
 
                 final Node rootNode = nodeService.getRoot();
                 idProviderNodePermissions = mergeWithRootPermissions( idProviderNodePermissions, rootNode.getPermissions() );
@@ -1041,6 +1071,11 @@ public final class SecurityServiceImpl
                                         .parent( idProviderNode.path() )
                                         .name( IdProviderNodeTranslator.GROUP_FOLDER_NODE_NAME )
                                         .permissions( groupsNodePermissions )
+                                        .build() );
+                nodeService.create( CreateNodeParams.create()
+                                        .parent( idProviderNode.path() )
+                                        .name( IdProviderNodeTranslator.SERVICE_ACCOUNT_FOLDER_NODE_NAME )
+                                        .permissions( serviceAccountNodePermissions )
                                         .build() );
 
                 final ApplyNodePermissionsParams applyPermissions =

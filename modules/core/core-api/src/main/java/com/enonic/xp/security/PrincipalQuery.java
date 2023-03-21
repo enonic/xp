@@ -187,6 +187,12 @@ public final class PrincipalQuery
             return this;
         }
 
+        public Builder includeServiceAccounts()
+        {
+            this.principalTypes.add( PrincipalType.SA );
+            return this;
+        }
+
         public Builder includeTypes( final PrincipalType... principalTypes )
         {
             Collections.addAll( this.principalTypes, principalTypes );

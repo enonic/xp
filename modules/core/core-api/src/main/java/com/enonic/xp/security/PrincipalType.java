@@ -8,6 +8,7 @@ public enum PrincipalType
 
     USER,
     GROUP,
-    ROLE
+    ROLE,
+    SA
 
 }

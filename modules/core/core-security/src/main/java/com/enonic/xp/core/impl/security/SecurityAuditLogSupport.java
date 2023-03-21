@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.security;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.CreateServiceAccountParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -41,4 +42,6 @@ public interface SecurityAuditLogSupport
     void removeRelationships( PrincipalKey key );
 
     void setPassword( PrincipalKey key );
+
+    void createServiceAccount( CreateServiceAccountParams params );
 }

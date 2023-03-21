@@ -44,6 +44,8 @@ abstract class IdProviderNodeTranslator
 
     static final String GROUP_FOLDER_NODE_NAME = "groups";
 
+    static final String SERVICE_ACCOUNT_FOLDER_NODE_NAME = "service-accounts";
+
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
     protected static final NodePath ID_PROVIDER_PARENT_PATH =
@@ -57,6 +59,11 @@ abstract class IdProviderNodeTranslator
     static NodePath getIdProvidersParentPath()
     {
         return ID_PROVIDER_PARENT_PATH;
+    }
+
+    static NodePath getServiceAccountsParentPath()
+    {
+        return new NodePath( ID_PROVIDER_PARENT_PATH, NodeName.from( PrincipalKey.SERVICE_ACCOUNTS_NODE_NAME ) );
     }
 
     static IdProviderKey toKey( final Node node )
@@ -221,6 +228,12 @@ abstract class IdProviderNodeTranslator
             }
         }
         return builder.build();
+    }
+
+    static AccessControlList idProviderPermissionsToServiceAccountsNodePermissions(
+        final IdProviderAccessControlList idProviderPermissions )
+    {
+        return AccessControlList.empty(); // TODO
     }
 
     static UpdateNodeParams toUpdateNodeParams( final IdProvider idProvider, final NodeId nodeId )

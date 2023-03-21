@@ -16,6 +16,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.CreateServiceAccountParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -253,6 +254,21 @@ public class SecurityAuditLogSupportImpl
             paramsSet.setString( "key", key.toString() );
 
             log( "system.security.principal.setPassword", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void createServiceAccount( final CreateServiceAccountParams params )
+    {
+        if ( isEnabledAuditLogs )
+        {
+            PropertyTree data = new PropertyTree();
+            PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.setString( "key", params.getKey().toString() );
+            paramsSet.setString( "displayName", params.getDisplayName() );
+            paramsSet.setString( "description", params.getDescription() );
+
+            log( "system.security.principal.create", data, AuditLogUris.from( params.getKey().toString() ) );
         }
     }
 

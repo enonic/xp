@@ -22,6 +22,7 @@ public final class PrincipalRelationship
         checkArgument( !( builder.from.isRole() && builder.to.isRole() ), "Principal relationship from Role to Role is not allowed" );
         checkArgument( !( builder.from.isGroup() && builder.to.isRole() ), "Principal relationship from Group to Role is not allowed" );
         checkArgument( !builder.from.isUser(), "Principal relationship from User to another Principal is not allowed" );
+        checkArgument( !builder.from.isServiceAccount(), "Principal relationship from ServiceAccount to another Principal is not allowed" );
 
         this.from = builder.from;
         this.to = builder.to;

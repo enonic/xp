@@ -25,6 +25,7 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
+import com.enonic.xp.security.ServiceAccount;
 import com.enonic.xp.security.User;
 
 abstract class PrincipalNodeTranslator
@@ -56,6 +57,12 @@ abstract class PrincipalNodeTranslator
         return createGroupFromNode( node );
     }
 
+    static ServiceAccount serviceAccountFromNode( final Node node )
+    {
+        return createServiceAccountFromNode( node );
+    }
+
+
     static Role roleFromNode( final Node node )
     {
         return createRoleFromNode( node );
@@ -80,6 +87,8 @@ abstract class PrincipalNodeTranslator
                 return createGroupFromNode( node );
             case ROLE:
                 return createRoleFromNode( node );
+            case SA:
+                return createServiceAccountFromNode( node );
             default:
                 throw new IllegalArgumentException( "Not able to translate principal-type " + principalType );
         }
@@ -104,18 +113,7 @@ abstract class PrincipalNodeTranslator
             data.setString( PrincipalPropertyNames.ID_PROVIDER_KEY, principal.getKey().getIdProviderKey().toString() );
         }
 
-        switch ( principal.getKey().getType() )
-        {
-            case USER:
-                populateUserData( data.getRoot(), (User) principal );
-                break;
-            case ROLE:
-                populateRoleData( data.getRoot(), (Role) principal );
-                break;
-            case GROUP:
-                populateGroupData( data.getRoot(), (Group) principal );
-                break;
-        }
+        populatePrincipalData( principal, data );
 
         builder.data( data );
         builder.refresh( RefreshMode.ALL );
@@ -132,21 +130,29 @@ abstract class PrincipalNodeTranslator
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, principal.getDisplayName() );
-                switch ( principal.getKey().getType() )
-                {
-                    case USER:
-                        populateUserData( nodeData.getRoot(), (User) principal );
-                        break;
-                    case ROLE:
-                        populateRoleData( nodeData.getRoot(), (Role) principal );
-                        break;
-                    case GROUP:
-                        populateGroupData( nodeData.getRoot(), (Group) principal );
-                        break;
-                }
+                populatePrincipalData( principal, nodeData );
             } ).
             refresh( RefreshMode.ALL ).
             build();
+    }
+
+    private static void populatePrincipalData( final Principal principal, final PropertyTree nodeData )
+    {
+        switch ( principal.getKey().getType() )
+        {
+            case USER:
+                populateUserData( nodeData.getRoot(), (User) principal );
+                break;
+            case ROLE:
+                populateRoleData( nodeData.getRoot(), (Role) principal );
+                break;
+            case GROUP:
+                populateGroupData( nodeData.getRoot(), (Group) principal );
+                break;
+            case SA:
+                populateServiceAccountData( nodeData.getRoot(), (ServiceAccount) principal );
+                break;
+        }
     }
 
     static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
@@ -246,6 +252,11 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, group.getDescription() );
     }
 
+    private static void populateServiceAccountData( final PropertySet data, final ServiceAccount serviceAccount )
+    {
+        data.setString( PrincipalPropertyNames.DESCRIPTION_KEY, serviceAccount.getDescription() );
+    }
+
     private static User createUserFromNode( final Node node )
     {
         Preconditions.checkNotNull( node );
@@ -297,5 +308,22 @@ abstract class PrincipalNodeTranslator
             build();
     }
 
+    private static ServiceAccount createServiceAccountFromNode( final Node node )
+    {
+        Preconditions.checkNotNull( node );
+
+        final PropertyTree nodeAsTree = node.data();
+
+        final ServiceAccount.Builder serviceAccount = ServiceAccount.create()
+            .key( PrincipalKeyNodeTranslator.toKey( node ) )
+            .displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) )
+            .description( nodeAsTree.getString( PrincipalPropertyNames.DESCRIPTION_KEY ) );
+
+        final PropertySet nodeData = nodeAsTree.getSet( PrincipalPropertyNames.DATA_KEY );
+        final PropertyTree data = nodeData == null ? new PropertyTree() : nodeData.toTree();
+        serviceAccount.data( data );
+
+        return serviceAccount.build();
+    }
 
 }
