@@ -107,7 +107,7 @@ final class ImageUrlBuilder
     private static class ContentInNotMediaException
         extends NotFoundException
     {
-        public ContentInNotMediaException( final String message )
+        ContentInNotMediaException( final String message )
         {
             super( message );
         }
