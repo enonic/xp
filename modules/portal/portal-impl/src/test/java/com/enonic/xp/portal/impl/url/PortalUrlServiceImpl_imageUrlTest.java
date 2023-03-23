@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -12,6 +12,7 @@ import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -124,7 +125,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/error/500?message=Image+%5B123456%5D+not+found", url );
+        assertThat( url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -138,8 +139,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" ).
             validate();
 
-        assertEquals( "/site/default/draft/a/b/mycontent/_/error/500?message=Image+with+%5B123456%5D+id+not+found",
-                      this.service.imageUrl( params ) );
+        assertThat( this.service.imageUrl( params  )).startsWith( "/site/default/draft/a/b/mycontent/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -213,9 +213,17 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         final Content content = ContentFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) )
-            .thenThrow( new ContentNotFoundException( content.getPath(), Branch.from( "draft" ) ) );
+            .thenThrow( ContentNotFoundException.create()
+                            .contentPath( content.getPath() )
+                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .branch( ContentConstants.BRANCH_DRAFT )
+                            .build() );
         Mockito.when( this.contentService.getById( content.getId() ) )
-            .thenThrow( new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
+            .thenThrow( ContentNotFoundException.create()
+                            .contentId( content.getId() )
+                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .branch( ContentConstants.BRANCH_DRAFT )
+                            .build() );
         return content;
     }
 }

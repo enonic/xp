@@ -57,8 +57,8 @@ public final class ContentAlreadyExistsException
 
     private static String buildMessage( final ContentPath path, final RepositoryId repositoryId, final Branch branch )
     {
-        return Stream.of( MessageFormat.format( "Content at path [{0}]", path ),
-                          repositoryId != null ? MessageFormat.format( "in repository [{0}]", repositoryId ) : "",
+        return Stream.of( MessageFormat.format( "Content at path [{0}]", path ), repositoryId != null ? MessageFormat.format(
+                              "in repository [{0}]", repositoryId ) : "",
                           branch != null ? MessageFormat.format( "in branch [{0}]", branch ) : "", "already exists" ).
             filter( Predicate.not( String::isEmpty ) ).
             collect( Collectors.joining( " " ) );

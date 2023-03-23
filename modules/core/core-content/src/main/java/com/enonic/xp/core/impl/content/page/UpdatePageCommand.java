@@ -3,10 +3,9 @@ package com.enonic.xp.core.impl.content.page;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
@@ -40,15 +39,12 @@ final class UpdatePageCommand
 
     public Content execute()
     {
-        final Content content = this.contentService.getById( this.params.getContent() );
+        final ContentId contentId = this.params.getContent();
+        final Content content = this.contentService.getById( contentId );
 
-        if ( content == null )
-        {
-            throw new ContentNotFoundException( this.params.getContent(), ContextAccessor.current().getBranch() );
-        }
         if ( content.getPage() == null )
         {
-            throw new PageNotFoundException( this.params.getContent() );
+            throw new PageNotFoundException( contentId );
         }
 
         final EditablePage editablePage = new EditablePage( content.getPage() );
@@ -63,7 +59,7 @@ final class UpdatePageCommand
         defaultValuesProcessor.applyDefaultValues( editedPage, content.getPage() );
 
         final UpdateContentParams params = new UpdateContentParams().
-            contentId( this.params.getContent() ).
+            contentId( contentId ).
             editor( edit -> edit.page = editedPage );
 
         return this.contentService.update( params );

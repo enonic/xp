@@ -3,6 +3,7 @@ package com.enonic.xp.exception;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@Deprecated
 public final class SystemException
     extends BaseException
 {

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Reference;
@@ -117,7 +118,7 @@ public final class ComponentInstruction
         Component component = content.getPage().getRegions().getComponent( path );
         if ( component == null )
         {
-            throw new RenderException( "Component not found: [{0}]", path );
+            throw new RenderException( MessageFormat.format( "Component not found: [{0}]", path ) );
         }
 
         return component;
@@ -128,7 +129,7 @@ public final class ComponentInstruction
         final Component fragmentComponent = content.getPage().getFragment();
         if ( !( fragmentComponent instanceof LayoutComponent ) )
         {
-            throw new RenderException( "Component not found: [{0}]", path );
+            throw new RenderException( MessageFormat.format( "Component not found: [{0}]", path ) );
         }
         final LayoutComponent layout = (LayoutComponent) fragmentComponent;
 
@@ -136,7 +137,7 @@ public final class ComponentInstruction
         final Component component = pageRegions.getComponent( path );
         if ( component == null )
         {
-            throw new RenderException( "Component not found: [{0}]", path );
+            throw new RenderException( MessageFormat.format( "Component not found: [{0}]", path ) );
         }
         return component;
     }

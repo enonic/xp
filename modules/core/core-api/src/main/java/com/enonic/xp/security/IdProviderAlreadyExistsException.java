@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
@@ -11,7 +13,8 @@ public class IdProviderAlreadyExistsException
 
     public IdProviderAlreadyExistsException( final IdProviderKey idProviderKey )
     {
-        super( "Id Provider [{0}] could not be created. A Id Provider with that name already exists", idProviderKey );
+        super(
+            MessageFormat.format( "Id Provider [{0}] could not be created. A Id Provider with that name already exists", idProviderKey ) );
         this.idProviderKey = idProviderKey;
     }
 

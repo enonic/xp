@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -123,7 +122,7 @@ public class PageHandlerTest
     public void getContentNotFound()
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
         this.request.setContentPath( path );
 
         final WebException e =

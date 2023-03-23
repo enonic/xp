@@ -218,7 +218,7 @@ class AttachmentHandlerTest
     void idNotFound()
         throws Exception
     {
-        when( this.contentService.getById( any() ) ).thenThrow( new ContentNotFoundException( ContentPath.ROOT, null) );
+        when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
 
         this.request.setEndpointPath( "/_/attachment/download/1/logo.png" );
 

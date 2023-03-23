@@ -67,7 +67,7 @@ public abstract class Initializer
         }
         catch ( InterruptedException e )
         {
-            throw new InitializationException( initializationSubject + " initialization check thread interrupted", e );
+            throw new InitializationException( e, initializationSubject + " initialization check thread interrupted" );
         }
     }
 

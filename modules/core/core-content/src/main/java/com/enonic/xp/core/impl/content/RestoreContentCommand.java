@@ -123,7 +123,12 @@ final class RestoreContentCommand
             }
             else
             {
-                throw new ContentNotFoundException( params.getContentId(), ContextAccessor.current().getBranch() );
+                throw ContentNotFoundException.create()
+                    .contentId( params.getContentId() )
+                    .repositoryId( ContextAccessor.current().getRepositoryId() )
+                    .branch( ContextAccessor.current().getBranch() )
+                    .contentRoot( ContentNodeHelper.getContentRoot() )
+                    .build();
             }
         }
     }

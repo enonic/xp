@@ -1,5 +1,6 @@
 package com.enonic.xp.xml.parser;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,7 +91,7 @@ public final class XmlFormMapper
             return buildFormOptionSetItem( root );
         }
 
-        throw new XmlException( "Unknown item type [{0}]", tagName );
+        throw new XmlException( MessageFormat.format( "Unknown item type [{0}]", tagName ) );
     }
 
     private Input buildInputItem( final DomElement root )
@@ -209,7 +210,7 @@ public final class XmlFormMapper
             return builder.build();
         }
 
-        throw new XmlException( "Unknown item type [{0}]", tagName );
+        throw new XmlException( MessageFormat.format( "Unknown item type [{0}]", tagName ) );
     }
 
     private Occurrences buildOccurrence( final DomElement root )

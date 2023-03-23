@@ -37,12 +37,12 @@ final class AttachmentUrlBuilder
 
     private Content resolveContent()
     {
-        return new ContentResolver().
-            portalRequest( this.portalRequest ).
-            contentService( this.contentService ).
-            id( this.params.getId() ).
-            path( this.params.getPath() ).
-            resolve();
+        final ContentResolver contentResolver = new ContentResolver().portalRequest( this.portalRequest )
+            .contentService( this.contentService )
+            .id( this.params.getId() )
+            .path( this.params.getPath() );
+
+        return contentResolver.resolve();
     }
 
     private Attachment resolveAttachment( final Content content )

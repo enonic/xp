@@ -1,18 +1,16 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.url.ImageUrlParams;
-import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -54,24 +52,16 @@ final class ImageUrlBuilder
     private Media resolveMedia()
     {
         final Content content;
-        try
+        final ContentResolver contentResolver = new ContentResolver().portalRequest( this.portalRequest )
+            .contentService( this.contentService )
+            .id( this.params.getId() )
+            .path( this.params.getPath() );
+        content = contentResolver.resolve();
+        if ( !( content instanceof Media ) )
         {
-            content = new ContentResolver().portalRequest( this.portalRequest )
-                .contentService( this.contentService )
-                .id( this.params.getId() )
-                .path( this.params.getPath() )
-                .resolve();
-        }
-        catch ( ContentNotFoundException e )
-        {
-            throw new WebException( HttpStatus.NOT_FOUND, String.format( "Image [%s] not found",
-                                                                         Objects.requireNonNullElse( this.params.getId(),
-                                                                                                     this.params.getPath() ) ), e );
-        }
-        if ( !content.getType().isDescendantOfMedia() && !content.getType().isMedia() )
-        {
-            throw WebException.notFound( String.format( "Image with [%s] id not found", content.getId() ) );
-
+            throw new ContentInNotMediaException(
+                String.format( "Content [%s:%s:%s] is not a Media", ContextAccessor.current().getRepositoryId(),
+                               ContextAccessor.current().getBranch(), content.getId() ) );
         }
         return (Media) content;
     }
@@ -89,7 +79,7 @@ final class ImageUrlBuilder
             toString();
     }
 
-    private String resolveName( final Media media )
+    private String resolveName( final Content media )
     {
         final String name = media.getName().toString();
 
@@ -112,5 +102,14 @@ final class ImageUrlBuilder
         }
 
         return this.params.getScale().replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
+    }
+
+    private static class ContentInNotMediaException
+        extends NotFoundException
+    {
+        ContentInNotMediaException( final String message )
+        {
+            super( message );
+        }
     }
 }

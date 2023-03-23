@@ -529,7 +529,12 @@ public class ContentServiceImpl
             .execute();
         if ( content == null )
         {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
         return content;
     }
@@ -618,7 +623,12 @@ public class ContentServiceImpl
         final Content content = executeGetByPath( path );
         if ( content == null )
         {
-            throw new ContentNotFoundException( path, ContextAccessor.current().getBranch() );
+            throw ContentNotFoundException.create()
+                .contentPath( path )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
         return content;
     }

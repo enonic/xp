@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -75,7 +74,7 @@ public class ModifyMediaHandlerTest
     public void testModifyMediaThrowContentNotFound()
     {
         Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) )
-            .thenThrow( new ContentNotFoundException( ContentPath.from( "path" ), Branch.from( "draft" ) ) );
+            .thenThrow( ContentNotFoundException.class );
         runFunction( "/test/ModifyMediaHandlerTest.js", "modifyMediaThrowContentNotFound" );
     }
 }

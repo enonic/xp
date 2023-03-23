@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
@@ -113,8 +112,7 @@ public class CreateFragmentCommandTest
     @Test
     public void imageComponentName_contentNotFound()
     {
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "123" ), ContextAccessor.current().getBranch() ) );
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );
 
         assertEquals( "Image", testImageComponentName( null, false ) );
     }
