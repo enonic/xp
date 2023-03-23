@@ -432,7 +432,7 @@ export {
 
 export interface ContentsResult<
     Hit extends Content<unknown>,
-    AggregationOutput extends Record<string, AggregationsResult>
+    AggregationOutput extends Record<string, AggregationsResult> | undefined = undefined
 > {
     total: number;
     count: number;
@@ -608,7 +608,7 @@ export function create<
     return __.toNativeObject(bean.execute<Data, Type>());
 }
 
-export interface QueryContentParams<AggregationInput extends Aggregations> {
+export interface QueryContentParams<AggregationInput extends Aggregations = never> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
