@@ -283,7 +283,7 @@ final class BuiltinContentTypes
         .build();
 
     private static final ContentType MEDIA =
-        createSystemType( ContentTypeName.media() ).setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
+        createSystemType( ContentTypeName.media() ).setFinal( false ).setAbstract( true ).allowChildContent( false ).build();
 
     private static final ContentType MEDIA_TEXT = createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() )
         .setFinal( true )
