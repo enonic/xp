@@ -95,7 +95,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertThat(url).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
     }
 
     @Test
