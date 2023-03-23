@@ -16,7 +16,7 @@ import com.enonic.xp.node.NodePaths;
 import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 
-class ContentNodeHelper
+public class ContentNodeHelper
 {
     private static final String CONTENT_ROOT_NODE_NAME = "content";
 

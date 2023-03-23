@@ -1,5 +1,7 @@
 package com.enonic.xp.security;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
@@ -12,7 +14,7 @@ public class PrincipalAlreadyExistsException
 
     public PrincipalAlreadyExistsException( final PrincipalKey principalKey )
     {
-        super( "Principal [{0}] could not be created. A principal with that name already exists", principalKey.getId() );
+        super( MessageFormat.format( "Principal [{0}] could not be created. A principal with that name already exists", principalKey ) );
         this.principalKey = principalKey;
     }
 

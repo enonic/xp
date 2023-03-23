@@ -99,7 +99,12 @@ public class ContentNodeTranslator
         if ( !allowAltRootPath && !( node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) ||
             node.path().equals( ContentNodeHelper.getContentRoot() ) ) )
         {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch(), ContentNodeHelper.getContentRoot() );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
 
         final ContentPath parentContentPath = getParent( node.path() );

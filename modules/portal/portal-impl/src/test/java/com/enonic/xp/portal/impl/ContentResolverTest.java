@@ -88,10 +88,10 @@ class ContentResolverTest
         request.setContentPath( contentPath );
 
         when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
+            ContentNotFoundException.class );
 
         when( this.contentService.getByPath( contentPath ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
+            ContentNotFoundException.class );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
@@ -111,7 +111,7 @@ class ContentResolverTest
         request.setContentPath( ContentPath.from( "/some-page" ) );
 
         when( this.contentService.getById( ContentId.from( "some-page" ) ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "some-page" ), null ) );
+            ContentNotFoundException.class );
         when( this.contentService.getByPath( ContentPath.from( "/some-page" ) ) ).thenReturn( content );
 
         when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( site );
@@ -229,7 +229,7 @@ class ContentResolverTest
         final ContentPath contentPath = ContentPath.from( "/mysite/landing-page/non-existing" );
         request.setContentPath( contentPath );
 
-        when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
+        when( this.contentService.getByPath( contentPath ) ).thenThrow( ContentNotFoundException.class );
         when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );

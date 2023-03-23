@@ -45,7 +45,8 @@ public class GetAttachmentsHandlerTest
         throws Exception
     {
         final ContentId id = ContentId.from( "123456" );
-        Mockito.when( this.contentService.getById( id ) ).thenThrow( new ContentNotFoundException( id, null ) );
+        Mockito.when( this.contentService.getById( Mockito.any() ) )
+            .thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/GetAttachmentsHandlerTest.js", "getById_notFound" );
     }
@@ -55,7 +56,7 @@ public class GetAttachmentsHandlerTest
         throws Exception
     {
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
-        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, null ) );
+        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/GetAttachmentsHandlerTest.js", "getByPath_notFound" );
     }

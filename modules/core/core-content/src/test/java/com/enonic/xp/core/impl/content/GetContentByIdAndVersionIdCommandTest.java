@@ -95,7 +95,7 @@ public class GetContentByIdAndVersionIdCommandTest
     public void testExecute_ContentNotFound()
     {
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenReturn( node );
-        when( translator.fromNode( any( Node.class ), anyBoolean() ) ).thenReturn( null );
+        when( translator.fromNode( any( Node.class ), anyBoolean(), anyBoolean() ) ).thenThrow( ContentNotFoundException.class );
 
         assertThrows( ContentNotFoundException.class, () -> createInstance().execute() );
 

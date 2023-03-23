@@ -71,7 +71,12 @@ abstract class AbstractContentCommand
         final Content content = GetContentByIdCommand.create( contentId, this ).build().execute();
         if ( content == null )
         {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
         return content;
     }

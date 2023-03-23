@@ -43,24 +43,18 @@ public class GetContentByPathAndVersionIdCommand
         {
             final Node node = nodeService.getByPathAndVersionId( nodePath, nodeVersionId );
 
-            final Content content = filter( translator.fromNode( node, true ) );
-
-            if ( content != null )
-            {
-                return content;
-            }
-
-            throw createContentNotFoundException();
+            return translator.fromNode( node, true );
         }
         catch ( NodeNotFoundException e )
         {
-            throw createContentNotFoundException();
+            throw ContentNotFoundException.create()
+                .contentPath( contentPath )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .cause( e )
+                .build();
         }
-    }
-
-    private ContentNotFoundException createContentNotFoundException()
-    {
-        return new ContentNotFoundException( contentPath, contentVersionId, ContextAccessor.current().getBranch() );
     }
 
     public static class Builder

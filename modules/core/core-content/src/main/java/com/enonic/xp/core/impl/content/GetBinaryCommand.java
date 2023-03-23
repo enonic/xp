@@ -34,7 +34,12 @@ final class GetBinaryCommand
             final Node node = nodeService.getById( NodeId.from( contentId ) );
             if ( node == null || contentPendingOrExpired( node, Instant.now() ) )
             {
-                throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+                throw ContentNotFoundException.create()
+                    .contentId( contentId )
+                    .repositoryId( ContextAccessor.current().getRepositoryId() )
+                    .branch( ContextAccessor.current().getBranch() )
+                    .contentRoot( ContentNodeHelper.getContentRoot() )
+                    .build();
             }
         }
         return nodeService.getBinary( NodeId.from( contentId ), binaryReference );

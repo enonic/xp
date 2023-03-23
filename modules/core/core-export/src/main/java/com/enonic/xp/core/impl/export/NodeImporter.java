@@ -236,7 +236,7 @@ public final class NodeImporter
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load source node [" + nodeSource.getUrl() + "]: ", e );
+            throw new XmlException( e, "Could not load source node [" + nodeSource.getUrl() + "]: " );
         }
 
         final Node newNode = newNodeBuilder.build();

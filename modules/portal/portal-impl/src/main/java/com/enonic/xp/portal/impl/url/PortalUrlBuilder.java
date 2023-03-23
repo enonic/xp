@@ -1,8 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -200,19 +202,26 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     protected String buildErrorUrl( final Exception e )
     {
+        final String logRef = LOG.isWarnEnabled() ? newLogRef() : "";
+
+        LOG.warn( "Portal url build failed. Logref: {}", logRef, e );
         if ( e instanceof NotFoundException )
         {
-            return buildErrorUrl( 404, e.getMessage() );
+            return buildErrorUrl( 404, String.join( " ", "Not Found.", logRef ) );
         }
         else if ( e instanceof OutOfScopeException )
         {
-            return buildErrorUrl( 400, e.getMessage() );
+            return buildErrorUrl( 400, String.join( " ", "Out of scope.", logRef ) );
         }
         else
         {
-            LOG.warn( "Portal url build failed", e );
-            return buildErrorUrl( 500, e.getMessage() );
+            return buildErrorUrl( 500, String.join( " ", "Something went wrong.", logRef ) );
         }
+    }
+
+    private static String newLogRef()
+    {
+        return new BigInteger( UUID.randomUUID().toString().replace( "-", "" ), 16 ).toString( 32 );
     }
 
     protected final String buildErrorUrl( final int code, final String message )

@@ -5,12 +5,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
@@ -60,7 +57,8 @@ public class SetPermissionsHandlerTest
     public void testContentNotFoundByPath()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( new ContentNotFoundException( ContentPath.ROOT, Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) )
+            .thenThrow( ContentNotFoundException.class );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
@@ -76,8 +74,9 @@ public class SetPermissionsHandlerTest
     public void testContentNotFoundById()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenThrow(
-            new ContentNotFoundException( ContentId.from( "ee70f5d0-025c-4fbd-a835-5e50ff7b76ba" ), Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) )
+            .thenThrow(
+                ContentNotFoundException.class );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );

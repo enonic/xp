@@ -1,5 +1,7 @@
 package com.enonic.xp.task;
 
+import java.text.MessageFormat;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 import com.enonic.xp.page.DescriptorKey;
@@ -12,13 +14,13 @@ public class TaskNotFoundException
 
     public TaskNotFoundException( final DescriptorKey task )
     {
-        super( "Task [{0}] not found", task );
+        super( MessageFormat.format( "Task [{0}] not found", task ) );
         this.task = task;
     }
 
     public TaskNotFoundException( final DescriptorKey task, final String message )
     {
-        super( "Task [{0}] not found. " + message, task );
+        super( MessageFormat.format( "Task [{0}] not found. {1}", task, message ) );
         this.task = task;
     }
 
