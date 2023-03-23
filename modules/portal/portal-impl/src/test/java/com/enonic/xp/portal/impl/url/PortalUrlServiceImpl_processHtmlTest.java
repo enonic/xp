@@ -278,7 +278,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             portalRequest( this.portalRequest ).
             value( "<a href=\"image://123\">Image</a>" );
 
-        //Checks that the error 500 page is returned
+        //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
         assertThat( processedHtml).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
