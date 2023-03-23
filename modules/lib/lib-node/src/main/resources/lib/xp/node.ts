@@ -138,7 +138,7 @@ export interface SuggestionResult {
     }[];
 }
 
-export interface NodeQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
+export interface NodeQueryResult<AggregationOutput extends Record<string, AggregationsResult> | undefined = undefined> {
     total: number;
     count: number;
     hits: NodeQueryResultHit[];
@@ -146,7 +146,7 @@ export interface NodeQueryResult<AggregationOutput extends Record<string, Aggreg
     suggestions?: Record<string, SuggestionResult[]>;
 }
 
-export interface NodeMultiRepoQueryResult<AggregationOutput extends Record<string, AggregationsResult>> {
+export interface NodeMultiRepoQueryResult<AggregationOutput extends Record<string, AggregationsResult> | undefined = undefined> {
     total: number;
     count: number;
     hits: (NodeQueryResultHit & {
@@ -346,7 +346,7 @@ export interface SetChildOrderParams {
     childOrder: string;
 }
 
-export interface QueryNodeParams<AggregationInput extends Aggregations> {
+export interface QueryNodeParams<AggregationInput extends Aggregations = never> {
     start?: number;
     count?: number;
     query?: QueryDsl | string;
