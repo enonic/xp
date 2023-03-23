@@ -139,7 +139,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" ).
             validate();
 
-        assertThat(  this.service.imageUrl( params  )).startsWith( "/site/default/draft/a/b/mycontent/_/error/404?message=Not+Found." );
+        assertThat( this.service.imageUrl( params  )).startsWith( "/site/default/draft/a/b/mycontent/_/error/404?message=Not+Found." );
     }
 
     @Test
