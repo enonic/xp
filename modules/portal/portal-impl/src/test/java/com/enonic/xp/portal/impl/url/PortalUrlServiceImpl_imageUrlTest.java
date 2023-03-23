@@ -125,7 +125,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertThat(  url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
     }
 
     @Test
