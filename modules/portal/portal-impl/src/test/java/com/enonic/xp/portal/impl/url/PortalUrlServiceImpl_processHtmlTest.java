@@ -280,7 +280,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/site/default/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
 
     @Test
