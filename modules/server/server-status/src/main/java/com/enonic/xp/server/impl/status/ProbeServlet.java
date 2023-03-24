@@ -8,64 +8,59 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.service.component.annotations.Activate;
-
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.server.impl.status.check.StateCheck;
+import com.enonic.xp.server.impl.status.check.OSGIStateCheck;
 
 public abstract class ProbeServlet
     extends HttpServlet
 {
-    private final StateCheck stateCheck;
+    private final OSGIStateCheck osgiStateCheck;
 
-    @Activate
-    public ProbeServlet( final StateCheck stateCheck )
+    public ProbeServlet( final OSGIStateCheck osgiStateCheck )
     {
-        this.stateCheck = stateCheck;
+        this.osgiStateCheck = osgiStateCheck;
     }
-
-    abstract String getSuccessMessage();
-
-    abstract String getFailedMessage( final List<String> errorMessages );
 
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws IOException
     {
-        final List<String> errorMessages = stateCheck.check().getErrorMessages();
+        final List<String> errorMessages = osgiStateCheck.check().getErrorMessages();
         serializeJson( res, errorMessages );
     }
 
     private void serializeJson( final HttpServletResponse res, final List<String> errorMessages )
         throws IOException
     {
-
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
-        String message;
+
         if ( errorMessages.isEmpty() )
         {
             res.setStatus( 200 );
-            message = getSuccessMessage();
         }
         else
         {
-            res.setStatus( 500 );
-            message = getFailedMessage( errorMessages );
+            res.setStatus( 503 );
+
+            res.setContentType( MediaType.JSON_UTF_8.toString() );
+            final PrintWriter writer = res.getWriter();
+
+            final ArrayNode errors = json.putArray( "errors" );
+            errorMessages.forEach( errors::add );
+
+            writer.print( json );
+
+            writer.close();
         }
-        res.setContentType( MediaType.JSON_UTF_8.toString() );
-
-        final PrintWriter writer = res.getWriter();
-
-        writer.println( json.put( "message", message ).toString() );
-        writer.close();
     }
 
     void deactivate()
     {
-        this.stateCheck.deactivate();
+        this.osgiStateCheck.deactivate();
     }
 
 }

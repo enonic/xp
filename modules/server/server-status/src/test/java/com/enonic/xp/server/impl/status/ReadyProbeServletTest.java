@@ -69,12 +69,11 @@ public class ReadyProbeServletTest
         servlet.doGet( req, res );
 
         verify( res ).setStatus( eq( 200 ) );
-        verify( printWriter ).println( eq( "{\"message\":\"XP is ready!\"}" ) );
 
         servlet.deactivate();
         servlet.doGet( req, res );
 
-        verify( res ).setStatus( eq( 500 ) );
+        verify( res ).setStatus( eq( 503 ) );
     }
 
     @Test
@@ -85,6 +84,6 @@ public class ReadyProbeServletTest
 
         servlet.doGet( req, res );
 
-        verify( res ).setStatus( eq( 500 ) );
+        verify( res ).setStatus( eq( 503 ) );
     }
 }

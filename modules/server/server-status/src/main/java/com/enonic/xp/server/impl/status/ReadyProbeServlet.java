@@ -1,7 +1,5 @@
 package com.enonic.xp.server.impl.status;
 
-import java.util.List;
-
 import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
 
@@ -11,7 +9,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
 import com.enonic.xp.annotation.Order;
-import com.enonic.xp.server.impl.status.check.ReadyOSGIStateCheck;
+import com.enonic.xp.server.impl.status.check.OSGIStateCheck;
+import com.enonic.xp.server.impl.status.check.OSGIStateChecks;
 
 @Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
@@ -22,24 +21,12 @@ public final class ReadyProbeServlet
     @Activate
     public ReadyProbeServlet( final BundleContext bundleContext )
     {
-        super( new ReadyOSGIStateCheck( bundleContext ) );
+        super( new OSGIStateCheck( bundleContext, OSGIStateChecks.READY_SERVICE_NAMES ) );
     }
 
     @Deactivate
     public void deactivate()
     {
         super.deactivate();
-    }
-
-    @Override
-    String getSuccessMessage()
-    {
-        return "XP is ready!";
-    }
-
-    @Override
-    String getFailedMessage( final List<String> errorMessages )
-    {
-        return String.format( "XP is not ready: [%s]", String.join( ", ", errorMessages ) );
     }
 }

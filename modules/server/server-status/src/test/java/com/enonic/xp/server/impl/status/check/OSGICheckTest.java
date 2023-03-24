@@ -1,7 +1,5 @@
 package com.enonic.xp.server.impl.status.check;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -17,26 +15,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OSGIReadyCheckTest
+public class OSGICheckTest
 {
-    private static final List<String> TRACKED_SERVICE_NAMES =
-        List.of( "com.enonic.xp.export.ExportService", "com.enonic.xp.scheduler.SchedulerService",
-                 "com.enonic.xp.portal.websocket.WebSocketManager", "com.enonic.xp.portal.view.ViewFunctionService",
-                 "com.enonic.xp.task.TaskService", "com.enonic.xp.task.TaskDescriptorService",
-                 "com.enonic.xp.script.event.ScriptEventManager", "com.enonic.xp.security.SecurityService",
-                 "com.enonic.xp.portal.url.PortalUrlService", "com.enonic.xp.web.multipart.MultipartService",
-                 "com.enonic.xp.mail.MailService", "com.enonic.xp.i18n.LocaleService", "com.enonic.xp.portal.owasp.HtmlSanitizer",
-                 "com.enonic.xp.schema.content.ContentTypeService", "com.enonic.xp.admin.tool.AdminToolDescriptorService",
-                 "com.enonic.xp.server.internal.deploy.DeployDirectoryWatcher", "com.enonic.xp.server.internal.deploy.AutoDeployer",
-                 "com.enonic.xp.server.internal.deploy.StoredApplicationsDeployer" );
-
     @Mock
     private BundleContext bundleContext;
 
     @Test
     public void testNotReady()
     {
-        final StateCheck healthCheck = new ReadyOSGIStateCheck( bundleContext );
+        final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.READY_SERVICE_NAMES );
         final StateCheckResult result = healthCheck.check();
 
         assertThat( result.getErrorMessages() ).containsOnly( "[com.enonic.xp.portal.url.PortalUrlService] service in not available",
@@ -60,10 +47,21 @@ public class OSGIReadyCheckTest
     }
 
     @Test
+    public void testNotAlive()
+    {
+        final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES );
+        final StateCheckResult result = healthCheck.check();
+
+        assertThat( result.getErrorMessages() ).containsOnly( "[org.elasticsearch.client.AdminClient] service in not available",
+                                                              "[org.elasticsearch.client.Client] service in not available",
+                                                              "[org.elasticsearch.client.ClusterAdminClient] service in not available" );
+    }
+
+    @Test
     public void testReady()
         throws Exception
     {
-        for ( String s : TRACKED_SERVICE_NAMES )
+        for ( String s : OSGIStateChecks.READY_SERVICE_NAMES )
         {
             final ServiceReference<Object> serviceMock = mock( ServiceReference.class );
 
@@ -71,7 +69,25 @@ public class OSGIReadyCheckTest
             when( bundleContext.getService( serviceMock ) ).thenReturn( mock( Object.class ) );
         }
 
-        final StateCheck healthCheck = new ReadyOSGIStateCheck( bundleContext );
+        final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.READY_SERVICE_NAMES );
+        final StateCheckResult result = healthCheck.check();
+
+        assertTrue( result.getErrorMessages().isEmpty() );
+    }
+
+    @Test
+    public void testAlive()
+        throws Exception
+    {
+        for ( String s : OSGIStateChecks.LIVE_SERVICE_NAMES )
+        {
+            final ServiceReference<Object> serviceMock = mock( ServiceReference.class );
+
+            when( bundleContext.getServiceReferences( eq( s ), isNull() ) ).thenReturn( new ServiceReference<?>[]{serviceMock} );
+            when( bundleContext.getService( serviceMock ) ).thenReturn( mock( Object.class ) );
+        }
+
+        final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES );
         final StateCheckResult result = healthCheck.check();
 
         assertTrue( result.getErrorMessages().isEmpty() );

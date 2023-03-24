@@ -1,28 +1,25 @@
 package com.enonic.xp.server.impl.status.check;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
-abstract class OSGIStateCheck
-    implements StateCheck
+public final class OSGIStateCheck
 {
+
     private final Map<String, ServiceTracker<?, ?>> trackers;
 
-    OSGIStateCheck( final BundleContext bundleContext )
+    public OSGIStateCheck( final BundleContext bundleContext, final Set<String> servicesToTrack )
     {
-        this.trackers = getServicesToTrack().stream()
+        this.trackers = servicesToTrack.stream()
             .collect( Collectors.toMap( service -> service, service -> new ServiceTracker<>( bundleContext, service, null ) ) );
 
         this.trackers.values().forEach( ServiceTracker::open );
     }
 
-    abstract List<String> getServicesToTrack();
-
-    @Override
     public StateCheckResult check()
     {
         final StateCheckResult.Builder result = StateCheckResult.create();
@@ -35,7 +32,6 @@ abstract class OSGIStateCheck
         return result.build();
     }
 
-    @Override
     public void deactivate()
     {
         trackers.values().forEach( ServiceTracker::close );
