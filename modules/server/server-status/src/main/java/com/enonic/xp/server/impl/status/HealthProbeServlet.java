@@ -15,7 +15,7 @@ import com.enonic.xp.server.impl.status.check.HealthOSGIStateCheck;
 
 @Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
-@WebServlet({"/ready"})
+@WebServlet({"/healthz"})
 public final class HealthProbeServlet
     extends ProbeServlet
 {
