@@ -2,7 +2,9 @@ package com.enonic.xp.lib.schema.mapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
+import com.google.common.base.Optional;
 import com.google.common.io.ByteProcessor;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -16,7 +18,7 @@ public final class IconByteSource
 
     public IconByteSource( final Icon icon )
     {
-        this.icon = icon;
+        this.icon = Objects.requireNonNull( icon );
     }
 
     @Override
@@ -35,13 +37,19 @@ public final class IconByteSource
     @Override
     public boolean isEmpty()
     {
-        return icon == null || icon.getSize() == 0;
+        return icon.getSize() == 0;
     }
 
     @Override
     public long size()
     {
-        return isEmpty() ? 0 : icon.getSize();
+        return icon.getSize();
+    }
+
+    @Override
+    public Optional<Long> sizeIfKnown()
+    {
+        return Optional.of( (long) icon.getSize() );
     }
 
     @Override
@@ -62,6 +70,6 @@ public final class IconByteSource
     @Override
     public String toString()
     {
-        return "IconStream(" + size() + ")";
+        return "IconStream(" + icon.getSize() + ")";
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MultipartItemImplTest
@@ -28,9 +29,10 @@ public class MultipartItemImplTest
         assertEquals( "upload", item.getName() );
         assertEquals( "image.png", item.getFileName() );
         assertEquals( "image/png", item.getContentType().toString() );
-        assertEquals( false, item.isEmpty() );
-        assertEquals( 10, item.getSize() );
-        assertEquals( 10, item.size() );
+        assertFalse( item.isEmpty() );
+        assertEquals( 10L, item.getSize() );
+        assertEquals( 10L, item.size() );
+        assertEquals( 10L, item.sizeIfKnown().get() );
         assertNotNull( item.getBytes() );
         assertEquals( "hello", item.getAsString() );
     }
