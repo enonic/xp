@@ -3,9 +3,11 @@ package com.enonic.xp.web.impl.multipart;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import javax.servlet.http.Part;
 
+import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
@@ -20,7 +22,7 @@ final class MultipartItemImpl
 
     MultipartItemImpl( final Part item )
     {
-        this.item = item;
+        this.item = Objects.requireNonNull( item );
     }
 
     @Override
@@ -77,13 +79,19 @@ final class MultipartItemImpl
     @Override
     public long size()
     {
-        return getSize();
+        return this.item.getSize();
+    }
+
+    @Override
+    public Optional<Long> sizeIfKnown()
+    {
+        return Optional.of( this.item.getSize() );
     }
 
     @Override
     public boolean isEmpty()
     {
-        return getSize() == 0;
+        return this.item.getSize() == 0;
     }
 
     public void delete()
