@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ import com.enonic.xp.region.TextComponent;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PageDataSerializerTest
     extends AbstractDataSerializerTest
@@ -76,6 +78,12 @@ public class PageDataSerializerTest
         final PropertySet pageOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 0 ).getSet();
         assertTrue( pageOnlyData.hasProperty( "page.config.app-key.d-name" ) );
         assertEquals( "42.0", pageOnlyData.getString( "page.config.app-key.d-name.aim" ) );
+    }
+
+    @Test
+    public void noComponentsNoPage()
+    {
+        assertNull( pageDataSerializer.fromData( new PropertySet() ) );
     }
 
     @Test
@@ -166,7 +174,6 @@ public class PageDataSerializerTest
         assertEquals( page, parsedPage );
     }
 
-
     @Test
     public void fragmentPage()
     {
@@ -223,6 +230,7 @@ public class PageDataSerializerTest
 
         Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create().
             config( Form.create().build() ).
+            modifiedTime( Instant.now() ).
             key( pageDescriptorKey ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( regionName1 ).build() ).

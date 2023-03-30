@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,18 +25,20 @@ import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LayoutDataSerializerTest extends AbstractDataSerializerTest
+public class LayoutDataSerializerTest
+    extends AbstractDataSerializerTest
 {
     private LayoutComponentDataSerializer layoutDataSerializer;
 
     @BeforeEach
     public void setUp()
     {
-        final RegionDataSerializer regionSerializer = new RegionDataSerializer( ComponentDataSerializerProvider.create().
-            layoutDescriptorService( layoutDescriptorService ).
-            partDescriptorService( partDescriptorService ).
-            build() );
+        final RegionDataSerializer regionSerializer = new RegionDataSerializer( ComponentDataSerializerProvider.create()
+                                                                                    .layoutDescriptorService( layoutDescriptorService )
+                                                                                    .partDescriptorService( partDescriptorService )
+                                                                                    .build() );
 
         this.layoutDataSerializer = new LayoutComponentDataSerializer( this.layoutDescriptorService, regionSerializer );
     }
@@ -42,58 +46,83 @@ public class LayoutDataSerializerTest extends AbstractDataSerializerTest
     @Test
     public void testLayoutWithTwoRegions()
     {
-        genAndCheckLayout( "left", "right");
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
+        setupDescriptorService( layoutDescriptorKey, "left", "right" );
+        genAndCheckLayout( layoutDescriptorKey, "left", "right" );
     }
 
     @Test
     public void testLayoutWithRegionsWithSimilarNames()
     {
-        genAndCheckLayout( "left", "left2");
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
+        setupDescriptorService( layoutDescriptorKey, "left", "left2" );
+        genAndCheckLayout( layoutDescriptorKey, "left", "left2" );
     }
 
-    private void genAndCheckLayout( final String regionName1, final String regionName2 )
+    @Test
+    public void testLayoutWithDescriptorServiceNotAvailable()
     {
-        final LayoutComponent layoutComponent = createLayoutComponent( regionName1, regionName2 );
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
+        setupDefaultDescriptor( layoutDescriptorKey );
+        genAndCheckLayout( layoutDescriptorKey, "up", "down" );
+    }
 
+    @Test
+    public void testNoComponents()
+    {
+        final LayoutComponent parsedLayout = layoutDataSerializer.fromData( new PropertySet() );
+        assertTrue(parsedLayout.getRegions().isEmpty());
+    }
+
+    private void genAndCheckLayout( final DescriptorKey layoutDescriptorKey, final String... regionNames )
+    {
+        final LayoutComponent layoutComponent = createLayoutComponent( layoutDescriptorKey, regionNames );
         final PropertyTree layoutAsData = new PropertyTree();
+
         layoutDataSerializer.toData( layoutComponent, layoutAsData.getRoot() );
-        final List<PropertySet> componentsAsData = layoutAsData.getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).
-            map( Property::getSet ).collect( Collectors.toList() );
+
+        final List<PropertySet> componentsAsData = layoutAsData.getProperties( COMPONENTS )
+            .stream()
+            .filter( Property::hasNotNullValue )
+            .map( Property::getSet )
+            .collect( Collectors.toList() );
+
         final LayoutComponent parsedLayout = layoutDataSerializer.fromData( layoutAsData.getSet( COMPONENTS ), componentsAsData );
 
         assertEquals( layoutComponent, parsedLayout );
     }
 
-    private LayoutComponent createLayoutComponent( final String regionName1, final String regionName2)
+    private LayoutComponent createLayoutComponent( final DescriptorKey layoutDescriptorKey, final String... regionNames )
+    {
+        final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
+        Arrays.stream( regionNames ).map( regionName -> Region.create().name( regionName ).add( TextComponent.create().build() ).build() ).forEach( layoutRegionsBuilder::add );
+
+        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegionsBuilder.build() ).build();
+    }
+
+    private void setupDescriptorService( final DescriptorKey key, final String... regionNames )
     {
         final String layoutName = "MyLayout";
-        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
+        final RegionDescriptors.Builder builder = RegionDescriptors.create();
+        Arrays.stream( regionNames ).map( regionName -> RegionDescriptor.create().name( regionName ).build() ).forEach( builder::add );
 
-        final Region region1 = Region.create().
-            name( regionName1 ).
-            build();
+        Mockito.when( layoutDescriptorService.getByKey( key ) )
+            .thenReturn( LayoutDescriptor.create()
+                             .key( key )
+                             .modifiedTime( Instant.now() )
+                             .displayName( layoutName )
+                             .config( Form.create().build() )
+                             .regions( builder.build() )
+                             .build() );
+    }
 
-        final Region region2 = Region.create().
-            name( regionName2 ).
-            add( TextComponent.create().build() ).
-            build();
-
-        final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
-
-        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( LayoutDescriptor.create().
-            key( layoutDescriptorKey ).
-            displayName( layoutName ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().
-            add( RegionDescriptor.create().
-            name( regionName1 ).
-            build() ).
-            add( RegionDescriptor.create().
-            name( regionName2 ).
-            build() ).
-            build() ).
-            build() );
-
-        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegions ).build();
+    private void setupDefaultDescriptor( final DescriptorKey key )
+    {
+        Mockito.when( layoutDescriptorService.getByKey( key ) )
+            .thenReturn( LayoutDescriptor.create()
+                             .key( key )
+                             .config( Form.create().build() )
+                             .regions( RegionDescriptors.create().build() )
+                             .build() );
     }
 }
