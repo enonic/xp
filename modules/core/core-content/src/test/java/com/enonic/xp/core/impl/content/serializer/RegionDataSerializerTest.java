@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,7 @@ public class RegionDataSerializerTest
 
         Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( LayoutDescriptor.create().
             key( layoutDescriptorKey ).
+            modifiedTime( Instant.now() ).
             displayName( layoutName ).
             config( Form.create().build() ).
             regions( RegionDescriptors.create().build() ).
