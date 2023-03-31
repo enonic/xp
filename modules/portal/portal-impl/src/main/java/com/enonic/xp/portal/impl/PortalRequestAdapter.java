@@ -2,15 +2,20 @@ package com.enonic.xp.portal.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class PortalRequestAdapter
 {
@@ -22,17 +27,13 @@ public class PortalRequestAdapter
     {
         final PortalRequest result = new PortalRequest();
 
-        setBaseUri( req, result );
-        setRenderMode( req, result );
+        final PortalAttributes portalAttributes = (PortalAttributes) req.getAttribute( PortalAttributes.class.getName() );
 
-        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
+        getRenderMode( portalAttributes ).ifPresent( result::setMode );
+        result.setBaseUri( getBaseUri( portalAttributes ).orElseGet( () -> requestUriToBaseUri( req.getRequestURI() ) ) );
+        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase( Locale.ROOT ) ) );
         result.setRawRequest( req );
         result.setContentType( req.getContentType() );
-
-        //TODO Temporary fix until Admin/Site full refactoring
-        //The Servlet request should be translated to Portal request only once
-//        result.setBody( RequestBodyReader.readBody( req ) );
-
         result.setScheme( req.getScheme() );
         result.setHost( req.getServerName() );
         result.setRemoteAddress( req.getRemoteAddr() );
@@ -48,50 +49,41 @@ public class PortalRequestAdapter
         return result;
     }
 
-    private void setBaseUri( final HttpServletRequest from, final PortalRequest to )
+    private static Optional<RenderMode> getRenderMode( final PortalAttributes portalAttributes )
     {
-        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
-        if ( portalAttributes != null && portalAttributes.getBaseUri() != null )
+        return Optional.ofNullable( portalAttributes ).map( PortalAttributes::getRenderMode );
+    }
+
+    private static Optional<String> getBaseUri( final PortalAttributes portalAttributes )
+    {
+        return Optional.ofNullable( portalAttributes ).map( PortalAttributes::getBaseUri );
+    }
+
+    private static String requestUriToBaseUri( final String requestUri )
+    {
+        if ( requestUri.equals( "/site" ) || requestUri.startsWith( "/site/" ) )
         {
-            to.setBaseUri( portalAttributes.getBaseUri() );
+            return PORTAL_BASE_URI;
+        }
+        else if ( requestUri.equals( "/admin" ) || requestUri.startsWith( "/admin/" ) )
+        {
+            return ADMIN_BASE_URI;
         }
         else
         {
-            final String requestURI = from.getRequestURI();
-            if ( requestURI.startsWith( "/site" ) )
-            {
-                to.setBaseUri( PORTAL_BASE_URI );
-            }
-            else if ( requestURI.startsWith( "/admin" ) )
-            {
-                to.setBaseUri( ADMIN_BASE_URI );
-            }
-            else
-            {
-                to.setBaseUri( requestURI );
-            }
+            return requestUri;
         }
     }
 
-    private void setRenderMode( final HttpServletRequest from, final PortalRequest to )
+    private static void setHeaders( final HttpServletRequest from, final PortalRequest to )
     {
-        final PortalAttributes portalAttributes = (PortalAttributes) from.getAttribute( PortalAttributes.class.getName() );
-        if ( portalAttributes != null && portalAttributes.getRenderMode() != null )
-        {
-            to.setMode( portalAttributes.getRenderMode() );
-        }
-    }
-
-
-    private void setHeaders( final HttpServletRequest from, final PortalRequest to )
-    {
-        for ( final String key : Collections.list( from.getHeaderNames() ) )
+        for ( final String key : Collections.list( requireNonNullElse( from.getHeaderNames(), Collections.emptyEnumeration() ) ) )
         {
             to.getHeaders().put( key, from.getHeader( key ) );
         }
     }
 
-    private void setCookies( final HttpServletRequest from, final PortalRequest to )
+    private static void setCookies( final HttpServletRequest from, final PortalRequest to )
     {
         final Cookie[] cookies = from.getCookies();
         if ( cookies == null )
@@ -105,7 +97,7 @@ public class PortalRequestAdapter
         }
     }
 
-    private void setParameters( final HttpServletRequest from, final PortalRequest to )
+    private static void setParameters( final HttpServletRequest from, final PortalRequest to )
     {
         for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
         {
