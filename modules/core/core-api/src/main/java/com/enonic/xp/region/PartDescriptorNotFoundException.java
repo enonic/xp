@@ -6,6 +6,7 @@ import com.enonic.xp.page.DescriptorKey;
 
 
 @PublicApi
+@Deprecated
 public class PartDescriptorNotFoundException
     extends NotFoundException
 {

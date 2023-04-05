@@ -25,10 +25,10 @@ public class ContentNodeTranslator
 
     private final ContentDataSerializer contentDataSerializer;
 
-    public ContentNodeTranslator( final NodeService nodeService, final ContentDataSerializer contentDataSerializer )
+    public ContentNodeTranslator( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.contentDataSerializer = contentDataSerializer;
+        this.contentDataSerializer = new ContentDataSerializer();
     }
 
     public Contents fromNodes( final Nodes nodes, final boolean resolveHasChildren )

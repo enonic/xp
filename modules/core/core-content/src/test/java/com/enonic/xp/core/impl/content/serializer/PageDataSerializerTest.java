@@ -1,57 +1,36 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.RegionDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageDataSerializerTest
     extends AbstractDataSerializerTest
 {
     private PageDataSerializer pageDataSerializer;
 
-    private PageDescriptorService pageDescriptorService;
-
     @BeforeEach
     public void setUp()
     {
-        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-
-        this.pageDataSerializer = PageDataSerializer.create().
-            pageDescriptorService( pageDescriptorService ).
-            partDescriptorService( partDescriptorService ).
-            layoutDescriptorService( layoutDescriptorService ).
-            build();
+        this.pageDataSerializer = new PageDataSerializer();
     }
 
     @Test
@@ -100,39 +79,6 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void page_deserialize_custom_order_of_components()
-    {
-        final Page page = createPage();
-
-        final PropertyTree pageAsData = new PropertyTree();
-        pageDataSerializer.toData( page, pageAsData.getRoot() );
-
-        final List<PropertySet> componentsAsData =
-            pageAsData.getRoot().getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).map(
-                item -> item.getSet() ).collect( Collectors.toList() );
-
-        final List<PropertySet> customOrdercomponentsAsData = new ArrayList<>();
-        customOrdercomponentsAsData.add( componentsAsData.get( 7 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 11 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 4 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 3 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 1 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 10 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 5 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 6 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 8 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 2 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 0 ) );
-        customOrdercomponentsAsData.add( componentsAsData.get( 9 ) );
-
-        final PropertySet root = new PropertySet();
-        customOrdercomponentsAsData.forEach( componentData -> root.addSet( COMPONENTS, componentData ) );
-        final Page parsedPage = pageDataSerializer.fromData( root );
-
-        assertEquals( page, parsedPage );
-    }
-
-    @Test
     public void page_template()
     {
         Page page = Page.create().
@@ -157,14 +103,8 @@ public class PageDataSerializerTest
         final Page page = Page.create().
             config( pageConfig ).
             descriptor( pageDescriptorKey ).
-            regions( null ).
+            regions( PageRegions.create().build() ).
             build();
-
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create().
-            config( Form.create().build() ).
-            key( pageDescriptorKey ).
-            regions( RegionDescriptors.create().build() ).
-            build() );
 
         final PropertyTree pageAsData = new PropertyTree();
         pageDataSerializer.toData( page, pageAsData.getRoot() );
@@ -228,22 +168,11 @@ public class PageDataSerializerTest
             regions( regions ).
             build();
 
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create().
-            config( Form.create().build() ).
-            modifiedTime( Instant.now() ).
-            key( pageDescriptorKey ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( regionName1 ).build() ).
-                add( RegionDescriptor.create().name( regionName2 ).build() ).
-                build() ).
-            build() );
-
         return page;
     }
 
     private LayoutComponent createLayoutComponent()
     {
-        final String layoutName = "MyLayout";
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
         final String regionName1 = "left";
         final String regionName2 = "right";
@@ -266,20 +195,6 @@ public class PageDataSerializerTest
             build();
 
         final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
-
-        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( LayoutDescriptor.create().
-            key( layoutDescriptorKey ).
-            displayName( layoutName ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().
-                    name( regionName1 ).
-                    build() ).
-                add( RegionDescriptor.create().
-                    name( regionName2 ).
-                    build() ).
-                build() ).
-            build() );
 
         return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegions ).build();
     }

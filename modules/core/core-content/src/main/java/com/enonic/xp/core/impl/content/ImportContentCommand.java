@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.Node;
@@ -15,13 +14,10 @@ final class ImportContentCommand
 {
     private final ImportContentParams params;
 
-    private final ContentDataSerializer contentDataSerializer;
-
     private ImportContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     static Builder create()
@@ -38,7 +34,6 @@ final class ImportContentCommand
     {
         final Node importNode = ImportContentFactory.create().
             params( params ).
-            contentDataSerializer( contentDataSerializer ).
             build().execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
@@ -60,8 +55,6 @@ final class ImportContentCommand
     {
         private ImportContentParams params;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private Builder()
         {
         }
@@ -72,18 +65,11 @@ final class ImportContentCommand
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
-        {
-            this.contentDataSerializer = contentDataSerializer;
-            return this;
-        }
-
         @Override
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( params, "params must be given" );
-            Preconditions.checkNotNull( contentDataSerializer, "contentDataSerializer must be given" );
         }
 
         public ImportContentCommand build()

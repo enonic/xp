@@ -86,12 +86,7 @@ class RenameContentCommandTest
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.partDescriptorService = mock( PartDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
-
-        this.contentDataSerializer = ContentDataSerializer.create()
-            .layoutDescriptorService( layoutDescriptorService )
-            .pageDescriptorService( pageDescriptorService )
-            .partDescriptorService( partDescriptorService )
-            .build();
+        this.contentDataSerializer = new ContentDataSerializer();
 
         final ContentType contentType =
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build();
@@ -204,7 +199,6 @@ class RenameContentCommandTest
             .partDescriptorService( this.partDescriptorService )
             .contentValidators( List.of( new ContentNameValidator() ) )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.contentDataSerializer )
             .build();
     }
 }

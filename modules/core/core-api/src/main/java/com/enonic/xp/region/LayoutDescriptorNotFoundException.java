@@ -5,6 +5,7 @@ import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.page.DescriptorKey;
 
 @PublicApi
+@Deprecated
 public class LayoutDescriptorNotFoundException
     extends NotFoundException
 {

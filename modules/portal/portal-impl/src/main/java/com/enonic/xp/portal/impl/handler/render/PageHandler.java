@@ -12,6 +12,7 @@ import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -29,6 +30,8 @@ public final class PageHandler
     private RendererDelegate rendererDelegate;
 
     private PageDescriptorService pageDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
 
     private PageTemplateService pageTemplateService;
 
@@ -54,8 +57,8 @@ public final class PageHandler
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
-        worker.pageResolver = new PageResolver( pageTemplateService );
         worker.pageDescriptorService = pageDescriptorService;
+        worker.pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
         worker.portalUrlService = portalUrlService;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
@@ -81,6 +84,12 @@ public final class PageHandler
     public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
+    }
+
+    @Reference
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     @Reference

@@ -1,15 +1,27 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpStatus;
@@ -19,9 +31,16 @@ public class PageResolver
 {
     private final PageTemplateService pageTemplateService;
 
-    public PageResolver( final PageTemplateService pageTemplateService )
+    private final PageDescriptorService pageDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
+    public PageResolver( final PageTemplateService pageTemplateService, final PageDescriptorService pageDescriptorService,
+                         final LayoutDescriptorService layoutDescriptorService )
     {
         this.pageTemplateService = pageTemplateService;
+        this.pageDescriptorService = pageDescriptorService;
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     public PageResolverResult resolve( final RenderMode mode, final Content content, final Site site )
@@ -42,7 +61,7 @@ public class PageResolver
             if ( page.getFragment() != null )
             {
                 controller = null;
-                effectivePage = page;
+                effectivePage = buildPageFromFragment( page );
             }
             else if ( page.getDescriptor() != null )
             {
@@ -89,7 +108,12 @@ public class PageResolver
             }
         }
 
-        return new PageResolverResult( effectivePage, controller );
+        if ( controller == null )
+        {
+            return new PageResolverResult( effectivePage, null, null );
+        }
+
+        return buildPageWithRegionsFromController( effectivePage, controller );
     }
 
     private PageTemplate getPageTemplateOrFindDefault( final PageTemplateKey pageTemplate, final ContentTypeName contentType,
@@ -158,6 +182,113 @@ public class PageResolver
         {
             return page != null ? page : Page.create().template( templateKey ).build();
         }
+    }
+
+    private Page buildPageFromFragment( final Page effectivePage )
+    {
+        final Component fragmentComponent = effectivePage.getFragment();
+
+        if ( fragmentComponent instanceof LayoutComponent )
+        {
+            final Page.Builder pageBuilder = Page.create( effectivePage );
+            pageBuilder.fragment( processLayoutComponent( (LayoutComponent) fragmentComponent ) );
+            return pageBuilder.build();
+        }
+
+        return effectivePage;
+    }
+
+    private PageResolverResult buildPageWithRegionsFromController( final Page effectivePage, final DescriptorKey controller )
+    {
+        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( controller );
+
+        if ( pageDescriptor == null || pageDescriptor.getModifiedTime() == null )
+        {
+            return new PageResolverResult( effectivePage, controller, null );
+        }
+
+        final Page resultingPage = buildPageWithRegions( effectivePage, pageDescriptor );
+
+        return new PageResolverResult( resultingPage, controller, pageDescriptor );
+    }
+
+    private Page buildPageWithRegions( final Page sourcePage, final PageDescriptor pageDescriptor )
+    {
+        final Page.Builder pageBuilder = Page.create( sourcePage );
+        final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
+
+        if ( pageDescriptor.getRegions() != null )
+        {
+            pageDescriptor.getRegions().forEach( regionDescriptor -> {
+                pageRegionsBuilder.add( getOrCreatePageRegion( regionDescriptor, sourcePage ) );
+            } );
+        }
+
+        return pageBuilder.regions( pageRegionsBuilder.build() ).build();
+    }
+
+    private Region getOrCreatePageRegion( final RegionDescriptor regionDescriptor, final Page sourcePage )
+    {
+        final Region existingRegion = sourcePage.getRegion( regionDescriptor.getName() );
+
+        return existingRegion == null
+            ? Region.create().name( regionDescriptor.getName() ).build()
+            : processExistingPageRegion( existingRegion );
+    }
+
+    private Region processExistingPageRegion( final Region existingRegion )
+    {
+        final Region.Builder builder = Region.create( existingRegion );
+        final ImmutableList<Component> components = existingRegion.getComponents();
+
+        for ( int i = 0; i < components.size(); i++)
+        {
+            builder.set( i, processComponent( components.get( i ) ) );
+        }
+
+        return builder.build();
+    }
+
+    private Component processComponent( final Component component )
+    {
+        if ( component instanceof LayoutComponent )
+        {
+            return processLayoutComponent( (LayoutComponent) component );
+        }
+        else
+        {
+            return component;
+        }
+    }
+
+    private LayoutComponent processLayoutComponent( final LayoutComponent component )
+    {
+        final LayoutDescriptor layoutDescriptor =
+            component.hasDescriptor() ? layoutDescriptorService.getByKey( component.getDescriptor() ) : null;
+
+        if ( layoutDescriptor == null || layoutDescriptor.getModifiedTime() == null )
+        {
+            return component;
+        }
+
+        return buildLayoutWithRegions( component, layoutDescriptor );
+    }
+
+    private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutDescriptor layoutDescriptor )
+    {
+        final LayoutComponent.Builder layoutBuilder = LayoutComponent.create( existingLayout );
+        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+
+        if ( layoutDescriptor.getRegions() != null )
+        {
+                layoutDescriptor.getRegions().forEach( region -> {
+                final Region existingRegion = existingLayout.getRegion( region.getName() );
+                final Region regionToAdd = existingRegion == null ? Region.create().name( region.getName() ).build() : existingRegion;
+                regionsBuilder.add( regionToAdd );
+            } );
+        }
+
+        return layoutBuilder.regions( regionsBuilder.build() ).build();
     }
 
 }

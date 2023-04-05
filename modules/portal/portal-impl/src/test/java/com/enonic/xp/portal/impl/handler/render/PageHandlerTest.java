@@ -52,6 +52,7 @@ public class PageHandlerTest
         this.handler = new PageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
+        this.handler.setLayoutDescriptorService( this.layoutDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
         this.handler.setRendererDelegate( this.rendererDelegate );
         this.handler.setPortalUrlService( this.portalUrlService );

@@ -1,25 +1,20 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,10 +26,7 @@ public class RegionDataSerializerTest
     @BeforeEach
     public void setUp()
     {
-        this.regionSerializer = new RegionDataSerializer( ComponentDataSerializerProvider.create().
-            layoutDescriptorService( layoutDescriptorService ).
-            partDescriptorService( partDescriptorService ).
-            build() );
+        this.regionSerializer = new RegionDataSerializer( new ComponentDataSerializerProvider() );
     }
 
     @Test
@@ -42,7 +34,6 @@ public class RegionDataSerializerTest
     {
         final PropertyTree myPartConfig = new PropertyTree();
         myPartConfig.addString( "some", "config" );
-        final String layoutName = "MyOtherPart";
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "app-descr:layout-name" );
 
         final Region region = Region.create().
@@ -51,14 +42,6 @@ public class RegionDataSerializerTest
             add( ImageComponent.create().build() ).
             add( LayoutComponent.create().descriptor( layoutDescriptorKey ).build() ).
             build();
-
-        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( LayoutDescriptor.create().
-            key( layoutDescriptorKey ).
-            modifiedTime( Instant.now() ).
-            displayName( layoutName ).
-            config( Form.create().build() ).
-            regions( RegionDescriptors.create().build() ).
-            build() );
 
         final PropertyTree regionAsData = new PropertyTree();
 
