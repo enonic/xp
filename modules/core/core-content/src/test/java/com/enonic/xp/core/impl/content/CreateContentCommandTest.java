@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentInheritType;
@@ -17,12 +19,18 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeDefault;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -38,11 +46,18 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -573,6 +588,119 @@ public class CreateContentCommandTest
                          ContentType.create().name( ContentTypeName.folder() ).setBuiltIn().build() );
 
         assertThrows( IllegalArgumentException.class, command::execute );
+    }
+
+    @Test
+    public void testCreateCommandWithDefaultExtraDatas()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.test" );
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:xDataName" );
+        final XData xData = XData.create()
+            .name( xDataName )
+            .addFormItem( Input.create()
+                              .label( "Label" )
+                              .name( "name" )
+                              .inputType( InputTypeName.CHECK_BOX )
+                              .defaultValue(
+                                  InputTypeDefault.create().property( InputTypeProperty.create( "default", "check" ).build() ).build() )
+                              .occurrences( 1, 1 )
+                              .build() )
+            .build();
+
+        mockContentRootNode( null );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create()
+                             .superType( ContentTypeName.unstructured() )
+                             .name( ContentTypeName.unstructured() )
+                             .xData( XDataNames.from( xDataName ) )
+                             .build() );
+
+        Mockito.when( xDataService.getByNames( Mockito.any( XDataNames.class ) ) ).thenReturn( XDatas.from( xData ) );
+
+        Mockito.when( xDataService.getByName( Mockito.any( XDataName.class ) ) ).thenReturn( xData );
+
+        Mockito.when( siteService.getDescriptor( applicationKey ) )
+            .thenReturn( SiteDescriptor.create()
+                             .applicationKey( applicationKey )
+                             .xDataMappings( XDataMappings.create()
+                                                 .add( XDataMapping.create()
+                                                           .xDataName( xDataName )
+                                                           .optional( true )
+                                                           .allowContentTypes( "^(?!base:folder$).*" )
+                                                           .build() )
+                                                 .build() )
+                             .build() );
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.unstructured() )
+            .name( "name" )
+            .parent( ContentPath.ROOT )
+            .contentData( new PropertyTree() )
+            .displayName( "displayName" )
+            .build();
+
+        final CreateContentCommand command = CreateContentCommand.create()
+            .params( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .contentDataSerializer( contentDataSerializer )
+            .formDefaultValuesProcessor( ( form, data ) -> {
+            } )
+            .applicationKeys( ApplicationKeys.from( applicationKey ) )
+            .build();
+
+        final Content createdContent = command.execute();
+        assertNotNull( createdContent );
+    }
+
+    @Test
+    public void testCreateCommandWithWithExtraDatas()
+    {
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:xDataName" );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create()
+                             .superType( ContentTypeName.unstructured() )
+                             .name( ContentTypeName.unstructured() )
+                             .xData( XDataNames.from( xDataName ) )
+                             .build() );
+
+        mockContentRootNode( null );
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.unstructured() )
+            .name( "name" )
+            .parent( ContentPath.ROOT )
+            .contentData( new PropertyTree() )
+            .displayName( "displayName" )
+            .extraDatas( ExtraDatas.create().
+                add( new ExtraData( xDataName, new PropertyTree() ) )
+            .build() )
+            .build();
+
+        final CreateContentCommand command = CreateContentCommand.create()
+            .params( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .contentDataSerializer( contentDataSerializer )
+            .formDefaultValuesProcessor( ( form, data ) -> {
+            } )
+            .build();
+
+        final Content createdContent = command.execute();
+        assertNotNull( createdContent );
+        assertTrue( createdContent.hasExtraData() );
     }
 
     private CreateContentParams.Builder createContentParams()

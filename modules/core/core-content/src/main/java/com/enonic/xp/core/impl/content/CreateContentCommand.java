@@ -1,13 +1,16 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -19,6 +22,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
@@ -27,7 +32,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
@@ -41,6 +45,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -55,8 +60,6 @@ final class CreateContentCommand
 
     private final MediaInfo mediaInfo;
 
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
     private final PageDescriptorService pageDescriptorService;
 
     private final PartDescriptorService partDescriptorService;
@@ -68,13 +71,23 @@ final class CreateContentCommand
     private CreateContentCommand( final Builder builder )
     {
         super( builder );
-        this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.contentDataSerializer = builder.contentDataSerializer;
+
+        final Set<ExtraData> extraDataSet = new HashSet<>();
+        if ( builder.params.getExtraDatas() != null )
+        {
+            extraDataSet.addAll( builder.params.getExtraDatas().getSet() );
+        }
+        if ( builder.applicationKeys != null )
+        {
+            extraDataSet.addAll( getDefaultExtraDatas( builder.applicationKeys, builder.params.getType() ) );
+        }
+
+        this.params = CreateContentParams.create( builder.params ).extraDatas( ExtraDatas.from( extraDataSet ) ).build();
     }
 
     static Builder create()
@@ -98,7 +111,17 @@ final class CreateContentCommand
         validateContentType( contentType );
 
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
-        // TODO apply default values to xData
+
+        if ( params.getExtraDatas() != null )
+        {
+            params.getExtraDatas().forEach( extraData -> {
+                XData xData = xDataService.getByName( extraData.getName() );
+                if ( xData != null )
+                {
+                    formDefaultValuesProcessor.setDefaultValues( xData.getForm(), extraData.getData() );
+                }
+            } );
+        }
 
         CreateContentParams processedParams = runContentProcessors( this.params, contentType );
 
@@ -325,7 +348,7 @@ final class CreateContentCommand
 
         private MediaInfo mediaInfo;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
+        private ApplicationKeys applicationKeys;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -356,12 +379,6 @@ final class CreateContentCommand
             return this;
         }
 
-        Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-            return this;
-        }
-
         Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
@@ -383,6 +400,12 @@ final class CreateContentCommand
         Builder contentDataSerializer( final ContentDataSerializer value )
         {
             this.contentDataSerializer = value;
+            return this;
+        }
+
+        Builder applicationKeys( final ApplicationKeys applicationKeys )
+        {
+            this.applicationKeys = applicationKeys;
             return this;
         }
 
