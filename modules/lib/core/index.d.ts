@@ -151,30 +151,25 @@ export interface Region<Components extends Component[] = Component[]> {
 // ─────────────────────────────────────────────────────────────────────────────
 // Content
 // ─────────────────────────────────────────────────────────────────────────────
-export interface Content<
-    Data = Record<string, unknown>,
-    Type extends string = string,
-    Page extends Component = Component,
-    > {
+export interface CommonContent {
     _id: string;
     _name: string;
     _path: string;
-    _score: number;
+    _score?: number;
     creator: UserKey;
-    modifier: UserKey;
+    modifier?: UserKey;
     createdTime: string;
-    modifiedTime: string;
+    modifiedTime?: string;
     owner: string;
-    data: Data;
-    type: Type;
+    
     displayName: string;
     hasChildren: boolean;
     language?: string;
     valid: boolean;
-    originProject: string;
+    originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Page;
+    
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -185,6 +180,27 @@ export interface Content<
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
 }
+
+export interface FragmentContent extends CommonContent {
+    fragment: LayoutComponent | PartComponent
+    type: 'portal:fragment'
+}
+
+export interface PageContent<
+    Data = Record<string, unknown>,
+    Type extends string = string,
+    Page extends Component = Component,
+> extends CommonContent {
+    data: Data;
+    page: Page;
+    type: Type;
+}
+
+export type Content<
+    Data = Record<string, unknown>,
+    Type extends string = string,
+    Page extends Component = Component,
+> = FragmentContent | PageContent;
 
 // Compliant with npm module ts-brand
 type Brand<
