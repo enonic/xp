@@ -96,8 +96,8 @@ export interface TextComponent {
 export type Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> =
     | FragmentComponent
     | LayoutComponent<Config, Regions>
+    | PageComponent<Config, Regions>
     | PartComponent<Config>
-    | PageComponent
     | TextComponent;
 
 export interface Region<Config extends object = object> {
