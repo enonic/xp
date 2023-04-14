@@ -52,13 +52,53 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {
-    config: Config;
-    descriptor: string;
+export interface FragmentComponent {
+    fragment: string;
     path: string;
-    type: 'page' | 'layout' | 'part';
-    regions: Regions;
+    type: 'fragment'
 }
+
+export interface LayoutComponent<
+    Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>
+> {
+    config: Config
+    descriptor: string
+    path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+    regions: Regions;
+    type: 'layout'
+}
+
+export interface PartComponent<Config extends object = object> {
+    config: Config
+    descriptor: string
+    path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+    type: 'part'
+}
+
+export interface PageComponent<
+    Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>
+> {
+    config: Config
+    descriptor: string
+    path: '/'
+    regions: Regions;
+    type: 'page'
+}
+
+export interface TextComponent {
+    path: string
+    text: string
+    type: 'text'
+}
+
+export type Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> =
+    | FragmentComponent
+    | LayoutComponent<Config, Regions>
+    | PartComponent<Config>
+    | PageComponent
+    | TextComponent;
 
 export interface Region<Config extends object = object> {
     name: string;
