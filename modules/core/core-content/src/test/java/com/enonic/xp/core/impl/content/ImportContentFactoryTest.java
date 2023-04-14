@@ -17,13 +17,9 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ImportContentParams;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -109,21 +105,8 @@ public class ImportContentFactoryTest
 
     }
 
-    private ContentDataSerializer createContentDataSerializer()
-    {
-        final PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-
-        return ContentDataSerializer.create()
-            .partDescriptorService( partDescriptorService )
-            .pageDescriptorService( pageDescriptorService )
-            .layoutDescriptorService( layoutDescriptorService )
-            .build();
-    }
-
     private ImportContentFactory createFactory()
     {
-        return ImportContentFactory.create().params( this.params ).contentDataSerializer( createContentDataSerializer() ).build();
+        return ImportContentFactory.create().params( this.params ).build();
     }
 }

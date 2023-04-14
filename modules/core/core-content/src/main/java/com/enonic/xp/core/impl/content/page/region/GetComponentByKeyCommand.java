@@ -5,12 +5,12 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
-import com.enonic.xp.region.LayoutDescriptorNotFoundException;
 import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.region.PartDescriptorNotFoundException;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
@@ -38,9 +38,19 @@ class GetComponentByKeyCommand
         {
             return LayoutComponent.create().
                 descriptor( layoutDescriptor.getKey() ).
+                regions( buildLayoutRegions( layoutDescriptor ) ).
                 build();
         }
         return null;
+    }
+
+    private LayoutRegions buildLayoutRegions( final LayoutDescriptor layoutDescriptor )
+    {
+        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+        layoutDescriptor.getRegions()
+            .forEach( regionDescriptor -> regionsBuilder.add( Region.create().name( regionDescriptor.getName() ).build() ) );
+
+        return regionsBuilder.build();
     }
 
     private boolean componentExists( final ResourceKey componentPath )
@@ -50,26 +60,12 @@ class GetComponentByKeyCommand
 
     private PartDescriptor getPartDescriptor()
     {
-        try
-        {
-            return partDescriptorService.getByKey( descriptorKey );
-        }
-        catch ( PartDescriptorNotFoundException e )
-        {
-            return null;
-        }
+        return partDescriptorService.getByKey( descriptorKey );
     }
 
     private LayoutDescriptor getLayoutDescriptor()
     {
-        try
-        {
-            return layoutDescriptorService.getByKey( descriptorKey );
-        }
-        catch ( LayoutDescriptorNotFoundException e )
-        {
-            return null;
-        }
+        return layoutDescriptorService.getByKey( descriptorKey );
     }
 
     public GetComponentByKeyCommand descriptorKey( final DescriptorKey descriptorKey )

@@ -21,15 +21,12 @@ public class AbstractDataSerializerTest
 {
     protected PartDescriptorService partDescriptorService;
 
-    protected LayoutDescriptorService layoutDescriptorService;
-
     protected ContentService contentService;
 
     @BeforeEach
     void setUpAbstractDataSerializerTest()
     {
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.contentService = Mockito.mock( ContentService.class );
     }
 

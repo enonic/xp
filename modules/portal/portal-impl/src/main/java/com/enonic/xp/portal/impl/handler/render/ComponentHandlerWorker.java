@@ -53,19 +53,16 @@ final class ComponentHandlerWorker
         throws Exception
     {
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
-
         final Content content = resolvedContent.getContentOrElseThrow();
-
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
-
         final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
-
         Component component = null;
 
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final Component fragmentComponent = content.getPage().getFragment();
+            final Component fragmentComponent = resolvedPage.getEffectivePage().getFragment();
+
             if ( this.componentPath.isEmpty() )
             {
                 component = fragmentComponent;

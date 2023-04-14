@@ -62,8 +62,7 @@ public class ParentContentSynchronizerTest
         synchronizer = new ParentContentSynchronizer( this.contentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
-                                        layoutDescriptorService, projectService, contentService, synchronizer );
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
     }
 
     private Content syncCreated( final ContentId contentId )

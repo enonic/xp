@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -18,9 +17,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,17 +43,7 @@ public class ContentNodeTranslatorTest
         throws Exception
     {
         this.nodeService = Mockito.mock( NodeService.class );
-        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        final PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-
-        final ContentDataSerializer contentDataSerializer = ContentDataSerializer.create()
-            .layoutDescriptorService( layoutDescriptorService )
-            .pageDescriptorService( pageDescriptorService )
-            .partDescriptorService( partDescriptorService )
-            .build();
-
-        this.contentNodeTranslator = new ContentNodeTranslator( nodeService, contentDataSerializer );
+        this.contentNodeTranslator = new ContentNodeTranslator( nodeService );
     }
 
     @Test

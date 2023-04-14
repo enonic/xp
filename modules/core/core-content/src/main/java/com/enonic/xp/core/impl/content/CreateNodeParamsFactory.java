@@ -45,8 +45,6 @@ public class CreateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private final ContentDataSerializer contentDataSerializer;
-
     public CreateNodeParamsFactory( final Builder builder )
     {
         this.params = builder.params;
@@ -56,11 +54,11 @@ public class CreateNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public CreateNodeParams.Builder produce()
     {
+        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
         final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
@@ -149,8 +147,6 @@ public class CreateNodeParamsFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private SiteService siteService;
 
         Builder( final CreateContentTranslatorParams params )
@@ -194,12 +190,6 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer value )
-        {
-            this.contentDataSerializer = value;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( params );
@@ -207,7 +197,6 @@ public class CreateNodeParamsFactory
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( siteService );
             Preconditions.checkNotNull( xDataService );
-            Preconditions.checkNotNull( contentDataSerializer );
         }
 
         public CreateNodeParamsFactory build()

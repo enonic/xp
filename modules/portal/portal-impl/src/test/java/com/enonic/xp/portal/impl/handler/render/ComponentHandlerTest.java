@@ -15,16 +15,18 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
-import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -46,7 +48,8 @@ public class ComponentHandlerTest
     public final void setup()
         throws Exception
     {
-        this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor );
+        this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor,
+                                             this.pageDescriptorService, this.layoutDescriptorService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -136,7 +139,7 @@ public class ComponentHandlerTest
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
         assertAll( () -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ),
-                   () -> assertEquals( "No default template found for content", e.getMessage() ));
+                   () -> assertEquals( "No default template found for content", e.getMessage() ) );
     }
 
     @Test
@@ -187,13 +190,12 @@ public class ComponentHandlerTest
         assertEquals( "Site for [/site/somepath/content] not found", e.getMessage() );
     }
 
-
     @Test
-    public void testComponentFragment()
+    public void testEmptyFragmentIsResolved()
         throws Exception
     {
         setupSite();
-        setupContentFragment();
+        setupContent( createPageWithFragment( null ) );
         setupTemplates();
 
         final PortalResponse portalResponse =
@@ -206,6 +208,124 @@ public class ComponentHandlerTest
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertResponseOK( res );
+    }
+
+    @Test
+    public void testFragmentContentNotFound()
+        throws Exception
+    {
+        setupSite();
+        setupContent( createPageWithFragment() );
+        setupTemplates();
+
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) ).thenThrow( ContentNotFoundException.class );
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
+
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertResponseOK( res );
+    }
+
+    @Test
+    public void testFragmentWithoutComponentsIsResolved()
+        throws Exception
+    {
+        setupSite();
+        setupContent( createPageWithFragment() );
+        setupTemplates();
+
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) )
+            .thenReturn( createContentWithPage( null, ContentTypeName.from( "contentTypeName" ) ) );
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
+
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertResponseOK( res );
+    }
+
+    @Test
+    public void testFragmentWithComponentsIsResolved()
+        throws Exception
+    {
+        setupSite();
+        setupContent( createPageWithFragment() );
+        setupTemplates();
+
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) )
+            .thenReturn( createPageThatIsFragment( TextComponent.create().build() ) );
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
+
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertResponseOK( res );
+    }
+
+    @Test
+    public void testFragmentComponentAsTextComponent()
+        throws Exception
+    {
+        final TextComponent textComponent = TextComponent.create().build();
+        final Content content = createPageThatIsFragment( textComponent );
+        setupContent( content );
+
+        testFragmentContent( content, "/_/component/" );
+    }
+
+    @Test
+    public void testFragmentComponentAsLayoutComponent()
+        throws Exception
+    {
+        final LayoutRegions layoutRegions =
+            LayoutRegions.create().add( Region.create().name( "main-region" ).add( TextComponent.create().build() ).build() ).build();
+        final LayoutComponent layoutComponent = LayoutComponent.create().regions( layoutRegions ).build();
+        final Content content = createPageThatIsFragment( layoutComponent );
+
+        testFragmentContent( content, "/_/component/main-region/0" );
+    }
+
+    private void testFragmentContent( final Content content, final String endpointPath )
+        throws Exception
+    {
+        setupSite();
+        setupContent( content );
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
+
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setEndpointPath( endpointPath );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertResponseOK( res );
+    }
+
+    private void assertResponseOK( final WebResponse res )
+    {
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
@@ -213,88 +333,52 @@ public class ComponentHandlerTest
         assertEquals( "component rendered", res.getBody() );
     }
 
-    private void setupContentFragment()
+    private void setupContent( final Content content )
     {
-        final Content content = createPageWithFragment( "id", "site/somepath/content", "myapplication:ctype", true );
-        final Content fragment = createFragmentContent();
-
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
-
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        Mockito.when( this.contentService.getByPath( fragment.getPath() ) ).thenReturn( fragment );
-
-        Mockito.when( this.contentService.getById( fragment.getId() ) ).thenReturn( fragment );
-
     }
 
-    private Content createPageWithFragment( final String id, final String path, final String contentTypeName, final boolean withPage )
+    private Content createPageThatIsFragment( final Component fragmentComponent )
+    {
+        Page page = Page.create().fragment( fragmentComponent ).build();
+        return createContentWithPage( page, ContentTypeName.fragment() );
+    }
+
+    private Content createPageWithFragment()
+    {
+        return createPageWithFragment( ContentId.from( "fragmentId" ) );
+    }
+
+    private Content createPageWithFragment( final ContentId fragmentId )
+    {
+        PageRegions pageRegions = PageRegions.create()
+            .add( Region.create().name( "main-region" ).add( FragmentComponent.create().fragment( fragmentId ).build() ).build() )
+            .build();
+
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( new PropertyTree() ).build();
+
+        return createContentWithPage( page, ContentTypeName.from( "contentTypeName" ) );
+    }
+
+    final Content createContentWithPage( final Page page, final ContentTypeName contentTypeName )
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
         final Content.Builder content = Content.create()
-            .id( ContentId.from( id ) )
-            .path( ContentPath.from( path ) )
+            .id( ContentId.from( "id" ) )
+            .path( ContentPath.from( "site/somepath/content" ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .type( ContentTypeName.from( contentTypeName ) )
+            .type( contentTypeName )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
                               .build() );
 
-        if ( withPage )
-        {
-            PageRegions pageRegions = PageRegions.create()
-                .add( Region.create()
-                          .name( "main-region" )
-                          .add( FragmentComponent.create().fragment( ContentId.from( "fragmentId" ) ).build() )
-                          .build() )
-                .build();
-
-            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
-            content.page( page );
-        }
-        return content.build();
-    }
-
-    private Content createFragmentContent()
-    {
-        PropertyTree rootDataSet = new PropertyTree();
-
-        final Content.Builder content = Content.create()
-            .id( ContentId.from( "fragmentId" ) )
-            .path( ContentPath.from( "site/somepath/fragment" ) )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .type( ContentTypeName.fragment() );
-
-        Page page = Page.create()
-            .template( PageTemplateKey.from( "my-page" ) )
-            .fragment( PartComponent.create().descriptor( "myapp:mypart" ).build() )
-            .config( rootDataSet )
-            .build();
         content.page( page );
+
         return content.build();
-    }
-
-    private Site createSite( final String id, final String path, final String contentTypeName )
-    {
-        PropertyTree rootDataSet = new PropertyTree();
-        rootDataSet.addString( "property1", "value1" );
-
-        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
-
-        return Site.create()
-            .id( ContentId.from( id ) )
-            .path( ContentPath.from( path ) )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .type( ContentTypeName.from( contentTypeName ) )
-            .page( page )
-            .build();
     }
 }

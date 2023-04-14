@@ -100,7 +100,6 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -172,8 +171,6 @@ public class ContentServiceImpl
 
     private final LayoutDescriptorService layoutDescriptorService;
 
-    private final ContentDataSerializer contentDataSerializer;
-
     private ContentAuditLogSupport contentAuditLogSupport;
 
     private volatile ContentConfig config;
@@ -187,14 +184,7 @@ public class ContentServiceImpl
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-
-        this.contentDataSerializer = ContentDataSerializer.create().
-            layoutDescriptorService( layoutDescriptorService ).
-            pageDescriptorService( pageDescriptorService ).
-            partDescriptorService( partDescriptorService ).
-            build();
-
-        this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
+        this.translator = new ContentNodeTranslator( nodeService );
     }
 
     @Activate
@@ -236,7 +226,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( createContentParams ).
             build().
@@ -276,7 +265,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( params ).
             build().
@@ -323,7 +311,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
@@ -350,7 +337,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
@@ -378,7 +364,6 @@ public class ContentServiceImpl
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             contentValidators( this.contentValidators ).
-            contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
@@ -791,7 +776,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             build().
             execute();
 
@@ -1085,7 +1069,7 @@ public class ContentServiceImpl
     @Override
     public ContentIds getOutboundDependencies( final ContentId id )
     {
-        return new ContentOutboundDependenciesIdsResolver( this, contentDataSerializer ).resolve( id );
+        return new ContentOutboundDependenciesIdsResolver( this ).resolve( id );
     }
 
     @Override
@@ -1185,7 +1169,6 @@ public class ContentServiceImpl
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
@@ -1244,7 +1227,6 @@ public class ContentServiceImpl
             params( params ).
             nodeService( nodeService ).
             contentTypeService( contentTypeService ).
-            contentDataSerializer( contentDataSerializer ).
             eventPublisher( eventPublisher ).
             translator( translator ).
             build().
