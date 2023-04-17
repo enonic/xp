@@ -200,7 +200,7 @@ export type Content<
     Data = Record<string, unknown>,
     Type extends string = string,
     Page extends Component = Component,
-> = FragmentContent | PageContent;
+> = FragmentContent | PageContent<Data, Type, Page>;
 
 // Compliant with npm module ts-brand
 type Brand<
