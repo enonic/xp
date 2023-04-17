@@ -3,6 +3,7 @@ package com.enonic.xp.impl.server.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.assertj.core.api.recursive.comparison.ComparingProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.server.rest.model.IdProviderJson;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
@@ -44,8 +47,11 @@ public class IdProviderResourceTest
     @Test
     public void testList()
     {
-        final IdProvider idProvider1 = mockIdProvider( "key1", "Id Provider 1", "description 1", mock( IdProviderConfig.class ) );
-        final IdProvider idProvider2 = mockIdProvider( "key2", "Id Provider 2", "description 2", mock( IdProviderConfig.class ) );
+        final IdProviderConfig config1 = mockIdProviderConfig( "app1" );
+        final IdProviderConfig config2 = mockIdProviderConfig( "app2" );
+
+        final IdProvider idProvider1 = mockIdProvider( "key1", "Id Provider 1", "description 1", config1 );
+        final IdProvider idProvider2 = mockIdProvider( "key2", "Id Provider 2", "description 2", config2 );
 
         final IdProviders idProviders = IdProviders.from( idProvider1, idProvider2 );
         final List<IdProviderJson> expected = idProviders.stream().map( IdProviderJson::new ).collect( Collectors.toList() );
@@ -55,8 +61,13 @@ public class IdProviderResourceTest
         final List<IdProviderJson> result = resource.list();
 
         verify( securityService, times( 1 ) ).getIdProviders();
-        assertThat( result.get( 0 ) ).usingRecursiveComparison().isEqualTo( expected.get( 0 ) );
-        assertThat( result.get( 1 ) ).usingRecursiveComparison().isEqualTo( expected.get( 1 ) );
+        final ComparingProperties introspectionStrategy = new ComparingProperties();
+        assertThat( result.get( 0 ) ).usingRecursiveComparison()
+            .withIntrospectionStrategy( introspectionStrategy )
+            .isEqualTo( expected.get( 0 ) );
+        assertThat( result.get( 1 ) ).usingRecursiveComparison()
+            .withIntrospectionStrategy( introspectionStrategy )
+            .isEqualTo( expected.get( 1 ) );
     }
 
     private IdProvider mockIdProvider( final String key, final String displayName, final String description,
@@ -70,6 +81,16 @@ public class IdProviderResourceTest
         Mockito.when( idProvider.getIdProviderConfig() ).thenReturn( idProviderConfig );
 
         return idProvider;
+    }
+
+    private IdProviderConfig mockIdProviderConfig( final String applicationKey )
+    {
+        IdProviderConfig idProviderConfig = mock( IdProviderConfig.class );
+
+        when( idProviderConfig.getApplicationKey() ).thenReturn( ApplicationKey.from( applicationKey ) );
+        when( idProviderConfig.getConfig() ).thenReturn( new PropertyTree() );
+
+        return idProviderConfig;
     }
 
 }

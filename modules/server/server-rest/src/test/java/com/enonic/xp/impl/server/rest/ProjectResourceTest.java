@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.assertj.core.api.recursive.comparison.ComparingProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +86,7 @@ public class ProjectResourceTest
 
         final List<ProjectJson> result = resource.list();
 
-        assertThat( result ).usingRecursiveComparison().isEqualTo( expected );
+        assertThat( result ).usingRecursiveComparison().withIntrospectionStrategy( new ComparingProperties() ).isEqualTo( expected );
     }
 
     private ProjectJson createProjectJson( final Site site, final Project project )
