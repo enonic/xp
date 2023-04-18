@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import org.assertj.core.api.recursive.comparison.ComparingProperties;
 import org.junit.jupiter.api.Assertions;
@@ -121,8 +120,6 @@ public class ProjectResourceTest
 
     private Project mockProject( final ProjectName name )
     {
-        final Random random = new Random();
-
         final PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "long", 2L );
         siteConfigConfig.addBoolean( "boolean", true );
