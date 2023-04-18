@@ -1,0 +1,112 @@
+package com.enonic.xp.impl.server.rest;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentQuery;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.impl.server.rest.model.ProjectJson;
+import com.enonic.xp.impl.server.rest.model.SiteJson;
+import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.security.RoleKeys;
+
+@Path("/projects")
+@Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed(RoleKeys.ADMIN_ID)
+@Component(immediate = true, property = "group=api")
+public final class ProjectResource
+    implements JaxRsComponent
+{
+    private ProjectService projectService;
+
+    private ContentService contentService;
+
+    @GET
+    @Path("list")
+    public List<ProjectJson> list()
+    {
+        return projectService.list()
+            .stream()
+            .map( project -> ProjectJson.create().project( project ).addSites( getSitesFromProject( project ) ).build() )
+            .collect( Collectors.toList() );
+    }
+
+    private List<SiteJson> getSitesFromProject( final Project project )
+    {
+        final ImmutableList.Builder<SiteJson> siteJsons = ImmutableList.builder();
+
+        for ( Branch branch : Arrays.asList( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+        {
+            siteJsons.addAll( fetchSites( project.getName(), branch ) );
+        }
+
+        return siteJsons.build();
+    }
+
+
+    private List<SiteJson> fetchSites( final ProjectName projectName, final Branch branch )
+    {
+        final Context context =
+            ContextBuilder.from( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
+
+        final ContentQuery query = ContentQuery.create()
+            .queryFilter( ValueFilter.create().fieldName( "type" ).addValue( ValueFactory.newString( "portal:site" ) ).build() )
+            .build();
+
+        final FindContentIdsByQueryResult result = context.callWith( () -> contentService.find( query ) );
+
+        return context.callWith( () -> contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) )
+            .stream()
+            .map( s -> createSiteJson( s, branch ) )
+            .collect( Collectors.toList() ) );
+    }
+
+    private SiteJson createSiteJson( final Content site, final Branch branch )
+    {
+        final SiteJson.Builder builder =
+            SiteJson.create().displayName( site.getDisplayName() ).path( site.getPath().toString() ).branch( branch.getValue() );
+        if ( site.getLanguage() != null )
+        {
+            builder.language( site.getLanguage().getLanguage() );
+        }
+
+        return builder.build();
+    }
+
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        this.projectService = projectService;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+}
