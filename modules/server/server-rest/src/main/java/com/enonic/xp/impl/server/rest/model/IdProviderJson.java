@@ -26,9 +26,4 @@ public class IdProviderJson
         return idProvider.getDescription();
     }
 
-    public IdProviderConfigJson getConfig()
-    {
-        return new IdProviderConfigJson( idProvider.getIdProviderConfig() );
-    }
-
 }

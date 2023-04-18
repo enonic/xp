@@ -11,12 +11,12 @@ public class ProjectJson
 {
     private final Project project;
 
-    private final List<SiteJson> sites;
+    private final List<BranchJson> branches;
 
     private ProjectJson( Builder builder )
     {
         this.project = builder.project;
-        this.sites = builder.sites.build();
+        this.branches = builder.branches.build();
     }
 
     public static Builder create()
@@ -39,19 +39,19 @@ public class ProjectJson
         return project.getDescription();
     }
 
-    public String getParentName()
+    public String getParent()
     {
         return project.getParent() != null ? project.getParent().toString() : null;
     }
 
-    public List<SiteJson> getSites()
+    public List<BranchJson> getBranches()
     {
-        return sites;
+        return branches;
     }
 
     public static class Builder
     {
-        private final ImmutableList.Builder<SiteJson> sites = ImmutableList.builder();
+        private final ImmutableList.Builder<BranchJson> branches = ImmutableList.builder();
 
         private Project project;
 
@@ -61,9 +61,9 @@ public class ProjectJson
             return this;
         }
 
-        public Builder addSites( final Collection<SiteJson> siteJsons )
+        public Builder addBranches( final Collection<BranchJson> branchesJsons )
         {
-            this.sites.addAll( siteJsons );
+            this.branches.addAll( branchesJsons );
             return this;
         }
 

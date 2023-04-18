@@ -27,6 +27,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.impl.server.rest.model.BranchJson;
 import com.enonic.xp.impl.server.rest.model.ProjectJson;
 import com.enonic.xp.impl.server.rest.model.SiteJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -61,22 +62,21 @@ public final class ProjectResource
     {
         return projectService.list()
             .stream()
-            .map( project -> ProjectJson.create().project( project ).addSites( getSitesFromProject( project ) ).build() )
+            .map( project -> ProjectJson.create().project( project ).addBranches( getBranchesFromProject( project ) ).build() )
             .collect( Collectors.toList() );
     }
 
-    private List<SiteJson> getSitesFromProject( final Project project )
+    private List<BranchJson> getBranchesFromProject( final Project project )
     {
-        final ImmutableList.Builder<SiteJson> siteJsons = ImmutableList.builder();
+        final ImmutableList.Builder<BranchJson> branchJsons = ImmutableList.builder();
 
         for ( Branch branch : Arrays.asList( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
         {
-            siteJsons.addAll( fetchSites( project.getName(), branch ) );
+            branchJsons.add( BranchJson.create().name( branch.getValue() ).addSites( fetchSites( project.getName(), branch ) ).build() );
         }
 
-        return siteJsons.build();
+        return branchJsons.build();
     }
-
 
     private List<SiteJson> fetchSites( final ProjectName projectName, final Branch branch )
     {
@@ -91,14 +91,13 @@ public final class ProjectResource
 
         return context.callWith( () -> contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) )
             .stream()
-            .map( s -> createSiteJson( s, branch ) )
+            .map( this::createSiteJson )
             .collect( Collectors.toList() ) );
     }
 
-    private SiteJson createSiteJson( final Content site, final Branch branch )
+    private SiteJson createSiteJson( final Content site )
     {
-        final SiteJson.Builder builder =
-            SiteJson.create().displayName( site.getDisplayName() ).path( site.getPath().toString() ).branch( branch.getValue() );
+        final SiteJson.Builder builder = SiteJson.create().displayName( site.getDisplayName() ).path( site.getPath().toString() );
         if ( site.getLanguage() != null )
         {
             builder.language( site.getLanguage().getLanguage() );

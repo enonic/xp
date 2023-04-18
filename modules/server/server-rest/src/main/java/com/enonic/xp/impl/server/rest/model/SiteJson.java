@@ -8,14 +8,11 @@ public final class SiteJson
 
     private final String language;
 
-    private final String branch;
-
     private SiteJson( Builder builder )
     {
         this.displayName = builder.displayName;
         this.path = builder.path;
         this.language = builder.language;
-        this.branch = builder.branch;
     }
 
     public static Builder create()
@@ -38,11 +35,6 @@ public final class SiteJson
         return language;
     }
 
-    public String getBranch()
-    {
-        return branch;
-    }
-
     public static class Builder
     {
         String displayName;
@@ -50,8 +42,6 @@ public final class SiteJson
         String path;
 
         String language;
-
-        String branch;
 
         public Builder displayName( final String displayName )
         {
@@ -68,12 +58,6 @@ public final class SiteJson
         public Builder language( final String language )
         {
             this.language = language;
-            return this;
-        }
-
-        public Builder branch( final String branch )
-        {
-            this.branch = branch;
             return this;
         }
 

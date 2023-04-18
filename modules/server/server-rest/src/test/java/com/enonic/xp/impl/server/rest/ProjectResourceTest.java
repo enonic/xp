@@ -1,9 +1,11 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.recursive.comparison.ComparingProperties;
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +25,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.server.rest.model.BranchJson;
 import com.enonic.xp.impl.server.rest.model.ProjectJson;
 import com.enonic.xp.impl.server.rest.model.SiteJson;
 import com.enonic.xp.page.Page;
@@ -85,25 +88,6 @@ public class ProjectResourceTest
         assertThat( result ).usingRecursiveComparison().withIntrospectionStrategy( new ComparingProperties() ).isEqualTo( expected );
     }
 
-    private ProjectJson createProjectJson( final Site site, final Project project )
-    {
-        return ProjectJson.create()
-            .project( project )
-            .addSites( List.of( createSiteJson( site, "draft" ), createSiteJson( site, "master" ) ) )
-            .build();
-    }
-
-    private SiteJson createSiteJson( final Site site, final String branch )
-    {
-        return SiteJson.create()
-            .displayName( site.getDisplayName() )
-            .branch( branch )
-            .language( "en" )
-            .path( site.getPath().toString() )
-            .build();
-    }
-
-
     @Test
     public void testListEmpty()
     {
@@ -112,6 +96,27 @@ public class ProjectResourceTest
         final List<ProjectJson> result = resource.list();
 
         Assertions.assertEquals( Collections.emptyList(), result );
+    }
+
+    private ProjectJson createProjectJson( final Site site, final Project project )
+    {
+        return ProjectJson.create()
+            .project( project )
+            .addBranches( List.of( createBranchJson( "draft", List.of( site ) ), createBranchJson( "master", List.of( site ) ) ) )
+            .build();
+    }
+
+    private BranchJson createBranchJson( final String name, final Collection<Site> sites )
+    {
+        return BranchJson.create()
+            .name( name )
+            .addSites( sites.stream().map( this::createSiteJson ).collect( Collectors.toList() ) )
+            .build();
+    }
+
+    private SiteJson createSiteJson( final Site site )
+    {
+        return SiteJson.create().displayName( site.getDisplayName() ).language( "en" ).path( site.getPath().toString() ).build();
     }
 
     private Project mockProject( final ProjectName name )
