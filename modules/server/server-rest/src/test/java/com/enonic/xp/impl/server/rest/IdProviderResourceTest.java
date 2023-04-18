@@ -39,8 +39,7 @@ public class IdProviderResourceTest
     @BeforeEach
     public void setUp()
     {
-        resource = new IdProviderResource();
-        resource.setSecurityService( securityService );
+        resource = new IdProviderResource( securityService );
     }
 
     @Test

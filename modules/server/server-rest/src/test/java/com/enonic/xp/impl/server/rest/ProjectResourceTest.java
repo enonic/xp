@@ -38,7 +38,6 @@ import com.enonic.xp.site.SiteConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,9 +54,7 @@ public class ProjectResourceTest
     @BeforeEach
     public void setUp()
     {
-        resource = new ProjectResource();
-        resource.setProjectService( projectService );
-        resource.setContentService( contentService );
+        resource = new ProjectResource( projectService, contentService );
     }
 
     @Test
@@ -111,7 +108,6 @@ public class ProjectResourceTest
     public void testListEmpty()
     {
         when( projectService.list() ).thenReturn( Projects.empty() );
-        resource.setContentService( mock( ContentService.class ) );
 
         final List<ProjectJson> result = resource.list();
 

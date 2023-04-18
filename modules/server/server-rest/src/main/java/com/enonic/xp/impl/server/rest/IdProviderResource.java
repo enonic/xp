@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -24,19 +25,19 @@ import com.enonic.xp.security.SecurityService;
 public final class IdProviderResource
     implements JaxRsComponent
 {
-    private SecurityService securityService;
+    private final SecurityService securityService;
+
+    @Activate
+    public IdProviderResource( @Reference final SecurityService securityService )
+    {
+        this.securityService = securityService;
+    }
 
     @GET
     @Path("list")
     public List<IdProviderJson> list()
     {
         return securityService.getIdProviders().stream().map( IdProviderJson::new ).collect( Collectors.toList() );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
     }
 
 }

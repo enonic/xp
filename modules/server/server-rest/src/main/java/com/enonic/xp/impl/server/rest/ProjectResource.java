@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -42,9 +43,17 @@ import com.enonic.xp.security.RoleKeys;
 public final class ProjectResource
     implements JaxRsComponent
 {
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private ContentService contentService;
+    private final ContentService contentService;
+
+
+    @Activate
+    public ProjectResource( @Reference final ProjectService projectService, @Reference final ContentService contentService )
+    {
+        this.projectService = projectService;
+        this.contentService = contentService;
+    }
 
     @GET
     @Path("list")
@@ -96,17 +105,5 @@ public final class ProjectResource
         }
 
         return builder.build();
-    }
-
-    @Reference
-    public void setProjectService( final ProjectService projectService )
-    {
-        this.projectService = projectService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 }
