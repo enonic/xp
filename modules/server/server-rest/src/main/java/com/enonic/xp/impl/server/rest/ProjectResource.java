@@ -37,7 +37,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.RoleKeys;
 
-@Path("/projects")
+@Path("/content/projects")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")
