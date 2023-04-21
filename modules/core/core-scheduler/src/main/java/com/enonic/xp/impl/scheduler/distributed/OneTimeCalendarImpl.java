@@ -2,6 +2,8 @@ package com.enonic.xp.impl.scheduler.distributed;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import com.google.common.base.Preconditions;
@@ -33,9 +35,15 @@ public final class OneTimeCalendarImpl
     }
 
     @Override
-    public Optional<Duration> nextExecution()
+    public Optional<Duration> timeToNextExecution()
     {
         return Optional.of( Duration.between( Instant.now(), value ) );
+    }
+
+    @Override
+    public Optional<ZonedDateTime> nextExecution( final Instant instant )
+    {
+        return Optional.of( value.atZone( ZoneId.systemDefault() ) ); //TODO:discuss
     }
 
     @Override

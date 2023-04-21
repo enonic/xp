@@ -1,8 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -82,22 +80,11 @@ public final class LocalSystemScheduler
         simpleExecutor.shutdownNow();
     }
 
-    @Override
-    public Set<String> getAllFutures()
-    {
-        return new HashSet<>( scheduledFutures.keySet() );
-    }
 
     @Override
     public Optional<? extends ScheduledFuture<?>> get( final String name )
     {
         return Optional.ofNullable( scheduledFutures.get( name ) );
-    }
-
-    @Override
-    public void disposeAllDone()
-    {
-        scheduledFutures.entrySet().removeIf( entry -> entry.getValue().isDone() );
     }
 
     @Override
@@ -108,18 +95,6 @@ public final class LocalSystemScheduler
         {
             future.cancel( false );
         }
-    }
-
-    @Override
-    public ScheduledFuture<?> schedule( final SchedulableTask task, final long delay, final TimeUnit unit )
-    {
-        return scheduledFutures.compute( task.getName(), ( name, value ) -> {
-            if ( value != null )
-            {
-                throw new IllegalStateException( String.format( "Task for [%s] job is scheduled already.", name ) );
-            }
-            return simpleExecutor.schedule( task, delay, unit );
-        } );
     }
 
     @Override

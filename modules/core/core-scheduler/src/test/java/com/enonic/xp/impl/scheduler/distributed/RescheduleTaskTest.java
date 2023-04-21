@@ -3,14 +3,8 @@ package com.enonic.xp.impl.scheduler.distributed;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,23 +20,31 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import com.hazelcast.scheduledexecutor.IScheduledFuture;
-import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
+import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,19 +55,34 @@ import static org.mockito.Mockito.when;
 public class RescheduleTaskTest
 {
     @Mock(stubOnly = true)
-    ServiceReference<SchedulerService> serviceReference;
+    ServiceReference<TaskService> taskReference;
 
     @Mock(stubOnly = true)
-    ServiceReference<SchedulerExecutorService> executorReference;
+    ServiceReference<NodeService> nodeReference;
+
+    @Mock(stubOnly = true)
+    ServiceReference<SchedulerService> schedulerReference;
+
+    @Mock(stubOnly = true)
+    ServiceReference<SecurityService> securityReference;
 
     @Captor
-    ArgumentCaptor<SchedulableTaskImpl> taskCaptor;
+    ArgumentCaptor<SubmitTaskParams> taskCaptor;
+
+    @Captor
+    ArgumentCaptor<AuthenticationToken> tokenCaptor;
 
     @Mock
     private SchedulerService schedulerService;
 
     @Mock
-    private SchedulerExecutorService schedulerExecutorService;
+    private TaskService taskService;
+
+    @Mock
+    private NodeService nodeService;
+
+    @Mock
+    private SecurityService securityService;
 
     @Mock
     private BundleContext bundleContext;
@@ -78,11 +95,15 @@ public class RescheduleTaskTest
 
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
-        when( bundleContext.getServiceReferences( SchedulerService.class, null ) ).thenReturn( List.of( serviceReference ) );
-        when( bundleContext.getServiceReferences( SchedulerExecutorService.class, null ) ).thenReturn( List.of( executorReference ) );
+        when( bundleContext.getServiceReferences( SchedulerService.class, null ) ).thenReturn( List.of( schedulerReference ) );
+        when( bundleContext.getServiceReferences( TaskService.class, null ) ).thenReturn( List.of( taskReference ) );
+        when( bundleContext.getServiceReferences( NodeService.class, null ) ).thenReturn( List.of( nodeReference ) );
+        when( bundleContext.getServiceReferences( SecurityService.class, null ) ).thenReturn( List.of( securityReference ) );
 
-        when( bundleContext.getService( serviceReference ) ).thenReturn( schedulerService );
-        when( bundleContext.getService( executorReference ) ).thenReturn( schedulerExecutorService );
+        when( bundleContext.getService( nodeReference ) ).thenReturn( nodeService );
+        when( bundleContext.getService( taskReference ) ).thenReturn( taskService );
+        when( bundleContext.getService( schedulerReference ) ).thenReturn( schedulerService );
+        when( bundleContext.getService( securityReference ) ).thenReturn( securityService );
     }
 
     @AfterEach
@@ -92,38 +113,174 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void rescheduleWithDoneAndDisabledTasks()
+    public void submitOldOneTimeTask()
     {
-        mockFutures();
         mockJobs();
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
 
-        final RescheduleTask task = createAndRunTask();
-        assertEquals( "rescheduleTask", task.getName() );
-
-        verify( schedulerExecutorService, times( 2 ) ).schedule( taskCaptor.capture(), anyLong(), isA( TimeUnit.class ) );
-
-        assertEquals( 2, taskCaptor.getAllValues().size() );
-        assertEquals( "task2", taskCaptor.getAllValues().get( 0 ).getName() );
-        assertEquals( "task3", taskCaptor.getAllValues().get( 1 ).getName() );
-    }
-
-    @Test
-    public void firstJobRescheduleFailedButSecondIsOk()
-    {
-        mockFutures();
-        mockJobs();
-
-        when( schedulerExecutorService.schedule( isA( SchedulableTask.class ), anyLong(), isA( TimeUnit.class ) ) ).
-            thenThrow( RuntimeException.class ).
-            then( a -> null );
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
         createAndRunTask();
 
-        verify( schedulerExecutorService, times( 2 ) ).schedule( taskCaptor.capture(), anyLong(), isA( TimeUnit.class ) );
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+        assertEquals( "task3", taskCaptor.getValue().getDescriptorKey().getName() );
+    }
 
-        assertEquals( 2, taskCaptor.getAllValues().size() );
-        assertEquals( "task2", taskCaptor.getAllValues().get( 0 ).getName() );
-        assertEquals( "task3", taskCaptor.getAllValues().get( 1 ).getName() );
+
+    @Test
+    public void submitInOrder()
+    {
+        final Instant now = Instant.now();
+        final ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 2, ChronoUnit.SECONDS ) );
+        final ScheduledJob job2 = mockOneTimeJob( "job2", now );
+        final ScheduledJob job3 = mockOneTimeJob( "job3", now.minus( 1, ChronoUnit.SECONDS ) );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3 ) );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) )
+            .thenReturn( TaskId.from( "2" ) )
+            .thenReturn( TaskId.from( "3" ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        createAndRunTask();
+
+        verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
+
+        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getName() );
+        assertEquals( "job3", taskCaptor.getAllValues().get( 1 ).getName() );
+        assertEquals( "job2", taskCaptor.getAllValues().get( 2 ).getName() );
+    }
+
+    @Test
+    public void jobSubmitFailedButRetried()
+    {
+        final Instant now = Instant.now();
+        ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
+        ScheduledJob job2 = mockOneTimeJob( "job2", now );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( RuntimeException.class )
+            .thenReturn( TaskId.from( "1" ) );
+
+        createAndRunTask();
+
+        verify( taskService, times( 2 ) ).submitTask( taskCaptor.capture() );
+
+        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getName() );
+        assertEquals( "job2", taskCaptor.getAllValues().get( 1 ).getName() );
+
+        job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), now );
+        job2 = mockOneTimeJob( "job2", now, now );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+
+        createAndRunTask();
+
+        verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
+
+        assertEquals( "job1", taskCaptor.getAllValues().get( 2 ).getName() );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new Error() );
+
+        createAndRunTask();
+        verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
+    }
+
+    @Test
+    public void jobSubmitFailedWithError()
+    {
+        final Instant now = Instant.now();
+        ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new Error() ).thenReturn( TaskId.from( "1" ) );
+
+        createAndRunTask();
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+
+        job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), now );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+        createAndRunTask();
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+    }
+
+    @Test
+    public void retryFailedMultipleTimes()
+    {
+        final Instant now = Instant.now();
+        ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
+
+        for ( int i = 0; i <= 10; i++ )
+        {
+            createAndRunTask();
+        }
+        verify( taskService, times( 11 ) ).submitTask( taskCaptor.capture() );
+    }
+
+    @Test
+    public void submitJobAsUser()
+    {
+        final Instant now = Instant.now();
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "my-user" );
+
+        ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), user );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+        when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
+
+        createAndRunTask();
+
+        assertEquals( "default", tokenCaptor.getValue().getIdProvider().toString() );
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+    }
+
+    @Test
+    public void submitCronJob()
+    {
+        ScheduledJob job1 = mockCronJob( "job1", "* * * * *", Instant.parse( "2021-02-26T10:44:33.170079900Z" ) );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+
+        final Node node = mockNode();
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+        when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
+
+        createAndRunTask();
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+    }
+
+    @Test
+    public void testName()
+    {
+        assertEquals( "rescheduleTask", new RescheduleTask().getName() );
     }
 
     @Test
@@ -132,7 +289,6 @@ public class RescheduleTaskTest
     {
         when( bundleContext.getServiceReferences( SchedulerService.class, null ) ).thenReturn( List.of() );
 
-        mockFutures();
         mockJobs();
 
         for ( int i = 0; i < 10; i++ )
@@ -151,121 +307,92 @@ public class RescheduleTaskTest
         return task;
     }
 
-    private void mockFutures()
-    {
-        final ScheduledTaskHandler handler1 = mock( ScheduledTaskHandler.class );
-        final ScheduledTaskHandler handler2 = mock( ScheduledTaskHandler.class );
-        final ScheduledTaskHandler handler3 = mock( ScheduledTaskHandler.class );
-        final ScheduledTaskHandler handler4 = mock( ScheduledTaskHandler.class );
-
-        final IScheduledFuture<?> future1 = mock( IScheduledFuture.class );
-        final IScheduledFuture<?> future2 = mock( IScheduledFuture.class );
-        final IScheduledFuture<?> future3 = mock( IScheduledFuture.class );
-        final IScheduledFuture<?> future4 = mock( IScheduledFuture.class );
-
-        when( future1.getHandler() ).thenReturn( handler1 );
-        when( future2.getHandler() ).thenReturn( handler2 );
-        when( future3.getHandler() ).thenReturn( handler3 );
-        when( future4.getHandler() ).thenReturn( handler4 );
-
-        when( handler1.getTaskName() ).thenReturn( "task1" );
-        when( handler2.getTaskName() ).thenReturn( "task2" );
-        when( handler3.getTaskName() ).thenReturn( "task3" );
-        when( handler4.getTaskName() ).thenReturn( "task4" );
-
-        when( future1.isDone() ).thenReturn( true );
-        when( future2.isDone() ).thenReturn( true );
-        when( future3.isDone() ).thenReturn( true );
-
-        Map<String, ScheduledFuture<?>> futures = new HashMap<>(
-            Map.of( handler1.getTaskName(), future1, handler2.getTaskName(), future2, handler3.getTaskName(), future3,
-                    handler4.getTaskName(), future4 ) );
-
-        when( schedulerExecutorService.getAllFutures() ).
-            thenAnswer( invocation -> futures.keySet() );
-
-        doAnswer( invocation -> {
-            final Set<String> doneTasks = futures.entrySet().stream().
-                filter( entry -> entry.getValue().isDone() ).
-                map( Map.Entry::getKey ).
-                collect( Collectors.toSet() );
-
-            doneTasks.forEach( futures::remove );
-
-            return doneTasks;
-        } ).when( schedulerExecutorService ).disposeAllDone();
-
-        doAnswer( invocation -> {
-
-            final ScheduledFuture<?> future = futures.remove( (String) invocation.getArgument( 0 ) );
-            return future != null;
-        } ).when( schedulerExecutorService ).dispose( isA( String.class ) );
-
-    }
-
     private void mockJobs()
     {
-        final ScheduledJob job1 = ScheduledJob.create().
-            name( ScheduledJobName.from( "task1" ) ).
-            calendar( CronCalendarImpl.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getDefault() ).
-                build() ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            config( new PropertyTree() ).
-            enabled( false ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-            modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-            build();
+        final ScheduledJob job1 = mockCronJob( "task1", "* * * * *" );
 
-        final ScheduledJob job2 = ScheduledJob.create().
-            name( ScheduledJobName.from( "task2" ) ).
-            calendar( CronCalendarImpl.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getDefault() ).
-                build() ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ) ).
-            config( new PropertyTree() ).
-            enabled( true ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:modifier" ) ).
-            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-            modifiedTime( Instant.parse( "2021-02-25T10:44:53.170079900Z" ) ).
-            build();
+        final ScheduledJob job2 = mockCronJob( "task2", "* * * * *" );
 
-        final ScheduledJob job3 = ScheduledJob.create().
-            name( ScheduledJobName.from( "task3" ) ).
-            calendar( OneTimeCalendarImpl.create().
-                value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
-                build() ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) ).
-            config( new PropertyTree() ).
-            enabled( true ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ).
-            modifiedTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ).
-            build();
+        final ScheduledJob job3 = mockOneTimeJob( "task3", Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) );
 
-        final ScheduledJob job4 = ScheduledJob.create().
-            name( ScheduledJobName.from( "task4" ) ).
-            calendar( CronCalendarImpl.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getDefault() ).
-                build() ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task4" ) ).
-            config( new PropertyTree() ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:modifier" ) ).
-            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-            modifiedTime( Instant.parse( "2021-02-25T11:44:33.170079900Z" ) ).
-            enabled( true ).
-            build();
+        final ScheduledJob job4 = mockCronJob( "task4", "* * * * *" );
 
-        when( schedulerService.list() ).
-            thenReturn( List.of( job1, job2, job3, job4 ) );
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3, job4 ) );
+    }
+
+    private ScheduledJob mockOneTimeJob( final String scheduledJobName, final Instant instant )
+    {
+        return mockOneTimeJob( scheduledJobName, instant, null, null );
+    }
+
+    private ScheduledJob mockOneTimeJob( final String scheduledJobName, final Instant instant, final Instant lastRun )
+    {
+        return mockOneTimeJob( scheduledJobName, instant, lastRun, null );
+    }
+
+    private ScheduledJob mockOneTimeJob( final String scheduledJobName, final Instant instant, final PrincipalKey user )
+    {
+        return mockOneTimeJob( scheduledJobName, instant, null, user );
+    }
+
+    private ScheduledJob mockOneTimeJob( final String scheduledJobName, final Instant instant, final Instant lastRun,
+                                         final PrincipalKey user )
+    {
+        return ScheduledJob.create()
+            .name( ScheduledJobName.from( scheduledJobName ) )
+            .calendar( OneTimeCalendarImpl.create().value( instant ).build() )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) )
+            .config( new PropertyTree() )
+            .enabled( true )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) )
+            .modifiedTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) )
+            .lastRun( lastRun )
+            .user( user )
+            .build();
+    }
+
+    private ScheduledJob mockCronJob( final String scheduledJobName, final String cron )
+    {
+        return mockCronJob( scheduledJobName, cron, null );
+    }
+
+    private ScheduledJob mockCronJob( final String scheduledJobName, final String cron, final Instant lastRun )
+    {
+        return ScheduledJob.create()
+            .name( ScheduledJobName.from( scheduledJobName ) )
+            .calendar( CronCalendarImpl.create().value( cron ).timeZone( TimeZone.getDefault() ).build() )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ) )
+            .config( new PropertyTree() )
+            .enabled( true )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:modifier" ) )
+            .createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
+            .modifiedTime( Instant.parse( "2021-02-25T10:44:53.170079900Z" ) )
+            .lastRun( lastRun )
+            .build();
+    }
+
+    private Node mockNode()
+    {
+        final PropertyTree jobData = new PropertyTree();
+
+        final PropertySet calendar = new PropertySet();
+        calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, "ONE_TIME" );
+        calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, "2021-02-25T10:44:33.170079900Z" );
+
+        jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, "app:key" );
+        jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, true );
+        jobData.addSet( ScheduledJobPropertyNames.CALENDAR, calendar );
+        jobData.addSet( ScheduledJobPropertyNames.CONFIG, new PropertySet() );
+        jobData.setString( ScheduledJobPropertyNames.CREATOR, "user:system:creator" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIER, "user:system:modifier" );
+        jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2021-02-26T10:44:33.170079900Z" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2021-03-26T10:44:33.170079900Z" );
+
+        return Node.create().id( NodeId.from( "abc" ) ).name( "test" ).parentPath( NodePath.ROOT ).data( jobData ).build();
+
     }
 
 }

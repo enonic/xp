@@ -49,7 +49,7 @@ public class CronCalendarTest
             timeZone( TimeZone.getDefault() ).
             build();
 
-        assertTrue( calendar.nextExecution().get().toSeconds() <= 60 );
+        assertTrue( calendar.timeToNextExecution().get().toSeconds() <= 60 );
         assertEquals( ScheduleCalendarType.CRON, calendar.getType() );
     }
 

@@ -190,7 +190,6 @@ class SchedulerServiceActivatorTest
         mockNode( jobParams );
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
-        when( schedulerExecutorService.getAllFutures() ).thenReturn( Set.of( RescheduleTask.NAME ) );
 
         final ScheduledFuture<?> scheduledFuture = mock( ScheduledFuture.class );
         when( scheduledFuture.isDone() ).thenReturn( false );
@@ -217,7 +216,6 @@ class SchedulerServiceActivatorTest
         mockNode( jobParams );
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
-        when( schedulerExecutorService.getAllFutures() ).thenReturn( Set.of( RescheduleTask.NAME ) );
 
         final ScheduledFuture<?> scheduledFuture = mock( ScheduledFuture.class );
         when( scheduledFuture.isDone() ).thenReturn( true );

@@ -35,14 +35,14 @@ public class OneTimeCalendarTest
             value( Instant.now().plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).
             build();
 
-        assertFalse( calendar.nextExecution().get().isNegative() );
+        assertFalse( calendar.timeToNextExecution().get().isNegative() );
         assertEquals( ScheduleCalendarType.ONE_TIME, calendar.getType() );
 
         calendar = OneTimeCalendarImpl.create().
             value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
             build();
 
-        assertTrue( calendar.nextExecution().get().isNegative() );
+        assertTrue( calendar.timeToNextExecution().get().isNegative() );
     }
 
     @Test

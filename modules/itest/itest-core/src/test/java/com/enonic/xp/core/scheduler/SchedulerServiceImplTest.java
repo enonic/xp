@@ -1,7 +1,6 @@
 package com.enonic.xp.core.scheduler;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -577,9 +576,6 @@ class SchedulerServiceImplTest
 
         when( future.getHandler() ).thenReturn( handler );
         when( handler.getTaskName() ).thenReturn( name.getValue() );
-
-        when( schedulerExecutorService.getAllFutures() ).
-            thenReturn( Set.of( name.getValue() ) );
 
         return future;
     }

@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -56,9 +57,15 @@ public class SchedulerResourceTest
                 return TimeZone.getTimeZone( "GMT+3:00" );
             }
 
-            public Optional<Duration> nextExecution()
+            public Optional<Duration> timeToNextExecution()
             {
                 return Optional.of( Duration.ofSeconds( 50 ) );
+            }
+
+            @Override
+            public Optional<ZonedDateTime> nextExecution( final Instant instant )
+            {
+                return Optional.empty();
             }
 
             @Override
@@ -77,7 +84,7 @@ public class SchedulerResourceTest
             }
 
             @Override
-            public Optional<Duration> nextExecution()
+            public Optional<Duration> timeToNextExecution()
             {
                 return Optional.of( Duration.ofSeconds( 50 ) );
             }
@@ -86,6 +93,12 @@ public class SchedulerResourceTest
             public ScheduleCalendarType getType()
             {
                 return ScheduleCalendarType.ONE_TIME;
+            }
+
+            @Override
+            public Optional<ZonedDateTime> nextExecution( final Instant instant )
+            {
+                return Optional.empty();
             }
         };
 
