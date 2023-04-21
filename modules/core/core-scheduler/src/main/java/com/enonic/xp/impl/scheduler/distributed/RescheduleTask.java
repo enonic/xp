@@ -175,8 +175,6 @@ public class RescheduleTask
                 final ScheduledJob job = jobs.get( peek.name );
 
                 final Function<TaskService, TaskId> submitTask = taskService -> taskService.submitTask( SubmitTaskParams.create()
-                                                                                                            .name(
-                                                                                                                job.getName().getValue() )
                                                                                                             .descriptorKey(
                                                                                                                 job.getDescriptor() )
                                                                                                             .data( job.getConfig() )
