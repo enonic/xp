@@ -149,9 +149,9 @@ public class RescheduleTaskTest
 
         verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
 
-        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getName() );
-        assertEquals( "job3", taskCaptor.getAllValues().get( 1 ).getName() );
-        assertEquals( "job2", taskCaptor.getAllValues().get( 2 ).getName() );
+        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getDescriptorKey().getName() );
+        assertEquals( "job3", taskCaptor.getAllValues().get( 1 ).getDescriptorKey().getName() );
+        assertEquals( "job2", taskCaptor.getAllValues().get( 2 ).getDescriptorKey().getName() );
     }
 
     @Test
@@ -173,8 +173,8 @@ public class RescheduleTaskTest
 
         verify( taskService, times( 2 ) ).submitTask( taskCaptor.capture() );
 
-        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getName() );
-        assertEquals( "job2", taskCaptor.getAllValues().get( 1 ).getName() );
+        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getDescriptorKey().getName() );
+        assertEquals( "job2", taskCaptor.getAllValues().get( 1 ).getDescriptorKey().getName() );
 
         job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), now );
         job2 = mockOneTimeJob( "job2", now, now );
@@ -185,7 +185,7 @@ public class RescheduleTaskTest
 
         verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
 
-        assertEquals( "job1", taskCaptor.getAllValues().get( 2 ).getName() );
+        assertEquals( "job1", taskCaptor.getAllValues().get( 2 ).getDescriptorKey().getName() );
 
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new Error() );
 
@@ -341,7 +341,7 @@ public class RescheduleTaskTest
         return ScheduledJob.create()
             .name( ScheduledJobName.from( scheduledJobName ) )
             .calendar( OneTimeCalendarImpl.create().value( instant ).build() )
-            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), scheduledJobName ) )
             .config( new PropertyTree() )
             .enabled( true )
             .creator( PrincipalKey.from( "user:system:creator" ) )
@@ -363,7 +363,7 @@ public class RescheduleTaskTest
         return ScheduledJob.create()
             .name( ScheduledJobName.from( scheduledJobName ) )
             .calendar( CronCalendarImpl.create().value( cron ).timeZone( TimeZone.getDefault() ).build() )
-            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ) )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), scheduledJobName ) )
             .config( new PropertyTree() )
             .enabled( true )
             .creator( PrincipalKey.from( "user:system:creator" ) )
