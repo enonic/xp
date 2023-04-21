@@ -85,7 +85,10 @@ public class RescheduleTask
     private static void scheduleCronJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final Instant now,
                                           final Predicate<ScheduledJob> filterAlreadyScheduled )
     {
-        jobs.values().stream().filter( ScheduledJob::isEnabled ).filter( filterAlreadyScheduled )
+        jobs.values()
+            .stream()
+            .filter( ScheduledJob::isEnabled )
+            .filter( filterAlreadyScheduled )
             .filter( job -> ScheduleCalendarType.CRON.equals( job.getCalendar().getType() ) )
             .forEach( job -> {
                 final Instant actualLastRun = job.getLastRun();
@@ -211,6 +214,7 @@ public class RescheduleTask
             if ( entity.attempts < 10 )
             {
                 QUEUE.offer( new JobToRun( entity.name, entity.timeToRun, entity.attempts + 1 ) );
+                LOG.warn( "Error while running job [{}], will try to run once more", entity.name );
             }
             else
             {
