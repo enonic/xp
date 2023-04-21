@@ -253,14 +253,14 @@ public class RescheduleTask
 
         private final int attempts;
 
-        public JobToRun( final ScheduledJobName name, final Instant timeToRun )
+        JobToRun( final ScheduledJobName name, final Instant timeToRun )
         {
             this.name = name;
             this.timeToRun = timeToRun;
             this.attempts = 0;
         }
 
-        public JobToRun( final ScheduledJobName name, final Instant timeToRun, final int attempts )
+        JobToRun( final ScheduledJobName name, final Instant timeToRun, final int attempts )
         {
             this.name = name;
             this.timeToRun = timeToRun;
