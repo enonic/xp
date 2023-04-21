@@ -1,17 +1,19 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -54,36 +56,36 @@ public class RescheduleTask
         return NAME;
     }
 
-    private static void fetchJobsToSchedule( final Map<ScheduledJobName, ScheduledJob> jobs )
+    private static void fillJobsToSchedule( final Map<ScheduledJobName, ScheduledJob> jobs )
     {
         final Instant now = Instant.now();
-        final Set<ScheduledJobName> scheduledJobNames = QUEUE.stream().map( entity -> entity.name ).collect( Collectors.toSet() );
 
-        scheduleCronJobs( jobs, now, scheduledJobNames );
-        scheduleOneTimeJobs( jobs, scheduledJobNames );
+        final Predicate<ScheduledJob> filterAlreadyScheduled =
+            job -> !QUEUE.stream().map( entity -> entity.name ).collect( Collectors.toSet() ).contains( job.getName() );
+
+        scheduleCronJobs( jobs, now, filterAlreadyScheduled );
+        scheduleOneTimeJobs( jobs, now, filterAlreadyScheduled );
     }
 
-    private static void scheduleOneTimeJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final Set<ScheduledJobName> scheduledJobNames )
+    private static void scheduleOneTimeJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final Instant now,
+                                             final Predicate<ScheduledJob> filterAlreadyScheduled )
     {
         jobs.values()
             .stream()
             .filter( ScheduledJob::isEnabled )
-            .filter( job -> !scheduledJobNames.contains( job.getName() ) )
+            .filter( filterAlreadyScheduled )
             .filter( job -> ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) && job.getLastRun() == null )
             .forEach( ( job ) -> {
                 job.getCalendar()
-                    .timeToNextExecution()
-                    .ifPresent( duration -> QUEUE.offer( new JobToRun( job.getName(), Instant.now().plus( duration ) ) ) );
+                    .nextExecution()
+                    .ifPresent( duration -> QUEUE.offer( new JobToRun( job.getName(), now.plus( duration ) ) ) );
             } );
     }
 
     private static void scheduleCronJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final Instant now,
-                                          final Set<ScheduledJobName> scheduledJobNames )
+                                          final Predicate<ScheduledJob> filterAlreadyScheduled )
     {
-        jobs.values()
-            .stream()
-            .filter( ScheduledJob::isEnabled )
-            .filter( job -> !scheduledJobNames.contains( job.getName() ) )
+        jobs.values().stream().filter( ScheduledJob::isEnabled ).filter( filterAlreadyScheduled )
             .filter( job -> ScheduleCalendarType.CRON.equals( job.getCalendar().getType() ) )
             .forEach( job -> {
                 final Instant actualLastRun = job.getLastRun();
@@ -101,9 +103,9 @@ public class RescheduleTask
                 else
                 {
                     job.getCalendar()
-                        .timeToNextExecution()
-                        .ifPresent( nextExecutionDuration -> QUEUE.offer(
-                            new JobToRun( job.getName(), Instant.now().plus( nextExecutionDuration ) ) ) );
+                        .nextExecution()
+                        .ifPresent(
+                            nextExecutionDuration -> QUEUE.offer( new JobToRun( job.getName(), now.plus( nextExecutionDuration ) ) ) );
                 }
             } );
     }
@@ -141,17 +143,17 @@ public class RescheduleTask
                 .stream()
                 .collect( Collectors.toMap( ScheduledJob::getName, job -> job ) );
 
-        fetchJobsToSchedule( jobs );
+        fillJobsToSchedule( jobs );
 
-        final List<JobToRun> failedJobs = new ArrayList<>();
-
-        scheduleJobs( jobs, failedJobs );
+        final List<JobToRun> failedJobs = scheduleJobs( jobs );
 
         retryFailedJobs( failedJobs );
     }
 
-    private void scheduleJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final List<JobToRun> failedJobs )
+    private List<JobToRun> scheduleJobs( final Map<ScheduledJobName, ScheduledJob> jobs )
     {
+        final ImmutableList.Builder<JobToRun> failedJobs = ImmutableList.builder();
+
         while ( !QUEUE.isEmpty() )
         {
             final JobToRun peek = QUEUE.peek();
@@ -169,18 +171,17 @@ public class RescheduleTask
 
                 final ScheduledJob job = jobs.get( peek.name );
 
+                final Function<TaskService, TaskId> submitTask = taskService -> taskService.submitTask( SubmitTaskParams.create()
+                                                                                                            .name(
+                                                                                                                job.getName().getValue() )
+                                                                                                            .descriptorKey(
+                                                                                                                job.getDescriptor() )
+                                                                                                            .data( job.getConfig() )
+                                                                                                            .build() );
                 try
                 {
-                    final TaskId taskId = taskContext( job.getUser() ).callWith( () -> OsgiSupport.withService( TaskService.class,
-                                                                                                                taskService -> taskService.submitTask(
-                                                                                                                    SubmitTaskParams.create()
-                                                                                                                        .name( job.getName()
-                                                                                                                                   .getValue() ) //TODO: check
-                                                                                                                        .descriptorKey(
-                                                                                                                            job.getDescriptor() )
-                                                                                                                        .data(
-                                                                                                                            job.getConfig() )
-                                                                                                                        .build() ) ) );
+                    final TaskId taskId =
+                        taskContext( job.getUser() ).callWith( () -> OsgiSupport.withService( TaskService.class, submitTask ) );
 
                     adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create()
                         .nodeService( nodeService )
@@ -200,6 +201,8 @@ public class RescheduleTask
                 }
             }
         }
+
+        return failedJobs.build();
     }
 
     private void retryFailedJobs( final List<JobToRun> failedJobs )

@@ -65,7 +65,7 @@ public final class CronCalendarImpl
     }
 
     @Override
-    public Optional<Duration> timeToNextExecution()
+    public Optional<Duration> nextExecution()
     {
         return this.executionTime.timeToNextExecution( ZonedDateTime.now( timeZone.toZoneId() ) );
     }

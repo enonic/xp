@@ -57,7 +57,7 @@ public class SchedulerResourceTest
                 return TimeZone.getTimeZone( "GMT+3:00" );
             }
 
-            public Optional<Duration> timeToNextExecution()
+            public Optional<Duration> nextExecution()
             {
                 return Optional.of( Duration.ofSeconds( 50 ) );
             }
@@ -84,7 +84,7 @@ public class SchedulerResourceTest
             }
 
             @Override
-            public Optional<Duration> timeToNextExecution()
+            public Optional<Duration> nextExecution()
             {
                 return Optional.of( Duration.ofSeconds( 50 ) );
             }

@@ -30,7 +30,7 @@ public class CalendarServiceImplTest
     {
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) );
 
-        assertTrue( calendar.timeToNextExecution().get().get( ChronoUnit.SECONDS ) <= 60 );
+        assertTrue( calendar.nextExecution().get().get( ChronoUnit.SECONDS ) <= 60 );
         assertEquals( TimeZone.getTimeZone( "GMT+5:30" ), calendar.getTimeZone() );
         assertEquals( "* * * * *", calendar.getCronValue() );
     }
@@ -53,7 +53,7 @@ public class CalendarServiceImplTest
     {
         final OneTimeCalendar calendar = calendarService.oneTime( Instant.parse( "2014-09-25T10:00:00.00Z" ) );
 
-        assertTrue( calendar.timeToNextExecution().get().isNegative() );
+        assertTrue( calendar.nextExecution().get().isNegative() );
         assertEquals( Instant.parse( "2014-09-25T10:00:00.00Z" ), calendar.getValue() );
     }
 

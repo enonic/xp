@@ -12,9 +12,9 @@ import com.enonic.xp.annotation.PublicApi;
 public interface ScheduleCalendar
     extends Serializable
 {
-    Optional<Duration> timeToNextExecution();
-
     Optional<ZonedDateTime> nextExecution( Instant instant );
+
+    Optional<Duration> nextExecution();
 
     ScheduleCalendarType getType();
 }

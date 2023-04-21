@@ -35,7 +35,7 @@ public final class OneTimeCalendarImpl
     }
 
     @Override
-    public Optional<Duration> timeToNextExecution()
+    public Optional<Duration> nextExecution()
     {
         return Optional.of( Duration.between( Instant.now(), value ) );
     }
@@ -43,7 +43,8 @@ public final class OneTimeCalendarImpl
     @Override
     public Optional<ZonedDateTime> nextExecution( final Instant instant )
     {
-        return Optional.of( value.atZone( ZoneId.systemDefault() ) ); //TODO:discuss
+        final ZonedDateTime timeToRun = value.atZone( ZoneId.systemDefault() );
+        return Optional.ofNullable( instant.atZone( ZoneId.systemDefault() ).isBefore( timeToRun ) ? timeToRun : null );
     }
 
     @Override
