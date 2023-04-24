@@ -263,18 +263,43 @@ public class RescheduleTaskTest
     public void submitCronJob()
     {
         ScheduledJob job1 = mockCronJob( "job1", "* * * * *", Instant.parse( "2021-02-26T10:44:33.170079900Z" ) );
+        ScheduledJob job2 = mockCronJob( "job2", "* * * * *", Instant.now() );
 
-        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
 
         final Node node = mockNode();
         when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
-        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) ).thenReturn( TaskId.from( "2" ) );
         when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
 
         createAndRunTask();
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+        assertEquals( "job1", taskCaptor.getValue().getDescriptorKey().getName() );
+    }
+
+    @Test
+    public void jobWasRemoved()
+        throws InterruptedException
+    {
+        final Instant plus = null;
+
+        ScheduledJob job1 = mockCronJob( "job1", "* * * * *", plus );
+        ScheduledJob job2 = mockCronJob( "job2", "* * * * *", plus );
+
+        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+
+        createAndRunTask();
+
+        Thread.sleep( 61000 );
+
+        when( schedulerService.list() ).thenReturn( List.of( job2 ) );
+
+        createAndRunTask();
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+        assertEquals( "job2", taskCaptor.getValue().getDescriptorKey().getName() );
     }
 
     @Test

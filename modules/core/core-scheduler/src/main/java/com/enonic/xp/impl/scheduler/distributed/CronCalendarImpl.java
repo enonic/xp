@@ -59,9 +59,9 @@ public final class CronCalendarImpl
     }
 
     @Override
-    public Optional<ZonedDateTime> nextExecution( final Instant instant )
+    public Optional<Instant> nextExecution( final Instant instant )
     {
-        return this.executionTime.nextExecution( ZonedDateTime.ofInstant( instant, timeZone.toZoneId() ) );
+        return this.executionTime.nextExecution( ZonedDateTime.ofInstant( instant, timeZone.toZoneId() ) ).map( ZonedDateTime::toInstant );
     }
 
     @Override

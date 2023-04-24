@@ -2,7 +2,6 @@ package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -63,7 +62,7 @@ public class SchedulerResourceTest
             }
 
             @Override
-            public Optional<ZonedDateTime> nextExecution( final Instant instant )
+            public Optional<Instant> nextExecution( final Instant instant )
             {
                 return Optional.empty();
             }
@@ -96,7 +95,7 @@ public class SchedulerResourceTest
             }
 
             @Override
-            public Optional<ZonedDateTime> nextExecution( final Instant instant )
+            public Optional<Instant> nextExecution( final Instant instant )
             {
                 return Optional.empty();
             }

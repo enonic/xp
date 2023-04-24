@@ -97,7 +97,7 @@ public class RescheduleTask
                 if ( actualLastRun != null )
                 {
                     calendar.nextExecution( actualLastRun ).ifPresent( nextExecution -> {
-                        if ( nextExecution.isBefore( now.atZone( calendar.getTimeZone().toZoneId() ) ) )
+                        if ( nextExecution.isBefore( now ) )
                         {
                             QUEUE.offer( new JobToRun( job.getName(), now ) );
                         }

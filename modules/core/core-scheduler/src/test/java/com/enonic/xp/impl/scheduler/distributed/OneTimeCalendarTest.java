@@ -36,7 +36,9 @@ public class OneTimeCalendarTest
         OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().value( now.plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).build();
 
         assertFalse( calendar.nextExecution().get().isNegative() );
+        assertTrue( calendar.nextExecution( null ).isPresent() );
         assertTrue( calendar.nextExecution( now.plus( Duration.of( 2, ChronoUnit.MINUTES ) ) ).isEmpty() );
+        assertTrue( calendar.nextExecution( now.minus( Duration.of( 2, ChronoUnit.MINUTES ) ) ).isPresent() );
 
         assertEquals( ScheduleCalendarType.ONE_TIME, calendar.getType() );
 
