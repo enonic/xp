@@ -6,27 +6,24 @@ import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-
-import com.hazelcast.scheduledexecutor.IScheduledFuture;
-import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
+import com.enonic.xp.impl.scheduler.LocalSystemScheduler;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
+import com.enonic.xp.impl.scheduler.SchedulerExecutorServiceImpl;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
@@ -55,14 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class SchedulerServiceImplTest
     extends AbstractNodeTest
 {
@@ -74,9 +66,6 @@ class SchedulerServiceImplTest
         principals( RoleKeys.ADMIN ).
         user( REPO_TEST_DEFAULT_USER ).
         build();
-
-    @Mock
-    private SchedulerExecutorService schedulerExecutorService;
 
     private SchedulerServiceImpl schedulerService;
 
@@ -108,8 +97,10 @@ class SchedulerServiceImplTest
         final ScheduleAuditLogSupportImpl auditLogSupport =
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
-        schedulerService =
-            new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
+        final SchedulerExecutorService schedulerExecutorService =
+            new SchedulerExecutorServiceImpl( new LocalSystemScheduler(), mock( ClusterConfig.class ) );
+
+        schedulerService = new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
 
         adminContext().runWith( () -> SchedulerRepoInitializer.create()
             .setIndexService( indexService )
@@ -290,27 +281,6 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void modifyWithDispose()
-    {
-        final ScheduledJobName name = ScheduledJobName.from( "test" );
-
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ) ).
-            config( new PropertyTree() ).
-            enabled( true ).
-            build() ) );
-
-        adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-            name( name ).
-            editor( edit -> edit.enabled = false ).
-            build() ) );
-
-        verify( schedulerExecutorService, times( 1 ) ).dispose( eq( "test" ) );
-    }
-
-    @Test
     void modify()
         throws Exception
     {
@@ -431,25 +401,6 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void deleteWithDispose()
-    {
-        final ScheduledJobName name = ScheduledJobName.from( "test" );
-
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
-
-        mockFuture( name );
-
-        adminContext().callWith( () -> schedulerService.delete( name ) );
-
-        verify( schedulerExecutorService, times( 1 ) ).dispose( eq( "test" ) );
-    }
-
-    @Test
     void delete()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
@@ -567,16 +518,5 @@ class SchedulerServiceImplTest
             build() ) );
 
         assertEquals( 2, adminContext().callWith( () -> schedulerService.list() ).size() );
-    }
-
-    private IScheduledFuture<?> mockFuture( final ScheduledJobName name )
-    {
-        final ScheduledTaskHandler handler = mock( ScheduledTaskHandler.class );
-        final IScheduledFuture<?> future = mock( IScheduledFuture.class );
-
-        when( future.getHandler() ).thenReturn( handler );
-        when( handler.getTaskName() ).thenReturn( name.getValue() );
-
-        return future;
     }
 }

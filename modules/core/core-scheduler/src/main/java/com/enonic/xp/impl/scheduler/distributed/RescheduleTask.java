@@ -21,7 +21,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.osgi.OsgiSupport;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
@@ -77,8 +76,8 @@ public class RescheduleTask
             .filter( job -> ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) && job.getLastRun() == null )
             .forEach( ( job ) -> {
                 job.getCalendar()
-                    .nextExecution()
-                    .ifPresent( duration -> QUEUE.offer( new JobToRun( job.getName(), now.plus( duration ) ) ) );
+                    .nextExecution( now )
+                    .ifPresent( timeToExecute -> QUEUE.offer( new JobToRun( job.getName(), timeToExecute ) ) );
             } );
     }
 
@@ -92,24 +91,10 @@ public class RescheduleTask
             .filter( job -> ScheduleCalendarType.CRON.equals( job.getCalendar().getType() ) )
             .forEach( job -> {
                 final Instant actualLastRun = job.getLastRun();
-                final CronCalendar calendar = (CronCalendar) job.getCalendar();
 
-                if ( actualLastRun != null )
-                {
-                    calendar.nextExecution( actualLastRun ).ifPresent( nextExecution -> {
-                        if ( nextExecution.isBefore( now ) )
-                        {
-                            QUEUE.offer( new JobToRun( job.getName(), now ) );
-                        }
-                    } );
-                }
-                else
-                {
-                    job.getCalendar()
-                        .nextExecution()
-                        .ifPresent(
-                            nextExecutionDuration -> QUEUE.offer( new JobToRun( job.getName(), now.plus( nextExecutionDuration ) ) ) );
-                }
+                job.getCalendar().nextExecution( actualLastRun != null ? actualLastRun : now ).ifPresent( timeToExecute -> {
+                    QUEUE.offer( new JobToRun( job.getName(), timeToExecute ) );
+                } );
             } );
     }
 
@@ -174,11 +159,8 @@ public class RescheduleTask
 
                 final ScheduledJob job = jobs.get( peek.name );
 
-                final Function<TaskService, TaskId> submitTask = taskService -> taskService.submitTask( SubmitTaskParams.create()
-                                                                                                            .descriptorKey(
-                                                                                                                job.getDescriptor() )
-                                                                                                            .data( job.getConfig() )
-                                                                                                            .build() );
+                final Function<TaskService, TaskId> submitTask = taskService -> taskService.submitTask(
+                    SubmitTaskParams.create().descriptorKey( job.getDescriptor() ).data( job.getConfig() ).build() );
                 try
                 {
                     final TaskId taskId =

@@ -41,7 +41,7 @@ public final class OneTimeCalendarImpl
     @Override
     public Optional<Instant> nextExecution( final Instant instant )
     {
-        return Optional.ofNullable( instant != null ? instant.isBefore( value ) ? value : null : value );
+        return Optional.of( value );
     }
 
     @Override

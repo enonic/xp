@@ -13,6 +13,7 @@ public interface ScheduleCalendar
 {
     Optional<Instant> nextExecution( Instant instant );
 
+    @Deprecated
     Optional<Duration> nextExecution();
 
     ScheduleCalendarType getType();
