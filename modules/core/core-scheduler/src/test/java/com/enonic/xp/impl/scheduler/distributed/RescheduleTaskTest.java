@@ -132,9 +132,10 @@ public class RescheduleTaskTest
     public void submitInOrder()
     {
         final Instant now = Instant.now();
-        final ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 2, ChronoUnit.SECONDS ) );
-        final ScheduledJob job2 = mockOneTimeJob( "job2", now );
-        final ScheduledJob job3 = mockOneTimeJob( "job3", now.minus( 1, ChronoUnit.SECONDS ) );
+
+        final ScheduledJob job1 = mockOneTimeJob( "job-1", now.minus( 2, ChronoUnit.SECONDS ) );
+        final ScheduledJob job2 = mockOneTimeJob( "job-2", now );
+        final ScheduledJob job3 = mockOneTimeJob( "job-3", now.minus( 1, ChronoUnit.SECONDS ) );
 
         when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3 ) );
 
@@ -149,9 +150,9 @@ public class RescheduleTaskTest
 
         verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
 
-        assertEquals( "job1", taskCaptor.getAllValues().get( 0 ).getDescriptorKey().getName() );
-        assertEquals( "job3", taskCaptor.getAllValues().get( 1 ).getDescriptorKey().getName() );
-        assertEquals( "job2", taskCaptor.getAllValues().get( 2 ).getDescriptorKey().getName() );
+        assertEquals( "job-1", taskCaptor.getAllValues().get( 0 ).getDescriptorKey().getName() );
+        assertEquals( "job-3", taskCaptor.getAllValues().get( 1 ).getDescriptorKey().getName() );
+        assertEquals( "job-2", taskCaptor.getAllValues().get( 2 ).getDescriptorKey().getName() );
     }
 
     @Test
