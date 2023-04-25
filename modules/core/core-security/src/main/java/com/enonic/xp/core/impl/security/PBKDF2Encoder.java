@@ -44,6 +44,11 @@ final class PBKDF2Encoder
     @Override
     public boolean validate( final String key, final String correctPasswordKey )
     {
+        if ( isNullOrEmpty( key ) )
+        {
+            return false;
+        }
+
         final AuthenticationHash authenticationHash = AuthenticationHash.from( correctPasswordKey );
 
         if ( authenticationHash == null )

@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -94,9 +97,6 @@ import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
-
-import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -187,7 +187,7 @@ public final class SecurityServiceImpl
     @Override
     public IdProviderAccessControlList getDefaultIdProviderPermissions()
     {
-        return DEFAULT_ID_PROVIDER_ACL;
+        return SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
     }
 
     @Override
@@ -349,15 +349,14 @@ public final class SecurityServiceImpl
 
         if ( token.getIdProvider() != null )
         {
-            return doAuthenticate( token );
+            return doAuthenticate( token, token.getIdProvider() );
         }
         else
         {
             final IdProviders idProviders = callAsAuthenticated( this::getIdProviders );
             for ( IdProvider idProvider : idProviders )
             {
-                token.setIdProvider( idProvider.getKey() );
-                final AuthenticationInfo authInfo = doAuthenticate( token );
+                final AuthenticationInfo authInfo = doAuthenticate( token, idProvider.getKey() );
                 if ( authInfo.isAuthenticated() )
                 {
                     return authInfo;
@@ -441,75 +440,52 @@ public final class SecurityServiceImpl
         }
     }
 
-    private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
+    private AuthenticationInfo doAuthenticate( final AuthenticationToken token, final IdProviderKey idProvider )
     {
         return callAsAuthenticated( () -> {
+            final IndexPath principalField;
+            final String principalValue;
+            final Function<User, Boolean> subjectVerifier;
             if ( token instanceof UsernamePasswordAuthToken )
             {
-                return authenticateUsernamePassword( (UsernamePasswordAuthToken) token );
+                final UsernamePasswordAuthToken authToken = (UsernamePasswordAuthToken) token;
+                principalField = PrincipalIndexPath.LOGIN_KEY;
+                principalValue = authToken.getUsername();
+                subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
             }
             else if ( token instanceof EmailPasswordAuthToken )
             {
-                return authenticateEmailPassword( (EmailPasswordAuthToken) token );
+                final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) token;
+                principalField = PrincipalIndexPath.EMAIL_KEY;
+                principalValue = authToken.getEmail();
+                subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
             }
             else if ( token instanceof VerifiedUsernameAuthToken )
             {
-                return authenticateVerifiedUsername( (VerifiedUsernameAuthToken) token );
+                final VerifiedUsernameAuthToken authToken = (VerifiedUsernameAuthToken) token;
+                principalField = PrincipalIndexPath.LOGIN_KEY;
+                principalValue = authToken.getUsername();
+                subjectVerifier = user -> true;
             }
             else if ( token instanceof VerifiedEmailAuthToken )
             {
-                return authenticateVerifiedEmail( (VerifiedEmailAuthToken) token );
+                final VerifiedEmailAuthToken authToken = (VerifiedEmailAuthToken) token;
+                principalField = PrincipalIndexPath.EMAIL_KEY;
+                principalValue = authToken.getEmail();
+                subjectVerifier = user -> true;
             }
             else
             {
                 throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
             }
+            return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, idProvider ), subjectVerifier );
         } );
     }
 
-    private AuthenticationInfo authenticateEmailPassword( final EmailPasswordAuthToken token )
+    private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Function<User, Boolean> verifier )
     {
-        final User user = findByEmail( token.getIdProvider(), token.getEmail() );
-        if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
-        {
-            return createAuthInfo( user );
-        }
-        else
-        {
-            return AuthenticationInfo.unAuthenticated();
-        }
-    }
-
-    private AuthenticationInfo authenticateUsernamePassword( final UsernamePasswordAuthToken token )
-    {
-        final User user = findByUsername( token.getIdProvider(), token.getUsername() );
-        if ( user != null && !user.isDisabled() && passwordMatch( user, token.getPassword() ) )
-        {
-            return createAuthInfo( user );
-        }
-        else
-        {
-            return AuthenticationInfo.unAuthenticated();
-        }
-    }
-
-    private AuthenticationInfo authenticateVerifiedEmail( final VerifiedEmailAuthToken token )
-    {
-        final User user = findByEmail( token.getIdProvider(), token.getEmail() );
-        if ( user != null && !user.isDisabled() )
-        {
-            return createAuthInfo( user );
-        }
-        else
-        {
-            return AuthenticationInfo.unAuthenticated();
-        }
-    }
-
-    private AuthenticationInfo authenticateVerifiedUsername( final VerifiedUsernameAuthToken token )
-    {
-        final User user = findByUsername( token.getIdProvider(), token.getUsername() );
-        if ( user != null && !user.isDisabled() )
+        final User user = findUser.get();
+        if ( user != null && !user.isDisabled() && verifier.apply( user ) )
         {
             return createAuthInfo( user );
         }
@@ -529,23 +505,13 @@ public final class SecurityServiceImpl
             .build();
     }
 
-    private boolean passwordMatch( final User user, final String password )
-    {
-        if ( isNullOrEmpty( password ) )
-        {
-            return false;
-        }
-
-        return this.passwordEncoder.validate( password, user.getAuthenticationHash() );
-    }
-
-    private User findByUsername( final IdProviderKey idProvider, final String username )
+    private User findPrincipalByField( final IndexPath field, final String value, final IdProviderKey idProvider )
     {
         final CompareExpr idProviderExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
                                 ValueExpr.string( idProvider.toString() ) );
         final CompareExpr userNameExpr =
-            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.LOGIN_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( username ) );
+            CompareExpr.create( FieldExpr.from( field ), CompareExpr.Operator.EQ, ValueExpr.string( value ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
@@ -554,28 +520,7 @@ public final class SecurityServiceImpl
 
         if ( nodes.getSize() > 1 )
         {
-            throw new IllegalArgumentException( "Expected at most 1 user with username " + username + " in id provider " + idProvider );
-        }
-
-        return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
-    }
-
-    private User findByEmail( final IdProviderKey idProvider, final String email )
-    {
-        final CompareExpr idProviderExpr =
-            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
-                                ValueExpr.string( idProvider.toString() ) );
-        final CompareExpr userNameExpr =
-            CompareExpr.create( FieldExpr.from( PrincipalIndexPath.EMAIL_KEY ), CompareExpr.Operator.EQ, ValueExpr.string( email ) );
-        final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
-        final Nodes nodes = callWithContext( () -> {
-            final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
-            return this.nodeService.getByIds( result.getNodeIds() );
-        } );
-
-        if ( nodes.getSize() > 1 )
-        {
-            throw new IllegalArgumentException( "Expected at most 1 user with email " + email + " in id provider " + idProvider );
+            throw new IllegalArgumentException( "Expected at most 1 user with " + field + " " + value + " in id provider " + idProvider );
         }
 
         return nodes.isEmpty() ? null : PrincipalNodeTranslator.userFromNode( nodes.first() );
