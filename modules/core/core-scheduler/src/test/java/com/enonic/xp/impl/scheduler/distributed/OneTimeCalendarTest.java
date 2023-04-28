@@ -31,16 +31,18 @@ public class OneTimeCalendarTest
     @Test
     public void create()
     {
-        OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().
-            value( Instant.now().plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).
-            build();
+        final Instant now = Instant.now();
+
+        OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().value( now.plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).build();
 
         assertFalse( calendar.nextExecution().get().isNegative() );
+
+        assertTrue( calendar.nextExecution( null ).isPresent() );
+        assertTrue( calendar.nextExecution( now ).isPresent() );
+
         assertEquals( ScheduleCalendarType.ONE_TIME, calendar.getType() );
 
-        calendar = OneTimeCalendarImpl.create().
-            value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
-            build();
+        calendar = OneTimeCalendarImpl.create().value( now.minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).build();
 
         assertTrue( calendar.nextExecution().get().isNegative() );
     }

@@ -2,6 +2,7 @@ package com.enonic.xp.impl.scheduler.distributed;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -55,6 +56,12 @@ public final class CronCalendarImpl
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public Optional<Instant> nextExecution( final Instant instant )
+    {
+        return this.executionTime.nextExecution( ZonedDateTime.ofInstant( instant, timeZone.toZoneId() ) ).map( ZonedDateTime::toInstant );
     }
 
     @Override

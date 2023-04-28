@@ -1,13 +1,9 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -33,20 +29,6 @@ public final class ClusteredSystemScheduler
     }
 
     @Override
-    public Set<String> getAllFutures()
-    {
-        return hazelcastExecutor.getAllScheduledFutures().values().
-            stream().
-            flatMap( Collection::stream ).
-            map( future -> {
-                final ScheduledTaskHandler handler = future.getHandler();
-                return handler != null ? handler.getTaskName() : null;
-            } ).
-            filter( Objects::nonNull ).
-            collect( Collectors.toSet() );
-    }
-
-    @Override
     public Optional<? extends ScheduledFuture<?>> get( final String name )
     {
         return hazelcastExecutor.getAllScheduledFutures().values().
@@ -60,15 +42,6 @@ public final class ClusteredSystemScheduler
     }
 
     @Override
-    public void disposeAllDone()
-    {
-        hazelcastExecutor.getAllScheduledFutures().values().stream().
-            flatMap( Collection::stream ).
-            filter( Future::isDone ).
-            forEach( IScheduledFuture::dispose );
-    }
-
-    @Override
     public void dispose( final String name )
     {
         hazelcastExecutor.getAllScheduledFutures().values().stream().
@@ -79,12 +52,6 @@ public final class ClusteredSystemScheduler
             } ).
             findAny().
             ifPresent( IScheduledFuture::dispose );
-    }
-
-    @Override
-    public ScheduledFuture<?> schedule( final SchedulableTask task, final long delay, final TimeUnit unit )
-    {
-        return hazelcastExecutor.schedule( task, delay, unit );
     }
 
     @Override

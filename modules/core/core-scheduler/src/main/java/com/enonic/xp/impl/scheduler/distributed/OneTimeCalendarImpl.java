@@ -39,6 +39,12 @@ public final class OneTimeCalendarImpl
     }
 
     @Override
+    public Optional<Instant> nextExecution( final Instant instant )
+    {
+        return Optional.of( value );
+    }
+
+    @Override
     public ScheduleCalendarType getType()
     {
         return ScheduleCalendarType.ONE_TIME;

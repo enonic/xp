@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -36,18 +35,6 @@ public final class SchedulerExecutorServiceImpl
     }
 
     @Override
-    public void disposeAllDone()
-    {
-        getScheduler().disposeAllDone();
-    }
-
-    @Override
-    public Set<String> getAllFutures()
-    {
-        return getScheduler().getAllFutures();
-    }
-
-    @Override
     public Optional<? extends ScheduledFuture<?>> get( final String name )
     {
         return getScheduler().get( name );
@@ -57,12 +44,6 @@ public final class SchedulerExecutorServiceImpl
     public void dispose( final String name )
     {
         getScheduler().dispose( name );
-    }
-
-    @Override
-    public ScheduledFuture<?> schedule( SchedulableTask task, long delay, TimeUnit unit )
-    {
-        return getScheduler().schedule( task, delay, unit );
     }
 
     @Override

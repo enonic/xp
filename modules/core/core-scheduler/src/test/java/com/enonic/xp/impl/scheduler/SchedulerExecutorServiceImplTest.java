@@ -3,7 +3,6 @@ package com.enonic.xp.impl.scheduler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -27,8 +26,6 @@ import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
@@ -75,11 +72,13 @@ class SchedulerExecutorServiceImplTest
 
         final SchedulableTask task = mockTask( "task1" );
 
-        service.schedule( task, 1, TimeUnit.SECONDS );
+        service.scheduleAtFixedRate( task, 1, 1, TimeUnit.SECONDS );
 
-        assertEquals( 1, service.getAllFutures().size() );
-        assertTrue( service.getAllFutures().contains( task.getName() ) );
         assertTrue( service.get( task.getName() ).isPresent() );
+
+        service.dispose( task.getName() );
+
+        assertTrue( service.get( task.getName() ).isEmpty() );
     }
 
     @Test
@@ -90,8 +89,8 @@ class SchedulerExecutorServiceImplTest
 
         final SchedulableTask task = mockTask( "task1" );
 
-        service.schedule( task, 1, TimeUnit.HOURS );
-        assertThrows( IllegalStateException.class, () -> service.schedule( task, 1, TimeUnit.HOURS ) );
+        service.scheduleAtFixedRate( task, 1, 1, TimeUnit.HOURS );
+        assertThrows( IllegalStateException.class, () -> service.scheduleAtFixedRate( task, 1, 1, TimeUnit.HOURS ) );
         assertThrows( IllegalStateException.class, () -> service.scheduleAtFixedRate( task, 0, 1, TimeUnit.HOURS ) );
     }
 
@@ -106,48 +105,6 @@ class SchedulerExecutorServiceImplTest
 
         Thread.sleep( 500 );
         verify( task, atLeast( 4 ) ).run();
-    }
-
-    @Test
-    public void localDispose()
-        throws Exception
-    {
-        setLocal();
-
-        final SchedulableTask task = mockTask( "task1" );
-
-        final ScheduledFuture<?> future = service.schedule( task, 1, TimeUnit.SECONDS );
-
-        assertFalse( future.isDone() );
-
-        service.dispose( task.getName() );
-
-        assertTrue( future.isDone() );
-        assertTrue( service.getAllFutures().isEmpty() );
-        assertTrue( service.get( task.getName() ).isEmpty() );
-    }
-
-    @Test
-    public void localDisposeAllDone()
-        throws Exception
-    {
-        setLocal();
-
-        final SchedulableTask task1 = mockTask( "task1" );
-        final SchedulableTask task2 = mockTask( "task2" );
-
-        service.schedule( task1, 0, TimeUnit.MILLISECONDS );
-        service.scheduleAtFixedRate( task2, 0, 10, TimeUnit.SECONDS );
-
-        Thread.sleep( 100 );
-
-        assertEquals( 2, service.getAllFutures().size() );
-        assertTrue( service.get("task1").isPresent() );
-
-        service.disposeAllDone();
-
-        assertEquals( 1, service.getAllFutures().size() );
-        assertTrue( service.get("task1").isEmpty() );
     }
 
     @Test
@@ -173,7 +130,7 @@ class SchedulerExecutorServiceImplTest
         final SchedulableTask task = mockTask( "task1" );
 
         localScheduler.deactivate();
-        assertThrows( RejectedExecutionException.class, () -> service.schedule( task, 1, TimeUnit.MILLISECONDS ) );
+        assertThrows( RejectedExecutionException.class, () -> service.scheduleAtFixedRate( task, 1, 1, TimeUnit.MILLISECONDS ) );
     }
 
     @Test
@@ -186,12 +143,12 @@ class SchedulerExecutorServiceImplTest
         final SchedulableTask task2 = mockTask( "task2" );
 
         doThrow( NullPointerException.class ).when( task1 ).run();
-        ScheduledFuture<?> future = service.schedule( task1, 1, TimeUnit.MILLISECONDS );
+        ScheduledFuture<?> future = service.scheduleAtFixedRate( task1, 1, 1, TimeUnit.MILLISECONDS );
 
         assertThrows( ExecutionException.class, future::get );
 
         doThrow( Error.class ).when( task2 ).run();
-        future = service.schedule( task2, 1, TimeUnit.MILLISECONDS );
+        future = service.scheduleAtFixedRate( task2, 1, 1, TimeUnit.MILLISECONDS );
 
         assertThrows( ExecutionException.class, future::get );
     }
@@ -204,21 +161,23 @@ class SchedulerExecutorServiceImplTest
 
         final SchedulableTask task = mockTask( "task1" );
 
-        service.schedule( task, 1, TimeUnit.SECONDS );
+        when( hazelcastExecutorService.scheduleAtFixedRate( task, 1, 1, TimeUnit.SECONDS ) ).thenAnswer( invocation -> {
 
-        verify( hazelcastExecutorService, times( 1 ) ).schedule( task, 1, TimeUnit.SECONDS );
-    }
+            final IScheduledFuture<Object> future = mock( IScheduledFuture.class );
+            final ScheduledTaskHandler handler = mock( ScheduledTaskHandler.class );
 
-    @Test
-    public void clusterAtFixedRate()
-        throws Exception
-    {
-        setCluster( 0 );
+            when( handler.getTaskName() ).thenReturn( "task1" );
+            when( future.getHandler() ).thenReturn( handler );
 
-        final SchedulableTask task = mockTask( "task1" );
-        service.scheduleAtFixedRate( task, 0, 10, TimeUnit.MILLISECONDS );
+            when( hazelcastExecutorService.getAllScheduledFutures() ).thenReturn( Map.of( mock( Member.class ), List.of( future ) ) );
 
-        verify( hazelcastExecutorService, times( 1 ) ).scheduleAtFixedRate( task, 0, 10, TimeUnit.MILLISECONDS );
+            return future;
+        } );
+
+        service.scheduleAtFixedRate( task, 1, 1, TimeUnit.SECONDS );
+
+        assertTrue( service.get( task.getName() ).isPresent() );
+        verify( hazelcastExecutorService, times( 1 ) ).scheduleAtFixedRate( task, 1, 1, TimeUnit.SECONDS );
     }
 
     @Test
@@ -244,69 +203,6 @@ class SchedulerExecutorServiceImplTest
 
     }
 
-    @Test
-    public void clusterDisposeAllDone()
-        throws Exception
-    {
-        setCluster( 0 );
-
-        final ScheduledTaskHandler handler1 = mock( ScheduledTaskHandler.class );
-        final ScheduledTaskHandler handler2 = mock( ScheduledTaskHandler.class );
-
-        final IScheduledFuture<?> future1 = mock( IScheduledFuture.class );
-        final IScheduledFuture<?> future2 = mock( IScheduledFuture.class );
-
-        when( future1.getHandler() ).thenReturn( handler1 );
-        when( future2.getHandler() ).thenReturn( handler2 );
-
-        when( handler1.getTaskName() ).thenReturn( "task1" );
-        when( handler2.getTaskName() ).thenReturn( "task2" );
-
-        when( future1.isDone() ).thenReturn( false );
-        when( future2.isDone() ).thenReturn( true );
-
-        final Map futures = new HashMap( Map.of( mock( Member.class ), List.of( future1, future2 ) ) );
-
-        when( hazelcastExecutorService.getAllScheduledFutures() ).thenReturn( futures );
-
-        service.disposeAllDone();
-
-        verify( future2, times( 1 ) ).dispose();
-        verify( future1, times( 0 ) ).dispose();
-    }
-
-    @Test
-    public void clusterGetAllFutures()
-        throws Exception
-    {
-        setCluster( 0 );
-
-        final ScheduledTaskHandler handler1 = mock( ScheduledTaskHandler.class );
-        final ScheduledTaskHandler handler2 = mock( ScheduledTaskHandler.class );
-
-        final IScheduledFuture<?> future1 = mock( IScheduledFuture.class );
-        final IScheduledFuture<?> future2 = mock( IScheduledFuture.class );
-
-        when( future1.getHandler() ).thenReturn( handler1 );
-        when( future2.getHandler() ).thenReturn( handler2 );
-
-        when( handler1.getTaskName() ).thenReturn( "task1" );
-        when( handler2.getTaskName() ).thenReturn( "task2" );
-
-        when( future1.isDone() ).thenReturn( false );
-        when( future2.isDone() ).thenReturn( true );
-
-        final Map futures = new HashMap( Map.of( mock( Member.class ), List.of( future1 ), mock( Member.class ), List.of( future2 ) ) );
-
-        when( hazelcastExecutorService.getAllScheduledFutures() ).thenReturn( futures );
-
-        final Set<String> futuresMap = service.getAllFutures();
-
-        assertEquals( 2, futuresMap.size() );
-
-        assertTrue( service.get( "task1" ).isPresent() );
-        assertTrue( service.get( "task2" ).isPresent() );
-    }
 
     @Test
     public void clusterUnset()
@@ -317,7 +213,7 @@ class SchedulerExecutorServiceImplTest
         final SchedulableTask task = mockTask( "task1" );
 
         service.unsetClusteredScheduler( clusteredScheduler );
-        assertThrows( RuntimeException.class, () -> service.schedule( task, 1, TimeUnit.MILLISECONDS ) );
+        assertThrows( RuntimeException.class, () -> service.scheduleAtFixedRate( task, 1, 1, TimeUnit.MILLISECONDS ) );
     }
 
     @Test
@@ -329,7 +225,7 @@ class SchedulerExecutorServiceImplTest
         final SchedulableTask task = mockTask( "task1" );
 
         service.unsetClusteredScheduler( clusteredScheduler );
-        assertThrows( RuntimeException.class, () -> service.schedule( task, 1, TimeUnit.MILLISECONDS ) );
+        assertThrows( RuntimeException.class, () -> service.scheduleAtFixedRate( task, 1, 1, TimeUnit.MILLISECONDS ) );
     }
 
     private void setLocal()

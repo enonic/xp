@@ -62,6 +62,12 @@ public class SchedulerResourceTest
             }
 
             @Override
+            public Optional<Instant> nextExecution( final Instant instant )
+            {
+                return Optional.empty();
+            }
+
+            @Override
             public ScheduleCalendarType getType()
             {
                 return ScheduleCalendarType.CRON;
@@ -86,6 +92,12 @@ public class SchedulerResourceTest
             public ScheduleCalendarType getType()
             {
                 return ScheduleCalendarType.ONE_TIME;
+            }
+
+            @Override
+            public Optional<Instant> nextExecution( final Instant instant )
+            {
+                return Optional.empty();
             }
         };
 
