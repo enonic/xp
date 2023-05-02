@@ -52,6 +52,9 @@ export interface PublishInfo {
     first?: string;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Component
+// ─────────────────────────────────────────────────────────────────────────────
 export interface FragmentComponent {
     type: 'fragment'
     fragment: string;
@@ -59,30 +62,35 @@ export interface FragmentComponent {
 }
 
 export interface LayoutComponent<
+    Descriptor extends string = string,
     Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>
+    Regions extends Record<string, LayoutRegion> = Record<string, LayoutRegion>
 > {
     type: 'layout'
+    descriptor: Descriptor
     config: Config
-    descriptor: string
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
     regions: Regions;
 }
 
-export interface PartComponent<Config extends object = object> {
+export interface PartComponent<
+    Descriptor extends string = string,
+    Config extends object = object
+> {
     type: 'part'
+    descriptor: Descriptor
     config: Config
-    descriptor: string
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
 
 export interface PageComponent<
+    Descriptor extends string = string,
     Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>
+    Regions extends Record<string, PageRegion> = Record<string, PageRegion>
 > {
     type: 'page'
+    descriptor: Descriptor
     config: Config
-    descriptor: string
     path: '/'
     regions: Regions;
 }
@@ -93,18 +101,56 @@ export interface TextComponent {
     text: string
 }
 
-export type Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> =
+export type LayoutRegionComponent<
+    Descriptor extends string = string,
+    Config extends object = object
+> =
     | FragmentComponent
-    | LayoutComponent<Config, Regions>
-    | PageComponent<Config, Regions>
-    | PartComponent<Config>
+    | PartComponent<Descriptor, Config>
     | TextComponent;
 
-export interface Region<Config extends object = object> {
+export type PageRegionComponent<
+    Descriptor extends string = string,
+    Config extends object = object,
+    Regions extends Record<string, PageRegion> = Record<string, PageRegion>
+> =
+    | FragmentComponent
+    | LayoutComponent<Descriptor, Config, Regions>
+    | PartComponent<Descriptor, Config>
+    | TextComponent;
+
+export type Component<
+    Descriptor extends string = string,
+    Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>
+> =
+    | FragmentComponent
+    | LayoutComponent<Descriptor, Config, Regions>
+    | PageComponent<Descriptor, Config, Regions>
+    | PartComponent<Descriptor, Config>
+    | TextComponent;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Region
+// ─────────────────────────────────────────────────────────────────────────────
+export interface LayoutRegion<Components extends LayoutRegionComponent[] = LayoutRegionComponent[]> {
+    name: string;
+    components: Components;
+}
+
+export interface PageRegion<Components extends PageRegionComponent[] = PageRegionComponent[]> {
+    name: string;
+    components: Components;
+}
+
+export interface Region<Components extends Component[] = Component[]> {
     name: string;
     components: Component<Config>[];
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Content
+// ─────────────────────────────────────────────────────────────────────────────
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
