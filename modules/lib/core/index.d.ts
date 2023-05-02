@@ -53,44 +53,44 @@ export interface PublishInfo {
 }
 
 export interface FragmentComponent {
+    type: 'fragment'
     fragment: string;
     path: string;
-    type: 'fragment'
 }
 
 export interface LayoutComponent<
     Config extends object = object,
     Regions extends Record<string, Region> = Record<string, Region>
 > {
+    type: 'layout'
     config: Config
     descriptor: string
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
     regions: Regions;
-    type: 'layout'
 }
 
 export interface PartComponent<Config extends object = object> {
+    type: 'part'
     config: Config
     descriptor: string
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
-    type: 'part'
 }
 
 export interface PageComponent<
     Config extends object = object,
     Regions extends Record<string, Region> = Record<string, Region>
 > {
+    type: 'page'
     config: Config
     descriptor: string
     path: '/'
     regions: Regions;
-    type: 'page'
 }
 
 export interface TextComponent {
+    type: 'text'
     path: string
     text: string
-    type: 'text'
 }
 
 export type Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> =
