@@ -151,56 +151,110 @@ export interface Region<Components extends Component[] = Component[]> {
 // ─────────────────────────────────────────────────────────────────────────────
 // Content
 // ─────────────────────────────────────────────────────────────────────────────
-export interface CommonContent {
+export interface CommonContent<
+    Type extends string = string
+> {
+    // Literal member to discriminate on
+    type: Type;
+    // Required properties
     _id: string;
     _name: string;
     _path: string;
-    _score?: number;
-    creator: UserKey;
-    modifier?: UserKey;
+    attachments: Record<string, Attachment>;
     createdTime: string;
-    modifiedTime?: string;
-    owner: string;
-    
+    creator: UserKey;
     displayName: string;
     hasChildren: boolean;
-    language?: string;
+    owner: string;
     valid: boolean;
-    originProject?: string;
-    childOrder?: string;
-    _sort?: object[];
-    
     x: XpXData;
-    attachments: Record<string, Attachment>;
+    // Optional properties
+    _score?: number;
+    _sort?: object[];
+    childOrder?: string;
+    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
+    modifier?: UserKey;
+    modifiedTime?: string;
+    language?: string;
+    originProject?: string;
     publish?: PublishInfo;
+    variantOf?: string;
     workflow?: {
         state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
         checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
     };
-    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
-    variantOf?: string;
 }
 
-export interface FragmentContent extends CommonContent {
-    fragment: LayoutComponent | PartComponent
-    type: 'portal:fragment'
+export interface Content<
+    // Same order used in ContentUnion
+    Type extends string = string, // Literal member to discriminate on
+    Data = Record<string, unknown>,
+    Page extends PageComponent = PageComponent,
+    Fragment extends LayoutComponent | PartComponent = LayoutComponent | PartComponent
+> {
+    // NOTE: Not extending CommonContent for better "readability"
+    // Literal member to discriminate on
+    type: Type;
+    // Required properties
+    _id: string;
+    _name: string;
+    _path: string;
+    attachments: Record<string, Attachment>;
+    createdTime: string;
+    creator: UserKey;
+    displayName: string;
+    hasChildren: boolean;
+    owner: string;
+    valid: boolean;
+    x: XpXData;
+    // Common optional properties
+    _score?: number;
+    _sort?: object[];
+    childOrder?: string;
+    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
+    modifier?: UserKey;
+    modifiedTime?: string;
+    language?: string;
+    originProject?: string;
+    publish?: PublishInfo;
+    variantOf?: string;
+    workflow?: {
+        state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+        checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
+    };
+    // Page properties (not on Fragment Content, thus optional)
+    data?: Data;
+    page?: Page;
+    // Fragment properties (not on Page Content, thus optional)
+    fragment?: Fragment
+}
+
+export interface FragmentContent<
+    Fragment extends LayoutComponent | PartComponent = LayoutComponent | PartComponent
+> extends CommonContent implements Content {
+    type: 'portal:fragment' // Literal member to discriminate on
+    fragment: Fragment
 }
 
 export interface PageContent<
+    Type extends string = string, // Literal member to discriminate on
     Data = Record<string, unknown>,
-    Type extends string = string,
-    Page extends Component = Component,
-> extends CommonContent {
+    Page extends PageComponent = PageComponent,
+> extends CommonContent implements Content {
+    type: Type; // Literal member to discriminate on
     data: Data;
     page: Page;
-    type: Type;
 }
 
-export type Content<
+export type ContentUnion<
+    // Same order as Content
+    Type extends string = string, // Literal member to discriminate on
     Data = Record<string, unknown>,
-    Type extends string = string,
     Page extends Component = Component,
-> = FragmentContent | PageContent<Data, Type, Page>;
+    Fragment extends LayoutComponent | PartComponent = LayoutComponent | PartComponent
+> =
+    | FragmentContent<Fragment>
+    | PageContent<Type, Data, Page>;
 
 // Compliant with npm module ts-brand
 type Brand<
