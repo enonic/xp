@@ -68,27 +68,27 @@ export interface Region<Config extends object = object> {
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    Page extends Component = Component,
+    _Component extends Component = Component,
     > {
     _id: string;
     _name: string;
     _path: string;
-    _score: number;
+    _score?: number;
     creator: UserKey;
-    modifier: UserKey;
+    modifier?: UserKey;
     createdTime: string;
-    modifiedTime: string;
+    modifiedTime?: string;
     owner: string;
-    data: Data;
+    data: Type extends 'portal:fragment' ? undefined : Data;
     type: Type;
     displayName: string;
     hasChildren: boolean;
     language?: string;
     valid: boolean;
-    originProject: string;
+    originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Page;
+    page: Type extends 'portal:fragment' ? undefined : _Component;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -98,6 +98,7 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
+    fragment: Type extends 'portal:fragment' ? _Component : undefined;
 }
 
 // Compliant with npm module ts-brand
