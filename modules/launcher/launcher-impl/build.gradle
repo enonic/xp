@@ -19,4 +19,5 @@ dependencies {
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
 
     implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "net.bytebuddy:byte-buddy:1.14.4"
 }

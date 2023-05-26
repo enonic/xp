@@ -2,7 +2,7 @@ package com.enonic.xp.script.impl.util;
 
 import javax.script.ScriptException;
 
-import jdk.nashorn.api.scripting.NashornException;
+import org.openjdk.nashorn.api.scripting.NashornException;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;

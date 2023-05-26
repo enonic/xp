@@ -14,8 +14,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
+import com.enonic.xp.launcher.impl.weaver.NashornWeaver;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -106,47 +107,29 @@ public class FrameworkService
         }
     }
 
-    private FrameworkStartLevel getStartLevelService()
-    {
-        return this.felix.adapt( FrameworkStartLevel.class );
-    }
-
-    private void setStartLevel( final int level, final FrameworkListener... listeners )
-    {
-        final FrameworkStartLevel service = getStartLevelService();
-        if ( service.getStartLevel() != level )
-        {
-            getStartLevelService().setStartLevel( level, listeners );
-        }
-    }
-
     private void doStart()
         throws Exception
     {
         this.felix.init();
         this.felix.start();
 
-        setBundleStartLevel();
+        final int systemStartLevel = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL_BUNDLE ) );
+
+        final FrameworkStartLevel startLevelService = this.felix.adapt( FrameworkStartLevel.class );
+        startLevelService.setInitialBundleStartLevel( systemStartLevel );
+
+        this.felix.getBundleContext().registerService( WeavingHook.class, new NashornWeaver( systemStartLevel ), null );
+
         startActivators();
         registerServices();
-        setRunningStartLevel();
-    }
 
-    private void setBundleStartLevel()
-    {
-        final int level = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL_BUNDLE ) );
-        getStartLevelService().setInitialBundleStartLevel( level );
-    }
-
-    private void setRunningStartLevel()
-    {
-        final int level = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL ) );
-        setStartLevel( level, event -> serverStarted() );
+        final int operationsStartLevel = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL ) );
+        startLevelService.setStartLevel( operationsStartLevel, event -> serverStarted() );
     }
 
     private void serverStarted()
     {
-        LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) );
+        LOG.info( "Started Enonic XP in {} ms", System.currentTimeMillis() - this.startTime );
     }
 
     public void stop()
@@ -175,7 +158,7 @@ public class FrameworkService
     public void reset()
     {
         LOG.info( "Resetting server..." );
-        final int initialBundleStartLevel = getStartLevelService().getInitialBundleStartLevel();
+        final int initialBundleStartLevel = this.felix.adapt( FrameworkStartLevel.class ).getInitialBundleStartLevel();
         for ( Bundle bundle : this.felix.getBundleContext().getBundles() )
         {
             if ( bundle.adapt( BundleStartLevel.class ).getStartLevel() > initialBundleStartLevel )

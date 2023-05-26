@@ -3,7 +3,7 @@ package com.enonic.xp.script.impl.value;
 import java.util.ArrayList;
 import java.util.List;
 
-import jdk.nashorn.api.scripting.JSObject;
+import org.openjdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
 
