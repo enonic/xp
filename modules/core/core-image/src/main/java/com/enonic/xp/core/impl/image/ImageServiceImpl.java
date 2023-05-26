@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
 import org.osgi.service.component.annotations.Activate;
@@ -150,14 +151,26 @@ public class ImageServiceImpl
                     final int width = imageReader.getWidth( 0 );
                     final int height = imageReader.getHeight( 0 );
 
-                    final ColorModel originalColorModel = imageReader.getRawImageType( 0 ).getColorModel();
-
-                    final int pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
+                    final ImageTypeSpecifier rawImageType = imageReader.getRawImageType( 0 );
+                    final int pixelSize;
+                    final boolean mayHaveAlpha;
+                    if ( rawImageType != null )
+                    {
+                        final ColorModel originalColorModel = rawImageType.getColorModel();
+                        pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
+                        mayHaveAlpha = originalColorModel.hasAlpha();
+                    }
+                    else
+                    {
+                        // Fallback to 4 bytes per pixel and assume alpha channel
+                        pixelSize = 4;
+                        mayHaveAlpha = true;
+                    }
 
                     final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
                     final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
                     final boolean toAddBackground =
-                        !"png".equals( readImageParams.getFormat() ) && ( originalColorModel.hasAlpha() || toApplyFilters );
+                        !"png".equals( readImageParams.getFormat() ) && ( mayHaveAlpha || toApplyFilters );
                     final boolean toScale = readImageParams.getScaleParams() != null;
                     final boolean toCrop = readImageParams.getCropping() != null;
 

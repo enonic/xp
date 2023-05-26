@@ -154,4 +154,19 @@ class ImageServiceImplTest
 
         assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
     }
+
+    @Test
+    public void readImage_cmyk()
+    {
+        mockOriginalImage( "effect/cmyk.jpg" );
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .mimeType( "image/jpeg" )
+            .scaleSize( 128 )
+            .build();
+
+        assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+    }
 }
