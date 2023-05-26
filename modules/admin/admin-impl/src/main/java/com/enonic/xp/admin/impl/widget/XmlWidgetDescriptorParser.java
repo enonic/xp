@@ -25,7 +25,12 @@ final class XmlWidgetDescriptorParser
     {
         assertTagName( root, "widget" );
         this.builder.displayName( root.getChildValueTrimmed( "display-name" ) );
+        this.builder.displayNameI18nKey(
+            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
+
         this.builder.description( root.getChildValue( "description" ) );
+        this.builder.descriptionI18nKey(
+            root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
 
         final DomElement interfaces = root.getChild( "interfaces" );
         if ( interfaces != null )
