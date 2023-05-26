@@ -23,7 +23,11 @@ public class WidgetDescriptor
 {
     private final String displayName;
 
+    private final String displayNameI18nKey;
+
     private final String description;
+
+    private final String descriptionI18nKey;
 
     private final Icon icon;
 
@@ -39,7 +43,9 @@ public class WidgetDescriptor
     {
         super( builder.key );
         this.displayName = builder.displayName;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;
         this.interfaces = ImmutableSet.copyOf( builder.interfaces );
         this.allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
@@ -61,9 +67,19 @@ public class WidgetDescriptor
         return displayName;
     }
 
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
+    }
+
     public String getDescription()
     {
         return description;
+    }
+
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
     }
 
     public Icon getIcon()
@@ -108,7 +124,11 @@ public class WidgetDescriptor
 
         private String displayName;
 
+        private String displayNameI18nKey;
+
         private String description;
+
+        private String descriptionI18nKey;
 
         private Icon icon;
 
@@ -134,9 +154,21 @@ public class WidgetDescriptor
             return this;
         }
 
+        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        {
+            this.displayNameI18nKey = displayNameI18nKey;
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
             return this;
         }
 

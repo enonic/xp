@@ -58,6 +58,8 @@ public class XmlWidgetDescriptorParserTest
         assertEquals( "My widget description", result.getDescription() );
         assertEquals( "myapplication:mywidget", result.getKeyString() );
         assertEquals( "_/widgets/myapplication/mywidget", result.getUrl() );
+        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+        assertEquals( "key.description", result.getDescriptionI18nKey() );
 
         final Set<String> interfaces = result.getInterfaces();
         assertNotNull( interfaces );
