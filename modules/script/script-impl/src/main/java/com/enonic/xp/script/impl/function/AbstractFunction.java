@@ -2,7 +2,7 @@ package com.enonic.xp.script.impl.function;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.AbstractJSObject;
+import org.openjdk.nashorn.api.scripting.AbstractJSObject;
 
 abstract class AbstractFunction
     extends AbstractJSObject

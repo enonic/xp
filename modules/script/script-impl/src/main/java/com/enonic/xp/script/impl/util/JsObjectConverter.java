@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.JSObject;
+import org.openjdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.serializer.MapSerializable;
 

@@ -11,12 +11,11 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
+import org.openjdk.nashorn.api.scripting.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
-
-import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;

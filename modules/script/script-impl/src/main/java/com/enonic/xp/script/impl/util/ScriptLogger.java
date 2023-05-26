@@ -1,9 +1,8 @@
 package com.enonic.xp.script.impl.util;
 
+import org.openjdk.nashorn.api.scripting.JSObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.resource.ResourceKey;
 

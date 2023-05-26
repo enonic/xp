@@ -5,7 +5,7 @@ import java.util.Set;
 
 import javax.script.Bindings;
 
-import jdk.nashorn.api.scripting.JSObject;
+import org.openjdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.ObjectConverter;

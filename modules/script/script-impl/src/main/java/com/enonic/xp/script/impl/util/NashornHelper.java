@@ -4,9 +4,9 @@ import java.util.Date;
 
 import javax.script.ScriptEngine;
 
-import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.openjdk.nashorn.api.scripting.JSObject;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public final class NashornHelper
 {
@@ -14,7 +14,7 @@ public final class NashornHelper
 
     public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {
-        return FACTORY.getScriptEngine( new String[]{"--optimistic-types=false", "--global-per-engine", "-strict", "--language=es6", "--no-deprecation-warning"},
+        return FACTORY.getScriptEngine( new String[]{"--optimistic-types=false", "--global-per-engine", "-strict", "--language=es6"},
                                         loader );
     }
 
