@@ -36,15 +36,7 @@ jobs:
         with:
           java-version: 11
           distribution: 'temurin'
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          cache: 'gradle'
             
       - name: Build with Gradle
         run: ./gradlew ci --scan
