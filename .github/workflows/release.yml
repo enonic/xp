@@ -21,7 +21,7 @@ jobs:
         id: get_previous_release_tag
         run: |
           PREVIOUS_RELEASE_TAG=$(git tag --sort=-version:refname --merged | grep -E '^v([[:digit:]]+\.){2}[[:digit:]]+$' | grep -v "$(git describe --tags)" | head -1)
-          echo ::set-output name=previous_release_tag::$PREVIOUS_RELEASE_TAG
+          echo "previous_release_tag=$PREVIOUS_RELEASE_TAG" >> $GITHUB_OUTPUT
 
       - name: Generate Release Notes
         uses: enonic/release-tools/generate-changelog@master
