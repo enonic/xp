@@ -1,23 +1,23 @@
 dependencies {
     implementation project( ':web:web-api' )
     implementation project( ':core:core-internal' )
-    implementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
-    implementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
-    implementation "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
-    implementation "org.eclipse.jetty:jetty-jmx:${jettyVersion}"
-    implementation "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
-    implementation "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
-    implementation ("org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}") {
+    implementation libs.jetty.server
+    implementation libs.jetty.servlet
+    implementation libs.jetty.servlets
+    implementation libs.jetty.jmx
+    implementation libs.jetty.websocket.server
+    implementation libs.jetty.websocket.servlet
+    implementation ( libs.jetty.websocket.serverimpl) {
         exclude group: 'javax.annotation'
     }
-    implementation "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
-    implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
+    implementation libs.jakarta.annotation
+    implementation libs.metrics.jetty9
 
     testFixturesApi( project(":web:web-api") )
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testFixturesImplementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
-    testFixturesImplementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
+    testFixturesImplementation libs.jetty.server
+    testFixturesImplementation libs.jetty.servlet
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }
@@ -30,5 +30,5 @@ jar {
              'com.enonic.xp.data;resolution:=optional,' +
              'com.enonic.xp.support;resolution:=optional,' +
              '*;resolution:=optional',
-         'X-Jetty-Version': jettyVersion )
+         'X-Jetty-Version': libs.jetty.server.get().version )
 }

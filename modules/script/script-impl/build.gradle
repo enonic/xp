@@ -2,8 +2,8 @@ dependencies {
     implementation project( ':script:script-api' )
     implementation project( ':core:core-internal' )
 
-    implementation "org.openjdk.nashorn:nashorn-core:${nashornVersion}"
-    implementation "org.graalvm.js:js:22.3.1"
+    implementation libs.nashorn
+    implementation libs.graaljs
 
     testImplementation( testFixtures( project(":core:core-app") ) )
 

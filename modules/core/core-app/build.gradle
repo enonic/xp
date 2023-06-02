@@ -1,13 +1,13 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    implementation 'org.osgi:org.osgi.service.cm:1.6.1'
+    implementation libs.osgi.service.cm
 
     testFixturesApi project( ':core:core-api' )
-    testFixturesApi( 'org.ops4j.pax.tinybundles:tinybundles:3.0.0' )
-    testFixturesImplementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesApi libs.tinybundles
+    testFixturesImplementation libs.felix.framework
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

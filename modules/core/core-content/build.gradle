@@ -3,8 +3,8 @@ dependencies {
     implementation project( ':core:core-internal' )
 
     testFixturesApi( testFixtures( project(":core:core-app") ) )
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
 
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-schema") ) )

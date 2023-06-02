@@ -1,6 +1,6 @@
 dependencies {
     implementation project( ':web:web-api' )
-    implementation "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+    implementation libs.jetty.servlets
 }
 
 jar {

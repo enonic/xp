@@ -1,9 +1,0 @@
-def isNonStable = { String version ->
-    return ['alpha', 'beta', '-rc', '-m', '-b'].any { it -> version.toLowerCase().contains(it) }
-}
-
-dependencyUpdates {
-    rejectVersionIf {
-        isNonStable(it.candidate.version)
-    }
-}

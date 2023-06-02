@@ -1,17 +1,17 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
-    implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
-    implementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
+    implementation libs.jackson.jaxrs.jsonprovider
+    implementation ( libs.resteasy ) {
         exclude group: 'org.jboss.spec.javax.ws.rs'
     }
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
-    testFixturesImplementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
+    testFixturesImplementation ( libs.resteasy ) {
         exclude group: 'org.jboss.spec.javax.ws.rs'
     }
-    testFixturesImplementation "org.eclipse.jetty:jetty-client:${jettyVersion}"
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation libs.jetty.client
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
 
     testImplementation( testFixtures( project(":web:web-jetty") ) )

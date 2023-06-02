@@ -1,10 +1,10 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
-    implementation "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
-    implementation "com.hazelcast:hazelcast-client:${hazelcastVersion}"
-    implementation "com.hazelcast:hazelcast-kubernetes:${hazelcastK8sVersion}"
+    implementation libs.hazelcast.hazelcast
+    implementation libs.jetty.hazelcast
+    implementation libs.hazelcast.client
+    implementation libs.hazelcast.kubernetes
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }
