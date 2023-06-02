@@ -1,12 +1,12 @@
 dependencies {
     api project( ':portal:portal-api' )
-    api 'junit:junit:4.13.2'
+    api libs.junit.junit4
     implementation project( ':core:core-app' )
     implementation project( ':core:core-internal' )
     implementation testFixtures( project( ':script:script-impl' ) )
-    implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    implementation "org.mockito:mockito-core:${mockitoVersion}"
-    implementation "org.slf4j:slf4j-simple:${slf4jVersion}"
+    implementation libs.junit.jupiter.api
+    implementation libs.mockito.core
+    implementation libs.slf4j.simple
 
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junitJupiterVersion}"
+    testRuntimeOnly libs.junit.jupiter.vintage
 }

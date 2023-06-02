@@ -1,7 +1,7 @@
 dependencies {
     implementation project( ':web:web-api' )
-    implementation "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
-    implementation "com.hazelcast:hazelcast-client:${hazelcastVersion}"
+    implementation libs.jetty.hazelcast
+    implementation libs.hazelcast.client
 }
 
 jar {

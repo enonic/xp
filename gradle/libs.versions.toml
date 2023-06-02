@@ -1,0 +1,125 @@
+[libraries]
+junit-junit4 = { module = "junit:junit", version = "4.13.2" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "5.9.3" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.9.3" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.9.3" }
+junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", version = "5.9.3" }
+
+mockito-core = { module = "org.mockito:mockito-core", version = "5.3.1" }
+mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version = "5.3.1" }
+
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.14.2" }
+
+assertj-core = { module = "org.assertj:assertj-core", version = "3.24.2" }
+
+tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0.0" }
+
+mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "1.9" }
+
+slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.36" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version = "1.7.36" }
+slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "1.7.36" }
+slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version = "1.7.36" }
+slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version = "1.7.36" }
+jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.5.0.Final" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.2.12" }
+jansi = { module = "org.fusesource.jansi:jansi", version = "1.18" }
+
+jakarta-activation = { module = "com.sun.activation:jakarta.activation", version = "1.2.2" }
+jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "1.6.7" }
+jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "1.3.5" }
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "2.0.2" }
+jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "2.1.6" }
+
+jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version = "2.3.3" }
+jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.6" }
+
+javax-servlet = "javax.servlet:javax.servlet-api:3.1.0"
+javax-websocket = "javax.websocket:javax.websocket-api:1.0"
+
+osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
+osgi-service-componentannotations = { module = "org.osgi:org.osgi.service.component.annotations", version = "1.5.1" }
+osgi-service-cm = { module = "org.osgi:org.osgi.service.cm", version = "1.6.1" }
+osgi-util-promise = { module = "org.osgi:org.osgi.util.promise", version = "1.3.0" }
+osgi-util-function = { module = "org.osgi:org.osgi.util.function", version = "1.2.0" }
+osgi-core = { module = "org.osgi:osgi.core", version = "8.0.0" }
+
+felix-metatype = { module = "org.apache.felix:org.apache.felix.metatype", version = "1.2.4" }
+felix-eventadmin = { module = "org.apache.felix:org.apache.felix.eventadmin", version = "1.6.4" }
+felix-configadmin = { module = "org.apache.felix:org.apache.felix.configadmin", version = "1.9.26" }
+felix-scr = { module = "org.apache.felix:org.apache.felix.scr", version = "2.2.6" }
+felix-framework = { module = "org.apache.felix:org.apache.felix.framework", version = "7.0.5" }
+felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.8" }
+felix-log = { module = "org.apache.felix:org.apache.felix.log", version = "1.3.0" }
+felix-logback = { module = "org.apache.felix:org.apache.felix.logback", version = "1.0.6" }
+felix-logextension = { module = "org.apache.felix:org.apache.felix.log.extension", version = "1.0.0" }
+felix-gogo-command = { module = "org.apache.felix:org.apache.felix.gogo.command", version = "0.16.0" }
+felix-gogo-runtime = { module = "org.apache.felix:org.apache.felix.gogo.runtime", version = "0.16.2" }
+felix-gogo-shell = { module = "org.apache.felix:org.apache.felix.gogo.shell", version = "0.12.0" }
+felix-shell-remote = { module = "org.apache.felix:org.apache.felix.shell.remote", version = "1.1.2" }
+
+bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version = "1.70" }
+
+elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
+
+jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
+
+guava = { module = "com.google.guava:guava", version = "26.0-jre" }
+
+jsoup = { module = "org.jsoup:jsoup", version = "1.16.1" }
+
+owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20220608.1" }
+
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.4" }
+
+cronutils = { module = "com.cronutils:cron-utils", version = "9.2.0" }
+
+jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
+
+attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
+
+nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.4" }
+graaljs = { module = "org.graalvm.js:js", version = "22.3.2" }
+
+commons-lang = { module = "commons-lang:commons-lang", version = "2.6" }
+commons-io = { module = "commons-io:commons-io", version = "2.12.0" }
+commons-compress = { module = "org.apache.commons:commons-compress", version = "1.23.0" }
+
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.15.2" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.15.2" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.15.2" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.15.2" }
+jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.15.2" }
+jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.15.2" }
+jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.15.2" }
+jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.15.2" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.15.2" }
+
+tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
+tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
+
+metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.19" }
+metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.19" }
+metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.19" }
+metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.19" }
+metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.19" }
+
+hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
+hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
+hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version = "1.5.6" }
+
+jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
+
+resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.7.Final" }
+
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version = "9.4.51.v20230217" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "9.4.51.v20230217" }
+jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version = "9.4.51.v20230217" }
+jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "9.4.51.v20230217" }
+jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version = "9.4.51.v20230217" }
+jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version = "9.4.51.v20230217" }
+jetty-websocket-serverimpl = { module = "org.eclipse.jetty.websocket:javax-websocket-server-impl", version = "9.4.51.v20230217" }
+jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version = "9.4.51.v20230217" }
+jetty-client = { module = "org.eclipse.jetty:jetty-client", version = "9.4.51.v20230217" }
+
+[plugins]

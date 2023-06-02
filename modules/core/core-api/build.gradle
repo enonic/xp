@@ -1,26 +1,26 @@
 dependencies {
-    api ('com.google.guava:guava:26.0-jre') {
+    api ( libs.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    api 'org.osgi:osgi.core:8.0.0'
-    api "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
-    api "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
+    api libs.jackson.databind
+    api libs.osgi.core
+    api libs.jakarta.mail
+    api libs.metrics.core
 
     // The following libraries are not really API. Remove in future versions of XP.
-    api "org.slf4j:slf4j-api:${slf4jVersion}"
-    api "commons-lang:commons-lang:${commonsLangVersion}"
-    api "commons-io:commons-io:${commonsIoVersion}"
-    compileOnlyApi 'org.osgi:org.osgi.service.component.annotations:1.5.1'
-    api 'org.osgi:org.osgi.service.component:1.5.1'
+    api libs.slf4j.api
+    api libs.commons.lang
+    api libs.commons.io
+    compileOnlyApi libs.osgi.service.componentannotations
+    api libs.osgi.service.component
 
     implementation project( ':core:core-internal' )
 
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    implementation 'org.jparsec:jparsec:3.1'
+    implementation libs.jackson.datatype.jsr310
+    implementation libs.jparsec
 
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
 
     testImplementation project( ':core:core-internal' )
 }

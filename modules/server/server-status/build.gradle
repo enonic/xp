@@ -1,7 +1,7 @@
 dependencies {
     implementation project( ':web:web-api' )
-    implementation "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}"
-    implementation "io.dropwizard.metrics:metrics-json:${dropwizardMetricsVersion}"
+    implementation libs.metrics.jvm
+    implementation libs.metrics.json
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

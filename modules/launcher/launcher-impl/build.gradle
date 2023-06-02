@@ -1,23 +1,23 @@
 dependencies {
     implementation project( ':launcher:launcher-api' )
-    implementation ("org.apache.felix:org.apache.felix.framework:${felixVersion}") {
+    implementation (libs.felix.framework) {
         exclude group: 'org.codehaus.mojo'
     }
-    implementation 'org.apache.felix:org.apache.felix.utils:1.11.8'
+    implementation libs.felix.utils
 
-    runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.6') {
+    runtimeOnly ( libs.felix.log ) {
         exclude group: 'org.osgi'
     }
-    runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.6'
-    implementation ('org.apache.felix:org.apache.felix.log.extension:1.0.0') {
+    runtimeOnly libs.felix.logback
+    implementation ( libs.felix.logextension ) {
         exclude group: 'org.osgi'
         exclude group: 'org.apache.felix'
     }
-    runtimeOnly 'ch.qos.logback:logback-classic:1.2.11'
-    runtimeOnly 'org.fusesource.jansi:jansi:1.18'
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    runtimeOnly libs.logback.classic
+    runtimeOnly libs.jansi
+    implementation libs.slf4j.api
+    implementation libs.slf4j.jultoslf4j
 
-    implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "net.bytebuddy:byte-buddy:1.14.4"
+    implementation libs.commons.io
+    implementation libs.bytebuddy
 }

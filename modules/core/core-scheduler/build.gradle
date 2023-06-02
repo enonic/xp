@@ -1,8 +1,8 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
-    implementation "com.cronutils:cron-utils:${cronUtilsVersion}"
+    implementation libs.hazelcast.hazelcast
+    implementation libs.cronutils
 
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-internal") ) )

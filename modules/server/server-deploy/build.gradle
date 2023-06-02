@@ -3,7 +3,7 @@ dependencies {
     //TODO Temporary fix. See issue xp#7003
     implementation project( ':admin:admin-api' )
 
-    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation libs.commons.io
 }
 
 jar {
