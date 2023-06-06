@@ -15,9 +15,9 @@ declare global {
 
 import type {
     ByteSource,
+    Component,
     Content,
-    LayoutComponent,
-    PartComponent,
+    Region,
 } from '@enonic-types/core';
 
 export type {
@@ -456,10 +456,10 @@ export function getContent<Hit extends Content<unknown> = Content>(): Hit | null
     return __.toNativeObject(bean.execute<Hit>());
 }
 
-interface GetCurrentComponentHandler<
-    T extends PartComponent | LayoutComponent = PartComponent | LayoutComponent
-> {
-    execute(): T | null;
+interface GetCurrentComponentHandler<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>> {
+
+    execute(): Component<Config, Regions> | null;
 }
 
 
@@ -471,10 +471,10 @@ interface GetCurrentComponentHandler<
  *
  * @returns {object|null} The current component as JSON.
  */
-export function getComponent<
-    T extends PartComponent | LayoutComponent = PartComponent | LayoutComponent
->(): T | null {
-    const bean = __.newBean<GetCurrentComponentHandler<T>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+export function getComponent<Config extends object = object,
+    Regions extends Record<string, Region> = Record<string, Region>,
+    >(): Component<Config, Regions> | null {
+    const bean = __.newBean<GetCurrentComponentHandler<Config, Regions>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 

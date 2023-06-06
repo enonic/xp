@@ -1,4 +1,15 @@
+export type ComponentDescriptor = `${string}:${string}`;
+
 declare global {
+    interface XpLayoutMap {
+        [layoutDescriptor: ComponentDescriptor]: object;
+    }
+    interface XpPageMap {
+        [pageDescriptor: ComponentDescriptor]: object;
+    }
+    interface XpPartMap {
+        [partDescriptor: ComponentDescriptor]: object;
+    }
     interface XpXData {
         [key: string]: Record<string, Record<string, unknown>>;
     }
@@ -52,47 +63,42 @@ export interface PublishInfo {
     first?: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────────────────────────
-export interface FragmentComponent {
+export interface Fragment {
     type: 'fragment'
     fragment: string;
     path: string;
 }
 
-export interface LayoutComponent<
-    Descriptor extends string = string,
-    Config extends object = object,
-    Regions extends Record<string, LayoutRegion> = Record<string, LayoutRegion>
+export type LayoutDescriptor = keyof XpLayoutMap;
+export interface Layout<
+    Descriptor extends LayoutDescriptor = LayoutDescriptor
 > {
     type: 'layout'
     descriptor: Descriptor
-    config: Config
+    config: XpLayoutMap[Descriptor]
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
-    regions: Regions;
+    regions: Record<string, Region<(Fragment | Part | TextComponent)[]>>;
 }
 
-export interface PartComponent<
-    Descriptor extends string = string,
-    Config extends object = object
+export type PartDescriptor = keyof XpPartMap;
+export interface Part<
+    Descriptor extends PartDescriptor = PartDescriptor,
 > {
     type: 'part'
     descriptor: Descriptor
-    config: Config
+    config: XpPartMap[Descriptor]
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
 
-export interface PageComponent<
-    Descriptor extends string = string,
-    Config extends object = object,
-    Regions extends Record<string, PageRegion> = Record<string, PageRegion>
+export type PageDescriptor = keyof XpPageMap;
+export interface Page<
+    Descriptor extends PageDescriptor = PageDescriptor,
 > {
     type: 'page'
     descriptor: Descriptor
-    config: Config
+    config: XpPageMap[Descriptor]
     path: '/'
-    regions: Regions;
+    regions: Record<string, Region<(Fragment | Layout | Part | TextComponent)[]>>;
 }
 
 export interface TextComponent {
@@ -101,60 +107,27 @@ export interface TextComponent {
     text: string
 }
 
-export type LayoutRegionComponent<
-    Descriptor extends string = string,
-    Config extends object = object
-> =
-    | FragmentComponent
-    | PartComponent<Descriptor, Config>
-    | TextComponent;
-
-export type PageRegionComponent<
-    Descriptor extends string = string,
-    Config extends object = object,
-    Regions extends Record<string, PageRegion> = Record<string, PageRegion>
-> =
-    | FragmentComponent
-    | LayoutComponent<Descriptor, Config, Regions>
-    | PartComponent<Descriptor, Config>
-    | TextComponent;
-
-export type Component<
-    Descriptor extends string = string,
+export interface Component<
     Config extends object = object,
     Regions extends Record<string, Region> = Record<string, Region>
-> =
-    | FragmentComponent
-    | LayoutComponent<Descriptor, Config, Regions>
-    | PageComponent<Descriptor, Config, Regions>
-    | PartComponent<Descriptor, Config>
-    | TextComponent;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Region
-// ─────────────────────────────────────────────────────────────────────────────
-export interface LayoutRegion<Components extends LayoutRegionComponent[] = LayoutRegionComponent[]> {
-    name: string;
-    components: Components;
-}
-
-export interface PageRegion<Components extends PageRegionComponent[] = PageRegionComponent[]> {
-    name: string;
-    components: Components;
+> {
+    config?: Config;
+    descriptor?: string;
+    fragment?: string;
+    path?: string;
+    regions?: Regions;
+    type: 'fragment' | 'layout' | 'page' | 'part' | 'text';
+    text?: string
 }
 
 export interface Region<Components extends Component[] = Component[]> {
     name: string;
-    components: Component<Config>[];
+    components: Components;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Content
-// ─────────────────────────────────────────────────────────────────────────────
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    _Component extends Component = Component,
     > {
     _id: string;
     _name: string;
@@ -174,7 +147,7 @@ export interface Content<
     originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Type extends 'portal:fragment' ? undefined : _Component;
+    page: Type extends 'portal:fragment' ? undefined : Page;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -184,7 +157,7 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
-    fragment: Type extends 'portal:fragment' ? _Component : undefined;
+    fragment: Type extends 'portal:fragment' ? Layout | Part : undefined;
 }
 
 // Compliant with npm module ts-brand
