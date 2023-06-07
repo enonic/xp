@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 import org.osgi.framework.startlevel.BundleStartLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.bytebuddy.jar.asm.ClassReader;
 import net.bytebuddy.jar.asm.ClassVisitor;
@@ -15,6 +17,8 @@ import net.bytebuddy.jar.asm.commons.Remapper;
 public class NashornWeaver
     implements WeavingHook
 {
+    private static final Logger LOG = LoggerFactory.getLogger( NashornWeaver.class );
+
     private final long systemStartLevel;
 
     public NashornWeaver( final long systemStartLevel )
@@ -52,6 +56,8 @@ public class NashornWeaver
 
             if ( classModified.get() )
             {
+                LOG.warn( "Class {} uses unsupported jdk.nashorn. Application may stop working in future XP versions.",
+                          wovenClass.getClassName() );
                 byte[] bytes = cw.toByteArray();
 
                 wovenClass.setBytes( bytes );
