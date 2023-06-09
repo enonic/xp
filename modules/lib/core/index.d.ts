@@ -67,28 +67,31 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface Fragment {
+export interface FragmentComponent {
     type: 'fragment'
     fragment: string;
     path: string;
 }
 
-export interface Layout<
+export interface LayoutComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = NestedRecord
+    Config extends NestedRecord = NestedRecord,
+    Regions extends
+        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
 > {
     type: 'layout'
     descriptor: Descriptor
     config: Config
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
-    regions: Record<string, Region<(Fragment | Part | TextComponent)[]>>;
+    regions: Regions;
 }
-type EveryLayoutDescriptor = keyof XpLayoutMap;
-type EveryLayout = EveryLayoutDescriptor extends any // this lets us iterate over every member of the union
-    ? Layout<EveryLayoutDescriptor>
+type LayoutDescriptor = keyof XpLayoutMap;
+type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
+    ? LayoutComponent<LayoutDescriptor>
     : never;
 
-export interface Part<
+export interface PartComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord = NestedRecord
 > {
@@ -97,24 +100,27 @@ export interface Part<
     config: Config
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
-type EveryPartDescriptor = keyof XpPartMap;
-type EveryPart = EveryPartDescriptor extends any // this lets us iterate over every member of the union
-    ? Part<EveryPartDescriptor>
+type PartDescriptor = keyof XpPartMap;
+type Part = PartDescriptor extends any // this lets us iterate over every member of the union
+    ? PartComponent<PartDescriptor>
     : never;
 
-export interface Page<
+export interface PageComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = NestedRecord
+    Config extends NestedRecord = NestedRecord,
+    Regions extends
+        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
 > {
     type: 'page'
     descriptor: Descriptor
     config: Config
     path: '/'
-    regions: Record<string, Region<(Fragment | Layout | Part | TextComponent)[]>>;
+    regions: Regions;
 }
-type EveryPageDescriptor = keyof XpPageMap;
-type EveryPage = EveryPageDescriptor extends any // this lets us iterate over every member of the union
-    ? Page<EveryPageDescriptor>
+type PageDescriptor = keyof XpPageMap;
+type Page = PageDescriptor extends any // this lets us iterate over every member of the union
+    ? PageComponent<PageDescriptor>
     : never;
 
 export interface TextComponent {
@@ -123,23 +129,21 @@ export interface TextComponent {
     text: string
 }
 
-export interface Component<
-    Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>
-> {
-    config?: Config;
-    descriptor?: string;
-    fragment?: string;
-    path?: string;
-    regions?: Regions;
-    type: 'fragment' | 'layout' | 'page' | 'part' | 'text';
-    text?: string
-}
+export type Component<
+    Config extends NestedRecord = NestedRecord,
+    Regions extends Record<string, Region> = Record<string, Region>,
+    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
+> =
+    | FragmentComponent
+    | LayoutComponent<Descriptor, Config, Regions>
+    | PageComponent<Descriptor, Config, Regions>
+    | PartComponent<Descriptor, Config>
+    | TextComponent;
 
 export interface PageRegion<
     Components extends
-        (Fragment | Layout | Part | TextComponent)[] =
-        (Fragment | Layout | Part | TextComponent)[]
+        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout          | Part          | TextComponent)[]
 > {
     name: string;
     components: Components;
@@ -147,25 +151,26 @@ export interface PageRegion<
 
 export interface LayoutRegion<
     Components extends
-        (Fragment | Part | TextComponent)[] =
-        (Fragment | Part | TextComponent)[]
+        (FragmentComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Part          | TextComponent)[]
 > {
     name: string;
     components: Components;
 }
 
-export interface Region<Components extends Component[] = Component[]> {
-    name: string;
-    components: Components;
-}
+export type Region<
+    Components extends
+        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout          | Part          | TextComponent)[]
+> = PageRegion<Components> | LayoutRegion<Components>;
 
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    Component extends (
+    _Component extends (
         Type extends 'portal:fragment'
-            ? Layout | Part
-            : Page
+            ? LayoutComponent | PartComponent
+            : PageComponent
         ) = (
             Type extends 'portal:fragment'
                 ? Layout | Part
@@ -190,7 +195,7 @@ export interface Content<
     originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Type extends 'portal:fragment' ? undefined : Component;
+    page: Type extends 'portal:fragment' ? undefined : _Component;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -200,7 +205,7 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
-    fragment: Type extends 'portal:fragment' ? Component : undefined;
+    fragment: Type extends 'portal:fragment' ? _Component : undefined;
 }
 
 // Compliant with npm module ts-brand
