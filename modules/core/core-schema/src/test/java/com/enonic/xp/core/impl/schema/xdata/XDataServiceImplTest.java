@@ -27,10 +27,7 @@ public class XDataServiceImplTest
     protected void initialize()
         throws Exception
     {
-        this.service = new XDataServiceImpl();
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
-
+        this.service = new XDataServiceImpl( this.applicationService, this.resourceService );
         this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, null );
     }
 
@@ -74,11 +71,11 @@ public class XDataServiceImplTest
     public void testGetByContentType()
     {
         initializeApps();
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapp2:address" ).
-            xData( XDataNames.from( "myapp2:address", "myapp2:address1" ) ).
-            build();
+        final ContentType contentType = ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .name( "myapp2:address" )
+            .xData( XDataNames.from( "myapp2:address", "myapp2:address1" ) )
+            .build();
         final XDatas xDatas = service.getFromContentType( contentType );
         assertNotNull( xDatas );
         assertEquals( 1, xDatas.getSize() );

@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.task;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -19,7 +20,13 @@ public final class TaskDescriptorLoader
 {
     private static final String PATH = "/tasks";
 
-    private ResourceService resourceService;
+    private final DescriptorKeyLocator descriptorKeyLocator;
+
+    @Activate
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService )
+    {
+        descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
+    }
 
     @Override
     public Class<TaskDescriptor> getType()
@@ -30,7 +37,7 @@ public final class TaskDescriptorLoader
     @Override
     public DescriptorKeys find( final ApplicationKey key )
     {
-        return DescriptorKeys.from( new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key ) );
+        return DescriptorKeys.from( descriptorKeyLocator.findKeys( key ) );
     }
 
     @Override
@@ -60,12 +67,6 @@ public final class TaskDescriptorLoader
     public TaskDescriptor postProcess( final TaskDescriptor descriptor )
     {
         return descriptor;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 
     private void parseXml( final ApplicationKey applicationKey, final TaskDescriptor.Builder builder, final String xml )

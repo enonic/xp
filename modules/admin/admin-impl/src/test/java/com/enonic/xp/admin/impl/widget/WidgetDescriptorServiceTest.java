@@ -8,15 +8,13 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceKeys;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -28,8 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class WidgetDescriptorServiceTest
 {
     private DescriptorService descriptorService;
-
-    private ResourceService resourceService;
 
     private WidgetDescriptorServiceImpl service;
 
@@ -47,54 +43,46 @@ public class WidgetDescriptorServiceTest
     public void setup()
     {
         this.descriptorService = Mockito.mock( DescriptorService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
 
-        this.service = new WidgetDescriptorServiceImpl();
-        this.service.setDescriptorService( this.descriptorService );
-        this.service.setResourceService( this.resourceService );
+        this.service = new WidgetDescriptorServiceImpl( this.descriptorService );
 
-        widgetDescriptor1 = WidgetDescriptor.create().
-            key( DescriptorKey.from( "app:a" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).
-            build();
+        widgetDescriptor1 =
+            WidgetDescriptor.create().key( DescriptorKey.from( "app:a" ) ).addInterface( "com.enonic.xp.my-interface" ).build();
 
-        widgetDescriptor2 = WidgetDescriptor.create().
-            key( DescriptorKey.from( "app:b" ) ).
-            addInterface( "com.enonic.xp.another-interface" ).
-            build();
+        widgetDescriptor2 =
+            WidgetDescriptor.create().key( DescriptorKey.from( "app:b" ) ).addInterface( "com.enonic.xp.another-interface" ).build();
 
-        widgetDescriptor3 = WidgetDescriptor.create().
-            key( DescriptorKey.from( "app:c" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).
-            setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) ).
-            build();
+        widgetDescriptor3 = WidgetDescriptor.create()
+            .key( DescriptorKey.from( "app:c" ) )
+            .addInterface( "com.enonic.xp.my-interface" )
+            .setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) )
+            .build();
 
-        widgetDescriptor4 = WidgetDescriptor.create().
-            key( DescriptorKey.from( "app:d" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).
-            setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "user:system:anonymous" ) ) ).
-            build();
+        widgetDescriptor4 = WidgetDescriptor.create()
+            .key( DescriptorKey.from( "app:d" ) )
+            .addInterface( "com.enonic.xp.my-interface" )
+            .setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "user:system:anonymous" ) ) )
+            .build();
 
-        widgetDescriptor5 = WidgetDescriptor.create().
-            key( DescriptorKey.from( "app:e" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).
-            setAllowedPrincipals( Collections.emptyList() ).
-            build();
+        widgetDescriptor5 = WidgetDescriptor.create()
+            .key( DescriptorKey.from( "app:e" ) )
+            .addInterface( "com.enonic.xp.my-interface" )
+            .setAllowedPrincipals( Collections.emptyList() )
+            .build();
 
         final Descriptors<WidgetDescriptor> widgetDescriptors =
             Descriptors.from( widgetDescriptor1, widgetDescriptor2, widgetDescriptor3, widgetDescriptor4, widgetDescriptor5 );
         Mockito.when( this.descriptorService.getAll( WidgetDescriptor.class ) ).thenReturn( widgetDescriptors );
         Mockito.when( this.descriptorService.get( WidgetDescriptor.class, DescriptorKey.from( "app:c" ) ) ).thenReturn( widgetDescriptor3 );
         Mockito.when( this.descriptorService.get( WidgetDescriptor.class, DescriptorKey.from( "app:d" ) ) ).thenReturn( widgetDescriptor4 );
+        Mockito.when( this.descriptorService.get( WidgetDescriptor.class, ApplicationKeys.from( "app" ) ) )
+            .thenReturn( Descriptors.from( widgetDescriptor3, widgetDescriptor4 ) );
     }
 
     @Test
     public void get_by_application()
         throws Exception
     {
-        Mockito.when( this.resourceService.findFiles( ApplicationKey.from( "app" ), "/admin/widgets/.+\\.(xml|js)" ) ).thenReturn(
-            ResourceKeys.from( ResourceKey.from( "app:admin/widgets/d/d.xml" ), ResourceKey.from( "app:admin/widgets/c/c.xml" ) ) );
-
         final Descriptors<WidgetDescriptor> result = this.service.getByApplication( ApplicationKey.from( "app" ) );
 
         assertEquals( 2, result.getSize() );
@@ -128,12 +116,10 @@ public class WidgetDescriptorServiceTest
     public void get_allowed_by_interfaces_as_admin()
         throws Exception
     {
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).
-            principals( PrincipalKey.ofRole( "system.admin" ) ).
-            build();
-        final Context adminContext = ContextBuilder.
-            from( ContextAccessor.current() ).
-            authInfo( authenticationInfo ).build();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+            .principals( PrincipalKey.ofRole( "system.admin" ) )
+            .build();
+        final Context adminContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
 
         adminContext.runWith( () -> {
             final Descriptors<WidgetDescriptor> result = this.service.getAllowedByInterfaces( "com.enonic.xp.my-interface" );

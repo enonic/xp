@@ -10,6 +10,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RelationshipTypeServiceImplTest
     extends AbstractSchemaTest
@@ -18,11 +19,8 @@ public class RelationshipTypeServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
-        this.service = new RelationshipTypeServiceImpl();
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
+        this.service = new RelationshipTypeServiceImpl( this.applicationService, this.resourceService );
     }
 
     @Test
@@ -37,7 +35,7 @@ public class RelationshipTypeServiceImplTest
         assertEquals( 0, types2.getSize() );
 
         final RelationshipType mixin = service.getByName( RelationshipTypeName.from( "other:mytype" ) );
-        assertEquals( null, mixin );
+        assertNull( mixin );
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.widget;
 
 import java.time.Instant;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -22,7 +23,16 @@ public final class WidgetDescriptorLoader
 {
     private static final String PATH = "/admin/widgets";
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
+
+    private final DescriptorKeyLocator descriptorKeyLocator;
+
+    @Activate
+    public WidgetDescriptorLoader( @Reference final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, PATH, false );
+    }
 
     @Override
     public Class<WidgetDescriptor> getType()
@@ -33,7 +43,7 @@ public final class WidgetDescriptorLoader
     @Override
     public DescriptorKeys find( final ApplicationKey key )
     {
-        return DescriptorKeys.from( new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key ) );
+        return DescriptorKeys.from( descriptorKeyLocator.findKeys( key ) );
     }
 
     @Override
@@ -65,12 +75,6 @@ public final class WidgetDescriptorLoader
     public WidgetDescriptor postProcess( final WidgetDescriptor descriptor )
     {
         return descriptor;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 
     private void parseXml( final ApplicationKey applicationKey, final WidgetDescriptor.Builder builder, final String xml )

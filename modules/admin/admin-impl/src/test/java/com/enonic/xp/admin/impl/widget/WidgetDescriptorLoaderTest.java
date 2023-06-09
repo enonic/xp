@@ -30,8 +30,7 @@ public class WidgetDescriptorLoaderTest
     protected void initialize()
         throws Exception
     {
-        this.loader = new WidgetDescriptorLoader();
-        this.loader.setResourceService( this.resourceService );
+        this.loader = new WidgetDescriptorLoader( this.resourceService );
 
         final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );

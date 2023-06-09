@@ -21,11 +21,8 @@ public class AdminToolDescriptorServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
-        this.service = new AdminToolDescriptorServiceImpl();
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
+        this.service = new AdminToolDescriptorServiceImpl( this.resourceService, this.applicationService );
 
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
@@ -33,7 +30,6 @@ public class AdminToolDescriptorServiceImplTest
 
     @Test
     public void getAllowedAdminToolDescriptors()
-        throws Exception
     {
         final PrincipalKeys principalKeys = PrincipalKeys.from( PrincipalKey.from( "role:system.user.admin" ) );
         AdminToolDescriptors result = this.service.getAllowedAdminToolDescriptors( principalKeys );

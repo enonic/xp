@@ -25,14 +25,11 @@ public class PageDescriptorServiceTest
     {
         super.initialize();
 
-        this.service = new PageDescriptorServiceImpl();
-        this.service.setResourceService( this.resourceService );
-        this.service.setMixinService( this.mixinService );
+        this.service = new PageDescriptorServiceImpl( this.descriptorService );
     }
 
     @Test
     public void testGetByKey()
-        throws Exception
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypage" );
         final PageDescriptor descriptor = this.service.getByKey( key );

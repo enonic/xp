@@ -16,7 +16,7 @@ import com.enonic.xp.region.LayoutDescriptors;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
-    final DescriptorService descriptorService;
+    private final DescriptorService descriptorService;
 
     @Activate
     public LayoutDescriptorServiceImpl( @Reference final DescriptorService descriptorService )
