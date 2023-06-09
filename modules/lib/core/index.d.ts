@@ -88,7 +88,7 @@ export interface LayoutComponent<
 }
 type LayoutDescriptor = keyof XpLayoutMap;
 type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
-    ? LayoutComponent<LayoutDescriptor>
+    ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
     : never;
 
 export interface PartComponent<
@@ -102,7 +102,7 @@ export interface PartComponent<
 }
 type PartDescriptor = keyof XpPartMap;
 type Part = PartDescriptor extends any // this lets us iterate over every member of the union
-    ? PartComponent<PartDescriptor>
+    ? PartComponent<PartDescriptor, XpPartMap<PartDescriptor>>
     : never;
 
 export interface PageComponent<
@@ -120,7 +120,7 @@ export interface PageComponent<
 }
 type PageDescriptor = keyof XpPageMap;
 type Page = PageDescriptor extends any // this lets us iterate over every member of the union
-    ? PageComponent<PageDescriptor>
+    ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
     : never;
 
 export interface TextComponent {
