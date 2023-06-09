@@ -22,10 +22,8 @@ public class TaskDescriptorLoaderTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
-        this.loader = new TaskDescriptorLoader();
-        this.loader.setResourceService( this.resourceService );
+        this.loader = new TaskDescriptorLoader( this.resourceService );
 
         addApplication( "myapp1", "/apps/myapp1" );
     }

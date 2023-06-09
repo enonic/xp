@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,13 +29,16 @@ public final class XDataServiceImpl
 {
     private final BuiltinXDataTypes builtInTypes;
 
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    private final XDataLoader xDataLoader;
 
-    public XDataServiceImpl()
+    @Activate
+    public XDataServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
         this.builtInTypes = new BuiltinXDataTypes();
+        this.applicationService = applicationService;
+        this.xDataLoader = new XDataLoader( resourceService );
     }
 
     @Override
@@ -45,8 +49,7 @@ public final class XDataServiceImpl
             return this.builtInTypes.getAll().getXData( name );
         }
 
-        final XData xData = new XDataLoader( this.resourceService ).get( name );
-        return xData;
+        return xDataLoader.get( name );
     }
 
     @Override
@@ -83,7 +86,7 @@ public final class XDataServiceImpl
         }
 
         final List<XData> list = new ArrayList<>();
-        for ( final XDataName name : findNames( key ) )
+        for ( final XDataName name : xDataLoader.findNames( key ) )
         {
             final XData type = getByName( name );
             if ( type != null )
@@ -99,26 +102,7 @@ public final class XDataServiceImpl
     @Override
     public XDatas getFromContentType( final ContentType contentType )
     {
-        return XDatas.from( contentType.getXData().stream().
-            map( this::getByName ).
-            filter( Objects::nonNull ).
-            collect( Collectors.toSet() ) );
-    }
-
-    private Set<XDataName> findNames( final ApplicationKey key )
-    {
-        return new XDataLoader( this.resourceService ).findNames( key );
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
+        return XDatas.from(
+            contentType.getXData().stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toSet() ) );
     }
 }

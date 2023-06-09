@@ -30,6 +30,7 @@ public abstract class AbstractDescriptorServiceTest
         final DescriptorServiceImpl descriptorServiceImpl = new DescriptorServiceImpl( facetFactory );
         descriptorServiceImpl.addLoader( new LayoutDescriptorLoader( this.resourceService, this.mixinService ) );
         descriptorServiceImpl.addLoader( new PartDescriptorLoader( this.resourceService, this.mixinService ) );
+        descriptorServiceImpl.addLoader( new PageDescriptorLoader( this.resourceService, this.mixinService ) );
         this.descriptorService = descriptorServiceImpl;
 
         addApplication( "myapp1", "/apps/myapp1" );

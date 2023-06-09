@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -36,18 +37,21 @@ public final class MixinServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
 
-    private ApplicationService applicationService;
+    private final MixinLoader mixinLoader;
 
-    private ResourceService resourceService;
+    private final ApplicationService applicationService;
 
-    public MixinServiceImpl()
+    @Activate
+    public MixinServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
+        this.mixinLoader = new MixinLoader( resourceService );
+        this.applicationService = applicationService;
     }
 
     @Override
     public Mixin getByName( final MixinName name )
     {
-        return new MixinLoader( this.resourceService ).get( name );
+        return mixinLoader.get( name );
     }
 
     @Override
@@ -79,7 +83,7 @@ public final class MixinServiceImpl
     public Mixins getByApplication( final ApplicationKey key )
     {
         final List<Mixin> list = new ArrayList<>();
-        for ( final MixinName name : findNames( key ) )
+        for ( final MixinName name : mixinLoader.findNames( key ) )
         {
             final Mixin type = getByName( name );
             if ( type != null )
@@ -90,11 +94,6 @@ public final class MixinServiceImpl
         }
 
         return Mixins.from( list );
-    }
-
-    private Set<MixinName> findNames( final ApplicationKey key )
-    {
-        return new MixinLoader( this.resourceService ).findNames( key );
     }
 
     @Override
@@ -178,17 +177,5 @@ public final class MixinServiceImpl
             }
         }
         return formItems;
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 }

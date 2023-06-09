@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -24,13 +25,17 @@ public final class RelationshipTypeServiceImpl
 {
     private final BuiltinRelationshipTypes builtInTypes;
 
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    private final RelationshipTypeLoader relationshipTypeLoader;
 
-    public RelationshipTypeServiceImpl()
+    @Activate
+    public RelationshipTypeServiceImpl( @Reference final ApplicationService applicationService,
+                                        @Reference final ResourceService resourceService )
     {
         this.builtInTypes = new BuiltinRelationshipTypes();
+        this.applicationService = applicationService;
+        this.relationshipTypeLoader = new RelationshipTypeLoader( resourceService );
     }
 
     @Override
@@ -41,7 +46,7 @@ public final class RelationshipTypeServiceImpl
             return this.builtInTypes.getAll().get( name );
         }
 
-        return new RelationshipTypeLoader( this.resourceService ).get( name );
+        return relationshipTypeLoader.get( name );
     }
 
     private boolean isSystem( final RelationshipTypeName name )
@@ -72,7 +77,7 @@ public final class RelationshipTypeServiceImpl
         }
 
         final List<RelationshipType> list = new ArrayList<>();
-        for ( final RelationshipTypeName name : findNames( key ) )
+        for ( final RelationshipTypeName name : relationshipTypeLoader.findNames( key ) )
         {
             final RelationshipType type = getByName( name );
             if ( type != null )
@@ -83,23 +88,6 @@ public final class RelationshipTypeServiceImpl
         }
 
         return RelationshipTypes.from( list );
-    }
-
-    private Set<RelationshipTypeName> findNames( final ApplicationKey key )
-    {
-        return new RelationshipTypeLoader( this.resourceService ).findNames( key );
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 }
 

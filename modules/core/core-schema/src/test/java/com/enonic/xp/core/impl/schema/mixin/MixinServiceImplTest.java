@@ -31,9 +31,7 @@ public class MixinServiceImplTest
     protected void initialize()
         throws Exception
     {
-        this.service = new MixinServiceImpl();
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
+        this.service = new MixinServiceImpl( this.applicationService, this.resourceService );
 
         this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.service );
     }
@@ -79,10 +77,10 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().
-            addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.create().mixin( "myapp2:mixin2" ).build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( InlineMixin.create().mixin( "myapp2:mixin2" ).build() )
+            .build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
@@ -98,10 +96,10 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().
-            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() )
+            .build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
@@ -116,16 +114,12 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().
-            addFormItem( FormItemSet.create().
-                name( "home" ).
-                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
-                build() ).
-            addFormItem( FormItemSet.create().
-                name( "cottage" ).
-                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).
-                build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem(
+                FormItemSet.create().name( "home" ).addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() )
+            .addFormItem(
+                FormItemSet.create().name( "cottage" ).addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() )
+            .build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
@@ -146,9 +140,7 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().
-            addFormItem( InlineMixin.create().mixin( "myapp2:address2" ).build() ).
-            build();
+        final Form form = Form.create().addFormItem( InlineMixin.create().mixin( "myapp2:address2" ).build() ).build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
@@ -161,10 +153,10 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().
-            addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() )
+            .build();
 
         try
         {
@@ -182,19 +174,29 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final FormOptionSet optionSet = FormOptionSet.create().
-            name( "myOptionSet" ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
-                addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
-                defaultOption( true ).addFormItem(
-                Input.create().name( "myTextLine2" ).label( "My text line 2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            build();
+        final FormOptionSet optionSet = FormOptionSet.create()
+            .name( "myOptionSet" )
+            .addOptionSetOption( FormOptionSetOption.create()
+                                     .name( "myOptionSetOption1" )
+                                     .label( "option label1" )
+                                     .addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() )
+                                     .build() )
+            .addOptionSetOption( FormOptionSetOption.create()
+                                     .name( "myOptionSetOption2" )
+                                     .label( "option label2" )
+                                     .defaultOption( true )
+                                     .addFormItem( Input.create()
+                                                       .name( "myTextLine2" )
+                                                       .label( "My text line 2" )
+                                                       .inputType( InputTypeName.TEXT_LINE )
+                                                       .build() )
+                                     .build() )
+            .build();
 
-        final Form form = Form.create().
-            addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            addFormItem( optionSet ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( optionSet )
+            .build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
