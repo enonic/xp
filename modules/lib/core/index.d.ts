@@ -1,14 +1,18 @@
 export type ComponentDescriptor = `${string}:${string}`;
 
+export interface NestedRecord {
+	[name: PropertyKey]: NestedRecord | unknown
+}
+
 declare global {
     interface XpLayoutMap {
-        [layoutDescriptor: ComponentDescriptor]: object;
+        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
     }
     interface XpPageMap {
-        [pageDescriptor: ComponentDescriptor]: object;
+        [pageDescriptor: ComponentDescriptor]: NestedRecord;
     }
     interface XpPartMap {
-        [partDescriptor: ComponentDescriptor]: object;
+        [partDescriptor: ComponentDescriptor]: NestedRecord;
     }
     interface XpXData {
         [key: string]: Record<string, Record<string, unknown>>;
@@ -69,37 +73,49 @@ export interface Fragment {
     path: string;
 }
 
-export type LayoutDescriptor = keyof XpLayoutMap;
 export interface Layout<
-    Descriptor extends LayoutDescriptor = LayoutDescriptor
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord = NestedRecord
 > {
     type: 'layout'
     descriptor: Descriptor
-    config: XpLayoutMap[Descriptor]
+    config: Config
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
     regions: Record<string, Region<(Fragment | Part | TextComponent)[]>>;
 }
+type EveryLayoutDescriptor = keyof XpLayoutMap;
+type EveryLayout = EveryLayoutDescriptor extends any // this lets us iterate over every member of the union
+    ? Layout<EveryLayoutDescriptor>
+    : never;
 
-export type PartDescriptor = keyof XpPartMap;
 export interface Part<
-    Descriptor extends PartDescriptor = PartDescriptor,
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord = NestedRecord
 > {
     type: 'part'
     descriptor: Descriptor
-    config: XpPartMap[Descriptor]
+    config: Config
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
+type EveryPartDescriptor = keyof XpPartMap;
+type EveryPart = EveryPartDescriptor extends any // this lets us iterate over every member of the union
+    ? Part<EveryPartDescriptor>
+    : never;
 
-export type PageDescriptor = keyof XpPageMap;
 export interface Page<
-    Descriptor extends PageDescriptor = PageDescriptor,
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord = NestedRecord
 > {
     type: 'page'
     descriptor: Descriptor
-    config: XpPageMap[Descriptor]
+    config: Config
     path: '/'
     regions: Record<string, Region<(Fragment | Layout | Part | TextComponent)[]>>;
 }
+type EveryPageDescriptor = keyof XpPageMap;
+type EveryPage = EveryPageDescriptor extends any // this lets us iterate over every member of the union
+    ? Page<EveryPageDescriptor>
+    : never;
 
 export interface TextComponent {
     type: 'text'
@@ -120,6 +136,24 @@ export interface Component<
     text?: string
 }
 
+export interface PageRegion<
+    Components extends
+        (Fragment | Layout | Part | TextComponent)[] =
+        (Fragment | Layout | Part | TextComponent)[]
+> {
+    name: string;
+    components: Components;
+}
+
+export interface LayoutRegion<
+    Components extends
+        (Fragment | Part | TextComponent)[] =
+        (Fragment | Part | TextComponent)[]
+> {
+    name: string;
+    components: Components;
+}
+
 export interface Region<Components extends Component[] = Component[]> {
     name: string;
     components: Components;
@@ -128,6 +162,15 @@ export interface Region<Components extends Component[] = Component[]> {
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
+    Component extends (
+        Type extends 'portal:fragment'
+            ? Layout | Part
+            : Page
+        ) = (
+            Type extends 'portal:fragment'
+                ? Layout | Part
+                : Page
+            ),
     > {
     _id: string;
     _name: string;
@@ -147,7 +190,7 @@ export interface Content<
     originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Type extends 'portal:fragment' ? undefined : Page;
+    page: Type extends 'portal:fragment' ? undefined : Component;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -157,7 +200,7 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
-    fragment: Type extends 'portal:fragment' ? Layout | Part : undefined;
+    fragment: Type extends 'portal:fragment' ? Component : undefined;
 }
 
 // Compliant with npm module ts-brand
