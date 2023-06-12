@@ -72,7 +72,7 @@ owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java
 
 bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.4" }
 
-cronutils = { module = "com.cronutils:cron-utils", version = "9.2.0" }
+cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 
 jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
