@@ -17,6 +17,7 @@ import type {
     ByteSource,
     Component,
     Content,
+    NestedRecord,
     Region,
 } from '@enonic-types/core';
 
@@ -456,12 +457,9 @@ export function getContent<Hit extends Content<unknown> = Content>(): Hit | null
     return __.toNativeObject(bean.execute<Hit>());
 }
 
-interface GetCurrentComponentHandler<Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>> {
-
-    execute(): Component<Config, Regions> | null;
+interface GetCurrentComponentHandler<_Component extends Component = Component> {
+    execute(): _Component | null;
 }
-
 
 /**
  * This function returns the component corresponding to the current execution context. It is meant to be called
@@ -471,10 +469,10 @@ interface GetCurrentComponentHandler<Config extends object = object,
  *
  * @returns {object|null} The current component as JSON.
  */
-export function getComponent<Config extends object = object,
-    Regions extends Record<string, Region> = Record<string, Region>,
-    >(): Component<Config, Regions> | null {
-    const bean = __.newBean<GetCurrentComponentHandler<Config, Regions>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+export function getComponent<
+    _Component extends Component = Component
+>(): _Component | null {
+    const bean = __.newBean<GetCurrentComponentHandler<_Component>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 

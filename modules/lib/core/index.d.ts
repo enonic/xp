@@ -1,4 +1,19 @@
+export type ComponentDescriptor = `${string}:${string}`;
+
+export interface NestedRecord {
+	[name: PropertyKey]: NestedRecord | unknown
+}
+
 declare global {
+    interface XpLayoutMap {
+        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+    interface XpPageMap {
+        [pageDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+    interface XpPartMap {
+        [partDescriptor: ComponentDescriptor]: NestedRecord;
+    }
     interface XpXData {
         [key: string]: Record<string, Record<string, unknown>>;
     }
@@ -52,23 +67,123 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface Component<Config extends object = object, Regions extends Record<string, Region> = Record<string, Region>> {
-    config: Config;
-    descriptor: string;
+export interface FragmentComponent {
+    type: 'fragment'
+    fragment: string;
     path: string;
-    type: 'page' | 'layout' | 'part';
-    regions: Regions;
 }
 
-export interface Region<Config extends object = object> {
-    name: string;
-    components: Component<Config>[];
+export interface LayoutComponent<
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord = Descriptor extends LayoutDescriptor
+        ? XpLayoutMap[LayoutDescriptor]
+        : NestedRecord,
+    Regions extends
+        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
+> {
+    type: 'layout'
+    descriptor: Descriptor
+    config: Config
+    path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+    regions: Regions;
 }
+type LayoutDescriptor = keyof XpLayoutMap;
+type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
+    ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
+    : never;
+
+export interface PartComponent<
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord =
+        Descriptor extends PartDescriptor
+        ? XpPartMap<PartDescriptor>
+        : NestedRecord
+> {
+    type: 'part'
+    descriptor: Descriptor
+    config: Config
+    path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+}
+type PartDescriptor = keyof XpPartMap;
+type Part = PartDescriptor extends any // this lets us iterate over every member of the union
+    ? PartComponent<PartDescriptor, XpPartMap<PartDescriptor>>
+    : never;
+
+export interface PageComponent<
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Config extends NestedRecord =
+        Descriptor extends PageDescriptor
+        ? XpPageMap[PageDescriptor]
+        : NestedRecord,
+    Regions extends
+        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
+> {
+    type: 'page'
+    descriptor: Descriptor
+    config: Config
+    path: '/'
+    regions: Regions;
+}
+type PageDescriptor = keyof XpPageMap;
+type Page = PageDescriptor extends any // this lets us iterate over every member of the union
+    ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
+    : never;
+
+export interface TextComponent {
+    type: 'text'
+    path: string
+    text: string
+}
+
+export type Component<
+    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
+    Config extends NestedRecord = NestedRecord,
+    Regions extends Record<string, Region> = Record<string, Region>,
+> =
+    | FragmentComponent
+    | LayoutComponent<Descriptor, Config, Regions>
+    | PageComponent<Descriptor, Config, Regions>
+    | PartComponent<Descriptor, Config>
+    | TextComponent;
+
+export interface PageRegion<
+    Components extends
+        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout          | Part          | TextComponent)[]
+> {
+    name: string;
+    components: Components;
+}
+
+export interface LayoutRegion<
+    Components extends
+        (FragmentComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Part          | TextComponent)[]
+> {
+    name: string;
+    components: Components;
+}
+
+export type Region<
+    Components extends
+        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout          | Part          | TextComponent)[]
+> = PageRegion<Components> | LayoutRegion<Components>;
 
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    _Component extends Component = Component,
+    _Component extends (
+        Type extends 'portal:fragment'
+            ? LayoutComponent | PartComponent
+            : PageComponent
+        ) = (
+            Type extends 'portal:fragment'
+                ? Layout | Part
+                : Page
+            ),
     > {
     _id: string;
     _name: string;
