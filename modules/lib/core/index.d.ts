@@ -75,7 +75,9 @@ export interface FragmentComponent {
 
 export interface LayoutComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = NestedRecord,
+    Config extends NestedRecord = Descriptor extends LayoutDescriptor
+        ? XpLayoutMap[LayoutDescriptor]
+        : NestedRecord,
     Regions extends
         Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
         Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
@@ -93,7 +95,10 @@ type Layout = LayoutDescriptor extends any // this lets us iterate over every me
 
 export interface PartComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = NestedRecord
+    Config extends NestedRecord =
+        Descriptor extends PartDescriptor
+        ? XpPartMap<PartDescriptor>
+        : NestedRecord
 > {
     type: 'part'
     descriptor: Descriptor
@@ -107,7 +112,10 @@ type Part = PartDescriptor extends any // this lets us iterate over every member
 
 export interface PageComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = NestedRecord,
+    Config extends NestedRecord =
+        Descriptor extends PageDescriptor
+        ? XpPageMap[PageDescriptor]
+        : NestedRecord,
     Regions extends
         Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
         Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
@@ -130,9 +138,9 @@ export interface TextComponent {
 }
 
 export type Component<
+    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
     Config extends NestedRecord = NestedRecord,
     Regions extends Record<string, Region> = Record<string, Region>,
-    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
 > =
     | FragmentComponent
     | LayoutComponent<Descriptor, Config, Regions>
