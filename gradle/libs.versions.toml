@@ -62,7 +62,7 @@ bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version = "1.70" 
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 
-jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
+jna = { module = "net.java.dev.jna:jna", version = "5.13.0" }
 
 guava = { module = "com.google.guava:guava", version = "26.0-jre" }
 
