@@ -38,24 +38,26 @@ public abstract class ProbeServlet
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
+        res.setContentType( MediaType.JSON_UTF_8.toString() );
+        final PrintWriter writer = res.getWriter();
+
         if ( errorMessages.isEmpty() )
         {
             res.setStatus( 200 );
+
+            writer.print( json );
         }
         else
         {
             res.setStatus( 503 );
-
-            res.setContentType( MediaType.JSON_UTF_8.toString() );
-            final PrintWriter writer = res.getWriter();
 
             final ArrayNode errors = json.putArray( "errors" );
             errorMessages.forEach( errors::add );
 
             writer.print( json );
 
-            writer.close();
         }
+        writer.close();
     }
 
     void deactivate()
