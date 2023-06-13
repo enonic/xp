@@ -14,7 +14,7 @@ import com.enonic.xp.server.impl.status.check.OSGIStateChecks;
 
 @Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
-@WebServlet({"/healthz"})
+@WebServlet({"/health"})
 public final class HealthProbeServlet
     extends ProbeServlet
 {
