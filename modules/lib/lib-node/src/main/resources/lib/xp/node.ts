@@ -419,9 +419,9 @@ export interface FindChildrenParams {
     parentKey: string;
     start?: number | null;
     count?: number | null;
-    childOrder: string;
-    countOnly: boolean;
-    recursive: boolean;
+    childOrder?: string;
+    countOnly?: boolean;
+    recursive?: boolean;
 }
 
 interface FindChildrenHandlerParams {
