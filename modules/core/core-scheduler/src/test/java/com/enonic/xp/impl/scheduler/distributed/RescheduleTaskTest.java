@@ -236,6 +236,7 @@ public class RescheduleTaskTest
             createAndRunTask();
         }
         verify( taskService, times( 11 ) ).submitTask( taskCaptor.capture() );
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
     }
 
     @Test

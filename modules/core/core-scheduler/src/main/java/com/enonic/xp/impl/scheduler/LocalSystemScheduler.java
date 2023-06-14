@@ -19,14 +19,13 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.core.internal.Local;
 import com.enonic.xp.core.internal.concurrent.ThreadFactoryImpl;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
-import com.enonic.xp.impl.scheduler.distributed.SchedulableTaskImpl;
 
 @Component(immediate = true)
 @Local
 public final class LocalSystemScheduler
     implements SystemScheduler
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SchedulableTaskImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LocalSystemScheduler.class );
 
     private static final int CORE_POOL_SIZE = 1;
 
