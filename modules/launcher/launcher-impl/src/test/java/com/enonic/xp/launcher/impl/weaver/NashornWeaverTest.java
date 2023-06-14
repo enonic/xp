@@ -26,14 +26,14 @@ class NashornWeaverTest
         final WovenClass wovenClass = mock( WovenClass.class, RETURNS_DEEP_STUBS );
         final BundleStartLevel bundleStartLevelMock = mock( BundleStartLevel.class );
         when( wovenClass.getBundleWiring().getBundle().adapt( same( BundleStartLevel.class ) ) ).thenReturn( bundleStartLevelMock );
-        when( bundleStartLevelMock.getStartLevel() ).thenReturn( 41 );
+        when( bundleStartLevelMock.getStartLevel() ).thenReturn( 60 );
 
         final byte[] originalBytes = readResource();
         // Precondition: make sure that the class contains the original jdk/nashorn
         assertThat( originalBytes ).containsSequence( "Ljdk/nashorn/api/scripting/JSObject".getBytes( StandardCharsets.UTF_8 ) );
 
         when( wovenClass.getBytes() ).thenReturn( originalBytes );
-        new NashornWeaver( 40 ).weave( wovenClass );
+        new NashornWeaver( 60 ).weave( wovenClass );
 
         final ArgumentCaptor<byte[]> captor = ArgumentCaptor.forClass( byte[].class );
         verify( wovenClass ).setBytes( captor.capture() );
