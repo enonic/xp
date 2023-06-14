@@ -144,14 +144,14 @@ public class RescheduleTask
 
         fillJobsToSchedule( jobs );
 
-        final List<JobToRun> failedJobs = scheduleJobs( jobs );
+        final List<FailedJob> failedJobs = scheduleJobs( jobs );
 
         retryFailedJobs( failedJobs );
     }
 
-    private List<JobToRun> scheduleJobs( final Map<ScheduledJobName, ScheduledJob> jobs )
+    private List<FailedJob> scheduleJobs( final Map<ScheduledJobName, ScheduledJob> jobs )
     {
-        final ImmutableList.Builder<JobToRun> failedJobs = ImmutableList.builder();
+        final ImmutableList.Builder<FailedJob> failedJobs = ImmutableList.builder();
 
         while ( !QUEUE.isEmpty() )
         {
@@ -187,7 +187,7 @@ public class RescheduleTask
                 }
                 catch ( Exception e )
                 {
-                    failedJobs.add( peek );
+                    failedJobs.add( new FailedJob( peek, e ) );
                 }
                 catch ( Throwable t )
                 {
@@ -199,17 +199,26 @@ public class RescheduleTask
         return failedJobs.build();
     }
 
-    private void retryFailedJobs( final List<JobToRun> failedJobs )
+    private void retryFailedJobs( final List<FailedJob> failedJobs )
     {
-        failedJobs.forEach( entity -> {
-            if ( entity.attempts < 10 )
+        failedJobs.forEach( failedJob -> {
+            if ( failedJob.job.attempts < 10 )
             {
-                QUEUE.offer( new JobToRun( entity.name, entity.modifiedTime, entity.timeToRun, entity.attempts + 1 ) );
-                LOG.warn( "Error while running job [{}], will try to run once more", entity.name );
+                QUEUE.offer(
+                    new JobToRun( failedJob.job.name, failedJob.job.modifiedTime, failedJob.job.timeToRun, failedJob.job.attempts + 1 ) );
+                LOG.warn( "Error while running job [{}], will try to run once more", failedJob.job.name );
             }
             else
             {
-                LOG.error( "Error while running job [{}], no further attempts will be made", entity.name );
+                adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create()
+                    .nodeService( nodeService )
+                    .name( failedJob.job.name )
+                    .lastRun( Instant.now() )
+                    .lastTaskId( null )
+                    .build()
+                    .execute() ) );
+
+                LOG.error( "Error while running job [{}], no further attempts will be made", failedJob.job.name, failedJob.reason );
             }
         } );
     }
@@ -269,4 +278,18 @@ public class RescheduleTask
             this.attempts = attempts;
         }
     }
+
+    private static class FailedJob
+    {
+        final JobToRun job;
+
+        final Exception reason;
+
+        FailedJob( final JobToRun job, final Exception reason )
+        {
+            this.job = job;
+            this.reason = reason;
+        }
+    }
+
 }

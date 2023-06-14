@@ -47,7 +47,7 @@ public class UpdateLastRunCommand
             path( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) ).
             editor( toBeEdited -> {
                 toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
-                toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId.toString() );
+            toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId != null ? lastTaskId.toString() : null );
             } ).
             refresh( RefreshMode.ALL ).
             build();
@@ -93,7 +93,6 @@ public class UpdateLastRunCommand
         {
             Preconditions.checkNotNull( name, "name cannot be null." );
             Preconditions.checkNotNull( lastRun, "lastRun cannot be null." );
-            Preconditions.checkNotNull( lastTaskId, "lastTaskId cannot be null." );
         }
 
         @Override
