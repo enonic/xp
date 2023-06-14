@@ -178,7 +178,7 @@ export interface Content<
     _Component extends (
         Type extends 'portal:fragment'
             ? LayoutComponent | PartComponent
-            : PageComponent
+            : PageComponent | Record<string,never>
         ) = (
             Type extends 'portal:fragment'
                 ? Layout | Part
@@ -194,7 +194,7 @@ export interface Content<
     createdTime: string;
     modifiedTime?: string;
     owner: string;
-    data: Type extends 'portal:fragment' ? undefined : Data;
+    data: Type extends 'portal:fragment' ? Record<string,never> : Data;
     type: Type;
     displayName: string;
     hasChildren: boolean;
@@ -203,7 +203,7 @@ export interface Content<
     originProject?: string;
     childOrder?: string;
     _sort?: object[];
-    page: Type extends 'portal:fragment' ? undefined : _Component;
+    page?: Type extends 'portal:fragment' ? never : _Component;
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
@@ -213,7 +213,7 @@ export interface Content<
     };
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
-    fragment: Type extends 'portal:fragment' ? _Component : undefined;
+    fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
 // Compliant with npm module ts-brand
