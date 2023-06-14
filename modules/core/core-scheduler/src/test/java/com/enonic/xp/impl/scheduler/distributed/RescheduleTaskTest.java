@@ -304,6 +304,32 @@ public class RescheduleTaskTest
     }
 
     @Test
+    public void jobWasModified()
+        throws InterruptedException
+    {
+        final Instant plus = null;
+
+        ScheduledJob job = mockCronJob( "job1", "1 1 1 1 1", plus );
+
+        when( schedulerService.list() ).thenReturn( List.of( job ) );
+
+        createAndRunTask();
+
+        ScheduledJob modified = mockCronJob( "job1", "* * * * *", plus );
+        when( schedulerService.list() ).thenReturn( List.of( modified ) );
+
+        createAndRunTask();
+
+        Thread.sleep( 61000 );
+
+        createAndRunTask();
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+        assertEquals( "job1", taskCaptor.getValue().getDescriptorKey().getName() );
+    }
+
+
+    @Test
     public void testName()
     {
         assertEquals( "rescheduleTask", new RescheduleTask().getName() );
@@ -395,7 +421,7 @@ public class RescheduleTaskTest
             .creator( PrincipalKey.from( "user:system:creator" ) )
             .modifier( PrincipalKey.from( "user:system:modifier" ) )
             .createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
-            .modifiedTime( Instant.parse( "2021-02-25T10:44:53.170079900Z" ) )
+            .modifiedTime( Instant.now() )
             .lastRun( lastRun )
             .build();
     }

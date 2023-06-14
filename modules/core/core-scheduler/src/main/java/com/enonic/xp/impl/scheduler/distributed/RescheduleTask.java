@@ -62,8 +62,21 @@ public class RescheduleTask
         final Predicate<ScheduledJob> filterAlreadyScheduled =
             job -> !QUEUE.stream().map( entity -> entity.name ).collect( Collectors.toSet() ).contains( job.getName() );
 
+        unscheduleModifiedJobs( jobs );
         scheduleCronJobs( jobs, now, filterAlreadyScheduled );
         scheduleOneTimeJobs( jobs, now, filterAlreadyScheduled );
+    }
+
+    private static void unscheduleModifiedJobs( final Map<ScheduledJobName, ScheduledJob> jobs )
+    {
+        QUEUE.removeIf( jobToRun -> {
+            final ScheduledJob scheduledJob = jobs.get( jobToRun.name );
+            if ( scheduledJob != null )
+            {
+                return !jobToRun.modifiedTime.equals( scheduledJob.getModifiedTime() );
+            }
+            return false;
+        } );
     }
 
     private static void scheduleOneTimeJobs( final Map<ScheduledJobName, ScheduledJob> jobs, final Instant now,
@@ -75,9 +88,7 @@ public class RescheduleTask
             .filter( filterAlreadyScheduled )
             .filter( job -> ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) && job.getLastRun() == null )
             .forEach( ( job ) -> {
-                job.getCalendar()
-                    .nextExecution( now )
-                    .ifPresent( timeToExecute -> QUEUE.offer( new JobToRun( job.getName(), timeToExecute ) ) );
+                job.getCalendar().nextExecution( now ).ifPresent( timeToExecute -> QUEUE.offer( new JobToRun( job, timeToExecute ) ) );
             } );
     }
 
@@ -93,7 +104,7 @@ public class RescheduleTask
                 final Instant actualLastRun = job.getLastRun();
 
                 job.getCalendar().nextExecution( actualLastRun != null ? actualLastRun : now ).ifPresent( timeToExecute -> {
-                    QUEUE.offer( new JobToRun( job.getName(), timeToExecute ) );
+                    QUEUE.offer( new JobToRun( job, timeToExecute ) );
                 } );
             } );
     }
@@ -193,7 +204,7 @@ public class RescheduleTask
         failedJobs.forEach( entity -> {
             if ( entity.attempts < 10 )
             {
-                QUEUE.offer( new JobToRun( entity.name, entity.timeToRun, entity.attempts + 1 ) );
+                QUEUE.offer( new JobToRun( entity.name, entity.modifiedTime, entity.timeToRun, entity.attempts + 1 ) );
                 LOG.warn( "Error while running job [{}], will try to run once more", entity.name );
             }
             else
@@ -240,16 +251,20 @@ public class RescheduleTask
 
         private final int attempts;
 
-        JobToRun( final ScheduledJobName name, final Instant timeToRun )
+        private final Instant modifiedTime;
+
+        JobToRun( final ScheduledJob job, final Instant timeToRun )
         {
-            this.name = name;
+            this.name = job.getName();
+            this.modifiedTime = job.getModifiedTime();
             this.timeToRun = timeToRun;
             this.attempts = 0;
         }
 
-        JobToRun( final ScheduledJobName name, final Instant timeToRun, final int attempts )
+        JobToRun( final ScheduledJobName name, final Instant modifiedTime, final Instant timeToRun, final int attempts )
         {
             this.name = name;
+            this.modifiedTime = modifiedTime;
             this.timeToRun = timeToRun;
             this.attempts = attempts;
         }
