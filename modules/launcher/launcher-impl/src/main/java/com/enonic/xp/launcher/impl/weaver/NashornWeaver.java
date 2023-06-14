@@ -28,7 +28,7 @@ public class NashornWeaver
 
     public void weave( final WovenClass wovenClass )
     {
-        if ( wovenClass.getBundleWiring().getBundle().adapt( BundleStartLevel.class ).getStartLevel() > systemStartLevel )
+        if ( wovenClass.getBundleWiring().getBundle().adapt( BundleStartLevel.class ).getStartLevel() >= systemStartLevel )
         {
             AtomicBoolean classModified = new AtomicBoolean();
 
