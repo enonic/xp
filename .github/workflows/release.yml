@@ -27,7 +27,6 @@ jobs:
         uses: enonic/release-tools/generate-changelog@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ZENHUB_TOKEN: ${{ secrets.ZENHUB_TOKEN }}
           PREVIOS_RELEASE_TAG: ${{ steps.get_previous_release_tag.outputs.previous_release_tag }}
           OUTPUT_FILE: changelog.md
 
