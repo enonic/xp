@@ -76,7 +76,7 @@ cronutils = { module = "com.cronutils:cron-utils", version = "9.2.0" }
 
 jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
-attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
+attoparser = { module = "org.attoparser:attoparser", version = "2.0.6.RELEASE" }
 
 nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.4" }
 graaljs = { module = "org.graalvm.js:js", version = "22.3.2" }
