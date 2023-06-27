@@ -1,9 +1,5 @@
 Licenses used by Enonic XP (full license texts are provided after the list of libraries)
 
-    Animal Sniffer Annotations
-    MIT License
-    https://www.mojohaus.org/animal-sniffer/animal-sniffer-annotations/license.html
-
     Apache Commons
     Apache License 2.0
     http://www.apache.org/licenses/LICENSE-2.0
@@ -150,27 +146,27 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
 
     Jakarta Activation
     Eclipse Public License 2.0
-    https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt
+    https://projects.eclipse.org/projects/ee4j.jaf
 
     Jakarta Annotations
     Eclipse Public License 2.0
-    https://www.eclipse.org/legal/epl-2.0/
+    https://projects.eclipse.org/projects/ee4j.ca
 
-    Jakarta JAX-RS
+    Jakarta EL
     Eclipse Public License 2.0
-    https://github.com/eclipse-ee4j/jaxrs-api
-
-    Jakarta Validation
-    Eclipse Public License 2.0
-    https://beanvalidation.org/licensing/
+    https://projects.eclipse.org/projects/ee4j.el
 
     Jakarta Mail
     Eclipse Public License 2.0
-    https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt
+    https://projects.eclipse.org/projects/ee4j.mail
+
+    Jakarta RESTful Web Services
+    Eclipse Public License 2.0
+    https://projects.eclipse.org/projects/ee4j.rest
 
     Jakarta XML Bind
     Eclipse Public License 2.0
-    https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt
+    https://projects.eclipse.org/projects/ee4j.jaxb
 
     Jansi
     Apache License 2.0
