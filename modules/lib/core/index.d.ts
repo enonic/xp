@@ -76,7 +76,7 @@ export interface FragmentComponent {
 export interface LayoutComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord = Descriptor extends LayoutDescriptor
-        ? XpLayoutMap[LayoutDescriptor]
+        ? XpLayoutMap[Descriptor]
         : NestedRecord,
     Regions extends
         Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
@@ -97,7 +97,7 @@ export interface PartComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord =
         Descriptor extends PartDescriptor
-        ? XpPartMap<PartDescriptor>
+        ? XpPartMap[Descriptor]
         : NestedRecord
 > {
     type: 'part'
@@ -107,14 +107,14 @@ export interface PartComponent<
 }
 type PartDescriptor = keyof XpPartMap;
 type Part = PartDescriptor extends any // this lets us iterate over every member of the union
-    ? PartComponent<PartDescriptor, XpPartMap<PartDescriptor>>
+    ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
     : never;
 
 export interface PageComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord =
         Descriptor extends PageDescriptor
-        ? XpPageMap[PageDescriptor]
+        ? XpPageMap[Descriptor]
         : NestedRecord,
     Regions extends
         Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
