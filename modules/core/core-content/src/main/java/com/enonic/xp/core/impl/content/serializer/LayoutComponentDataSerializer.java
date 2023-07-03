@@ -4,24 +4,25 @@ package com.enonic.xp.core.impl.content.serializer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Iterators;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.region.RegionDescriptors;
 
 final class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent>
 {
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private final RegionDataSerializer regionDataSerializer;
 
-    LayoutComponentDataSerializer( final RegionDataSerializer regionDataSerializer )
+    LayoutComponentDataSerializer( final LayoutDescriptorService layoutDescriptorService, final RegionDataSerializer regionDataSerializer )
     {
+        this.layoutDescriptorService = layoutDescriptorService;
         this.regionDataSerializer = regionDataSerializer;
     }
 
@@ -47,36 +48,33 @@ final class LayoutComponentDataSerializer
 
     public LayoutComponent fromData( final PropertySet layoutData, final List<PropertySet> componentsAsData )
     {
-        final PropertySet layoutDataSet = layoutData.getSet( LayoutComponentType.INSTANCE.toString() );
-        final LayoutComponent.Builder layoutBuilder = LayoutComponent.create();
+        final LayoutComponent.Builder layoutComponent = LayoutComponent.create();
 
-        if ( layoutDataSet != null && layoutDataSet.isNotNull( DESCRIPTOR ) )
-        {
-            final DescriptorKey descriptorKey = DescriptorKey.from( layoutDataSet.getString( DESCRIPTOR ) );
-
-            layoutBuilder
-                .descriptor( descriptorKey )
-                .config( getConfigFromData( layoutDataSet, descriptorKey ) )
-                .regions( buildLayoutRegions( layoutData.getString( PATH ), componentsAsData ) );
-        }
-
-        return layoutBuilder.build();
-    }
-
-    private LayoutRegions buildLayoutRegions( final String layoutPath, final List<PropertySet> componentsAsData )
-    {
         final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
 
-        getRegionDescriptors( layoutPath, componentsAsData ).forEach( regionDescriptor -> {
-            layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
-        } );
+        final PropertySet specialBlockSet = layoutData.getSet( LayoutComponentType.INSTANCE.toString() );
 
-        return layoutRegionsBuilder.build();
-    }
+        if ( specialBlockSet != null && specialBlockSet.isNotNull( DESCRIPTOR ) )
+        {
+            final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
 
-    private RegionDescriptors getRegionDescriptors( final String layoutPath, final List<PropertySet> componentsAsData )
-    {
-        final int childrenLevel = Iterators.size( ComponentPath.from( layoutPath ).iterator() ) + 1;
-        return regionDataSerializer.getRegionDescriptorsAtLevel( childrenLevel, componentsAsData );
+            layoutComponent.descriptor( descriptorKey );
+            layoutComponent.config( getConfigFromData( specialBlockSet, descriptorKey ) );
+
+            final LayoutDescriptor layoutDescriptor = layoutDescriptorService.getByKey( descriptorKey );
+
+            final String layoutPath = layoutData.getString( PATH );
+
+            if ( layoutDescriptor.getRegions() != null && layoutDescriptor.getRegions().numberOfRegions() > 0 )
+            {
+                layoutDescriptor.getRegions().forEach( regionDescriptor -> {
+                    layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
+                } );
+            }
+        }
+
+        layoutComponent.regions( layoutRegionsBuilder.build() );
+
+        return layoutComponent.build();
     }
 }

@@ -5,7 +5,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -15,7 +14,6 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -35,23 +33,15 @@ public final class ComponentHandler
 
     private final ContentService contentService;
 
-    private final PageDescriptorService pageDescriptorService;
-
-    private final LayoutDescriptorService layoutDescriptorService;
-
     @Activate
     public ComponentHandler( @Reference final ContentService contentService, @Reference final RendererDelegate rendererDelegate,
-                             @Reference final PageTemplateService pageTemplateService, @Reference final PostProcessor postProcessor,
-                             @Reference final PageDescriptorService pageDescriptorService,
-                             @Reference final LayoutDescriptorService layoutDescriptorService )
+                             @Reference final PageTemplateService pageTemplateService, @Reference final PostProcessor postProcessor )
     {
         super( "component" );
         this.contentService = contentService;
         this.rendererDelegate = rendererDelegate;
         this.pageTemplateService = pageTemplateService;
         this.postProcessor = postProcessor;
-        this.pageDescriptorService = pageDescriptorService;
-        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     @Override
@@ -73,7 +63,7 @@ public final class ComponentHandler
         worker.contentService = contentService;
         worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
-        worker.pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
+        worker.pageResolver = new PageResolver( pageTemplateService );
         worker.postProcessor = postProcessor;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )

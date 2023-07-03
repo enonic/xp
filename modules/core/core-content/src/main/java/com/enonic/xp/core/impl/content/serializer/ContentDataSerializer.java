@@ -9,6 +9,7 @@ import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
@@ -37,7 +38,10 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
@@ -87,12 +91,22 @@ public class ContentDataSerializer
 
     private final PublishInfoSerializer publishInfoSerializer;
 
-    public ContentDataSerializer( )
+    private ContentDataSerializer( final Builder builder )
     {
-        this.pageDataSerializer = new PageDataSerializer();
+        this.pageDataSerializer = PageDataSerializer.create()
+            .pageDescriptorService( builder.pageDescriptorService )
+            .partDescriptorService( builder.partDescriptorService )
+            .layoutDescriptorService( builder.layoutDescriptorService )
+            .build();
+
         this.extraDataSerializer = new ExtraDataSerializer();
         this.workflowInfoSerializer = new WorkflowInfoSerializer();
         this.publishInfoSerializer = new PublishInfoSerializer();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
@@ -564,4 +578,45 @@ public class ContentDataSerializer
             } ).toArray( PropertySet[]::new ) );
         }
     }
+
+    public static class Builder
+    {
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
+        void validate()
+        {
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
+        }
+
+        public ContentDataSerializer build()
+        {
+            validate();
+            return new ContentDataSerializer( this );
+        }
+    }
+
 }

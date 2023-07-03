@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -69,6 +70,8 @@ public class CreateContentCommandTest
 
     private EventPublisher eventPublisher;
 
+    private ContentDataSerializer contentDataSerializer;
+
     @BeforeEach
     public void setUp()
         throws Exception
@@ -82,7 +85,13 @@ public class CreateContentCommandTest
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        this.translator = new ContentNodeTranslator( nodeService );
+        this.contentDataSerializer = ContentDataSerializer.create()
+            .layoutDescriptorService( layoutDescriptorService )
+            .pageDescriptorService( pageDescriptorService )
+            .partDescriptorService( partDescriptorService )
+            .build();
+
+        this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
 
         Mockito.when( this.nodeService.hasChildren( Mockito.any( Node.class ) ) ).thenReturn( false );
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
@@ -591,6 +600,7 @@ public class CreateContentCommandTest
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .pageDescriptorService( this.pageDescriptorService )
+            .contentDataSerializer( contentDataSerializer )
             .formDefaultValuesProcessor( ( form, data ) -> {
             } )
             .build();

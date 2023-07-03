@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Iterators;
-
 import com.enonic.xp.core.impl.content.page.region.ComponentTypes;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
@@ -14,7 +12,6 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
-import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.PATH;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.TYPE;
@@ -84,20 +81,6 @@ final class RegionDataSerializer
     private int getLevel( final String path )
     {
         return path.split( ComponentPath.DIVIDER ).length;
-    }
-
-    public RegionDescriptors getRegionDescriptorsAtLevel( final int level, final List<PropertySet> componentsAsData ) {
-        final RegionDescriptors.Builder builder = RegionDescriptors.create();
-
-        componentsAsData.stream()
-            .map( componentSet -> ComponentPath.from( componentSet.getString( PATH ) ) )
-            .filter( path -> Iterators.size( path.iterator() ) == level )
-            .map( path -> Iterators.getLast( path.iterator() ).getRegionName() )
-            .distinct()
-            .map( regionName -> RegionDescriptor.create().name( regionName ).build() )
-            .forEach( builder::add );
-
-        return builder.build();
     }
 
     Component getComponent( final PropertySet componentData, final List<PropertySet> componentsAsData )
