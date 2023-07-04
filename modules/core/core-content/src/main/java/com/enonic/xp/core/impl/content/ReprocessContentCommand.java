@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -35,6 +36,8 @@ final class ReprocessContentCommand
 
     private final LayoutDescriptorService layoutDescriptorService;
 
+    private final ContentDataSerializer contentDataSerializer;
+
     private ReprocessContentCommand( final Builder builder )
     {
         super( builder );
@@ -43,6 +46,7 @@ final class ReprocessContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     Content execute()
@@ -80,6 +84,7 @@ final class ReprocessContentCommand
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
+            contentDataSerializer( this.contentDataSerializer ).
             build().execute();
     }
 
@@ -113,6 +118,8 @@ final class ReprocessContentCommand
 
         private LayoutDescriptorService layoutDescriptorService;
 
+        private ContentDataSerializer contentDataSerializer;
+
         private Builder( final ReprocessContentParams params )
         {
             this.params = params;
@@ -139,6 +146,12 @@ final class ReprocessContentCommand
         public Builder layoutDescriptorService( final LayoutDescriptorService value )
         {
             this.layoutDescriptorService = value;
+            return this;
+        }
+
+        public Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
             return this;
         }
 

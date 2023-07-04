@@ -20,10 +20,10 @@ class ContentOutboundDependenciesIdsResolver
 
     private final ContentDataSerializer contentDataSerializer;
 
-    ContentOutboundDependenciesIdsResolver( final ContentService contentService )
+    ContentOutboundDependenciesIdsResolver( final ContentService contentService, final ContentDataSerializer contentDataSerializer )
     {
         this.contentService = contentService;
-        this.contentDataSerializer = new ContentDataSerializer();
+        this.contentDataSerializer = contentDataSerializer;
     }
 
     public ContentIds resolve( final ContentId contentId )

@@ -1,17 +1,24 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.util.Reference;
@@ -34,9 +41,16 @@ final class PageDataSerializer
 
     private final ComponentDataSerializerProvider componentDataSerializerProvider;
 
-    PageDataSerializer( )
+    private final PageDescriptorService pageDescriptorService;
+
+    private PageDataSerializer( final Builder builder )
     {
-        this.componentDataSerializerProvider = new ComponentDataSerializerProvider();
+        this.pageDescriptorService = builder.pageDescriptorService;
+
+        this.componentDataSerializerProvider = ComponentDataSerializerProvider.create().
+            layoutDescriptorService( builder.layoutDescriptorService ).
+            partDescriptorService( builder.partDescriptorService ).
+            build();
     }
 
     @Override
@@ -107,18 +121,30 @@ final class PageDataSerializer
     @Override
     public Page fromData( final PropertySet asSet )
     {
-        final List<PropertySet> componentsAsData = asSet.getProperties( COMPONENTS )
-            .stream()
-            .filter( Property::hasNotNullValue )
-            .map( Property::getSet )
-            .collect( Collectors.toList() );
+        final List<PropertySet> componentsAsData = asSet.getProperties( COMPONENTS ).stream().filter( Property::hasNotNullValue ).
+            map( Property::getSet ).collect( Collectors.toList() );
 
         if ( componentsAsData.isEmpty() )
         {
             return null;
         }
 
+        if ( !isRootComponent( componentsAsData.get( 0 ) ) )
+        {
+            componentsAsData.sort( Comparator.comparing( this::getComponentPath ) );
+        }
+
         return fromData( componentsAsData );
+    }
+
+    private boolean isRootComponent( final PropertySet componentData )
+    {
+        return getComponentPath( componentData ).equals( ComponentPath.DIVIDER );
+    }
+
+    private String getComponentPath( final PropertySet componentData )
+    {
+        return componentData.getString( PATH );
     }
 
     private Page fromData( final List<PropertySet> componentsAsData )
@@ -163,7 +189,7 @@ final class PageDataSerializer
                 final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
                 page.descriptor( descriptorKey );
                 page.config( getConfigFromData( specialBlockSet, descriptorKey ) );
-                page.regions( getPageRegions( componentsAsData ) );
+                page.regions( getPageRegions( descriptorKey, componentsAsData ) );
             }
 
             if ( specialBlockSet.isNotNull( TEMPLATE ) )
@@ -180,18 +206,70 @@ final class PageDataSerializer
         return page.build();
     }
 
-    private PageRegions getPageRegions( final List<PropertySet> componentsAsData )
+    private PageRegions getPageRegions( final DescriptorKey descriptorKey, final List<PropertySet> componentsAsData )
     {
-        final RegionDescriptors regionDescriptors =
-            componentDataSerializerProvider.getRegionDataSerializer().getRegionDescriptorsAtLevel( 1, componentsAsData );
+        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( descriptorKey );
+
+        final RegionDescriptors regionDescriptors = pageDescriptor.getRegions();
+
+        if ( regionDescriptors.numberOfRegions() == 0 )
+        {
+            return null;
+        }
 
         final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
 
         regionDescriptors.forEach( regionDescriptor -> {
-            pageRegionsBuilder.add( componentDataSerializerProvider.getRegionDataSerializer()
-                                        .fromData( regionDescriptor, ComponentPath.DIVIDER, componentsAsData ) );
+            pageRegionsBuilder.add(
+                componentDataSerializerProvider.getRegionDataSerializer().fromData( regionDescriptor, ComponentPath.DIVIDER,
+                                                                                    componentsAsData ) );
         } );
 
         return pageRegionsBuilder.build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        public Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        public Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        public Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
+        void validate()
+        {
+            Preconditions.checkNotNull( pageDescriptorService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
+        }
+
+        public PageDataSerializer build()
+        {
+            validate();
+            return new PageDataSerializer( this );
+        }
     }
 }

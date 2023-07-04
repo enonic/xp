@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -35,7 +36,7 @@ public class ContentOutboundDependenciesIdsResolverTest
         throws Exception
     {
         this.contentService = Mockito.mock( ContentService.class );
-        this.resolver = new ContentOutboundDependenciesIdsResolver( contentService );
+        this.resolver = new ContentOutboundDependenciesIdsResolver( contentService, Mockito.mock( ContentDataSerializer.class ) );
     }
 
     private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName )
