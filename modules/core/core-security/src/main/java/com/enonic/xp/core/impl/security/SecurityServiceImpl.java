@@ -566,6 +566,7 @@ public final class SecurityServiceImpl
             .email( createUser.getEmail() )
             .displayName( createUser.getDisplayName() )
             .modifiedTime( Instant.now( clock ) )
+            .serviceAccount( createUser.getServiceAccount() )
             .build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );

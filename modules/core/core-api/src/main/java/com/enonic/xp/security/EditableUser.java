@@ -26,6 +26,10 @@ public final class EditableUser
 
     public PropertyTree profile;
 
+    public boolean serviceAccount;
+
+    public PropertyTree idProviderData;
+
     public EditableUser( final User source )
     {
         this.source = source;
@@ -37,18 +41,22 @@ public final class EditableUser
         this.key = source.getKey();
         this.modifiedTime = source.getModifiedTime();
         this.profile = source.getProfile().copy();
+        this.serviceAccount = source.isServiceAccount();
+        this.idProviderData = source.getIdProviderData().copy();
     }
 
     public User build()
     {
-        return User.create( this.source ).
-            displayName( displayName ).
-            email( email ).
-            login( login ).
-            authenticationHash( authenticationHash ).
-            key( key ).
-            modifiedTime( modifiedTime ).
-            profile( profile ).
-            build();
+        return User.create( this.source )
+            .displayName( displayName )
+            .email( email )
+            .login( login )
+            .authenticationHash( authenticationHash )
+            .key( key )
+            .modifiedTime( modifiedTime )
+            .profile( profile )
+            .serviceAccount( serviceAccount )
+            .idProviderData( idProviderData )
+            .build();
     }
 }

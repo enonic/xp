@@ -34,6 +34,7 @@ export interface User {
     email?: string;
     login: string;
     idProvider: string;
+    serviceAccount?: boolean;
 }
 
 export interface Group {

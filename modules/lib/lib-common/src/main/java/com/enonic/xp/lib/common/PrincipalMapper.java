@@ -39,6 +39,8 @@ public final class PrincipalMapper
             gen.value( "login", user.getLogin() );
             gen.value( "idProvider", value.getKey() != null ? value.getKey().getIdProviderKey() : null );
             serializeProfile( gen, user.getProfile() );
+            gen.value( "serviceAccount", user.isServiceAccount() );
+            serializeIdProviderData( gen, user.getIdProviderData() );
         }
         else
         {
@@ -54,6 +56,13 @@ public final class PrincipalMapper
             new PropertyTreeMapper( value ).serialize( gen );
             gen.end();
         }
+    }
+
+    private void serializeIdProviderData( final MapGenerator gen, final PropertyTree value)
+    {
+        gen.map( "idProviderData" );
+        new PropertyTreeMapper( value ).serialize( gen );
+        gen.end();
     }
 
     @Override

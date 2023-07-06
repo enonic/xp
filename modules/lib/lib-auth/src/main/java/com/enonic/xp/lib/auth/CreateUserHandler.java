@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.lib.common.PrincipalMapper;
@@ -24,6 +25,8 @@ public final class CreateUserHandler
 
     private String email;
 
+    private Boolean serviceAccount;
+
     public void setIdProvider( final String idProvider )
     {
         this.idProviderKey = IdProviderKey.from( idProvider );
@@ -44,11 +47,21 @@ public final class CreateUserHandler
         this.email = email;
     }
 
+    public void setServiceAccount( final Boolean serviceAccount )
+    {
+        this.serviceAccount = serviceAccount;
+    }
+
     public PrincipalMapper createUser()
     {
-        final User user = this.securityService.get().createUser(
-            CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
-                PrincipalKey.ofUser( this.idProviderKey, this.name ) ).build() );
+        final User user = this.securityService.get()
+            .createUser( CreateUserParams.create()
+                             .displayName( this.displayName )
+                             .email( this.email )
+                             .login( this.name )
+                             .userKey( PrincipalKey.ofUser( this.idProviderKey, this.name ) )
+                             .setServiceAccount( Objects.requireNonNullElse( serviceAccount, false ) )
+                             .build() );
         return new PrincipalMapper( user );
     }
 

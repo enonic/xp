@@ -3,11 +3,14 @@ package com.enonic.xp.security.auth;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -16,6 +19,7 @@ import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthenticationInfoTest
@@ -201,5 +205,54 @@ public class AuthenticationInfoTest
         final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
 
         assertEquals( deserializedObject, info );
+    }
+
+    @Test
+    void testSerializationServiceAccount()
+    {
+        final PropertySet publicKey_1 = new PropertySet();
+        publicKey_1.setString( "kid", "kid_1" );
+        publicKey_1.setString( "publicKey", "publicKey_1" );
+
+        final PropertySet publicKey_2 = new PropertySet();
+        publicKey_2.setString( "kid", "kid_2" );
+        publicKey_2.setString( "publicKey", "publicKey_2" );
+
+        final PropertyTree idProviderData = new PropertyTree();
+        idProviderData.addSet( "publicKeys", publicKey_1 );
+        idProviderData.addSet( "publicKeys", publicKey_2 );
+
+        final User user = User.create()
+            .login( "service-account" )
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "system" ), "sa" ) )
+            .serviceAccount( true )
+            .idProviderData( idProviderData )
+            .build();
+
+        final AuthenticationInfo info = AuthenticationInfo.create().user( user ).build();
+
+        final byte[] serializedObject = SerializableUtils.serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) SerializableUtils.deserialize( serializedObject );
+
+        assertEquals( deserializedObject, info );
+
+        final PropertySet propertySet = removePublicKeys( idProviderData, List.of( "kid_1" ) );
+
+        assertNotNull( propertySet );
+    }
+
+    private PropertySet removePublicKeys( final PropertyTree source, final List<String> keysToRemove )
+    {
+        final PropertySet result = new PropertySet();
+
+        source.getSets( "publicKeys" ).forEach( propertySet -> {
+            final String kid = propertySet.getString( "kid" );
+            if ( !keysToRemove.contains( kid ) )
+            {
+                result.addSet( "publicKeys", propertySet );
+            }
+        } );
+
+        return result;
     }
 }

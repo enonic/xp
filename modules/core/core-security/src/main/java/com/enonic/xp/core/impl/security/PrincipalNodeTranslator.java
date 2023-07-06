@@ -234,6 +234,8 @@ abstract class PrincipalNodeTranslator
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
         data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
         data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot() );
+        data.setBoolean( PrincipalPropertyNames.SERVICE_ACCOUNT_KEY, user.isServiceAccount() );
+        data.setSet( PrincipalPropertyNames.ID_PROVIDER_DATA_KEY, user.getIdProviderData().getRoot() );
     }
 
     private static void populateRoleData( final PropertySet data, final Role role )
@@ -259,7 +261,14 @@ abstract class PrincipalNodeTranslator
             displayName( nodeAsTree.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) ).
             authenticationHash( nodeAsTree.getString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY ) );
 
+        final Boolean isServiceAccount = nodeAsTree.getBoolean( PrincipalPropertyNames.SERVICE_ACCOUNT_KEY );
+        if ( isServiceAccount != null )
+        {
+            user.serviceAccount( isServiceAccount );
+        }
+
         createUserProfileFromNode( nodeAsTree, user );
+        createUserIdProviderDataFromNode( nodeAsTree, user );
 
         return user.build();
     }
@@ -269,6 +278,13 @@ abstract class PrincipalNodeTranslator
         final PropertySet nodeProfile = nodeAsTree.getSet( PrincipalPropertyNames.PROFILE_KEY );
         final PropertyTree profile = nodeProfile == null ? new PropertyTree() : nodeProfile.toTree();
         user.profile( profile );
+    }
+
+    private static void createUserIdProviderDataFromNode( final PropertyTree nodeAsTree, final User.Builder user )
+    {
+        final PropertySet nodeIdProviderData = nodeAsTree.getSet( PrincipalPropertyNames.ID_PROVIDER_DATA_KEY );
+        final PropertyTree idProviderData = nodeIdProviderData == null ? new PropertyTree() : nodeIdProviderData.toTree();
+        user.idProviderData( idProviderData );
     }
 
     private static Group createGroupFromNode( final Node node )

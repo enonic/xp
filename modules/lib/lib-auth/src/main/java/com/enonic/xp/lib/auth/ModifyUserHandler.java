@@ -45,7 +45,7 @@ public final class ModifyUserHandler
                 editor( this::newUserEditor ).
                 build();
 
-            return new PrincipalMapper( this.securityService.get().updateUser( params ) );
+            return new PrincipalMapper( this.securityService.get().updateUser( params ), true );
         }
         return null;
     }
@@ -71,6 +71,12 @@ public final class ModifyUserHandler
         if ( email != null )
         {
             target.email = email;
+        }
+
+        final Boolean isServiceAccount = Converters.convert( map.get( "serviceAccount" ), Boolean.class );
+        if ( isServiceAccount != null )
+        {
+            target.serviceAccount = isServiceAccount;
         }
     }
 

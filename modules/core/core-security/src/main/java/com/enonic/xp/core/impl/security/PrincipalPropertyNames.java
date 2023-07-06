@@ -23,4 +23,10 @@ interface PrincipalPropertyNames
     String DESCRIPTION_KEY = "description";
 
     String PROFILE_KEY = "profile";
+
+    String PUBLIC_KEYS_KEY = "publicKeys";
+
+    String SERVICE_ACCOUNT_KEY = "serviceAccount";
+
+    String ID_PROVIDER_DATA_KEY = "idProviderData";
 }

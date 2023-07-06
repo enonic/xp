@@ -46,7 +46,7 @@ public class UserNodeTranslatorTest
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
         assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
-        assertEquals( 7, rootDataSet.getTotalSize() );
+        assertEquals( 9, rootDataSet.getTotalSize() );
     }
 
 

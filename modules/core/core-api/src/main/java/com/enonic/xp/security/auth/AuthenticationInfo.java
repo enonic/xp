@@ -118,6 +118,8 @@ public final class AuthenticationInfo
         oos.writeUTF( user.getLogin() );
         oos.writeBoolean( user.isDisabled() );
         oos.writeObject( user.getProfile() );
+        oos.writeBoolean( user.isServiceAccount() );
+        oos.writeObject( user.getIdProviderData() );
     }
 
     private User deserializeUser( final ObjectInputStream ois )
@@ -131,6 +133,8 @@ public final class AuthenticationInfo
         user.login( ois.readUTF() );
         user.disabled( ois.readBoolean() );
         user.profile( (PropertyTree) ois.readObject() );
+        user.serviceAccount( ois.readBoolean() );
+        user.idProviderData( (PropertyTree) ois.readObject() );
         return user.build();
     }
 

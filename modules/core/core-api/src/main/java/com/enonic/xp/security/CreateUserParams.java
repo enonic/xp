@@ -21,6 +21,8 @@ public final class CreateUserParams
 
     private final String password;
 
+    private final Boolean serviceAccount;
+
     private CreateUserParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
@@ -32,6 +34,7 @@ public final class CreateUserParams
         this.email = builder.email;
         this.login = checkNotNull( builder.login, "login is required for a user" );
         this.password = builder.password;
+        this.serviceAccount = builder.serviceAccount;
     }
 
     public PrincipalKey getKey()
@@ -59,6 +62,11 @@ public final class CreateUserParams
         return login;
     }
 
+    public Boolean getServiceAccount()
+    {
+        return serviceAccount;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -75,6 +83,8 @@ public final class CreateUserParams
         private String login;
 
         private String password;
+
+        private Boolean serviceAccount;
 
         private Builder()
         {
@@ -108,6 +118,12 @@ public final class CreateUserParams
         public Builder password( final String value )
         {
             this.password = value;
+            return this;
+        }
+
+        public Builder setServiceAccount( final Boolean serviceAccount )
+        {
+            this.serviceAccount = serviceAccount;
             return this;
         }
 

@@ -15,11 +15,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class User
     extends Principal
 {
-    public static final User ANONYMOUS = User.create().
-        key( PrincipalKey.ofAnonymous() ).
-        displayName( "Anonymous User" ).
-        login( "anonymous" ).
-        build();
+    public static final User ANONYMOUS =
+        User.create().key( PrincipalKey.ofAnonymous() ).displayName( "Anonymous User" ).login( "anonymous" ).build();
 
     private final String email;
 
@@ -31,6 +28,10 @@ public final class User
 
     private final PropertyTree profile;
 
+    private final boolean serviceAccount;
+
+    private final PropertyTree idProviderData;
+
     private User( final Builder builder )
     {
         super( builder );
@@ -40,6 +41,8 @@ public final class User
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
         this.profile = builder.profile;
+        this.serviceAccount = builder.serviceAccount;
+        this.idProviderData = builder.idProviderData;
     }
 
     public String getEmail()
@@ -67,6 +70,16 @@ public final class User
         return profile;
     }
 
+    public boolean isServiceAccount()
+    {
+        return serviceAccount;
+    }
+
+    public PropertyTree getIdProviderData()
+    {
+        return idProviderData;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -84,13 +97,14 @@ public final class User
         }
         final User user = (User) o;
         return loginDisabled == user.loginDisabled && Objects.equals( email, user.email ) && Objects.equals( login, user.login ) &&
-            Objects.equals( authenticationHash, user.authenticationHash ) && Objects.equals( profile, user.profile );
+            Objects.equals( authenticationHash, user.authenticationHash ) && Objects.equals( profile, user.profile ) &&
+            Objects.equals( serviceAccount, user.serviceAccount ) && Objects.equals( idProviderData, user.idProviderData );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), email, login, authenticationHash, loginDisabled, profile );
+        return Objects.hash( super.hashCode(), email, login, authenticationHash, loginDisabled, profile, serviceAccount, idProviderData );
     }
 
     public static Builder create()
@@ -116,10 +130,15 @@ public final class User
 
         private PropertyTree profile;
 
+        private boolean serviceAccount;
+
+        private PropertyTree idProviderData;
+
         private Builder()
         {
             super();
             this.profile = new PropertyTree();
+            this.idProviderData = new PropertyTree();
         }
 
         private Builder( final User user )
@@ -130,6 +149,8 @@ public final class User
             this.authenticationHash = user.getAuthenticationHash();
             this.loginDisabled = user.isDisabled();
             this.profile = user.profile == null ? new PropertyTree() : user.profile.copy();
+            this.serviceAccount = user.isServiceAccount();
+            this.idProviderData = user.getIdProviderData() == null ? new PropertyTree() : user.getIdProviderData().copy();
         }
 
         public Builder login( final String value )
@@ -163,6 +184,18 @@ public final class User
         public Builder disabled( final boolean loginDisabled )
         {
             this.loginDisabled = loginDisabled;
+            return this;
+        }
+
+        public Builder serviceAccount( final boolean serviceAccount )
+        {
+            this.serviceAccount = serviceAccount;
+            return this;
+        }
+
+        public Builder idProviderData( final PropertyTree idProviderData )
+        {
+            this.idProviderData = idProviderData;
             return this;
         }
 

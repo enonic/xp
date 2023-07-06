@@ -323,6 +323,7 @@ export interface CreateUserParams {
     displayName?: string;
     idProvider: string;
     email?: string;
+    serviceAccount?: boolean;
 }
 
 interface CreateUserHandler {
@@ -333,6 +334,8 @@ interface CreateUserHandler {
     setDisplayName(value?: string | null): void;
 
     setEmail(value?: string | null): void;
+
+    setServiceAccount(value?: boolean): void;
 
     createUser(): User;
 }
@@ -358,6 +361,7 @@ export function createUser(params: CreateUserParams): User {
     bean.setName(params.name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setEmail(__.nullOrValue(params.email));
+    bean.setServiceAccount(params.serviceAccount ?? false);
 
     return __.toNativeObject(bean.createUser());
 }
@@ -732,8 +736,8 @@ interface FindUsersHandler {
     execute(): FindPrincipalsResult<User | UserWithProfile>;
 }
 
-export function findUsers(params: FindUsersParams & {includeProfile?: false}): FindPrincipalsResult<User>;
-export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {includeProfile: true}): FindPrincipalsResult<UserWithProfile<Profile>>;
+export function findUsers(params: FindUsersParams & { includeProfile?: false }): FindPrincipalsResult<User>;
+export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & { includeProfile: true }): FindPrincipalsResult<UserWithProfile<Profile>>;
 /**
  * Search for users matching the specified query.
  *
