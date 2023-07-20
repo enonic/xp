@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,18 +26,23 @@ import static com.enonic.xp.core.impl.content.serializer.DescriptorBasedComponen
 import static com.enonic.xp.core.impl.content.serializer.DescriptorBasedComponentDataSerializer.appNameToConfigPropertyName;
 import static com.enonic.xp.core.impl.content.serializer.DescriptorBasedComponentDataSerializer.getConfigFromData;
 
-final class PageDataSerializer
+class PageDataSerializer
     extends AbstractDataSetSerializer<Page>
 {
     private static final String TEMPLATE = "template";
 
     private static final String CUSTOMIZED = "customized";
 
-    private final ComponentDataSerializerProvider componentDataSerializerProvider;
+    protected ComponentDataSerializerProvider componentDataSerializerProvider;
 
     PageDataSerializer( )
     {
-        this.componentDataSerializerProvider = new ComponentDataSerializerProvider();
+        this(new ComponentDataSerializerProvider());
+    }
+
+    protected PageDataSerializer( final ComponentDataSerializerProvider componentDataSerializerProvider )
+    {
+        this.componentDataSerializerProvider = componentDataSerializerProvider;
     }
 
     @Override
@@ -52,13 +58,13 @@ final class PageDataSerializer
         }
     }
 
-    private void serializeFragment( final Page page, final PropertySet parent )
+    protected void serializeFragment( final Page page, final PropertySet parent )
     {
         final Component fragment = page.getFragment();
         componentDataSerializerProvider.getDataSerializer( fragment.getType() ).toData( fragment, parent );
     }
 
-    private void serializePage( final Page page, final PropertySet parent )
+    protected void serializePage( final Page page, final PropertySet parent )
     {
         final PropertySet asSet = parent.addSet( COMPONENTS );
 
@@ -104,7 +110,6 @@ final class PageDataSerializer
         }
     }
 
-    @Override
     public Page fromData( final PropertySet asSet )
     {
         final List<PropertySet> componentsAsData = asSet.getProperties( COMPONENTS )
@@ -118,10 +123,25 @@ final class PageDataSerializer
             return null;
         }
 
+        if ( !isRootComponent( componentsAsData.get( 0 ) ) )
+        {
+            componentsAsData.sort( Comparator.comparing( this::getComponentPath ) );
+        }
+
         return fromData( componentsAsData );
     }
 
-    private Page fromData( final List<PropertySet> componentsAsData )
+    private boolean isRootComponent( final PropertySet componentData )
+    {
+        return getComponentPath( componentData ).equals( ComponentPath.DIVIDER );
+    }
+
+    private String getComponentPath( final PropertySet componentData )
+    {
+        return componentData.getString( PATH );
+    }
+
+    protected Page fromData( final List<PropertySet> componentsAsData )
     {
         final PropertySet pageData = componentsAsData.get( 0 );
         componentsAsData.remove( 0 );
@@ -129,7 +149,7 @@ final class PageDataSerializer
         return fromData( pageData, componentsAsData );
     }
 
-    private Page fromData( final PropertySet pageData, final List<PropertySet> componentsAsData )
+    protected Page fromData( final PropertySet pageData, final List<PropertySet> componentsAsData )
     {
         final boolean isFragment = !pageData.getString( TYPE ).equals( PAGE );
 
@@ -141,7 +161,7 @@ final class PageDataSerializer
         return fromPageData( pageData, componentsAsData );
     }
 
-    private Page fromFragmentData( final PropertySet fragmentData, final List<PropertySet> componentsAsData )
+    protected Page fromFragmentData( final PropertySet fragmentData, final List<PropertySet> componentsAsData )
     {
         final Page.Builder page = Page.create();
 
@@ -150,7 +170,7 @@ final class PageDataSerializer
         return page.build();
     }
 
-    private Page fromPageData( final PropertySet pageData, final List<PropertySet> componentsAsData )
+    protected Page fromPageData( final PropertySet pageData, final List<PropertySet> componentsAsData )
     {
         final Page.Builder page = Page.create();
 
@@ -163,7 +183,7 @@ final class PageDataSerializer
                 final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
                 page.descriptor( descriptorKey );
                 page.config( getConfigFromData( specialBlockSet, descriptorKey ) );
-                page.regions( getPageRegions( componentsAsData ) );
+                page.regions( getPageRegions( descriptorKey, componentsAsData ) );
             }
 
             if ( specialBlockSet.isNotNull( TEMPLATE ) )
@@ -180,7 +200,7 @@ final class PageDataSerializer
         return page.build();
     }
 
-    private PageRegions getPageRegions( final List<PropertySet> componentsAsData )
+    protected PageRegions getPageRegions( final DescriptorKey descriptorKey, final List<PropertySet> componentsAsData )
     {
         final RegionDescriptors regionDescriptors =
             componentDataSerializerProvider.getRegionDataSerializer().getRegionDescriptorsAtLevel( 1, componentsAsData );

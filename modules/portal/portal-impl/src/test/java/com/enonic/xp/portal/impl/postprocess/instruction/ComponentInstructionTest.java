@@ -104,32 +104,6 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testLayoutIsReturnedWithRegions()
-        throws Exception
-    {
-        final ArgumentCaptor<Component> captor = ArgumentCaptor.forClass( Component.class );
-        returnOnRender( "render result", captor.capture() );
-
-        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapplication:layout" );
-        final LayoutRegions regions =
-            LayoutRegions.create().add( Region.create().name( "r1" ).build() ).add( Region.create().name( "r2" ).build() ).build();
-        final LayoutComponent layoutFromService = LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
-
-        when( componentService.getByKey( Mockito.any( DescriptorKey.class) ) ).thenReturn( layoutFromService );
-
-        final PortalRequest portalRequest = new PortalRequest();
-        final LayoutComponent emptyLayoutComponent =
-            LayoutComponent.create().descriptor( DescriptorKey.from( "myapplication:layout" ) ).build();
-
-        final Content content = createPage( "content-id", "content-name", "myapplication:content-type", emptyLayoutComponent );
-        portalRequest.setContent( content );
-
-        instruction.evaluate( portalRequest, "COMPONENT myRegion/0" );
-
-        assertEquals( captor.getValue(), layoutFromService );
-    }
-
-    @Test
     public void testFragmentContentNotLayoutThrowsException()
     {
         final PortalRequest portalRequest = new PortalRequest();

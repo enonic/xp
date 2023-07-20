@@ -17,6 +17,11 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.Region;
 
 public final class FragmentRenderer
 {
@@ -32,14 +37,18 @@ public final class FragmentRenderer
 
     private final ContentService contentService;
 
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private final RendererDelegate rendererDelegate;
 
     private final FragmentPageResolver fragmentPageResolver = new FragmentPageResolver();
 
-    public FragmentRenderer( final ContentService contentService, final RendererDelegate rendererDelegate )
+    public FragmentRenderer( final ContentService contentService, final LayoutDescriptorService layoutDescriptorService,
+                             final RendererDelegate rendererDelegate )
     {
         this.contentService = contentService;
         this.rendererDelegate = rendererDelegate;
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     public PortalResponse render( final FragmentComponent component, final PortalRequest portalRequest )
@@ -106,23 +115,65 @@ public final class FragmentRenderer
 
     private Component getFragmentComponent( final FragmentComponent component )
     {
-        final Content fragmentContent;
         try
         {
-            fragmentContent = contentService.getById( component.getFragment() );
+            final Content fragmentContent = contentService.getById( component.getFragment() );
+            return getFragmentFromContent( fragmentContent );
         }
         catch ( ContentNotFoundException e )
         {
             return null;
         }
+    }
+
+    private Component getFragmentFromContent( final Content fragmentContent )
+    {
         if ( fragmentContent.getType().isFragment() || fragmentContent.getPage() != null )
         {
-            return fragmentContent.getPage().getFragment();
+            return processFragmentComponent( fragmentContent.getPage().getFragment() );
         }
-        else
+
+        return null;
+    }
+
+    private Component processFragmentComponent( final Component fragmentComponent )
+    {
+        if ( fragmentComponent instanceof LayoutComponent )
         {
-            return null;
+            return processLayoutComponent( (LayoutComponent) fragmentComponent );
         }
+
+        return fragmentComponent;
+    }
+
+    private LayoutComponent processLayoutComponent( final LayoutComponent component )
+    {
+        final LayoutDescriptor layoutDescriptor =
+            component.hasDescriptor() ? layoutDescriptorService.getByKey( component.getDescriptor() ) : null;
+
+        if ( layoutDescriptor == null || layoutDescriptor.getModifiedTime() == null )
+        {
+            return component;
+        }
+
+        return buildLayoutWithRegions( component, layoutDescriptor );
+    }
+
+    private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutDescriptor layoutDescriptor )
+    {
+        final LayoutComponent.Builder layoutBuilder = LayoutComponent.create( existingLayout );
+        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+
+        if ( layoutDescriptor.getRegions() != null )
+        {
+            layoutDescriptor.getRegions().forEach( region -> {
+                final Region existingRegion = existingLayout.getRegion( region.getName() );
+                final Region regionToAdd = existingRegion == null ? Region.create().name( region.getName() ).build() : existingRegion;
+                regionsBuilder.add( regionToAdd );
+            } );
+        }
+
+        return layoutBuilder.regions( regionsBuilder.build() ).build();
     }
 
     private PortalResponse renderEmptyFragment( final RenderMode renderMode, final FragmentComponent component )
@@ -136,10 +187,6 @@ public final class FragmentRenderer
     {
         final String escapedMessage = HtmlEscapers.htmlEscaper().escape( errorMessage );
         final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
-        return PortalResponse.create().
-            contentType( MediaType.HTML_UTF_8 ).
-            postProcess( false ).
-            body( html ).
-            build();
+        return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).postProcess( false ).body( html ).build();
     }
 }

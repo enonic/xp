@@ -15,9 +15,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartDescriptorService;
 
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 
@@ -29,20 +26,11 @@ final class ReprocessContentCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final PageDescriptorService pageDescriptorService;
-
-    private final PartDescriptorService partDescriptorService;
-
-    private final LayoutDescriptorService layoutDescriptorService;
-
     private ReprocessContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.pageDescriptorService = builder.pageDescriptorService;
-        this.partDescriptorService = builder.partDescriptorService;
-        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     Content execute()
@@ -107,12 +95,6 @@ final class ReprocessContentCommand
 
         private MediaInfoService mediaInfoService;
 
-        private PageDescriptorService pageDescriptorService;
-
-        private PartDescriptorService partDescriptorService;
-
-        private LayoutDescriptorService layoutDescriptorService;
-
         private Builder( final ReprocessContentParams params )
         {
             this.params = params;
@@ -122,30 +104,6 @@ final class ReprocessContentCommand
         {
             this.mediaInfoService = value;
             return this;
-        }
-
-        public Builder pageDescriptorService( final PageDescriptorService value )
-        {
-            this.pageDescriptorService = value;
-            return this;
-        }
-
-        public Builder partDescriptorService( final PartDescriptorService value )
-        {
-            this.partDescriptorService = value;
-            return this;
-        }
-
-        public Builder layoutDescriptorService( final LayoutDescriptorService value )
-        {
-            this.layoutDescriptorService = value;
-            return this;
-        }
-
-        @Override
-        void validate()
-        {
-            super.validate();
         }
 
         public ReprocessContentCommand build()

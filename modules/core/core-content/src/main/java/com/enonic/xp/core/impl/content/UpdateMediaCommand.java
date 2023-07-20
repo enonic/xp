@@ -11,9 +11,6 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -24,20 +21,11 @@ final class UpdateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final PageDescriptorService pageDescriptorService;
-
-    private final PartDescriptorService partDescriptorService;
-
-    private final LayoutDescriptorService layoutDescriptorService;
-
     private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.pageDescriptorService = builder.pageDescriptorService;
-        this.partDescriptorService = builder.partDescriptorService;
-        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static Builder create( final UpdateMediaParams params )
@@ -123,13 +111,6 @@ final class UpdateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private PageDescriptorService pageDescriptorService;
-
-        private PartDescriptorService partDescriptorService;
-
-        private LayoutDescriptorService layoutDescriptorService;
-
-
         Builder( final UpdateMediaParams params )
         {
             this.params = params;
@@ -144,24 +125,6 @@ final class UpdateMediaCommand
         public Builder mediaInfoService( final MediaInfoService value )
         {
             this.mediaInfoService = value;
-            return this;
-        }
-
-        public Builder pageDescriptorService( final PageDescriptorService value )
-        {
-            this.pageDescriptorService = value;
-            return this;
-        }
-
-        public Builder partDescriptorService( final PartDescriptorService value )
-        {
-            this.partDescriptorService = value;
-            return this;
-        }
-
-        public Builder layoutDescriptorService( final LayoutDescriptorService value )
-        {
-            this.layoutDescriptorService = value;
             return this;
         }
 
