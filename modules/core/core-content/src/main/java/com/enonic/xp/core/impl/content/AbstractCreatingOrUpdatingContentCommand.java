@@ -13,6 +13,9 @@ import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.FileNames;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.site.SiteService;
@@ -35,6 +38,12 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final List<ContentValidator> contentValidators;
 
+    protected final PageDescriptorService pageDescriptorService;
+
+    protected final PartDescriptorService partDescriptorService;
+
+    protected final LayoutDescriptorService layoutDescriptorService;
+
     final boolean allowUnsafeAttachmentNames;
 
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
@@ -45,6 +54,9 @@ class AbstractCreatingOrUpdatingContentCommand
         this.contentProcessors = List.copyOf( builder.contentProcessors );
         this.contentValidators = List.copyOf( builder.contentValidators );
         this.allowUnsafeAttachmentNames = builder.allowUnsafeAttachmentNames;
+        this.pageDescriptorService = builder.pageDescriptorService;
+        this.partDescriptorService = builder.partDescriptorService;
+        this.layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static class Builder<B extends Builder<B>>
@@ -60,6 +72,12 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private boolean allowUnsafeAttachmentNames;
 
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         Builder()
         {
         }
@@ -71,6 +89,9 @@ class AbstractCreatingOrUpdatingContentCommand
             this.siteService = source.siteService;
             this.contentProcessors = source.contentProcessors;
             this.contentValidators = source.contentValidators;
+            this.pageDescriptorService = source.pageDescriptorService;
+            this.partDescriptorService = source.partDescriptorService;
+            this.layoutDescriptorService = source.layoutDescriptorService;
         }
 
         @SuppressWarnings("unchecked")
@@ -105,6 +126,24 @@ class AbstractCreatingOrUpdatingContentCommand
         B allowUnsafeAttachmentNames( final boolean allowUnsafeAttachmentNames )
         {
             this.allowUnsafeAttachmentNames = allowUnsafeAttachmentNames;
+            return (B) this;
+        }
+
+        B pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return (B) this;
+        }
+
+        B partDescriptorService( final PartDescriptorService partDescriptorService )
+        {
+            this.partDescriptorService = partDescriptorService;
+            return (B) this;
+        }
+
+        B layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+        {
+            this.layoutDescriptorService = layoutDescriptorService;
             return (B) this;
         }
 

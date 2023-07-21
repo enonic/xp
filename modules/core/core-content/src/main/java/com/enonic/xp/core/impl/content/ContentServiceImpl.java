@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -100,6 +99,8 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.content.serializer.FullContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -173,25 +174,19 @@ public class ContentServiceImpl
 
     private ContentAuditLogSupport contentAuditLogSupport;
 
-    private volatile ContentConfig config;
+    private final ContentConfig config;
 
     @Activate
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
-                               @Reference final LayoutDescriptorService layoutDescriptorService )
+                               @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
     {
+        this.config = config;
         this.nodeService = nodeService;
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.translator = new ContentNodeTranslator( nodeService );
-    }
-
-    @Activate
-    @Modified
-    public void initialize( final ContentConfig config )
-    {
-        this.config = config;
+        this.translator = new ContentNodeTranslator( nodeService, getContentDataSerializer() );
     }
 
     @Override
@@ -1245,6 +1240,19 @@ public class ContentServiceImpl
         {
             return null;
         }
+    }
+
+    private ContentDataSerializer getContentDataSerializer()
+    {
+        return config.resolveEmptyRegions() ? createFullContentDataSerializer() : new ContentDataSerializer();
+    }
+
+    private FullContentDataSerializer createFullContentDataSerializer()
+    {
+        return FullContentDataSerializer.create()
+            .layoutDescriptorService( layoutDescriptorService )
+            .pageDescriptorService( pageDescriptorService )
+            .build();
     }
 
     private static void verifyContextBranch( final Branch branch )

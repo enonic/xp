@@ -97,6 +97,7 @@ class RenameContentCommandTest
 
         when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
+        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
     }
 
     @Test

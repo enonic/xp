@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.region.FragmentComponent;
+import com.enonic.xp.region.LayoutDescriptorService;
 
 @Component
 public final class RendererDelegateImpl
@@ -21,10 +22,14 @@ public final class RendererDelegateImpl
 
     private final ContentService contentService;
 
+    private final LayoutDescriptorService layoutDescriptorService;
+
     @Activate
-    public RendererDelegateImpl( @Reference final ContentService contentService )
+    public RendererDelegateImpl( @Reference final ContentService contentService,
+                                 @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.contentService = contentService;
+        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     @Override
@@ -32,7 +37,7 @@ public final class RendererDelegateImpl
     {
         if ( renderable instanceof FragmentComponent )
         {
-            return new FragmentRenderer( contentService, this ).render( (FragmentComponent) renderable, portalRequest );
+            return new FragmentRenderer( contentService, layoutDescriptorService, this ).render( (FragmentComponent) renderable, portalRequest );
         }
         return renderers.stream().
             filter( r -> r.getType().isInstance( renderable ) ).

@@ -87,7 +87,7 @@ public final class ComponentInstruction
     {
         if ( FRAGMENT_COMPONENT.equalsIgnoreCase( componentSelector ) )
         {
-            return resolveFragmentComponent( portalRequest );
+            return getPageFragment( portalRequest );
         }
 
         if ( componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
@@ -138,31 +138,7 @@ public final class ComponentInstruction
             throw new RenderException( MessageFormat.format( "Component not found: [{0}]", path ) );
         }
 
-        if ( component instanceof LayoutComponent )
-        {
-            return resolveLayoutWithRegions( (LayoutComponent) component, content.getPage() );
-        }
-
         return component;
-    }
-
-    private LayoutComponent resolveLayoutWithRegions( final LayoutComponent existingLayout, final Page page )
-    {
-        if ( !existingLayout.hasDescriptor() )
-        {
-            return existingLayout;
-        }
-
-        final LayoutComponent layoutFromDescriptor = (LayoutComponent) componentService.getByKey( existingLayout.getDescriptor() );
-
-        if ( layoutFromDescriptor == null )
-        {
-            return existingLayout;
-        }
-
-        final LayoutComponent layoutComponent = buildLayoutWithRegions( existingLayout, layoutFromDescriptor );
-        setParentRegionOnLayout( page, existingLayout, layoutComponent );
-        return layoutComponent;
     }
 
     private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutComponent layoutFromDescriptor )
@@ -215,22 +191,6 @@ public final class ComponentInstruction
         }
 
         return component;
-    }
-
-    private Component resolveFragmentComponent( final PortalRequest portalRequest )
-    {
-        final Component fragmentComponent = getPageFragment( portalRequest );
-        return processFragment( fragmentComponent );
-    }
-
-    private Component processFragment( final Component fragmentComponent )
-    {
-        if ( fragmentComponent instanceof LayoutComponent )
-        {
-            return resolveLayoutWithRegions( (LayoutComponent) fragmentComponent, null  );
-        }
-
-        return fragmentComponent;
     }
 
     private Component getPageFragment( final PortalRequest portalRequest )
