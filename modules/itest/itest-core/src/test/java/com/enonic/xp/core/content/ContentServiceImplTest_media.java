@@ -84,10 +84,8 @@ public class ContentServiceImplTest_media
 
         Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
-        final ContentConfig contentConfig = mock( ContentConfig.class );
-        when( contentConfig.attachments_allowUnsafeNames() ).thenReturn( true );
+        when( config.attachments_allowUnsafeNames() ).thenReturn( true );
 
-        contentService.initialize( contentConfig );
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );

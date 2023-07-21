@@ -8,5 +8,7 @@ public @interface ContentConfig
 
     boolean attachments_allowUnsafeNames() default false;
 
+    boolean resolveEmptyRegions() default false;
+
     String auditlog_filter() default "!system.content.update,*";
 }

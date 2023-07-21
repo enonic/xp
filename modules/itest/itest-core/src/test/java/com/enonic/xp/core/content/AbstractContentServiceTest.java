@@ -144,6 +144,8 @@ public abstract class AbstractContentServiceTest
 
     protected ContentServiceImpl contentService;
 
+    protected ContentConfig config;
+
     protected NodeServiceImpl nodeService;
 
     protected MixinService mixinService;
@@ -320,7 +322,8 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
-        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
+        this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
@@ -334,8 +337,6 @@ public abstract class AbstractContentServiceTest
         contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
-
-        contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
     }
 
     @AfterEach

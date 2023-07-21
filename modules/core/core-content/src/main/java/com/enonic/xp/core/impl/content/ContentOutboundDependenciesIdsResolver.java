@@ -18,12 +18,9 @@ class ContentOutboundDependenciesIdsResolver
 {
     private final ContentService contentService;
 
-    private final ContentDataSerializer contentDataSerializer;
-
     ContentOutboundDependenciesIdsResolver( final ContentService contentService )
     {
         this.contentService = contentService;
-        this.contentDataSerializer = new ContentDataSerializer();
     }
 
     public ContentIds resolve( final ContentId contentId )
@@ -40,7 +37,7 @@ class ContentOutboundDependenciesIdsResolver
         final PropertySet contentPageData = new PropertyTree().getRoot();
         if ( content.getPage() != null )
         {
-            contentDataSerializer.toPageData( content.getPage(), contentPageData );
+            new ContentDataSerializer().toPageData( content.getPage(), contentPageData );
         }
 
         final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllExtraData().

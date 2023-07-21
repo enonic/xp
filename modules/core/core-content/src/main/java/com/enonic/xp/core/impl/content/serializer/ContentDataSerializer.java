@@ -89,7 +89,12 @@ public class ContentDataSerializer
 
     public ContentDataSerializer( )
     {
-        this.pageDataSerializer = new PageDataSerializer();
+        this( new PageDataSerializer() );
+    }
+
+    protected ContentDataSerializer( final PageDataSerializer pageDataSerializer )
+    {
+        this.pageDataSerializer = pageDataSerializer;
         this.extraDataSerializer = new ExtraDataSerializer();
         this.workflowInfoSerializer = new WorkflowInfoSerializer();
         this.publishInfoSerializer = new PublishInfoSerializer();

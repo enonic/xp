@@ -34,6 +34,7 @@ final class ImportContentCommand
     {
         final Node importNode = ImportContentFactory.create().
             params( params ).
+            contentDataSerializer( this.translator.getContentDataSerializer() ).
             build().execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
