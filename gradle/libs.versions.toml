@@ -60,7 +60,7 @@ felix-shell-remote = { module = "org.apache.felix:org.apache.felix.shell.remote"
 
 bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version = "1.70" }
 
-elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
+elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "8.8.2" }
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
