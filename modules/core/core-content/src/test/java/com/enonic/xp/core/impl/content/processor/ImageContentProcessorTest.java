@@ -261,15 +261,35 @@ public class ImageContentProcessorTest
             build();
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
         final PropertyTree data = new PropertyTree();
-        final EditableContent editableContent = new EditableContent( Content.create().
-            name( "myContentName" ).
-            parentPath( ContentPath.ROOT ).
-            data( data ).
-            build() );
+        final EditableContent editableContent =
+            new EditableContent( Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( data ).build() );
         result.getEditor().edit( editableContent );
         assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( editableContent.extraDatas.first().getData().getString( "altitude", 0 ), "2" );
         assertEquals( 13, editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
+    }
+
+    @Test
+    public void testProcessUpdateWithMediaInfoOverwritten()
+        throws IOException
+    {
+        final Form.Builder form = Form.create();
+        form.addFormItem( createTextLine( "shutterTime", "Exposure Time" ).occurrences( 0, 1 ).build() );
+        final XData xDataInfo = createXData( MediaInfo.IMAGE_INFO_METADATA_NAME, "Extra Info", form.build() );
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any() ) ).thenReturn( XDatas.from( xDataInfo ) );
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.imageMedia() ).name( "myContent" ).build() )
+            .mediaInfo( MediaInfo.create()
+                            .addMetadata( "exposure time", "1" )
+                            .addMetadata( "exif Subifd Exposure Time", "2" )
+                            .addMetadata( "shutter Time", "3" )
+                            .build() )
+            .build();
+        final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
+        final EditableContent editableContent = new EditableContent(
+            Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( new PropertyTree() ).build() );
+        result.getEditor().edit( editableContent );
+        assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "2" );
     }
 
     private static Form createGpsInfoMixinForm()
