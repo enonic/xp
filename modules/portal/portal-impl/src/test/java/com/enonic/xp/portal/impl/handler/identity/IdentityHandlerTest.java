@@ -54,9 +54,7 @@ public class IdentityHandlerTest
             return null;
         } );
 
-        this.handler = new IdentityHandler();
-        this.handler.setContentService( contentService );
-        this.handler.setIdProviderControllerService( idProviderControllerService );
+        this.handler = new IdentityHandler( contentService, idProviderControllerService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
@@ -93,7 +91,7 @@ public class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler.setIdProviderControllerService( idProviderControllerService );
+        this.handler = new IdentityHandler( Mockito.mock( ContentService.class ), idProviderControllerService );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 

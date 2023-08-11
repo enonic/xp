@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.security;
 
+import java.security.SecureRandom;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +17,7 @@ public class PBKDF2EncoderTest
     public void setUp()
         throws Exception
     {
-        this.encoder = new PBKDF2Encoder();
+        this.encoder = new PBKDF2Encoder( new SecureRandom() );
     }
 
     @Test

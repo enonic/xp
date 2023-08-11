@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.idprovider;
 
-import java.util.Objects;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -64,25 +62,13 @@ public class IdProviderControllerExecutionParams
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final IdProviderControllerExecutionParams that = (IdProviderControllerExecutionParams) o;
-        return Objects.equals( idProviderKey, that.idProviderKey ) && Objects.equals( functionName, that.functionName ) &&
-            Objects.equals( servletRequest, that.servletRequest ) && Objects.equals( portalRequest, that.portalRequest ) &&
-            Objects.equals( response, that.response );
+       return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-
-        return Objects.hash( idProviderKey, functionName, servletRequest, portalRequest, response );
+        return super.hashCode();
     }
 
     public static final class Builder

@@ -9,6 +9,7 @@ public final class VirtualHostHelper
 {
     private static final String KEY = VirtualHost.class.getName();
 
+    @Deprecated
     public static boolean hasVirtualHost( final HttpServletRequest req )
     {
         return getVirtualHost( req ) != null;
