@@ -106,7 +106,7 @@ metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", vers
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
 hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
-hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version = "1.5.6" }
+hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version = "2.2.3" }
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
