@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -23,7 +24,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
 @Order(-200)
 @WebFilter("/*")
 public final class VirtualHostFilter
@@ -31,7 +32,7 @@ public final class VirtualHostFilter
 {
     private static final Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
 
-    private final VirtualHostService virtualHostConfigService;
+    private final VirtualHostService virtualHostService;
 
     private final VirtualHostResolver virtualHostResolver;
 
@@ -39,7 +40,7 @@ public final class VirtualHostFilter
     public VirtualHostFilter( @Reference final VirtualHostService virtualHostService,
                               @Reference final VirtualHostResolver virtualHostResolver )
     {
-        this.virtualHostConfigService = virtualHostService;
+        this.virtualHostService = virtualHostService;
         this.virtualHostResolver = virtualHostResolver;
     }
 
@@ -47,7 +48,8 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( virtualHostConfigService.isEnabled() )
+        if ( virtualHostService.isEnabled() &&
+            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
         {
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
             if ( virtualHost == null )
