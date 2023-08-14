@@ -44,8 +44,9 @@ public final class DispatchServletImpl
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        ServletRequestHolder.setRequest( req );
+        req.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, connector );
 
+        ServletRequestHolder.setRequest( req );
         try
         {
             this.filterPipeline.filter( req, res, this.servletPipeline );

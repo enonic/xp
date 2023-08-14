@@ -15,4 +15,6 @@ public class DispatchConstants
     public static final List<String> CONNECTORS = List.of( XP_CONNECTOR, API_CONNECTOR, STATUS_CONNECTOR );
 
     public static final String CONNECTOR_PROPERTY = "connector";
+
+    public static final String CONNECTOR_ATTRIBUTE = "com.enonic.xp.web.dispatch.connector";
 }
