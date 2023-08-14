@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -22,7 +23,13 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 public final class IdProviderFilter
     extends OncePerRequestFilter
 {
-    private IdProviderControllerService idProviderControllerService;
+    private final IdProviderControllerService idProviderControllerService;
+
+    @Activate
+    public IdProviderFilter( @Reference final IdProviderControllerService idProviderControllerService )
+    {
+        this.idProviderControllerService = idProviderControllerService;
+    }
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
@@ -44,11 +51,5 @@ public final class IdProviderFilter
         final IdProviderResponseWrapper responseWrapper = new IdProviderResponseWrapper( idProviderControllerService, req, res );
         final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
         chain.doFilter( requestWrapper, responseWrapper );
-    }
-
-    @Reference
-    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
-    {
-        this.idProviderControllerService = idProviderControllerService;
     }
 }

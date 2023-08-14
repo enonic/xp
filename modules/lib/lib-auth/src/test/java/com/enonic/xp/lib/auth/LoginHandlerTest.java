@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.auth;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
@@ -112,7 +109,7 @@ public class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, localScopeAuth );
-        assertEquals( null, sessionAuthInfo );
+        assertNull( sessionAuthInfo );
     }
 
     @Test
@@ -162,36 +159,23 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginMultipleIdProvidersInOrder()
+    public void testLoginUnspecifiedIdProvider()
     {
-        final IdProvider idProvider1 =
-            IdProvider.create().displayName( "Id Provider 1" ).key( IdProviderKey.from( "idprovider1" ) ).build();
-        final IdProvider idProvider3 =
-            IdProvider.create().displayName( "Id Provider 3" ).key( IdProviderKey.from( "idprovider3" ) ).build();
-        final IdProvider idProvider2 =
-            IdProvider.create().displayName( "Id Provider 2" ).key( IdProviderKey.from( "idprovider2" ) ).build();
-        final IdProviders idProviders = IdProviders.from( idProvider1, idProvider3, idProvider2 );
-
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken();
         expectedAuthToken.setEmail( "user1@enonic.com" );
         expectedAuthToken.setPassword( "pwd123" );
-        expectedAuthToken.setIdProvider( idProvider3.getKey() );
+        expectedAuthToken.setIdProvider( null );
 
         final AuthTokenMatcher matcher = new AuthTokenMatcher( expectedAuthToken );
         Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
-        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-        runFunction( "/test/login-test.js", "loginMultipleIdProvidersInOrder" );
+        runFunction( "/test/login-test.js", "loginUnspecifiedIdProvider" );
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
-        assertEquals( 3, matcher.loginIdProviderAttempts.size() );
-        assertEquals( "idprovider1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
-        assertEquals( "idprovider2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
-        assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
     }
 
     @Test
@@ -223,8 +207,6 @@ public class LoginHandlerTest
             this.thisObject = thisObject;
         }
 
-        List<IdProviderKey> loginIdProviderAttempts = new ArrayList<>();
-
         @Override
         public boolean matches( AuthenticationToken argument )
         {
@@ -234,10 +216,9 @@ public class LoginHandlerTest
             }
 
             final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) argument;
-            loginIdProviderAttempts.add( authToken.getIdProvider() );
 
-            return thisObject.getClass().equals( authToken.getClass() ) &&
-                this.thisObject.getIdProvider().equals( authToken.getIdProvider() ) &&
+            return
+                this.thisObject.getIdProvider() == null &&
                 this.thisObject.getEmail().equals( authToken.getEmail() ) &&
                 this.thisObject.getPassword().equals( authToken.getPassword() );
         }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -36,13 +37,17 @@ public class IdentityHandler
 
     private static final Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    protected IdProviderControllerService idProviderControllerService;
+    private final IdProviderControllerService idProviderControllerService;
 
-    public IdentityHandler()
+    @Activate
+    public IdentityHandler( @Reference final ContentService contentService,
+                            @Reference final IdProviderControllerService idProviderControllerService )
     {
-        super( "idprovider" );
+        super("idprovider");
+        this.contentService = contentService;
+        this.idProviderControllerService = idProviderControllerService;
     }
 
     @Override
@@ -61,7 +66,7 @@ public class IdentityHandler
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
 
-        if ( !( virtualHost == null || virtualHost.getIdProviderKeys().contains( idProviderKey ) ) )
+        if ( virtualHost != null && !virtualHost.getIdProviderKeys().contains( idProviderKey ) )
         {
             throw WebException.forbidden( String.format( "'%s' id provider is forbidden", idProviderKey ) );
         }
@@ -160,17 +165,5 @@ public class IdentityHandler
             putString( jSessionId, StandardCharsets.UTF_8 ).
             hash().
             toString();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
-    {
-        this.idProviderControllerService = idProviderControllerService;
     }
 }

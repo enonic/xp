@@ -1,15 +1,13 @@
 package com.enonic.xp.core.impl.security;
 
+import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.Arrays;
+import java.util.Objects;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.HexEncoder;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class PBKDF2Encoder
     implements PasswordEncoder
@@ -20,17 +18,15 @@ final class PBKDF2Encoder
 
     private static final int ITERATIONS = 1000;
 
-    PBKDF2Encoder()
+    private final SecureRandom secureRandom;
+
+    PBKDF2Encoder(final SecureRandom secureRandom)
     {
+        this.secureRandom = secureRandom;
     }
 
     @Override
     public String encodePassword( final String plainPassword )
-    {
-        return doEncode( plainPassword );
-    }
-
-    private String doEncode( final String plainPassword )
     {
         final byte[] salt = createSalt();
 
@@ -44,17 +40,12 @@ final class PBKDF2Encoder
     @Override
     public boolean validate( final String key, final String correctPasswordKey )
     {
-        if ( isNullOrEmpty( key ) )
+        if ( Objects.requireNonNullElse( key, "" ).isEmpty() || Objects.requireNonNullElse( correctPasswordKey, "" ).isEmpty() )
         {
             return false;
         }
 
         final AuthenticationHash authenticationHash = AuthenticationHash.from( correctPasswordKey );
-
-        if ( authenticationHash == null )
-        {
-            return false;
-        }
 
         final String type = authenticationHash.type;
         if ( !type.equals( this.getType() ) )
@@ -65,7 +56,7 @@ final class PBKDF2Encoder
         final byte[] correctHash = HexEncoder.fromHex( authenticationHash.pwd );
         final byte[] generatedHash = encodePassword( key.toCharArray(), HexEncoder.fromHex( authenticationHash.salt ), LENGTH, ITERATIONS );
 
-        return Arrays.equals( correctHash, generatedHash );
+        return MessageDigest.isEqual( correctHash, generatedHash );
     }
 
     @Override
@@ -85,15 +76,14 @@ final class PBKDF2Encoder
         }
         catch ( Exception e )
         {
-            throw Exceptions.unchecked( e );
+            throw new RuntimeException( e );
         }
     }
 
     private byte[] createSalt()
     {
-        SecureRandom random = new SecureRandom();
         byte[] salt = new byte[20];
-        random.nextBytes( salt );
+        secureRandom.nextBytes( salt );
         return salt;
     }
 
@@ -116,11 +106,6 @@ final class PBKDF2Encoder
 
         public static AuthenticationHash from( final String key )
         {
-            if ( isNullOrEmpty( key ) )
-            {
-                return null;
-            }
-
             final String[] elements = key.split( SEPARATOR );
 
             if ( elements.length != 3 )
