@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
@@ -17,11 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.context.Context;
@@ -112,9 +110,9 @@ public final class SecurityServiceImpl
 
     private final Clock clock;
 
-    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();
-
     private final SecureRandom secureRandom = new SecureRandom();
+
+    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder( secureRandom );
 
     private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
 
@@ -136,8 +134,8 @@ public final class SecurityServiceImpl
 
     private void initializeSuPassword()
     {
-        final String suPasswordPropertyValue = Strings.emptyToNull( System.getProperty( SU_PASSWORD_PROPERTY_KEY ) );
-        if ( suPasswordPropertyValue != null )
+        final String suPasswordPropertyValue = System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" );
+        if ( !suPasswordPropertyValue.isEmpty() )
         {
             final Matcher suPasswordMatcher = SU_PASSWORD_PATTERN.matcher( suPasswordPropertyValue );
             if ( suPasswordMatcher.find() )
@@ -425,7 +423,7 @@ public final class SecurityServiceImpl
                 throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
         }
 
-        return hashFunction.newHasher().putString( plainPassword, Charset.defaultCharset() ).hash().toString();
+        return hashFunction.newHasher().putString( plainPassword, StandardCharsets.UTF_8 ).hash().toString();
     }
 
     private void addRandomDelay()
@@ -530,7 +528,7 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
-        Preconditions.checkArgument( password != null && password.length() > 0, "Password cannot be empty" );
+        Preconditions.checkArgument( password != null && !password.isEmpty(), "Password cannot be empty" );
 
         return callWithContext( () -> {
 
@@ -914,7 +912,7 @@ public final class SecurityServiceImpl
             final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
-            return PrincipalQueryResult.create().addPrincipals( principals ).totalSize( Ints.checkedCast( result.getTotalHits() ) ).build();
+            return PrincipalQueryResult.create().addPrincipals( principals ).totalSize( Math.toIntExact( result.getTotalHits() ) ).build();
         }
         catch ( NodeNotFoundException e )
         {
@@ -932,7 +930,7 @@ public final class SecurityServiceImpl
             final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( result.getNodeIds() ) );
 
             final Principals principals = PrincipalNodeTranslator.fromNodes( nodes );
-            return UserQueryResult.create().addUsers( principals ).totalSize( Ints.checkedCast( result.getTotalHits() ) ).build();
+            return UserQueryResult.create().addUsers( principals ).totalSize( Math.toIntExact( result.getTotalHits() ) ).build();
         }
         catch ( NodeNotFoundException e )
         {

@@ -42,8 +42,7 @@ public class BasicAuthFilterTest
         this.chain = Mockito.mock( FilterChain.class );
         this.securityService = Mockito.mock( SecurityService.class );
 
-        this.filter = new BasicAuthFilter();
-        this.filter.setSecurityService( this.securityService );
+        this.filter = new BasicAuthFilter( this.securityService );
 
         final IdProviderKey idProviderKey = IdProviderKey.from( "store" );
         final IdProvider idProvider = IdProvider.create().key( idProviderKey ).build();

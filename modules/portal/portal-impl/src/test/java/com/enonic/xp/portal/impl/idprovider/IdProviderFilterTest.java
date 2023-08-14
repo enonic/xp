@@ -26,8 +26,7 @@ public class IdProviderFilterTest
     public void setup()
     {
         idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
-        idProviderFilter = new IdProviderFilter();
-        idProviderFilter.setIdProviderControllerService( idProviderControllerService );
+        idProviderFilter = new IdProviderFilter( idProviderControllerService );
     }
 
     @Test

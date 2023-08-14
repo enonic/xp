@@ -9,13 +9,20 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.annotation.Order;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.EmailPasswordAuthToken;
+import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
+import com.enonic.xp.session.Session;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=api"})
@@ -24,7 +31,13 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 public final class BasicAuthFilter
     extends OncePerRequestFilter
 {
-    private SecurityService securityService;
+    private final SecurityService securityService;
+
+    @Activate
+    public BasicAuthFilter( @Reference final SecurityService securityService )
+    {
+        this.securityService = securityService;
+    }
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
@@ -48,14 +61,11 @@ public final class BasicAuthFilter
             return;
         }
 
-        final AuthHelper helper = new AuthHelper( this.securityService );
-        helper.login( parts[0], parts[1], false );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
+        final AuthenticationInfo info = authenticate( parts[0], parts[1] );
+        if ( info.isAuthenticated() )
+        {
+            createSession( info );
+        }
     }
 
     private static String[] parseHeader( final String header )
@@ -82,5 +92,51 @@ public final class BasicAuthFilter
         }
 
         return parts;
+    }
+
+    private AuthenticationInfo authenticate( final String user, final String password )
+    {
+        AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
+
+        if ( isValidEmail( user ) )
+        {
+            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
+            emailAuthToken.setEmail( user );
+            emailAuthToken.setPassword( password );
+            authInfo = securityService.authenticate( emailAuthToken );
+        }
+        if ( !authInfo.isAuthenticated() )
+        {
+            final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
+            usernameAuthToken.setUsername( user );
+            usernameAuthToken.setPassword( password );
+            authInfo = securityService.authenticate( usernameAuthToken );
+        }
+        return authInfo;
+    }
+
+    private boolean isValidEmail( final String value )
+    {
+        return value != null && value.chars().filter( ch -> ch == '@' ).count() == 1;
+    }
+
+    private void createSession( final AuthenticationInfo authInfo )
+    {
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+        final Session session = localScope.getSession();
+
+        if ( session != null )
+        {
+            final var attributes = session.getAttributes();
+            session.invalidate();
+
+            final Session newSession = localScope.getSession();
+
+            if ( newSession != null )
+            {
+                attributes.forEach( newSession::setAttribute );
+                session.setAttribute( authInfo );
+            }
+        }
     }
 }

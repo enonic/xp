@@ -122,7 +122,7 @@ exports.loginMultipleIdProvider = function () {
 
 };
 
-exports.loginMultipleIdProvidersInOrder = function () {
+exports.loginUnspecifiedIdProvider = function () {
 
     var result = auth.login({
         user: 'user1@enonic.com',

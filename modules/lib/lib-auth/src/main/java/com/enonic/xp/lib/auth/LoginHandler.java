@@ -1,27 +1,18 @@
 package com.enonic.xp.lib.auth;
 
-import java.util.Comparator;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
-import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.IdProviders;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
@@ -43,7 +34,7 @@ public final class LoginHandler
 
     private Scope scope;
 
-    private Supplier<SecurityService> securityService;
+    private Supplier<SecurityService> securityServiceSupplier;
 
     private Supplier<Context> context;
 
@@ -81,7 +72,7 @@ public final class LoginHandler
 
     public LoginResultMapper login()
     {
-        AuthenticationInfo authInfo = noIdProviderSpecified() ? attemptLoginWithAllExistingIdProviders() : attemptLogin();
+        AuthenticationInfo authInfo = attemptLogin();
 
         if ( authInfo.isAuthenticated() )
         {
@@ -132,41 +123,17 @@ public final class LoginHandler
         }
     }
 
-    private boolean noIdProviderSpecified()
-    {
-        return this.idProvider == null || this.idProvider.length == 0;
-    }
-
-    private AuthenticationInfo attemptLoginWithAllExistingIdProviders()
-    {
-        final IdProviders idProviders = runAsAuthenticated( this::getSortedIdProviders );
-
-        for ( IdProvider idProvider : idProviders )
-        {
-            final AuthenticationInfo authInfo = authenticate( idProvider.getKey() );
-            if ( ( authInfo != null ) && authInfo.isAuthenticated() )
-            {
-                return authInfo;
-            }
-        }
-
-        return AuthenticationInfo.unAuthenticated();
-    }
-
-    private IdProviders getSortedIdProviders()
-    {
-        IdProviders idProviders = securityService.get().getIdProviders();
-        return IdProviders.from(
-            idProviders.stream().sorted( Comparator.comparing( u -> u.getKey().toString() ) ).collect( Collectors.toList() ) );
-    }
-
     private AuthenticationInfo attemptLogin()
     {
+        if ( idProvider == null || idProvider.length == 0 )
+        {
+            return authenticate( null );
+        }
 
         for ( String uStore : idProvider )
         {
             final AuthenticationInfo authInfo = authenticate( IdProviderKey.from( uStore ) );
-            if ( ( authInfo != null ) && authInfo.isAuthenticated() )
+            if ( authInfo.isAuthenticated() )
             {
                 return authInfo;
             }
@@ -177,17 +144,17 @@ public final class LoginHandler
 
     private AuthenticationInfo authenticate( IdProviderKey idProvider )
     {
-        AuthenticationInfo authInfo = null;
+        AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
 
         if ( isValidEmail( this.user ) )
         {
+            final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
                 final VerifiedEmailAuthToken verifiedEmailAuthToken = new VerifiedEmailAuthToken();
                 verifiedEmailAuthToken.setEmail( this.user );
                 verifiedEmailAuthToken.setIdProvider( idProvider );
-
-                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( verifiedEmailAuthToken ) );
+                authToken = verifiedEmailAuthToken;
             }
             else
             {
@@ -195,20 +162,20 @@ public final class LoginHandler
                 emailAuthToken.setEmail( this.user );
                 emailAuthToken.setPassword( this.password );
                 emailAuthToken.setIdProvider( idProvider );
-
-                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( emailAuthToken ) );
+                authToken = emailAuthToken;
             }
+            authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
 
-        if ( authInfo == null || !authInfo.isAuthenticated() )
+        if ( !authInfo.isAuthenticated() )
         {
+            final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
-                final VerifiedUsernameAuthToken usernameAuthToken = new VerifiedUsernameAuthToken();
-                usernameAuthToken.setUsername( this.user );
-                usernameAuthToken.setIdProvider( idProvider );
-
-                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+                final VerifiedUsernameAuthToken verifiedUsernameAuthToken = new VerifiedUsernameAuthToken();
+                verifiedUsernameAuthToken.setUsername( this.user );
+                verifiedUsernameAuthToken.setIdProvider( idProvider );
+                authToken = verifiedUsernameAuthToken;
             }
             else
             {
@@ -216,23 +183,12 @@ public final class LoginHandler
                 usernameAuthToken.setUsername( this.user );
                 usernameAuthToken.setPassword( this.password );
                 usernameAuthToken.setIdProvider( idProvider );
-
-                authInfo = runAsAuthenticated( () -> this.securityService.get().authenticate( usernameAuthToken ) );
+                authToken = usernameAuthToken;
             }
+            authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
 
         return authInfo;
-    }
-
-    private <T> T runAsAuthenticated( Callable<T> runnable )
-    {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( this.context.get() )
-            .authInfo( authInfo )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
-            .branch( SecurityConstants.BRANCH_SECURITY )
-            .build()
-            .callWith( runnable );
     }
 
     private boolean isValidEmail( final String value )
@@ -256,7 +212,7 @@ public final class LoginHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.securityService = context.getService( SecurityService.class );
+        this.securityServiceSupplier = context.getService( SecurityService.class );
         this.context = context.getBinding( Context.class );
         this.portalRequestSupplier = context.getBinding( PortalRequest.class );
     }
