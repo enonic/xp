@@ -166,8 +166,7 @@ public class ParentContentSynchronizerTest
 
     private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
     {
-        final ContentSyncParams.Builder builder =
-            ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject ).includeChildren( false );
+        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
 
         if ( contentId != null )
         {
@@ -175,6 +174,7 @@ public class ParentContentSynchronizerTest
         }
         synchronizer.sync( builder.build() );
     }
+
 
     @Test
     public void testCreatedChild()
@@ -283,6 +283,24 @@ public class ParentContentSynchronizerTest
         throws Exception
     {
         assertNull( syncUpdated( ContentId.from( "source" ) ) );
+    }
+
+    @Test
+    public void syncInvalidParent()
+        throws Exception
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        syncCreated( sourceContent.getId() );
+
+        final Content updatedContent = projectContext.callWith(
+            () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
+                edit.data.addString( "a", "b" );
+            } ) ) ) );
+
+        sync( sourceContent.getId(), nonRelatedProject.getName(), layer.getName() );
+
+        assertNotEquals( layerContext.callWith( () -> contentService.getById( sourceContent.getId() ).getData() ),
+                         updatedContent.getData() );
     }
 
     @Test

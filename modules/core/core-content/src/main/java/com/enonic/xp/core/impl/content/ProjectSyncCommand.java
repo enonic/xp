@@ -31,12 +31,11 @@ final class ProjectSyncCommand
     {
         final Project targetProject = projectService.get( params.getTargetProject() );
 
-        if ( targetProject.getParent() != null )
+        if ( !targetProject.getParents().isEmpty() )
         {
-            contentSynchronizer.sync( ContentSyncParams.create().
-                sourceProject( targetProject.getParent() ).
-                targetProject( params.getTargetProject() ).
-                build() );
+            targetProject.getParents()
+                .forEach( parent -> contentSynchronizer.sync(
+                    ContentSyncParams.create().sourceProject( parent ).targetProject( params.getTargetProject() ).build() ) );
         }
         else
         {

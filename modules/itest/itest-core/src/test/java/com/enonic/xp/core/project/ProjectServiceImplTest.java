@@ -706,7 +706,7 @@ class ProjectServiceImplTest
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getDescription(), pro.getDescription() );
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getDisplayName(), pro.getDisplayName() );
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getIcon(), pro.getIcon() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParent(), pro.getParent() );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParents(), pro.getParents() );
         } );
 
     }
@@ -747,7 +747,7 @@ class ProjectServiceImplTest
             doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
-            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParent() );
+            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParents().get( 0 ) );
         } );
     }
 
@@ -946,17 +946,19 @@ class ProjectServiceImplTest
         final ProjectGraph graph1 = adminContext().callWith( () -> projectService.graph( project1.getName() ) );
 
         assertEquals( 5, graph1.getSize() );
-        assertThat( graph1.getList() ).extracting( "name", "parent" )
-            .containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
-                              tuple( project4.getName(), project2.getName() ), tuple( project3.getName(), project2.getName() ),
-                              tuple( project5.getName(), project4.getName() ) );
+        assertThat( graph1.getList() ).extracting( "name", "parents" )
+            .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
+                              tuple( project4.getName(), List.of( project2.getName() ) ),
+                              tuple( project3.getName(), List.of( project2.getName() ) ),
+                              tuple( project5.getName(), List.of( project4.getName() ) ) );
 
         final ProjectGraph graph2 = adminContext().callWith( () -> projectService.graph( project4.getName() ) );
 
         assertEquals( 4, graph2.getSize() );
-        assertThat( graph2.getList() ).extracting( "name", "parent" )
-            .containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
-                              tuple( project4.getName(), project2.getName() ), tuple( project5.getName(), project4.getName() ) );
+        assertThat( graph2.getList() ).extracting( "name", "parents" )
+            .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
+                              tuple( project4.getName(), List.of( project2.getName() ) ),
+                              tuple( project5.getName(), List.of( project4.getName() ) ) );
     }
 
     @Test
@@ -1107,9 +1109,13 @@ class ProjectServiceImplTest
             .name( name )
             .description( "description" )
             .displayName( "Project display name" )
-            .parent( parent )
             .permissions( permissions )
             .forceInitialization( forceInitialization );
+
+        if ( parent != null )
+        {
+            params.addParents( List.of( parent ) );
+        }
 
         if ( siteConfigs != null )
         {

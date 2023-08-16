@@ -90,7 +90,6 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ProjectServiceImpl projectService;
 
-
     protected ContentServiceImpl contentService;
 
     protected MediaInfoServiceImpl mediaInfoService;
@@ -107,6 +106,8 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context projectContext;
 
+    protected Context secondProjectContext;
+
     protected Context layerContext;
 
     protected Context childLayerContext;
@@ -119,15 +120,17 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project project;
 
+    protected Project secondProject;
+
+    protected Project nonRelatedProject;
+
     protected Project layer;
 
     protected Project childLayer;
 
     protected static Context adminContext()
     {
-        return ContextBuilder.create()
-            .branch( "master" )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+        return ContextBuilder.create().branch( "master" ).repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
             .build();
     }
@@ -160,10 +163,7 @@ public abstract class AbstractContentSynchronizerTest
 
             SecurityInitializer.create()
                 .setIndexService( indexService )
-                .setSecurityService( securityService )
-                .setNodeService( nodeService )
-                .build()
-                .initialize();
+                .setSecurityService( securityService ).setNodeService( nodeService ).build().initialize();
 
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
@@ -171,10 +171,18 @@ public abstract class AbstractContentSynchronizerTest
             project = projectService.create(
                 CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
 
+            secondProject = projectService.create(
+                CreateProjectParams.create().name( ProjectName.from( "source_project2" ) ).displayName( "Source Project 2" ).build() );
+
+            nonRelatedProject = projectService.create( CreateProjectParams.create()
+                                                           .name( ProjectName.from( "another_project" ) )
+                                                           .displayName( "Another Source Project" )
+                                                           .build() );
+
             layer = projectService.create( CreateProjectParams.create()
                                                .name( ProjectName.from( "target_project" ) )
                                                .displayName( "Target Project" )
-                                               .parent( project.getName() )
+                                               .addParents( List.of( project.getName(), secondProject.getName() ) )
                                                .build() );
 
             childLayer = projectService.create( CreateProjectParams.create()
@@ -185,6 +193,12 @@ public abstract class AbstractContentSynchronizerTest
 
             this.projectContext = ContextBuilder.from( ContextAccessor.current() )
                 .repositoryId( project.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
+
+            this.secondProjectContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( secondProject.getName().getRepoId() )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();

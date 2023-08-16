@@ -88,6 +88,23 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testCreatedDiffParentsSameName()
+        throws InterruptedException
+    {
+        final Content firstContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content secondContent = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        handleEvents();
+
+        final Content firstTargetContent = layerContext.callWith( () -> contentService.getById( firstContent.getId() ) );
+        final Content secondTargetContent = layerContext.callWith( () -> contentService.getById( secondContent.getId() ) );
+
+        compareSynched( firstContent, firstTargetContent );
+        assertNotEquals( secondContent.getName(), secondTargetContent.getName() );
+        assertNotEquals( "name-1", secondTargetContent.getName() );
+    }
+
+    @Test
     public void testCreated()
         throws InterruptedException
     {
@@ -99,6 +116,14 @@ public class ProjectContentEventListenerTest
 
         compareSynched( sourceContent, targetContent );
         assertEquals( project.getName(), targetContent.getOriginProject() );
+
+        final Content secondParentContent = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
+
+        handleEvents();
+
+        final Content secondTargetContent = layerContext.callWith( () -> contentService.getById( secondParentContent.getId() ) );
+
+        compareSynched( secondParentContent, secondTargetContent );
     }
 
     @Test
@@ -222,6 +247,37 @@ public class ProjectContentEventListenerTest
         assertEquals( 4, targetContent.getInherit().size() );
     }
 
+    @Test
+    public void testUpdatedInSecondParent()
+        throws InterruptedException
+    {
+        projectContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
+        final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name2" ) );
+
+        final Content updatedContent = secondProjectContext.callWith( () -> {
+
+            final Content updated = contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
+                edit.data = new PropertyTree();
+                edit.displayName = "newDisplayName";
+                edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
+                edit.owner = PrincipalKey.from( "user:system:newOwner" );
+                edit.language = Locale.forLanguageTag( "no" );
+                edit.page = createPage();
+
+            } ) ) );
+
+            return updated;
+
+        } );
+
+        handleEvents();
+
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent2.getId() ) );
+
+        compareSynched( updatedContent, targetContent );
+        assertEquals( 4, targetContent.getInherit().size() );
+    }
+
 
     @Test
     public void testUpdatedFromReadyToInProgress()
@@ -301,6 +357,35 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testMovedToContentFromOtherProjectAndRemove()
+        throws InterruptedException
+    {
+        final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+
+        handleEvents();
+
+        layerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent2.getId() ).parentContentPath( sourceContent1.getPath() ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent1 = layerContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+        final Content targetContent2 = layerContext.callWith( () -> contentService.getById( sourceContent2.getId() ) );
+
+        assertEquals( "/content1", targetContent1.getPath().toString() );
+        assertEquals( "/content1/content2", targetContent2.getPath().toString() );
+
+        projectContext.runWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent1.getPath() ).build() ) );
+
+        handleEvents(); // not synced
+
+        assertTrue( layerContext.callWith( () -> contentService.contentExists( sourceContent1.getId() ) ) );
+        assertTrue( layerContext.callWith( () -> contentService.contentExists( sourceContent2.getId() ) ) );
+    }
+
+    @Test
     public void testMovedLocally()
         throws InterruptedException
     {
@@ -366,6 +451,38 @@ public class ProjectContentEventListenerTest
 
         assertEquals( "/content", targetContent.getPath().toString() );
         assertEquals( "/content/child", targetChild.getPath().toString() );
+    }
+
+    @Test
+    public void testMovedArchivedAndRestored()
+        throws InterruptedException
+    {
+        final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+
+        handleEvents();
+
+        layerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent2.getId() ).parentContentPath( sourceContent1.getPath() ).build() ) );
+
+        projectContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent1.getId() ).build() ) );
+
+        handleEvents();
+
+        Content targetContent1 = layerArchiveContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+        Content targetContent2 = layerArchiveContext.callWith( () -> contentService.getById( sourceContent2.getId() ) );
+
+        assertEquals( "/content1", targetContent1.getPath().toString() );
+        assertEquals( "/content1/content2", targetContent2.getPath().toString() );
+
+        projectContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent1.getId() ).build() ) );
+        handleEvents();
+
+        targetContent1 = layerContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+        targetContent2 = layerContext.callWith( () -> contentService.getById( sourceContent2.getId() ) );
+
+        assertEquals( "/content1", targetContent1.getPath().toString() );
+        assertEquals( "/content1/content2", targetContent2.getPath().toString() );
     }
 
     @Test

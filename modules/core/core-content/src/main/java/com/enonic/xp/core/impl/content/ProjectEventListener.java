@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -73,24 +74,21 @@ public final class ProjectEventListener
     {
         final Project project = this.projectService.get( projectName );
 
-        if ( project != null && project.getParent() != null )
+        if ( project != null && !project.getParents().isEmpty() )
         {
-            final Project parentProject = this.projectService.get( project.getParent() );
-
-            if ( parentProject != null )
-            {
-                final ContentSyncTask syncTask = ContentSyncTask.create().
-                    sourceProject( parentProject.getName() ).
-                    targetProject( project.getName() ).
-                    contentSynchronizer( contentSynchronizer ).
-                    build();
+            project.getParents().stream().map( projectService::get ).filter( Objects::nonNull ).forEach( parentProject -> {
+                final ContentSyncTask syncTask = ContentSyncTask.create()
+                    .sourceProject( parentProject.getName() )
+                    .targetProject( project.getName() )
+                    .contentSynchronizer( contentSynchronizer )
+                    .build();
 
                 taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                            .runnableTask( syncTask )
-                                            .description( String.format( "sync [%s] project from parent [%s]", project.getName(),
-                                                                         parentProject.getName() ) )
-                                            .build() );
-            }
+                                                 .runnableTask( syncTask )
+                                                 .description( String.format( "sync [%s] project from parent [%s]", project.getName(),
+                                                                              parentProject.getName() ) )
+                                                 .build() );
+            } );
         }
     }
 
@@ -102,21 +100,18 @@ public final class ProjectEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            authInfo( authInfo ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( User.create().
-                key( PrincipalKey.ofSuperUser() ).
-                login( PrincipalKey.ofSuperUser().getId() ).
-                build() ).
-            build();
+        return AuthenticationInfo.create()
+            .principals( RoleKeys.ADMIN )
+            .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+            .build();
     }
 }

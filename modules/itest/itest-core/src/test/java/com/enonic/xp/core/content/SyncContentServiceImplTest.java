@@ -5,11 +5,13 @@ import java.util.EnumSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -152,10 +154,62 @@ public class SyncContentServiceImplTest
 
     }
 
+    @Test
+    public void testSyncProjectFromTwoParents()
+        throws Exception
+    {
+        final Content missedContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content missedContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        layerContext.runWith( () -> {
+            assertFalse( contentService.contentExists( missedContent1.getId() ) );
+            assertFalse( contentService.contentExists( missedContent2.getId() ) );
+        } );
+
+        projectContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() ) );
+
+        layerContext.runWith( () -> {
+            assertTrue( contentService.contentExists( missedContent1.getId() ) );
+            assertTrue( contentService.contentExists( missedContent2.getId() ) );
+        } );
+
+    }
+
+    @Test
+    public void testMoveArchiveAndResetFromTwoParents()
+        throws Exception
+    {
+        final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
+        final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        projectContext.runWith( () -> syncContentService.syncProject(
+            ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() ) );
+
+        layerContext.runWith( () -> {
+            contentService.move(
+                MoveContentParams.create().contentId( sourceContent2.getId() ).parentContentPath( sourceContent1.getPath() ).build() );
+        } );
+
+        projectContext.runWith( () -> {
+            contentService.archive( ArchiveContentParams.create().contentId( sourceContent1.getId() ).build() );
+
+            syncContentService.syncProject(
+                ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() );
+        } );
+
+        layerArchiveContext.runWith( () -> {
+            assertTrue( contentService.contentExists( sourceContent1.getId() ) );
+            assertTrue( contentService.contentExists( sourceContent2.getId() ) );
+        } );
+    }
+
     private Content syncCreated( final ContentId contentId )
     {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );
 
