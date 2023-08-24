@@ -19,6 +19,7 @@
   <xs:element name="application" type="applicationType"/>
   <xs:element name="task" type="taskDescriptor"/>
   <xs:element name="styles" type="styleDescriptor"/>
+  <xs:element name="api" type="apiDescriptor"/>
 
   <xs:complexType name="site">
     <xs:sequence>
@@ -418,6 +419,18 @@
       <xs:element minOccurs="0" name="filter" type="xs:string"/>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="apiDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="allow">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="principal" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

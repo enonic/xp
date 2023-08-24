@@ -8,6 +8,7 @@ dependencies {
     testImplementation( project( ':web:web-impl' ) )
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":web:web-api") ) )
+    testImplementation( testFixtures( project(":core:core-content") ) )
 }
 
 jar {
