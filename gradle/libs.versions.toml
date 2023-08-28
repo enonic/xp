@@ -64,7 +64,7 @@ elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" 
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
-guava = { module = "com.google.guava:guava", version = "26.0-jre" }
+guava = { module = "com.google.guava:guava", version = "32.1.2-jre" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.16.1" }
 
