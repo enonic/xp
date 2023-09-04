@@ -35,7 +35,7 @@ jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version =
 jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.6" }
 
 javax-servlet = "javax.servlet:javax.servlet-api:3.1.0"
-javax-websocket = "javax.websocket:javax.websocket-api:1.0"
+javax-websocket = "javax.websocket:javax.websocket-api:1.1"
 
 osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
 osgi-service-componentannotations = { module = "org.osgi:org.osgi.service.component.annotations", version = "1.5.1" }
