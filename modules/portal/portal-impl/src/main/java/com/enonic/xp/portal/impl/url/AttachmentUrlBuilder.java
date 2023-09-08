@@ -6,6 +6,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.repository.RepositoryUtils;
 
 final class AttachmentUrlBuilder
     extends PortalUrlBuilder<AttachmentUrlParams>
@@ -14,17 +15,29 @@ final class AttachmentUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, "attachment" );
 
-        if ( this.params.isDownload() )
+        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+
+        if ( isSlashAPI )
         {
-            appendPart( url, "download" );
+            appendPart( url, "attachment" );
+            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            appendPart( url, this.portalRequest.getBranch().toString() );
+            if ( this.params.isDownload() )
+            {
+                params.put( "download", null );
+            }
         }
         else
         {
-            appendPart( url, "inline" );
+            appendPart( url, this.portalRequest.getContentPath().toString() );
+            appendPart( url, "_" );
+            appendPart( url, "attachment" );
+        }
+
+        if ( !isSlashAPI )
+        {
+            appendPart( url, this.params.isDownload() ? "download" : "inline" );
         }
 
         final Content content = resolveContent();
@@ -33,6 +46,12 @@ final class AttachmentUrlBuilder
 
         appendPart( url, content.getId().toString() + ":" + hash );
         appendPart( url, attachment.getName() );
+    }
+
+    @Override
+    protected String getBaseUrl()
+    {
+        return UrlContextHelper.getMediaServiceBaseUrl();
     }
 
     private Content resolveContent()

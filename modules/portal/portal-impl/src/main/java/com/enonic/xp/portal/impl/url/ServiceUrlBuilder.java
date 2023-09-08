@@ -13,7 +13,7 @@ final class ServiceUrlBuilder
         super( "service" );
     }
 
-    private ApplicationKey getAplication()
+    private ApplicationKey getApplication()
     {
         return new ApplicationResolver().
             portalRequest( this.portalRequest ).
@@ -25,7 +25,7 @@ final class ServiceUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, getAplication().toString() );
+        appendPart( url, getApplication().toString() );
         appendPart( url, this.params.getService() );
     }
 }

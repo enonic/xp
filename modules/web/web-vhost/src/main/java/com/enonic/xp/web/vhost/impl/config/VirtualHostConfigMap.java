@@ -57,8 +57,9 @@ final class VirtualHostConfigMap
         final String target = normalizePath( getString( prefix + "target" ) );
         final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
         final int order = getInt( prefix + "order", Integer.MAX_VALUE );
+        final Map<String, String> context = getVirtualHostContext( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context );
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
@@ -83,6 +84,16 @@ final class VirtualHostConfigMap
         } );
 
         return hostIdProvidersMapping.build();
+    }
+
+    private Map<String, String> getVirtualHostContext( final String mappingPrefix )
+    {
+        final String configPrefix = mappingPrefix + "context" + ".";
+
+        return this.map.entrySet()
+            .stream()
+            .filter( entry -> entry.getKey().startsWith( configPrefix ) )
+            .collect( Collectors.toMap( entry -> entry.getKey().replace( configPrefix, "" ), Map.Entry::getValue ) );
     }
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )

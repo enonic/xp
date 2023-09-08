@@ -176,20 +176,21 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    void rewriteUri_admin_queryString() {
+    void rewriteUri_admin_queryString()
+    {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
 
         when( vhost.getTarget() ).thenReturn( "/xp/admin" );
         when( vhost.getSource() ).thenReturn( "/admin" );
 
-
         UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/xp/admin/rest?a=b" );
         assertEquals( "/admin/rest?a=b", rewritingResult.getRewrittenUri() );
     }
 
     @Test
-    void rewriteUri_queryString() {
+    void rewriteUri_queryString()
+    {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
 

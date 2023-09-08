@@ -108,6 +108,7 @@ public class ApiHandlerTest
         final Map<String, List<String>> objectAsMap = (Map<String, List<String>>) body;
         assertTrue( objectAsMap.containsKey( "resources" ) );
         assertTrue( objectAsMap.get( "resources" ).contains( "myapplication" ) );
+        assertTrue( objectAsMap.get( "resources" ).contains( "media" ) );
     }
 
 }

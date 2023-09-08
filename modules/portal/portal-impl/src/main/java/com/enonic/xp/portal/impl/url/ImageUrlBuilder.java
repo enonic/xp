@@ -11,6 +11,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.repository.RepositoryUtils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -25,7 +26,26 @@ final class ImageUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        super.buildUrl( url, params );
+        params.putAll( this.params.getParams() );
+
+        if ( this.portalRequest.isSiteBase() )
+        {
+            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            appendPart( url, this.portalRequest.getBranch().toString() );
+        }
+
+        if ( portalRequest.getRawPath().startsWith( "/api/" ) )
+        {
+            appendPart( url, this.endpointType );
+            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            appendPart( url, this.portalRequest.getBranch().toString() );
+        }
+        else
+        {
+            appendPart( url, this.portalRequest.getContentPath().toString() );
+            appendPart( url, "_" );
+            appendPart( url, this.endpointType );
+        }
 
         final Media media = resolveMedia();
         final String hash = resolveHash( media );
@@ -39,6 +59,12 @@ final class ImageUrlBuilder
         addParamIfNeeded( params, "quality", this.params.getQuality() );
         addParamIfNeeded( params, "background", this.params.getBackground() );
         addParamIfNeeded( params, "filter", this.params.getFilter() );
+    }
+
+    @Override
+    protected String getBaseUrl()
+    {
+        return UrlContextHelper.getMediaServiceBaseUrl();
     }
 
     private void addParamIfNeeded( final Multimap<String, String> params, final String name, final Object value )

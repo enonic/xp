@@ -50,9 +50,9 @@ public class ApiAppHandler
     private final ExceptionRenderer exceptionRenderer;
 
     @Activate
-    public ApiAppHandler( final @Reference ControllerScriptFactory controllerScriptFactory,
-                          final @Reference ApiDescriptorService apiDescriptorService, final @Reference ExceptionMapper exceptionMapper,
-                          final @Reference ExceptionRenderer exceptionRenderer )
+    public ApiAppHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
+                          @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
+                          @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;

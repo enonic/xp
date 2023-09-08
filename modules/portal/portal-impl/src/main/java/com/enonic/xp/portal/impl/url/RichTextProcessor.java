@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.html.HtmlDocument;
@@ -205,6 +206,10 @@ public class RichTextProcessor
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
+        PortalRequest portalRequest = params.getPortalRequest();
+        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
+        portalRequest.setBranch( ContextAccessor.current().getBranch() );
+
         ImmutableMap<String, ImageStyle> imageStyleMap = getImageStyleMap( params.getPortalRequest() );
         ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
         ImageUrlParams imageUrlParams = new ImageUrlParams().
@@ -212,7 +217,7 @@ public class RichTextProcessor
             id( id ).
             scale( getScale( imageStyle, urlParams, null ) ).
             filter( getFilter( imageStyle ) ).
-            portalRequest( params.getPortalRequest() );
+            portalRequest( portalRequest );
 
         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
@@ -266,11 +271,14 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().
-            type( params.getType() ).
-            id( id ).
-            download( DOWNLOAD_MODE.equals( mode ) ).
-            portalRequest( params.getPortalRequest() );
+        PortalRequest portalRequest = params.getPortalRequest();
+        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
+        portalRequest.setBranch( ContextAccessor.current().getBranch() );
+
+        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().type( params.getType() )
+            .id( id )
+            .download( DOWNLOAD_MODE.equals( mode ) )
+            .portalRequest( portalRequest );
 
         final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
 
@@ -389,10 +397,7 @@ public class RichTextProcessor
             return Collections.emptyMap();
         }
         final String query = urlQuery.startsWith( "?" ) ? urlQuery.substring( 1 ) : urlQuery;
-        return Splitter.on( '&' ).
-            trimResults().
-            withKeyValueSeparator( "=" ).
-            split( query.replace( "&amp;", "&" ) );
+        return Splitter.on( '&' ).trimResults().withKeyValueSeparator( "=" ).split( query.replace( "&amp;", "&" ) );
     }
 
     private String addQueryParamsIfPresent( final String url, final String urlQuery )
