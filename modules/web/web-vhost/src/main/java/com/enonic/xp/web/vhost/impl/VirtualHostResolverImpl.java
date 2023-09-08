@@ -74,14 +74,14 @@ public class VirtualHostResolverImpl
                 if ( matcher.matches() && matchesSource( requestURI ) )
                 {
                     return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
-                                                   matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping( virtualHost ),
-                                                   virtualHost.getOrder() );
+                                                   matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
+                                                   virtualHost.getOrder(), virtualHost.getContext() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( requestURI ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
-                                               createIdProvidersMapping( virtualHost ), virtualHost.getOrder() );
+                                               createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext() );
             }
             return null;
         }
@@ -92,7 +92,7 @@ public class VirtualHostResolverImpl
                 requestURI.startsWith( virtualHost.getSource() + "/" );
         }
 
-        VirtualHostIdProvidersMapping createIdProvidersMapping( VirtualHost virtualHost )
+        VirtualHostIdProvidersMapping createIdProvidersMapping()
         {
             VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
             if ( virtualHost.getDefaultIdProviderKey() != null )

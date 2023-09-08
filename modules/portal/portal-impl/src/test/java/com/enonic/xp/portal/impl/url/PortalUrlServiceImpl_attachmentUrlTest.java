@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -112,6 +113,46 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "http://localhost/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
+    }
+
+    @Test
+    public void createAttachmentUrlForSlashApi()
+    {
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+        this.portalRequest.setContent( createContent() );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .name( "a2.jpg" )
+            .portalRequest( this.portalRequest )
+            .download( true );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 8080 );
+
+        final String url = this.service.attachmentUrl( params );
+        assertEquals( "http://localhost:8080/api/media/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
+    }
+
+    @Test
+    public void createAttachmentUrlForSlashApiWithVhostContextConfig()
+    {
+        ContextAccessor.current().getLocalScope().setAttribute( "mediaService.baseUrl", "http://media.enonic.com" );
+
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+        this.portalRequest.setContent( createContent() );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .name( "a2.jpg" )
+            .portalRequest( this.portalRequest )
+            .download( true );
+
+        final String url = this.service.attachmentUrl( params );
+        assertEquals( "http://media.enonic.com/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
     }
 
     private Content createContent()

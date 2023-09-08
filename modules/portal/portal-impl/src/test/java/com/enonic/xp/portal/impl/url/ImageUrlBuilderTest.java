@@ -56,6 +56,7 @@ public class ImageUrlBuilderTest
         portalRequest.setBranch( Branch.from( "draft" ) );
         portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         portalRequest.setBaseUri( "/site" );
+        portalRequest.setRawPath( "/site" );
         portalRequest.setContent( media );
 
         this.imageUrlParams = new ImageUrlParams().portalRequest( portalRequest ).scale( "testScale" );

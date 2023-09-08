@@ -54,9 +54,8 @@ public final class VirtualHostFilter
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
             if ( virtualHost == null )
             {
-                LOG.warn(
-                    "Virtual host mapping could not be resolved for host [" + req.getServerName() + "] and path [" + req.getRequestURI() +
-                        "]" );
+                LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
+                          req.getRequestURI() );
                 res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
