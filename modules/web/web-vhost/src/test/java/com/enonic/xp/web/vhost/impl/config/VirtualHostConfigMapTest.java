@@ -200,4 +200,17 @@ public class VirtualHostConfigMapTest
         assertEquals( "/source", virtualHosts.get( 0 ).getSource() );
         assertEquals( "/", virtualHosts.get( 1 ).getSource() );
     }
+
+    @Test
+    public void testContextConfig()
+    {
+        map.put( "mapping.name.context.propertyName", "propertyValue" );
+
+        VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
+
+        final List<VirtualHost> virtualHosts = virtualHostConfig.buildMappings();
+
+        final Map<String, String> context = virtualHosts.get( 0 ).getContext();
+        assertEquals( "propertyValue", context.get( "propertyName" ) );
+    }
 }

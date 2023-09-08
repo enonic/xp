@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.context;
 
+import java.util.Map;
+
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,10 +11,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ContextFilterTest
 {
@@ -27,6 +31,10 @@ class ContextFilterTest
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
         final FilterChain chain = mock( FilterChain.class );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getContext() ).thenReturn( Map.of( "k", "v" ) );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         filter.doFilter( req, res, chain );
 

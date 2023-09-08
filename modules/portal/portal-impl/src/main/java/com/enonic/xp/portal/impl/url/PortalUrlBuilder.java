@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.slf4j.Logger;
@@ -144,6 +145,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
+    protected String getBaseUrl()
+    {
+        return null;
+    }
+
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
@@ -153,7 +159,22 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), str.toString() );
+        final boolean isSlashAPI = portalRequest.getRawPath() != null && portalRequest.getRawPath().startsWith( "/api/" );
+
+        final String baseUrl = isSlashAPI ? getBaseUrl() : null;
+        if ( baseUrl != null )
+        {
+            return UrlTypeConstants.SERVER_RELATIVE.equals( this.params.getType() ) ? str.toString() : baseUrl + str;
+        }
+
+        String targetUri = str.toString();
+
+        if ( isSlashAPI )
+        {
+            targetUri = "/api/media" + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
+        }
+
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );
 
         if ( rewritingResult.isOutOfScope() )
         {
@@ -168,19 +189,24 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
         else if ( UrlTypeConstants.WEBSOCKET.equals( this.params.getType() ) )
         {
-            return ServletRequestUrlHelper.getServerUrl( new HttpServletRequestWrapper( portalRequest.getRawRequest() )
-            {
-                @Override
-                public String getScheme()
-                {
-                    return isSecure() ? "wss" : "ws";
-                }
-            } ) + uri;
+            return ServletRequestUrlHelper.getServerUrl( webSocketRequestWrapper( portalRequest.getRawRequest() ) ) + uri;
         }
         else
         {
             return uri;
         }
+    }
+
+    private static HttpServletRequestWrapper webSocketRequestWrapper( final HttpServletRequest request )
+    {
+        return new HttpServletRequestWrapper( request )
+        {
+            @Override
+            public String getScheme()
+            {
+                return isSecure() ? "wss" : "ws";
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")

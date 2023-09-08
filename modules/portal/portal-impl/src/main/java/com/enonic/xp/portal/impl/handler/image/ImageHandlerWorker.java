@@ -30,7 +30,7 @@ import com.enonic.xp.web.WebException;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-final class ImageHandlerWorker
+public final class ImageHandlerWorker
     extends AbstractAttachmentHandlerWorker<Media>
 {
     private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
@@ -41,15 +41,15 @@ final class ImageHandlerWorker
 
     private final MediaInfoService mediaInfoService;
 
-    String filterParam;
+    public String filterParam;
 
-    String qualityParam;
+    public String qualityParam;
 
-    String backgroundParam;
+    public String backgroundParam;
 
-    ScaleParams scaleParams;
+    public ScaleParams scaleParams;
 
-    ImageHandlerWorker( final PortalRequest request, final ContentService contentService, final ImageService imageService,
+    public ImageHandlerWorker( final PortalRequest request, final ContentService contentService, final ImageService imageService,
                         final MediaInfoService mediaInfoService )
     {
         super( request, contentService );

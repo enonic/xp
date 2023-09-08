@@ -7,10 +7,10 @@ import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-final class AttachmentHandlerWorker
+public final class AttachmentHandlerWorker
     extends AbstractAttachmentHandlerWorker<Content>
 {
-    AttachmentHandlerWorker( final PortalRequest request, final ContentService contentService )
+    public AttachmentHandlerWorker( final PortalRequest request, final ContentService contentService )
     {
         super( request, contentService );
     }

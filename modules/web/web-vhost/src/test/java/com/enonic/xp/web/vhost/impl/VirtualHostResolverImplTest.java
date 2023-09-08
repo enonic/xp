@@ -3,6 +3,7 @@ package com.enonic.xp.web.vhost.impl;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -261,10 +262,39 @@ public class VirtualHostResolverImplTest
         assertNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
 
-    private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order )
+    @Test
+    public void testResolveVirtualHostWithContextConfig()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "domain.com", "/source", "/other/a", 1, Map.of( "k1", "v1", "k2", "v2" ) ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com", "/", "/other/b", 1 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/source" );
+        when( req.getServerName() ).thenReturn( "domain.com" );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
+        assertNotNull( virtualHost );
+
+        final Map<String, String> contextConfig = virtualHost.getContext();
+        assertNotNull( contextConfig );
+        assertEquals( contextConfig.get( "k1" ), "v1" );
+        assertEquals( contextConfig.get( "k2" ), "v2" );
+    }
+
+    private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order,
+                                                         Map<String, String> contextConfig )
     {
         return new VirtualHostMapping( name, host, source, target, VirtualHostIdProvidersMapping.create().build(),
-                                       Objects.requireNonNullElse( order, Integer.MAX_VALUE ) );
+                                       Objects.requireNonNullElse( order, Integer.MAX_VALUE ), contextConfig );
+    }
+
+    private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order )
+    {
+        return createVirtualHostMapping( name, host, source, target, order, null );
     }
 
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
+import java.util.Map;
 import java.util.Objects;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -19,10 +20,18 @@ public final class VirtualHostMapping
 
     private final int order;
 
+    private final Map<String, String> context;
+
     private final VirtualHostIdProvidersMapping idProvidersMapping;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
+    {
+        this( name, host, source, target, idProvidersMapping, order, Map.of() );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context )
     {
         Objects.requireNonNull( name, "name must be set" );
         Objects.requireNonNull( host, "host must be set" );
@@ -36,6 +45,7 @@ public final class VirtualHostMapping
         this.target = target;
         this.idProvidersMapping = idProvidersMapping;
         this.order = order;
+        this.context = Objects.requireNonNullElse( context, Map.of() );
     }
 
     @Override
@@ -78,5 +88,11 @@ public final class VirtualHostMapping
     public int getOrder()
     {
         return order;
+    }
+
+    @Override
+    public Map<String, String> getContext()
+    {
+        return context;
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.api;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -71,9 +72,14 @@ public class ApiHandler
 
     private List<String> getApiResources()
     {
-        return applicationService.getInstalledApplications().stream().filter( application -> {
+        List<String> result = new ArrayList<>();
+
+        result.add( "media" );
+        result.addAll( applicationService.getInstalledApplications().stream().filter( application -> {
             ResourceKey resourceKey = ResourceKey.from( application.getKey(), "api/api.js" );
             return resourceService.getResource( resourceKey ).exists();
-        } ).map( application -> application.getKey().getName() ).collect( Collectors.toList() );
+        } ).map( application -> application.getKey().getName() ).collect( Collectors.toList() ) );
+
+        return result;
     }
 }
