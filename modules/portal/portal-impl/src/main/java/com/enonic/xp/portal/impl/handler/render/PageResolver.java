@@ -204,7 +204,7 @@ public class PageResolver
 
         if ( pageDescriptor == null || pageDescriptor.getModifiedTime() == null )
         {
-            return new PageResolverResult( effectivePage, controller, null );
+            return new PageResolverResult( effectivePage, controller, pageDescriptor );
         }
 
         final Page resultingPage = buildPageWithRegions( effectivePage, pageDescriptor );
