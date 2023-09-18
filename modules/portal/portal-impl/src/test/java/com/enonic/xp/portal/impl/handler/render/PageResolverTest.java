@@ -211,22 +211,27 @@ public class PageResolverTest
     {
         // setup
         final Site site = createSite();
+        final DescriptorKey descriptor = DescriptorKey.from( "myapp:my-descriptor" );
 
-        PageTemplate template = PageTemplate.newPageTemplate()
+        final PageTemplate template = PageTemplate.newPageTemplate()
             .key( PageTemplateKey.from( "t-1" ) )
             .parentPath( site.getPath() )
             .name( "my-template" )
-            .page( Page.create().descriptor( DescriptorKey.from( "myapp:my-descriptor" ) ).config( configA ).regions( regionsA ).build() )
+            .page( Page.create().descriptor( descriptor ).config( configA ).regions( regionsA ).build() )
             .canRender( ContentTypeNames.from( ContentTypeName.templateFolder() ) )
             .build();
 
-        Content content = Content.create()
+        final Content content = Content.create()
             .parentPath( site.getPath() )
             .name( "my-content" )
             .type( ContentTypeName.templateFolder() )
             .page( Page.create().template( template.getKey() ).config( configB ).build() )
             .build();
 
+        final PageDescriptor defaultPageDescriptor =
+            PageDescriptor.create().config( Form.create().build() ).regions( RegionDescriptors.create().build() ).key( descriptor ).build();
+
+        when( pageDescriptorService.getByKey( descriptor ) ).thenReturn( defaultPageDescriptor );
         when( pageTemplateService.getByKey( template.getKey() ) ).thenReturn( template );
 
         // exercise
@@ -238,7 +243,8 @@ public class PageResolverTest
         assertEquals( configB, effectivePage.getConfig() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
         assertNull( effectivePage.getDescriptor() );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( descriptor, result.getController() );
+        assertEquals( defaultPageDescriptor, result.getPageDescriptor() );
     }
 
     @Test
