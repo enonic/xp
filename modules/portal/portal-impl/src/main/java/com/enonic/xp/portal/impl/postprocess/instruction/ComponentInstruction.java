@@ -141,37 +141,6 @@ public final class ComponentInstruction
         return component;
     }
 
-    private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutComponent layoutFromDescriptor )
-    {
-        final LayoutComponent.Builder layoutBuilder = LayoutComponent.create( existingLayout );
-        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
-
-        layoutFromDescriptor.getRegions().forEach( region -> {
-            final Region existingRegion = existingLayout.getRegion( region.getName() );
-            final Region regionToAdd = existingRegion == null ? Region.create().name( region.getName() ).build() : existingRegion;
-            regionsBuilder.add( regionToAdd );
-        } );
-
-        return layoutBuilder.regions( regionsBuilder.build() ).build();
-    }
-
-    private void setParentRegionOnLayout( final Page page, final LayoutComponent existingLayout, final LayoutComponent resultingLayout )
-    {
-        if ( page == null || page.getRegions() == null )
-        {
-            return;
-        }
-
-        page.getRegions().forEach( region -> {
-            final int index = region.getIndex( existingLayout );
-
-            if ( index > -1 )
-            {
-                Region.create( region ).set( index, resultingLayout ).build(); // The only way to set layout's parent region
-            }
-        } );
-    }
-
     private Component resolveComponentInFragment( final Content content, final ComponentPath path )
     {
         final Component fragmentComponent = content.getPage().getFragment();
