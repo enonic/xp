@@ -26,6 +26,13 @@ public class BooleanQueryBuilderTest
     }
 
     @Test
+    public void mustNotArray()
+        throws Exception
+    {
+        test( "mustNot_array" );
+    }
+
+    @Test
     public void should()
         throws Exception
     {
