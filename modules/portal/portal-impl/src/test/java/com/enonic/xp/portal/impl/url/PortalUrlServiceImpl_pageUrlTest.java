@@ -113,4 +113,20 @@ public class PortalUrlServiceImpl_pageUrlTest
         final String url = this.service.pageUrl( params );
         assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );
     }
+
+    @Test
+    public void createUrlSlashApi()
+    {
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+
+        final PageUrlParams params = new PageUrlParams().
+            portalRequest( this.portalRequest ).
+            type( UrlTypeConstants.ABSOLUTE ).
+            path( "/a/b" ).
+            param( "a", 3 );
+
+        final String url = this.service.pageUrl( params );
+        assertEquals( "/site/default/draft/a/b?a=3", url );
+    }
 }
