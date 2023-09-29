@@ -46,6 +46,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     protected ResourceService resourceService;
 
+    protected boolean mustBeRewritten = true;
+
     private String getBaseUri()
     {
         return this.portalRequest.getBaseUri();
@@ -154,6 +156,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return null;
     }
 
+    public final void setMustBeRewritten( final boolean mustBeRewritten )
+    {
+        this.mustBeRewritten = mustBeRewritten;
+    }
+
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
@@ -164,6 +171,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendParams( str, params.entries() );
 
         final boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+
+        if ( isSlashAPI && !mustBeRewritten )
+        {
+            return str.toString();
+        }
 
         final String baseUrl = isSlashAPI ? getBaseUrl() : null;
         if ( baseUrl != null )
