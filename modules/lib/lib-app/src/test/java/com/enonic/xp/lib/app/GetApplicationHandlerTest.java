@@ -44,4 +44,13 @@ public class GetApplicationHandlerTest
 
         runScript( "/lib/xp/examples/app/get.js" );
     }
+
+    @Test
+    public void testMissing()
+    {
+
+        when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
+
+        runFunction( "/test/GetApplicationHandlerTest.js", "getMissing" );
+    }
 }

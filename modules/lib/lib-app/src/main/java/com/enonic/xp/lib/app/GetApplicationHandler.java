@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.app;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -18,7 +19,9 @@ public final class GetApplicationHandler
 
     public ApplicationMapper execute()
     {
-        return new ApplicationMapper( applicationServiceSupplier.get().get( ApplicationKey.from( key ) ) );
+        return Optional.ofNullable( applicationServiceSupplier.get().get( ApplicationKey.from( key ) ) )
+            .map( ApplicationMapper::new )
+            .orElse( null );
     }
 
     public void setKey( final String key )
