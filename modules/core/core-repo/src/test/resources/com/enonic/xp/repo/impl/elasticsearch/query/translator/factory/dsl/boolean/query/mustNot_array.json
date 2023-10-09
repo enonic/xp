@@ -1,0 +1,22 @@
+{
+  "boolean" : {
+    "mustNot" : [
+      {
+        "boolean" : {
+          "should" : {
+            "fulltext" : {
+              "fields" : [
+                "displayName"
+              ],
+              "query" : "fisk"
+            },
+            "term" : {
+              "field" : "custom_number",
+              "value" : 2.4
+            }
+          }
+        }
+      }
+    ]
+  }
+}
