@@ -43,4 +43,13 @@ public class GetApplicationDescriptorHandlerTest
 
         runFunction( "/test/GetApplicationDescriptorHandlerTest.js", "getWithoutIcon" );
     }
+
+    @Test
+    public void testMissing()
+    {
+
+        when( applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
+
+        runFunction( "/test/GetApplicationDescriptorHandlerTest.js", "getMissing" );
+    }
 }
