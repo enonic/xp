@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.app;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationDescriptorService;
@@ -18,7 +19,9 @@ public final class GetApplicationDescriptorHandler
 
     public ApplicationDescriptorMapper execute()
     {
-        return new ApplicationDescriptorMapper( applicationDescriptorServiceSupplier.get().get( ApplicationKey.from( key ) ) );
+        return Optional.ofNullable( applicationDescriptorServiceSupplier.get().get( ApplicationKey.from( key ) ) )
+            .map( ApplicationDescriptorMapper::new )
+            .orElse( null );
     }
 
     public void setKey( final String key )
