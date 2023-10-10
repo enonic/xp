@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -36,11 +35,6 @@ import static org.mockito.Mockito.when;
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest
 {
-    @BeforeEach
-    public void before()
-    {
-
-    }
 
     @Test
     public void process_empty_value()
@@ -610,6 +604,54 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "<a href=\"/site/default/draft" + content.getPath() +
                           "\" data-link-ref=\"linkRef\">Text</a>\n<!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument10\" _body=\"\"-->",
                       result );
+    }
+
+    @Test
+    public void testCustomStyleDescriptorCallback()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+
+        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
+        final StyleDescriptor styleDescriptor =
+            StyleDescriptor.create().application( ApplicationKey.from( "myapp" ) ).addStyleElement( imageStyle ).build();
+
+        final Map<String, String> imageProjection = new HashMap<>();
+
+        //Process an html text containing a style
+        final String link1 = "<img src=\"image://" + media.getId() + "?style=mystyle\">";
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .customStyleDescriptorsCallback( () -> StyleDescriptors.from( styleDescriptor ) )
+            .customHtmlProcessor( processorParams -> {
+                processorParams.processDefault( ( element, properties ) -> {
+                    if ( "img".equals( element.getTagName() ) )
+                    {
+                        element.setAttribute( "data-image-ref", "imageRef" );
+                        imageProjection.clear();
+                        imageProjection.putAll( properties );
+                    }
+                } );
+                return processorParams.getDocument().getInnerHtml();
+            } )
+            .value( link1 );
+
+        final String processedLink = this.service.processHtml( params );
+
+        final String expectedResult =
+            "<img src=\"/site/default/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+                "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
+
+        assertEquals( expectedResult, processedLink );
+        assertEquals( media.getId().toString(), imageProjection.get( "contentId" ) );
+        assertEquals( "server", imageProjection.get( "type" ) );
+        assertNull( imageProjection.get( "mode" ) );
+        assertEquals( "?style=mystyle", imageProjection.get( "queryParams" ) );
+        assertEquals( "mystyle", imageProjection.get( "style:name" ) );
+        assertEquals( "2:1", imageProjection.get( "style:aspectRatio" ) );
+        assertEquals( "myfilter", imageProjection.get( "style:filter" ) );
     }
 
     private void assertProcessHtml( String inputName, String expectedOutputName )
