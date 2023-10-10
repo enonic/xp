@@ -39,7 +39,10 @@ public class PortalUrlServiceImpl_processHtmlTest
     @BeforeEach
     public void before()
     {
-
+        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
+        final StyleDescriptor styleDescriptor =
+            StyleDescriptor.create().application( ApplicationKey.from( "myapp" ) ).addStyleElement( imageStyle ).build();
+        when( styleDescriptorService.getAll() ).thenReturn( StyleDescriptors.from( styleDescriptor ) );
     }
 
     @Test
@@ -341,17 +344,6 @@ public class PortalUrlServiceImpl_processHtmlTest
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
         when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
             "binaryHash" );
-
-        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).
-            aspectRatio( "2:1" ).
-            filter( "myfilter" ).
-            build();
-        final StyleDescriptor styleDescriptor = StyleDescriptor.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            addStyleElement( imageStyle ).
-            build();
-        when( styleDescriptorService.getByApplications( Mockito.any() ) ).
-            thenReturn( StyleDescriptors.from( styleDescriptor ) );
 
         final Map<String, String> imageProjection = new HashMap<>();
 

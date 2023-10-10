@@ -15,6 +15,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.url.PortalUrlServiceImpl;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -198,7 +199,10 @@ public class TextRendererTest
         @Override
         public StyleDescriptors getAll()
         {
-            return null;
+            final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
+            final StyleDescriptor styleDescriptor =
+                StyleDescriptor.create().application( ApplicationKey.from( "myapp" ) ).addStyleElement( imageStyle ).build();
+            return StyleDescriptors.from( styleDescriptor );
         }
     }
 }

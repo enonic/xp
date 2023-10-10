@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
@@ -30,16 +27,12 @@ import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
-import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
 public class RichTextProcessor
 {
-    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
-
     private static final int[] QUERY_OR_FRAGMENT_ALLOWED_CHARACTERS =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?/:@-._~!$&'()*+,;=%".chars().sorted().toArray();
 
@@ -95,12 +88,15 @@ public class RichTextProcessor
 
     private final MacroService macroService;
 
+    private final ImmutableMap<String, ImageStyle> imageStyleMap;
+
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                               final MacroService macroService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.macroService = macroService;
+        this.imageStyleMap = createImageStyleMap();
     }
 
     private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
@@ -178,10 +174,11 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final PageUrlParams pageUrlParams = new PageUrlParams().
-            type( params.getType() ).
-            id( id ).
-            portalRequest( params.getPortalRequest() );
+        final PortalRequest portalRequest = params.getPortalRequest();
+        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
+        portalRequest.setBranch( ContextAccessor.current().getBranch() );
+
+        final PageUrlParams pageUrlParams = new PageUrlParams().type( params.getType() ).id( id ).portalRequest( portalRequest );
 
         final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
 
@@ -210,7 +207,6 @@ public class RichTextProcessor
         portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
         portalRequest.setBranch( ContextAccessor.current().getBranch() );
 
-        ImmutableMap<String, ImageStyle> imageStyleMap = getImageStyleMap( params.getPortalRequest() );
         ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
         ImageUrlParams imageUrlParams = new ImageUrlParams().
             type( params.getType() ).
@@ -233,7 +229,7 @@ public class RichTextProcessor
                         id( id ).
                         scale( getScale( imageStyle, urlParams, imageWidth ) ).
                         filter( getFilter( imageStyle ) ).
-                        portalRequest( params.getPortalRequest() );
+                        portalRequest( portalRequest );
 
                     return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
                 } ).collect( Collectors.joining( "," ) );
@@ -308,35 +304,15 @@ public class RichTextProcessor
         return element.hasAttribute( "href" ) ? "href" : "src";
     }
 
-    private ImmutableMap<String, ImageStyle> getImageStyleMap( final PortalRequest portalRequest )
+    private ImmutableMap<String, ImageStyle> createImageStyleMap()
     {
         final ImmutableMap.Builder<String, ImageStyle> imageStyleMap = ImmutableMap.builder();
-        final StyleDescriptors styleDescriptors = getStyleDescriptors( portalRequest );
+        final StyleDescriptors styleDescriptors = styleDescriptorService.getAll();
         styleDescriptors.stream().
             flatMap( styleDescriptor -> styleDescriptor.getElements().stream() ).
             filter( elementStyle -> ImageStyle.STYLE_ELEMENT_NAME.equals( elementStyle.getElement() ) ).
             forEach( elementStyle -> imageStyleMap.put( elementStyle.getName(), (ImageStyle) elementStyle ) );
         return imageStyleMap.build();
-    }
-
-    private StyleDescriptors getStyleDescriptors( final PortalRequest portalRequest )
-    {
-        final ImmutableSet.Builder<ApplicationKey> appKeys =
-            ImmutableSet.<ApplicationKey>builder().add( SYSTEM_APPLICATION_KEY );
-
-        if ( portalRequest != null )
-        {
-            final Site site = portalRequest.getSite();
-            if ( site != null )
-            {
-                for ( SiteConfig siteConfig : site.getSiteConfigs() )
-                {
-                    appKeys.add( siteConfig.getApplicationKey() );
-                }
-            }
-        }
-
-        return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys.build() ) );
     }
 
     private ImageStyle getImageStyle( final Map<String, ImageStyle> imageStyleMap, final Map<String, String> urlParams )
@@ -414,7 +390,7 @@ public class RichTextProcessor
         addComponentToUrlIfValid( queryParamsAsMap.get( "query" ), "?", urlSuffix );
         addComponentToUrlIfValid( queryParamsAsMap.get( "fragment" ), "#", urlSuffix );
 
-        return url + urlSuffix.toString();
+        return url + urlSuffix;
     }
 
     private void addComponentToUrlIfValid( final String value, final String mark, final StringBuilder builder )
