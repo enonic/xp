@@ -170,7 +170,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        final boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+        final String rawPath = portalRequest.getRawPath();
+        final boolean isSlashAPI = rawPath.startsWith( "/api/" ) || rawPath.startsWith( "/admin/api/" );
 
         if ( isSlashAPI && !mustBeRewritten )
         {
@@ -187,7 +188,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( isSlashAPI )
         {
-            targetUri = "/api/media" + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
+            String targetPrefix = rawPath.startsWith( "/admin/api/" ) ? "/admin/api/media" : "/api/media";
+            targetUri = targetPrefix + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
         }
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );

@@ -34,7 +34,7 @@ final class ImageUrlBuilder
             appendPart( url, this.portalRequest.getBranch().toString() );
         }
 
-        if ( portalRequest.getRawPath().startsWith( "/api/" ) )
+        if ( portalRequest.getRawPath().startsWith( "/api/" ) || portalRequest.getRawPath().startsWith( "/admin/api/" ) )
         {
             appendPart( url, this.endpointType );
             appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );

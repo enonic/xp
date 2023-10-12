@@ -31,7 +31,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public class ApiHandler
     extends BaseWebHandler
 {
-    private static final Pattern URL_PATTERN = Pattern.compile( "^/api$" );
+    private static final Pattern URL_PATTERN = Pattern.compile( "^(/admin)?/api$" );
 
     private final ApplicationService applicationService;
 

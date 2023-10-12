@@ -37,9 +37,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public class ApiAppHandler
     extends BaseWebHandler
 {
-    public static final Pattern PATTERN = Pattern.compile( "/api/([^/]+)(/.*)?" );
-
-    private static final int APPLICATION_INDEX = 1;
+    public static final Pattern PATTERN = Pattern.compile( "(/admin)?/api/(?<appKey>[^/]+)(/.*)?" );
 
     private final ControllerScriptFactory controllerScriptFactory;
 
@@ -73,7 +71,7 @@ public class ApiAppHandler
         final Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
         matcher.matches();
 
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( APPLICATION_INDEX ) );
+        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( "appKey" ) );
 
         checkAccessIfNeeded( applicationKey );
 

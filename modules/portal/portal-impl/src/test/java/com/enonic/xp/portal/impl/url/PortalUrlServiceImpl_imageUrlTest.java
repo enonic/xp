@@ -207,6 +207,10 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         url = this.service.imageUrl( params );
         assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+
+        this.portalRequest.setRawPath( "/admin/api/com.enonic.app.appname" );
+        url = this.service.imageUrl( params );
+        assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     private Content createContent()
