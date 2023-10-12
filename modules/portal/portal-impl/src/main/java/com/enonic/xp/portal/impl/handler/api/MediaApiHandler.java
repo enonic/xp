@@ -48,7 +48,7 @@ public class MediaApiHandler
     extends BaseWebHandler
 {
     private static final Pattern PATTERN =
-        Pattern.compile( "^/api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
+        Pattern.compile( "^/(admin/)?api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
 
     private static final Pattern ATTACHMENT_REST_PATH_PATTERN =
         Pattern.compile( "^(?<id>[^/^:]+)(?::(?<fingerprint>[^/]+))?/(?<name>[^/?]+)(?:\\?download)?$" );

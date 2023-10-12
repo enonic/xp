@@ -132,8 +132,13 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 8080 );
 
-        final String url = this.service.attachmentUrl( params );
+        String url = this.service.attachmentUrl( params );
         assertEquals( "http://localhost:8080/api/media/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
+
+        this.portalRequest.setRawPath( "/admin/api/com.enonic.app.appname" );
+
+        url = this.service.attachmentUrl( params );
+        assertEquals( "http://localhost:8080/admin/api/media/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
     }
 
     @Test
@@ -151,7 +156,12 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .portalRequest( this.portalRequest )
             .download( true );
 
-        final String url = this.service.attachmentUrl( params );
+        String url = this.service.attachmentUrl( params );
+        assertEquals( "http://media.enonic.com/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
+
+        this.portalRequest.setRawPath( "/admin/api/com.enonic.app.appname" );
+
+        url = this.service.attachmentUrl( params );
         assertEquals( "http://media.enonic.com/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
     }
 

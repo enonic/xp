@@ -64,6 +64,12 @@ public class ApiHandlerTest
         when( webRequest.getRawPath() ).thenReturn( "/api" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
+        when( webRequest.getRawPath() ).thenReturn( "/admin/api" );
+        assertTrue( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getRawPath() ).thenReturn( "/adm/api" );
+        assertFalse( this.handler.canHandle( webRequest ) );
+
         when( webRequest.getRawPath() ).thenReturn( "/api/" );
         assertFalse( this.handler.canHandle( webRequest ) );
 
@@ -82,6 +88,9 @@ public class ApiHandlerTest
 
         when( apiConfig.api_index_enabled() ).thenReturn( "off" );
         when( webRequest.getRawPath() ).thenReturn( "/api" );
+        assertFalse( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getRawPath() ).thenReturn( "/admin/api" );
         assertFalse( this.handler.canHandle( webRequest ) );
     }
 

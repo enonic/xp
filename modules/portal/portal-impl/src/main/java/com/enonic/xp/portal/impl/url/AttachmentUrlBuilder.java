@@ -16,7 +16,7 @@ final class AttachmentUrlBuilder
     {
         super.buildUrl( url, params );
 
-        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" ) || portalRequest.getRawPath().startsWith( "/admin/api/" );
 
         if ( isSlashAPI )
         {
