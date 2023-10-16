@@ -87,7 +87,7 @@ commons-compress = { module = "org.apache.commons:commons-compress", version = "
 
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.15.2" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.15.2" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.15.2" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.15.3" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.15.2" }
 jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.15.2" }
 jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.15.2" }
