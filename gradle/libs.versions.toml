@@ -113,8 +113,8 @@ jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.7.Final" }
 
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version = "9.4.52.v20230823" }
-jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "9.4.52.v20230823" }
-jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version = "9.4.52.v20230823" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "11.0.17" }
+jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version = "11.0.17" }
 jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "9.4.52.v20230823" }
 jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version = "9.4.52.v20230823" }
 jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version = "9.4.52.v20230823" }
