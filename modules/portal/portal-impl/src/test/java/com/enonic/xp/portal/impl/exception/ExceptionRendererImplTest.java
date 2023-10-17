@@ -39,6 +39,8 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -302,6 +304,13 @@ class ExceptionRendererImplTest
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+
+        VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/admin" );
+        when( virtualHost.getTarget() ).thenReturn( "/admin" );
+        when( request.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        VirtualHostHelper.setVirtualHost( request.getRawRequest(), virtualHost );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
 

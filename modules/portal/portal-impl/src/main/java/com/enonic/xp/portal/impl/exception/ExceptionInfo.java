@@ -15,6 +15,8 @@ import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -146,9 +148,12 @@ final class ExceptionInfo
 
     private String generateLogoutUrl( final WebRequest req )
     {
+        final PortalRequest portalRequest = req instanceof PortalRequest ? (PortalRequest) req : new PortalRequest( req );
+        final VirtualHost vhost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
         return this.portalUrlService.identityUrl( new IdentityUrlParams().
-            portalRequest( new PortalRequest( req ) ).
+            portalRequest( portalRequest ).
             idProviderFunction( "logout" ).
+            redirectionUrl( vhost.getSource() ).
             idProviderKey( ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() ) );
     }
 
