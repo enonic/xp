@@ -85,15 +85,15 @@ commons-lang = { module = "commons-lang:commons-lang", version = "2.6" }
 commons-io = { module = "commons-io:commons-io", version = "2.13.0" }
 commons-compress = { module = "org.apache.commons:commons-compress", version = "1.23.0" }
 
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.15.2" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.15.2" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.15.3" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.15.3" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.15.3" }
-jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.15.2" }
-jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.15.2" }
-jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.15.2" }
-jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.15.2" }
-jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.15.2" }
-jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.15.2" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.15.3" }
+jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.15.3" }
+jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.15.3" }
+jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.15.3" }
+jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.15.3" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.15.3" }
 
 tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
