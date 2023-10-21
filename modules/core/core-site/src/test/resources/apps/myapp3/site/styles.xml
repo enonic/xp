@@ -1,8 +1,8 @@
 <styles css="assets/styles2.css">
   <style name="duplicatedName">
-    <displayName>Style 1</displayName>
+    <display-name>Style 1</display-name>
   </style>
   <style name="duplicatedName">
-    <displayName>Style 2</displayName>
+    <display-name>Style 2</display-name>
   </style>
 </styles>

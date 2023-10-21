@@ -34,6 +34,11 @@ public final class XmlNodeParser
 {
     private Node.Builder builder;
 
+    public XmlNodeParser()
+    {
+        super( "urn:enonic:xp:export:1.0" );
+    }
+
     public XmlNodeParser builder( final Node.Builder builder )
     {
         this.builder = builder;
@@ -273,12 +278,12 @@ public final class XmlNodeParser
 
     private IndexConfig parseIndexConfig( final DomElement root )
     {
-        final IndexConfig.Builder builder = IndexConfig.create().
-            decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) ).
-            enabled( root.getChildValueAs( "enabled", Boolean.class, false ) ).
-            fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) ).
-            nGram( root.getChildValueAs( "nGram", Boolean.class, false ) ).
-            includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
+        final IndexConfig.Builder builder = IndexConfig.create()
+            .decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) )
+            .enabled( root.getChildValueAs( "enabled", Boolean.class, false ) )
+            .fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) )
+            .nGram( root.getChildValueAs( "nGram", Boolean.class, false ) )
+            .includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
 
         final DomElement indexValueProcessors = root.getChild( "indexValueProcessors" );
         if ( indexValueProcessors != null )
@@ -329,18 +334,14 @@ public final class XmlNodeParser
             return;
         }
 
-        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).
-            forEach( builder::addAllTextConfigLanguage );
+        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).forEach( builder::addAllTextConfigLanguage );
     }
 
     private List<String> parseAllTextIndexConfigLanguages( final DomElement languages )
     {
         if ( languages != null )
         {
-            return languages.getChildren().
-                stream().
-                map( DomElement::getValue ).
-                collect( Collectors.toList() );
+            return languages.getChildren().stream().map( DomElement::getValue ).collect( Collectors.toList() );
         }
 
         return Collections.emptyList();

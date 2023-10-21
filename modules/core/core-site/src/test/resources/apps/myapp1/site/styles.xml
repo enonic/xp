@@ -1,24 +1,24 @@
 <styles css="assets/styles.css">
   <style name="warning">
-    <displayName>Warning</displayName>
+    <display-name>Warning</display-name>
   </style>
   <image name="editor-align-justify">
-    <displayName i18n="style.editor.align.justify">Justify</displayName>
+    <display-name i18n="style.editor.align.justify">Justify</display-name>
   </image>
   <image name="editor-width-auto">
-    <displayName i18n="editor-width-auto-text">Override ${width}</displayName>
+    <display-name i18n="editor-width-auto-text">Override ${width}</display-name>
   </image>
   <image name="editor-style-cinema">
-    <displayName i18n="editor-style-cinema-text">Cinema</displayName>
-    <aspectRatio>21:9</aspectRatio>
+    <display-name i18n="editor-style-cinema-text">Cinema</display-name>
+    <aspect-ratio>21:9</aspect-ratio>
     <filter>pixelate(10)</filter>
   </image>
   <image name="editor-style-square">
-    <displayName i18n="editor-style-square-text">Square</displayName>
-    <aspectRatio>1:1</aspectRatio>
+    <display-name i18n="editor-style-square-text">Square</display-name>
+    <aspect-ratio>1:1</aspect-ratio>
   </image>
   <image name="editor-style-tall">
-    <displayName i18n="editor-style-tall-text">Tall</displayName>
-    <aspectRatio>9:16</aspectRatio>
+    <display-name i18n="editor-style-tall-text">Tall</display-name>
+    <aspect-ratio>9:16</aspect-ratio>
   </image>
 </styles>
