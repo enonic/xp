@@ -20,6 +20,7 @@ final class AttachmentUrlBuilder
 
         if ( isSlashAPI )
         {
+            url.setLength( 0 );
             appendPart( url, "attachment" );
             appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
             appendPart( url, this.portalRequest.getBranch().toString() );
@@ -52,6 +53,12 @@ final class AttachmentUrlBuilder
     protected String getBaseUrl()
     {
         return UrlContextHelper.getMediaServiceBaseUrl();
+    }
+
+    @Override
+    protected String getTargetUriPrefix()
+    {
+        return "/api/media";
     }
 
     private Content resolveContent()

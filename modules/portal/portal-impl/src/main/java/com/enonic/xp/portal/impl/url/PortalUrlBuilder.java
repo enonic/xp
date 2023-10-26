@@ -156,6 +156,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         return null;
     }
 
+    protected String getTargetUriPrefix()
+    {
+        return null;
+    }
+
     public final void setMustBeRewritten( final boolean mustBeRewritten )
     {
         this.mustBeRewritten = mustBeRewritten;
@@ -188,7 +193,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( isSlashAPI )
         {
-            String targetPrefix = rawPath.startsWith( "/admin/api/" ) ? "/admin/api/media" : "/api/media";
+            String targetPrefix = rawPath.startsWith( "/admin/api/" ) ? "/admin" + getTargetUriPrefix() : getTargetUriPrefix();
             targetUri = targetPrefix + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
         }
 

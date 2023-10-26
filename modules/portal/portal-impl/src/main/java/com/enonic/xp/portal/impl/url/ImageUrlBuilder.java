@@ -36,6 +36,7 @@ final class ImageUrlBuilder
 
         if ( portalRequest.getRawPath().startsWith( "/api/" ) || portalRequest.getRawPath().startsWith( "/admin/api/" ) )
         {
+            url.setLength( 0 );
             appendPart( url, this.endpointType );
             appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
             appendPart( url, this.portalRequest.getBranch().toString() );
@@ -65,6 +66,12 @@ final class ImageUrlBuilder
     protected String getBaseUrl()
     {
         return UrlContextHelper.getMediaServiceBaseUrl();
+    }
+
+    @Override
+    protected String getTargetUriPrefix()
+    {
+        return "/api/media";
     }
 
     private void addParamIfNeeded( final Multimap<String, String> params, final String name, final Object value )

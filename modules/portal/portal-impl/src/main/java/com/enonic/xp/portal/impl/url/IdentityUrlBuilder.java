@@ -20,7 +20,15 @@ final class IdentityUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        super.buildUrl( url, params );
+        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" ) || portalRequest.getRawPath().startsWith( "/admin/api/" );
+        if ( isSlashAPI )
+        {
+            url.setLength( 0 );
+        }
+        else
+        {
+            super.buildUrl( url, params );
+        }
 
         if ( this.params.getIdProviderKey() == null )
         {
@@ -42,6 +50,18 @@ final class IdentityUrlBuilder
             final String jSessionId = getJSessionId();
             params.put( "_ticket", generateTicket( jSessionId ) );
         }
+    }
+
+    @Override
+    protected String getBaseUrl()
+    {
+        return UrlContextHelper.getIdProviderServiceBaseUrl();
+    }
+
+    @Override
+    protected String getTargetUriPrefix()
+    {
+        return "/api/idprovider";
     }
 
     private String getJSessionId()
