@@ -7,7 +7,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -184,33 +185,55 @@ public class PortalUrlServiceImpl_imageUrlTest
     @Test
     public void createImageUrlForSlashApiWithVhostContextConfig()
     {
-        ContextAccessor.current().getLocalScope().setAttribute( "mediaService.baseUrl", "http://media.enonic.com" );
+        Context context = ContextBuilder.create().build();
+        context.getLocalScope().setAttribute( "mediaService.baseUrl", "http://media.enonic.com" );
 
         this.portalRequest.setBaseUri( "" );
         this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
         this.portalRequest.setContent( createContent() );
 
-        ImageUrlParams params = new ImageUrlParams().
-            format( "png" ).
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+        context.runWith( () -> {
+            ImageUrlParams params = new ImageUrlParams().format( "png" )
+                .type( UrlTypeConstants.ABSOLUTE )
+                .portalRequest( this.portalRequest )
+                .scale( "max(300)" );
 
-        String url = this.service.imageUrl( params );
-        assertEquals( "http://media.enonic.com/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            String url = this.service.imageUrl( params );
+            assertEquals(
+                "http://media.enonic.com/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
 
-        params = new ImageUrlParams().
-            format( "png" ).
-            type( UrlTypeConstants.SERVER_RELATIVE ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            params = new ImageUrlParams().format( "png" )
+                .type( UrlTypeConstants.SERVER_RELATIVE )
+                .portalRequest( this.portalRequest )
+                .scale( "max(300)" );
 
-        url = this.service.imageUrl( params );
-        assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            url = this.service.imageUrl( params );
+            assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
 
-        this.portalRequest.setRawPath( "/admin/api/com.enonic.app.appname" );
-        url = this.service.imageUrl( params );
-        assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            this.portalRequest.setRawPath( "/admin/api/com.enonic.app.appname" );
+            url = this.service.imageUrl( params );
+            assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        } );
+    }
+
+    @Test
+    public void createUrlForSlashApi()
+    {
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+        this.portalRequest.setContent( createContent() );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        ImageUrlParams params =
+            new ImageUrlParams().format( "png" ).type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).scale( "max(300)" );
+
+        Context context = ContextBuilder.create().build();
+        String url = context.callWith( () -> this.service.imageUrl( params ) );
+        assertEquals(
+            "http://localhost/api/media/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     private Content createContent()

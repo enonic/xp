@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -14,7 +14,6 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_identityUrlTest
@@ -138,5 +137,43 @@ public class PortalUrlServiceImpl_identityUrlTest
 
         final String url = this.service.identityUrl( params );
         assertEquals( "http://localhost/site/default/draft/_/idprovider/system/login", url );
+    }
+
+    @Test
+    public void createUrlForSlashApiWithVhostContextConfig()
+    {
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+
+        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .idProviderKey( IdProviderKey.system() )
+            .idProviderFunction( "login" );
+
+        Context context = ContextBuilder.create().build();
+        context.getLocalScope().setAttribute( "idProviderService.baseUrl", "http://media.enonic.com" );
+
+        String url = context.callWith( () -> this.service.identityUrl( params ) );
+        assertEquals( "http://media.enonic.com/system/login", url );
+    }
+
+    @Test
+    public void createUrlForSlashApi()
+    {
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .idProviderKey( IdProviderKey.system() )
+            .idProviderFunction( "login" );
+
+        Context context = ContextBuilder.create().build();
+        String url = context.callWith( () -> this.service.identityUrl( params ) );
+        assertEquals( "http://localhost/api/idprovider/system/login", url );
     }
 }
