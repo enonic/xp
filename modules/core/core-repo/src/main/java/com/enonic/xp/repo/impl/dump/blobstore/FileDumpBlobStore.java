@@ -9,6 +9,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
@@ -24,12 +26,6 @@ public class FileDumpBlobStore
     }
 
     @Override
-    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
-    {
-        return new DumpBlobRecord( segment, key, this );
-    }
-
-    @Override
     protected ByteSource getBytes( final Segment segment, final BlobKey key )
     {
         return MoreFiles.asByteSource( getBlobRef( segment, key ).asPath( baseDir ) );
@@ -42,14 +38,20 @@ public class FileDumpBlobStore
     }
 
     @Override
-    protected void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
-        throws IOException
+    public void addRecord( final Segment segment, final BlobRecord blobRecord )
     {
-        final Path file = getBlobRef( segment, key ).asPath( baseDir );
-        if ( !Files.exists( file ) )
+        try
         {
-            Files.createDirectories( file.getParent() );
-            in.copyTo( MoreFiles.asByteSink( file ) );
+            final Path file = getBlobRef( segment, blobRecord.getKey() ).asPath( baseDir );
+            if ( !Files.exists( file ) )
+            {
+                Files.createDirectories( file.getParent() );
+                blobRecord.getBytes().copyTo( MoreFiles.asByteSink( file ) );
+            }
+        }
+        catch ( final IOException e )
+        {
+            throw new BlobStoreException( "Failed to add blob", e );
         }
     }
 }

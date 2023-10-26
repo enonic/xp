@@ -7,24 +7,17 @@ import java.util.Map;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.io.ByteSink;
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class ZipDumpWriteBlobStore
     extends AbstractDumpBlobStore
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ZipDumpWriteBlobStore.class );
-
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
-    private final Map<String, ByteSource> records = new HashMap<>();
+    private final Map<String, BlobRecord> records = new HashMap<>();
 
     public ZipDumpWriteBlobStore( String dumpName, ZipArchiveOutputStream zipArchiveOutputStream )
     {
@@ -33,22 +26,16 @@ public class ZipDumpWriteBlobStore
         this.zipArchiveOutputStream = zipArchiveOutputStream;
     }
 
-    @Override
-    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
-    {
-        throw new UnsupportedOperationException();
-    }
-
     public void flush()
     {
         try
         {
-            for ( Map.Entry<String, ByteSource> entry : records.entrySet() )
+            for ( var entry : records.entrySet() )
             {
                 final String segmentedKey = entry.getKey();
-                final ByteSource in = entry.getValue();
+                final BlobRecord blobRecord = entry.getValue();
                 zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( segmentedKey ) );
-                in.copyTo( zipArchiveOutputStream );
+                blobRecord.getBytes().copyTo( zipArchiveOutputStream );
                 zipArchiveOutputStream.closeArchiveEntry();
             }
         }
@@ -63,20 +50,8 @@ public class ZipDumpWriteBlobStore
     }
 
     @Override
-    protected ByteSource getBytes( final Segment segment, final BlobKey key )
+    public void addRecord( final Segment segment, final BlobRecord blobRecord )
     {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected ByteSink getByteSink( final Segment segment, final BlobKey key )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
-    {
-        records.put( getBlobRef( segment, key ).asString(), in );
+        records.put( getBlobRef( segment, blobRecord.getKey() ).asString(), blobRecord );
     }
 }

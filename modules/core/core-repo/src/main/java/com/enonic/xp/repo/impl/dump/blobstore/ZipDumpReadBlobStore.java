@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
-import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -36,17 +35,5 @@ public class ZipDumpReadBlobStore
                 return zipFile.getInputStream( zipFile.getEntry( getBlobRef( segment, key ).asString() ) );
             }
         };
-    }
-
-    @Override
-    protected ByteSink getByteSink( final Segment segment, final BlobKey key )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
-    {
-        throw new UnsupportedOperationException();
     }
 }

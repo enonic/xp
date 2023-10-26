@@ -18,7 +18,6 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -30,7 +29,6 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.NullSystemLoadListener;
 import com.enonic.xp.repo.impl.dump.PathRef;
@@ -40,6 +38,7 @@ import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -161,20 +160,22 @@ public abstract class AbstractDumpReader
     @Override
     public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final DumpBlobRecord dataRecord = this.dumpBlobStore.getRecord( nodeSegment, nodeVersionKey.getNodeBlobKey() );
+        final DumpBlobRecord dataRecord =
+            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ),
+                                          nodeVersionKey.getNodeBlobKey() );
 
-        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
-        final DumpBlobRecord indexConfigRecord = this.dumpBlobStore.getRecord( indexConfigSegment, nodeVersionKey.getIndexConfigBlobKey() );
+        final DumpBlobRecord indexConfigRecord =
+            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ),
+                                          nodeVersionKey.getIndexConfigBlobKey() );
 
-        final Segment accessControlSegment =
-            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
         final DumpBlobRecord accessControlRecord =
-            this.dumpBlobStore.getRecord( accessControlSegment, nodeVersionKey.getAccessControlBlobKey() );
+            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ),
+                                          nodeVersionKey.getAccessControlBlobKey() );
 
         try
         {
-            return NodeVersionJsonSerializer.toNodeVersion( dataRecord.getBytes(), indexConfigRecord.getBytes(), accessControlRecord.getBytes() );
+            return NodeVersionJsonSerializer.toNodeVersion( dataRecord.getBytes(), indexConfigRecord.getBytes(),
+                                                            accessControlRecord.getBytes() );
         }
         catch ( IOException e )
         {
@@ -185,8 +186,8 @@ public abstract class AbstractDumpReader
     @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
     {
-        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
-        final DumpBlobRecord record = this.dumpBlobStore.getRecord( segment, BlobKey.from( blobKey ) );
+        final DumpBlobRecord record = this.dumpBlobStore.getRecord(
+            RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ), BlobKey.from( blobKey ) );
 
         if ( record == null )
         {

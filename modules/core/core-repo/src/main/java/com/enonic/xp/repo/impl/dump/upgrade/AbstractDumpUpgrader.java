@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -41,10 +43,10 @@ public abstract class AbstractDumpUpgrader
     @Override
     public DumpUpgradeStepResult upgrade( final String dumpName )
     {
-        result = DumpUpgradeStepResult.create().
-            initialVersion( new Version( getModelVersion().getMajor() - 1 ) ).
-            upgradedVersion( getModelVersion() ).
-            stepName( getName() );
+        result = DumpUpgradeStepResult.create()
+            .initialVersion( new Version( getModelVersion().getMajor() - 1 ) )
+            .upgradedVersion( getModelVersion() )
+            .stepName( getName() );
         doUpgrade( dumpName );
         return result.build();
     }
@@ -79,9 +81,11 @@ public abstract class AbstractDumpUpgrader
         }
     }
 
-    protected BlobKey addRecord( final Segment segment, final byte[] serializedData )
+    protected BlobKey addRecord( final Segment segment, final byte[] data )
     {
-        return dumpReader.getDumpBlobStore().addRecord( segment, ByteSource.wrap( serializedData ) );
+        final ByteArrayBlobRecord blobRecord = new ByteArrayBlobRecord( data );
+        dumpReader.getDumpBlobStore().addRecord( segment, blobRecord );
+        return blobRecord.key;
     }
 
     public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )
@@ -106,5 +110,53 @@ public abstract class AbstractDumpUpgrader
         throws IOException
     {
         return new TarArchiveInputStream( new GZIPInputStream( Files.newInputStream( metaFile ) ) );
+    }
+
+    private static class ByteArrayBlobRecord
+        implements BlobRecord
+    {
+        final ByteSource byteSource;
+
+        final BlobKey key;
+
+        final long lastModified;
+
+        ByteArrayBlobRecord( final byte[] data )
+        {
+            this.byteSource = ByteSource.wrap( data );
+            this.key = BlobKey.from( byteSource );
+            this.lastModified = System.currentTimeMillis();
+        }
+
+        @Override
+        public BlobKey getKey()
+        {
+            return key;
+        }
+
+        @Override
+        public long getLength()
+        {
+            try
+            {
+                return byteSource.size();
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        }
+
+        @Override
+        public ByteSource getBytes()
+        {
+            return byteSource;
+        }
+
+        @Override
+        public long lastModified()
+        {
+            return lastModified;
+        }
     }
 }

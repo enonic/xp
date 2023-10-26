@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -210,6 +209,6 @@ public class IndexConfigUpgrader
 
         final byte[] indexConfigDocumentSerialized = serialize( indexConfigDocumentJson );
 
-        return dumpReader.getDumpBlobStore().addRecord( INDEX_CONFIG_SEGMENT, ByteSource.wrap( indexConfigDocumentSerialized ) );
+        return addRecord( INDEX_CONFIG_SEGMENT, indexConfigDocumentSerialized );
     }
 }

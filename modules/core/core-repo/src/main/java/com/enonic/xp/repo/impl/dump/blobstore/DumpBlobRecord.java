@@ -7,10 +7,9 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 
-public class DumpBlobRecord implements BlobRecord
+public class DumpBlobRecord
 {
     private final BlobKey key;
 
@@ -25,19 +24,16 @@ public class DumpBlobRecord implements BlobRecord
         this.dumpBlobStore = dumpBlobStore;
     }
 
-    @Override
     public final BlobKey getKey()
     {
         return key;
     }
 
-    @Override
     public ByteSource getBytes()
     {
         return dumpBlobStore.getBytes( segment, key );
     }
 
-    @Override
     public long getLength()
     {
         try
@@ -48,12 +44,6 @@ public class DumpBlobRecord implements BlobRecord
         {
             throw new UncheckedIOException( e );
         }
-    }
-
-    @Override
-    public long lastModified()
-    {
-        return 0;
     }
 
     public ByteSink getByteSink()

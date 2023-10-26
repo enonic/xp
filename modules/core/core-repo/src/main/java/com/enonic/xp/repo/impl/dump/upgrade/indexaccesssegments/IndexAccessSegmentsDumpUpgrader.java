@@ -10,7 +10,6 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractMetaDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
@@ -21,6 +20,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4VersionsDumpE
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionsDumpEntryJson;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.AccessControlJson;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -87,21 +87,19 @@ public class IndexAccessSegmentsDumpUpgrader
                                                               final Pre4VersionDumpEntryJson versionDumpEntry )
     {
         //Retrieves the existing node version
-        final Segment nodeDataSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
+        final Segment nodeDataSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         final BlobKey nodeBlobKey = BlobKey.from( versionDumpEntry.getBlobKey() );
-        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( nodeDataSegment, nodeBlobKey );
+        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().getRecord( nodeDataSegment, nodeBlobKey );
         final Pre4NodeVersionJson nodeVersion = getNodeVersion( nodeBlobRecord );
 
         //Serializes the new index config blob
         final byte[] serializedIndexConfig = serialize( nodeVersion.getIndexConfigDocument() );
-        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final BlobKey indexConfigBlobKey = addRecord( indexConfigSegment, serializedIndexConfig );
 
         //Serializes the new access control blob
         final byte[] serializedAccessControl = serializeAccessControl( nodeVersion );
-        final Segment accessControlSegment =
-            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
+        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
         final BlobKey accessControlBlobKey = addRecord( accessControlSegment, serializedAccessControl );
 
         //Return the new version dump entry

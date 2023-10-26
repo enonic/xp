@@ -1,12 +1,10 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
-import java.io.IOException;
-
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobStoreException;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -28,35 +26,28 @@ public abstract class AbstractDumpBlobStore
     }
 
     @Override
-    public BlobKey addRecord( final Segment segment, final ByteSource in )
-        throws BlobStoreException
+    public void addRecord( final Segment segment, final BlobRecord blobRecord )
     {
-        try
-        {
-            final BlobKey blobKey = BlobKey.from( in );
-            writeRecord( segment, blobKey, in );
-            return blobKey;
-        }
-        catch ( final IOException e )
-        {
-            throw new BlobStoreException( "Failed to add blob", e );
-        }
+        throw new UnsupportedOperationException();
     }
 
-    protected abstract ByteSource getBytes( Segment segment, BlobKey key );
+    protected ByteSource getBytes( Segment segment, BlobKey key )
+    {
+        throw new UnsupportedOperationException();
+    }
 
-    protected abstract ByteSink getByteSink( Segment segment, BlobKey key );
-
-    protected abstract void writeRecord( Segment segment, BlobKey key, ByteSource in )
-        throws IOException;
+    protected ByteSink getByteSink( Segment segment, BlobKey key )
+    {
+        throw new UnsupportedOperationException();
+    }
 
     protected PathRef getBlobRef( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
-        return pathRef.resolve( segment.getLevel( RepositorySegmentUtils.BLOB_TYPE_LEVEL ).getValue() ).
-            resolve( id.substring( 0, 2 ) ).
-            resolve( id.substring( 2, 4 ) ).
-            resolve( id.substring( 4, 6 ) ).
-            resolve( id );
+        return pathRef.resolve( segment.getLevel( RepositorySegmentUtils.BLOB_TYPE_LEVEL ).getValue() )
+            .resolve( id.substring( 0, 2 ) )
+            .resolve( id.substring( 2, 4 ) )
+            .resolve( id.substring( 4, 6 ) )
+            .resolve( id );
     }
 }
