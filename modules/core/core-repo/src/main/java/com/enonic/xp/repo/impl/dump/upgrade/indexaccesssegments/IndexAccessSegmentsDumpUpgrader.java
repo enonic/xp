@@ -89,18 +89,18 @@ public class IndexAccessSegmentsDumpUpgrader
         //Retrieves the existing node version
         final Segment nodeDataSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         final BlobKey nodeBlobKey = BlobKey.from( versionDumpEntry.getBlobKey() );
-        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().getRecord( nodeDataSegment, nodeBlobKey );
+        final DumpBlobRecord nodeBlobRecord = dumpReader.getRecord( nodeDataSegment, nodeBlobKey );
         final Pre4NodeVersionJson nodeVersion = getNodeVersion( nodeBlobRecord );
 
         //Serializes the new index config blob
         final byte[] serializedIndexConfig = serialize( nodeVersion.getIndexConfigDocument() );
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
-        final BlobKey indexConfigBlobKey = addRecord( indexConfigSegment, serializedIndexConfig );
+        final BlobKey indexConfigBlobKey = dumpReader.addRecord( indexConfigSegment, serializedIndexConfig );
 
         //Serializes the new access control blob
         final byte[] serializedAccessControl = serializeAccessControl( nodeVersion );
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
-        final BlobKey accessControlBlobKey = addRecord( accessControlSegment, serializedAccessControl );
+        final BlobKey accessControlBlobKey = dumpReader.addRecord( accessControlSegment, serializedAccessControl );
 
         //Return the new version dump entry
         return Pre6VersionDumpEntryJson.create().

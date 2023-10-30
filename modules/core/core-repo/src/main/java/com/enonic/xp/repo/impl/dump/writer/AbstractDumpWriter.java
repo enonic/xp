@@ -9,17 +9,14 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
@@ -39,19 +36,16 @@ public abstract class AbstractDumpWriter
 
     private final DumpBlobStore dumpBlobStore;
 
-    private final BlobStore blobStore;
-
     private final DumpSerializer serializer;
 
     protected final FilePaths filePaths;
 
     protected TarArchiveOutputStream tarOutputStream;
 
-    protected AbstractDumpWriter( final BlobStore blobStore, FilePaths filePaths, DumpBlobStore dumpBlobStore )
+    protected AbstractDumpWriter( final FilePaths filePaths, final DumpBlobStore dumpBlobStore )
     {
         this.dumpBlobStore = dumpBlobStore;
         this.serializer = new JsonDumpSerializer();
-        this.blobStore = blobStore;
         this.filePaths = filePaths;
     }
 
@@ -144,7 +138,7 @@ public abstract class AbstractDumpWriter
 
     private void addBlob( final Segment segment, final BlobKey blobKey )
     {
-        dumpBlobStore.addRecord( segment, new DeferredBlobRecord( segment, blobKey, blobStore ) );
+        dumpBlobStore.addRecord( new BlobReference( segment, blobKey ) );
     }
 
     @Override
@@ -182,58 +176,6 @@ public abstract class AbstractDumpWriter
         catch ( IOException e )
         {
             throw new RepoDumpException( "Could not write dump-entry", e );
-        }
-    }
-
-    private static class DeferredBlobRecord
-        implements BlobRecord
-    {
-        final BlobStore blobStore;
-
-        final Segment segment;
-
-        final BlobKey blobKey;
-
-        DeferredBlobRecord( Segment segment, BlobKey blobKey, BlobStore blobStore )
-        {
-            this.blobStore = blobStore;
-            this.segment = segment;
-            this.blobKey = blobKey;
-        }
-
-        public BlobRecord getBlobRecord()
-        {
-            final BlobRecord record = blobStore.getRecord( segment, blobKey );
-            if ( record == null )
-            {
-                throw new RepoDumpException(
-                    "Cannot write blob with key [" + blobKey + "], not found in blobStore segment [" + segment + "]" );
-            }
-            return record;
-        }
-
-        @Override
-        public BlobKey getKey()
-        {
-            return blobKey;
-        }
-
-        @Override
-        public long getLength()
-        {
-            return getBlobRecord().getLength();
-        }
-
-        @Override
-        public ByteSource getBytes()
-        {
-            return getBlobRecord().getBytes();
-        }
-
-        @Override
-        public long lastModified()
-        {
-            return getBlobRecord().lastModified();
         }
     }
 }

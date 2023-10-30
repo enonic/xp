@@ -8,10 +8,8 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class FileDumpBlobStore
@@ -19,34 +17,34 @@ public class FileDumpBlobStore
 {
     private final Path baseDir;
 
-    public FileDumpBlobStore( final Path baseDir )
+    public FileDumpBlobStore( final Path baseDir, BlobStore sourceBlobStore )
     {
-        super( PathRef.of() );
+        super( PathRef.of(), sourceBlobStore );
         this.baseDir = baseDir;
     }
 
     @Override
-    protected ByteSource getBytes( final Segment segment, final BlobKey key )
+    protected ByteSource getBytes( final BlobReference reference )
     {
-        return MoreFiles.asByteSource( getBlobRef( segment, key ).asPath( baseDir ) );
+        return MoreFiles.asByteSource( getBlobPathRef( reference ).asPath( baseDir ) );
     }
 
     @Override
-    protected ByteSink getByteSink( final Segment segment, final BlobKey key )
+    protected ByteSink getByteSink( final BlobReference reference )
     {
-        return MoreFiles.asByteSink( getBlobRef( segment, key ).asPath( baseDir ) );
+        return MoreFiles.asByteSink( getBlobPathRef( reference ).asPath( baseDir ) );
     }
 
     @Override
-    public void addRecord( final Segment segment, final BlobRecord blobRecord )
+    public void addRecord( final BlobContainer blobContainer )
     {
         try
         {
-            final Path file = getBlobRef( segment, blobRecord.getKey() ).asPath( baseDir );
+            final Path file = getBlobPathRef( blobContainer.getReference() ).asPath( baseDir );
             if ( !Files.exists( file ) )
             {
                 Files.createDirectories( file.getParent() );
-                blobRecord.getBytes().copyTo( MoreFiles.asByteSink( file ) );
+                copyBlob( blobContainer, Files.newOutputStream( file ) );
             }
         }
         catch ( final IOException e )

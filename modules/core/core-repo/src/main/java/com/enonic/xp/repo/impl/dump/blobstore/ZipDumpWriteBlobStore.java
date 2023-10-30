@@ -8,8 +8,7 @@ import java.util.Map;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class ZipDumpWriteBlobStore
@@ -17,12 +16,11 @@ public class ZipDumpWriteBlobStore
 {
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
-    private final Map<String, BlobRecord> records = new HashMap<>();
+    private final Map<PathRef, BlobContainer> records = new HashMap<>();
 
-    public ZipDumpWriteBlobStore( String dumpName, ZipArchiveOutputStream zipArchiveOutputStream )
+    public ZipDumpWriteBlobStore( String dumpName, ZipArchiveOutputStream zipArchiveOutputStream, BlobStore sourceBlobStore )
     {
-        super( PathRef.of( dumpName ) );
-
+        super( PathRef.of( dumpName ), sourceBlobStore );
         this.zipArchiveOutputStream = zipArchiveOutputStream;
     }
 
@@ -32,10 +30,8 @@ public class ZipDumpWriteBlobStore
         {
             for ( var entry : records.entrySet() )
             {
-                final String segmentedKey = entry.getKey();
-                final BlobRecord blobRecord = entry.getValue();
-                zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( segmentedKey ) );
-                blobRecord.getBytes().copyTo( zipArchiveOutputStream );
+                zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( entry.getKey().toString() ) );
+                copyBlob( entry.getValue(), zipArchiveOutputStream );
                 zipArchiveOutputStream.closeArchiveEntry();
             }
         }
@@ -50,8 +46,8 @@ public class ZipDumpWriteBlobStore
     }
 
     @Override
-    public void addRecord( final Segment segment, final BlobRecord blobRecord )
+    public void addRecord( final BlobContainer blobContainer )
     {
-        records.put( getBlobRef( segment, blobRecord.getKey() ).asString(), blobRecord );
+        records.put( getBlobPathRef( blobContainer.getReference() ), blobContainer );
     }
 }

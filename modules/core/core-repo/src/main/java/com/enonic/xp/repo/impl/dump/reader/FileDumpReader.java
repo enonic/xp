@@ -2,12 +2,16 @@ package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.SystemLoadListener;
@@ -15,7 +19,9 @@ import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobHolder;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobStore;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -24,10 +30,14 @@ public class FileDumpReader
 {
     private final Path dumpPath;
 
-    private FileDumpReader( final SystemLoadListener listener, FilePaths filePaths, FileDumpBlobStore dumpBlobStore, Path dumpPath )
+    private final FileDumpBlobStore dumpBlobStore;
+
+    private FileDumpReader( final SystemLoadListener listener, final FilePaths filePaths, final Path dumpPath,
+                            final FileDumpBlobStore dumpBlobStore )
     {
         super( listener, filePaths, dumpBlobStore );
         this.dumpPath = dumpPath;
+        this.dumpBlobStore = dumpBlobStore;
     }
 
     public static FileDumpReader create( final SystemLoadListener listener, Path basePath, final String dumpName )
@@ -44,7 +54,7 @@ public class FileDumpReader
         {
             throw new RepoLoadException( "Directory is not a valid dump directory: [" + dumpPath + "]" );
         }
-        return new FileDumpReader( listener, filePaths, new FileDumpBlobStore( dumpPath ), dumpPath );
+        return new FileDumpReader( listener, filePaths, dumpPath, new FileDumpBlobStore( dumpPath, null ) );
     }
 
     @Override
@@ -69,9 +79,16 @@ public class FileDumpReader
         return Files.exists( file.asPath( dumpPath ) );
     }
 
-    public DumpBlobStore getDumpBlobStore()
+    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
     {
-        return new FileDumpBlobStore( dumpPath );
+        return dumpBlobStore.getRecord( segment, key );
+    }
+
+    public BlobKey addRecord( final Segment segment, final byte[] data )
+    {
+        final ByteArrayBlobContainer blobContainer = new ByteArrayBlobContainer( segment, data );
+        dumpBlobStore.addRecord( blobContainer );
+        return blobContainer.getReference().getKey();
     }
 
     public Path getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
@@ -92,5 +109,32 @@ public class FileDumpReader
     public Path getMetaDataFile()
     {
         return filePaths.metaDataFile().asPath( dumpPath );
+    }
+
+    public static final class ByteArrayBlobContainer
+        implements BlobHolder
+    {
+        final byte[] data;
+
+        final BlobReference reference;
+
+        public ByteArrayBlobContainer( final Segment segment, final byte[] data )
+        {
+            this.data = data;
+            this.reference = new BlobReference( segment, BlobKey.from( ByteSource.wrap( data ) ) );
+        }
+
+        @Override
+        public BlobReference getReference()
+        {
+            return reference;
+        }
+
+        @Override
+        public void copyTo( final OutputStream outputStream )
+            throws IOException
+        {
+            outputStream.write( data );
+        }
     }
 }

@@ -30,15 +30,15 @@ public class ZipDumpWriter
 
     private final ZipDumpWriteBlobStore dumpBlobStore;
 
-    private ZipDumpWriter( final BlobStore blobStore, FilePaths filePaths, ZipDumpWriteBlobStore dumpBlobStore,
+    private ZipDumpWriter( FilePaths filePaths, ZipDumpWriteBlobStore dumpBlobStore,
                            ZipArchiveOutputStream zipArchiveOutputStream )
     {
-        super( blobStore, filePaths, dumpBlobStore );
+        super( filePaths, dumpBlobStore );
         this.zipArchiveOutputStream = zipArchiveOutputStream;
         this.dumpBlobStore = dumpBlobStore;
     }
 
-    public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore blobStore )
+    public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -46,9 +46,9 @@ public class ZipDumpWriter
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
                 Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
-            final ZipDumpWriteBlobStore zipDumpWriteBlobStore = new ZipDumpWriteBlobStore( dumpName, zipArchiveOutputStream );
-            return new ZipDumpWriter( blobStore, new DefaultFilePaths( PathRef.of( dumpName ) ), zipDumpWriteBlobStore,
-                                      zipArchiveOutputStream );
+            final ZipDumpWriteBlobStore zipDumpWriteBlobStore =
+                new ZipDumpWriteBlobStore( dumpName, zipArchiveOutputStream, sourceBlobStore );
+            return new ZipDumpWriter( new DefaultFilePaths( PathRef.of( dumpName ) ), zipDumpWriteBlobStore, zipArchiveOutputStream );
         }
         catch ( IOException e )
         {

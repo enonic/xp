@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
@@ -11,43 +8,28 @@ import com.enonic.xp.blob.Segment;
 
 public class DumpBlobRecord
 {
-    private final BlobKey key;
-
-    private final Segment segment;
+    private final BlobReference reference;
 
     private final AbstractDumpBlobStore dumpBlobStore;
 
     public DumpBlobRecord( final Segment segment, final BlobKey key, final AbstractDumpBlobStore dumpBlobStore )
     {
-        this.key = key;
-        this.segment = segment;
+        this.reference = new BlobReference( segment, key );
         this.dumpBlobStore = dumpBlobStore;
     }
 
     public final BlobKey getKey()
     {
-        return key;
+        return reference.getKey();
     }
 
     public ByteSource getBytes()
     {
-        return dumpBlobStore.getBytes( segment, key );
-    }
-
-    public long getLength()
-    {
-        try
-        {
-            return dumpBlobStore.getBytes( segment, key ).size();
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return dumpBlobStore.getBytes( reference );
     }
 
     public ByteSink getByteSink()
     {
-        return dumpBlobStore.getByteSink( segment, key );
+        return dumpBlobStore.getByteSink( reference );
     }
 }

@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -14,9 +17,12 @@ public abstract class AbstractDumpBlobStore
 {
     private final PathRef pathRef;
 
-    public AbstractDumpBlobStore( final PathRef pathRef )
+    private final BlobStore sourceBlobStore;
+
+    public AbstractDumpBlobStore( final PathRef pathRef, final BlobStore sourceBlobStore )
     {
         this.pathRef = pathRef;
+        this.sourceBlobStore = sourceBlobStore;
     }
 
     @Override
@@ -26,28 +32,42 @@ public abstract class AbstractDumpBlobStore
     }
 
     @Override
-    public void addRecord( final Segment segment, final BlobRecord blobRecord )
+    public void addRecord( final BlobContainer blobContainer )
     {
         throw new UnsupportedOperationException();
     }
 
-    protected ByteSource getBytes( Segment segment, BlobKey key )
+    protected ByteSource getBytes( final BlobReference reference )
     {
         throw new UnsupportedOperationException();
     }
 
-    protected ByteSink getByteSink( Segment segment, BlobKey key )
+    protected ByteSink getByteSink( final BlobReference reference )
     {
         throw new UnsupportedOperationException();
     }
 
-    protected PathRef getBlobRef( final Segment segment, final BlobKey key )
+    protected PathRef getBlobPathRef( final BlobReference reference )
     {
-        final String id = key.toString();
-        return pathRef.resolve( segment.getLevel( RepositorySegmentUtils.BLOB_TYPE_LEVEL ).getValue() )
+        final String id = reference.getKey().toString();
+        return pathRef.resolve( reference.getSegment().getLevel( RepositorySegmentUtils.BLOB_TYPE_LEVEL ).getValue() )
             .resolve( id.substring( 0, 2 ) )
             .resolve( id.substring( 2, 4 ) )
             .resolve( id.substring( 4, 6 ) )
             .resolve( id );
+    }
+
+    void copyBlob( final BlobContainer blobContainer, final OutputStream outputStream )
+        throws IOException
+    {
+        if ( blobContainer instanceof BlobHolder )
+        {
+            ( (BlobHolder) blobContainer ).copyTo( outputStream );
+        }
+        else
+        {
+            final BlobReference blobRef = (BlobReference) blobContainer;
+            sourceBlobStore.getRecord( blobRef.getSegment(), blobRef.getKey() ).getBytes().copyTo( outputStream );
+        }
     }
 }

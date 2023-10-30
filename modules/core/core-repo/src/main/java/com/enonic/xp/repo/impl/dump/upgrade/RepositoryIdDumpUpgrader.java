@@ -122,8 +122,7 @@ public class RepositoryIdDumpUpgrader
 
     private void upgradeNodeVersionBlob( final String nodeBlobKey )
     {
-        final DumpBlobRecord dumpBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( SEGMENT, BlobKey.from( nodeBlobKey ) );
+        final DumpBlobRecord dumpBlobRecord = dumpReader.getRecord( SEGMENT, BlobKey.from( nodeBlobKey ) );
 
         final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
 
