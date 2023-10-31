@@ -255,7 +255,7 @@ public class RepositoryIdDumpUpgrader
     {
         try
         {
-            dumpBlobRecord.getByteSink().write( NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) );
+            dumpBlobRecord.override( NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) );
         }
         catch ( IOException e )
         {

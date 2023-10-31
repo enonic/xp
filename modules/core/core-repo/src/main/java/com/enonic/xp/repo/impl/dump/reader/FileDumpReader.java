@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -19,8 +18,6 @@ import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.blobstore.BlobHolder;
-import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobStore;
 import com.enonic.xp.repository.RepositoryId;
@@ -86,9 +83,7 @@ public class FileDumpReader
 
     public BlobKey addRecord( final Segment segment, final byte[] data )
     {
-        final ByteArrayBlobContainer blobContainer = new ByteArrayBlobContainer( segment, data );
-        dumpBlobStore.addRecord( blobContainer );
-        return blobContainer.getReference().getKey();
+        return dumpBlobStore.addRecord( segment, ByteSource.wrap( data ) );
     }
 
     public Path getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
@@ -111,30 +106,4 @@ public class FileDumpReader
         return filePaths.metaDataFile().asPath( dumpPath );
     }
 
-    public static final class ByteArrayBlobContainer
-        implements BlobHolder
-    {
-        final byte[] data;
-
-        final BlobReference reference;
-
-        public ByteArrayBlobContainer( final Segment segment, final byte[] data )
-        {
-            this.data = data;
-            this.reference = new BlobReference( segment, BlobKey.from( ByteSource.wrap( data ) ) );
-        }
-
-        @Override
-        public BlobReference getReference()
-        {
-            return reference;
-        }
-
-        @Override
-        public void copyTo( final OutputStream outputStream )
-            throws IOException
-        {
-            outputStream.write( data );
-        }
-    }
 }

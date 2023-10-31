@@ -5,7 +5,10 @@ import java.util.Objects;
 
 public final class PathRef
 {
+
     private static final String SEPARATOR = "/";
+
+    private static final PathRef EMPTY_PATH_REF = new PathRef( "" );
 
     private final String path;
 
@@ -16,7 +19,7 @@ public final class PathRef
 
     public static PathRef of()
     {
-        return new PathRef( "" );
+        return EMPTY_PATH_REF;
     }
 
     public static PathRef of( String root )

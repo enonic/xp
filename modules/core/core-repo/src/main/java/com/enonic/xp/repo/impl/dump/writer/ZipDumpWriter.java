@@ -46,9 +46,10 @@ public class ZipDumpWriter
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
                 Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
-            final ZipDumpWriteBlobStore zipDumpWriteBlobStore =
-                new ZipDumpWriteBlobStore( dumpName, zipArchiveOutputStream, sourceBlobStore );
-            return new ZipDumpWriter( new DefaultFilePaths( PathRef.of( dumpName ) ), zipDumpWriteBlobStore, zipArchiveOutputStream );
+
+            final PathRef basePathInZip = PathRef.of( dumpName );
+            final ZipDumpWriteBlobStore zipDumpWriteBlobStore = new ZipDumpWriteBlobStore( basePathInZip, sourceBlobStore );
+            return new ZipDumpWriter( new DefaultFilePaths( basePathInZip ), zipDumpWriteBlobStore, zipArchiveOutputStream );
         }
         catch ( IOException e )
         {
@@ -79,7 +80,7 @@ public class ZipDumpWriter
     public void close()
         throws IOException
     {
-        dumpBlobStore.flush();
+        dumpBlobStore.flush( zipArchiveOutputStream );
         zipArchiveOutputStream.close();
     }
 }

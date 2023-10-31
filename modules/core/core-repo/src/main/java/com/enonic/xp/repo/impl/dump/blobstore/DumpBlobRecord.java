@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
-import com.google.common.io.ByteSink;
+import java.io.IOException;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -10,15 +11,15 @@ public class DumpBlobRecord
 {
     private final BlobReference reference;
 
-    private final AbstractDumpBlobStore dumpBlobStore;
+    private final FileDumpBlobStore dumpBlobStore;
 
-    public DumpBlobRecord( final Segment segment, final BlobKey key, final AbstractDumpBlobStore dumpBlobStore )
+    public DumpBlobRecord( final Segment segment, final BlobKey key, final FileDumpBlobStore dumpBlobStore )
     {
         this.reference = new BlobReference( segment, key );
         this.dumpBlobStore = dumpBlobStore;
     }
 
-    public final BlobKey getKey()
+    public BlobKey getKey()
     {
         return reference.getKey();
     }
@@ -28,8 +29,9 @@ public class DumpBlobRecord
         return dumpBlobStore.getBytes( reference );
     }
 
-    public ByteSink getByteSink()
+    public void override( final byte[] bytes )
+        throws IOException
     {
-        return dumpBlobStore.getByteSink( reference );
+        dumpBlobStore.overrideBlob( reference, bytes );
     }
 }

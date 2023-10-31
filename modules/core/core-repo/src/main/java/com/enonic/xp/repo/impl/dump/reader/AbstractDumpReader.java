@@ -34,7 +34,7 @@ import com.enonic.xp.repo.impl.dump.NullSystemLoadListener;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
@@ -160,22 +160,21 @@ public abstract class AbstractDumpReader
     @Override
     public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final DumpBlobRecord dataRecord =
-            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ),
-                                          nodeVersionKey.getNodeBlobKey() );
+        final ByteSource dataBytes = this.dumpBlobStore.getBytes(
+            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ),
+                               nodeVersionKey.getNodeBlobKey() ) );
 
-        final DumpBlobRecord indexConfigRecord =
-            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ),
-                                          nodeVersionKey.getIndexConfigBlobKey() );
+        final ByteSource indexConfigBytes = this.dumpBlobStore.getBytes(
+            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ),
+                               nodeVersionKey.getIndexConfigBlobKey() ) );
 
-        final DumpBlobRecord accessControlRecord =
-            this.dumpBlobStore.getRecord( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ),
-                                          nodeVersionKey.getAccessControlBlobKey() );
+        final ByteSource accessControlBytes = this.dumpBlobStore.getBytes(
+            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ),
+                               nodeVersionKey.getAccessControlBlobKey() ) );
 
         try
         {
-            return NodeVersionJsonSerializer.toNodeVersion( dataRecord.getBytes(), indexConfigRecord.getBytes(),
-                                                            accessControlRecord.getBytes() );
+            return NodeVersionJsonSerializer.toNodeVersion( dataBytes, indexConfigBytes, accessControlBytes );
         }
         catch ( IOException e )
         {
@@ -186,15 +185,9 @@ public abstract class AbstractDumpReader
     @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
     {
-        final DumpBlobRecord record = this.dumpBlobStore.getRecord(
-            RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ), BlobKey.from( blobKey ) );
-
-        if ( record == null )
-        {
-            throw new RepoLoadException( "Cannot find referred blob id " + blobKey + " in dump" );
-        }
-
-        return record.getBytes();
+        return this.dumpBlobStore.getBytes(
+            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ),
+                               BlobKey.from( blobKey ) ) );
     }
 
     @Override

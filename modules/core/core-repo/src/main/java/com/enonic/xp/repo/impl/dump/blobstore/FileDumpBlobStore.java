@@ -4,52 +4,82 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class FileDumpBlobStore
-    extends AbstractDumpBlobStore
+    implements DumpBlobStore
 {
     private final Path baseDir;
 
-    public FileDumpBlobStore( final Path baseDir, BlobStore sourceBlobStore )
+    private final BlobStore sourceBlobStore;
+
+    public FileDumpBlobStore( final Path baseDir, final BlobStore sourceBlobStore )
     {
-        super( PathRef.of(), sourceBlobStore );
         this.baseDir = baseDir;
+        this.sourceBlobStore = sourceBlobStore;
     }
 
     @Override
-    protected ByteSource getBytes( final BlobReference reference )
+    public ByteSource getBytes( final BlobReference reference )
     {
-        return MoreFiles.asByteSource( getBlobPathRef( reference ).asPath( baseDir ) );
+        return MoreFiles.asByteSource( toPath( reference ) );
     }
 
     @Override
-    protected ByteSink getByteSink( final BlobReference reference )
+    public void addRecord( final BlobReference reference )
     {
-        return MoreFiles.asByteSink( getBlobPathRef( reference ).asPath( baseDir ) );
+        final ByteSource data = DumpBlobStoreUtils.getBytesByReference( sourceBlobStore, reference );
+        writeBlob( reference, data );
     }
 
-    @Override
-    public void addRecord( final BlobContainer blobContainer )
+    public BlobKey addRecord( final Segment segment, final ByteSource data )
     {
+        final BlobReference reference = new BlobReference( segment, BlobKey.from( data ) );
+
+        writeBlob( reference, data );
+        return reference.getKey();
+    }
+
+    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
+    {
+        return new DumpBlobRecord( segment, key, this );
+    }
+    void overrideBlob( final BlobReference reference, byte[] bytes )
+        throws IOException
+    {
+        Files.write( toPath( reference ), bytes );
+    }
+
+    private void writeBlob( final BlobReference reference, final ByteSource data )
+    {
+        final Path path = toPath( reference );
         try
         {
-            final Path file = getBlobPathRef( blobContainer.getReference() ).asPath( baseDir );
-            if ( !Files.exists( file ) )
+            if ( !Files.exists( path ) )
             {
-                Files.createDirectories( file.getParent() );
-                copyBlob( blobContainer, Files.newOutputStream( file ) );
+                Files.createDirectories( path.getParent() );
+
+                try (var output = Files.newOutputStream( path ))
+                {
+                    data.copyTo( output );
+                }
             }
         }
         catch ( final IOException e )
         {
             throw new BlobStoreException( "Failed to add blob", e );
         }
+    }
+
+    private Path toPath( final BlobReference reference )
+    {
+        return DumpBlobStoreUtils.getBlobPathRef( PathRef.of(), reference ).asPath( baseDir );
     }
 }

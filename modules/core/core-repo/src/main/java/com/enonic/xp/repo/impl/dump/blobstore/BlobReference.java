@@ -6,7 +6,6 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 
 public final class BlobReference
-    implements BlobContainer
 {
     private final Segment segment;
 
@@ -29,12 +28,6 @@ public final class BlobReference
     }
 
     @Override
-    public BlobReference getReference()
-    {
-        return this;
-    }
-
-    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -53,5 +46,11 @@ public final class BlobReference
     public int hashCode()
     {
         return Objects.hash( segment, key );
+    }
+
+    @Override
+    public String toString()
+    {
+        return segment + ":" + key;
     }
 }

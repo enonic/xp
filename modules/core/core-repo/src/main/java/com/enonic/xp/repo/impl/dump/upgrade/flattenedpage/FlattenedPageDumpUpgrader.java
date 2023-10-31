@@ -204,7 +204,7 @@ public class FlattenedPageDumpUpgrader
         final byte[] serializedUpgradedNodeVersion = serializeValue( nodeVersion );
         try
         {
-            dumpBlobRecord.getByteSink().write( serializedUpgradedNodeVersion );
+            dumpBlobRecord.override( serializedUpgradedNodeVersion );
         }
         catch ( IOException e )
         {

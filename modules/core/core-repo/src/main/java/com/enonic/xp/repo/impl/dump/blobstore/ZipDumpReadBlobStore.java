@@ -10,19 +10,20 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class ZipDumpReadBlobStore
-    extends AbstractDumpBlobStore
+    implements DumpBlobStore
 {
     private final ZipFile zipFile;
 
-    public ZipDumpReadBlobStore( ZipFile zipFile, PathRef basePath )
-    {
-        super( basePath, null );
+    private final PathRef basePath;
 
+    public ZipDumpReadBlobStore( final ZipFile zipFile, final PathRef basePath )
+    {
+        this.basePath = basePath;
         this.zipFile = zipFile;
     }
 
     @Override
-    protected ByteSource getBytes( final BlobReference reference )
+    public ByteSource getBytes( final BlobReference reference )
     {
         return new ByteSource()
         {
@@ -30,8 +31,14 @@ public class ZipDumpReadBlobStore
             public InputStream openStream()
                 throws IOException
             {
-                return zipFile.getInputStream( zipFile.getEntry( getBlobPathRef( reference ).asString() ) );
+                return zipFile.getInputStream( zipFile.getEntry( DumpBlobStoreUtils.getBlobPathRef( basePath, reference ).asString() ) );
             }
         };
+    }
+
+    @Override
+    public void addRecord( final BlobReference reference )
+    {
+        throw new UnsupportedOperationException();
     }
 }

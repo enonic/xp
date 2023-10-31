@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.Segment;
+import com.google.common.io.ByteSource;
 
 public interface DumpBlobStore
 {
-    DumpBlobRecord getRecord( Segment segment, BlobKey key );
+    ByteSource getBytes( BlobReference reference );
 
-    void addRecord( BlobContainer blobContainer );
+    void addRecord( BlobReference blobContainer );
 }

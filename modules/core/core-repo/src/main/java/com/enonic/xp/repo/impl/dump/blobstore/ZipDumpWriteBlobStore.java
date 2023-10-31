@@ -2,36 +2,41 @@ package com.enonic.xp.repo.impl.dump.blobstore;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class ZipDumpWriteBlobStore
-    extends AbstractDumpBlobStore
+    implements DumpBlobStore
 {
-    private final ZipArchiveOutputStream zipArchiveOutputStream;
+    private final Set<BlobReference> records = new HashSet<>();
 
-    private final Map<PathRef, BlobContainer> records = new HashMap<>();
+    private final PathRef basePath;
 
-    public ZipDumpWriteBlobStore( String dumpName, ZipArchiveOutputStream zipArchiveOutputStream, BlobStore sourceBlobStore )
+    private final BlobStore sourceBlobStore;
+
+    public ZipDumpWriteBlobStore( final PathRef basePath, final BlobStore sourceBlobStore )
     {
-        super( PathRef.of( dumpName ), sourceBlobStore );
-        this.zipArchiveOutputStream = zipArchiveOutputStream;
+        this.basePath = basePath;
+        this.sourceBlobStore = sourceBlobStore;
     }
 
-    public void flush()
+    public void flush( final ZipArchiveOutputStream zipArchiveOutputStream )
     {
         try
         {
-            for ( var entry : records.entrySet() )
+            for ( var reference : records )
             {
-                zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( entry.getKey().toString() ) );
-                copyBlob( entry.getValue(), zipArchiveOutputStream );
+                zipArchiveOutputStream.putArchiveEntry(
+                    new ZipArchiveEntry( DumpBlobStoreUtils.getBlobPathRef( basePath, reference ).asString() ) );
+                DumpBlobStoreUtils.getBytesByReference( sourceBlobStore, reference ).copyTo( zipArchiveOutputStream );
                 zipArchiveOutputStream.closeArchiveEntry();
             }
         }
@@ -39,15 +44,17 @@ public class ZipDumpWriteBlobStore
         {
             throw new UncheckedIOException( e );
         }
-        finally
-        {
-            records.clear();
-        }
     }
 
     @Override
-    public void addRecord( final BlobContainer blobContainer )
+    public void addRecord( final BlobReference reference )
     {
-        records.put( getBlobPathRef( blobContainer.getReference() ), blobContainer );
+        records.add( reference );
+    }
+
+    @Override
+    public ByteSource getBytes( final BlobReference reference )
+    {
+        throw new UnsupportedOperationException();
     }
 }
