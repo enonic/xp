@@ -14,7 +14,6 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 
 public class FileDumpBlobStore
-    implements DumpBlobStore
 {
     private final Path baseDir;
 
@@ -26,17 +25,14 @@ public class FileDumpBlobStore
         this.sourceBlobStore = sourceBlobStore;
     }
 
-    @Override
     public ByteSource getBytes( final BlobReference reference )
     {
         return MoreFiles.asByteSource( toPath( reference ) );
     }
 
-    @Override
     public void addRecord( final BlobReference reference )
     {
-        final ByteSource data = DumpBlobStoreUtils.getBytesByReference( sourceBlobStore, reference );
-        writeBlob( reference, data );
+        writeBlob( reference, sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() ).getBytes() );
     }
 
     public BlobKey addRecord( final Segment segment, final ByteSource data )

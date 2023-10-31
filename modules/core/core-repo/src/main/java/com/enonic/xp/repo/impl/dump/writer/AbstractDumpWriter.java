@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.writer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.Consumer;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -17,7 +18,6 @@ import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -34,7 +34,7 @@ public abstract class AbstractDumpWriter
 {
     private static final Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
 
-    private final DumpBlobStore dumpBlobStore;
+    private final Consumer<BlobReference> dumpBlobStore;
 
     private final DumpSerializer serializer;
 
@@ -42,7 +42,7 @@ public abstract class AbstractDumpWriter
 
     protected TarArchiveOutputStream tarOutputStream;
 
-    protected AbstractDumpWriter( final FilePaths filePaths, final DumpBlobStore dumpBlobStore )
+    protected AbstractDumpWriter( final FilePaths filePaths, final Consumer<BlobReference> dumpBlobStore )
     {
         this.dumpBlobStore = dumpBlobStore;
         this.serializer = new JsonDumpSerializer();
@@ -138,7 +138,7 @@ public abstract class AbstractDumpWriter
 
     private void addBlob( final Segment segment, final BlobKey blobKey )
     {
-        dumpBlobStore.addRecord( new BlobReference( segment, blobKey ) );
+        dumpBlobStore.accept( new BlobReference( segment, blobKey ) );
     }
 
     @Override

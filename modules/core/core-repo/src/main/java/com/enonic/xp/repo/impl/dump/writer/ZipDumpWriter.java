@@ -7,6 +7,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -17,9 +19,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
-import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
-import com.enonic.xp.repo.impl.dump.blobstore.ZipDumpWriteBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStoreUtils;
 
 public class ZipDumpWriter
     extends AbstractDumpWriter
@@ -28,14 +30,17 @@ public class ZipDumpWriter
 
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
-    private final ZipDumpWriteBlobStore dumpBlobStore;
+    private final Set<BlobReference> records;
 
-    private ZipDumpWriter( FilePaths filePaths, ZipDumpWriteBlobStore dumpBlobStore,
-                           ZipArchiveOutputStream zipArchiveOutputStream )
+    private final BlobStore sourceBlobStore;
+
+    private ZipDumpWriter( final PathRef basePathInZip, final BlobStore sourceBlobStore,
+                           final ZipArchiveOutputStream zipArchiveOutputStream, final Set<BlobReference> records )
     {
-        super( filePaths, dumpBlobStore );
+        super( new DefaultFilePaths( basePathInZip ), records::add );
+        this.records = records;
+        this.sourceBlobStore = sourceBlobStore;
         this.zipArchiveOutputStream = zipArchiveOutputStream;
-        this.dumpBlobStore = dumpBlobStore;
     }
 
     public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
@@ -47,9 +52,7 @@ public class ZipDumpWriter
                 Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
 
-            final PathRef basePathInZip = PathRef.of( dumpName );
-            final ZipDumpWriteBlobStore zipDumpWriteBlobStore = new ZipDumpWriteBlobStore( basePathInZip, sourceBlobStore );
-            return new ZipDumpWriter( new DefaultFilePaths( basePathInZip ), zipDumpWriteBlobStore, zipArchiveOutputStream );
+            return new ZipDumpWriter( PathRef.of( dumpName ), sourceBlobStore, zipArchiveOutputStream, new HashSet<>() );
         }
         catch ( IOException e )
         {
@@ -80,7 +83,22 @@ public class ZipDumpWriter
     public void close()
         throws IOException
     {
-        dumpBlobStore.flush( zipArchiveOutputStream );
-        zipArchiveOutputStream.close();
+
+        try
+        {
+            // It is not possible to write into multiple zip entries at the same time.
+            // We delay writing the blobs until the very end, when writing of metadata zip-entry is already complete.
+            for ( BlobReference reference : records )
+            {
+                final String zipEntryName = DumpBlobStoreUtils.getBlobPathRef( filePaths.basePath(), reference ).asString();
+                zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( zipEntryName ) );
+                sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() ).getBytes().copyTo( zipArchiveOutputStream );
+                zipArchiveOutputStream.closeArchiveEntry();
+            }
+        }
+        finally
+        {
+            zipArchiveOutputStream.close();
+        }
     }
 }

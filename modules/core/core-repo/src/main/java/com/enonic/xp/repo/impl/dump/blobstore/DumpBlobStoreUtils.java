@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 
@@ -20,10 +17,5 @@ public final class DumpBlobStoreUtils
             .resolve( id.substring( 2, 4 ) )
             .resolve( id.substring( 4, 6 ) )
             .resolve( id );
-    }
-
-    public static ByteSource getBytesByReference( final BlobStore sourceBlobStore, final BlobReference reference )
-    {
-        return sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() ).getBytes();
     }
 }

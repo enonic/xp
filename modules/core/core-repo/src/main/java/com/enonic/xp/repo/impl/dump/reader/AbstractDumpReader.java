@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
@@ -18,6 +19,7 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -35,7 +37,6 @@ import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -47,16 +48,17 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public abstract class AbstractDumpReader
     implements DumpReader
 {
-    private final DumpBlobStore dumpBlobStore;
+    private final Function<BlobReference, ByteSource> blobByteSourceProvider;
 
     private final SystemLoadListener listener;
 
     protected final FilePaths filePaths;
 
-    protected AbstractDumpReader( final SystemLoadListener listener, FilePaths filePaths, DumpBlobStore dumpBlobStore )
+    protected AbstractDumpReader( final SystemLoadListener listener, FilePaths filePaths,
+                                  Function<BlobReference, ByteSource> blobByteSourceProvider )
     {
         this.listener = Objects.requireNonNullElseGet( listener, NullSystemLoadListener::new );
-        this.dumpBlobStore = dumpBlobStore;
+        this.blobByteSourceProvider = blobByteSourceProvider;
         this.filePaths = filePaths;
     }
 
@@ -160,17 +162,13 @@ public abstract class AbstractDumpReader
     @Override
     public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final ByteSource dataBytes = this.dumpBlobStore.getBytes(
-            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ),
-                               nodeVersionKey.getNodeBlobKey() ) );
+        final ByteSource dataBytes = getBlobByteSource( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL, nodeVersionKey.getNodeBlobKey() );
 
-        final ByteSource indexConfigBytes = this.dumpBlobStore.getBytes(
-            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ),
-                               nodeVersionKey.getIndexConfigBlobKey() ) );
+        final ByteSource indexConfigBytes =
+            getBlobByteSource( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL, nodeVersionKey.getIndexConfigBlobKey() );
 
-        final ByteSource accessControlBytes = this.dumpBlobStore.getBytes(
-            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ),
-                               nodeVersionKey.getAccessControlBlobKey() ) );
+        final ByteSource accessControlBytes =
+            getBlobByteSource( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, nodeVersionKey.getAccessControlBlobKey() );
 
         try
         {
@@ -185,9 +183,12 @@ public abstract class AbstractDumpReader
     @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
     {
-        return this.dumpBlobStore.getBytes(
-            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ),
-                               BlobKey.from( blobKey ) ) );
+        return getBlobByteSource( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL, BlobKey.from( blobKey ));
+    }
+
+    private ByteSource getBlobByteSource( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey )
+    {
+        return this.blobByteSourceProvider.apply( new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, segmentLevel ), blobKey ) );
     }
 
     @Override

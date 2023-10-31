@@ -32,7 +32,7 @@ public class FileDumpReader
     private FileDumpReader( final SystemLoadListener listener, final FilePaths filePaths, final Path dumpPath,
                             final FileDumpBlobStore dumpBlobStore )
     {
-        super( listener, filePaths, dumpBlobStore );
+        super( listener, filePaths, dumpBlobStore::getBytes );
         this.dumpPath = dumpPath;
         this.dumpBlobStore = dumpBlobStore;
     }
