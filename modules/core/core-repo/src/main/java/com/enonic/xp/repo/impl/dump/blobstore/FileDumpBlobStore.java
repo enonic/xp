@@ -8,6 +8,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
@@ -32,7 +33,12 @@ public class FileDumpBlobStore
 
     public void addRecord( final BlobReference reference )
     {
-        writeBlob( reference, sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() ).getBytes() );
+        final BlobRecord record = sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() );
+        if ( record == null )
+        {
+            throw new BlobStoreException( "Blob not found: " + reference );
+        }
+        writeBlob( reference, record.getBytes() );
     }
 
     public BlobKey addRecord( final Segment segment, final ByteSource data )

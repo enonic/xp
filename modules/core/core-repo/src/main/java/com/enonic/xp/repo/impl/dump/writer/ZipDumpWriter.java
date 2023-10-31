@@ -7,8 +7,10 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -16,9 +18,12 @@ import org.apache.commons.compress.archivers.zip.ZipMethod;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
+import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStoreUtils;
@@ -30,14 +35,14 @@ public class ZipDumpWriter
 
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
-    private final Set<BlobReference> records;
+    private final Map<String, BlobReference> records;
 
     private final BlobStore sourceBlobStore;
 
-    private ZipDumpWriter( final PathRef basePathInZip, final BlobStore sourceBlobStore,
-                           final ZipArchiveOutputStream zipArchiveOutputStream, final Set<BlobReference> records )
+    private ZipDumpWriter( final FilePaths filePaths, final BlobStore sourceBlobStore,
+                           final ZipArchiveOutputStream zipArchiveOutputStream, final Map<String, BlobReference> records )
     {
-        super( new DefaultFilePaths( basePathInZip ), records::add );
+        super( filePaths, reference -> records.put( DumpBlobStoreUtils.getBlobPathRef( filePaths.basePath(), reference ).asString(), reference ) );
         this.records = records;
         this.sourceBlobStore = sourceBlobStore;
         this.zipArchiveOutputStream = zipArchiveOutputStream;
@@ -52,7 +57,7 @@ public class ZipDumpWriter
                 Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
 
-            return new ZipDumpWriter( PathRef.of( dumpName ), sourceBlobStore, zipArchiveOutputStream, new HashSet<>() );
+            return new ZipDumpWriter( new DefaultFilePaths( PathRef.of( dumpName ) ), sourceBlobStore, zipArchiveOutputStream, new HashMap<>() );
         }
         catch ( IOException e )
         {
@@ -83,17 +88,30 @@ public class ZipDumpWriter
     public void close()
         throws IOException
     {
-
+        final List<BlobReference> notFound = new ArrayList<>();
         try
         {
             // It is not possible to write into multiple zip entries at the same time.
             // We delay writing the blobs until the very end, when writing of metadata zip-entry is already complete.
-            for ( BlobReference reference : records )
+            for ( var entry : records.entrySet() )
             {
-                final String zipEntryName = DumpBlobStoreUtils.getBlobPathRef( filePaths.basePath(), reference ).asString();
+                final String zipEntryName = entry.getKey();
+                final BlobReference reference = entry.getValue();
+
+                final BlobRecord record = sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() );
+                if ( record == null )
+                {
+                    notFound.add( reference );
+                    continue;
+                }
+
                 zipArchiveOutputStream.putArchiveEntry( new ZipArchiveEntry( zipEntryName ) );
-                sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() ).getBytes().copyTo( zipArchiveOutputStream );
+                record.getBytes().copyTo( zipArchiveOutputStream );
                 zipArchiveOutputStream.closeArchiveEntry();
+            }
+            if ( !notFound.isEmpty() )
+            {
+                throw new BlobStoreException( "Blobs not found: " + notFound );
             }
         }
         finally
