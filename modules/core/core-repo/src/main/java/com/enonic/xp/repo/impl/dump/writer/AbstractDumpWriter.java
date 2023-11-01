@@ -91,6 +91,7 @@ public abstract class AbstractDumpWriter
         try
         {
             this.tarOutputStream.close();
+            flush();
         }
         catch ( IOException e )
         {
@@ -139,6 +140,11 @@ public abstract class AbstractDumpWriter
     private void addBlob( final Segment segment, final BlobKey blobKey )
     {
         dumpBlobStore.accept( new BlobReference( segment, blobKey ) );
+    }
+
+    public void flush()
+        throws IOException
+    {
     }
 
     @Override

@@ -10,9 +10,9 @@ import com.google.common.io.MoreFiles;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 
 public class FileDumpBlobStore
 {
@@ -36,7 +36,7 @@ public class FileDumpBlobStore
         final BlobRecord record = sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() );
         if ( record == null )
         {
-            throw new BlobStoreException( "Blob not found: " + reference );
+            throw new RepoDumpException( "Blob not found: " + reference );
         }
         writeBlob( reference, record.getBytes() );
     }
@@ -53,6 +53,7 @@ public class FileDumpBlobStore
     {
         return new DumpBlobRecord( segment, key, this );
     }
+
     void overrideBlob( final BlobReference reference, byte[] bytes )
         throws IOException
     {
@@ -76,7 +77,7 @@ public class FileDumpBlobStore
         }
         catch ( final IOException e )
         {
-            throw new BlobStoreException( "Failed to add blob", e );
+            throw new RepoDumpException( "Failed to add blob", e );
         }
     }
 

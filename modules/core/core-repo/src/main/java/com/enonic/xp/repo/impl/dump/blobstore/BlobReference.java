@@ -13,8 +13,8 @@ public final class BlobReference
 
     public BlobReference( final Segment segment, final BlobKey key )
     {
-        this.segment = segment;
-        this.key = key;
+        this.segment = Objects.requireNonNull( segment );
+        this.key = Objects.requireNonNull( key );
     }
 
     public Segment getSegment()
