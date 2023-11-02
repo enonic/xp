@@ -12,10 +12,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
@@ -41,10 +38,10 @@ public abstract class AbstractDumpUpgrader
     @Override
     public DumpUpgradeStepResult upgrade( final String dumpName )
     {
-        result = DumpUpgradeStepResult.create().
-            initialVersion( new Version( getModelVersion().getMajor() - 1 ) ).
-            upgradedVersion( getModelVersion() ).
-            stepName( getName() );
+        result = DumpUpgradeStepResult.create()
+            .initialVersion( new Version( getModelVersion().getMajor() - 1 ) )
+            .upgradedVersion( getModelVersion() )
+            .stepName( getName() );
         doUpgrade( dumpName );
         return result.build();
     }
@@ -77,11 +74,6 @@ public abstract class AbstractDumpUpgrader
         {
             throw new RepoDumpException( "Cannot serialize value", e );
         }
-    }
-
-    protected BlobKey addRecord( final Segment segment, final byte[] serializedData )
-    {
-        return dumpReader.getDumpBlobStore().addRecord( segment, ByteSource.wrap( serializedData ) );
     }
 
     public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )

@@ -93,7 +93,7 @@ public final class CachedBlobStore
             {
                 final CacheBlobRecord cacheBlobRecord = new CacheBlobRecord( record );
                 this.cache.put( record.getKey(), cacheBlobRecord );
-                return record;
+                return cacheBlobRecord;
             }
             catch ( IOException e )
             {

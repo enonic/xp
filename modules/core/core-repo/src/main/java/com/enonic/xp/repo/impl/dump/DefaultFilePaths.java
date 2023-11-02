@@ -33,7 +33,7 @@ public class DefaultFilePaths
     @Override
     public PathRef repoRootPath()
     {
-        return basePath.resolve( DumpConstants.META_BASE_PATH );
+        return basePath.resolve( "meta" );
     }
 
     @Override

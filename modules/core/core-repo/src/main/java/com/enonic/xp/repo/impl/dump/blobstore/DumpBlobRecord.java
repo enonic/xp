@@ -1,63 +1,37 @@
 package com.enonic.xp.repo.impl.dump.blobstore;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
-import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 
-public class DumpBlobRecord implements BlobRecord
+public class DumpBlobRecord
 {
-    private final BlobKey key;
+    private final BlobReference reference;
 
-    private final Segment segment;
+    private final FileDumpBlobStore dumpBlobStore;
 
-    private final AbstractDumpBlobStore dumpBlobStore;
-
-    public DumpBlobRecord( final Segment segment, final BlobKey key, final AbstractDumpBlobStore dumpBlobStore )
+    public DumpBlobRecord( final Segment segment, final BlobKey key, final FileDumpBlobStore dumpBlobStore )
     {
-        this.key = key;
-        this.segment = segment;
+        this.reference = new BlobReference( segment, key );
         this.dumpBlobStore = dumpBlobStore;
     }
 
-    @Override
-    public final BlobKey getKey()
+    public BlobKey getKey()
     {
-        return key;
+        return reference.getKey();
     }
 
-    @Override
     public ByteSource getBytes()
     {
-        return dumpBlobStore.getBytes( segment, key );
+        return dumpBlobStore.getBytes( reference );
     }
 
-    @Override
-    public long getLength()
+    public void override( final byte[] bytes )
+        throws IOException
     {
-        try
-        {
-            return dumpBlobStore.getBytes( segment, key ).size();
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-    }
-
-    @Override
-    public long lastModified()
-    {
-        return 0;
-    }
-
-    public ByteSink getByteSink()
-    {
-        return dumpBlobStore.getByteSink( segment, key );
+        dumpBlobStore.overrideBlob( reference, bytes );
     }
 }

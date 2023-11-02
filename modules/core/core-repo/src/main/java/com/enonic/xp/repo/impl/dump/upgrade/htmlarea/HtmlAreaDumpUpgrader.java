@@ -87,10 +87,8 @@ public class HtmlAreaDumpUpgrader
 
     private void upgradeVersionMeta( final VersionDumpEntryJson versionDumpEntryJson )
     {
-        final DumpBlobRecord nodeDumpBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( NODE_SEGMENT, BlobKey.from( versionDumpEntryJson.getNodeBlobKey() ) );
-        final DumpBlobRecord indexDumpBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( INDEX_SEGMENT, BlobKey.from( versionDumpEntryJson.getIndexConfigBlobKey() ) );
+        final DumpBlobRecord nodeDumpBlobRecord = dumpReader.getRecord( NODE_SEGMENT, BlobKey.from( versionDumpEntryJson.getNodeBlobKey() ) );
+        final DumpBlobRecord indexDumpBlobRecord = dumpReader.getRecord( INDEX_SEGMENT, BlobKey.from( versionDumpEntryJson.getIndexConfigBlobKey() ) );
         upgradeBlobRecord( nodeDumpBlobRecord, indexDumpBlobRecord );
     }
 
@@ -137,7 +135,7 @@ public class HtmlAreaDumpUpgrader
         final byte[] serializedUpgradedNodeVersion = NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) ;
         try
         {
-            dumpBlobRecord.getByteSink().write( serializedUpgradedNodeVersion );
+            dumpBlobRecord.override( serializedUpgradedNodeVersion );
         }
         catch ( IOException e )
         {

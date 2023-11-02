@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.writer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.Consumer;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -10,16 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -36,9 +34,7 @@ public abstract class AbstractDumpWriter
 {
     private static final Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
 
-    private final DumpBlobStore dumpBlobStore;
-
-    private final BlobStore blobStore;
+    private final Consumer<BlobReference> dumpBlobStore;
 
     private final DumpSerializer serializer;
 
@@ -46,11 +42,10 @@ public abstract class AbstractDumpWriter
 
     protected TarArchiveOutputStream tarOutputStream;
 
-    protected AbstractDumpWriter( final BlobStore blobStore, FilePaths filePaths, DumpBlobStore dumpBlobStore )
+    protected AbstractDumpWriter( final FilePaths filePaths, final Consumer<BlobReference> dumpBlobStore )
     {
         this.dumpBlobStore = dumpBlobStore;
         this.serializer = new JsonDumpSerializer();
-        this.blobStore = blobStore;
         this.filePaths = filePaths;
     }
 
@@ -96,6 +91,7 @@ public abstract class AbstractDumpWriter
         try
         {
             this.tarOutputStream.close();
+            flush();
         }
         catch ( IOException e )
         {
@@ -130,57 +126,25 @@ public abstract class AbstractDumpWriter
     @Override
     public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
-        final Segment nodeDumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
-        final BlobRecord existingNodeBlobRecord = blobStore.getRecord( nodeDumpSegment, nodeVersionKey.getNodeBlobKey() );
-        if ( existingNodeBlobRecord == null )
-        {
-            throw new RepoDumpException(
-                "Cannot write node blob with key [" + nodeVersionKey.getNodeBlobKey() + "], not found in blobStore" );
-        }
-
-        final Segment indexConfigDumpSegment =
-            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
-        final BlobRecord existingIndexConfigBlobRecord =
-            blobStore.getRecord( indexConfigDumpSegment, nodeVersionKey.getIndexConfigBlobKey() );
-        if ( existingIndexConfigBlobRecord == null )
-        {
-            throw new RepoDumpException(
-                "Cannot write index config blob with key [" + nodeVersionKey.getIndexConfigBlobKey() + "], not found in blobStore" );
-        }
-
-        final Segment accessControlDumpSegment =
-            RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
-        final BlobRecord existingAccessControlBlobRecord =
-            blobStore.getRecord( accessControlDumpSegment, nodeVersionKey.getAccessControlBlobKey() );
-        if ( existingAccessControlBlobRecord == null )
-        {
-            throw new RepoDumpException(
-                "Cannot write access control blob with key [" + nodeVersionKey.getAccessControlBlobKey() + "], not found in blobStore" );
-        }
-
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
-        this.dumpBlobStore.addRecord( nodeSegment, existingNodeBlobRecord.getBytes() );
-
-        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
-        this.dumpBlobStore.addRecord( indexConfigSegment, existingIndexConfigBlobRecord.getBytes() );
-
-        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
-        this.dumpBlobStore.addRecord( accessControlSegment, existingAccessControlBlobRecord.getBytes() );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ), nodeVersionKey.getNodeBlobKey() );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ), nodeVersionKey.getIndexConfigBlobKey() );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ), nodeVersionKey.getAccessControlBlobKey() );
     }
 
     @Override
     public void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey blobKey )
     {
-        final Segment dumpSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_BINARY_SEGMENT_LEVEL );
-        final BlobRecord binaryRecord = blobStore.getRecord( dumpSegment, blobKey );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ), blobKey );
+    }
 
-        if ( binaryRecord == null )
-        {
-            throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobStore" );
-        }
+    private void addBlob( final Segment segment, final BlobKey blobKey )
+    {
+        dumpBlobStore.accept( new BlobReference( segment, blobKey ) );
+    }
 
-        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
-        this.dumpBlobStore.addRecord( segment, binaryRecord.getBytes() );
+    public void flush()
+        throws IOException
+    {
     }
 
     @Override
@@ -220,5 +184,4 @@ public abstract class AbstractDumpWriter
             throw new RepoDumpException( "Could not write dump-entry", e );
         }
     }
-
 }

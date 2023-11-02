@@ -20,13 +20,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.blobstore.ZipDumpReadBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStoreUtils;
 
 public class ZipDumpReader
     extends AbstractDumpReader
@@ -36,9 +37,10 @@ public class ZipDumpReader
 
     private final ZipFile zipFile;
 
-    private ZipDumpReader( final SystemLoadListener listener, PathRef basePathInZip, ZipFile zipFile )
+    private ZipDumpReader( final SystemLoadListener listener, final PathRef basePathInZip, final ZipFile zipFile )
     {
-        super( listener, new DefaultFilePaths( basePathInZip ), new ZipDumpReadBlobStore( zipFile, basePathInZip ) );
+        super( listener, new DefaultFilePaths( basePathInZip ),
+               reference -> new ZipEntryByteSource( zipFile, DumpBlobStoreUtils.getBlobPathRef( basePathInZip, reference ).asString() ) );
         this.zipFile = zipFile;
     }
 
@@ -107,11 +109,12 @@ public class ZipDumpReader
     protected Stream<String> listDirectories( final PathRef repoRootPath )
     {
         final String prefix = repoRootPath.asString() + "/";
-        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( zipFile.getEntries().asIterator(), Spliterator.ORDERED ), false ).
-            map( ZipArchiveEntry::getName ).
-            filter( name -> name.startsWith( prefix ) ).
-            filter( name -> name.indexOf( "/", prefix.length() ) != -1 ).
-            map( name -> name.substring( prefix.length(), name.indexOf( "/", prefix.length() ) ) ).distinct();
+        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( zipFile.getEntries().asIterator(), Spliterator.ORDERED ), false )
+            .map( ZipArchiveEntry::getName )
+            .filter( name -> name.startsWith( prefix ) )
+            .filter( name -> name.indexOf( "/", prefix.length() ) != -1 )
+            .map( name -> name.substring( prefix.length(), name.indexOf( "/", prefix.length() ) ) )
+            .distinct();
     }
 
     @Override
@@ -119,5 +122,26 @@ public class ZipDumpReader
         throws IOException
     {
         zipFile.close();
+    }
+
+    private static class ZipEntryByteSource
+        extends ByteSource
+    {
+        final String zipEntryName;
+
+        final ZipFile zipFile;
+
+        ZipEntryByteSource( final ZipFile zipFile, final String zipEntryName )
+        {
+            this.zipFile = zipFile;
+            this.zipEntryName = zipEntryName;
+        }
+
+        @Override
+        public InputStream openStream()
+            throws IOException
+        {
+            return zipFile.getInputStream( zipFile.getEntry( zipEntryName ) );
+        }
     }
 }
