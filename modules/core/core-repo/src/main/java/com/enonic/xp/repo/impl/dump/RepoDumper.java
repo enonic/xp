@@ -117,17 +117,26 @@ public class RepoDumper
         writer.openBranchMeta( repository.getId(), branch );
         try
         {
-            dumpBranch( branchDumpResult, nodeIdsAccumulator );
-            this.dumpResult.add( branchDumpResult.build() );
+            try
+            {
+                dumpBranch( branchDumpResult, nodeIdsAccumulator );
+            }
+            catch ( Exception e )
+            {
+                throw new RepoDumpException( "Error occurred when dumping repository " + repository.getId(), e );
+            }
+            finally
+            {
+                writer.closeMeta();
+            }
         }
-        catch ( Exception e )
+        catch ( RepoDumpException e )
         {
-            throw new RepoDumpException( "Error occurred when dumping repository " + repository.getId(), e );
+            LOG.error( "Cannot fully dump repository [{}] branch [{}]",repository.getId(), branch, e );
+            branchDumpResult.error(
+                DumpError.error( "Cannot fully dump repository [" + repository.getId() + "] branch [" + branch + "]: " + e.getMessage() ) );
         }
-        finally
-        {
-            writer.closeMeta();
-        }
+        this.dumpResult.add( branchDumpResult.build() );
     }
 
     private void dumpBranch( final BranchDumpResult.Builder dumpResult, Consumer<NodeId> nodeIdsAccumulator )
@@ -156,23 +165,32 @@ public class RepoDumper
         writer.openVersionsMeta( repository.getId() );
         try
         {
-            for ( NodeId nodeId : dumpedNodes )
+            try
             {
-                final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
-
-                final NodeVersionQueryResult versions = getVersions( nodeId );
-                for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
+                for ( NodeId nodeId : dumpedNodes )
                 {
-                    doStoreVersion( builder, metaData, this.dumpResult );
-                    this.dumpResult.addedVersion();
-                }
+                    final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
-                writer.writeVersionsEntry( builder.build() );
+                    final NodeVersionQueryResult versions = getVersions( nodeId );
+                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
+                    {
+                        doStoreVersion( builder, metaData, this.dumpResult );
+                        this.dumpResult.addedVersion();
+                    }
+
+                    writer.writeVersionsEntry( builder.build() );
+                }
+            }
+            finally
+            {
+                writer.closeMeta();
             }
         }
-        finally
+        catch ( RepoDumpException e )
         {
-            writer.closeMeta();
+            LOG.error( "Cannot fully dump repository [{}] versions",repository.getId(), e );
+            dumpResult.error(
+                DumpError.error( "Cannot fully dump repository [" + repository.getId() + "] versions: " + e.getMessage() ) );
         }
     }
 

@@ -19,7 +19,7 @@ import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
-import com.enonic.xp.repo.impl.dump.blobstore.ZipDumpWriteBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.ZipDumpBlobStore;
 
 public class ZipDumpWriter
     extends AbstractDumpWriter
@@ -28,17 +28,18 @@ public class ZipDumpWriter
 
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
-    private final ZipDumpWriteBlobStore dumpBlobStore;
 
-    private ZipDumpWriter( final BlobStore blobStore, FilePaths filePaths, ZipDumpWriteBlobStore dumpBlobStore,
-                           ZipArchiveOutputStream zipArchiveOutputStream )
+    private final ZipDumpBlobStore store;
+
+    private ZipDumpWriter( final FilePaths filePaths, final ZipArchiveOutputStream zipArchiveOutputStream,
+                           final ZipDumpBlobStore store )
     {
-        super( blobStore, filePaths, dumpBlobStore );
+        super( filePaths, store::add );
         this.zipArchiveOutputStream = zipArchiveOutputStream;
-        this.dumpBlobStore = dumpBlobStore;
+        this.store = store;
     }
 
-    public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore blobStore )
+    public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -46,9 +47,10 @@ public class ZipDumpWriter
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
                 Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
-            final ZipDumpWriteBlobStore zipDumpWriteBlobStore = new ZipDumpWriteBlobStore( dumpName, zipArchiveOutputStream );
-            return new ZipDumpWriter( blobStore, new DefaultFilePaths( PathRef.of( dumpName ) ), zipDumpWriteBlobStore,
-                                      zipArchiveOutputStream );
+
+            final PathRef basePathInZip = PathRef.of( dumpName );
+            return new ZipDumpWriter( new DefaultFilePaths( basePathInZip ), zipArchiveOutputStream,
+                                      new ZipDumpBlobStore( basePathInZip, sourceBlobStore, zipArchiveOutputStream ) );
         }
         catch ( IOException e )
         {
@@ -76,10 +78,16 @@ public class ZipDumpWriter
     }
 
     @Override
+    public void flush()
+        throws IOException
+    {
+            store.flush();
+    }
+
+    @Override
     public void close()
         throws IOException
     {
-        dumpBlobStore.flush();
         zipArchiveOutputStream.close();
     }
 }

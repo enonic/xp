@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 import com.google.common.base.Preconditions;
 
@@ -12,7 +13,7 @@ import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobStore;
 
 public class FileDumpWriter
@@ -20,23 +21,24 @@ public class FileDumpWriter
 {
     private final Path dumpPath;
 
-    private FileDumpWriter( final BlobStore blobStore, FilePaths filePaths, Path dumpPath, DumpBlobStore dumpBlobStore )
+    private FileDumpWriter( FilePaths filePaths, Path dumpPath, Consumer<BlobReference> dumpBlobStore )
     {
-        super( blobStore, filePaths, dumpBlobStore );
+        super( filePaths, dumpBlobStore );
         this.dumpPath = dumpPath;
     }
 
-    public static FileDumpWriter create( final Path basePath, final String dumpName, final BlobStore blobStore )
+    public static FileDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
     {
-        return create( basePath, dumpName, blobStore, new DefaultFilePaths() );
+        return create( basePath, dumpName, sourceBlobStore, new DefaultFilePaths() );
     }
 
-    public static FileDumpWriter create( final Path basePath, final String dumpName, final BlobStore blobStore, final FilePaths filePaths )
+    public static FileDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore,
+                                         final FilePaths filePaths )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
 
         final Path dumpPath = basePath.resolve( dumpName );
-        return new FileDumpWriter( blobStore, filePaths, dumpPath, new FileDumpBlobStore( dumpPath ) );
+        return new FileDumpWriter( filePaths, dumpPath, new FileDumpBlobStore( dumpPath, sourceBlobStore )::addRecord );
     }
 
     @Override

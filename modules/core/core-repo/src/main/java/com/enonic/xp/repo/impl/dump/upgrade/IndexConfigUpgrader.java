@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -114,8 +113,7 @@ public class IndexConfigUpgrader
 
     private VersionDumpEntryJson upgradeVersionMeta( final VersionDumpEntryJson version )
     {
-        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( NODE_SEGMENT, BlobKey.from( version.getNodeBlobKey() ) );
+        final DumpBlobRecord nodeBlobRecord = dumpReader.getRecord( NODE_SEGMENT, BlobKey.from( version.getNodeBlobKey() ) );
 
         final NodeVersionDataJson nodeVersionDataJson = getNode( nodeBlobRecord );
 
@@ -131,7 +129,6 @@ public class IndexConfigUpgrader
         }
 
         return version;
-
     }
 
     private NodeVersionDataJson getNode( final DumpBlobRecord nodeBlobRecord )
@@ -162,8 +159,7 @@ public class IndexConfigUpgrader
 
     private BlobKey upgradeIndexConfigDocument( final BlobKey blobKey, final NodeVersion nodeVersion )
     {
-        final DumpBlobRecord indexConfigBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( INDEX_CONFIG_SEGMENT, blobKey );
+        final DumpBlobRecord indexConfigBlobRecord = dumpReader.getRecord( INDEX_CONFIG_SEGMENT, blobKey );
 
         final PatternIndexConfigDocument sourceDocument = getIndexConfigDocument( indexConfigBlobRecord );
 
@@ -210,6 +206,6 @@ public class IndexConfigUpgrader
 
         final byte[] indexConfigDocumentSerialized = serialize( indexConfigDocumentJson );
 
-        return dumpReader.getDumpBlobStore().addRecord( INDEX_CONFIG_SEGMENT, ByteSource.wrap( indexConfigDocumentSerialized ) );
+        return dumpReader.addRecord( INDEX_CONFIG_SEGMENT, indexConfigDocumentSerialized );
     }
 }

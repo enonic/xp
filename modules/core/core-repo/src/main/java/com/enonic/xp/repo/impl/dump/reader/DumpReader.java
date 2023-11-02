@@ -29,7 +29,7 @@ public interface DumpReader
 
     CommitsLoadResult loadCommits( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
 
-    NodeVersion get( RepositoryId repositoryId, NodeVersionKey blobKey );
+    NodeVersion get( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
     ByteSource getBinary( RepositoryId repositoryId, String blobKey );
 

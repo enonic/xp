@@ -4,52 +4,85 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 
 public class FileDumpBlobStore
-    extends AbstractDumpBlobStore
 {
     private final Path baseDir;
 
-    public FileDumpBlobStore( final Path baseDir )
+    private final BlobStore sourceBlobStore;
+
+    public FileDumpBlobStore( final Path baseDir, final BlobStore sourceBlobStore )
     {
-        super( PathRef.of() );
         this.baseDir = baseDir;
+        this.sourceBlobStore = sourceBlobStore;
     }
 
-    @Override
+    public ByteSource getBytes( final BlobReference reference )
+    {
+        return MoreFiles.asByteSource( toPath( reference ) );
+    }
+
+    public void addRecord( final BlobReference reference )
+    {
+        final BlobRecord record = sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() );
+        if ( record == null )
+        {
+            throw new RepoDumpException( "Blob not found: " + reference );
+        }
+        writeBlob( reference, record.getBytes() );
+    }
+
+    public BlobKey addRecord( final Segment segment, final ByteSource data )
+    {
+        final BlobReference reference = new BlobReference( segment, BlobKey.from( data ) );
+
+        writeBlob( reference, data );
+        return reference.getKey();
+    }
+
     public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
     {
         return new DumpBlobRecord( segment, key, this );
     }
 
-    @Override
-    protected ByteSource getBytes( final Segment segment, final BlobKey key )
-    {
-        return MoreFiles.asByteSource( getBlobRef( segment, key ).asPath( baseDir ) );
-    }
-
-    @Override
-    protected ByteSink getByteSink( final Segment segment, final BlobKey key )
-    {
-        return MoreFiles.asByteSink( getBlobRef( segment, key ).asPath( baseDir ) );
-    }
-
-    @Override
-    protected void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
+    void overrideBlob( final BlobReference reference, byte[] bytes )
         throws IOException
     {
-        final Path file = getBlobRef( segment, key ).asPath( baseDir );
-        if ( !Files.exists( file ) )
+        Files.write( toPath( reference ), bytes );
+    }
+
+    private void writeBlob( final BlobReference reference, final ByteSource data )
+    {
+        final Path path = toPath( reference );
+        try
         {
-            Files.createDirectories( file.getParent() );
-            in.copyTo( MoreFiles.asByteSink( file ) );
+            if ( !Files.exists( path ) )
+            {
+                Files.createDirectories( path.getParent() );
+
+                try (var output = Files.newOutputStream( path ))
+                {
+                    data.copyTo( output );
+                }
+            }
         }
+        catch ( final IOException e )
+        {
+            throw new RepoDumpException( "Failed to add blob", e );
+        }
+    }
+
+    private Path toPath( final BlobReference reference )
+    {
+        return DumpBlobStoreUtils.getBlobPathRef( PathRef.of(), reference ).asPath( baseDir );
     }
 }

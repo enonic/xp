@@ -124,8 +124,7 @@ public class FlattenedPageDumpUpgrader
     private void addTemplateControllerMapping( final Pre4VersionDumpEntryJson version,
                                                final TemplateControllerMappings templateControllerMapping )
     {
-        final DumpBlobRecord dumpBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
+        final DumpBlobRecord dumpBlobRecord = dumpReader.getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
         final NodeVersion nodeVersion = getNodeVersion( dumpBlobRecord );
         templateControllerMapping.handle( nodeVersion.getId(), nodeVersion.getData() );
     }
@@ -171,8 +170,7 @@ public class FlattenedPageDumpUpgrader
 
     private void upgradeVersionMeta( final Pre4VersionDumpEntryJson version, final FlattenedPageDataUpgrader dataUpgrader )
     {
-        final DumpBlobRecord dumpBlobRecord = dumpReader.getDumpBlobStore().
-            getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
+        final DumpBlobRecord dumpBlobRecord = dumpReader.getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
         upgradeBlobRecord( dumpBlobRecord, dataUpgrader );
 
     }
@@ -206,7 +204,7 @@ public class FlattenedPageDumpUpgrader
         final byte[] serializedUpgradedNodeVersion = serializeValue( nodeVersion );
         try
         {
-            dumpBlobRecord.getByteSink().write( serializedUpgradedNodeVersion );
+            dumpBlobRecord.override( serializedUpgradedNodeVersion );
         }
         catch ( IOException e )
         {
