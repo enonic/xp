@@ -20,6 +20,12 @@ public @interface HazelcastConfig
 
     int system_hazelcast_mastership_claim_timeout_seconds() default 120;
 
+    String system_hazelcast_health_monitoring_level() default "SILENT";
+
+    int system_hazelcast_health_monitoring_threshold_cpu_percentage() default 70;
+
+    int system_hazelcast_health_monitoring_threshold_memory_percentage() default 90;
+
     int hazelcast_wait_seconds_before_join() default 5;
 
     int hazelcast_max_wait_seconds_before_join() default 20;
