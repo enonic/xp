@@ -76,6 +76,15 @@ public class HazelcastConfigServiceImpl
         config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
 
+        config.setProperty( GroupProperty.HEALTH_MONITORING_LEVEL.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_level() ) );
+
+        config.setProperty( GroupProperty.HEALTH_MONITORING_THRESHOLD_CPU_PERCENTAGE.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_threshold_cpu_percentage() ) );
+
+        config.setProperty( GroupProperty.HEALTH_MONITORING_THRESHOLD_MEMORY_PERCENTAGE.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_threshold_memory_percentage() ) );
+
         config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(),
                             String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
 
