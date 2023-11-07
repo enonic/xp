@@ -92,6 +92,11 @@ public class ApiHandlerTest
 
         when( webRequest.getRawPath() ).thenReturn( "/admin/api" );
         assertFalse( this.handler.canHandle( webRequest ) );
+
+        Application welcomeApp = mock( Application.class );
+        when( applicationService.get( ApplicationKey.from( "com.enonic.xp.app.welcome" ) ) ).thenReturn( welcomeApp );
+        when( apiConfig.api_index_enabled() ).thenReturn( "on" );
+        assertTrue( this.handler.canHandle( webRequest ) );
     }
 
     @Test
