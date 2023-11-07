@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.impl.api.ApiConfig;
 import com.enonic.xp.portal.impl.api.ApiIndexMode;
@@ -32,6 +33,8 @@ public class ApiHandler
     extends BaseWebHandler
 {
     private static final Pattern URL_PATTERN = Pattern.compile( "^(/admin)?/api$" );
+
+    private static final ApplicationKey WELCOME_APP_KEY = ApplicationKey.from( "com.enonic.xp.app.welcome" );
 
     private final ApplicationService applicationService;
 
@@ -57,7 +60,8 @@ public class ApiHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        boolean isIndexEnabled = RunMode.get() == RunMode.DEV
+        boolean isSDK = applicationService.get( WELCOME_APP_KEY ) != null;
+        boolean isIndexEnabled = isSDK || RunMode.get() == RunMode.DEV
             ? apiIndexMode == ApiIndexMode.ON || apiIndexMode == ApiIndexMode.AUTO
             : apiIndexMode == ApiIndexMode.ON;
         return isIndexEnabled && URL_PATTERN.matcher( webRequest.getRawPath() ).matches();
