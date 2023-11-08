@@ -77,7 +77,7 @@ public class ApiAppHandlerTest
         WebRequest webRequest = mock( WebRequest.class );
 
         when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        assertFalse( this.handler.canHandle( webRequest ) );
 
         when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/" );
         assertTrue( this.handler.canHandle( webRequest ) );
@@ -100,17 +100,17 @@ public class ApiAppHandlerTest
     {
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp" );
+        request.setRawPath( "/api/com.enonic.app.myapp/" );
 
         when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( null );
 
         assertDoesNotThrow( () -> this.handler.doHandle( request, null, null ) );
 
-        request.setRawPath( "/admin/api/com.enonic.app.myapp" );
+        request.setRawPath( "/admin/api/com.enonic.app.myapp/" );
 
         assertDoesNotThrow( () -> this.handler.doHandle( request, null, null ) );
 
-        request.setRawPath( "/api/com.enonic.app.myapp" );
+        request.setRawPath( "/api/com.enonic.app.myapp/" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .applicationKey( ApplicationKey.from( "com.enonic.app.myapp" ) )
@@ -122,7 +122,7 @@ public class ApiAppHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
         assertEquals( "You don't have permission to access API for [com.enonic.app.myapp]", ex.getMessage() );
 
-        request.setRawPath( "/admin/api/com.enonic.app.myapp" );
+        request.setRawPath( "/admin/api/com.enonic.app.myapp/" );
 
         ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
         assertEquals( "You don't have permission to access API for [com.enonic.app.myapp]", ex.getMessage() );
@@ -135,7 +135,7 @@ public class ApiAppHandlerTest
 
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp" );
+        request.setRawPath( "/api/com.enonic.app.myapp/" );
         request.setWebSocketContext( webSocketContext );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
@@ -173,7 +173,7 @@ public class ApiAppHandlerTest
     {
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp" );
+        request.setRawPath( "/api/com.enonic.app.myapp/" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .applicationKey( ApplicationKey.from( "com.enonic.app.myapp" ) )

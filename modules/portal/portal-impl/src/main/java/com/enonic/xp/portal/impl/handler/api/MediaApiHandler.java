@@ -34,6 +34,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -100,7 +101,7 @@ public class MediaApiHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return PATTERN.matcher( webRequest.getRawPath() ).matches();
+        return webRequest.getRawPath().startsWith( "/admin/api/media/" ) || webRequest.getRawPath().startsWith( "/api/media/" );
     }
 
     @Override
@@ -108,7 +109,10 @@ public class MediaApiHandler
         throws Exception
     {
         Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
-        matcher.matches();
+        if ( !matcher.matches() )
+        {
+            return PortalResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
+        }
 
         String repo = matcher.group( "repo" );
         String branch = matcher.group( "branch" );

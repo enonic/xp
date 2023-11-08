@@ -20,6 +20,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -47,8 +48,7 @@ public class ApiIdentityHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return ( webRequest.getRawPath().startsWith( "/api/" ) || webRequest.getRawPath().startsWith( "/admin/api/" ) ) &&
-            PATTERN.matcher( webRequest.getRawPath() ).matches();
+        return webRequest.getRawPath().startsWith( "/api/idprovider" ) || webRequest.getRawPath().startsWith( "/admin/api/idprovider" );
     }
 
     @Override
@@ -56,7 +56,10 @@ public class ApiIdentityHandler
         throws Exception
     {
         final Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
-        matcher.matches();
+        if ( !matcher.matches() )
+        {
+            return PortalResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
+        }
 
         final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( "idProviderName" ) );
 
