@@ -4,11 +4,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -19,10 +21,14 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SiteHandlerTest
 {
@@ -45,6 +51,11 @@ public class SiteHandlerTest
         this.request = new WebRequest();
         this.request.setRawRequest( rawRequest );
         this.request.setRawPath( "/site/myrepo/draft/mycontent" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
+
+        VirtualHostHelper.setVirtualHost( request.getRawRequest(), initVirtualHost( request.getRawRequest(), virtualHost ) );
 
         this.response = WebResponse.create().build();
     }
@@ -110,5 +121,27 @@ public class SiteHandlerTest
             .authInfo( AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).principals( PrincipalKey.ofAnonymous() ).build() )
             .build()
             .callWith( () -> handler.createPortalRequest( request, response ) );
+    }
+
+    private VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
+    {
+        when( rawRequest.getAttribute( isA( String.class ) ) ).thenAnswer(
+            ( InvocationOnMock invocation ) -> VirtualHost.class.getName().equals( invocation.getArguments()[0] )
+                ? virtualHost
+                : generateDefaultVirtualHost() );
+
+        return virtualHost;
+    }
+
+    private VirtualHost generateDefaultVirtualHost()
+    {
+        VirtualHost result = mock( VirtualHost.class );
+
+        when( result.getHost() ).thenReturn( "host" );
+        when( result.getSource() ).thenReturn( "/" );
+        when( result.getTarget() ).thenReturn( "/" );
+        when( result.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( IdProviderKey.system() ) );
+
+        return result;
     }
 }

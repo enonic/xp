@@ -1,25 +1,36 @@
 package com.enonic.xp.admin.impl.portal;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseHandlerTest;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AdminSiteHandlerTest
     extends BaseHandlerTest
@@ -48,6 +59,11 @@ public class AdminSiteHandlerTest
         this.request.setRawRequest( rawRequest );
 
         this.response = WebResponse.create().build();
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
+
+        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
     }
 
     @Test
@@ -131,5 +147,43 @@ public class AdminSiteHandlerTest
         assertEquals( "master", portalRequest.getBranch().toString() );
         assertEquals( "/", portalRequest.getContentPath().toString() );
         assertEquals( RenderMode.EDIT, portalRequest.getMode() );
+    }
+
+    @Test
+    public void testCreatePortalRequestWithVhostContext()
+    {
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "myidprovider" ) );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.from( "myidprovider" ) );
+        when( virtualHost.getContext() ).thenReturn(
+            Map.of( RepositoryId.class.getName(), "com.enonic.cms.myrepo", Branch.class.getName(), "draft" ) );
+
+        VirtualHostHelper.setVirtualHost( request.getRawRequest(), initVirtualHost( request.getRawRequest(), virtualHost ) );
+
+        PortalRequest portalRequest = new PortalRequest(request);
+        assertEquals( "com.enonic.cms.myrepo", portalRequest.getRepositoryId().toString() );
+        assertEquals( "draft", portalRequest.getBranch().toString() );
+    }
+
+    private VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
+    {
+        when( rawRequest.getAttribute( isA( String.class ) ) ).thenAnswer(
+            ( InvocationOnMock invocation ) -> VirtualHost.class.getName().equals( invocation.getArguments()[0] )
+                ? virtualHost
+                : generateDefaultVirtualHost() );
+
+        return virtualHost;
+    }
+
+    private VirtualHost generateDefaultVirtualHost()
+    {
+        VirtualHost result = mock( VirtualHost.class );
+
+        when( result.getHost() ).thenReturn( "host" );
+        when( result.getSource() ).thenReturn( "/" );
+        when( result.getTarget() ).thenReturn( "/" );
+        when( result.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( IdProviderKey.system() ) );
+
+        return result;
     }
 }

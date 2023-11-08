@@ -14,6 +14,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @PublicApi
 public final class PortalRequest
@@ -53,7 +55,19 @@ public final class PortalRequest
 
     public PortalRequest( final WebRequest webRequest )
     {
-        super(webRequest);
+        super( webRequest );
+
+        VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
+        final String repositoryId = virtualHost.getContext().get( RepositoryId.class.getName() );
+        if ( repositoryId != null )
+        {
+            setRepositoryId( RepositoryId.from( repositoryId ) );
+        }
+        final String branch = virtualHost.getContext().get( Branch.class.getName() );
+        if ( branch != null )
+        {
+            setBranch( Branch.from( branch ) );
+        }
     }
 
     public Branch getBranch()

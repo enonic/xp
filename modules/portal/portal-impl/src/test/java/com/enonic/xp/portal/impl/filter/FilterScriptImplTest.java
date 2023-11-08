@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -26,16 +27,23 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FilterScriptImplTest
 {
@@ -55,7 +63,12 @@ public class FilterScriptImplTest
     public void setup()
         throws Exception
     {
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        ServletRequestHolder.setRequest( req );
+
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setRawRequest( req );
+
         this.portalResponse = PortalResponse.create().build();
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
@@ -89,8 +102,11 @@ public class FilterScriptImplTest
 
         this.factory = new FilterScriptFactoryImpl( scriptService );
 
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "myidprovider" ) );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.from( "myidprovider" ) );
+
+        VirtualHostHelper.setVirtualHost( req, initVirtualHost( req, virtualHost ) );
     }
 
     @Test
@@ -199,5 +215,27 @@ public class FilterScriptImplTest
     {
         final FilterScript controllerScript = this.factory.fromScript( ResourceKey.from( script ) );
         this.portalResponse = controllerScript.execute( this.portalRequest, this.portalResponse, webHandlerChain );
+    }
+
+    private VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
+    {
+        when( rawRequest.getAttribute( isA( String.class ) ) ).thenAnswer(
+            ( InvocationOnMock invocation ) -> VirtualHost.class.getName().equals( invocation.getArguments()[0] )
+                ? virtualHost
+                : generateDefaultVirtualHost() );
+
+        return virtualHost;
+    }
+
+    private VirtualHost generateDefaultVirtualHost()
+    {
+        VirtualHost result = mock( VirtualHost.class );
+
+        when( result.getHost() ).thenReturn( "host" );
+        when( result.getSource() ).thenReturn( "/" );
+        when( result.getTarget() ).thenReturn( "/" );
+        when( result.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( IdProviderKey.system() ) );
+
+        return result;
     }
 }

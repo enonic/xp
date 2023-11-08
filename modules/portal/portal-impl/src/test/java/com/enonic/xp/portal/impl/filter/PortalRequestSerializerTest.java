@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
@@ -18,21 +21,36 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PortalRequestSerializerTest
 {
     private ScriptValueFactory<?> factory;
 
+    private HttpServletRequest rawRequest;
+
     @BeforeEach
     public void setup()
     {
         this.factory = ScriptFixturesFacade.getInstance().scriptValueFactory();
+        this.rawRequest = mock( HttpServletRequest.class );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
+
+        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
     }
 
     @AfterEach
@@ -50,6 +68,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawRequest( this.rawRequest );
         final String jsonRequest = readResource( "PortalRequestSerializer_request.json" );
         final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
@@ -89,6 +108,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawRequest( this.rawRequest );
         final String jsonRequest = readResource( "PortalRequestSerializer_request2.json" );
         final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
@@ -119,6 +139,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawRequest( this.rawRequest );
         final ScriptValue value = factory.evalValue( "var result = 'response'; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
@@ -134,6 +155,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawRequest( this.rawRequest );
         final String jsonRequest = readResource( "PortalRequestSerializer_request3.json" );
         final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
@@ -161,6 +183,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawRequest( this.rawRequest );
         sourceRequest.getParams().put( "a", "oldA" );
 
         sourceRequest.getParams().put( "b", "oldB" );
@@ -192,5 +215,27 @@ public class PortalRequestSerializerTest
         {
             return new String( Objects.requireNonNull( stream ).readAllBytes(), StandardCharsets.UTF_8 );
         }
+    }
+
+    private VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
+    {
+        when( rawRequest.getAttribute( isA( String.class ) ) ).thenAnswer(
+            ( InvocationOnMock invocation ) -> VirtualHost.class.getName().equals( invocation.getArguments()[0] )
+                ? virtualHost
+                : generateDefaultVirtualHost() );
+
+        return virtualHost;
+    }
+
+    private VirtualHost generateDefaultVirtualHost()
+    {
+        VirtualHost result = mock( VirtualHost.class );
+
+        when( result.getHost() ).thenReturn( "host" );
+        when( result.getSource() ).thenReturn( "/" );
+        when( result.getTarget() ).thenReturn( "/" );
+        when( result.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( IdProviderKey.system() ) );
+
+        return result;
     }
 }
