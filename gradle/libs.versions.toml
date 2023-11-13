@@ -104,8 +104,8 @@ metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.21"
 metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.21" }
 metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.21" }
 
-hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
-hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
+hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "5.3.6" }
+hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "5.3.6" }
 hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version = "1.5.6" }
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
