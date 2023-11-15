@@ -3,16 +3,14 @@ package com.enonic.xp.image;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ImageHelperTest
 {
     @Test
     void createImagePlaceholder()
     {
-        final String str = ImageHelper.createImagePlaceholder( 2, 2 );
-        assertNotNull( str );
-        assertEquals( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAC0lEQVR42mNgQAcAABIAAeRVjecAAAAASUVORK5CYII=",
+        final String str = ImageHelper.createImagePlaceholder( 2, 3 );
+        assertEquals( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADCAYAAAC56t6BAAAAC0lEQVR4nGNgwAcAAB4AAfb96ZYAAAAASUVORK5CYII=",
                       str );
     }
 

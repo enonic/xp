@@ -19,7 +19,7 @@ public class ImagePlaceholderFunctionTest
     public void testExecute()
     {
         final Object result = execute( "imagePlaceholder", "width=2", "height=2" );
-        assertEquals( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAC0lEQVR42mNgQAcAABIAAeRVjecAAAAASUVORK5CYII=",
+        assertEquals( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAC0lEQVR4nGNgwAQAABQAAX3+Hu4AAAAASUVORK5CYII=",
                       result );
     }
 

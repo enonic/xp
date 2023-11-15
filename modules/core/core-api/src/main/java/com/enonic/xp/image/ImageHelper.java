@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Base64;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
@@ -31,19 +30,7 @@ public final class ImageHelper
 
     public static String createImagePlaceholder( final int width, final int height )
     {
-        try
-        {
-            final BufferedImage image = createImage( width, height, true );
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            writeImage( out, image, "png", 0 );
-            final byte[] bytes = out.toByteArray();
-
-            return "data:image/png;base64," + Base64.getEncoder().encodeToString( bytes );
-        }
-        catch ( final IOException e )
-        {
-            throw Exceptions.newRuntime( "Failed to create image placeholder" ).withCause( e );
-        }
+        return new ImagePlaceholderFactory( width, height ).create();
     }
 
     @Deprecated
