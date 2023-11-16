@@ -248,7 +248,7 @@ exports.imagePlaceholderTest = function () {
     });
 
     assert.assertEquals(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAEklEQVR42mNgGAWjYBSMgpEOAAUKAAEVKR6qAAAAAElFTkSuQmCC',
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAFUlEQVR4nGNgGAWjYBSMglEwCkgHAAZAAAEAAhBgAAAAAElFTkSuQmCC',
         result);
     return true;
 };

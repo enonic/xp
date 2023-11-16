@@ -10,7 +10,7 @@ var url = portalLib.imagePlaceholder({
 
 // BEGIN
 // URL returned.
-var expected = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAGUlEQVR42u3BAQEAAACCIP+vbkhAAQAA7wYMGAAB93LuRQAAAABJRU5ErkJggg==';
+var expected = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAGklEQVR4nO3BAQ0AAADCoPdPbQ8HFAAAAPwbDwAAAQUUSzEAAAAASUVORK5CYII=';
 // END
 
 assert.assertEquals(expected, url);
