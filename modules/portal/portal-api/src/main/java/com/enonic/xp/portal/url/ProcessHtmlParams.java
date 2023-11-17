@@ -3,6 +3,7 @@ package com.enonic.xp.portal.url;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
@@ -10,6 +11,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.style.StyleDescriptors;
 
 @PublicApi
 public final class ProcessHtmlParams
@@ -22,6 +24,8 @@ public final class ProcessHtmlParams
     private String imageSizes;
 
     private Function<HtmlProcessorParams, String> customHtmlProcessor;
+
+    private Supplier<StyleDescriptors> customStyleDescriptorsCallback;
 
     private boolean processMacros = true;
 
@@ -41,9 +45,20 @@ public final class ProcessHtmlParams
         return imageWidths;
     }
 
+    public Supplier<StyleDescriptors> getCustomStyleDescriptorsCallback()
+    {
+        return customStyleDescriptorsCallback;
+    }
+
     public ProcessHtmlParams imageWidths( final List<Integer> imageWidths )
     {
         this.imageWidths = imageWidths;
+        return this;
+    }
+
+    public ProcessHtmlParams customStyleDescriptorsCallback( final Supplier<StyleDescriptors> customStyleDescriptorsCallback )
+    {
+        this.customStyleDescriptorsCallback = customStyleDescriptorsCallback;
         return this;
     }
 
