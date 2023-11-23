@@ -17,7 +17,6 @@ import com.google.common.base.Splitter;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.html.HtmlDocument;
@@ -179,11 +178,8 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final PortalRequest portalRequest = params.getPortalRequest();
-        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
-        portalRequest.setBranch( ContextAccessor.current().getBranch() );
-
-        final PageUrlParams pageUrlParams = new PageUrlParams().type( params.getType() ).id( id ).portalRequest( portalRequest );
+        final PageUrlParams pageUrlParams =
+            new PageUrlParams().type( params.getType() ).id( id ).portalRequest( params.getPortalRequest() );
 
         final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
 
@@ -208,15 +204,11 @@ public class RichTextProcessor
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
-        PortalRequest portalRequest = params.getPortalRequest();
-        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
-        portalRequest.setBranch( ContextAccessor.current().getBranch() );
-
         if ( imageStyleMap == null )
         {
             StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
                 ? params.getCustomStyleDescriptorsCallback().get()
-                : getStyleDescriptors( portalRequest );
+                : getStyleDescriptors( params.getPortalRequest() );
             imageStyleMap = getImageStyleMap( styleDescriptors );
         }
 
@@ -226,7 +218,7 @@ public class RichTextProcessor
             id( id ).
             scale( getScale( imageStyle, urlParams, null ) ).
             filter( getFilter( imageStyle ) ).
-            portalRequest( portalRequest );
+            portalRequest( params.getPortalRequest() );
 
         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
@@ -242,7 +234,7 @@ public class RichTextProcessor
                         id( id ).
                         scale( getScale( imageStyle, urlParams, imageWidth ) ).
                         filter( getFilter( imageStyle ) ).
-                        portalRequest( portalRequest );
+                        portalRequest( params.getPortalRequest() );
 
                     return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
                 } ).collect( Collectors.joining( "," ) );
@@ -280,14 +272,10 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        PortalRequest portalRequest = params.getPortalRequest();
-        portalRequest.setRepositoryId( ContextAccessor.current().getRepositoryId() );
-        portalRequest.setBranch( ContextAccessor.current().getBranch() );
-
         final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().type( params.getType() )
             .id( id )
             .download( DOWNLOAD_MODE.equals( mode ) )
-            .portalRequest( portalRequest );
+            .portalRequest( params.getPortalRequest() );
 
         final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
 
