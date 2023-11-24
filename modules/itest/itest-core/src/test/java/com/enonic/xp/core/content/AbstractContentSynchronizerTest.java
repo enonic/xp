@@ -169,7 +169,9 @@ public abstract class AbstractContentSynchronizerTest
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
 
             project = projectService.create(
-                CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
+                CreateProjectParams.create().name( ProjectName.from( "source_project" ) )
+                    .parent( null ) // old project-lib sets parent to null for root projects
+                    .displayName( "Source Project" ).build() );
 
             secondProject = projectService.create(
                 CreateProjectParams.create().name( ProjectName.from( "source_project2" ) ).displayName( "Source Project 2" ).build() );

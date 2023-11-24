@@ -133,7 +133,10 @@ public final class CreateProjectParams
         @Deprecated
         public Builder parent( final ProjectName parent )
         {
-            this.parents.add( parent );
+            if ( parent != null )
+            {
+                this.parents.add( parent );
+            }
             return this;
         }
 
