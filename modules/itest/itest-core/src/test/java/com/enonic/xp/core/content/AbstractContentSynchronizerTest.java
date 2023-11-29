@@ -112,6 +112,10 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context childLayerContext;
 
+    protected Context secondChildLayerContext;
+
+    protected Context mixedChildLayerContext;
+
     protected Context projectArchiveContext;
 
     protected Context layerArchiveContext;
@@ -128,9 +132,15 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project childLayer;
 
+    protected Project secondChildLayer;
+
+    protected Project mixedChildLayer;
+
     protected static Context adminContext()
     {
-        return ContextBuilder.create().branch( "master" ).repositoryId( SystemConstants.SYSTEM_REPO_ID )
+        return ContextBuilder.create()
+            .branch( "master" )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
             .build();
     }
@@ -163,15 +173,19 @@ public abstract class AbstractContentSynchronizerTest
 
             SecurityInitializer.create()
                 .setIndexService( indexService )
-                .setSecurityService( securityService ).setNodeService( nodeService ).build().initialize();
+                .setSecurityService( securityService )
+                .setNodeService( nodeService )
+                .build()
+                .initialize();
 
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
 
-            project = projectService.create(
-                CreateProjectParams.create().name( ProjectName.from( "source_project" ) )
-                    .parent( null ) // old project-lib sets parent to null for root projects
-                    .displayName( "Source Project" ).build() );
+            project = projectService.create( CreateProjectParams.create()
+                                                 .name( ProjectName.from( "source_project" ) )
+                                                 .parent( null ) // old project-lib sets parent to null for root projects
+                                                 .displayName( "Source Project" )
+                                                 .build() );
 
             secondProject = projectService.create(
                 CreateProjectParams.create().name( ProjectName.from( "source_project2" ) ).displayName( "Source Project 2" ).build() );
@@ -192,6 +206,18 @@ public abstract class AbstractContentSynchronizerTest
                                                     .displayName( "Child Layer" )
                                                     .parent( project.getName() )
                                                     .build() );
+
+            secondChildLayer = projectService.create( CreateProjectParams.create()
+                                                          .name( ProjectName.from( "second_child_layer" ) )
+                                                          .displayName( "Second Child Layer" )
+                                                          .parent( project.getName() )
+                                                          .build() );
+
+            mixedChildLayer = projectService.create( CreateProjectParams.create()
+                                                         .name( ProjectName.from( "mixed_child_layer" ) )
+                                                         .displayName( "Mixed Child Layer" )
+                                                         .addParents( List.of( childLayer.getName(), secondChildLayer.getName() ) )
+                                                         .build() );
 
             this.projectContext = ContextBuilder.from( ContextAccessor.current() )
                 .repositoryId( project.getName().getRepoId() )
@@ -217,17 +243,26 @@ public abstract class AbstractContentSynchronizerTest
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.projectArchiveContext = ContextBuilder.from( this.projectContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            this.secondChildLayerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( secondChildLayer.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.layerArchiveContext = ContextBuilder.from( this.layerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            this.mixedChildLayerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( mixedChildLayer.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.childLayerArchiveContext = ContextBuilder.from( this.childLayerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
-                .build();
+            this.projectArchiveContext =
+                ContextBuilder.from( this.projectContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
+
+            this.layerArchiveContext =
+                ContextBuilder.from( this.layerContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
+
+            this.childLayerArchiveContext =
+                ContextBuilder.from( this.childLayerContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
 
             projectService.initialize();
         } );
@@ -271,7 +306,8 @@ public abstract class AbstractContentSynchronizerTest
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
+        contentService =
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
