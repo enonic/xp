@@ -30,6 +30,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
@@ -40,6 +41,7 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
+import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.form.Form;
@@ -77,6 +79,9 @@ public class ProjectContentEventListenerTest
     private Set<Event> handledEvents;
 
 
+    private SyncContentServiceImpl syncContentService;
+
+
     @BeforeEach
     void setUp()
     {
@@ -85,6 +90,9 @@ public class ProjectContentEventListenerTest
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
         handledEvents = new HashSet<>();
+
+        syncContentService =
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
     }
 
     @Test
@@ -294,8 +302,8 @@ public class ProjectContentEventListenerTest
             handleEvents();
 
             final Content sourceContentReady = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                          .editor( ( edit -> edit.workflowInfo =
-                                                                              WorkflowInfo.create().state( WorkflowState.IN_PROGRESS )
+                                                                          .editor( ( edit -> edit.workflowInfo = WorkflowInfo.create()
+                                                                              .state( WorkflowState.IN_PROGRESS )
                                                                               .build() ) ) );
 
             handleEvents();
@@ -770,8 +778,10 @@ public class ProjectContentEventListenerTest
                                                                                   .build() )
                                                                         .build() ) );
 
-        projectContext.runWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
+        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                        .contentId( sourceContent.getId() )
+                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                        .build() ) );
 
         handleEvents();
 
@@ -896,6 +906,43 @@ public class ProjectContentEventListenerTest
             assertTrue( contentService.contentExists( sourceContent.getId() ) );
             assertTrue( contentService.contentExists( sourceChild1.getId() ) );
             assertTrue( contentService.contentExists( sourceChild2.getId() ) );
+        } );
+    }
+
+    @Test
+    public void testDeletedAndRestoredFromTheCorrectParent()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        childLayerContext.runWith( () -> {
+            contentService.rename(
+                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() );
+        } );
+
+        secondChildLayerContext.runWith( () -> {
+            contentService.rename(
+                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() );
+        } );
+
+        mixedChildLayerContext.runWith( () -> {
+            syncContentService.syncProject( ProjectSyncParams.create().targetProject( mixedChildLayer.getName() ).build() );
+            assertEquals( "newName1", contentService.getById( sourceContent.getId() ).getName().toString() );
+        } );
+
+        handleEvents();
+
+        mixedChildLayerContext.runWith( () -> {
+            contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() );
+        } );
+
+        handleEvents();
+
+        mixedChildLayerContext.runWith( () -> {
+            syncContentService.syncProject( ProjectSyncParams.create().targetProject( mixedChildLayer.getName() ).build() );
+            assertEquals( "newName1", contentService.getById( sourceContent.getId() ).getName().toString() );
         } );
     }
 

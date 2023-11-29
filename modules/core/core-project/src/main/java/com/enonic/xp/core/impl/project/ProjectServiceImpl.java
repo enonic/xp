@@ -420,8 +420,11 @@ public class ProjectServiceImpl
     private void addDirectParents( final Project project, final Set<Project> result )
     {
         project.getParents().stream().map( this::doGet ).forEach( parent -> {
-            addDirectParents( parent, result );
-            result.add( parent );
+            if ( parent != null )
+            {
+                addDirectParents( parent, result );
+                result.add( parent );
+            }
         } );
     }
 

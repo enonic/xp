@@ -180,14 +180,14 @@ public final class ProjectContentEventListener
 
             if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( type ) )
             {
-                this.projectService.list()
+                sourceProject.getParents()
                     .stream()
-                    .filter( project -> sourceProject.getParents().contains( project.getName() ) )
-                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create()
-                                                                             .addContentIds( contentIds )
-                                                                             .sourceProject( parentProject.getName() )
-                                                                             .targetProject( sourceProject.getName() )
-                                                                             .build() )
+                    .filter( parentProjectName -> projectService.get( parentProjectName ) != null )
+                    .forEach( parentProjectName -> contentSynchronizer.sync( ContentSyncParams.create()
+                                                                                 .addContentIds( contentIds )
+                                                                                 .sourceProject( parentProjectName )
+                                                                                 .targetProject( sourceProject.getName() )
+                                                                                 .build() )
 
                     );
             }
