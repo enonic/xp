@@ -12,16 +12,17 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
-import com.enonic.xp.core.impl.content.ProjectEventListener;
+import com.enonic.xp.core.impl.content.ProjectCreatedEventListener;
 import com.enonic.xp.core.impl.project.ProjectEvents;
 import com.enonic.xp.event.Event;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ProjectEventListenerTest
+public class ProjectCreatedEventListenerTest
     extends AbstractContentSynchronizerTest
 {
-    private ProjectEventListener listener;
+    private ProjectCreatedEventListener listener;
 
     private ArgumentCaptor<Event> eventCaptor;
 
@@ -31,7 +32,7 @@ public class ProjectEventListenerTest
     void setUp()
     {
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
-        listener = new ProjectEventListener( this.projectService, this.taskService, synchronizer );
+        listener = new ProjectCreatedEventListener( this.projectService, this.taskService, synchronizer );
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
         handledEvents = new HashSet<>();
@@ -73,22 +74,38 @@ public class ProjectEventListenerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        adminContext().runWith( () -> listener.onEvent(
-            Event.create( ProjectEvents.CREATED_EVENT_TYPE ).value( ProjectEvents.PROJECT_NAME_KEY, layer.getName() ).localOrigin( false ).
-            build() ) );
+        adminContext().runWith( () -> listener.onEvent( Event.create( ProjectEvents.CREATED_EVENT_TYPE )
+                                                            .value( ProjectEvents.PROJECT_NAME_KEY, layer.getName() )
+                                                            .localOrigin( false )
+                                                            .build() ) );
 
         Thread.sleep( 1000 );
 
         assertThrows( ContentNotFoundException.class, () -> layerContext.runWith( () -> contentService.getById( sourceContent.getId() ) ) );
     }
 
+    @Test
+    public void testFromMultipleParents()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        handleEvents();
+
+        final Content parentContent1 = childLayerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+//        final Content parentContent2 = secondChildLayerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        final Content targetContent = mixedChildLayerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        compareSynched( parentContent1, targetContent );
+        assertEquals( childLayer.getName(), targetContent.getOriginProject() );
+    }
+
     private void handleEvents()
         throws InterruptedException
     {
         Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
-        eventCaptor.getAllValues().stream().
-            filter( event -> !handledEvents.contains( event ) ).
-            forEach( listener::onEvent );
+        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
         handledEvents.addAll( eventCaptor.getAllValues() );
         Thread.sleep( 1000 );
 

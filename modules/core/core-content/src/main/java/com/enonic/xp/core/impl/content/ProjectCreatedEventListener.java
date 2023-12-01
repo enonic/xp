@@ -22,14 +22,17 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
-public final class ProjectEventListener
+public final class ProjectCreatedEventListener
     implements EventListener
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ProjectEventListener.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProjectCreatedEventListener.class );
 
     private final ProjectService projectService;
 
@@ -38,8 +41,8 @@ public final class ProjectEventListener
     private final ContentSynchronizer contentSynchronizer;
 
     @Activate
-    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final TaskService taskService,
-                                 @Reference final ContentSynchronizer contentSynchronizer )
+    public ProjectCreatedEventListener( @Reference final ProjectService projectService, @Reference final TaskService taskService,
+                                        @Reference final ContentSynchronizer contentSynchronizer )
     {
         this.projectService = projectService;
         this.taskService = taskService;
@@ -76,19 +79,20 @@ public final class ProjectEventListener
 
         if ( project != null && !project.getParents().isEmpty() )
         {
-            project.getParents().stream().map( projectService::get ).filter( Objects::nonNull ).forEach( parentProject -> {
-                final ContentSyncTask syncTask = ContentSyncTask.create()
-                    .sourceProject( parentProject.getName() )
-                    .targetProject( project.getName() )
-                    .contentSynchronizer( contentSynchronizer )
-                    .build();
+            final RunnableTask syncTask = ( TaskId id, ProgressReporter progressReporter ) -> {
+                project.getParents()
+                    .stream()
+                    .map( projectService::get )
+                    .filter( Objects::nonNull )
+                    .forEach( parentProject -> contentSynchronizer.sync(
+                        ContentSyncParams.create().sourceProject( parentProject.getName() ).targetProject( project.getName() ).build() )
 
-                taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                                 .runnableTask( syncTask )
-                                                 .description( String.format( "sync [%s] project from parent [%s]", project.getName(),
-                                                                              parentProject.getName() ) )
-                                                 .build() );
-            } );
+                    );
+            };
+            taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                             .runnableTask( syncTask )
+                                             .description( String.format( "sync [%s] project", project.getName() ) )
+                                             .build() );
         }
     }
 
