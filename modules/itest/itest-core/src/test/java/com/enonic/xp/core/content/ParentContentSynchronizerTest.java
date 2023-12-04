@@ -328,6 +328,7 @@ public class ParentContentSynchronizerTest
                                                   .byteSource( loadImage( "darth-small.jpg" ) )
                                                   .mimeType( "image/jpeg" )
                                                   .artist( "artist" )
+                                                  .altText( "alt text" )
                                                   .copyright( "copy" )
                                                   .tags( "my new tags" )
                                                   .caption( "caption" ) );

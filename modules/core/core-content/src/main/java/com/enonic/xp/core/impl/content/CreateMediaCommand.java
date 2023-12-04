@@ -65,6 +65,7 @@ final class CreateMediaCommand
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
             caption( params.getCaption() ).
+            altText( params.getAltText() ).
             artist( params.getArtist() != null ? List.of( params.getArtist() ) : List.of() ).
             copyright( params.getCopyright() ).
             tags( params.getTags() != null ? List.of( params.getTags() ) : List.of() ).

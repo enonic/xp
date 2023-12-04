@@ -25,6 +25,8 @@ public final class CreateMediaParams
 
     private String caption = "";
 
+    private String altText = "";
+
     private String artist = "";
 
     private String copyright = "";
@@ -70,6 +72,12 @@ public final class CreateMediaParams
     public CreateMediaParams caption( final String caption )
     {
         this.caption = caption;
+        return this;
+    }
+
+    public CreateMediaParams altText( final String altText )
+    {
+        this.altText = altText;
         return this;
     }
 
@@ -134,6 +142,11 @@ public final class CreateMediaParams
         return caption;
     }
 
+    public String getAltText()
+    {
+        return altText;
+    }
+
     public String getArtist()
     {
         return artist;
@@ -164,7 +177,8 @@ public final class CreateMediaParams
         return Double.compare( that.focalX, focalX ) == 0 && Double.compare( that.focalY, focalY ) == 0 &&
             Objects.equals( parent, that.parent ) && Objects.equals( name, that.name ) && Objects.equals( mimeType, that.mimeType ) &&
             Objects.equals( byteSource, that.byteSource ) && Objects.equals( caption, that.caption ) &&
-            Objects.equals( artist, that.artist ) && Objects.equals( copyright, that.copyright ) && Objects.equals( tags, that.tags );
+            Objects.equals( altText, that.altText ) && Objects.equals( artist, that.artist ) &&
+            Objects.equals( copyright, that.copyright ) && Objects.equals( tags, that.tags );
     }
 
     @Override
