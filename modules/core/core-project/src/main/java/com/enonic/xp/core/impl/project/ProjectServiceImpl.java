@@ -256,6 +256,12 @@ public class ProjectServiceImpl
             {
                 throw new ProjectAlreadyExistsException( params.getName() );
             }
+
+            if ( createsCircleDependency( params.getName(), params.getParents() ) )
+            {
+                throw new ProjectCircleDependencyException( params.getName(), params.getParents() );
+            }
+
             final PropertyTree contentRootData = createContentRootData( params );
 
             doInitRootNodes( params, contentRootData );
@@ -759,4 +765,31 @@ public class ProjectServiceImpl
             .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
     }
+
+    private boolean createsCircleDependency( final ProjectName projectName, final List<ProjectName> parentNames )
+    {
+        if ( parentNames.contains( projectName ) )
+        {
+            return true;
+        }
+
+        for ( ProjectName parentName : parentNames )
+        {
+            final Project project = this.doGet( parentName );
+            if ( project == null )
+            {
+                continue;
+            }
+
+            final List<ProjectName> parents = project.getParents();
+
+            if ( createsCircleDependency( projectName, parents ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
