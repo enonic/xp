@@ -19,6 +19,8 @@ final class MediaFormDataBuilder
 
     private String caption = "";
 
+    private String altText = "";
+
     private List<String> artist;
 
     private String copyright = "";
@@ -44,6 +46,12 @@ final class MediaFormDataBuilder
     MediaFormDataBuilder caption( final String caption )
     {
         this.caption = caption;
+        return this;
+    }
+
+    MediaFormDataBuilder altText( final String altText )
+    {
+        this.altText = altText;
         return this;
     }
 
@@ -112,6 +120,10 @@ final class MediaFormDataBuilder
             if ( tags != null )
             {
                 data.setValues( "tags", tags.stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
+            }
+            if ( altText != null )
+            {
+                data.setString( "altText", altText );
             }
         }
     }

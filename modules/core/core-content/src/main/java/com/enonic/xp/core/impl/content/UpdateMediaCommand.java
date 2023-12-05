@@ -79,6 +79,7 @@ final class UpdateMediaCommand
             .focalX( params.getFocalX() )
             .focalY( params.getFocalY() )
             .caption( params.getCaption() )
+            .altText( params.getAltText() )
             .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
             .copyright( params.getCopyright() )
             .tags( params.getTagList().isEmpty() ? List.of("") : params.getTagList() );
