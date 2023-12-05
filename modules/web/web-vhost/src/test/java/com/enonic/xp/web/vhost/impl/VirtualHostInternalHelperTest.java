@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 public class VirtualHostInternalHelperTest
 {
-
     @Test
     public void testGetFullTargetPath()
     {
@@ -25,7 +24,49 @@ public class VirtualHostInternalHelperTest
 
         final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
 
-        assertEquals( fullTarget, "/b/c/other/service" );
+        assertEquals( "/b/c/other/service", fullTarget  );
+    }
+
+    @Test
+    public void testGetFullTargetPath_root_target()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/a", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/a/other/service" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/other/service", fullTarget  );
+    }
+
+    @Test
+    public void testGetFullTargetPath_source_equals_request()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/a", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/a" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/", fullTarget  );
+    }
+
+    @Test
+    public void testGetFullTargetPath_source_equals_request_2()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/a", "/foo/", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/a" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/foo/", fullTarget  );
     }
 
     @Test
@@ -39,6 +80,49 @@ public class VirtualHostInternalHelperTest
 
         final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
 
-        assertEquals( fullTarget, "/b/c/other/service/" );
+        assertEquals( "/b/c/other/service/", fullTarget );
+    }
+
+
+    @Test
+    void testGetFullTargetPath_root_source()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/b/c", fullTarget );
+    }
+
+    @Test
+    void testGetFullTargetPath_root_source_2()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/d/e" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/b/c/d/e", fullTarget );
+    }
+
+    @Test
+    void testGetFullTargetPath_root_source_and_target()
+    {
+        final VirtualHostMapping virtualHostMapping =
+            new VirtualHostMapping( "host", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/b/c" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( "/b/c", fullTarget );
     }
 }
