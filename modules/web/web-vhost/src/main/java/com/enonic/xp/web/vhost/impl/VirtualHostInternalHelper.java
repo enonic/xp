@@ -7,14 +7,31 @@ import com.enonic.xp.web.vhost.VirtualHost;
 public final class VirtualHostInternalHelper
 {
 
+    private VirtualHostInternalHelper()
+    {
+    }
+
     public static String getFullTargetPath( final VirtualHost virtualHost, final HttpServletRequest req )
     {
-        String path = req.getRequestURI();
-        if ( !"/".equals( virtualHost.getSource() ) && path.startsWith( virtualHost.getSource() ) )
+        final String source = virtualHost.getSource();
+        final String target = virtualHost.getTarget();
+        final String requestURI = req.getRequestURI();
+
+        if ( source.equals( requestURI ) )
         {
-            path = path.substring( virtualHost.getSource().length() );
+            return target;
         }
 
-        return virtualHost.getTarget() + path;
+        if ( "/".equals( source ) )
+        {
+            return "/".equals( target ) ? requestURI : target + requestURI;
+        }
+
+        if ( "/".equals( target ) )
+        {
+            return requestURI.substring( source.length() );
+        }
+
+        return target + requestURI.substring( source.length() );
     }
 }
