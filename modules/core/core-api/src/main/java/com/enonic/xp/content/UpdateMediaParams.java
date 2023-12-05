@@ -28,6 +28,8 @@ public final class UpdateMediaParams
 
     private String copyright;
 
+    private String altText;
+
     private List<String> tags = List.of();
 
     private WorkflowInfo workflowInfo;
@@ -93,6 +95,12 @@ public final class UpdateMediaParams
         return this;
     }
 
+    public UpdateMediaParams altText( final String altText )
+    {
+        this.altText = altText;
+        return this;
+    }
+
     @Deprecated
     public UpdateMediaParams tags( final String tags )
     {
@@ -152,6 +160,11 @@ public final class UpdateMediaParams
     public String getCaption()
     {
         return caption;
+    }
+
+    public String getAltText()
+    {
+        return altText;
     }
 
     public List<String> getArtistList()

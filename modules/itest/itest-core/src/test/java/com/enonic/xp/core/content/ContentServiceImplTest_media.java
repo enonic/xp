@@ -205,6 +205,10 @@ public class ContentServiceImplTest_media
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "Small cat" ).
+            altText( "alt text" ).
+            caption( "caption" ).
+            copyright( "copyright" ).
+            artist( "artist" ).
             parent( ContentPath.ROOT );
 
         Mockito.reset( auditLogService );
