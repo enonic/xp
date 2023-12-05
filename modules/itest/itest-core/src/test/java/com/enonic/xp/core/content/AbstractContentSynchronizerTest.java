@@ -166,7 +166,7 @@ public abstract class AbstractContentSynchronizerTest
             when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
             final ProjectConfig projectConfig = mock( ProjectConfig.class );
-            when( projectConfig.multipleParents_allowed() ).thenReturn( true );
+            when( projectConfig.multiInheritance() ).thenReturn( true );
 
             final AuditLogService auditLogService = mock( AuditLogService.class );
 

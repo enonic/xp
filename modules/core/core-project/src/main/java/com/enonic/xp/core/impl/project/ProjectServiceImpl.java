@@ -265,7 +265,7 @@ public class ProjectServiceImpl
                 throw new ProjectCircleDependencyException( params.getName(), params.getParents() );
             }
 
-            if ( !config.multipleParents_allowed() && params.getParents().size() > 1 )
+            if ( !config.multiInheritance() && params.getParents().size() > 1 )
             {
                 throw new ProjectMultipleParentsException( params.getName(), params.getParents() );
             }

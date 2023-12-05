@@ -1076,6 +1076,8 @@ class ProjectServiceImplTest
     @Test
     void create_with_circle_dependency()
     {
+        when( projectConfig.multiInheritance() ).thenReturn( true );
+        
         adminContext().runWith( () -> {
             final Project parent = doCreateProject( ProjectName.from( "parent" ), SiteConfigs.empty() );
             final Project child = doCreateProject( ProjectName.from( "child" ), parent.getName(), SiteConfigs.empty() );
@@ -1092,8 +1094,7 @@ class ProjectServiceImplTest
     @Test
     void test_enabled_multiple_parents()
     {
-
-        when( projectConfig.multipleParents_allowed() ).thenReturn( true );
+        when( projectConfig.multiInheritance() ).thenReturn( true );
 
         adminContext().runWith( () -> {
             final Project parent1 = doCreateProject( ProjectName.from( "parent1" ), SiteConfigs.empty() );
