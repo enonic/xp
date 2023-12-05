@@ -64,7 +64,6 @@ public final class CreateProjectParams
         return parents;
     }
 
-    @Deprecated
     public ProjectName getParent()
     {
         return !parents.isEmpty() ? parents.get( 0 ) : null;
@@ -130,7 +129,6 @@ public final class CreateProjectParams
             return this;
         }
 
-        @Deprecated
         public Builder parent( final ProjectName parent )
         {
             if ( parent != null )

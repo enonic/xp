@@ -180,7 +180,6 @@ public final class Project
             return this;
         }
 
-        @Deprecated
         public Builder parent( final ProjectName parent )
         {
             this.parents.add( parent );

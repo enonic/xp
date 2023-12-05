@@ -25,6 +25,8 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectCircleDependencyException;
+import com.enonic.xp.core.impl.project.ProjectConfig;
+import com.enonic.xp.core.impl.project.ProjectMultipleParentsException;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
@@ -118,6 +120,8 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
+    private ProjectConfig projectConfig;
+
     ProjectServiceImplTest()
     {
         super( true );
@@ -171,12 +175,14 @@ class ProjectServiceImplTest
     @BeforeEach
     void setUp()
     {
-        SecurityConfig securityConfig = mock( SecurityConfig.class );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
-        AuditLogService auditLogService = mock( AuditLogService.class );
+        projectConfig = mock( ProjectConfig.class );
 
-        SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+        final AuditLogService auditLogService = mock( AuditLogService.class );
+
+        final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
         securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
@@ -193,7 +199,7 @@ class ProjectServiceImplTest
 
             projectService =
                 new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
-                                        eventPublisher );
+                                        eventPublisher, projectConfig );
 
             projectService.initialize();
         } );
@@ -1080,6 +1086,37 @@ class ProjectServiceImplTest
 
             assertThrows( ProjectCircleDependencyException.class,
                           () -> doCreateProject( ProjectName.from( "parent" ), grandchild.getName(), SiteConfigs.empty() ) );
+        } );
+    }
+
+    @Test
+    void test_enabled_multiple_parents()
+    {
+
+        when( projectConfig.multipleParents_allowed() ).thenReturn( true );
+
+        adminContext().runWith( () -> {
+            final Project parent1 = doCreateProject( ProjectName.from( "parent1" ), SiteConfigs.empty() );
+            final Project parent2 = doCreateProject( ProjectName.from( "parent2" ), SiteConfigs.empty() );
+            final Project child = doCreateProject( ProjectName.from( "child" ), ProjectPermissions.create().build(), false,
+                                                   List.of( parent1.getName(), parent2.getName() ) );
+
+            assertEquals( List.of( parent1.getName(), parent2.getName() ), child.getParents() );
+        } );
+    }
+
+    @Test
+    void test_disabled_multiple_parents()
+    {
+
+        adminContext().runWith( () -> {
+            final Project parent1 = doCreateProject( ProjectName.from( "parent1" ), SiteConfigs.empty() );
+            final Project parent2 = doCreateProject( ProjectName.from( "parent2" ), SiteConfigs.empty() );
+
+            assertThrows( ProjectMultipleParentsException.class, () ->
+
+                doCreateProject( ProjectName.from( "child" ), ProjectPermissions.create().build(), false,
+                                 List.of( parent1.getName(), parent2.getName() ) ) );
         } );
     }
 
