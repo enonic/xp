@@ -58,6 +58,7 @@ import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
@@ -301,11 +302,12 @@ public abstract class AbstractContentServiceTest
         final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
+        final ProjectConfig projectConfig = mock( ProjectConfig.class );
+
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )
@@ -315,15 +317,15 @@ public abstract class AbstractContentServiceTest
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-        projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
-                                    eventPublisher );
+        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
+                                                 eventPublisher, projectConfig );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
+        contentService =
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );

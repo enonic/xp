@@ -32,7 +32,6 @@ public final class ProjectGraphEntry
         return name;
     }
 
-    @Deprecated
     public ProjectName getParent()
     {
         return !parents.isEmpty() ? parents.get( 0 ) : null;
@@ -66,7 +65,6 @@ public final class ProjectGraphEntry
             return this;
         }
 
-        @Deprecated
         public Builder parent( final ProjectName parent )
         {
             this.parents.add( parent );

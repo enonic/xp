@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
@@ -161,15 +162,18 @@ public abstract class AbstractContentSynchronizerTest
     private void setUpProjectService()
     {
         adminContext().runWith( () -> {
-            SecurityConfig securityConfig = mock( SecurityConfig.class );
+            final SecurityConfig securityConfig = mock( SecurityConfig.class );
             when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
-            AuditLogService auditLogService = mock( AuditLogService.class );
+            final ProjectConfig projectConfig = mock( ProjectConfig.class );
+            when( projectConfig.multiInheritance() ).thenReturn( true );
+
+            final AuditLogService auditLogService = mock( AuditLogService.class );
 
             final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
             securityAuditLogSupport.activate( securityConfig );
 
-            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+            final SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
 
             SecurityInitializer.create()
                 .setIndexService( indexService )
@@ -179,7 +183,7 @@ public abstract class AbstractContentSynchronizerTest
                 .initialize();
 
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
-                                                     new ProjectPermissionsContextManagerImpl(), eventPublisher );
+                                                     new ProjectPermissionsContextManagerImpl(), eventPublisher, projectConfig );
 
             project = projectService.create( CreateProjectParams.create()
                                                  .name( ProjectName.from( "source_project" ) )

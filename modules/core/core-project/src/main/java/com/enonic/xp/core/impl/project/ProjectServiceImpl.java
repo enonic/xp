@@ -98,10 +98,12 @@ public class ProjectServiceImpl
 
     private final EventPublisher eventPublisher;
 
+    private final ProjectConfig config;
+
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,
-                               final ProjectPermissionsContextManager projectPermissionsContextManager,
-                               final EventPublisher eventPublisher )
+                               final ProjectPermissionsContextManager projectPermissionsContextManager, final EventPublisher eventPublisher,
+                               final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
@@ -109,6 +111,7 @@ public class ProjectServiceImpl
         this.securityService = securityService;
         this.projectPermissionsContextManager = projectPermissionsContextManager;
         this.eventPublisher = eventPublisher;
+        this.config = config;
     }
 
     public void initialize()
@@ -260,6 +263,11 @@ public class ProjectServiceImpl
             if ( createsCircleDependency( params.getName(), params.getParents() ) )
             {
                 throw new ProjectCircleDependencyException( params.getName(), params.getParents() );
+            }
+
+            if ( !config.multiInheritance() && params.getParents().size() > 1 )
+            {
+                throw new ProjectMultipleParentsException( params.getName(), params.getParents() );
             }
 
             final PropertyTree contentRootData = createContentRootData( params );
