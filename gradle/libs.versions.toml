@@ -100,7 +100,7 @@ tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version
 
 metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.21" }
 metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.21" }
-metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.21" }
+metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.23" }
 metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.21" }
 metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.21" }
 
