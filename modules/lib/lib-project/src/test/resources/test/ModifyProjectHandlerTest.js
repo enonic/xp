@@ -6,6 +6,7 @@ var modifyProjectExpected = {
     displayName: 'new display name',
     description: 'new description',
     language: 'fr',
+    parents: [],
     siteConfig: [
         {
             applicationKey: 'appKey1',
@@ -68,6 +69,7 @@ var modifyDescriptionExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'new description',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -97,6 +99,7 @@ var modifyDisplayNameExpected = {
     id: 'myproject',
     displayName: 'new display name',
     description: 'project description',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -127,6 +130,7 @@ var modifyLanguageExpected = {
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -145,6 +149,7 @@ var modifyApplicationsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    parents: [],
     siteConfig: [
         {
             applicationKey: 'appKey2',

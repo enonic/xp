@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,14 +22,17 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
-public final class ProjectEventListener
+public final class ProjectCreatedEventListener
     implements EventListener
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ProjectEventListener.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProjectCreatedEventListener.class );
 
     private final ProjectService projectService;
 
@@ -37,8 +41,8 @@ public final class ProjectEventListener
     private final ContentSynchronizer contentSynchronizer;
 
     @Activate
-    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final TaskService taskService,
-                                 @Reference final ContentSynchronizer contentSynchronizer )
+    public ProjectCreatedEventListener( @Reference final ProjectService projectService, @Reference final TaskService taskService,
+                                        @Reference final ContentSynchronizer contentSynchronizer )
     {
         this.projectService = projectService;
         this.taskService = taskService;
@@ -73,24 +77,22 @@ public final class ProjectEventListener
     {
         final Project project = this.projectService.get( projectName );
 
-        if ( project != null && project.getParent() != null )
+        if ( project != null && !project.getParents().isEmpty() )
         {
-            final Project parentProject = this.projectService.get( project.getParent() );
+            final RunnableTask syncTask = ( TaskId id, ProgressReporter progressReporter ) -> {
+                project.getParents()
+                    .stream()
+                    .map( projectService::get )
+                    .filter( Objects::nonNull )
+                    .forEach( parentProject -> contentSynchronizer.sync(
+                        ContentSyncParams.create().sourceProject( parentProject.getName() ).targetProject( project.getName() ).build() )
 
-            if ( parentProject != null )
-            {
-                final ContentSyncTask syncTask = ContentSyncTask.create().
-                    sourceProject( parentProject.getName() ).
-                    targetProject( project.getName() ).
-                    contentSynchronizer( contentSynchronizer ).
-                    build();
-
-                taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                            .runnableTask( syncTask )
-                                            .description( String.format( "sync [%s] project from parent [%s]", project.getName(),
-                                                                         parentProject.getName() ) )
-                                            .build() );
-            }
+                    );
+            };
+            taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                             .runnableTask( syncTask )
+                                             .description( String.format( "sync [%s] project", project.getName() ) )
+                                             .build() );
         }
     }
 
@@ -102,21 +104,18 @@ public final class ProjectEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            authInfo( authInfo ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( User.create().
-                key( PrincipalKey.ofSuperUser() ).
-                login( PrincipalKey.ofSuperUser().getId() ).
-                build() ).
-            build();
+        return AuthenticationInfo.create()
+            .principals( RoleKeys.ADMIN )
+            .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+            .build();
     }
 }

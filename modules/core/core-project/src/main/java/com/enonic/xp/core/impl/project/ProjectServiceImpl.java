@@ -9,11 +9,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.EnumSet;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKeys;
@@ -98,10 +98,12 @@ public class ProjectServiceImpl
 
     private final EventPublisher eventPublisher;
 
+    private final ProjectConfig config;
+
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,
-                               final ProjectPermissionsContextManager projectPermissionsContextManager,
-                               final EventPublisher eventPublisher )
+                               final ProjectPermissionsContextManager projectPermissionsContextManager, final EventPublisher eventPublisher,
+                               final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
@@ -109,6 +111,7 @@ public class ProjectServiceImpl
         this.securityService = securityService;
         this.projectPermissionsContextManager = projectPermissionsContextManager;
         this.eventPublisher = eventPublisher;
+        this.config = config;
     }
 
     public void initialize()
@@ -137,6 +140,19 @@ public class ProjectServiceImpl
                                      .build() );
             }
         } );
+    }
+
+    private static void buildParents( final Project.Builder project, final PropertySet projectData )
+    {
+        for ( final String s : projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ) )
+        {
+            project.addParent( ProjectName.from( s ) );
+        }
+    }
+
+    private void doInitRootNodes( final CreateProjectParams params )
+    {
+        this.doInitRootNodes( params, null );
     }
 
     private List<Repository> getProjectRepositories( final Repositories repositories )
@@ -182,13 +198,41 @@ public class ProjectServiceImpl
         }
     }
 
-    private static void buildParents( final Project.Builder project, final PropertySet projectData )
+    private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
     {
-        final Iterator<String> projectNamesIterator = projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ).iterator();
-        if ( projectNamesIterator.hasNext() )
-        {
-            project.parent( ProjectName.from( projectNamesIterator.next() ) );
-        }
+        ContentInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .setRepositoryService( repositoryService )
+            .repositoryId( params.getName().getRepoId() )
+            .setRepositoryData( createProjectData( params ) )
+            .setContentData( contentRootData )
+            .accessControlList( CreateProjectRootAccessListCommand.create()
+                                    .projectName( params.getName() )
+                                    .permissions( params.getPermissions() )
+                                    .build()
+                                    .execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
+        IssueInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectIssuesAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
+        ArchiveInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
     }
 
     private static void buildSiteConfigs( final Project.Builder project, final SiteConfigs siteConfigs )
@@ -215,6 +259,17 @@ public class ProjectServiceImpl
             {
                 throw new ProjectAlreadyExistsException( params.getName() );
             }
+
+            if ( createsCircleDependency( params.getName(), params.getParents() ) )
+            {
+                throw new ProjectCircleDependencyException( params.getName(), params.getParents() );
+            }
+
+            if ( !config.multiInheritance() && params.getParents().size() > 1 )
+            {
+                throw new ProjectMultipleParentsException( params.getName(), params.getParents() );
+            }
+
             final PropertyTree contentRootData = createContentRootData( params );
 
             doInitRootNodes( params, contentRootData );
@@ -345,8 +400,8 @@ public class ProjectServiceImpl
         }
 
         callWithListContext( () -> {
-            Stream.concat( Lists.reverse( doGetParents( targetProject ) ).stream(), Stream.of( targetProject ) )
-                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() ) );
+            Stream.concat( doGetParents( targetProject ).stream(), Stream.of( targetProject ) )
+                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() ) );
 
             final Queue<Project> children = new ArrayDeque<>();
             children.add( targetProject );
@@ -356,9 +411,9 @@ public class ProjectServiceImpl
             while ( !children.isEmpty() )
             {
                 final Project current = children.poll();
-                projects.stream().filter( p -> current.getName().equals( p.getParent() ) ).forEach( p -> {
+                projects.stream().filter( p -> p.getParents().contains( current.getName() ) ).forEach( p -> {
                     children.offer( p );
-                    graph.add( ProjectGraphEntry.create().name( p.getName() ).parent( p.getParent() ).build() );
+                    graph.add( ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() );
                 } );
             }
 
@@ -368,69 +423,29 @@ public class ProjectServiceImpl
         return graph.build();
     }
 
-    private List<Project> doGetParents( final Project project )
+    private Set<Project> doGetParents( final Project project )
     {
-        ImmutableList.Builder<Project> result = ImmutableList.builder();
+        final Set<Project> parents = new LinkedHashSet<>();
+        addDirectParents( project, parents );
 
-        Project currentProject = project;
-
-        while ( currentProject.getParent() != null )
-        {
-            final Project parentProject = doGet( currentProject.getParent() );
-            result.add( parentProject );
-
-            currentProject = parentProject;
-        }
-
-        return result.build();
+        return parents;
     }
 
-    private void doInitRootNodes( final CreateProjectParams params )
+    private void addDirectParents( final Project project, final Set<Project> result )
     {
-        doInitRootNodes( params, null );
+        project.getParents().stream().map( this::doGet ).forEach( parent -> {
+            if ( parent != null )
+            {
+                addDirectParents( parent, result );
+                result.add( parent );
+            }
+        } );
     }
 
     @Override
     public Project get( final ProjectName projectName )
     {
         return callWithGetContext( () -> doGet( projectName ), projectName );
-    }
-
-    private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
-    {
-        ContentInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .setRepositoryService( repositoryService )
-            .repositoryId( params.getName().getRepoId() )
-            .setRepositoryData( createProjectData( params ) )
-            .setContentData( contentRootData )
-            .accessControlList( CreateProjectRootAccessListCommand.create()
-                                    .projectName( params.getName() )
-                                    .permissions( params.getPermissions() )
-                                    .build()
-                                    .execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
-
-        IssueInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .repositoryId( params.getName().getRepoId() )
-            .accessControlList( CreateProjectIssuesAccessListCommand.create().projectName( params.getName() ).build().execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
-
-        ArchiveInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .repositoryId( params.getName().getRepoId() )
-            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
     }
 
     @Override
@@ -510,9 +525,10 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-        if ( params.getParent() != null )
+        if ( !params.getParents().isEmpty() )
         {
-            projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
+            projectData.addStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY,
+                                    params.getParents().stream().map( ProjectName::toString ).collect( Collectors.toList() ) );
         }
 
         return data;
@@ -757,4 +773,31 @@ public class ProjectServiceImpl
             .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
     }
+
+    private boolean createsCircleDependency( final ProjectName projectName, final List<ProjectName> parentNames )
+    {
+        if ( parentNames.contains( projectName ) )
+        {
+            return true;
+        }
+
+        for ( ProjectName parentName : parentNames )
+        {
+            final Project project = this.doGet( parentName );
+            if ( project == null )
+            {
+                continue;
+            }
+
+            final List<ProjectName> parents = project.getParents();
+
+            if ( createsCircleDependency( projectName, parents ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

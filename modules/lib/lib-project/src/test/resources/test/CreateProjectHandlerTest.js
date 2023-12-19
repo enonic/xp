@@ -6,6 +6,7 @@ var createProjectExpected = {
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -35,36 +36,38 @@ exports.createProject = function () {
     assert.assertJsonEquals(createProjectExpected, result);
 };
 
-var createProjectWithParentExpected = {
+var createProjectWithOneParentExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    parent: 'testparent',
     language: 'no',
+    parents: ['testparent'],
+    parent: 'testparent',
     permissions: {},
     readAccess: {
         public: true
     }
 };
 
-exports.createProjectWithParent = function () {
+exports.createProjectWithOneParent = function () {
     var result = project.create({
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         language: 'no',
-        parent: 'testparent',
+        parents: ['testparent'],
         readAccess: {public: true},
         permissions: {}
     });
 
-    assert.assertJsonEquals(createProjectWithParentExpected, result);
+    assert.assertJsonEquals(createProjectWithOneParentExpected, result);
 };
 
 var createProjectWithoutLanguageExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -97,6 +100,7 @@ var createProjectWithoutPermissionsExpected = {
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
+    parents: [],
     permissions: {},
     readAccess: {
         public: true
@@ -137,6 +141,7 @@ var createProjectWithApplicationsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    parents: [],
     siteConfig: [
         {
             applicationKey: 'appKey1',

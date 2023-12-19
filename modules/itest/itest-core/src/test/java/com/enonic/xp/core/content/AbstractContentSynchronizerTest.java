@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
@@ -90,7 +91,6 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ProjectServiceImpl projectService;
 
-
     protected ContentServiceImpl contentService;
 
     protected MediaInfoServiceImpl mediaInfoService;
@@ -107,9 +107,15 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context projectContext;
 
+    protected Context secondProjectContext;
+
     protected Context layerContext;
 
     protected Context childLayerContext;
+
+    protected Context secondChildLayerContext;
+
+    protected Context mixedChildLayerContext;
 
     protected Context projectArchiveContext;
 
@@ -119,9 +125,17 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project project;
 
+    protected Project secondProject;
+
+    protected Project nonRelatedProject;
+
     protected Project layer;
 
     protected Project childLayer;
+
+    protected Project secondChildLayer;
+
+    protected Project mixedChildLayer;
 
     protected static Context adminContext()
     {
@@ -148,15 +162,18 @@ public abstract class AbstractContentSynchronizerTest
     private void setUpProjectService()
     {
         adminContext().runWith( () -> {
-            SecurityConfig securityConfig = mock( SecurityConfig.class );
+            final SecurityConfig securityConfig = mock( SecurityConfig.class );
             when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
-            AuditLogService auditLogService = mock( AuditLogService.class );
+            final ProjectConfig projectConfig = mock( ProjectConfig.class );
+            when( projectConfig.multiInheritance() ).thenReturn( true );
+
+            final AuditLogService auditLogService = mock( AuditLogService.class );
 
             final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
             securityAuditLogSupport.activate( securityConfig );
 
-            SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+            final SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
 
             SecurityInitializer.create()
                 .setIndexService( indexService )
@@ -166,15 +183,26 @@ public abstract class AbstractContentSynchronizerTest
                 .initialize();
 
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
-                                                     new ProjectPermissionsContextManagerImpl(), eventPublisher );
+                                                     new ProjectPermissionsContextManagerImpl(), eventPublisher, projectConfig );
 
-            project = projectService.create(
-                CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
+            project = projectService.create( CreateProjectParams.create()
+                                                 .name( ProjectName.from( "source_project" ) )
+                                                 .parent( null ) // old project-lib sets parent to null for root projects
+                                                 .displayName( "Source Project" )
+                                                 .build() );
+
+            secondProject = projectService.create(
+                CreateProjectParams.create().name( ProjectName.from( "source_project2" ) ).displayName( "Source Project 2" ).build() );
+
+            nonRelatedProject = projectService.create( CreateProjectParams.create()
+                                                           .name( ProjectName.from( "another_project" ) )
+                                                           .displayName( "Another Source Project" )
+                                                           .build() );
 
             layer = projectService.create( CreateProjectParams.create()
                                                .name( ProjectName.from( "target_project" ) )
                                                .displayName( "Target Project" )
-                                               .parent( project.getName() )
+                                               .addParents( List.of( project.getName(), secondProject.getName() ) )
                                                .build() );
 
             childLayer = projectService.create( CreateProjectParams.create()
@@ -183,8 +211,26 @@ public abstract class AbstractContentSynchronizerTest
                                                     .parent( project.getName() )
                                                     .build() );
 
+            secondChildLayer = projectService.create( CreateProjectParams.create()
+                                                          .name( ProjectName.from( "second_child_layer" ) )
+                                                          .displayName( "Second Child Layer" )
+                                                          .parent( project.getName() )
+                                                          .build() );
+
+            mixedChildLayer = projectService.create( CreateProjectParams.create()
+                                                         .name( ProjectName.from( "mixed_child_layer" ) )
+                                                         .displayName( "Mixed Child Layer" )
+                                                         .addParents( List.of( childLayer.getName(), secondChildLayer.getName() ) )
+                                                         .build() );
+
             this.projectContext = ContextBuilder.from( ContextAccessor.current() )
                 .repositoryId( project.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
+
+            this.secondProjectContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( secondProject.getName().getRepoId() )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
@@ -201,17 +247,26 @@ public abstract class AbstractContentSynchronizerTest
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.projectArchiveContext = ContextBuilder.from( this.projectContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            this.secondChildLayerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( secondChildLayer.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.layerArchiveContext = ContextBuilder.from( this.layerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            this.mixedChildLayerContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( mixedChildLayer.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.childLayerArchiveContext = ContextBuilder.from( this.childLayerContext )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
-                .build();
+            this.projectArchiveContext =
+                ContextBuilder.from( this.projectContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
+
+            this.layerArchiveContext =
+                ContextBuilder.from( this.layerContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
+
+            this.childLayerArchiveContext =
+                ContextBuilder.from( this.childLayerContext ).attribute( CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) ).build();
 
             projectService.initialize();
         } );
@@ -255,7 +310,8 @@ public abstract class AbstractContentSynchronizerTest
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
+        contentService =
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );

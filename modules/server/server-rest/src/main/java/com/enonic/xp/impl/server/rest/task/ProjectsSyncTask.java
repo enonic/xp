@@ -1,10 +1,12 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -39,52 +41,38 @@ public final class ProjectsSyncTask
     @Override
     public void run( final TaskId taskId, final ProgressReporter progressReporter )
     {
-        sortProjects( this.projectService.list() ).
-            stream().
-            filter( project -> project.getParent() != null ).
-            forEach( this::doSync );
+        sortAndFilterProjectsForSync( this.projectService.list() ).forEach( this::doSync );
     }
 
-    private void doSync( final Project targetProject )
+    private void doSync( final ProjectName targetProjectName )
     {
-        syncContentService.syncProject( ProjectSyncParams.create().
-            targetProject( targetProject.getName() ).
-            build() );
+        syncContentService.syncProject( ProjectSyncParams.create().targetProject( targetProjectName ).build() );
     }
 
-    private List<Project> sortProjects( final Projects projects )
+    private List<ProjectName> sortAndFilterProjectsForSync( final Projects projects )
     {
-        final List<Project> result = new ArrayList<>();
-        final Queue<Project> queue = new ArrayDeque<>( projects.getList() );
+        final Set<ProjectName> projectNames = projects.stream().map( Project::getName ).collect( Collectors.toSet() );
 
-        ProjectName currentParent = null;
-        int currentParentCounter = 0;
-        int loopSize = queue.size();
+        final Set<ProjectName> result = new LinkedHashSet<>();
+
+        final Map<ProjectName, Project> normalizedProjects = projects.stream().map( project -> {
+
+            final Project.Builder builder = Project.create().name( project.getName() );
+            project.getParents().stream().filter( projectNames::contains ).forEach( builder::addParent );
+
+            return builder.build();
+
+        } ).collect( Collectors.toMap( Project::getName, project -> project ) );
+
+        final Queue<Project> queue = new ArrayDeque<>( normalizedProjects.values() );
 
         while ( !queue.isEmpty() )
         {
-            if ( loopSize == 0 )
-            {
-                if ( currentParentCounter < result.size() )
-                {
-                    currentParent = result.get( currentParentCounter ).getName();
-                    currentParentCounter++;
-                }
-                else
-                {  // projects with invalid parent in queue
-                    currentParent = queue.peek().getParent();
-                }
-
-                loopSize = queue.size();
-
-            }
-
-            loopSize--;
-
             final Project current = queue.poll();
-            if ( Objects.equals( current.getParent(), currentParent ) )
+
+            if ( result.containsAll( current.getParents() ) )
             {
-                result.add( current );
+                result.add( current.getName() );
             }
             else
             {
@@ -92,7 +80,11 @@ public final class ProjectsSyncTask
             }
         }
 
-        return result;
+        return result.stream()
+            .map( normalizedProjects::get )
+            .filter( project -> !project.getParents().isEmpty() )
+            .map( Project::getName )
+            .collect( Collectors.toList() );
     }
 
     public static class Builder
