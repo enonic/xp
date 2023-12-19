@@ -14,7 +14,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SecurityService;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.project")
 public class ProjectServiceActivator
 {
     private final RepositoryService repositoryService;
@@ -31,11 +31,13 @@ public class ProjectServiceActivator
 
     private ServiceRegistration<ProjectService> service;
 
+    private final ProjectConfig config;
+
     @Activate
     public ProjectServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
                                     @Reference final NodeService nodeService, @Reference final SecurityService securityService,
                                     @Reference final ProjectPermissionsContextManager projectPermissionsContextManager,
-                                    @Reference final EventPublisher eventPublisher )
+                                    @Reference final EventPublisher eventPublisher, final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
@@ -43,6 +45,7 @@ public class ProjectServiceActivator
         this.securityService = securityService;
         this.projectPermissionsContextManager = projectPermissionsContextManager;
         this.eventPublisher = eventPublisher;
+        this.config = config;
     }
 
     @Activate
@@ -50,7 +53,7 @@ public class ProjectServiceActivator
     {
         final ProjectServiceImpl projectService =
             new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
-                                    eventPublisher );
+                                    eventPublisher, config );
         projectService.initialize();
         service = context.registerService( ProjectService.class, projectService, null );
     }

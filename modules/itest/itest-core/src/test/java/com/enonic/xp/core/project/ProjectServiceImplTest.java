@@ -3,6 +3,7 @@ package com.enonic.xp.core.project;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,6 +24,9 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
+import com.enonic.xp.core.impl.project.ProjectCircleDependencyException;
+import com.enonic.xp.core.impl.project.ProjectConfig;
+import com.enonic.xp.core.impl.project.ProjectMultipleParentsException;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
@@ -116,6 +120,8 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
+    private ProjectConfig projectConfig;
+
     ProjectServiceImplTest()
     {
         super( true );
@@ -169,12 +175,14 @@ class ProjectServiceImplTest
     @BeforeEach
     void setUp()
     {
-        SecurityConfig securityConfig = mock( SecurityConfig.class );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class );
         when( securityConfig.auditlog_enabled() ).thenReturn( true );
 
-        AuditLogService auditLogService = mock( AuditLogService.class );
+        projectConfig = mock( ProjectConfig.class );
 
-        SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
+        final AuditLogService auditLogService = mock( AuditLogService.class );
+
+        final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
         securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
@@ -191,7 +199,7 @@ class ProjectServiceImplTest
 
             projectService =
                 new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
-                                        eventPublisher );
+                                        eventPublisher, projectConfig );
 
             projectService.initialize();
         } );
@@ -706,7 +714,7 @@ class ProjectServiceImplTest
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getDescription(), pro.getDescription() );
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getDisplayName(), pro.getDisplayName() );
             assertEquals( ProjectConstants.DEFAULT_PROJECT.getIcon(), pro.getIcon() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParent(), pro.getParent() );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParents(), pro.getParents() );
         } );
 
     }
@@ -744,10 +752,10 @@ class ProjectServiceImplTest
     void create_parent()
     {
         adminContext().runWith( () -> {
-            doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
+            doCreateProject( ProjectName.from( "test-project" ), null, true, List.of( ProjectName.from( "parent" ) ) );
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
-            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParent() );
+            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParents().get( 0 ) );
         } );
     }
 
@@ -935,28 +943,30 @@ class ProjectServiceImplTest
     {
         final Project project1 = adminContext().callWith( () -> doCreateProject( ProjectName.from( "project1" ), null, true, null ) );
         final Project project2 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, List.of( project1.getName() ) ) );
         final Project project3 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, List.of( project2.getName() ) ) );
         final Project project4 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, List.of( project2.getName() ) ) );
         final Project project5 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, List.of( project4.getName() ) ) );
 
         final ProjectGraph graph1 = adminContext().callWith( () -> projectService.graph( project1.getName() ) );
 
         assertEquals( 5, graph1.getSize() );
-        assertThat( graph1.getList() ).extracting( "name", "parent" )
-            .containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
-                              tuple( project4.getName(), project2.getName() ), tuple( project3.getName(), project2.getName() ),
-                              tuple( project5.getName(), project4.getName() ) );
+        assertThat( graph1.getList() ).extracting( "name", "parents" )
+            .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
+                              tuple( project4.getName(), List.of( project2.getName() ) ),
+                              tuple( project3.getName(), List.of( project2.getName() ) ),
+                              tuple( project5.getName(), List.of( project4.getName() ) ) );
 
         final ProjectGraph graph2 = adminContext().callWith( () -> projectService.graph( project4.getName() ) );
 
         assertEquals( 4, graph2.getSize() );
-        assertThat( graph2.getList() ).extracting( "name", "parent" )
-            .containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
-                              tuple( project4.getName(), project2.getName() ), tuple( project5.getName(), project4.getName() ) );
+        assertThat( graph2.getList() ).extracting( "name", "parents" )
+            .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
+                              tuple( project4.getName(), List.of( project2.getName() ) ),
+                              tuple( project5.getName(), List.of( project4.getName() ) ) );
     }
 
     @Test
@@ -967,13 +977,13 @@ class ProjectServiceImplTest
         assertThrows( ProjectNotFoundException.class, () -> projectService.graph( ProjectName.from( "project1" ) ) );
 
         final Project project2 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, List.of( project1.getName() ) ) );
         final Project project3 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, List.of( project2.getName() ) ) );
         final Project project4 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, List.of( project2.getName() ) ) );
         final Project project5 =
-            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, List.of( project4.getName() ) ) );
 
         contextWithAuthInfo( getAccessForProject( ProjectName.from( "project4" ), List.of( ProjectRole.VIEWER ) ) ).runWith( () -> {
             assertEquals( 4, projectService.graph( ProjectName.from( "project4" ) ).getSize() );
@@ -1063,6 +1073,54 @@ class ProjectServiceImplTest
                       () -> adminContext().callWith( () -> projectService.getAvailableApplications( ProjectName.from( "unknown" ) ) ) );
     }
 
+    @Test
+    void create_with_circle_dependency()
+    {
+        when( projectConfig.multiInheritance() ).thenReturn( true );
+        
+        adminContext().runWith( () -> {
+            final Project parent = doCreateProject( ProjectName.from( "parent" ), SiteConfigs.empty() );
+            final Project child = doCreateProject( ProjectName.from( "child" ), parent.getName(), SiteConfigs.empty() );
+            final Project grandchild = doCreateProject( ProjectName.from( "grandchild" ), ProjectPermissions.create().build(), false,
+                                                        List.of( ProjectName.from( "invalid" ), child.getName() ) );
+
+            this.projectService.delete( parent.getName() );
+
+            assertThrows( ProjectCircleDependencyException.class,
+                          () -> doCreateProject( ProjectName.from( "parent" ), grandchild.getName(), SiteConfigs.empty() ) );
+        } );
+    }
+
+    @Test
+    void test_enabled_multiple_parents()
+    {
+        when( projectConfig.multiInheritance() ).thenReturn( true );
+
+        adminContext().runWith( () -> {
+            final Project parent1 = doCreateProject( ProjectName.from( "parent1" ), SiteConfigs.empty() );
+            final Project parent2 = doCreateProject( ProjectName.from( "parent2" ), SiteConfigs.empty() );
+            final Project child = doCreateProject( ProjectName.from( "child" ), ProjectPermissions.create().build(), false,
+                                                   List.of( parent1.getName(), parent2.getName() ) );
+
+            assertEquals( List.of( parent1.getName(), parent2.getName() ), child.getParents() );
+        } );
+    }
+
+    @Test
+    void test_disabled_multiple_parents()
+    {
+
+        adminContext().runWith( () -> {
+            final Project parent1 = doCreateProject( ProjectName.from( "parent1" ), SiteConfigs.empty() );
+            final Project parent2 = doCreateProject( ProjectName.from( "parent2" ), SiteConfigs.empty() );
+
+            assertThrows( ProjectMultipleParentsException.class, () ->
+
+                doCreateProject( ProjectName.from( "child" ), ProjectPermissions.create().build(), false,
+                                 List.of( parent1.getName(), parent2.getName() ) ) );
+        } );
+    }
+
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
         return adminContext().callWith( () -> doCreateProject( name ) );
@@ -1095,21 +1153,26 @@ class ProjectServiceImplTest
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
-                                     final ProjectName parent )
+                                     final Collection<ProjectName> parents )
     {
-        return doCreateProject( name, projectPermissions, forceInitialization, parent, null, null );
+        return doCreateProject( name, projectPermissions, forceInitialization, parents, null, null );
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
-                                     final ProjectName parent, final AccessControlList permissions, final SiteConfigs siteConfigs )
+                                     final Collection<ProjectName> parents, final AccessControlList permissions,
+                                     final SiteConfigs siteConfigs )
     {
         final CreateProjectParams.Builder params = CreateProjectParams.create()
             .name( name )
             .description( "description" )
             .displayName( "Project display name" )
-            .parent( parent )
             .permissions( permissions )
             .forceInitialization( forceInitialization );
+
+        if ( parents != null && !parents.isEmpty() )
+        {
+            params.addParents( parents );
+        }
 
         if ( siteConfigs != null )
         {
@@ -1128,7 +1191,7 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectName parent, final SiteConfigs siteConfigs )
     {
-        return this.doCreateProject( name, null, false, parent, null, siteConfigs );
+        return this.doCreateProject( name, null, false, List.of( parent ), null, siteConfigs );
     }
 
     private Project doCreateProject( final ProjectName name, final SiteConfigs siteConfigs )

@@ -1,6 +1,11 @@
 package com.enonic.xp.project;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -9,12 +14,12 @@ public final class ProjectGraphEntry
 {
     private final ProjectName name;
 
-    private final ProjectName parent;
+    private final List<ProjectName> parents;
 
     private ProjectGraphEntry( Builder builder )
     {
         this.name = builder.name;
-        this.parent = builder.parent;
+        this.parents = builder.parents.build();
     }
 
     public static Builder create()
@@ -29,20 +34,26 @@ public final class ProjectGraphEntry
 
     public ProjectName getParent()
     {
-        return parent;
+        return !parents.isEmpty() ? parents.get( 0 ) : null;
+    }
+
+    public List<ProjectName> getParents()
+    {
+        return parents;
     }
 
     @Override
     public String toString()
     {
-        return "ProjectGraphEntry{" + "name=" + name + ", parent=" + parent + '}';
+        return "ProjectGraphEntry{" + "name=" + name + ", parents=[" +
+            parents.stream().map( ProjectName::toString ).collect( Collectors.joining( "," ) ) + "]}";
     }
 
     public static final class Builder
     {
         private ProjectName name;
 
-        private ProjectName parent;
+        private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
         private Builder()
         {
@@ -56,7 +67,13 @@ public final class ProjectGraphEntry
 
         public Builder parent( final ProjectName parent )
         {
-            this.parent = parent;
+            this.parents.add( parent );
+            return this;
+        }
+
+        public Builder addParents( final Collection<ProjectName> parents )
+        {
+            this.parents.addAll( parents );
             return this;
         }
 

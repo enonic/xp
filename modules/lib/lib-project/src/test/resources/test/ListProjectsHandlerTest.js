@@ -5,6 +5,7 @@ var project1Expected = {
     id: 'myproject1',
     displayName: 'project display name 1',
     description: 'project description 1',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -23,6 +24,7 @@ var project2Expected = {
     id: 'myproject2',
     displayName: 'project display name 2',
     description: 'project description 2',
+    parents: [],
     permissions: {},
     readAccess: {public: false}
 };

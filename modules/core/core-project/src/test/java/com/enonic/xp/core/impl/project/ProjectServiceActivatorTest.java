@@ -52,6 +52,9 @@ class ProjectServiceActivatorTest
     @Mock(stubOnly = true)
     EventPublisher eventPublisher;
 
+    @Mock(stubOnly = true)
+    ProjectConfig config;
+
     @BeforeEach
     void setUp()
     {
@@ -68,7 +71,7 @@ class ProjectServiceActivatorTest
     {
         final ProjectServiceActivator activator =
             new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
-                                         eventPublisher );
+                                         eventPublisher, config );
 
         when( bundleContext.registerService( same( ProjectService.class ), any( ProjectService.class ), isNull() ) ).
             thenReturn( service );

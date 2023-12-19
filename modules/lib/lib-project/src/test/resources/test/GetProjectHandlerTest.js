@@ -5,6 +5,7 @@ var getProjectExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    parents: [],
     permissions: {
         owner: [
             'user:system:owner2',
@@ -33,6 +34,7 @@ var getProjectWithoutPermissionsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    parents: [],
     permissions: {},
     readAccess: {
         'public': true

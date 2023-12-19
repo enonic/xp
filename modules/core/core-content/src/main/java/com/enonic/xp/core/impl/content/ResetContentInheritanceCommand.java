@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,7 +19,6 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
@@ -55,38 +55,32 @@ final class ResetContentInheritanceCommand
 
     void execute()
     {
-        final ProjectName sourceProjectName = fetchSourceProjectName( params.getProjectName() );
-
-        validateSourceContentExist( sourceProjectName );
-
-        final Context targetContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( params.getProjectName().getRepoId() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            authInfo( createAdminAuthInfo() ).
-            build();
+        final Context targetContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( params.getProjectName().getRepoId() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .authInfo( createAdminAuthInfo() )
+            .build();
 
         targetContext.runWith( () -> {
             if ( contentService.contentExists( params.getContentId() ) )
             {
                 final Content targetContent = contentService.getById( params.getContentId() );
-                final Set<ContentInheritType> typesToReset = params.getInherit().
-                    stream().
-                    filter( contentInheritType -> !targetContent.getInherit().contains( contentInheritType ) ).
-                    collect( Collectors.toSet() );
+                final Set<ContentInheritType> typesToReset = params.getInherit()
+                    .stream()
+                    .filter( contentInheritType -> !targetContent.getInherit().contains( contentInheritType ) )
+                    .collect( Collectors.toSet() );
 
                 if ( !typesToReset.isEmpty() )
                 {
-                    final UpdateContentParams updateParams = new UpdateContentParams().
-                        contentId( targetContent.getId() ).
-                        stopInherit( false ).
-                        editor( edit -> {
+                    final UpdateContentParams updateParams =
+                        new UpdateContentParams().contentId( targetContent.getId() ).stopInherit( false ).editor( edit -> {
                             edit.inherit = processInherit( edit.inherit, typesToReset );
                             edit.workflowInfo = WorkflowInfo.inProgress();
                         } );
 
                     contentService.update( updateParams );
 
-                    syncContent( targetContent.getId(), sourceProjectName, params.getProjectName() );
+                    syncContent( targetContent.getId(), params.getProjectName() );
                 }
             }
         } );
@@ -97,8 +91,26 @@ final class ResetContentInheritanceCommand
         return EnumSet.copyOf( Stream.concat( oldTypes.stream(), newTypes.stream() ).collect( Collectors.toSet() ) );
     }
 
-    private void syncContent( final ContentId contentId, final ProjectName sourceProjectName, final ProjectName targetProjectName )
+    private void syncContent( final ContentId contentId, final ProjectName targetProjectName )
     {
+        final List<ProjectName> parents = projectService.get( targetProjectName ).getParents();
+
+        if ( parents.isEmpty() )
+        {
+            throw new IllegalArgumentException( String.format( "Project with name [%s] has no any parent", targetProjectName ) );
+        }
+
+        final ProjectName sourceProjectName = parents.stream()
+            .map( projectName -> ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( projectName.getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( createAdminAuthInfo() )
+                .build() )
+            .filter( context -> context.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
+            .map( context -> ProjectName.from( context.getRepositoryId() ) )
+            .findFirst()
+            .orElseThrow( () -> new IllegalArgumentException( "No source content to inherit" ) );
+
         contentSynchronizer.sync( ContentSyncParams.create()
                                       .addContentId( contentId )
                                       .sourceProject( sourceProjectName )
@@ -107,64 +119,12 @@ final class ResetContentInheritanceCommand
                                       .build() );
     }
 
-    private ProjectName fetchSourceProjectName( final ProjectName targetProjectName )
-    {
-        final Project targetProject = createAdminContext().callWith( () -> projectService.get( targetProjectName ) );
-
-        if ( targetProject == null )
-        {
-            throw new IllegalArgumentException( String.format( "Project with name [%s] doesn't exist", targetProjectName ) );
-        }
-
-        if ( targetProject.getParent() == null )
-        {
-            throw new IllegalArgumentException( String.format( "Project with name [%s] has no parent", targetProject.getName() ) );
-        }
-
-        final Project sourceProject = createAdminContext().callWith( () -> projectService.get( targetProject.getParent() ) );
-
-        if ( sourceProject == null )
-        {
-            throw new IllegalArgumentException( String.format( "Project with name [%s] doesn't exist", targetProject.getParent() ) );
-        }
-
-        return sourceProject.getName();
-    }
-
-    private void validateSourceContentExist( final ProjectName sourceProjectName )
-    {
-        final Context sourceContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( sourceProjectName.getRepoId() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            authInfo( createAdminAuthInfo() ).
-            build();
-
-        if ( !sourceContext.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
-        {
-            throw new IllegalArgumentException(
-                String.format( "[%s] content is missed in [%s] project", params.getContentId(), sourceProjectName ) );
-        }
-    }
-
-    private Context createAdminContext()
-    {
-        final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            authInfo( authInfo ).
-            build();
-    }
-
     private AuthenticationInfo createAdminAuthInfo()
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( User.create().
-                key( PrincipalKey.ofSuperUser() ).
-                login( PrincipalKey.ofSuperUser().getId() ).
-                build() ).
-            build();
+        return AuthenticationInfo.create()
+            .principals( RoleKeys.ADMIN )
+            .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+            .build();
     }
 
     public static class Builder
