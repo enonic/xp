@@ -139,6 +139,24 @@ class ContentResolverTest
         assertNull( result.getContent() );
         assertNull( result.getNearestSite() );
         assertEquals( "/", result.getSiteRelativePath() );
+        final WebException exception = assertThrows( WebException.class, result::getContentOrElseThrow );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
+    }
+
+    @Test
+    void resolve_root_path_in_edit_mode()
+    {
+        final PortalRequest request = new PortalRequest();
+        request.setMode( RenderMode.EDIT );
+        request.setContentPath( ContentPath.ROOT );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertNull( result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertEquals( "/", result.getSiteRelativePath() );
+        final WebException exception = assertThrows( WebException.class, result::getContentOrElseThrow );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
     }
 
     @Test
@@ -211,7 +229,6 @@ class ContentResolverTest
         request.setContentPath( ContentPath.from( "/mysite" ) );
 
         when( this.contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
-        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
@@ -279,6 +296,21 @@ class ContentResolverTest
         assertSame( content, result.getContent() );
         assertNull( result.getNearestSite() );
         assertNotNull( result.getSiteRelativePath() );
+    }
+
+    @Test
+    void resolve_root_in_live_mode()
+    {
+        final PortalRequest request = new PortalRequest();
+        request.setContentPath( ContentPath.ROOT );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertNull( result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertEquals( "/", result.getSiteRelativePath() );
+        final WebException exception = assertThrows( WebException.class, result::getContentOrElseThrow );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
     }
 
     private Content newContent()
