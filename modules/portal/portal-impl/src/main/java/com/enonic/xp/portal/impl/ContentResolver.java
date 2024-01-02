@@ -30,6 +30,11 @@ public class ContentResolver
     {
         final ContentPath contentPath = request.getContentPath();
 
+        if ( contentPath.isRoot() )
+        {
+            return new ContentResolverResult( null, false, null, "/", contentPath.toString() );
+        }
+
         if ( request.getMode() == RenderMode.EDIT )
         {
             return resolveInEditMode( contentPath );
@@ -44,7 +49,9 @@ public class ContentResolver
     {
         final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
 
-        final Site site = callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
+        final Site site = content != null && content.isSite()
+            ? (Site) content
+            : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
 
         final String siteRelativePath = siteRelativePath( site, contentPath );
         return new ContentResolverResult( visibleContent( content ), content != null, site, siteRelativePath, contentPath.toString() );
@@ -60,31 +67,21 @@ public class ContentResolver
 
         final Content content = contentById != null ? contentById : callAsContentAdmin( () -> this.getContentByPath( contentPath ) );
 
-        final Site site = getNearestSite( content );
-
-        final String siteRelativePath = siteRelativePath( site, content != null ? content.getPath() : contentPath );
-        return new ContentResolverResult( visibleContent( content ), content != null, site, siteRelativePath, contentPathString );
-    }
-
-    private Site getNearestSite( final Content content )
-    {
-        if ( content != null )
+        if ( content == null )
         {
-            if ( ContentPath.ROOT.equals( content.getPath() ) )
-            {
-                return null;
-            }
-            else
-            {
-                return content.isSite()
-                    ? (Site) content
-                    : callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) );
-            }
+            return new ContentResolverResult( null, false, null, contentPathString, contentPathString );
         }
-        else
+
+        if ( content.getPath().isRoot() )
         {
-            return null;
+            return new ContentResolverResult( null, false, null, "/", contentPathString );
         }
+
+        final Site site =
+            content.isSite() ? (Site) content : callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) );
+
+        final String siteRelativePath = siteRelativePath( site, content.getPath() );
+        return new ContentResolverResult( visibleContent( content ), true, site, siteRelativePath, contentPathString );
     }
 
     private static ContentId tryConvertToContentId( final String contentPathString )
@@ -101,7 +98,7 @@ public class ContentResolver
 
     private Content visibleContent( final Content content )
     {
-        return content == null || ContentPath.ROOT.equals( content.getPath() ) ||
+        return content == null || content.getPath().isRoot() ||
             !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ )
             ? null
             : content;
