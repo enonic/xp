@@ -725,8 +725,6 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
 
 export interface PublishContentParams {
     keys: string[];
-    sourceBranch: string;
-    targetBranch: string;
     schedule?: Schedule;
     includeChildren?: boolean;
     excludeChildrenIds?: string[];
@@ -742,10 +740,6 @@ export interface PublishContentResult {
 
 interface PublishContentHandler {
     setKeys(value: string[]): void;
-
-    setTargetBranch(value: string): void;
-
-    setSourceBranch(value: string): void;
 
     setContentPublishInfo(value: ScriptValue): void;
 
