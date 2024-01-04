@@ -29,7 +29,7 @@ export interface User {
     type: 'user';
     key: UserKey;
     displayName: string;
-    modifiedTime: string;
+    modifiedTime?: string;
     disabled?: boolean;
     email?: string;
     login: string;
