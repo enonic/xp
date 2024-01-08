@@ -43,7 +43,7 @@ addBundle( libs.slf4j.log4joverslf4j, 6 )
 addBundle( libs.jboss.logging, 6 )
 
 // Java Cryptography Extension
-addBundle( libs.bcprov.jdk15on, 6 )
+addBundle( libs.bcprov.jdk18on, 6 )
 
 // Library dependencies
 addBundle( libs.guava, 8 )

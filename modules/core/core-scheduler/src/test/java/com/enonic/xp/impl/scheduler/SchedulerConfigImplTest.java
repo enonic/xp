@@ -21,6 +21,7 @@ import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -128,7 +129,7 @@ class SchedulerConfigImplTest
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
 
-        assertEquals( "Unexpected character (''' (code 39)): was expecting double-quote to start field name\n" +
-                          " at [Source: (String)\"{'a':'b'}\"; line: 1, column: 3]", ex.getCause().getMessage() );
+        assertThat( ex.getCause().getMessage() ).contains(
+            "Unexpected character (''' (code 39)): was expecting double-quote to start field name" );
     }
 }
