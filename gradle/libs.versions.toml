@@ -34,7 +34,7 @@ jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "2.1.6" 
 jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version = "2.3.3" }
 jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.6" }
 
-javax-servlet = "javax.servlet:javax.servlet-api:3.1.0"
+javax-servlet = "javax.servlet:javax.servlet-api:4.0.1"
 javax-websocket = "javax.websocket:javax.websocket-api:1.0"
 
 osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
