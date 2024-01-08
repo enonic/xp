@@ -1,16 +1,16 @@
 [libraries]
 junit-junit4 = { module = "junit:junit", version = "4.13.2" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "5.10.0" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.10.0" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.10.0" }
-junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", version = "5.10.0" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "5.10.1" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.10.1" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.10.1" }
+junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", version = "5.10.1" }
 
-mockito-core = { module = "org.mockito:mockito-core", version = "5.6.0" }
+mockito-core = { module = "org.mockito:mockito-core", version = "5.8.0" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version = "5.8.0" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.15.1" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.15.5" }
 
-assertj-core = { module = "org.assertj:assertj-core", version = "3.24.2" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.25.1" }
 
 tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0.0" }
 
@@ -22,7 +22,7 @@ slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "1.7.36" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version = "1.7.36" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version = "1.7.36" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.5.3.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.2.12" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.2.13" }
 jansi = { module = "org.fusesource.jansi:jansi", version = "1.18" }
 
 jakarta-activation = { module = "com.sun.activation:jakarta.activation", version = "1.2.2" }
@@ -32,7 +32,7 @@ jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", ver
 jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "2.1.6" }
 
 jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version = "2.3.3" }
-jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.6" }
+jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.9" }
 
 javax-servlet = "javax.servlet:javax.servlet-api:3.1.0"
 javax-websocket = "javax.websocket:javax.websocket-api:1.0"
@@ -58,7 +58,7 @@ felix-gogo-runtime = { module = "org.apache.felix:org.apache.felix.gogo.runtime"
 felix-gogo-shell = { module = "org.apache.felix:org.apache.felix.gogo.shell", version = "0.12.0" }
 felix-shell-remote = { module = "org.apache.felix:org.apache.felix.shell.remote", version = "1.1.2" }
 
-bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version = "1.70" }
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.77" }
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 
@@ -66,11 +66,11 @@ jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
 guava = { module = "com.google.guava:guava", version = "26.0-jre" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.16.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20220608.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.9" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.11" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.0" }
 
@@ -82,27 +82,27 @@ nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.4" }
 graaljs = { module = "org.graalvm.js:js", version = "22.3.2" }
 
 commons-lang = { module = "commons-lang:commons-lang", version = "2.6" }
-commons-io = { module = "commons-io:commons-io", version = "2.13.0" }
-commons-compress = { module = "org.apache.commons:commons-compress", version = "1.23.0" }
+commons-io = { module = "commons-io:commons-io", version = "2.15.1" }
+commons-compress = { module = "org.apache.commons:commons-compress", version = "1.25.0" }
 
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.15.3" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.15.3" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.15.3" }
-jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.15.3" }
-jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.15.3" }
-jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.15.3" }
-jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.15.3" }
-jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.15.3" }
-jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.15.3" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.16.1" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.16.1" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.16.1" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.16.1" }
+jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.16.1" }
+jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.16.1" }
+jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.16.1" }
+jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.16.1" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.16.1" }
 
 tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
 
 metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.23" }
-metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.21" }
+metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.23" }
 metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.23" }
-metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.21" }
-metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.21" }
+metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.23" }
+metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.23" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
 hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
@@ -110,7 +110,7 @@ hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version 
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
-resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.7.Final" }
+resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.9.Final" }
 
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version = "9.4.53.v20231009" }
 jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "9.4.53.v20231009" }
