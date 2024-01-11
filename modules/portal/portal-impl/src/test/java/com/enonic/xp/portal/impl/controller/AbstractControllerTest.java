@@ -9,10 +9,6 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -28,17 +24,12 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
+import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class AbstractControllerTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper().
-        enable( SerializationFeature.INDENT_OUTPUT ).
-        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-
+   private final JsonTestHelper jsonTestHelper;
     protected PostProcessorImpl postProcessor;
 
     private ControllerScriptFactoryImpl factory;
@@ -48,6 +39,11 @@ public abstract class AbstractControllerTest
     protected PortalResponse portalResponse;
 
     protected ResourceService resourceService;
+
+    public AbstractControllerTest(  )
+    {
+        this.jsonTestHelper = new JsonTestHelper( this );
+    }
 
     @BeforeEach
     public void setup()
@@ -106,18 +102,7 @@ public abstract class AbstractControllerTest
     }
 
     protected final void assertJson( final String name, final String actual )
-        throws Exception
     {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = MAPPER.readTree( url );
-        final JsonNode actualJson = MAPPER.readTree( actual );
-
-        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
-        final String actualStr = MAPPER.writeValueAsString( actualJson );
-
-        assertEquals( expectedStr, actualStr );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( name ), jsonTestHelper.stringToJson( actual ) );
     }
 }

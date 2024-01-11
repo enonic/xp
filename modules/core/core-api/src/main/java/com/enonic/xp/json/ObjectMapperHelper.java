@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import com.enonic.xp.data.PropertyValueJson;
+
 @Deprecated
 public final class ObjectMapperHelper
 {
@@ -21,6 +23,12 @@ public final class ObjectMapperHelper
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
         mapper.serializationInclusion( JsonInclude.Include.ALWAYS );
         mapper.addModule( new JavaTimeModule() );
+        mapper.addMixIn( PropertyValueJson.class, JsonIncludeNonNull.class );
         return mapper.build();
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private static class JsonIncludeNonNull
+    {
     }
 }

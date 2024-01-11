@@ -25,7 +25,7 @@ public class ControllerScriptImpl_requestTest
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertJson( "simple", getResponseAsString() );
+        assertJson( "simple.json", getResponseAsString() );
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ControllerScriptImpl_requestTest
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertJson( "all", getResponseAsString() );
+        assertJson( "all.json", getResponseAsString() );
     }
 
     @Test

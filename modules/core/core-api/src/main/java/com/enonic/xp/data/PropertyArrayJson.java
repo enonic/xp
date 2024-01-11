@@ -3,23 +3,16 @@ package com.enonic.xp.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PropertyArrayJson
 {
-    @JsonProperty("name")
-    private String name;
+    public String name;
 
-    @JsonProperty("type")
-    private String type;
+    public String type;
 
-    @JsonProperty("values")
-    private List<PropertyValueJson> values;
+    public List<PropertyValueJson> values;
 
     public PropertyArrayJson()
     {

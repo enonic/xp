@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonToPropertyTreeTranslatorTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     @Test
     public void all_input_types()
