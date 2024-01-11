@@ -116,10 +116,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/FasterXML/jackson-annotations
 
-    Jackson BOM
-    Apache License 2.0
-    https://github.com/FasterXML/jackson-bom
-
     Jackson Core
     Apache License 2.0
     https://github.com/FasterXML/jackson-core
@@ -222,6 +218,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     http://objenesis.org
 
+    Opentest4j
+    Apache License 2.0
+    https://github.com/ota4j-team/opentest4j
+
     OSGi Utilities
     Apache License 2.0
     https://www.mvnrepository.com/artifact/org.osgi/org.osgi.core
@@ -251,9 +251,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     CC0 1.0 Universal
     http://github.com/twitter/jsr166e
 
-    Unicode Utilities: regex
+    Unicode Utilities: regex, icu4j
     Unicode license
     https://util.unicode.org/UnicodeJsps/regex.jsp
+    https://unicode-org.github.io/icu-docs/legal/
 
 ---------------------------------------------------------------------------
 
