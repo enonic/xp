@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
@@ -32,8 +29,6 @@ import com.enonic.xp.security.acl.Permission;
 public class CreateRepositoryHandler
     implements ScriptBean
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private RepositoryId repositoryId;
 
     private IndexDefinitions indexDefinitions;
@@ -88,10 +83,10 @@ public class CreateRepositoryHandler
                 {
                     final Map indexDefinitionSettingsMap = (Map) indexDefinitionMap.get( "settings" );
                     IndexSettings indexSettings =
-                        indexDefinitionSettingsMap == null ? null : new IndexSettings( createJson( indexDefinitionSettingsMap ) );
+                        indexDefinitionSettingsMap == null ? null : IndexSettings.from( indexDefinitionsMap );
                     final Map indexDefinitionMappingMap = (Map) indexDefinitionMap.get( "mapping" );
                     IndexMapping indexMapping =
-                        indexDefinitionMappingMap == null ? null : new IndexMapping( createJson( indexDefinitionMappingMap ) );
+                        indexDefinitionMappingMap == null ? null : IndexMapping.from( indexDefinitionMappingMap );
                     final IndexDefinition indexDefinition =
                         IndexDefinition.create().settings( indexSettings ).mapping( indexMapping ).build();
                     indexDefinitionsBuilder.add( indexType, indexDefinition );
@@ -146,11 +141,6 @@ public class CreateRepositoryHandler
             stream().
             map( Permission::valueOf ).
             collect( Collectors.toUnmodifiableList() );
-    }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        return MAPPER.valueToTree( value );
     }
 
     @Override

@@ -3,51 +3,40 @@ package com.enonic.xp.repo.impl.repository;
 import java.net.URL;
 import java.util.Objects;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexResourceType;
 import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.util.JsonHelper;
 
-public class DefaultIndexResourceProvider
-    implements IndexResourceProvider
+public final class DefaultIndexResourceProvider
 {
-    private final String resourceBaseFolder;
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
-    public DefaultIndexResourceProvider( final String resourceBaseFolder )
+    public static final DefaultIndexResourceProvider INSTANCE = new DefaultIndexResourceProvider();
+
+    public IndexMapping getMapping( final IndexType indexType )
     {
-        this.resourceBaseFolder = resourceBaseFolder;
+        final URL defaultMapping = getResource( indexType, IndexResourceType.MAPPING );
+
+        return IndexMapping.from( defaultMapping );
     }
 
-    @Override
-    public IndexMapping getMapping( final RepositoryId repositoryId, final IndexType indexType )
+    public IndexSettings getSettings( final IndexType indexType )
     {
-        final JsonNode defaultMapping = getResource( indexType, IndexResourceType.MAPPING );
+        final URL defaultSettings = getResource( indexType, IndexResourceType.SETTINGS );
 
-        return new IndexMapping( defaultMapping );
+        return IndexSettings.from( defaultSettings );
     }
 
-    @Override
-    public IndexSettings getSettings( final RepositoryId repositoryId, final IndexType indexType )
-    {
-        final JsonNode defaultSettings = getResource( indexType, IndexResourceType.SETTINGS );
-
-        return new IndexSettings( defaultSettings );
-    }
-
-    private JsonNode getResource( final IndexType indexType, final IndexResourceType type )
+    private URL getResource( final IndexType indexType, final IndexResourceType type )
     {
         String fileName =
-            resourceBaseFolder + "/" + type.getName() + "/" + "default" + "/" + indexType.getName() + "-" + type.getName() + ".json";
+            DEFAULT_INDEX_RESOURCE_FOLDER + "/" + type.getName() + "/" + "default" + "/" + indexType.getName() + "-" + type.getName() + ".json";
 
         try
         {
-            final URL resource = DefaultIndexResourceProvider.class.getResource( fileName );
-            return JsonHelper.from( Objects.requireNonNull( resource ) );
+            return Objects.requireNonNull( DefaultIndexResourceProvider.class.getResource( fileName ) );
         }
         catch ( Exception e )
         {

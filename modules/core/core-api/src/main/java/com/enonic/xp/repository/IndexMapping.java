@@ -1,6 +1,7 @@
 package com.enonic.xp.repository;
 
 import java.net.URL;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -9,33 +10,54 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.JsonHelper;
 
 @PublicApi
-public class IndexMapping
+public final class IndexMapping
 {
     private final JsonNode jsonNode;
 
-    public static IndexMapping from( final PropertyTree propertyTree )
-    {
-        return new IndexMapping( JsonHelper.from( propertyTree ) );
-    }
-
-    public static IndexMapping from( final URL url )
-    {
-        return new IndexMapping( JsonHelper.from( url ) );
-    }
-
-    public static IndexMapping from( final String string )
-    {
-        return new IndexMapping( JsonHelper.from( string ) );
-    }
-
+    @Deprecated
     public IndexMapping( final JsonNode resourceNode )
     {
         this.jsonNode = resourceNode;
     }
 
+    private IndexMapping( final JsonNode resourceNode, final boolean ignore )
+    {
+        this.jsonNode = resourceNode;
+    }
+
+    public static IndexMapping from( final PropertyTree propertyTree )
+    {
+        return new IndexMapping( JsonHelper.from( propertyTree ), false );
+    }
+
+    public static IndexMapping from( final URL url )
+    {
+        return new IndexMapping( JsonHelper.from( url ), false );
+    }
+
+    public static IndexMapping from( final String string )
+    {
+        return new IndexMapping( JsonHelper.from( string ), false );
+    }
+
+    public static IndexMapping from( final Map<String, Object> mapping )
+    {
+        return new IndexMapping( JsonHelper.from( mapping ), false );
+    }
+
+    public IndexMapping merge( final IndexMapping with )
+    {
+        final JsonNode newJsonNode = JsonHelper.from( Map.of() );
+        JsonHelper.merge( newJsonNode, this.jsonNode );
+        JsonHelper.merge( newJsonNode, with.jsonNode );
+
+        return new IndexMapping( newJsonNode, false );
+    }
+
+    @Deprecated
     public JsonNode getNode()
     {
-        return jsonNode;
+        return jsonNode.deepCopy();
     }
 
     public String getAsString()

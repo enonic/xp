@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -47,17 +46,17 @@ public final class StatusResource
         new ProductInfoBuilder( this.info ).build( json );
 
         json.set( "context", createContextJson() );
-        json.set( "readonly", createRepoReadOnlyJson() );
+        json.put( "readonly", createRepoReadOnlyJson() );
         return json;
     }
 
-    private JsonNode createRepoReadOnlyJson()
+    private Boolean createRepoReadOnlyJson()
     {
         final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH );
 
-        final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
+        final Boolean writeJsonNode = indexSettings != null ? indexSettings.getBoolean( "index.blocks.write" ) : null;
 
-        return writeJsonNode != null ? writeJsonNode : JsonNodeFactory.instance.booleanNode( false );
+        return writeJsonNode != null ? writeJsonNode : false;
     }
 
     private ObjectNode createContextJson()

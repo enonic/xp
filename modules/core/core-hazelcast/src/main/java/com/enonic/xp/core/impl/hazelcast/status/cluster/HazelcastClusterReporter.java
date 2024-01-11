@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.hazelcast.status.cluster;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
@@ -7,16 +10,16 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public class HazelcastClusterReporter
-    extends JsonStatusReporter
+    implements StatusReporter
 {
     private final HazelcastInstance hazelcastInstance;
 
@@ -33,7 +36,19 @@ public class HazelcastClusterReporter
     }
 
     @Override
-    public JsonNode getReport()
+    public MediaType getMediaType()
+    {
+        return MediaType.JSON_UTF_8;
+    }
+
+    @Override
+    public void report( final OutputStream outputStream )
+        throws IOException
+    {
+        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    JsonNode getReport()
     {
 
         final Cluster cluster = hazelcastInstance.getCluster();

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.util.JsonHelper;
 
 public abstract class QueryBuilderTest
 {
@@ -30,12 +30,16 @@ public abstract class QueryBuilderTest
 
     protected PropertyTree readJson( final String value )
     {
-        final JsonNode jsonNode = JsonHelper.from( value );
-
-        return MARSHALLER_SERVICE.marshal( MAPPER.convertValue( jsonNode, new TypeReference<Map<String, Object>>()
+        try
         {
-
-        } ) );
+            return MARSHALLER_SERVICE.marshal( MAPPER.readValue( value, new TypeReference<Map<String, Object>>()
+            {
+            } ) );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new IllegalArgumentException( "Cannot serialize settings from string [" + value + "]", e );
+        }
     }
 
     protected final String load( final String name )

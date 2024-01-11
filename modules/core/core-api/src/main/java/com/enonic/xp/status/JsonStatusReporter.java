@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
+@Deprecated
 public abstract class JsonStatusReporter
     implements StatusReporter
 {

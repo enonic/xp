@@ -13,7 +13,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.ObjectMapperHelper;
 
-public class JsonHelper
+@Deprecated
+public final class JsonHelper
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
         enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );

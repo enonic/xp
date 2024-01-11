@@ -90,7 +90,6 @@ public class RepositoryMapper
 
     private void serialize( final MapGenerator gen, final JsonNode jsonNode )
     {
-        final PropertyTree propertyTree = JsonToPropertyTreeTranslator.translate( jsonNode );
-        new PropertyTreeMapper( propertyTree ).serialize( gen );
+        new PropertyTreeMapper( JsonToPropertyTreeTranslator.translate( jsonNode ) ).serialize( gen );
     }
 }

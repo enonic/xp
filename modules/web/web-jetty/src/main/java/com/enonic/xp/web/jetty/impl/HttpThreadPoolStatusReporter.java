@@ -1,5 +1,9 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.osgi.service.component.annotations.Activate;
@@ -9,15 +13,16 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public class HttpThreadPoolStatusReporter
-    extends JsonStatusReporter
+    implements StatusReporter
 {
     private final ThreadPool threadPool;
+
 
     @Activate
     public HttpThreadPoolStatusReporter( @Reference final Server server )
@@ -32,6 +37,18 @@ public class HttpThreadPoolStatusReporter
     }
 
     @Override
+    public final MediaType getMediaType()
+    {
+        return MediaType.JSON_UTF_8;
+    }
+
+    @Override
+    public final void report( final OutputStream outputStream )
+        throws IOException
+    {
+        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
+    }
+
     public JsonNode getReport()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
