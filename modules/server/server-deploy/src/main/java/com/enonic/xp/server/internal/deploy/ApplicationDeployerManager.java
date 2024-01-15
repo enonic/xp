@@ -1,10 +1,13 @@
 package com.enonic.xp.server.internal.deploy;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.mail.MailService;
@@ -30,9 +33,11 @@ public class ApplicationDeployerManager
     private DeployDirectoryWatcher deployDirectoryWatcher;
 
     @Activate
-    public void activate()
+    public void activate( final BundleContext bundleContext )
         throws Exception
     {
+        bundleContext.registerService( Condition.class, Condition.INSTANCE,
+                                       Dictionaries.of( Condition.CONDITION_ID, "com.enonic.xp.server.deploy.ready" ) );
         storedApplicationsDeployer.deploy();
         autoDeployer.deploy();
         deployDirectoryWatcher.deploy();
