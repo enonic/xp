@@ -1,5 +1,6 @@
 dependencies {
     implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
     //TODO Temporary fix. See issue xp#7003
     implementation project( ':admin:admin-api' )
 
