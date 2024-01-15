@@ -46,13 +46,8 @@ final class JsonToPropertyTreeTranslator
         }
         else
         {
-            mapValue( parent, key, value );
+            parent.addProperty( key, resolveCoreValue( value ) );
         }
-    }
-
-    private static void mapValue( final PropertySet parent, final String key, final JsonNode value )
-    {
-        parent.addProperty( key, resolveCoreValue( value ) );
     }
 
     private static Value resolveCoreValue( final JsonNode value )

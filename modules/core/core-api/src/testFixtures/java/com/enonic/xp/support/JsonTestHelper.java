@@ -3,8 +3,6 @@ package com.enonic.xp.support;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -80,9 +78,7 @@ public class JsonTestHelper
     {
         try
         {
-            final JsonFactory factory = MAPPER.getFactory();
-            final JsonParser parser = factory.createParser( jsonString );
-            return parser.readValueAsTree();
+            return MAPPER.readTree( jsonString );
         }
         catch ( IOException e )
         {

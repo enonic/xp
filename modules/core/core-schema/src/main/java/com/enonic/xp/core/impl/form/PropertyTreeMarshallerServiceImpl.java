@@ -28,16 +28,17 @@ public class PropertyTreeMarshallerServiceImpl
         this.mixinService = mixinService;
     }
 
+
     @Override
     public PropertyTree marshal( final Map<String, ?> values )
     {
-        return marshal( values, Form.create().build(), false );
+        return marshal( values, null, false );
     }
 
     @Override
     public PropertyTree marshal( final Map<String, ?> values, final Form form, final boolean strict )
     {
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( form ), strict ).
+        return new FormJsonToPropertyTreeTranslator( form != null ? inlineMixins( form ) : null, strict ).
             translate( MAPPER.valueToTree( values ) );
     }
 

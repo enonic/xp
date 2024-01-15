@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
@@ -45,10 +46,109 @@ public final class PropertyTree
         root = source.copy( this );
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Map<String, Object> toMap()
     {
         return root.toMap();
+    }
+
+    public static PropertyTree fromMap( final Map<String, Object> map )
+    {
+        final PropertyTree propertyTree = new PropertyTree();
+        traverse( map, propertyTree.getRoot() );
+        return propertyTree;
+    }
+
+    private static void traverse( final Map<String, Object> json, final PropertySet parent )
+    {
+
+        for ( final Map.Entry<String, Object> next :  json.entrySet() )
+        {
+            addValue( parent, next.getKey(), next.getValue() );
+        }
+    }
+
+    private static void addValue( final PropertySet parent, final String key, final Object value )
+    {
+        if ( value instanceof Collection )
+        {
+            for ( final Object objNode : (Collection) value )
+            {
+                addValue( parent, key, objNode );
+            }
+        }
+        else if ( value instanceof Map )
+        {
+            final PropertySet parentSet = parent.addSet( key );
+            ((Map<String, ?>) value ).entrySet().forEach( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
+        }
+        else
+        {
+            parent.addProperty( key, resolveCoreValue( value ) );
+        }
+    }
+
+    private static Value resolveCoreValue( final Object value )
+    {
+        if ( value instanceof Instant )
+        {
+            return ValueFactory.newDateTime( (Instant) value );
+        }
+        else if ( value instanceof GeoPoint )
+        {
+            return ValueFactory.newGeoPoint( (GeoPoint) value );
+        }
+        else if ( value instanceof Double )
+        {
+            return ValueFactory.newDouble( (Double) value );
+        }
+        else if ( value instanceof Float )
+        {
+            return ValueFactory.newDouble( ( (Float) value ).doubleValue() );
+        }
+        else if ( value instanceof Integer )
+        {
+            return ValueFactory.newLong( ( (Integer) value ).longValue() );
+        }
+        else if ( value instanceof Byte )
+        {
+            return ValueFactory.newLong( ( (Byte) value ).longValue() );
+        }
+        else if ( value instanceof Long )
+        {
+            return ValueFactory.newLong( (Long) value );
+        }
+        else if ( value instanceof Number )
+        {
+            return ValueFactory.newDouble( ( (Number) value ).doubleValue() );
+        }
+        else if ( value instanceof Boolean )
+        {
+            return ValueFactory.newBoolean( (Boolean) value );
+        }
+        else if ( value instanceof LocalDateTime )
+        {
+            return ValueFactory.newLocalDateTime( (LocalDateTime) value );
+        }
+        else if ( value instanceof LocalDate )
+        {
+            return ValueFactory.newLocalDate( (LocalDate) value );
+        }
+        else if ( value instanceof LocalTime )
+        {
+            return ValueFactory.newLocalTime( (LocalTime) value );
+        }
+        else if ( value instanceof Date )
+        {
+            return ValueFactory.newDateTime( ( (Date) value ).toInstant() );
+        }
+        else if ( value instanceof Reference )
+        {
+            return ValueFactory.newReference( (Reference) value );
+        }
+        else
+        {
+            return ValueFactory.newString( value.toString() );
+        }
     }
 
     @Override

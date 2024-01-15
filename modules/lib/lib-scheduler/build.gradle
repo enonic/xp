@@ -4,5 +4,4 @@ dependencies {
     implementation project( ':lib:lib-common' )
 
     testImplementation project( ':tools:testing' )
-    testImplementation( testFixtures( project( ':core:core-schema' ) ) )
 }

@@ -65,4 +65,8 @@ public final class IndexMapping
         return this.jsonNode.toString();
     }
 
+    public Map<String, Object> asMap()
+    {
+        return JsonHelper.toMap(this.jsonNode);
+    }
 }

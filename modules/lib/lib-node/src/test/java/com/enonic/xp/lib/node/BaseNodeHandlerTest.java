@@ -2,8 +2,6 @@ package com.enonic.xp.lib.node;
 
 import java.time.Instant;
 
-import org.mockito.Mockito;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertySet;
@@ -23,6 +21,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.mockito.Mockito.mock;
+
 public class BaseNodeHandlerTest
     extends ScriptTestSupport
 {
@@ -38,9 +38,9 @@ public class BaseNodeHandlerTest
     {
         super.initialize();
 
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeService = Mockito.mock( NodeService.class );
-        this.securityService = Mockito.mock( SecurityService.class );
+        this.repositoryService = mock( RepositoryService.class );
+        this.nodeService = mock( NodeService.class );
+        this.securityService = mock( SecurityService.class );
 
         addService( NodeService.class, this.nodeService );
         addService( RepositoryService.class, this.repositoryService );

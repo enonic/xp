@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,7 +60,6 @@ public final class PropertySet
         return property;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Map<String, Object> toMap()
     {
         final LinkedHashMap<String, Object> map = new LinkedHashMap<>( propertyArrayByName.size() * 2 );
@@ -75,7 +73,7 @@ public final class PropertySet
                 final Value value = property.getValue();
                 if ( value.isPropertySet() )
                 {
-                    setMapValue( map, name, value.asData() == null ? new HashMap<>() : value.asData().toMap() );
+                    setMapValue( map, name, value.asData() == null ? new LinkedHashMap<>() : value.asData().toMap() );
                 }
                 else
                 {

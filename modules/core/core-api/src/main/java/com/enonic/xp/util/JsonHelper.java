@@ -19,6 +19,10 @@ public final class JsonHelper
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
         enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );
 
+    private JsonHelper()
+    {
+    }
+
     public static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
     {
         Iterator<String> fieldNames = updateNode.fieldNames();
@@ -83,5 +87,10 @@ public final class JsonHelper
         {
             throw new IllegalArgumentException( "Cannot serialize settings from string [" + json + "]", e );
         }
+    }
+
+    public static Map<String, Object> toMap( JsonNode jsonNode )
+    {
+        return MAPPER.convertValue( jsonNode, Map.class );
     }
 }

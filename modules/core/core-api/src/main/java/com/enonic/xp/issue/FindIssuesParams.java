@@ -1,7 +1,5 @@
 package com.enonic.xp.issue;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.enonic.xp.content.ContentIds;
 
 public final class FindIssuesParams
@@ -61,7 +59,6 @@ public final class FindIssuesParams
         return size;
     }
 
-    @JsonIgnore
     public ContentIds getItems()
     {
         return items;

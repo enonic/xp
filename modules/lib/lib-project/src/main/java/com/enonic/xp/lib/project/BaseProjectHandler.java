@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.script.ScriptValue;
@@ -25,9 +24,6 @@ public abstract class BaseProjectHandler
     protected Supplier<ContentService> contentService;
 
     protected Supplier<ProjectService> projectService;
-
-    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerService;
-
 
     public final Object execute()
     {
@@ -90,7 +86,7 @@ public abstract class BaseProjectHandler
             final Map<String, Object> config =
                 Optional.ofNullable( configValue.getMember( "config" ) ).map( ScriptValue::getMap ).orElse( null );
 
-            final PropertyTree siteConfig = propertyTreeMarshallerService.get().marshal( config );
+            final PropertyTree siteConfig = config != null ? PropertyTree.fromMap( config ) : new PropertyTree();
 
             return SiteConfig.create().config( siteConfig ).application( applicationKey ).build();
 
@@ -102,6 +98,5 @@ public abstract class BaseProjectHandler
     {
         this.contentService = context.getService( ContentService.class );
         this.projectService = context.getService( ProjectService.class );
-        this.propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class );
     }
 }

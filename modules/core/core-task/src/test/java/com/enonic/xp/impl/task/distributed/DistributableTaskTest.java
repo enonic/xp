@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -108,7 +107,7 @@ class DistributableTaskTest
 
         when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
         when(
-            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), eq( true ) ) ).thenReturn(
             config );
 
         final DistributableTask describedTask = new DistributableTask( descriptorKey, null, config, TEST_TASK_CONTEXT );
@@ -130,7 +129,7 @@ class DistributableTaskTest
 
         when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
         when(
-            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), eq( true ) ) ).thenReturn(
             config );
 
         final DistributableTask describedTask = new DistributableTask( descriptorKey, "name", config, TEST_TASK_CONTEXT );
@@ -155,7 +154,7 @@ class DistributableTaskTest
 
         when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
         when(
-            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), eq( true ) ) ).thenReturn(
             config );
 
         final DistributableTask describedTask = new DistributableTask( descriptorKey, null, config, TEST_TASK_CONTEXT );
@@ -178,7 +177,7 @@ class DistributableTaskTest
 
         when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
         when(
-            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), eq( true ) ) ).thenReturn(
             config );
 
         final DistributableTask describedTask = new DistributableTask( descriptorKey, "name", config, TEST_TASK_CONTEXT );

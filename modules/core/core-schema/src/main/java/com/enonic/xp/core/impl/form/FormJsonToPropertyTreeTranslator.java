@@ -32,7 +32,7 @@ public final class FormJsonToPropertyTreeTranslator
 
     public FormJsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
-        this.form = form != null ? form : Form.create().build();
+        this.form = form;
         this.strictMode = strict;
         this.propertyTree = new PropertyTree();
         this.inputTypeResolver = InputTypes.BUILTIN;
@@ -172,17 +172,17 @@ public final class FormJsonToPropertyTreeTranslator
 
     private boolean hasInput( final Property parentProperty, final String key )
     {
-        return this.form.getFormItem( resolveInputPath( key, parentProperty ) ) instanceof Input;
+        return form != null && form.getFormItem( resolveInputPath( key, parentProperty ) ) instanceof Input;
     }
 
     private Input getInput( final Property parentProperty, final String key )
     {
-        return this.form.getInput( resolveInputPath( key, parentProperty ), true );
+        return form == null ? null : form.getInput( resolveInputPath( key, parentProperty ), true );
     }
 
     private boolean isOptionSetSelection( final String key, final Property parentProperty )
     {
-        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem(
+        return form != null && OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && form.getFormItem(
             resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) instanceof FormOptionSet;
     }
 

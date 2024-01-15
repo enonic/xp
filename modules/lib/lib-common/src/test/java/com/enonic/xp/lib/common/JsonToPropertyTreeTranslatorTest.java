@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,7 +25,7 @@ public class JsonToPropertyTreeTranslatorTest
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
+        final PropertyTree data = PropertyTree.fromMap(JsonHelper.toMap( node ) );
 
         final Property media = data.getProperty( "media" );
         assertNotNull( media );
@@ -37,7 +38,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "stringArray" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
+        final PropertyTree data = PropertyTree.fromMap( JsonHelper.toMap( node ) );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );
@@ -59,7 +60,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
+        final PropertyTree data = PropertyTree.fromMap( JsonHelper.toMap( node ) );
 
         final Property property = data.getProperty( "checkbox" );
 

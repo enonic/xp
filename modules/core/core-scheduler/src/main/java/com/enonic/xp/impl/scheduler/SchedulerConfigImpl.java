@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.HashMap;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -13,12 +13,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
@@ -36,19 +38,16 @@ public class SchedulerConfigImpl
 
     private static final Pattern JOB_PROPERTY_PATTERN = Pattern.compile( "^(?<property>[a-zA-Z]+)$" );
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    private final PropertyTreeMarshallerService treeMarshallerService;
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private final CalendarService calendarService;
 
     private Configuration config;
 
     @Activate
-    public SchedulerConfigImpl( final Map<String, String> map, @Reference final PropertyTreeMarshallerService treeMarshallerService,
+    public SchedulerConfigImpl( final Map<String, String> map,
                                 @Reference final CalendarService calendarService )
     {
-        this.treeMarshallerService = treeMarshallerService;
         this.calendarService = calendarService;
 
         this.config = ConfigBuilder.create().
@@ -121,11 +120,13 @@ public class SchedulerConfigImpl
                     case ScheduledJobPropertyNames.CONFIG:
                         try
                         {
-                            job.config( treeMarshallerService.marshal( MAPPER.readValue( value, HashMap.class ) ) );
+                            job.config( PropertyTree.fromMap( MAPPER.readValue( value, new TypeReference<>()
+                            {
+                            } ) ) );
                         }
                         catch ( JsonProcessingException e )
                         {
-                            throw new RuntimeException( e );
+                            throw new UncheckedIOException( e );
                         }
                         break;
                     case ScheduledJobPropertyNames.CALENDAR_TIMEZONE:

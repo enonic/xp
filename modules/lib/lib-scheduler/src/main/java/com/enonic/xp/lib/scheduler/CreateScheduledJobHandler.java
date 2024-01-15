@@ -84,8 +84,7 @@ public final class CreateScheduledJobHandler
 
     public void setConfig( final ScriptValue value )
     {
-        this.config =
-            propertyTreeMarshallerService.get().marshal( Optional.ofNullable( value ).map( ScriptValue::getMap ).orElse( Map.of() ) );
+        this.config = value != null ? PropertyTree.fromMap( value.getMap() ) : new PropertyTree();
     }
 
     public void setEnabled( final boolean value )

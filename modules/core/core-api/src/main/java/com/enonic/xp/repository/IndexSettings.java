@@ -84,4 +84,8 @@ public final class IndexSettings
         return this.jsonNode.toString();
     }
 
+    public Map<String, Object> asMap()
+    {
+        return JsonHelper.toMap(this.jsonNode);
+    }
 }

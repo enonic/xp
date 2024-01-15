@@ -2,6 +2,7 @@ package com.enonic.xp.json;
 
 import java.text.SimpleDateFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.data.PropertyValueJson;
+import com.enonic.xp.issue.FindIssuesParams;
 
 @Deprecated
 public final class ObjectMapperHelper
@@ -24,11 +27,17 @@ public final class ObjectMapperHelper
         mapper.serializationInclusion( JsonInclude.Include.ALWAYS );
         mapper.addModule( new JavaTimeModule() );
         mapper.addMixIn( PropertyValueJson.class, JsonIncludeNonNull.class );
+        mapper.addMixIn( FindIssuesParams.class, FindIssuesParamsMixin.class );
         return mapper.build();
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private static class JsonIncludeNonNull
+    private interface JsonIncludeNonNull
     {
+    }
+
+    private interface FindIssuesParamsMixin {
+        @JsonIgnore
+        ContentIds getItems();
     }
 }

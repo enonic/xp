@@ -12,8 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
@@ -24,7 +22,6 @@ import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -37,8 +34,6 @@ public abstract class BaseScheduledJobHandlerTest
     protected SchedulerService schedulerService;
 
     protected CalendarService calendarService;
-
-    protected PropertyTreeMarshallerService propertyTreeMarshallerService;
 
     private Map<ScheduledJobName, ScheduledJob> jobs;
 
@@ -166,11 +161,9 @@ public abstract class BaseScheduledJobHandlerTest
 
         this.schedulerService = Mockito.mock( SchedulerService.class );
         this.calendarService = Mockito.mock( CalendarService.class );
-        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance( Mockito.mock( MixinService.class ) );
 
         addService( CalendarService.class, this.calendarService );
         addService( SchedulerService.class, this.schedulerService );
-        addService( PropertyTreeMarshallerService.class, this.propertyTreeMarshallerService );
 
         mockJob();
     }

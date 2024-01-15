@@ -1,11 +1,8 @@
 package com.enonic.xp.lib.repo.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
@@ -30,7 +27,7 @@ public class RepositoryMapper
         gen.value( "id", repository.getId() );
         serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
-        serialize( gen, repository.getData() );
+        serialize( gen,"data", repository.getData() );
     }
 
     private void serialize( final MapGenerator gen, final Branches branches )
@@ -47,9 +44,9 @@ public class RepositoryMapper
         gen.end();
     }
 
-    private void serialize( final MapGenerator gen, final PropertyTree repositoryData )
+    private void serialize( final MapGenerator gen, final String rootElement, final PropertyTree repositoryData )
     {
-        gen.map( "data" );
+        gen.map( rootElement );
         new PropertyTreeMapper( repositoryData ).serialize( gen );
         gen.end();
     }
@@ -68,17 +65,13 @@ public class RepositoryMapper
 
                     if ( indexDefinition.getSettings() != null )
                     {
-                        gen.map( "settings" );
-                        serialize( gen, indexDefinition.getSettings().getNode() );
-                        gen.end();
+                        serialize( gen, "settings",PropertyTree.fromMap( indexDefinition.getSettings().asMap() ) );
                     }
 
                     if ( indexDefinition.getMapping() != null )
                     {
 
-                        gen.map( "mapping" );
-                        serialize( gen, indexDefinition.getMapping().getNode() );
-                        gen.end();
+                        serialize( gen, "mapping",PropertyTree.fromMap(indexDefinition.getMapping().asMap()) );
                     }
 
                     gen.end();
@@ -86,10 +79,5 @@ public class RepositoryMapper
             }
             gen.end();
         }
-    }
-
-    private void serialize( final MapGenerator gen, final JsonNode jsonNode )
-    {
-        new PropertyTreeMapper( JsonToPropertyTreeTranslator.translate( jsonNode ) ).serialize( gen );
     }
 }

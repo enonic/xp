@@ -4,18 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 public final class LogArgConverter
 {
-    private final ObjectMapper mapper;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private final ObjectConverter converter;
 
     public LogArgConverter( final ObjectConverter converter )
     {
-        this.mapper = new ObjectMapper();
-        this.mapper.disable( SerializationFeature.INDENT_OUTPUT );
         this.converter = converter;
     }
 
