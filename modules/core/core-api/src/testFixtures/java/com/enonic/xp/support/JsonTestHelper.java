@@ -2,6 +2,7 @@ package com.enonic.xp.support;
 
 
 import java.io.IOException;
+import java.net.URL;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.enonic.xp.json.ObjectMapperHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonTestHelper
 {
@@ -89,5 +91,15 @@ public class JsonTestHelper
     public void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
     {
         assertEquals( jsonToString( expectedJson ), jsonToString( actualJson ) );
+    }
+
+    public static JsonNode loadJson( final Class<?> clazz, final String name )
+        throws Exception
+    {
+        final String resource = "/" + clazz.getName().replace( '.', '/' ) + "-" + name + ".json";
+        final URL url = clazz.getResource( resource );
+
+        assertNotNull( url, "File [" + resource + "] not found" );
+        return MAPPER.readTree( url );
     }
 }

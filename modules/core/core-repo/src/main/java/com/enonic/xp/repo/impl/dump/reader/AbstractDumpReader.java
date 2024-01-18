@@ -38,7 +38,7 @@ import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
@@ -215,7 +215,7 @@ public abstract class AbstractDumpReader
     {
         try (InputStream stream = openMetaFileStream( filePaths.metaDataFile() ))
         {
-            return new DumpMetaJsonSerializer().toDumpMeta( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
+            return new JsonDumpSerializer().toDumpMeta( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
         }
         catch ( IOException e )
         {

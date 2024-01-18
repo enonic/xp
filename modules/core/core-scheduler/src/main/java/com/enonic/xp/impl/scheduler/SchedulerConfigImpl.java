@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -12,21 +11,17 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.JsonHelper;
 
 @Component(configurationPid = "com.enonic.xp.scheduler")
 public class SchedulerConfigImpl
@@ -37,8 +32,6 @@ public class SchedulerConfigImpl
     private static final Pattern JOB_NAME_PATTERN = Pattern.compile( "^(?<name>[\\w\\-]+)\\.[\\w]+$" );
 
     private static final Pattern JOB_PROPERTY_PATTERN = Pattern.compile( "^(?<property>[a-zA-Z]+)$" );
-
-    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private final CalendarService calendarService;
 
@@ -118,16 +111,7 @@ public class SchedulerConfigImpl
                         job.user( PrincipalKey.from( "user:" + value ) );
                         break;
                     case ScheduledJobPropertyNames.CONFIG:
-                        try
-                        {
-                            job.config( PropertyTree.fromMap( MAPPER.readValue( value, new TypeReference<>()
-                            {
-                            } ) ) );
-                        }
-                        catch ( JsonProcessingException e )
-                        {
-                            throw new UncheckedIOException( e );
-                        }
+                            job.config( PropertyTree.fromMap( JsonHelper.toMap( value ) ) );
                         break;
                     case ScheduledJobPropertyNames.CALENDAR_TIMEZONE:
                         timeZone = TimeZone.getTimeZone( value );

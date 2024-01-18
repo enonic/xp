@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.hazelcast.cluster.ClusterState;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
@@ -71,16 +70,5 @@ class HazelcastClusterReporterTest
             new LinkedHashSet<>( List.of( member1, member2 ) ) ); //hazelcast always returns master first
 
         assertJson( "hazelcast_cluster.json", hazelcastClusterReporter.getReport() );
-    }
-
-    private void assertJson( final String fileName, final JsonNode actualJson )
-        throws Exception
-    {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
-
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualJson );
-
-        assertEquals( expectedStr, actualStr );
     }
 }

@@ -1,24 +1,21 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
-import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDataUpgrader;
+import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FlattenedPageDataUpgraderTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Test
     public void testPageFlattened()
         throws Exception
@@ -53,10 +50,10 @@ public class FlattenedPageDataUpgraderTest
         final JsonNode oldPageComponents = loadJson( oldJsonFile );
         final JsonNode newPageComponents = loadJson( newJsonFile );
 
-        final PropertyTree oldData = new JsonToPropertyTreeTranslator().translate( oldPageComponents );
-        final PropertyTree newData = new JsonToPropertyTreeTranslator().translate( newPageComponents );
+        final PropertyTree oldData = PropertyTree.fromMap(  JsonHelper.toMap( oldPageComponents ) );
+        final PropertyTree newData = PropertyTree.fromMap( JsonHelper.toMap( newPageComponents )  );
 
-        final HashMap<String, String> templateControllerMap = new HashMap<>();
+        final Map<String, String> templateControllerMap = new HashMap<>();
         templateControllerMap.put( "templateId", "com.enonic.app.features:main" );
         FlattenedPageDataUpgrader.create().
             templateControllerMap( templateControllerMap ).
@@ -70,10 +67,6 @@ public class FlattenedPageDataUpgraderTest
     private JsonNode loadJson( final String name )
         throws Exception
     {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        return MAPPER.readTree( url );
+        return JsonTestHelper.loadJson( getClass(), name );
     }
 }

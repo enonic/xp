@@ -1,15 +1,13 @@
 package com.enonic.xp.lib.common;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonToPropertyTreeTranslatorTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Test
     public void all_input_types()
         throws Exception
@@ -72,11 +68,7 @@ public class JsonToPropertyTreeTranslatorTest
     private JsonNode loadJson( final String name )
         throws Exception
     {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        return MAPPER.readTree( url );
+        return JsonTestHelper.loadJson( getClass(), name );
     }
 }
 

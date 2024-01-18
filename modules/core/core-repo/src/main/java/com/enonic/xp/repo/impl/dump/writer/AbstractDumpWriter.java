@@ -23,7 +23,6 @@ import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
-import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -56,7 +55,7 @@ public abstract class AbstractDumpWriter
 
         try (OutputStream outputStream = openMetaFileStream( dumpMetaFile ))
         {
-            outputStream.write( new DumpMetaJsonSerializer().serialize( dumpMeta ) );
+            outputStream.write( serializer.serialize( dumpMeta ) );
         }
         catch ( IOException e )
         {

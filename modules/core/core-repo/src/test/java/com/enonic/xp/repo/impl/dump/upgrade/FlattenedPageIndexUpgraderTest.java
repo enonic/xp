@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,9 @@ import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageIndexUpgrader;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FlattenedPageIndexUpgraderTest
 {
@@ -84,10 +83,6 @@ public class FlattenedPageIndexUpgraderTest
     private JsonNode loadJson( final String name )
         throws Exception
     {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        return MAPPER.readTree( url );
+        return JsonTestHelper.loadJson( getClass(), name );
     }
 }

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.IMap;
@@ -101,16 +100,5 @@ class HazelcastObjectsReporterTest
             List.of( map, queue, scheduledExecutorService, executorService, topic, lock ) );
 
         assertJson( "hazelcast_objects.json", hazelcastClusterReporter.getReport() );
-    }
-
-    private void assertJson( final String fileName, final JsonNode actualJson )
-        throws Exception
-    {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
-
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualJson );
-
-        assertEquals( expectedStr, actualStr );
     }
 }

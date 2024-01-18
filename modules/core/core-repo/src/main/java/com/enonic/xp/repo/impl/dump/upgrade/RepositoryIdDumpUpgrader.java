@@ -20,7 +20,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6.Pre6VersionDumpEntryJson;
@@ -164,7 +164,7 @@ public class RepositoryIdDumpUpgrader
 
         try
         {
-            Files.write( dumpMetaFile, new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ) );
+            Files.write( dumpMetaFile, new JsonDumpSerializer().serialize( upgradedDumpMeta ) );
         }
         catch ( IOException e )
         {

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 
 public class ResolveSyncWorkResultMapperTest
     extends BaseMapperTest
@@ -20,9 +19,6 @@ public class ResolveSyncWorkResultMapperTest
             add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.NEWER ) ).
             build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new ResolveSyncWorkResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "resolveSyncWork/full.json", jsonGenerator );
+        assertJson( "full", new ResolveSyncWorkResultMapper( result ) );
     }
 }

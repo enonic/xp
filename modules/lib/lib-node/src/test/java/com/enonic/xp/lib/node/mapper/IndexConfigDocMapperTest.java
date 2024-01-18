@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 
 public class IndexConfigDocMapperTest
     extends BaseMapperTest
@@ -28,9 +27,6 @@ public class IndexConfigDocMapperTest
             add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
             build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new IndexConfigDocMapper( doc ).serialize( jsonGenerator );
-
-        assertJson( "index_config_full.json", jsonGenerator );
+        assertJson( "index_config_full", new IndexConfigDocMapper( doc ) );
     }
 }

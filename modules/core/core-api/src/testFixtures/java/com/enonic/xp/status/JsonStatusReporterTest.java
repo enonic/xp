@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.json.ObjectMapperHelper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public abstract class JsonStatusReporterTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
@@ -40,5 +42,16 @@ public abstract class JsonStatusReporterTest
         throws Exception
     {
         return OBJECT_WRITER.writeValueAsString( value );
+    }
+
+    protected void assertJson( final String fileName, final JsonNode actualNode )
+        throws Exception
+    {
+        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+
+        final String expectedStr = toJson( expectedNode );
+        final String actualStr = toJson( actualNode );
+
+        assertEquals( expectedStr, actualStr );
     }
 }

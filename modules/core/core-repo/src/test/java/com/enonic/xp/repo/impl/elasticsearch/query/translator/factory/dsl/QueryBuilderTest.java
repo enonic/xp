@@ -5,32 +5,17 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.util.JsonHelper;
 
 public abstract class QueryBuilderTest
 {
-    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
-
     private final JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     protected PropertyTree readJson( final String value )
     {
-        try
-        {
-            return PropertyTree.fromMap( MAPPER.readValue( value, new TypeReference<>()
-            {
-            } ) );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return PropertyTree.fromMap( JsonHelper.toMap( value ) );
     }
 
     protected final String load( final String name )

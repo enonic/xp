@@ -171,14 +171,5 @@ public class ElasticsearchClusterReporterTest
     }
 
 
-    private void assertJson( final String fileName, final JsonNode actualNode )
-        throws Exception
-    {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
 
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualNode );
-
-        assertEquals( expectedStr, actualStr );
-    }
 }

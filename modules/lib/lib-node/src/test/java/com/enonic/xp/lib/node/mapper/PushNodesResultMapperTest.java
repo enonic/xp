@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 
 public class PushNodesResultMapperTest
     extends BaseMapperTest
@@ -15,10 +14,7 @@ public class PushNodesResultMapperTest
     {
         final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/single_successful.json", jsonGenerator );
+        assertJson( "single_successful", new PushNodesResultMapper( result ) );
     }
 
     @Test
@@ -29,10 +25,7 @@ public class PushNodesResultMapperTest
             addFailed( createEntry( "a" ), PushNodesResult.Reason.ACCESS_DENIED ).
             build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/single_failed.json", jsonGenerator );
+        assertJson( "single_failed", new PushNodesResultMapper( result ) );
     }
 
     @Test
@@ -48,10 +41,7 @@ public class PushNodesResultMapperTest
             .addFailed( createEntry( "f" ), PushNodesResult.Reason.PARENT_NOT_FOUND )
             .build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/full.json", jsonGenerator );
+        assertJson( "full", new PushNodesResultMapper( result ) );
     }
 
 }

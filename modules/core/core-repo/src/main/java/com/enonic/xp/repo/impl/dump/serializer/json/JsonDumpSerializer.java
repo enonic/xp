@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 
@@ -56,6 +57,19 @@ public class JsonDumpSerializer
     }
 
     @Override
+    public byte[] serialize( final DumpMeta dumpMeta )
+    {
+        try
+        {
+            return MAPPER.writeValueAsBytes( DumpMetaJson.from( dumpMeta ) );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new RepoDumpException( "Cannot serializer dumpEntry", e );
+        }
+    }
+
+    @Override
     public BranchDumpEntry toBranchMetaEntry( final String value )
     {
         try
@@ -94,6 +108,19 @@ public class JsonDumpSerializer
         catch ( IOException e )
         {
             throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpEntry", e );
+        }
+    }
+
+    public DumpMeta toDumpMeta( final String value )
+    {
+        try
+        {
+            final DumpMetaJson dumpMetaJson = MAPPER.readValue( value, DumpMetaJson.class );
+            return DumpMetaJson.fromJson( dumpMetaJson );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpMeta", e );
         }
     }
 }

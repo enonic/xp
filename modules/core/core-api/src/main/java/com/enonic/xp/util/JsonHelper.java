@@ -1,10 +1,13 @@
 package com.enonic.xp.util;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -93,4 +96,19 @@ public final class JsonHelper
     {
         return MAPPER.convertValue( jsonNode, Map.class );
     }
+
+    public static Map<String, Object> toMap( String json )
+    {
+        try
+        {
+            return MAPPER.readValue( json, new TypeReference<>()
+            {
+            } );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
 }
