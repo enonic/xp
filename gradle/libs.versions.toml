@@ -5,7 +5,7 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.10.1" }
 junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", version = "5.10.1" }
 
-mockito-core = { module = "org.mockito:mockito-core", version = "5.8.0" }
+mockito-core = { module = "org.mockito:mockito-core", version = "5.9.0" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version = "5.8.0" }
 
 equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.15.6" }
