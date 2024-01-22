@@ -18,7 +18,7 @@ mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "1.
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.36" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version = "1.7.36" }
-slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "1.7.36" }
+slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "2.0.11" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version = "1.7.36" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version = "1.7.36" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.5.3.Final" }
