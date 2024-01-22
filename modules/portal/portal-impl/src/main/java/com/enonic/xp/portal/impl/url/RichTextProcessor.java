@@ -213,12 +213,11 @@ public class RichTextProcessor
         }
 
         ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
-        ImageUrlParams imageUrlParams = new ImageUrlParams().
-            type( params.getType() ).
-            id( id ).
-            scale( getScale( imageStyle, urlParams, null ) ).
-            filter( getFilter( imageStyle ) ).
-            portalRequest( params.getPortalRequest() );
+        ImageUrlParams imageUrlParams = new ImageUrlParams().type( params.getType() )
+            .id( id )
+            .scale( getScale( imageStyle, urlParams, null ) )
+            .filter( getFilter( imageStyle ) )
+            .portalRequest( params.getPortalRequest() );
 
         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
@@ -229,12 +228,11 @@ public class RichTextProcessor
             if ( params.getImageWidths() != null )
             {
                 final String srcsetValues = params.getImageWidths().stream().map( imageWidth -> {
-                    final ImageUrlParams imageParams = new ImageUrlParams().
-                        type( params.getType() ).
-                        id( id ).
-                        scale( getScale( imageStyle, urlParams, imageWidth ) ).
-                        filter( getFilter( imageStyle ) ).
-                        portalRequest( params.getPortalRequest() );
+                    final ImageUrlParams imageParams = new ImageUrlParams().type( params.getType() )
+                        .id( id )
+                        .scale( getScale( imageStyle, urlParams, imageWidth ) )
+                        .filter( getFilter( imageStyle ) )
+                        .portalRequest( params.getPortalRequest() );
 
                     return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
                 } ).collect( Collectors.joining( "," ) );

@@ -35,7 +35,6 @@ import static org.mockito.Mockito.when;
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest
 {
-
     @Test
     public void process_empty_value()
     {
