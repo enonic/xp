@@ -119,7 +119,7 @@ jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "9.4.53.v2023100
 jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version = "9.4.53.v20231009" }
 jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version = "9.4.53.v20231009" }
 jetty-websocket-serverimpl = { module = "org.eclipse.jetty.websocket:javax-websocket-server-impl", version = "9.4.53.v20231009" }
-jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version = "9.4.53.v20231009" }
+jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version = "12.0.5" }
 jetty-client = { module = "org.eclipse.jetty:jetty-client", version = "9.4.53.v20231009" }
 
 [plugins]
