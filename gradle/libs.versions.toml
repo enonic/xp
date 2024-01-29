@@ -102,7 +102,7 @@ metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.2
 metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.23" }
 metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.23" }
 metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.23" }
-metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.23" }
+metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.25" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
 hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
