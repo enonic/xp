@@ -10,11 +10,7 @@ let importNodes = exportLib.importNodes({
     xslt: 'transform.xslt',
     xsltParams: {'k': 'v'},
     includeNodeIds: true,
-    includePermissions: true,
-    nodeImported: (i) => {
-    },
-    nodeResolved: (i) => {
-    }
+    includePermissions: true
 });
 // END
 // BEGIN

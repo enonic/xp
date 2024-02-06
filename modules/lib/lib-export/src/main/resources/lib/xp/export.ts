@@ -30,8 +30,8 @@ export interface ImportNodesParams {
     xsltParams?: unknown;
     includeNodeIds?: boolean;
     includePermissions?: boolean;
-    nodeResolved: (numberOfNodes: number) => void;
-    nodeImported: (numberOfImportedNodes: number) => void;
+    nodeResolved?: (numberOfNodes: number) => void;
+    nodeImported?: (numberOfImportedNodes: number) => void;
 }
 
 export interface ImportNodesError {
@@ -120,8 +120,8 @@ export interface ExportNodesParams {
     exportName: string;
     includeNodeIds?: boolean;
     includeVersions?: boolean;
-    nodeResolved: (numberOfNodes: number) => void;
-    nodeExported: (numberOfExportedNodes: number) => void;
+    nodeResolved?: (numberOfNodes: number) => void;
+    nodeExported?: (numberOfExportedNodes: number) => void;
 }
 
 export interface ExportNodesError {
