@@ -8,11 +8,7 @@ let exportNodes = exportLib.exportNodes({
     sourceNodePath: '/content',
     exportName: 'export-1',
     includeNodeIds: true,
-    includeVersions: true,
-    nodeImported: (i) => {
-    },
-    nodeResolved: (i) => {
-    }
+    includeVersions: true
 });
 // END
 
