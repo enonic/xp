@@ -71,14 +71,16 @@ export function localize(params: LocalizeParams): string {
  *
  * @param {string|string[]} locale A string-representation of a locale, or an array of locales in preferred order.
  * @param {string[]} bundles List of bundle names.  Bundle names are specified as paths, relative to the `src/main/resources` folder.
+ * @param {string} [application] Application key where to find resource bundles. Defaults to current application.
  *
  * @returns {object} An object of all phrases.
  *
  * @example
  * i18nLib.getPhrases('en', ['i18n/phrases'])
  */
-export function getPhrases(locale: string | string[], bundles: string[]): Record<string, string> {
+export function getPhrases(locale: string | string[], bundles: string[], application?: string): Record<string, string> {
     const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    bean.setApplication(__.nullOrValue(application));
     const locales: string[] = ([] as string[]).concat(locale);
     return __.toNativeObject(bean.getPhrases(locales, bundles));
 }
@@ -87,10 +89,12 @@ export function getPhrases(locale: string | string[], bundles: string[]): Record
  * This function returns the list of supported locale codes for the specified bundles.
  *
  * @param {string[]} bundles List of bundle names.
+ * @param {string} application Application key where to find resource bundles. Defaults to current application.
  *
  * @returns {string[]} A list of supported locale codes for the specified bundles.
  */
-export function getSupportedLocales(bundles: string[]): string[] {
+export function getSupportedLocales(bundles: string[], application?: string): string[] {
     const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    bean.setApplication(__.nullOrValue(application));
     return __.toNativeObject(bean.getSupportedLocales(bundles));
 }

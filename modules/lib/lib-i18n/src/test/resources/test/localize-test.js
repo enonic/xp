@@ -42,7 +42,7 @@ exports.testGetPhrases = function () {
         'b': '2'
     };
 
-    var result = i18n.getPhrases('en', null);
+    var result = i18n.getPhrases('en', null, 'com.enonic.myapplication');
     t.assertJsonEquals(actual, result);
 };
 
