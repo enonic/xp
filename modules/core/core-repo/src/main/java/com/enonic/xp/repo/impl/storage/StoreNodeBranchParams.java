@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.time.Instant;
 
-import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 
-public final class StoreNodeVersionParams
+public final class StoreNodeBranchParams
 {
     private final NodeId nodeId;
 
@@ -16,20 +15,25 @@ public final class StoreNodeVersionParams
 
     private final Instant timestamp;
 
-    private final NodeVersion nodeVersion;
+    private final NodeVersionKey nodeVersionKey;
 
     private final NodeVersionId nodeVersionId;
 
-    private final NodeCommitId nodeCommitId;
+    private final NodePath previousPath;
 
-    private StoreNodeVersionParams( final Builder builder )
+    private StoreNodeBranchParams( final Builder builder )
     {
-        nodeVersion = builder.nodeVersion;
+        nodeVersionKey = builder.nodeVersionKey;
         timestamp = builder.timestamp;
         nodePath = builder.nodePath;
         nodeId = builder.nodeId;
         nodeVersionId = builder.nodeVersionId;
-        nodeCommitId = builder.nodeCommitId;
+        previousPath = builder.previousPath;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public NodeId getNodeId()
@@ -47,9 +51,9 @@ public final class StoreNodeVersionParams
         return timestamp;
     }
 
-    public NodeVersion getNodeVersion()
+    public NodeVersionKey getNodeVersionKey()
     {
-        return nodeVersion;
+        return nodeVersionKey;
     }
 
     public NodeVersionId getNodeVersionId()
@@ -57,20 +61,14 @@ public final class StoreNodeVersionParams
         return nodeVersionId;
     }
 
-    public NodeCommitId getNodeCommitId()
+    public NodePath getPreviousPath()
     {
-        return nodeCommitId;
+        return previousPath;
     }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
 
     public static final class Builder
     {
-        private NodeVersion nodeVersion;
+        private NodeVersionKey nodeVersionKey;
 
         private Instant timestamp;
 
@@ -80,15 +78,16 @@ public final class StoreNodeVersionParams
 
         private NodeVersionId nodeVersionId;
 
-        private NodeCommitId nodeCommitId;
+        private NodePath previousPath;
+
 
         private Builder()
         {
         }
 
-        public Builder nodeVersion( final NodeVersion val )
+        public Builder nodeVersionKey( final NodeVersionKey val )
         {
-            nodeVersion = val;
+            nodeVersionKey = val;
             return this;
         }
 
@@ -116,15 +115,15 @@ public final class StoreNodeVersionParams
             return this;
         }
 
-        public Builder nodeCommitId( final NodeCommitId val )
+        public Builder previousPath( final NodePath val )
         {
-            nodeCommitId = val;
+            previousPath = val;
             return this;
         }
 
-        public StoreNodeVersionParams build()
+        public StoreNodeBranchParams build()
         {
-            return new StoreNodeVersionParams( this );
+            return new StoreNodeBranchParams( this );
         }
     }
 }

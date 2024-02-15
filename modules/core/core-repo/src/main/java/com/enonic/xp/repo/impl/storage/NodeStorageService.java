@@ -29,9 +29,11 @@ public interface NodeStorageService
 
     Node store( StoreNodeParams params, InternalContext context );
 
-    void storeVersion( StoreNodeVersionParams params, InternalContext context );
+    NodeVersionKey storeVersion( StoreNodeVersionParams params, InternalContext context );
 
     void storeCommit( StoreNodeCommitParams params, InternalContext context );
+
+    void storeBranch( StoreNodeBranchParams params, InternalContext context );
 
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 

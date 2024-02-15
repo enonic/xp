@@ -131,7 +131,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
+    public NodeVersionKey storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
         final NodeVersionKey nodeVersionKey = this.nodeVersionService.store( params.getNodeVersion(), context );
 
@@ -144,6 +144,8 @@ public class NodeStorageServiceImpl
             nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
             build(), context );
+
+        return nodeVersionKey;
     }
 
     @Override
@@ -156,6 +158,18 @@ public class NodeStorageServiceImpl
             timestamp( params.getTimestamp() ).
             build();
         this.commitService.store( nodeCommitEntry, context );
+    }
+
+    @Override
+    public void storeBranch( final StoreNodeBranchParams params, final InternalContext context )
+    {
+        this.branchService.store( NodeBranchEntry.create()
+                                      .nodeId( params.getNodeId() )
+                                      .nodeVersionId( params.getNodeVersionId() )
+                                      .nodeVersionKey( params.getNodeVersionKey() )
+                                      .nodePath( params.getNodePath() )
+                                      .timestamp( params.getTimestamp() )
+                                      .build(), params.getPreviousPath(), context );
     }
 
     @Override
