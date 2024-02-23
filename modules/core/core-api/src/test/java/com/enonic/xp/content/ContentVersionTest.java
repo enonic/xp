@@ -14,7 +14,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentVersionTest
 {
@@ -63,7 +62,6 @@ public class ContentVersionTest
             .publishInfo( publishInfo )
             .workflowInfo( workflowInfo )
             .permissions( permissions )
-            .inheritPermissions( true )
             .build();
 
         assertEquals( ContentVersionId.from( "a" ), version.getId() );
@@ -77,7 +75,6 @@ public class ContentVersionTest
         assertEquals( ChildOrder.manualOrder(), version.getChildOrder() );
         assertEquals( permissions, version.getPermissions() );
         assertEquals( "/a", version.getPath().toString() );
-        assertTrue( version.isInheritPermissions() );
     }
 
     @Test

@@ -23,8 +23,6 @@ public class NodeVersion
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private final AttachedBinaries attachedBinaries;
 
     private NodeVersion( Builder builder )
@@ -36,7 +34,6 @@ public class NodeVersion
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
     }
 
@@ -50,7 +47,6 @@ public class NodeVersion
             childOrder( node.getChildOrder() ).
             manualOrderValue( node.getManualOrderValue() ).
             permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() ).
             attachedBinaries( node.getAttachedBinaries() ).
             build();
     }
@@ -90,11 +86,6 @@ public class NodeVersion
         return permissions;
     }
 
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public AttachedBinaries getAttachedBinaries()
     {
         return attachedBinaries;
@@ -127,8 +118,6 @@ public class NodeVersion
 
         private AccessControlList permissions;
 
-        private boolean inheritPermissions;
-
         private AttachedBinaries attachedBinaries;
 
         private Builder()
@@ -148,7 +137,6 @@ public class NodeVersion
             this.childOrder = nodeVersion.childOrder;
             this.manualOrderValue = nodeVersion.manualOrderValue;
             this.permissions = nodeVersion.permissions;
-            this.inheritPermissions = nodeVersion.inheritPermissions;
             this.attachedBinaries = nodeVersion.attachedBinaries;
         }
 
@@ -194,12 +182,6 @@ public class NodeVersion
             return this;
         }
 
-        public Builder inheritPermissions( boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
-            return this;
-        }
-
         public Builder attachedBinaries( AttachedBinaries attachedBinaries )
         {
             this.attachedBinaries = attachedBinaries;
@@ -227,10 +209,6 @@ public class NodeVersion
 
         final NodeVersion that = (NodeVersion) o;
 
-        if ( inheritPermissions != that.inheritPermissions )
-        {
-            return false;
-        }
         if ( id != null ? !id.equals( that.id ) : that.id != null )
         {
             return false;
@@ -273,7 +251,6 @@ public class NodeVersion
         result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
         result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
         result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
-        result = 31 * result + ( inheritPermissions ? 1 : 0 );
         result = 31 * result + ( attachedBinaries != null ? attachedBinaries.hashCode() : 0 );
         return result;
     }
@@ -289,7 +266,6 @@ public class NodeVersion
             ", childOrder=" + childOrder +
             ", manualOrderValue=" + manualOrderValue +
             ", permissions=" + permissions +
-            ", inheritPermissions=" + inheritPermissions +
             ", attachedBinaries=" + attachedBinaries +
             '}';
     }

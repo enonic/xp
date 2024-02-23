@@ -81,7 +81,6 @@ public class CreateNodeHandlerTest
             parentPath( new NodePath( "/parent" ) ).
             id( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
             data( data ).
-            inheritPermissions( true ).
             permissions( AccessControlList.create().
                 add( AccessControlEntry.create().
                     allowAll().

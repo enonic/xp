@@ -100,7 +100,6 @@ public class ImportNodeCommand
                 manualOrderValue( this.importNode.getManualOrderValue() ).
                 name( this.importNode.name().toString() ).
                 parent( this.importNode.parentPath() ).
-                inheritPermissions( !this.importPermissionsOnCreate || this.importNode.inheritsPermissions() ).
                 setNodeId( this.importNode.id() );
 
             if ( this.importPermissionsOnCreate )
@@ -130,7 +129,6 @@ public class ImportNodeCommand
                 editableNode.data = this.importNode.data();
                 if ( this.importPermissions )
                 {
-                    editableNode.inheritPermissions = this.importNode.inheritsPermissions();
                     editableNode.permissions = this.importNode.getPermissions();
                 }
             } ).build();

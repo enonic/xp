@@ -53,7 +53,6 @@ public final class NodeVersionJsonSerializer
 
         return NodeVersion.create( nodeVersion )
             .indexConfigDocument( indexConfigDocument )
-            .inheritPermissions( accessControl.isInheritPermissions() )
             .permissions( accessControl.getPermissions() )
             .build();
     }

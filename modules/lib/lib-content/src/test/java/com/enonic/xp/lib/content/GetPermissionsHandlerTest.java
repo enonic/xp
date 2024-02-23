@@ -21,7 +21,6 @@ public class GetPermissionsHandlerTest
 
         final Content content = TestDataFixtures.newExampleContentBuilder().
             permissions( acl ).
-            inheritPermissions( false ).
             build();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 

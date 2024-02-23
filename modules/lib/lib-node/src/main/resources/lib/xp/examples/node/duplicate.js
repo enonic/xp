@@ -23,7 +23,6 @@ var expectedJson = {
             "languages": []
         }, "configs": []
     },
-    "_inheritsPermissions": false,
     "_permissions": [{
         "principal": "role:system.admin",
         "allow": ["READ", "CREATE", "MODIFY", "DELETE", "PUBLISH", "READ_PERMISSIONS", "WRITE_PERMISSIONS"],

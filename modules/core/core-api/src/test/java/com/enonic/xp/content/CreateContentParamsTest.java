@@ -34,7 +34,6 @@ public class CreateContentParamsTest
             displayName( "displayName" ).
             extraDatas( ExtraDatas.empty() ).
             permissions( permissions ).
-            inheritPermissions( true ).
             language( Locale.forLanguageTag( "en" ) ).
             name( "name" ).
             owner( PrincipalKey.ofAnonymous() ).
@@ -49,7 +48,6 @@ public class CreateContentParamsTest
         assertEquals( "displayName", createContentParams.getDisplayName() );
         assertEquals( ExtraDatas.empty(), createContentParams.getExtraDatas() );
         assertEquals( permissions, createContentParams.getPermissions() );
-        assertEquals( true, createContentParams.isInheritPermissions() );
         assertEquals( Locale.forLanguageTag( "en" ), createContentParams.getLanguage() );
         assertEquals( "name", createContentParams.getName().toString() );
         assertEquals( PrincipalKey.ofAnonymous(), createContentParams.getOwner() );
@@ -71,7 +69,6 @@ public class CreateContentParamsTest
             displayName( "displayName" ).
             extraDatas( ExtraDatas.empty() ).
             permissions( permissions ).
-            inheritPermissions( true ).
             language( Locale.forLanguageTag( "en" ) ).
             name( ContentName.from( "name" ) ).
             owner( PrincipalKey.ofAnonymous() ).
@@ -88,7 +85,6 @@ public class CreateContentParamsTest
         assertEquals( "displayName", createContentParams.getDisplayName() );
         assertEquals( ExtraDatas.empty(), createContentParams.getExtraDatas() );
         assertEquals( permissions, createContentParams.getPermissions() );
-        assertEquals( true, createContentParams.isInheritPermissions() );
         assertEquals( Locale.forLanguageTag( "en" ), createContentParams.getLanguage() );
         assertEquals( "name", createContentParams.getName().toString() );
         assertEquals( PrincipalKey.ofAnonymous(), createContentParams.getOwner() );

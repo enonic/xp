@@ -73,8 +73,6 @@ public class Content
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private final Set<ContentInheritType> inherit;
 
     private final ProjectName originProject;
@@ -121,7 +119,6 @@ public class Content
         this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
         this.language = builder.language;
         this.processedReferences = builder.processedReferences.build();
         this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
@@ -334,11 +331,6 @@ public class Content
         return permissions;
     }
 
-    public boolean inheritsPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public Locale getLanguage()
     {
         return language;
@@ -405,13 +397,12 @@ public class Content
         final Content other = (Content) o;
 
         return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
-            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
-            valid == other.valid && Objects.equals( modifier, other.modifier ) &&
-            Objects.equals( validationErrors, other.validationErrors ) && Objects.equals( creator, other.creator ) &&
-            Objects.equals( owner, other.owner ) && Objects.equals( createdTime, other.createdTime ) &&
-            Objects.equals( modifiedTime, other.modifiedTime ) && hasChildren == other.hasChildren &&
-            Objects.equals( inherit, other.inherit ) && Objects.equals( originProject, other.originProject ) &&
-            inheritPermissions == other.inheritPermissions && Objects.equals( childOrder, other.childOrder ) &&
+            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) && valid == other.valid &&
+            Objects.equals( modifier, other.modifier ) && Objects.equals( validationErrors, other.validationErrors ) &&
+            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
+            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
+            hasChildren == other.hasChildren && Objects.equals( inherit, other.inherit ) &&
+            Objects.equals( originProject, other.originProject ) && Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
             Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
@@ -419,15 +410,14 @@ public class Content
             Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
             Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
             Objects.equals( originalParentPath, other.originalParentPath ) && Objects.equals( archivedTime, other.archivedTime ) &&
-            Objects.equals( archivedBy, other.archivedBy ) &&
-            Objects.equals( variantOf, other.variantOf );
+            Objects.equals( archivedBy, other.archivedBy ) && Objects.equals( variantOf, other.variantOf );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
+                             hasChildren, inherit, originProject, childOrder, thumbnail, permissions, attachments, data,
                              extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
                              originalParentPath, archivedTime, archivedBy, variantOf );
     }
@@ -480,8 +470,6 @@ public class Content
 
         protected AccessControlList permissions;
 
-        protected boolean inheritPermissions;
-
         protected Locale language;
 
         protected ContentIds.Builder processedReferences;
@@ -507,7 +495,6 @@ public class Content
             this.type = ContentTypeName.unstructured();
             this.data = new PropertyTree();
             this.extraDatas = ExtraDatas.empty();
-            this.inheritPermissions = true;
             this.processedReferences = ContentIds.create();
         }
 
@@ -535,7 +522,6 @@ public class Content
             this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
             this.permissions = source.permissions;
-            this.inheritPermissions = source.inheritPermissions;
             this.language = source.language;
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
@@ -733,12 +719,6 @@ public class Content
         public BUILDER permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
-            return (BUILDER) this;
-        }
-
-        public BUILDER inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return (BUILDER) this;
         }
 

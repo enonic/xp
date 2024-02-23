@@ -75,7 +75,6 @@ public class CreateNodeParams
             indexConfigDocument( node.getIndexConfigDocument() ).
             childOrder( node.getChildOrder() ).
             permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() ).
             nodeType( node.getNodeType() );
     }
 

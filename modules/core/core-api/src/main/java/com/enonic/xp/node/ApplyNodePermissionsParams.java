@@ -13,8 +13,6 @@ public final class ApplyNodePermissionsParams
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private final boolean overwriteChildPermissions;
 
     private final ApplyPermissionsListener listener;
@@ -23,7 +21,6 @@ public final class ApplyNodePermissionsParams
     {
         nodeId = Objects.requireNonNull( builder.nodeId );
         permissions = builder.permissions;
-        inheritPermissions = builder.inheritPermissions;
         overwriteChildPermissions = builder.overwriteChildPermissions;
         listener = builder.listener;
     }
@@ -43,11 +40,6 @@ public final class ApplyNodePermissionsParams
         return permissions;
     }
 
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public boolean isOverwriteChildPermissions()
     {
         return overwriteChildPermissions;
@@ -63,8 +55,6 @@ public final class ApplyNodePermissionsParams
         private NodeId nodeId;
 
         private AccessControlList permissions;
-
-        private boolean inheritPermissions;
 
         private boolean overwriteChildPermissions;
 
@@ -83,12 +73,6 @@ public final class ApplyNodePermissionsParams
         public Builder permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
-            return this;
-        }
-
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

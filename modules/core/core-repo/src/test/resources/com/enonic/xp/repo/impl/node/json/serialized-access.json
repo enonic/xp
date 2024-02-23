@@ -1,5 +1,4 @@
 {
-  "inheritPermissions": false,
   "permissions": [
     {
       "allow": ["READ"],

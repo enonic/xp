@@ -41,8 +41,6 @@ public final class Node
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private final AttachedBinaries attachedBinaries;
 
     private final NodeVersionId nodeVersionId;
@@ -59,7 +57,6 @@ public final class Node
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
         this.attachedBinaries = builder.attachedBinaries;
         this.timestamp = builder.timestamp;
         this.nodeVersionId = builder.nodeVersionId;
@@ -142,11 +139,6 @@ public final class Node
         return permissions;
     }
 
-    public boolean inheritsPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public NodeType getNodeType()
     {
         return nodeType;
@@ -195,7 +187,6 @@ public final class Node
             childOrder( nodeVersion.getChildOrder() ).
             manualOrderValue( nodeVersion.getManualOrderValue() ).
             permissions( nodeVersion.getPermissions() ).
-            inheritPermissions( nodeVersion.isInheritPermissions() ).
             attachedBinaries( nodeVersion.getAttachedBinaries() );
     }
 
@@ -234,8 +225,6 @@ public final class Node
 
         private AccessControlList permissions = AccessControlList.empty();
 
-        private boolean inheritPermissions;
-
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
 
         private AttachedBinaries attachedBinaries = AttachedBinaries.empty();
@@ -263,7 +252,6 @@ public final class Node
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
             this.permissions = node.permissions;
-            this.inheritPermissions = node.inheritPermissions;
             this.attachedBinaries = node.attachedBinaries;
             this.timestamp = node.timestamp;
             this.nodeVersionId = node.nodeVersionId;
@@ -336,12 +324,6 @@ public final class Node
             return this;
         }
 
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
-            return this;
-        }
-
         public Builder nodeType( final NodeType nodeType )
         {
             this.nodeType = nodeType;
@@ -409,7 +391,6 @@ public final class Node
             Objects.equals( name, node.name ) &&
             Objects.equals( nodeType, node.nodeType ) &&
             Objects.equals( parentPath, node.parentPath ) &&
-            Objects.equals( inheritPermissions, node.inheritPermissions ) &&
             Objects.equals( manualOrderValue, node.manualOrderValue ) &&
             Objects.equals( childOrder, node.childOrder ) &&
             Objects.equals( permissions, node.permissions ) &&
@@ -422,7 +403,7 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, inheritPermissions, manualOrderValue, childOrder, permissions, data,
+        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, childOrder, permissions, data,
                              indexConfigDocument, attachedBinaries, nodeVersionId );
     }
 }

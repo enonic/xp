@@ -27,7 +27,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -196,7 +195,6 @@ public class MoveNodeCommandTest
                                             .name( "child1" )
                                             .parent( parent.path() )
                                             .setNodeId( NodeId.from( "child1" ) )
-                                            .inheritPermissions( true )
                                             .build() );
 
         final Node child1_1 = createNode(
@@ -244,7 +242,6 @@ public class MoveNodeCommandTest
         assertEquals( movedNode.path(), movedChild2.parentPath() );
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
-        assertFalse( movedNode.inheritsPermissions() );
         assertEquals( child1.getPermissions(), movedNode.getPermissions() );
     }
 
@@ -264,7 +261,6 @@ public class MoveNodeCommandTest
                                             .name( "child1" )
                                             .parent( parent.path() )
                                             .setNodeId( NodeId.from( "child1" ) )
-                                            .inheritPermissions( true )
                                             .build() );
 
         final Node child1_1 = createNode(

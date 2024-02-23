@@ -207,9 +207,6 @@ public class MoveNodeCommand
 
     private void updateStoredNodeProperties( final NodePath newParentPath, final Node.Builder nodeToMoveBuilder )
     {
-        // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
-        nodeToMoveBuilder.inheritPermissions( false );
-
         if ( newParentPath.equals( this.newParentPath ) )
         {
             final Node parentNode = doGetByPath( newParentPath );

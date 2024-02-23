@@ -87,7 +87,6 @@ public class ApplyNodePermissionsCommandTest
             name( "my-node" ).
             parent( NodePath.ROOT ).
             permissions( permissions ).
-            inheritPermissions( false ).
             build() );
 
         final Node child1_1 = createNode( CreateNodeParams.create().
@@ -108,7 +107,6 @@ public class ApplyNodePermissionsCommandTest
             name( "child1_1_1" ).
             parent( child1_1.path() ).
             permissions( child1_1_1Permissions ).
-            inheritPermissions( false ).
             build() );
 
         final Node child1_2_1 = createNode( CreateNodeParams.create().
@@ -174,111 +172,6 @@ public class ApplyNodePermissionsCommandTest
         assertEquals( 2, versions.getHits() );
         final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetadata().iterator();
         assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
-    }
-
-    @Test
-    public void testApplyPermissionsWithMerge()
-        throws Exception
-    {
-        runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithMerge );
-    }
-
-    private void applyPermissionsWithMerge()
-    {
-        final PrincipalKey user1 = PrincipalKey.ofUser( USK, "user1" );
-        final PrincipalKey user2 = PrincipalKey.ofUser( USK, "user2" );
-        final PrincipalKey group1 = PrincipalKey.ofGroup( USK, "group1" );
-        final AccessControlList permissions = AccessControlList.of(
-            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
-            AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY ).build(),
-            AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build() );
-
-        final AccessControlList initialChildPermissions =
-            AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
-
-        final Node topNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            permissions( permissions ).
-            inheritPermissions( false ).
-            build() );
-
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1" ).
-            parent( topNode.path() ).
-            permissions( initialChildPermissions ).
-            inheritPermissions( true ).
-            build() );
-
-        final Node child1_2 = createNode( CreateNodeParams.create().
-            name( "child1_2" ).
-            parent( topNode.path() ).
-            permissions( initialChildPermissions ).
-            inheritPermissions( true ).
-            build() );
-
-        final AccessControlList child1_1_1Permissions = AccessControlList.of(
-            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
-            AccessControlEntry.create().principal( user1 ).allow( READ, MODIFY, DELETE ).build(),
-            AccessControlEntry.create().principal( user2 ).allow( READ, CREATE, DELETE, MODIFY, PUBLISH ).build() );
-        final Node child1_1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1_1" ).
-            parent( child1_1.path() ).
-            permissions( child1_1_1Permissions ).
-            inheritPermissions( false ).
-            build() );
-
-        final Node child1_2_1 = createNode( CreateNodeParams.create().
-            name( "child1_2_1" ).
-            parent( child1_2.path() ).
-            permissions( initialChildPermissions ).
-            inheritPermissions( true ).
-            build() );
-
-        final Node child1_2_2 = createNode( CreateNodeParams.create().
-            name( "child1_2_2" ).
-            parent( child1_2.path() ).
-            permissions( initialChildPermissions ).
-            inheritPermissions( true ).
-            build() );
-
-        refresh();
-
-        final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create().
-            nodeId( topNode.id() ).
-            overwriteChildPermissions( false ).
-            permissions( topNode.getPermissions() ).
-            applyPermissionsListener( Mockito.mock( ApplyPermissionsListener.class ) ).
-            build();
-
-        final ApplyNodePermissionsResult updatedNodes = nodeService.applyPermissions( params );
-
-        assertEquals( 6, updatedNodes.getSucceedNodes().getSize() );
-
-        final Node topNodeUpdated = getNodeById( topNode.id() );
-        assertEquals( permissions, topNodeUpdated.getPermissions() );
-
-        final Node child1_1Updated = getNodeById( child1_1.id() );
-        assertEquals( permissions, child1_1Updated.getPermissions() );
-
-        final Node child1_2Updated = getNodeById( child1_2.id() );
-        assertEquals( permissions, child1_2Updated.getPermissions() );
-
-        final Node child1_1_1Updated = getNodeById( child1_1_1.id() );
-
-        final AccessControlList mergedPermissions = AccessControlList.of(
-            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ, WRITE_PERMISSIONS ).build(),
-            AccessControlEntry.create().principal( user1 ).allow( READ, DELETE, MODIFY ).build(),
-            AccessControlEntry.create().principal( group1 ).allow( READ, CREATE, DELETE, MODIFY ).build(),
-            AccessControlEntry.create().principal( user2 ).allow( READ, CREATE, MODIFY, DELETE, PUBLISH ).build() );
-
-        assertEquals( mergedPermissions, child1_1_1Updated.getPermissions() );
-
-        final Node child1_2_1Updated = getNodeById( child1_2_1.id() );
-        assertEquals( permissions, child1_2_1Updated.getPermissions() );
-
-        final Node child1_2_2Updated = getNodeById( child1_2_2.id() );
-        assertEquals( permissions, child1_2_2Updated.getPermissions() );
     }
 
     private void runAs( final PrincipalKey principal, final Runnable runnable )

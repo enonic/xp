@@ -6,12 +6,10 @@ public final class NodeVersionAccessControl
 {
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
 
-    public NodeVersionAccessControl( final AccessControlList permissions, final boolean inheritPermissions )
+    public NodeVersionAccessControl( final AccessControlList permissions )
     {
         this.permissions = permissions;
-        this.inheritPermissions = inheritPermissions;
     }
 
     public AccessControlList getPermissions()
@@ -19,8 +17,4 @@ public final class NodeVersionAccessControl
         return permissions;
     }
 
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
-    }
 }
