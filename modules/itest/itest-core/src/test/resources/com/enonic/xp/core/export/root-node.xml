@@ -2,7 +2,6 @@
   <id>000-000-000-000</id>
   <childOrder>_ts DESC</childOrder>
   <nodeType>default</nodeType>
-  <inheritPermissions>false</inheritPermissions>
   <permissions>
     <principal key="role:system.authenticated">
       <allow type="array">

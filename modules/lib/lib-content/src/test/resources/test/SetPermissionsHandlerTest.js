@@ -5,7 +5,6 @@ exports.setPermissionsMissingPrincipals = function () {
 
     var result = contentLib.setPermissions({
         key: '/features/js-libraries/mycontent',
-        inheritPermissions: false,
         overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
@@ -21,7 +20,6 @@ exports.setPermissionsNotFoundByPath = function () {
 
     var result = contentLib.setPermissions({
         key: '/features/js-libraries/mycontent',
-        inheritPermissions: false,
         overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
@@ -37,7 +35,6 @@ exports.setPermissionsNotFoundById = function () {
 
     var result = contentLib.setPermissions({
         key: '/features/js-libraries/mycontent',
-        inheritPermissions: false,
         overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',

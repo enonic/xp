@@ -230,7 +230,6 @@ public class ContentServiceImpl
             owner( site.getOwner() ).
             displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
             name( TEMPLATES_FOLDER_NAME ).
-            inheritPermissions( true ).
             parent( site.getPath() ).
             type( ContentTypeName.templateFolder() ).
             requireValid( true ).
@@ -271,7 +270,6 @@ public class ContentServiceImpl
                 owner( content.getOwner() ).
                 displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
                 name( TEMPLATES_FOLDER_NAME ).
-                inheritPermissions( true ).
                 parent( content.getPath() ).
                 type( ContentTypeName.templateFolder() ).
                 requireValid( true ).

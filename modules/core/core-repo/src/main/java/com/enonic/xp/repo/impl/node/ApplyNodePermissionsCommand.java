@@ -100,28 +100,19 @@ final class ApplyNodePermissionsCommand
 
     private Node storePermissions( final AccessControlList permissions, final Node node )
     {
-        final Node updatedNode;
         final boolean isParent = node.id().equals( params.getNodeId() );
 
-        if ( params.isOverwriteChildPermissions() || node.inheritsPermissions() || isParent )
-        {
-            updatedNode = createUpdatedNode( node, permissions, !isParent || params.isInheritPermissions() );
-        }
-        else
-        {
-            final AccessControlList mergedPermissions = mergingStrategy.mergePermissions( node.getPermissions(), permissions );
-            updatedNode = createUpdatedNode( node, mergedPermissions, false );
-        }
+        final AccessControlList permissionsToStore = params.isOverwriteChildPermissions() || isParent
+            ? permissions
+            : mergingStrategy.mergePermissions( node.getPermissions(), permissions );
+        final Node updatedNode = createUpdatedNode( node, permissionsToStore );
 
         return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
     }
 
-    private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions, final boolean inheritsPermissions )
+    private Node createUpdatedNode( final Node persistedNode, final AccessControlList permissions )
     {
-        final Node.Builder updateNodeBuilder = Node.create( persistedNode ).
-            timestamp( Instant.now( CLOCK ) ).
-            permissions( permissions ).
-            inheritPermissions( inheritsPermissions );
+        final Node.Builder updateNodeBuilder = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions );
         return updateNodeBuilder.build();
     }
 

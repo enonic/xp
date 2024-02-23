@@ -71,7 +71,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -404,10 +403,7 @@ public abstract class AbstractContentSynchronizerTest
         assertEquals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() );
         assertEquals( sourceContent.getPage(), targetContent.getPage() );
         assertEquals( sourceContent.isValid(), targetContent.isValid() );
-        assertEquals( sourceContent.inheritsPermissions(), targetContent.inheritsPermissions() );
         assertEquals( sourceContent.getCreatedTime(), targetContent.getCreatedTime() );
-
-        assertNotEquals( sourceContent.getPermissions(), targetContent.getPermissions() );
 
         assertTrue( targetContent.getInherit().containsAll( EnumSet.allOf( ContentInheritType.class ) ) );
     }

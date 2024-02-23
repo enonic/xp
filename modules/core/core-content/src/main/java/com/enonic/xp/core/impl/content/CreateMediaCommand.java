@@ -87,7 +87,6 @@ final class CreateMediaCommand
             displayName( trimExtension( params.getName() ) ).
             contentData( data ).
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
-            inheritPermissions( true ).
             build();
 
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).

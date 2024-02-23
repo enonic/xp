@@ -89,7 +89,6 @@ public final class CreateNodeCommand
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
             manualOrderValue( manualOrderValue ).
             permissions( permissions ).
-            inheritPermissions( params.inheritPermissions() ).
             nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION ).
             attachedBinaries( attachedBinaries ).
             timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );

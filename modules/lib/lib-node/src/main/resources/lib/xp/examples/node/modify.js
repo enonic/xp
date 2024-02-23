@@ -98,7 +98,6 @@ var expected = {
             }
         ]
     },
-    '_inheritsPermissions': false,
     '_permissions': [
         {
             'principal': 'user:system:newUser',

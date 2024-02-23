@@ -10,7 +10,6 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -42,8 +41,7 @@ public final class UpdateNodeCommand
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
 
-        if ( editableNode.inheritPermissions != persistedNode.inheritsPermissions() ||
-            !persistedNode.getPermissions().equals( editableNode.permissions ) )
+        if ( !persistedNode.getPermissions().equals( editableNode.permissions ) )
         {
             requireContextUserPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode );
         }
@@ -64,11 +62,6 @@ public final class UpdateNodeCommand
         }
 
         final Node.Builder builder = Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries );
-        if ( editedNode.inheritsPermissions() )
-        {
-            final NodePath parentPath = editedNode.path().getParentPath();
-            builder.permissions( NodeHelper.runAsAdmin( () -> doGetByPath( parentPath ) ).getPermissions() );
-        }
 
         final Node updatedNode = builder.build();
         if ( !this.params.isDryRun() )

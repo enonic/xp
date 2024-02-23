@@ -22,7 +22,6 @@ public class EditableNode
 
     public AccessControlList permissions;
 
-    public boolean inheritPermissions;
 
     public NodeType nodeType;
 
@@ -34,7 +33,6 @@ public class EditableNode
         this.manualOrderValue = source.getManualOrderValue();
         this.childOrder = source.getChildOrder();
         this.permissions = source.getPermissions();
-        this.inheritPermissions = source.inheritsPermissions();
         this.nodeType = source.getNodeType();
     }
 
@@ -46,7 +44,6 @@ public class EditableNode
             manualOrderValue( manualOrderValue ).
             childOrder( childOrder ).
             permissions( permissions ).
-            inheritPermissions( inheritPermissions ).
             nodeType( nodeType ).
             build();
     }

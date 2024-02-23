@@ -7,7 +7,6 @@ import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 
-import static com.enonic.xp.lib.node.NodePropertyConstants.INHERITS_PERMISSIONS;
 
 final class PermissionsMapper
     implements MapSerializable
@@ -22,8 +21,6 @@ final class PermissionsMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( INHERITS_PERMISSIONS, node.inheritsPermissions() );
-
         if ( !node.getPermissions().isEmpty() )
         {
             gen.array( NodePropertyConstants.PERMISSIONS );

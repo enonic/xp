@@ -127,7 +127,6 @@ public class ContentNodeTranslator
             .name( node.name().toString() )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )
-            .inheritPermissions( node.inheritsPermissions() )
             .hasChildren( hasChildren )
             .manualOrderValue( node.getManualOrderValue() );
 

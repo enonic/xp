@@ -20,8 +20,6 @@ public final class PermissionsMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "inheritsPermissions", content.inheritsPermissions() );
-
         if ( !content.getPermissions().isEmpty() )
         {
             gen.array( "permissions" );

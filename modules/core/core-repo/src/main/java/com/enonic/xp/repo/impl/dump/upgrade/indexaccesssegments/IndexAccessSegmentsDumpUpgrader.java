@@ -130,7 +130,6 @@ public class IndexAccessSegmentsDumpUpgrader
     private byte[] serializeAccessControl( final Pre4NodeVersionJson nodeVersion )
     {
         final AccessControlJson accessControlJson = AccessControlJson.create().
-            inheritPermissions( nodeVersion.isInheritPermissions() ).
             permissions( nodeVersion.getPermissions() ).
             build();
         return serialize( accessControlJson );

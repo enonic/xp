@@ -613,7 +613,6 @@ public class CreateContentCommandTest
             .indexConfigDocument( params.getIndexConfigDocument() )
             .childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() )
             .permissions( permissions )
-            .inheritPermissions( params.inheritPermissions() )
             .nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION )
             .timestamp( Instant.now() )
             .build();

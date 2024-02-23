@@ -59,7 +59,6 @@ var expected = {
             }
         ]
     },
-    '_inheritsPermissions': false,
     '_permissions': [
         {
             'principal': 'role:admin',

@@ -31,10 +31,9 @@ public class SetRootPermissionsHandlerTest
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        Mockito.when( this.nodeService.setRootPermissions( acl, true ) ).
+        Mockito.when( this.nodeService.setRootPermissions( acl ) ).
             thenReturn( Node.create().
                 permissions( acl ).
-                inheritPermissions( true ).
                 build() );
 
         runScript( "/lib/xp/examples/node/modifyRootPermissions.js" );

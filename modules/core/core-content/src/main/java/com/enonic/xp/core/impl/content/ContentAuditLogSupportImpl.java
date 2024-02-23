@@ -121,7 +121,6 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "type", nullToNull( params.getType() ) );
         paramsSet.addString( "name", nullToNull( params.getName() ) );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
-        paramsSet.addBoolean( "inheritPermissions", params.isInheritPermissions() );
 
         if ( params.getProcessedIds() != null )
         {
@@ -520,7 +519,6 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addBoolean( "inheritPermissions", params.isInheritPermissions() );
         paramsSet.addBoolean( "overwriteChildPermissions", params.isOverwriteChildPermissions() );
 
         if ( params.getPermissions() != null )
