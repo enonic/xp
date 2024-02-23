@@ -1076,7 +1076,6 @@ public class DumpServiceImplTest
 
         this.storageService.store( Node.createRoot()
                                        .permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
-                                       .inheritPermissions( false )
                                        .childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER )
                                        .build(), rootNodeInternalContext );
 

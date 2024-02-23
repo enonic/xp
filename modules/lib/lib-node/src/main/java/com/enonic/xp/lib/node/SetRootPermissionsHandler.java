@@ -9,19 +9,16 @@ public class SetRootPermissionsHandler
 {
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private SetRootPermissionsHandler( final Builder builder )
     {
         super( builder );
         this.permissions = builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
     }
 
     @Override
     public Object execute()
     {
-        final Node node = this.nodeService.setRootPermissions( this.permissions, this.inheritPermissions );
+        final Node node = this.nodeService.setRootPermissions( this.permissions );
         return new NodeMapper( node );
     }
 
@@ -35,16 +32,8 @@ public class SetRootPermissionsHandler
     {
         private AccessControlList permissions;
 
-        private boolean inheritPermissions = true;
-
         private Builder()
         {
-        }
-
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
-            return this;
         }
 
         public Builder permissions( final AccessControlList val )

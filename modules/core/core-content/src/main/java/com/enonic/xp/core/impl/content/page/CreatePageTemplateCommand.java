@@ -104,7 +104,6 @@ class CreatePageTemplateCommand
             owner( PrincipalKey.ofAnonymous() ).
             contentData( data ).
             type( ContentTypeName.pageTemplate() ).
-            inheritPermissions( true ).
             parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ).
             build() );
 

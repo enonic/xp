@@ -43,9 +43,6 @@ public final class Pre4NodeVersionJson
     @JsonProperty("permissions")
     private List<AccessControlEntryJson> permissions;
 
-    @JsonProperty("inheritPermissions")
-    private boolean inheritPermissions;
-
     @JsonProperty("nodeType")
     private String nodeType;
 
@@ -55,11 +52,6 @@ public final class Pre4NodeVersionJson
     public IndexConfigDocumentJson getIndexConfigDocument()
     {
         return indexConfigDocument;
-    }
-
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
     }
 
     public List<AccessControlEntryJson> getPermissions()
@@ -76,7 +68,6 @@ public final class Pre4NodeVersionJson
             .childOrder( ChildOrder.from( this.childOrder ) )
             .manualOrderValue( this.manualOrderValue )
             .permissions( fromJson( this.permissions ) )
-            .inheritPermissions( this.inheritPermissions )
             .nodeType( NodeType.from( this.nodeType ) )
             .attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) )
             .build();
@@ -113,7 +104,6 @@ public final class Pre4NodeVersionJson
         json.childOrder = nodeVersion.getChildOrder().toString();
         json.manualOrderValue = nodeVersion.getManualOrderValue();
         json.permissions = toJson( nodeVersion.getPermissions() );
-        json.inheritPermissions = nodeVersion.isInheritPermissions();
         json.nodeType = nodeVersion.getNodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
         return json;

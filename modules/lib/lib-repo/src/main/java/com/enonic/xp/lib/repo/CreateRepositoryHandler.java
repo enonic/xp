@@ -40,8 +40,6 @@ public class CreateRepositoryHandler
 
     private AccessControlList rootPermissions;
 
-    private Boolean inheritPermissions;
-
     private ChildOrder rootChildOrder;
 
     private Supplier<RepositoryService> repositoryServiceSupplier;

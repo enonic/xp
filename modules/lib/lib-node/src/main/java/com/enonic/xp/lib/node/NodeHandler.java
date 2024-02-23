@@ -208,9 +208,6 @@ public class NodeHandler
         final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
         final Iterable<PropertySet> asPropertySets = asPropertyTree.getSets( "_permissions" );
 
-        final boolean inheritPermissions =
-            asPropertyTree.getBoolean( "_inheritsPermissions" ) != null ? asPropertyTree.getBoolean( "_inheritsPermissions" ) : true;
-
         if ( asPropertySets == null )
         {
             throw new IllegalArgumentException( "Did not find parameter [_permissions]" );
@@ -220,7 +217,6 @@ public class NodeHandler
 
         return execute( SetRootPermissionsHandler.create().
             permissions( permissions ).
-            inheritPermissions( inheritPermissions ).
             nodeService( this.nodeService ).
             build() );
     }

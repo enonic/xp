@@ -39,7 +39,6 @@ public class ImportNodeFactory
         if ( serializedNode.isRoot() )
         {
             return Node.create( serializedNode ).
-                inheritPermissions( false ).
                 permissions( importPermissions ? serializedNode.getPermissions() : RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
                 manualOrderValue( manualOrderValue ).
                 build();
@@ -49,7 +48,6 @@ public class ImportNodeFactory
             return Node.create( serializedNode ).
                 parentPath( this.nodeImportPath.getParentPath() ).
                 name( this.nodeImportPath.getName() ).
-                inheritPermissions( !importPermissions || serializedNode.inheritsPermissions() ).
                 permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
                 id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
                 manualOrderValue( manualOrderValue ).

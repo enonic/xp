@@ -32,8 +32,6 @@ public final class SetPermissionsHandler
 
     private String key;
 
-    private boolean inheritPermissions;
-
     private boolean overwriteChildPermissions;
 
     private AccessControlList permissions;
@@ -41,11 +39,6 @@ public final class SetPermissionsHandler
     public void setKey( final String key )
     {
         this.key = key;
-    }
-
-    public void setInheritPermissions( final boolean inheritPermissions )
-    {
-        this.inheritPermissions = inheritPermissions;
     }
 
     public void setOverwriteChildPermissions( final boolean overwriteChildPermissions )
@@ -110,7 +103,6 @@ public final class SetPermissionsHandler
             contentService.applyPermissions( ApplyContentPermissionsParams.create().
                 contentId( contentId ).
                 permissions( permissions ).
-                inheritPermissions( inheritPermissions ).
                 overwriteChildPermissions( overwriteChildPermissions ).
                 build() );
 

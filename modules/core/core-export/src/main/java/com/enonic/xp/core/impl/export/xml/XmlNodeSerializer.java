@@ -64,7 +64,6 @@ public final class XmlNodeSerializer
         serializeValueElement( "nodeType", this.node.getNodeType() );
         serializeValueElement( "timestamp", this.node.getTimestamp() );
 
-        serializeValueElement( "inheritPermissions", this.node.inheritsPermissions() );
         serialize( this.node.getPermissions() );
 
         serializeData( this.node.data() );

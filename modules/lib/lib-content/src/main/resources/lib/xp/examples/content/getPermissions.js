@@ -8,7 +8,7 @@ var result = contentLib.getPermissions({
 });
 
 if (result) {
-    log.info('Content inherits permissions: ' + result.inheritPermissions);
+    log.info('Content permissions: ' + JSON.stringify(result.permissions));
 } else {
     log.info('Content not found');
 }
@@ -17,7 +17,6 @@ if (result) {
 // BEGIN
 // Permissions returned.
 var expected = {
-    'inheritsPermissions': false,
     'permissions': [
         {
             'principal': 'user:system:anonymous',

@@ -143,7 +143,6 @@ public class XmlNodeSerializerTest
             data( propertyTree ).
             indexConfigDocument( indexConfigDocumentBuilder.build() ).
             permissions( accessControlList ).
-            inheritPermissions( false ).
             attachedBinaries( AttachedBinaries.create().
                 add( new AttachedBinary( BinaryReference.from( "image.jpg" ), "a" ) ).
                 add( new AttachedBinary( BinaryReference.from( "image2.jpg" ), "b" ) ).

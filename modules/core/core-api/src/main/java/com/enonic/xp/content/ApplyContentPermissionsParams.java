@@ -14,8 +14,6 @@ public final class ApplyContentPermissionsParams
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private final boolean overwriteChildPermissions;
 
     private final ApplyPermissionsListener listener;
@@ -25,7 +23,6 @@ public final class ApplyContentPermissionsParams
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
         permissions = builder.permissions;
-        inheritPermissions = builder.inheritPermissions;
         listener = builder.listener;
     }
 
@@ -49,11 +46,6 @@ public final class ApplyContentPermissionsParams
         return permissions;
     }
 
-    public boolean isInheritPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public ApplyPermissionsListener getListener()
     {
         return listener;
@@ -72,13 +64,13 @@ public final class ApplyContentPermissionsParams
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
         return Objects.equals( this.contentId, that.contentId ) && this.overwriteChildPermissions == that.overwriteChildPermissions &&
-            Objects.equals( this.permissions, that.permissions ) && this.inheritPermissions == that.inheritPermissions;
+            Objects.equals( this.permissions, that.permissions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.contentId, this.permissions, this.overwriteChildPermissions, this.inheritPermissions );
+        return Objects.hash( this.contentId, this.permissions, this.overwriteChildPermissions );
     }
 
     public static final class Builder
@@ -86,8 +78,6 @@ public final class ApplyContentPermissionsParams
         private ContentId contentId;
 
         private AccessControlList permissions;
-
-        private boolean inheritPermissions;
 
         private boolean overwriteChildPermissions;
 
@@ -118,12 +108,6 @@ public final class ApplyContentPermissionsParams
         public Builder permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
-            return this;
-        }
-
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

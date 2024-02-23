@@ -957,11 +957,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node setRootPermissions( final AccessControlList acl, final boolean inheritPermissions )
+    public Node setRootPermissions( final AccessControlList acl )
     {
         return SetRootPermissionsCommand.create().
             permissions( acl ).
-            inheritPermissions( inheritPermissions ).
             indexServiceInternal( indexServiceInternal ).
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).

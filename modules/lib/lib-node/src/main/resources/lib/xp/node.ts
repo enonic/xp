@@ -489,7 +489,6 @@ export interface CommitParams {
 
 export interface SetRootPermissionsParams {
     _permissions: AccessControlEntry[];
-    _inheritsPermissions: boolean;
 }
 
 export type Permission = 'READ' | 'CREATE' | 'MODIFY' | 'DELETE' | 'PUBLISH' | 'READ_PERMISSIONS' | 'WRITE_PERMISSIONS';
@@ -540,7 +539,6 @@ export type CommonNodeProperties = {
     _childOrder: string;
     // _id: string; // Not on create
     // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
-    _inheritsPermissions: boolean;
     _manualOrderValue?: number; // Notice optional
     _name: string;
     _nodeType: string;
@@ -555,6 +553,7 @@ export type CommonNodeProperties = {
 export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _indexConfig?: Partial<NodeIndexConfigParams>;
     _parentPath?: string;
+    _inheritsPermissions?: boolean;
 };
 
 export type NodePropertiesOnModify = CommonNodeProperties & {
@@ -1009,7 +1008,6 @@ class RepoConnectionImpl
      *
      * @param {object} params JSON with the parameters.
      * @param {object} params._permissions the permission json
-     * @param {object} [params._inheritsPermissions]= true if the permissions should be inherited to children
      *
      * @returns {object} Updated root-node as JSON.
      */
