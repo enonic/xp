@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -62,6 +63,8 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PatchPermissionsParams;
+import com.enonic.xp.node.PatchPermissionsResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -974,6 +977,20 @@ public class NodeServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
+    }
+
+    @Override
+    public List<PatchPermissionsResult> patchVersion( final PatchPermissionsParams params )
+    {
+        verifyRepositoryExists();
+
+        return PatchNodePermissionsCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override

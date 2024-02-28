@@ -56,6 +56,11 @@ public class PushNodesCommand
         } );
     }
 
+    static Builder create( AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -214,6 +219,11 @@ public class PushNodesCommand
         Builder()
         {
             super();
+        }
+
+        Builder( AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder target( final Branch target )

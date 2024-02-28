@@ -3,12 +3,14 @@ package com.enonic.xp.core.node;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -38,6 +40,8 @@ import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.PatchPermissionsParams;
+import com.enonic.xp.node.PatchPermissionsResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
@@ -468,7 +472,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_path() {
+    void delete_tree_by_path()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -485,7 +490,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_id() {
+    void delete_tree_by_id()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -502,44 +508,102 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_root_path_fail() {
+    void test_patch_permissions()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
+        final Node grandchildNode = createNode( CreateNodeParams.create().name( "my-node2" ).parent( childNode.path() ).build() );
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
+        pushNodes( WS_OTHER, createdNode.id() );
+        pushNodes( WS_OTHER, childNode.id() );
+
+        refresh();
+
+        final List<PatchPermissionsResult> result = nodeService.patchVersion( PatchPermissionsParams.create()
+                                                                                  .nodeId( createdNode.id() )
+                                                                                  .permissions( AccessControlList.create()
+                                                                                                    .add( AccessControlEntry.create()
+                                                                                                              .allowAll()
+                                                                                                              .principal( PrincipalKey.from(
+                                                                                                                  "user:my-provider:my-user" ) )
+                                                                                                              .build() )
+                                                                                                    .build() )
+                                                                                  .build() );
+
+        assertEquals( 2, result.size() );
+
+        assertTrue( result.get( 0 ).getBranchResult().get( ContentConstants.BRANCH_DRAFT ) );
+        assertTrue( result.get( 0 ).getBranchResult().get( ContentConstants.BRANCH_MASTER ) );
+        assertTrue( result.get( 1 ).getBranchResult().get( ContentConstants.BRANCH_DRAFT ) );
+        assertTrue( result.get( 1 ).getBranchResult().get( ContentConstants.BRANCH_MASTER ) );
     }
 
     @Test
-    void delete_root_id_fail() {
+    void test_patch_permissions_modified()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
+        pushNodes( WS_OTHER, createdNode.id() );
+        pushNodes( WS_OTHER, childNode.id() );
+
+        refresh();
+
+        updateNode( UpdateNodeParams.create().id( childNode.id() ).editor( toBeEdited -> {
+            toBeEdited.data.addString( "newField", "fisk" );
+        } ).build() );
+
+        refresh();
+
+        final List<PatchPermissionsResult> result = nodeService.patchVersion( PatchPermissionsParams.create()
+                                                                                  .nodeId( createdNode.id() )
+                                                                                  .permissions( AccessControlList.create()
+                                                                                                    .add( AccessControlEntry.create()
+                                                                                                              .allowAll()
+                                                                                                              .principal( PrincipalKey.from(
+                                                                                                                  "user:my-provider:my-user" ) )
+                                                                                                              .build() )
+                                                                                                    .build() )
+                                                                                  .build() );
+
+        assertEquals( 2, result.size() );
+
+        assertTrue( result.get( 0 ).getBranchResult().get( ContentConstants.BRANCH_DRAFT ) );
+        assertTrue( result.get( 0 ).getBranchResult().get( ContentConstants.BRANCH_MASTER ) );
+        assertTrue( result.get( 1 ).getBranchResult().get( ContentConstants.BRANCH_DRAFT ) );
+        assertTrue( result.get( 1 ).getBranchResult().get( ContentConstants.BRANCH_MASTER ) );
+    }
+
+    @Test
+    void delete_root_path_fail()
+    {
+
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
+    }
+
+    @Test
+    void delete_root_id_fail()
+    {
+
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
     }
 
     @Test
     void nodes_has_children()
     {
-        final Node parentNode1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-1" ).
-            build() );
+        final Node parentNode1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
 
-        final Node parentNode2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-2" ).
-            build() );
+        final Node parentNode2 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
 
-        final Node parentNode3 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-3" ).
-            build() );
+        final Node parentNode3 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-3" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode1.path() ).
-            name( "my-child-node-1" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode1.path() ).name( "my-child-node-1" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode2.path() ).
-            name( "my-child-node-2" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode2.path() ).name( "my-child-node-2" ).build() );
 
         nodeService.refresh( RefreshMode.ALL );
 

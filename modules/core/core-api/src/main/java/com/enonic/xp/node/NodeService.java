@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.List;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -112,6 +114,8 @@ public interface NodeService
     ImportNodeResult importNode( ImportNodeParams params );
 
     LoadNodeResult loadNode( LoadNodeParams params );
+
+    List<PatchPermissionsResult> patchVersion( PatchPermissionsParams params );
 
     @Deprecated
     NodesHasChildrenResult hasChildren( Nodes nodes );

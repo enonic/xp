@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.security.PrincipalKey;
 
-public class StoreNodeCommitParams
+public final class StoreNodeCommitParams
 {
     private final NodeCommitId nodeCommitId;
 
