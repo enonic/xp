@@ -98,10 +98,10 @@ jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-d
 tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
 
-metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.23" }
-metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.23" }
-metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.23" }
-metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.23" }
+metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.25" }
+metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.25" }
+metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.25" }
+metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.25" }
 metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.25" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
