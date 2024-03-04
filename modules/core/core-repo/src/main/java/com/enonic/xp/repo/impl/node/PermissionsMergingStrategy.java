@@ -2,8 +2,11 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.security.acl.AccessControlList;
 
-interface PermissionsMergingStrategy
+/*sealed*/ interface PermissionsMergingStrategy /*permits DefaultPermissionsMergingStrategy, OverwriteChildPermissionsMergingStrategy*/
 {
+    OverwriteChildPermissionsMergingStrategy OVERWRITE = new OverwriteChildPermissionsMergingStrategy();
+
+    DefaultPermissionsMergingStrategy DEFAULT = new DefaultPermissionsMergingStrategy();
 
     /**
      * Returns resulting permissions after merging child and parent permissions.

@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeId;
@@ -12,10 +13,13 @@ final class ApplyContentPermissionsCommand
 {
     private final ApplyContentPermissionsParams params;
 
+    private final ContentNodeTranslator contentNodeTranslator;
+
     private ApplyContentPermissionsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.contentNodeTranslator = new ContentNodeTranslator( this.nodeService );
     }
 
     ApplyContentPermissionsResult execute()
@@ -31,10 +35,15 @@ final class ApplyContentPermissionsCommand
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsParams );
 
-        return ApplyContentPermissionsResult.create()
-            .setSucceedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSucceedNodes().getPaths() ) )
-            .setSkippedContents( ContentNodeHelper.translateNodePathsToContentPaths( result.getSkippedNodes().getPaths() ) )
-            .build();
+        final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
+
+        result.getBranchResults().forEach( ( id, branchResult ) -> {
+            branchResult.forEach( br -> builder.addBranchResult( ContentId.from( id ), br.branch(), br.node() != null
+                ? contentNodeTranslator.fromNode( br.node(), true )
+                : null ) );
+        } );
+
+        return builder.build();
     }
 
     public static Builder create( final ApplyContentPermissionsParams params )

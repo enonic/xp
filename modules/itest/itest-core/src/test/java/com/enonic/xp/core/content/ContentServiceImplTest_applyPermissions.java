@@ -9,17 +9,22 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_applyPermissions
@@ -35,10 +40,7 @@ public class ContentServiceImplTest_applyPermissions
             applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
             build();
 
-        final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
-
-        assertEquals( result.getSkippedContents().getSize(), 0 );
-        assertEquals( result.getSucceedContents().getSize(), 0 );
+        assertThrows( NodeNotFoundException.class, () -> this.contentService.applyPermissions( applyParams ) );
     }
 
     @Test
@@ -56,17 +58,21 @@ public class ContentServiceImplTest_applyPermissions
         final Content child =
             this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
 
+        final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
+
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
-            contentId( content.getId() ).
-            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
+            contentId( content.getId() ).applyContentPermissionsListener( listener ).
             build();
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
-        assertEquals( result.getSkippedContents().getSize(), 0 );
-        assertEquals( result.getSucceedContents().getSize(), 2 );
-        assertTrue( result.getSucceedContents().contains( child.getPath() ) );
-        assertTrue( result.getSucceedContents().contains( content.getPath() ) );
+        verify( listener, times( 2 ) ).permissionsApplied( 1 );
+
+        assertEquals( content.getPermissions(),
+                      result.getResult( content.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
+        assertNull( result.getResult( content.getId(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( child.getPermissions(), result.getResult( child.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
+        assertNull( result.getResult( child.getId(), ContentConstants.BRANCH_MASTER ) );
     }
 
     @Test

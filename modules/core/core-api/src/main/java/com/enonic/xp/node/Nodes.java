@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.stream.Collector;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -39,6 +40,11 @@ public final class Nodes
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Collector<Node, Builder, Nodes> collecting()
+    {
+        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }
 
     @Deprecated

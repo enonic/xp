@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -793,10 +794,12 @@ public class NodeServiceImpl
             build().
             execute();
 
-        for ( final Node node : result.getSucceedNodes() )
-        {
-            this.eventPublisher.publish( NodeEvents.permissionsUpdated( node ) );
-        }
+        result.getBranchResults()
+            .values()
+            .stream()
+            .flatMap( Collection::stream )
+            .filter( br -> br.node() != null )
+            .forEach( br -> this.eventPublisher.publish( NodeEvents.permissionsUpdated( br.node() ) ) );
 
         return result;
     }
