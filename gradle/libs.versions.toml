@@ -16,7 +16,7 @@ tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0
 
 mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "1.9" }
 
-slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.36" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version = "2.0.12" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version = "1.7.36" }
 slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "1.7.36" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version = "1.7.36" }
