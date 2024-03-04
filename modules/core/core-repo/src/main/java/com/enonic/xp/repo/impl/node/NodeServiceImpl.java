@@ -798,8 +798,8 @@ public class NodeServiceImpl
             .values()
             .stream()
             .flatMap( Collection::stream )
-            .filter( br -> br.node() != null )
-            .forEach( br -> this.eventPublisher.publish( NodeEvents.permissionsUpdated( br.node() ) ) );
+            .filter( br -> br.getNode() != null )
+            .forEach( br -> this.eventPublisher.publish( NodeEvents.permissionsUpdated( br.getNode() ) ) );
 
         return result;
     }

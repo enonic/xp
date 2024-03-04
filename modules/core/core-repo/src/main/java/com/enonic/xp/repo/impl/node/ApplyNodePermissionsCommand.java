@@ -80,8 +80,7 @@ public class ApplyNodePermissionsCommand
 
         if ( result.getBranchResults()
             .values()
-            .stream()
-            .anyMatch( l -> ContentConstants.BRANCH_MASTER.equals( l.get( 0 ).branch() ) && l.get( 0 ).node() != null ) )
+            .stream().anyMatch( l -> ContentConstants.BRANCH_MASTER.equals( l.get( 0 ).getBranch() ) && l.get( 0 ).getNode() != null ) )
         {
             storeCommit();
         }

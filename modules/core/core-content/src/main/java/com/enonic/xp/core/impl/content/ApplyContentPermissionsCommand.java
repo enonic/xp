@@ -38,8 +38,8 @@ final class ApplyContentPermissionsCommand
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
         result.getBranchResults().forEach( ( id, branchResult ) -> {
-            branchResult.forEach( br -> builder.addBranchResult( ContentId.from( id ), br.branch(), br.node() != null
-                ? contentNodeTranslator.fromNode( br.node(), true )
+            branchResult.forEach( br -> builder.addBranchResult( ContentId.from( id ), br.getBranch(),
+                                                                 br.getNode() != null ? contentNodeTranslator.fromNode( br.getNode(), true )
                 : null ) );
         } );
 

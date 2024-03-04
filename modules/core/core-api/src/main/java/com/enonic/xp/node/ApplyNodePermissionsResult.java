@@ -12,7 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class ApplyNodePermissionsResult
+public final class ApplyNodePermissionsResult
 {
     private final Map<NodeId, List<BranchResult>> branchResults;
 
@@ -50,8 +50,7 @@ public class ApplyNodePermissionsResult
 
         return results != null ? branchResults.get( nodeId )
             .stream()
-            .filter( br -> br.branch.equals( branch ) )
-            .map( BranchResult::node )
+            .filter( br -> br.branch.equals( branch ) ).map( BranchResult::getNode )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
@@ -69,12 +68,12 @@ public class ApplyNodePermissionsResult
             this.node = node;
         }
 
-        public Branch branch()
+        public Branch getBranch()
         {
             return branch;
         }
 
-        public Node node()
+        public Node getNode()
         {
             return node;
         }

@@ -12,7 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class ApplyContentPermissionsResult
+public final class ApplyContentPermissionsResult
 {
     private final Map<ContentId, List<BranchResult>> branchResults;
 
@@ -53,9 +53,7 @@ public class ApplyContentPermissionsResult
     {
         final List<BranchResult> results = branchResults.get( contentId );
         return results != null ? branchResults.get( contentId )
-            .stream()
-            .filter( br -> br.branch.equals( branch ) )
-            .map( BranchResult::content )
+            .stream().filter( br -> br.getBranch().equals( branch ) ).map( BranchResult::getContent )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
@@ -73,12 +71,12 @@ public class ApplyContentPermissionsResult
             this.content = content;
         }
 
-        public Branch branch()
+        public Branch getBranch()
         {
             return branch;
         }
 
-        public Content content()
+        public Content getContent()
         {
             return content;
         }
