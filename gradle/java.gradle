@@ -30,11 +30,11 @@ dependencies {
 java {
     withSourcesJar()
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of( 17 )
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = sourceCompatibility
 
 test {
