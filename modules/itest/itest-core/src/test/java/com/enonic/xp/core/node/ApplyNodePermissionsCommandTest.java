@@ -339,7 +339,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 6, updateNodes.getSucceedNodes().getSize() );
+        assertEquals( 6, updateNodes.getBranchResults().size() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );

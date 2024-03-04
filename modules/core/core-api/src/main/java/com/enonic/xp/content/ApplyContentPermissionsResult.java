@@ -1,11 +1,10 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -19,7 +18,7 @@ public final class ApplyContentPermissionsResult
 
     private ApplyContentPermissionsResult( Builder builder )
     {
-        this.branchResults = ImmutableMap.copyOf( builder.branchResults );
+        this.branchResults = (ImmutableMap) builder.branchResults.build().asMap();
     }
 
     public static Builder create()
@@ -53,7 +52,9 @@ public final class ApplyContentPermissionsResult
     {
         final List<BranchResult> results = branchResults.get( contentId );
         return results != null ? branchResults.get( contentId )
-            .stream().filter( br -> br.getBranch().equals( branch ) ).map( BranchResult::getContent )
+            .stream()
+            .filter( br -> br.getBranch().equals( branch ) )
+            .map( BranchResult::getContent )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
@@ -85,7 +86,7 @@ public final class ApplyContentPermissionsResult
 
     public static final class Builder
     {
-        private final Map<ContentId, List<BranchResult>> branchResults = new HashMap<>();
+        private final ImmutableListMultimap.Builder<ContentId, BranchResult> branchResults = ImmutableListMultimap.builder();
 
         private Builder()
         {
@@ -105,14 +106,7 @@ public final class ApplyContentPermissionsResult
 
         public Builder addBranchResult( ContentId contentId, Branch branch, Content content )
         {
-            branchResults.compute( contentId, ( k, v ) -> {
-                if ( v == null )
-                {
-                    v = new ArrayList<>();
-                }
-                v.add( new BranchResult( branch, content ) );
-                return v;
-            } );
+            branchResults.put( contentId, new BranchResult( branch, content ) );
             return this;
         }
 

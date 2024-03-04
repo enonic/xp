@@ -11,8 +11,10 @@ import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -99,8 +101,7 @@ public class ContentServiceImplTest_applyPermissions
             .build();
 
         final Content content = this.contentService.create( createContentParams );
-        final Content child =
-            this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
+        this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
 
         final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
 
@@ -132,8 +133,17 @@ public class ContentServiceImplTest_applyPermissions
 
         final Content content = this.contentService.create( createContentParams );
 
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
             .contentId( content.getId() )
+            .applyToOtherBranches( true )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create()
+                                        .principal( ContextAccessor.current().getAuthInfo().getUser().getKey() )
+                                        .allowAll()
+                                        .build() )
+                              .build() )
             .applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) )
             .build();
 
@@ -145,6 +155,7 @@ public class ContentServiceImplTest_applyPermissions
         final LogAuditLogParams log = captor.getValue();
 
         assertThat( log.getType() ).isEqualTo( "system.content.applyPermissions" );
-        assertThat( log.getData().getString( "result.succeedContents" ) ).isEqualTo( content.getPath().toString() );
+        assertThat( log.getData().getString( "result." + content.getId() + ".master" ) ).isEqualTo(
+            log.getData().getString( "result." + content.getId() + ".draft" ) );
     }
 }

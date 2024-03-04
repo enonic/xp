@@ -8,6 +8,7 @@ import com.google.common.collect.Streams;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -22,6 +23,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -43,6 +45,8 @@ public class ApplyNodePermissionsCommand
 
     private final Branch sourceBranch;
 
+    private final ApplyPermissionsListener listener;
+
     private ApplyNodePermissionsCommand( final Builder builder )
     {
         super( builder );
@@ -50,6 +54,9 @@ public class ApplyNodePermissionsCommand
         this.results = ApplyNodePermissionsResult.create();
         this.sourceBranch = ContextAccessor.current().getBranch();
         this.nodeCommitId = new NodeCommitId();
+        listener = params.getListener() != null ? params.getListener() : new ApplyPermissionsListener()
+        {
+        };
     }
 
     public static Builder create()
@@ -74,13 +81,18 @@ public class ApplyNodePermissionsCommand
             permissions = persistedNode.getPermissions();
         }
 
-        doPatchPermissions( params.getNodeId(), permissions );
+        refresh( RefreshMode.SEARCH );
+
+        doApplyPermissions( params.getNodeId(), permissions );
+
+        refresh( RefreshMode.ALL );
 
         final ApplyNodePermissionsResult result = results.build();
 
         if ( result.getBranchResults()
             .values()
-            .stream().anyMatch( l -> ContentConstants.BRANCH_MASTER.equals( l.get( 0 ).getBranch() ) && l.get( 0 ).getNode() != null ) )
+            .stream()
+            .anyMatch( l -> ContentConstants.BRANCH_MASTER.equals( l.get( 0 ).getBranch() ) && l.get( 0 ).getNode() != null ) )
         {
             storeCommit();
         }
@@ -88,7 +100,7 @@ public class ApplyNodePermissionsCommand
         return result;
     }
 
-    private void doPatchPermissions( final NodeId nodeId, final AccessControlList permissions )
+    private void doApplyPermissions( final NodeId nodeId, final AccessControlList permissions )
     {
         final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId );
 
@@ -132,12 +144,7 @@ public class ApplyNodePermissionsCommand
 
             final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
 
-            doPatchPermissions( child.id(), childPermissions );
-        }
-
-        if ( params.isOverwriteChildPermissions() )
-        {
-
+            doApplyPermissions( child.id(), childPermissions );
         }
     }
 
@@ -151,11 +158,7 @@ public class ApplyNodePermissionsCommand
         if ( persistedNode == null ||
             !NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode.getPermissions() ) )
         {
-            if ( params.getListener() != null )
-            {
-                params.getListener().notEnoughRights( 1 );
-            }
-
+            listener.notEnoughRights( 1 );
             return null;
         }
 
@@ -179,10 +182,7 @@ public class ApplyNodePermissionsCommand
 
         final Node result = this.nodeStorageService.store( nodeBuilder.build(), targetContext );
 
-        if ( params.getListener() != null )
-        {
-            params.getListener().permissionsApplied( 1 );
-        }
+        listener.permissionsApplied( 1 );
 
         return result;
     }

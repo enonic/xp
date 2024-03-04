@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -18,12 +16,15 @@ public final class ApplyContentPermissionsParams
 
     private final ApplyPermissionsListener listener;
 
+    private final boolean applyToOtherBranches;
+
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
         permissions = builder.permissions;
         listener = builder.listener;
+        applyToOtherBranches = builder.applyToOtherBranches;
     }
 
     public static Builder create()
@@ -51,26 +52,9 @@ public final class ApplyContentPermissionsParams
         return listener;
     }
 
-    @Override
-    public boolean equals( final Object o )
+    public boolean applyToOtherBranches()
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ApplyContentPermissionsParams ) )
-        {
-            return false;
-        }
-        final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
-        return Objects.equals( this.contentId, that.contentId ) && this.overwriteChildPermissions == that.overwriteChildPermissions &&
-            Objects.equals( this.permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( this.contentId, this.permissions, this.overwriteChildPermissions );
+        return applyToOtherBranches;
     }
 
     public static final class Builder
@@ -82,6 +66,8 @@ public final class ApplyContentPermissionsParams
         private boolean overwriteChildPermissions;
 
         private ApplyPermissionsListener listener;
+
+        private boolean applyToOtherBranches;
 
         private Builder()
         {
@@ -108,6 +94,12 @@ public final class ApplyContentPermissionsParams
         public Builder permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
+            return this;
+        }
+
+        public Builder applyToOtherBranches( final boolean applyToOtherBranches )
+        {
+            this.applyToOtherBranches = applyToOtherBranches;
             return this;
         }
 

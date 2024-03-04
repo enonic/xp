@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -56,6 +57,11 @@ public final class AuditLogUris
     private static ImmutableSet<AuditLogUri> doParseIds( final Collection<String> list )
     {
         return list.stream().map( AuditLogUri::from ).collect( ImmutableSet.toImmutableSet() );
+    }
+
+    public static Collector<AuditLogUri, Builder, AuditLogUris> collecting()
+    {
+        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }
 
     @Deprecated

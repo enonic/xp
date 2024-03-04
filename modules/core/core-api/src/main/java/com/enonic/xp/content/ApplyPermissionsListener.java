@@ -2,9 +2,15 @@ package com.enonic.xp.content;
 
 public interface ApplyPermissionsListener
 {
-    void setTotal( int count );
+    default void setTotal( int count )
+    {
+    }
 
-    void permissionsApplied( int count );
+    default void permissionsApplied( int count )
+    {
+    }
 
-    void notEnoughRights( int count );
+    default void notEnoughRights( int count )
+    {
+    }
 }

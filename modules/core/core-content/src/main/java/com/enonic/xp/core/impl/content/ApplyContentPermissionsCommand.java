@@ -1,8 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeId;
@@ -26,21 +30,31 @@ final class ApplyContentPermissionsCommand
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
-        final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create()
+        final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
             .nodeId( nodeId )
             .permissions( params.getPermissions() )
-            .overwriteChildPermissions( params.isOverwriteChildPermissions() )
-            .applyPermissionsListener( params.getListener() )
-            .build();
+            .overwriteChildPermissions( params.isOverwriteChildPermissions() ).applyPermissionsListener( params.getListener() );
 
-        final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsParams );
+        if ( params.applyToOtherBranches() )
+        {
+            applyNodePermissionsBuilder.addBranches( Branches.from(
+                ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() )
+                    ? ContentConstants.BRANCH_MASTER
+                    : ContentConstants.BRANCH_DRAFT ) );
+        }
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
         result.getBranchResults().forEach( ( id, branchResult ) -> {
             branchResult.forEach( br -> builder.addBranchResult( ContentId.from( id ), br.getBranch(),
-                                                                 br.getNode() != null ? contentNodeTranslator.fromNode( br.getNode(), true )
-                : null ) );
+                                                                 br.getNode() != null
+                                                                     ? ContextBuilder.from( ContextAccessor.current() )
+                                                                     .branch( br.getBranch() )
+                                                                     .build()
+                                                                     .callWith( () -> contentNodeTranslator.fromNode( br.getNode(), true ) )
+                                                                     : null ) );
         } );
 
         return builder.build();

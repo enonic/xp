@@ -1029,8 +1029,6 @@ public class ContentServiceImpl
     @Override
     public ApplyContentPermissionsResult applyPermissions( final ApplyContentPermissionsParams params )
     {
-        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
-
         final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
