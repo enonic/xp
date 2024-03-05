@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collector;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -32,6 +33,11 @@ public class RoutableNodeVersionIds
     public static RoutableNodeVersionIds from( final Collection<RoutableNodeVersionId> routableNodeVersionIds )
     {
         return new RoutableNodeVersionIds( ImmutableSet.copyOf( routableNodeVersionIds ) );
+    }
+
+    public static Collector<RoutableNodeVersionId, Builder, RoutableNodeVersionIds> collecting()
+    {
+        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build().getSet() ), Builder::build );
     }
 
     public static Builder create()
