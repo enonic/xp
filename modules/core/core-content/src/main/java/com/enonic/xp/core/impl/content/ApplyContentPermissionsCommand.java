@@ -35,12 +35,9 @@ final class ApplyContentPermissionsCommand
             .permissions( params.getPermissions() )
             .overwriteChildPermissions( params.isOverwriteChildPermissions() ).applyPermissionsListener( params.getListener() );
 
-        if ( params.applyToOtherBranches() )
+        if ( params.isImmediate() )
         {
-            applyNodePermissionsBuilder.addBranches( Branches.from(
-                ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() )
-                    ? ContentConstants.BRANCH_MASTER
-                    : ContentConstants.BRANCH_DRAFT ) );
+            applyNodePermissionsBuilder.addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );
         }
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );

@@ -54,9 +54,7 @@ public class ApplyNodePermissionsCommand
         this.results = ApplyNodePermissionsResult.create();
         this.sourceBranch = ContextAccessor.current().getBranch();
         this.nodeCommitId = new NodeCommitId();
-        listener = params.getListener() != null ? params.getListener() : new ApplyPermissionsListener()
-        {
-        };
+        listener = params.getListener() != null ? params.getListener() : ApplyPermissionsListener.EMPTY;
     }
 
     public static Builder create()

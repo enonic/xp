@@ -15,8 +15,7 @@ public class ApplyContentPermissionsParamsTest
     {
         final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
             .contentId( ContentId.from( "id1" ) )
-            .overwriteChildPermissions( true )
-            .applyToOtherBranches( true )
+            .overwriteChildPermissions( true ).immediate( true )
             .permissions( AccessControlList.create().build() )
             .applyContentPermissionsListener( new ApplyPermissionsListener()
             {
@@ -26,8 +25,7 @@ public class ApplyContentPermissionsParamsTest
         assertEquals( ContentId.from( "id1" ), params.getContentId() );
         assertTrue( params.isOverwriteChildPermissions() );
         assertEquals( AccessControlList.create().build(), params.getPermissions() );
-        assertTrue( params.applyToOtherBranches() );
+        assertTrue( params.isImmediate() );
         assertNotNull( params.getListener() );
     }
-
 }

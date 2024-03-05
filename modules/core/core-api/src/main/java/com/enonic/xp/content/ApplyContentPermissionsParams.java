@@ -16,7 +16,7 @@ public final class ApplyContentPermissionsParams
 
     private final ApplyPermissionsListener listener;
 
-    private final boolean applyToOtherBranches;
+    private final boolean immediate;
 
     private ApplyContentPermissionsParams( Builder builder )
     {
@@ -24,7 +24,7 @@ public final class ApplyContentPermissionsParams
         overwriteChildPermissions = builder.overwriteChildPermissions;
         permissions = builder.permissions;
         listener = builder.listener;
-        applyToOtherBranches = builder.applyToOtherBranches;
+        immediate = builder.immediate;
     }
 
     public static Builder create()
@@ -52,9 +52,9 @@ public final class ApplyContentPermissionsParams
         return listener;
     }
 
-    public boolean applyToOtherBranches()
+    public boolean isImmediate()
     {
-        return applyToOtherBranches;
+        return immediate;
     }
 
     public static final class Builder
@@ -67,7 +67,7 @@ public final class ApplyContentPermissionsParams
 
         private ApplyPermissionsListener listener;
 
-        private boolean applyToOtherBranches;
+        private boolean immediate;
 
         private Builder()
         {
@@ -97,9 +97,9 @@ public final class ApplyContentPermissionsParams
             return this;
         }
 
-        public Builder applyToOtherBranches( final boolean applyToOtherBranches )
+        public Builder immediate( final boolean immediate )
         {
-            this.applyToOtherBranches = applyToOtherBranches;
+            this.immediate = immediate;
             return this;
         }
 
