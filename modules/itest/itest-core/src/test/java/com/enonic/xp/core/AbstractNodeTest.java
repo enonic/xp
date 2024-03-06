@@ -19,7 +19,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
-import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
@@ -169,8 +168,6 @@ public abstract class AbstractNodeTest
     protected EventPublisher eventPublisher;
 
     protected IndexServiceImpl indexService;
-
-    protected SecurityServiceImpl securityService;
 
     private Context initialContext;
 

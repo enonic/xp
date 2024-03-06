@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -96,6 +97,11 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( paths ) );
     }
 
+    public static Collector<ContentPath, ContentPaths.Builder, ContentPaths> collecting()
+    {
+        return Collector.of( ContentPaths.Builder::new, ContentPaths.Builder::add, ( left, right ) -> left.addAll( right.build() ),
+                             ContentPaths.Builder::build );
+    }
     public static Builder create()
     {
         return new Builder();
