@@ -76,9 +76,7 @@ final class ApplyContentPermissionsCommand
 
         if ( !versionIdsToCommit.isEmpty() )
         {
-            nodeService.commit( NodeCommitEntry.create()
-                                    .message( "Applied permissions" )
-                                    .committer( ContextAccessor.current().getAuthInfo().getUser().getKey() )
+            nodeService.commit( NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX )
                                     .build(), versionIdsToCommit );
         }
     }

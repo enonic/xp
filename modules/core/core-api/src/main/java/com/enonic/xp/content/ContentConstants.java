@@ -74,6 +74,8 @@ public final class ContentConstants
 
     public static final String ARCHIVE_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_ARCHIVE";
 
+    public static final String APPLY_PERMISSIONS_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_APPLY_PERMISSIONS";
+
     public static final String PUBLISH_COMMIT_PREFIX_DELIMITER = " ";
 
     public static final String CONTENT_ROOT_PATH_ATTRIBUTE = "contentRootPath";

@@ -60,6 +60,11 @@ public class ApplyNodePermissionsCommand
 
     public ApplyNodePermissionsResult execute()
     {
+        if ( params.getBranches().contains( this.sourceBranch ) )
+        {
+            throw new IllegalArgumentException( "Branches cannot contain current branch" );
+        }
+
         final Node persistedNode = doGetById( params.getNodeId() );
 
         if ( persistedNode == null )
@@ -157,7 +162,7 @@ public class ApplyNodePermissionsCommand
                                                                              .nodePath( updatedVersionMetadata.getNodePath() )
                                                                              .nodeVersionKey( updatedVersionMetadata.getNodeVersionKey() )
                                                                              .nodeId( updatedVersionMetadata.getNodeId() )
-                                                                             .timestamp( Instant.now( CLOCK ) )
+                                                                             .timestamp( updatedVersionMetadata.getTimestamp() )
                                                                              .build() ).build() ), branch, l -> {
             }, InternalContext.from( ContextAccessor.current() ) );
             return null;
