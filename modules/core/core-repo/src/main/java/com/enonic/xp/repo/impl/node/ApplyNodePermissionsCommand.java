@@ -88,15 +88,15 @@ public class ApplyNodePermissionsCommand
     {
         final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId );
 
-        final Node updatedNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
+        final Node updatedOriginNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
 
-        if ( updatedNode == null )
+        if ( updatedOriginNode == null )
         {
             results.addBranchResult( nodeId, this.sourceBranch, null );
             return;
         }
 
-        results.addBranchResult( nodeId, this.sourceBranch, updatedNode );
+        results.addBranchResult( nodeId, this.sourceBranch, updatedOriginNode );
 
         activeVersionMap.keySet().forEach( targetBranch -> {
             if ( targetBranch.equals( this.sourceBranch ) )
@@ -111,12 +111,12 @@ public class ApplyNodePermissionsCommand
                 updatePermissionsInBranch( nodeId, isEqualToOrigin ? activeVersionMap.get( sourceBranch ) : null, permissions,
                                            targetBranch );
             ;
-            results.addBranchResult( nodeId, targetBranch, updatedTargetNode );
+            results.addBranchResult( nodeId, targetBranch, isEqualToOrigin ? updatedOriginNode : updatedTargetNode );
 
         } );
 
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
-                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedNode.path() ).build(),
+                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedOriginNode.path() ).build(),
                 SingleRepoSearchSource.from( ContextBuilder.from( ContextAccessor.current() ).branch( this.sourceBranch ).build() ) )
                                                       .getIds() );
 
@@ -158,17 +158,14 @@ public class ApplyNodePermissionsCommand
                                                                              .nodeVersionKey( updatedVersionMetadata.getNodeVersionKey() )
                                                                              .nodeId( updatedVersionMetadata.getNodeId() )
                                                                              .timestamp( Instant.now( CLOCK ) )
-                                                                             .build() )
-                                                       .build() ), branch, null, InternalContext.from( ContextAccessor.current() ) );
-
-            result = persistedNode;
+                                                                             .build() ).build() ), branch, l -> {
+            }, InternalContext.from( ContextAccessor.current() ) );
+            return null;
         }
         else
         {
             final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions ).build();
-
             result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
-
         }
 
         listener.permissionsApplied( 1 );
