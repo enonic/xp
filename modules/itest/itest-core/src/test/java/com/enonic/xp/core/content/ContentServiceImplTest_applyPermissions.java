@@ -135,8 +135,7 @@ public class ContentServiceImplTest_applyPermissions
 
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
 
-        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
-            .contentId( content.getId() ).immediate( true )
+        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().contentId( content.getId() )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create()
                                         .principal( ContextAccessor.current().getAuthInfo().getUser().getKey() )

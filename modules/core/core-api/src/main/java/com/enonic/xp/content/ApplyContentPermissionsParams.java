@@ -16,15 +16,12 @@ public final class ApplyContentPermissionsParams
 
     private final ApplyPermissionsListener listener;
 
-    private final boolean immediate;
-
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
         permissions = builder.permissions;
         listener = builder.listener;
-        immediate = builder.immediate;
     }
 
     public static Builder create()
@@ -52,11 +49,6 @@ public final class ApplyContentPermissionsParams
         return listener;
     }
 
-    public boolean isImmediate()
-    {
-        return immediate;
-    }
-
     public static final class Builder
     {
         private ContentId contentId;
@@ -66,8 +58,6 @@ public final class ApplyContentPermissionsParams
         private boolean overwriteChildPermissions;
 
         private ApplyPermissionsListener listener;
-
-        private boolean immediate;
 
         private Builder()
         {
@@ -94,12 +84,6 @@ public final class ApplyContentPermissionsParams
         public Builder permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
-            return this;
-        }
-
-        public Builder immediate( final boolean immediate )
-        {
-            this.immediate = immediate;
             return this;
         }
 

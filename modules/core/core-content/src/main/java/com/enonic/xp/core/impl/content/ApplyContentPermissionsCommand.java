@@ -40,12 +40,8 @@ final class ApplyContentPermissionsCommand
             .nodeId( nodeId )
             .permissions( params.getPermissions() )
             .overwriteChildPermissions( params.isOverwriteChildPermissions() )
-            .applyPermissionsListener( params.getListener() );
-
-        if ( params.isImmediate() )
-        {
-            applyNodePermissionsBuilder.addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );
-        }
+            .applyPermissionsListener( params.getListener() )
+            .addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
