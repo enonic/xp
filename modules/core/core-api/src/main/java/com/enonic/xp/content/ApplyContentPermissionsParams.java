@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -49,28 +47,6 @@ public final class ApplyContentPermissionsParams
     public ApplyPermissionsListener getListener()
     {
         return listener;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ApplyContentPermissionsParams ) )
-        {
-            return false;
-        }
-        final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
-        return Objects.equals( this.contentId, that.contentId ) && this.overwriteChildPermissions == that.overwriteChildPermissions &&
-            Objects.equals( this.permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( this.contentId, this.permissions, this.overwriteChildPermissions );
     }
 
     public static final class Builder

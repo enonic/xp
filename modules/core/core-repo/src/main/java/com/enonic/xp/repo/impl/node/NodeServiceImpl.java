@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -12,6 +13,7 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
@@ -813,19 +815,24 @@ public class NodeServiceImpl
     public ApplyNodePermissionsResult applyPermissions( final ApplyNodePermissionsParams params )
     {
         verifyContext();
-        final ApplyNodePermissionsResult result = ApplyNodePermissionsCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.nodeSearchService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final ApplyNodePermissionsResult result = ApplyNodePermissionsCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.nodeSearchService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
-        for ( final Node node : result.getSucceedNodes() )
-        {
-            this.eventPublisher.publish( NodeEvents.permissionsUpdated( node ) );
-        }
+        result.getBranchResults()
+            .values()
+            .stream()
+            .flatMap( Collection::stream )
+            .filter( br -> br.getNode() != null )
+            .forEach( br -> ContextBuilder.from( ContextAccessor.current() )
+                .branch( br.getBranch() )
+                .build()
+                .runWith( () -> this.eventPublisher.publish( NodeEvents.permissionsUpdated( br.getNode() ) ) ) );
 
         return result;
     }
