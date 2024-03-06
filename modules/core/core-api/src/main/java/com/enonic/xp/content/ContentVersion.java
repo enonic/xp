@@ -104,6 +104,12 @@ public final class ContentVersion
         return permissions;
     }
 
+    @Deprecated
+    public boolean isInheritPermissions()
+    {
+        return false;
+    }
+
     public static Builder create()
     {
         return new Builder();

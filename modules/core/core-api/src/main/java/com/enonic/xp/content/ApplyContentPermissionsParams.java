@@ -49,6 +49,12 @@ public final class ApplyContentPermissionsParams
         return listener;
     }
 
+    @Deprecated
+    public boolean isInheritPermissions()
+    {
+        return false;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -84,6 +90,12 @@ public final class ApplyContentPermissionsParams
         public Builder permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
+            return this;
+        }
+
+        @Deprecated
+        public Builder inheritPermissions( final boolean inheritPermissions )
+        {
             return this;
         }
 

@@ -382,6 +382,12 @@ public class Content
         return variantOf;
     }
 
+    @Deprecated
+    public boolean inheritsPermissions()
+    {
+        return false;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
