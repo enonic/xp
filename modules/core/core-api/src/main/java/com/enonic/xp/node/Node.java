@@ -160,6 +160,12 @@ public final class Node
         return nodeVersionId;
     }
 
+    @Deprecated
+    public boolean inheritsPermissions()
+    {
+        return false;
+    }
+
     public void validateForIndexing()
     {
         Preconditions.checkNotNull( this.id, "Id must be set" );
