@@ -58,7 +58,7 @@ public class LoadNodeCommand
             overrideVersion().
             build();
 
-        final Node loadedNode = this.nodeStorageService.store( storeNodeParams, InternalContext.from( ContextAccessor.current() ) );
+        final Node loadedNode = this.nodeStorageService.store( storeNodeParams, InternalContext.from( ContextAccessor.current() ) ).node();
 
         return LoadNodeResult.create().
             node( loadedNode ).

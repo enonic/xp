@@ -11,15 +11,18 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +58,8 @@ class RepositoryServiceActivatorTest
         when( indexServiceInternal.indicesExists( any() ) ).thenReturn( true );
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeStorageService.store( any( Node.class ), any() ) ).thenReturn( mockNode );
+        when( nodeStorageService.store( any( Node.class ), any() ) ).thenReturn(
+            new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
     }
 
     @Test

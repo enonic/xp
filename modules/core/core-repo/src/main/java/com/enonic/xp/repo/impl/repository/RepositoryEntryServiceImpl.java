@@ -68,7 +68,7 @@ public class RepositoryEntryServiceImpl
     public void createRepositoryEntry( final Repository repository )
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
-        final Node createdNode = nodeStorageService.store( node, createInternalContext() );
+        final Node createdNode = nodeStorageService.store( node, createInternalContext() ).node();
 
         refresh();
         eventPublisher.publish( NodeEvents.created( createdNode ) );

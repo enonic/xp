@@ -71,7 +71,7 @@ public class SetNodeChildOrderCommand
             timestamp( Instant.now( CLOCK ) ).
             build();
 
-        final Node node = this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
+        final Node node = this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) ).node();
         refresh( refresh );
         return node;
     }
