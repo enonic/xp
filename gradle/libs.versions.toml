@@ -115,7 +115,7 @@ resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.9.Final
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version = "9.4.53.v20231009" }
 jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "9.4.53.v20231009" }
 jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version = "9.4.53.v20231009" }
-jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "9.4.53.v20231009" }
+jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "12.0.7" }
 jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version = "9.4.53.v20231009" }
 jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version = "9.4.53.v20231009" }
 jetty-websocket-serverimpl = { module = "org.eclipse.jetty.websocket:javax-websocket-server-impl", version = "9.4.53.v20231009" }
