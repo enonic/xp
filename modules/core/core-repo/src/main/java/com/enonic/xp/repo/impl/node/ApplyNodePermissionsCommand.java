@@ -27,6 +27,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -93,7 +94,7 @@ public class ApplyNodePermissionsCommand
     {
         final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId );
 
-        final Node updatedOriginNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
+        final NodeVersionData updatedOriginNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
 
         if ( updatedOriginNode == null )
         {
@@ -101,7 +102,7 @@ public class ApplyNodePermissionsCommand
             return;
         }
 
-        results.addBranchResult( nodeId, this.sourceBranch, updatedOriginNode );
+        results.addBranchResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
 
         activeVersionMap.keySet().forEach( targetBranch -> {
             if ( targetBranch.equals( this.sourceBranch ) )
@@ -112,16 +113,18 @@ public class ApplyNodePermissionsCommand
             final boolean isEqualToOrigin =
                 activeVersionMap.get( targetBranch ).getNodeVersionId().equals( activeVersionMap.get( sourceBranch ).getNodeVersionId() );
 
-            final Node updatedTargetNode =
-                updatePermissionsInBranch( nodeId, isEqualToOrigin ? activeVersionMap.get( sourceBranch ) : null, permissions,
+            final NodeVersionData updatedTargetNode =
+                updatePermissionsInBranch( nodeId, isEqualToOrigin ? updatedOriginNode.nodeVersionMetadata() : null, permissions,
                                            targetBranch );
             ;
-            results.addBranchResult( nodeId, targetBranch, isEqualToOrigin ? updatedOriginNode : updatedTargetNode );
+            results.addBranchResult( nodeId, targetBranch, isEqualToOrigin
+                ? updatedOriginNode.node()
+                : updatedTargetNode != null ? updatedTargetNode.node() : null );
 
         } );
 
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
-                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedOriginNode.path() ).build(),
+                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedOriginNode.node().path() ).build(),
                 SingleRepoSearchSource.from( ContextBuilder.from( ContextAccessor.current() ).branch( this.sourceBranch ).build() ) )
                                                       .getIds() );
 
@@ -138,7 +141,7 @@ public class ApplyNodePermissionsCommand
         }
     }
 
-    private Node updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
+    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
                                             final AccessControlList permissions, final Branch branch )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
@@ -152,7 +155,7 @@ public class ApplyNodePermissionsCommand
             return null;
         }
 
-        Node result;
+        NodeVersionData result;
 
         if ( updatedVersionMetadata != null )
         {

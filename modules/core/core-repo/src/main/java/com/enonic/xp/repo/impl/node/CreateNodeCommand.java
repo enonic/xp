@@ -93,8 +93,7 @@ public final class CreateNodeCommand
             attachedBinaries( attachedBinaries ).
             timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
 
-
-        final Node newNode = this.nodeStorageService.store( nodeBuilder.build(), InternalContext.from( ContextAccessor.current() ) );
+        final Node newNode = this.nodeStorageService.store( nodeBuilder.build(), InternalContext.from( ContextAccessor.current() ) ).node();
 
         refresh( params.getRefresh() );
         return newNode;

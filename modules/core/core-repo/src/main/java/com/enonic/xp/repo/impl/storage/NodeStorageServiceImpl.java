@@ -71,28 +71,30 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Node store( final Node node, final InternalContext context )
+    public NodeVersionData store( final Node node, final InternalContext context )
     {
         return store( StoreNodeParams.create().node( node ).build(), context );
     }
 
     @Override
-    public Node store( final StoreNodeParams params, final InternalContext context )
+    public NodeVersionData store( final StoreNodeParams params, final InternalContext context )
     {
         final Node node = params.getNode();
 
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
 
-        this.versionService.store( NodeVersionMetadata.create()
-                                       .nodeId( node.id() )
-                                       .nodeVersionId( nodeVersionId )
-                                       .nodeVersionKey( nodeVersionKey )
-                                       .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
-                                       .nodePath( node.path() )
-                                       .nodeCommitId( params.getNodeCommitId() )
-                                       .timestamp( node.getTimestamp() )
-                                       .build(), context );
+        final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create()
+            .nodeId( node.id() )
+            .nodeVersionId( nodeVersionId )
+            .nodeVersionKey( nodeVersionKey )
+            .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
+            .nodePath( node.path() )
+            .nodeCommitId( params.getNodeCommitId() )
+            .timestamp( node.getTimestamp() )
+            .build();
+
+        this.versionService.store( nodeVersionMetadata, context );
 
         this.branchService.store( NodeBranchEntry.create()
                                       .nodeId( node.id() )
@@ -106,7 +108,7 @@ public class NodeStorageServiceImpl
 
         this.indexDataService.store( newNode, context );
 
-        return newNode;
+        return new NodeVersionData( newNode, nodeVersionMetadata );
     }
 
     @Override
