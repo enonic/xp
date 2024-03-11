@@ -119,7 +119,7 @@ public class ReorderChildNodeCommand
     {
         final Node updatedNode = Node.create( nodeToMove ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
 
-        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) ).node();
     }
 
     private long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final SearchResult result )

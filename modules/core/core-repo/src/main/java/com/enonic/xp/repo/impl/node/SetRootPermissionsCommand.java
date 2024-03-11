@@ -40,7 +40,7 @@ public class SetRootPermissionsCommand
             .timestamp( Instant.now( CLOCK ) )
             .build();
 
-        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ).node();
     }
 
     public static Builder create()

@@ -183,7 +183,7 @@ public class MoveNodeCommand
 
         final Node movedNode = this.nodeStorageService.store(
             StoreNodeParams.create().node( nodeToMoveBuilder.build() ).movedFrom( persistedNode.path() ).build(),
-            InternalContext.from( ContextAccessor.current() ) );
+            InternalContext.from( ContextAccessor.current() ) ).node();
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 

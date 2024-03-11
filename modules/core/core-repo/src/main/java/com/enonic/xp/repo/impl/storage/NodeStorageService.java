@@ -25,9 +25,9 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeStorageService
 {
-    Node store( Node node, InternalContext context );
+    NodeVersionData store( Node node, InternalContext context );
 
-    Node store( StoreNodeParams params, InternalContext context );
+    NodeVersionData store( StoreNodeParams params, InternalContext context );
 
     void storeVersion( StoreNodeVersionParams params, InternalContext context );
 

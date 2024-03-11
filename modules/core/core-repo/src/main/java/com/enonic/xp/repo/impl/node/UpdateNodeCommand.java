@@ -66,7 +66,7 @@ public final class UpdateNodeCommand
         final Node updatedNode = builder.build();
         if ( !this.params.isDryRun() )
         {
-            final Node storedNode = this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) );
+            final Node storedNode = this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) ).node();
             refresh( params.getRefresh() );
             return storedNode;
         }
