@@ -1,17 +1,8 @@
 package com.enonic.xp.lib.mail;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
-
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +10,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
 
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.mail.MailMessageParams;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -26,21 +18,32 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SendMailScriptTest
     extends ScriptTestSupport
 {
-    private MailMessage actualMessage;
+    private MailMessageParams actualMessage;
 
     @Override
     public void initialize()
         throws Exception
     {
         super.initialize();
-        final MailService mailService = message -> this.actualMessage = message;
-        addService( MailService.class, mailService );
+        addService( MailService.class, new MailService()
+        {
+            @Override
+            public void send( final MailMessage message )
+            {
+                // do nothing
+            }
+
+            @Override
+            public void send( final MailMessageParams message )
+            {
+                SendMailScriptTest.this.actualMessage = message;
+            }
+        } );
     }
 
     @Test
@@ -51,38 +54,36 @@ public class SendMailScriptTest
 
     @Test
     public void testSimpleMail()
-        throws Exception
     {
         runFunction( "/test/send-test.js", "simpleMail" );
 
-        final MimeMessage message = mockCompose( this.actualMessage );
+        final MailMessageParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
-        assertEquals( "test body", message.getContent() );
-        assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
-        assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
-        assertArrayEquals( toAddresses( "cc@bar.com" ), message.getRecipients( Message.RecipientType.CC ) );
-        assertArrayEquals( toAddresses( "bcc@bar.com" ), message.getRecipients( Message.RecipientType.BCC ) );
-        assertArrayEquals( toAddresses( "replyTo@bar.com" ), message.getReplyTo() );
-        assertEquals( "Value", message.getHeader( "X-Custom" )[0] );
-        assertEquals( "2", message.getHeader( "X-Other" )[0] );
+        assertEquals( "test body", message.getBody() );
+        assertArrayEquals( new String[]{"from@bar.com"}, message.getFrom() );
+        assertArrayEquals( new String[]{"to@bar.com"}, message.getTo() );
+        assertArrayEquals( new String[]{"cc@bar.com"}, message.getCc() );
+        assertArrayEquals( new String[]{"bcc@bar.com"}, message.getBcc() );
+        assertArrayEquals( new String[]{"replyTo@bar.com"}, message.getReplyTo() );
+        assertEquals( "Value", message.getHeaders().get( "X-Custom" ) );
+        assertEquals( "2", message.getHeaders().get( "X-Other" ) );
     }
 
     @Test
     public void testMultiRecipientsMail()
-        throws Exception
     {
         runFunction( "/test/send-test.js", "multiRecipientsMail" );
 
-        final MimeMessage message = mockCompose( this.actualMessage );
+        final MailMessageParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
-        assertEquals( "test body", message.getContent() );
-        assertArrayEquals( toAddresses( "from@bar.com", "from@foo.com" ), message.getFrom() );
-        assertArrayEquals( toAddresses( "to@bar.com", "to@foo.com" ), message.getRecipients( Message.RecipientType.TO ) );
-        assertArrayEquals( toAddresses( "cc@bar.com", "cc@foo.com" ), message.getRecipients( Message.RecipientType.CC ) );
-        assertArrayEquals( toAddresses( "bcc@bar.com", "bcc@foo.com" ), message.getRecipients( Message.RecipientType.BCC ) );
-        assertArrayEquals( toAddresses( "replyTo@bar.com", "replyTo@foo.com" ), message.getReplyTo() );
+        assertEquals( "test body", message.getBody() );
+        assertArrayEquals( new String[]{"from@bar.com", "from@foo.com"}, message.getFrom() );
+        assertArrayEquals( new String[]{"to@bar.com", "to@foo.com"}, message.getTo() );
+        assertArrayEquals( new String[]{"cc@bar.com", "cc@foo.com"}, message.getCc() );
+        assertArrayEquals( new String[]{"bcc@bar.com", "bcc@foo.com"}, message.getBcc() );
+        assertArrayEquals( new String[]{"replyTo@bar.com", "replyTo@foo.com"}, message.getReplyTo() );
     }
 
     @Test
@@ -91,21 +92,31 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "rfc822AddressMail" );
 
-        final MimeMessage message = mockCompose( this.actualMessage );
+        final MailMessageParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
-        assertEquals( "test body", message.getContent() );
-        assertArrayEquals( toAddresses( "From Bar <from@bar.com>", "From Foo <from@foo.com>" ), message.getFrom() );
-        assertArrayEquals( toAddresses( "To Bar <to@bar.com>", "To Foo <to@foo.com>" ), message.getRecipients( Message.RecipientType.TO ) );
+        assertEquals( "test body", message.getBody() );
+        assertArrayEquals( new String[]{"From Bar <from@bar.com>", "From Foo <from@foo.com>"}, message.getFrom() );
+        assertArrayEquals( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"}, message.getTo() );
     }
 
     @Test
     public void testFailSendMail()
         throws Exception
     {
-        final MailService mailService = message ->
+        final MailService mailService = new MailService()
         {
-            throw new RuntimeException( "Error sending mail" );
+            @Override
+            public void send( final MailMessage message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
+
+            @Override
+            public void send( final MailMessageParams message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
         };
         addService( MailService.class, mailService );
 
@@ -120,12 +131,12 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "sendMailWithContentType" );
 
-        final MimeMessage message = mockCompose( this.actualMessage );
+        final MailMessageParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
-        assertEquals( "test body", message.getContent() );
-        assertArrayEquals( toAddresses( "from@bar.com" ), message.getFrom() );
-        assertArrayEquals( toAddresses( "to@bar.com" ), message.getRecipients( Message.RecipientType.TO ) );
+        assertEquals( "test body", message.getBody() );
+        assertArrayEquals( new String[]{"from@bar.com"}, message.getFrom() );
+        assertArrayEquals( new String[]{"to@bar.com"}, message.getTo() );
         assertEquals( "text/html", message.getContentType() );
     }
 
@@ -133,9 +144,19 @@ public class SendMailScriptTest
     public void testFailMissingFrom()
         throws Exception
     {
-        final MailService mailService = message ->
+        final MailService mailService = new MailService()
         {
-            throw new RuntimeException( "Error sending mail" );
+            @Override
+            public void send( final MailMessage message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
+
+            @Override
+            public void send( final MailMessageParams message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
         };
         addService( MailService.class, mailService );
 
@@ -156,11 +177,20 @@ public class SendMailScriptTest
     public void testFailMissingTo()
         throws Exception
     {
-        final MailService mailService = message ->
+        addService( MailService.class, new MailService()
         {
-            throw new RuntimeException( "Error sending mail" );
-        };
-        addService( MailService.class, mailService );
+            @Override
+            public void send( final MailMessage message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
+
+            @Override
+            public void send( final MailMessageParams message )
+            {
+                throw new RuntimeException( "Error sending mail" );
+            }
+        } );
 
         try
         {
@@ -181,56 +211,21 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "sendWithAttachments" );
 
-        final MimeMessage message = mockCompose( this.actualMessage );
-        message.saveChanges(); // required to updated headers (mimeType)
+        final MailMessageParams message = this.actualMessage;
 
-        MimeMultipart content = (MimeMultipart) message.getContent();
-        assertEquals( 3, content.getCount() );
-        final BodyPart first = content.getBodyPart( 0 );
-        final BodyPart second = content.getBodyPart( 1 );
-        final BodyPart third = content.getBodyPart( 2 );
-        final String secondContent =
-            CharStreams.toString( new InputStreamReader( (InputStream) second.getContent(), StandardCharsets.UTF_8 ) );
+        assertEquals( 2, message.getAttachments().size() );
 
-        assertEquals( "test body", first.getContent() );
-        assertEquals( "image data", secondContent );
-        assertEquals( "Some text", third.getContent() );
+        final Map<String, Object> attachment1 = message.getAttachments().get( 0 );
+        assertEquals( "image.png", attachment1.get( "fileName" ) );
+        assertEquals( "image/png", attachment1.get( "mimeType" ) );
 
-        assertNull( first.getFileName() );
-        assertEquals( "image.png", second.getFileName() );
-        assertEquals( "text.txt", third.getFileName() );
+        assertEquals( "image data", CharStreams.toString(
+            new InputStreamReader( ( (ByteSource) attachment1.get( "data" ) ).openBufferedStream(), StandardCharsets.UTF_8 ) ) );
+        Map<String, Object> headersAttachment1 = (Map<String, Object>) attachment1.get( "headers" );
+        assertEquals( "<myimg>", headersAttachment1.get( "Content-ID" ) );
 
-        assertEquals( "text/plain; charset=UTF-8", first.getContentType() );
-        assertTrue( second.getContentType().startsWith( "image/png" ) );
-        assertTrue( third.getContentType().startsWith( "text/plain" ) );
-
-        assertEquals( "<myimg>", second.getHeader( "Content-ID" )[0] );
-    }
-
-    private InternetAddress[] toAddresses( final String... addresses )
-    {
-        return Stream.of( addresses ).map( this::toAddress ).toArray( InternetAddress[]::new );
-    }
-
-    private InternetAddress toAddress( final String address )
-        throws RuntimeException
-    {
-        try
-        {
-            return new InternetAddress( address );
-        }
-        catch ( AddressException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private MimeMessage mockCompose( final MailMessage message )
-        throws Exception
-    {
-        final MimeMessage mimeMessage = new MimeMessage( (Session) null );
-        message.compose( mimeMessage );
-        return mimeMessage;
+        final Map<String, Object> attachment2 = message.getAttachments().get( 1 );
+        assertEquals( "text.txt", attachment2.get( "fileName" ) );
     }
 
     public ByteSource createByteSource( final String value )

@@ -1,0 +1,220 @@
+package com.enonic.xp.mail.impl;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import com.google.common.io.ByteSource;
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.mail.MailException;
+import com.enonic.xp.mail.MailMessageParams;
+import com.enonic.xp.util.MediaTypes;
+
+import static com.google.common.base.Strings.nullToEmpty;
+
+class MimeMessageConverter
+{
+    static MimeMessage convert( Session session, MailMessageParams params )
+        throws Exception
+    {
+        MimeMessage message = new MimeMessage( session );
+
+        message.setSubject( params.getSubject() );
+
+        message.addFrom( toAddresses( params.getFrom() ) );
+        message.addRecipients( Message.RecipientType.TO, toAddresses( params.getTo() ) );
+        message.addRecipients( Message.RecipientType.CC, toAddresses( params.getCc() ) );
+        message.addRecipients( Message.RecipientType.BCC, toAddresses( params.getBcc() ) );
+        message.setReplyTo( toAddresses( params.getReplyTo() ) );
+
+        if ( params.getHeaders() != null )
+        {
+            for ( Map.Entry<String, String> header : params.getHeaders().entrySet() )
+            {
+                message.addHeader( header.getKey(), header.getValue() );
+            }
+        }
+
+        final List<Attachment> attachmentList = resolveAttachments( params.getAttachments() );
+        if ( attachmentList.isEmpty() )
+        {
+            message.setText( nullToEmpty( params.getBody() ), "UTF-8" );
+            if ( params.getContentType() != null )
+            {
+                message.addHeader( "Content-Type", params.getContentType() );
+            }
+        }
+        else
+        {
+            final Multipart multipart = new MimeMultipart();
+
+            final MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText( nullToEmpty( params.getBody() ), "UTF-8" );
+            if ( params.getContentType() != null )
+            {
+                textPart.addHeader( "Content-Type", params.getContentType() );
+            }
+            multipart.addBodyPart( textPart );
+
+            for ( Attachment attachment : attachmentList )
+            {
+                final MimeBodyPart messageBodyPart = new MimeBodyPart();
+                DataSource source = new ByteSourceDataSource( attachment.data, attachment.name, attachment.mimeType );
+                messageBodyPart.setDataHandler( new DataHandler( source ) );
+                messageBodyPart.setFileName( attachment.name );
+                for ( String headerName : attachment.headers.keySet() )
+                {
+                    messageBodyPart.addHeader( headerName, attachment.headers.get( headerName ) );
+                }
+                multipart.addBodyPart( messageBodyPart );
+            }
+            message.setContent( multipart );
+        }
+
+        return message;
+    }
+
+    private static InternetAddress[] toAddresses( final String[] addressList )
+    {
+        return Stream.of( addressList )
+            .filter( string -> !nullToEmpty( string ).isBlank() )
+            .map( MimeMessageConverter::toAddress )
+            .toArray( InternetAddress[]::new );
+    }
+
+    private static InternetAddress toAddress( final String address )
+        throws MailException
+    {
+        try
+        {
+            return new InternetAddress( address );
+        }
+        catch ( AddressException e )
+        {
+            throw new MailException( e.getMessage(), e );
+        }
+    }
+
+    private static List<Attachment> resolveAttachments( final List<Map<String, Object>> attachments )
+    {
+        if ( attachments == null )
+        {
+            return Collections.emptyList();
+        }
+        final List<Attachment> result = new ArrayList<>();
+        for ( Map<String, Object> attachmentObject : attachments )
+        {
+            final String name = getValue( attachmentObject, "fileName", String.class );
+            final ByteSource data = getValue( attachmentObject, "data", ByteSource.class );
+            String mimeType = getValue( attachmentObject, "mimeType", String.class );
+            final Map headers = getValue( attachmentObject, "headers", Map.class );
+            if ( name != null && data != null )
+            {
+                mimeType = mimeType == null ? getMimeType( name ) : mimeType;
+                result.add( new Attachment( name, data, mimeType, headers ) );
+            }
+        }
+        return result;
+    }
+
+    private static <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
+    {
+        final Object value = object.get( key );
+        if ( type.isInstance( value ) )
+        {
+            //noinspection unchecked
+            return (T) value;
+        }
+        return null;
+    }
+
+    private static String getMimeType( final String fileName )
+    {
+        if ( fileName == null )
+        {
+            return MediaType.OCTET_STREAM.toString();
+        }
+
+        final MediaType type = MediaTypes.instance().fromFile( fileName );
+        return type.toString();
+    }
+
+    private static class Attachment
+    {
+        public final String name;
+
+        public final ByteSource data;
+
+        public final String mimeType;
+
+        public final Map<String, String> headers;
+
+        Attachment( final String name, final ByteSource data, final String mimeType, final Map<String, String> headers )
+        {
+            this.name = name;
+            this.data = data;
+            this.mimeType = mimeType;
+            this.headers = headers == null ? Collections.emptyMap() : headers;
+        }
+    }
+
+    private static class ByteSourceDataSource
+        implements DataSource
+    {
+        private final ByteSource source;
+
+        private final String name;
+
+        private final String mimeType;
+
+        ByteSourceDataSource( final ByteSource source, final String name, final String mimeType )
+        {
+            this.source = source;
+            this.name = name;
+            this.mimeType = mimeType;
+        }
+
+        @Override
+        public InputStream getInputStream()
+            throws IOException
+        {
+            return this.source.openStream();
+        }
+
+        @Override
+        public OutputStream getOutputStream()
+            throws IOException
+        {
+            throw new UnsupportedOperationException( "Not implemented" );
+        }
+
+        @Override
+        public String getContentType()
+        {
+            return this.mimeType;
+        }
+
+        @Override
+        public String getName()
+        {
+            return this.name;
+        }
+    }
+}
