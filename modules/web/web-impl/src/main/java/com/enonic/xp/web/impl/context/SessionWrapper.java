@@ -3,6 +3,7 @@ package com.enonic.xp.web.impl.context;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -115,5 +116,9 @@ final class SessionWrapper
         }
 
         session.invalidate();
+
+        Cookie sessionCookie = new Cookie( "JSESSIONID", null);
+        sessionCookie.setPath(request.getContextPath()); // Set path to match the session cookie's
+        sessionCookie.setMaxAge(0); // Expire the cookie immediately
     }
 }

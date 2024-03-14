@@ -53,20 +53,15 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalRequest.setRawRequest( req );
 
-        this.service = new PortalUrlServiceImpl();
-        this.service.setMacroService( new MacroServiceImpl() );
-
         this.contentService = Mockito.mock( ContentService.class );
-        this.service.setContentService( this.contentService );
-
+        this.resourceService = Mockito.mock( ResourceService.class );
         this.styleDescriptorService = Mockito.mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.empty() );
-        this.service.setStyleDescriptorService( this.styleDescriptorService );
 
         this.applicationService = Mockito.mock( ApplicationService.class );
         when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.service.setResourceService( this.resourceService );
+        this.service = new PortalUrlServiceImpl(this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
+                                                mock() );
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,8 +10,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.hash.Hashing;
-
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -18,6 +17,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.RedirectChecksumGenerator;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -41,13 +41,17 @@ public class IdentityHandler
 
     private final IdProviderControllerService idProviderControllerService;
 
+    private final RedirectChecksumGenerator redirectChecksumGenerator;
+
     @Activate
     public IdentityHandler( @Reference final ContentService contentService,
-                            @Reference final IdProviderControllerService idProviderControllerService )
+                            @Reference final IdProviderControllerService idProviderControllerService,
+                            @Reference final RedirectChecksumGenerator redirectChecksumGenerator )
     {
-        super("idprovider");
+        super( "idprovider" );
         this.contentService = contentService;
         this.idProviderControllerService = idProviderControllerService;
+        this.redirectChecksumGenerator = redirectChecksumGenerator;
     }
 
     @Override
@@ -84,15 +88,13 @@ public class IdentityHandler
 
         if ( idProviderFunction == null )
         {
-            idProviderFunction = webRequest.getMethod().
-                toString().
-                toLowerCase();
+            idProviderFunction = webRequest.getMethod().toString().toLowerCase();
         }
 
         final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
         worker.idProviderKey = idProviderKey;
         worker.idProviderFunction = idProviderFunction;
-        worker.contentResolver =  new ContentResolver( contentService );
+        worker.contentResolver = new ContentResolver( contentService );
         worker.idProviderControllerService = this.idProviderControllerService;
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )
@@ -116,7 +118,8 @@ public class IdentityHandler
 
     private void checkTicket( final PortalRequest req )
     {
-        if ( getParameter( req, "redirect" ) != null )
+        final String redirect = getParameter( req, "redirect" );
+        if ( redirect != null )
         {
             final String ticket = removeParameter( req, "_ticket" );
             if ( ticket == null )
@@ -124,16 +127,9 @@ public class IdentityHandler
                 throw WebException.badRequest( "Missing ticket parameter" );
             }
 
-            final String jSessionId = getJSessionId();
-            final String expectedTicket = generateTicket( jSessionId );
-            if ( expectedTicket.equals( ticket ) )
-            {
-                req.setValidTicket( Boolean.TRUE );
-            }
-            else
-            {
-                req.setValidTicket( Boolean.FALSE );
-            }
+            final String expectedTicket = redirectChecksumGenerator.generateChecksum( redirect );
+            req.setValidTicket( MessageDigest.isEqual( expectedTicket.getBytes( StandardCharsets.ISO_8859_1 ),
+                                                       ticket.getBytes( StandardCharsets.ISO_8859_1 ) ) );
         }
     }
 
@@ -147,23 +143,5 @@ public class IdentityHandler
     {
         final Collection<String> values = req.getParams().removeAll( name );
         return values.isEmpty() ? null : values.iterator().next();
-    }
-
-    private String getJSessionId()
-    {
-        return ContextAccessor.current().
-            getLocalScope().
-            getSession().
-            getKey().
-            toString();
-    }
-
-    private String generateTicket( final String jSessionId )
-    {
-        return Hashing.sha1().
-            newHasher().
-            putString( jSessionId, StandardCharsets.UTF_8 ).
-            hash().
-            toString();
     }
 }

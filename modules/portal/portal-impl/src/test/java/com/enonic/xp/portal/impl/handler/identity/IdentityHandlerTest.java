@@ -25,6 +25,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 public class IdentityHandlerTest
     extends BaseHandlerTest
@@ -40,9 +41,9 @@ public class IdentityHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
-        final ContentService contentService = Mockito.mock( ContentService.class );
-        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        final ContentService contentService = mock( ContentService.class );
+        final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 
         Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
@@ -54,7 +55,7 @@ public class IdentityHandlerTest
             return null;
         } );
 
-        this.handler = new IdentityHandler( contentService, idProviderControllerService );
+        this.handler = new IdentityHandler( contentService, idProviderControllerService, mock() );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
@@ -88,10 +89,10 @@ public class IdentityHandlerTest
     public void testOptions()
         throws Exception
     {
-        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
+        final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( Mockito.mock( ContentService.class ), idProviderControllerService );
+        this.handler = new IdentityHandler( mock( ContentService.class ), idProviderControllerService, mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -136,7 +137,7 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
         Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
@@ -157,7 +158,7 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
         Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider", "myidprovider" ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
@@ -175,7 +176,7 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
         Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.empty() );
 
         VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
