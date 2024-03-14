@@ -106,10 +106,10 @@ class MimeMessageConverter
 
     private List<String> resolveFrom( final List<String> from )
     {
-        return from.stream().filter( Objects::nonNull ).map( sender -> {
+        final List<String> result = from.stream().filter( string -> !nullToEmpty( string ).isBlank() ).map( sender -> {
             if ( sender.contains( DEFAULT_FROM_PATTERN ) )
             {
-                if ( defaultFromEmail == null || defaultFromEmail.isEmpty() )
+                if ( nullToEmpty( defaultFromEmail ).isBlank() )
                 {
                     throw new IllegalArgumentException(
                         String.format( "To use \"%s\" the \"defaultFromEmail\" configuration must be set in \"com.enonic.xp.mail.cfg\"",
@@ -124,6 +124,20 @@ class MimeMessageConverter
                 return sender;
             }
         } ).collect( Collectors.toList() );
+
+        if ( result.isEmpty() )
+        {
+            if ( !nullToEmpty( defaultFromEmail ).isBlank() )
+            {
+                result.add( defaultFromEmail );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Parameter 'from' is required" );
+            }
+        }
+
+        return result;
     }
 
     private InternetAddress[] toAddresses( final List<String> addressList )
