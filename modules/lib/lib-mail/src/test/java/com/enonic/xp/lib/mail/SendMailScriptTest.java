@@ -2,6 +2,7 @@ package com.enonic.xp.lib.mail;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -10,12 +11,11 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
 
 import com.enonic.xp.mail.MailMessage;
-import com.enonic.xp.mail.MailMessageParams;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class SendMailScriptTest
     extends ScriptTestSupport
 {
-    private MailMessageParams actualMessage;
+    private SendMailParams actualMessage;
 
     @Override
     public void initialize()
@@ -39,7 +39,7 @@ public class SendMailScriptTest
             }
 
             @Override
-            public void send( final MailMessageParams message )
+            public void send( final SendMailParams message )
             {
                 SendMailScriptTest.this.actualMessage = message;
             }
@@ -57,15 +57,15 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "simpleMail" );
 
-        final MailMessageParams message = this.actualMessage;
+        final SendMailParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertArrayEquals( new String[]{"from@bar.com"}, message.getFrom() );
-        assertArrayEquals( new String[]{"to@bar.com"}, message.getTo() );
-        assertArrayEquals( new String[]{"cc@bar.com"}, message.getCc() );
-        assertArrayEquals( new String[]{"bcc@bar.com"}, message.getBcc() );
-        assertArrayEquals( new String[]{"replyTo@bar.com"}, message.getReplyTo() );
+        assertEquals( List.of( "from@bar.com"), message.getFrom() );
+        assertEquals( List.of( "to@bar.com"), message.getTo() );
+        assertEquals( List.of( "cc@bar.com"), message.getCc() );
+        assertEquals( List.of( "bcc@bar.com"), message.getBcc() );
+        assertEquals( List.of( "replyTo@bar.com"), message.getReplyTo() );
         assertEquals( "Value", message.getHeaders().get( "X-Custom" ) );
         assertEquals( "2", message.getHeaders().get( "X-Other" ) );
     }
@@ -75,15 +75,15 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "multiRecipientsMail" );
 
-        final MailMessageParams message = this.actualMessage;
+        final SendMailParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertArrayEquals( new String[]{"from@bar.com", "from@foo.com"}, message.getFrom() );
-        assertArrayEquals( new String[]{"to@bar.com", "to@foo.com"}, message.getTo() );
-        assertArrayEquals( new String[]{"cc@bar.com", "cc@foo.com"}, message.getCc() );
-        assertArrayEquals( new String[]{"bcc@bar.com", "bcc@foo.com"}, message.getBcc() );
-        assertArrayEquals( new String[]{"replyTo@bar.com", "replyTo@foo.com"}, message.getReplyTo() );
+        assertEquals( List.of( "from@bar.com", "from@foo.com"), message.getFrom() );
+        assertEquals( List.of( "to@bar.com", "to@foo.com"), message.getTo() );
+        assertEquals( List.of( "cc@bar.com", "cc@foo.com"), message.getCc() );
+        assertEquals( List.of( "bcc@bar.com", "bcc@foo.com"), message.getBcc() );
+        assertEquals( List.of( "replyTo@bar.com", "replyTo@foo.com"), message.getReplyTo() );
     }
 
     @Test
@@ -92,12 +92,12 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "rfc822AddressMail" );
 
-        final MailMessageParams message = this.actualMessage;
+        final SendMailParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertArrayEquals( new String[]{"From Bar <from@bar.com>", "From Foo <from@foo.com>"}, message.getFrom() );
-        assertArrayEquals( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"}, message.getTo() );
+        assertEquals( List.of( "From Bar <from@bar.com>", "From Foo <from@foo.com>"), message.getFrom() );
+        assertEquals( List.of( "To Bar <to@bar.com>", "To Foo <to@foo.com>"), message.getTo() );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class SendMailScriptTest
             }
 
             @Override
-            public void send( final MailMessageParams message )
+            public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
             }
@@ -131,12 +131,12 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "sendMailWithContentType" );
 
-        final MailMessageParams message = this.actualMessage;
+        final SendMailParams message = this.actualMessage;
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertArrayEquals( new String[]{"from@bar.com"}, message.getFrom() );
-        assertArrayEquals( new String[]{"to@bar.com"}, message.getTo() );
+        assertEquals( List.of( "from@bar.com"), message.getFrom() );
+        assertEquals( List.of( "to@bar.com"), message.getTo() );
         assertEquals( "text/html", message.getContentType() );
     }
 
@@ -153,7 +153,7 @@ public class SendMailScriptTest
             }
 
             @Override
-            public void send( final MailMessageParams message )
+            public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
             }
@@ -186,7 +186,7 @@ public class SendMailScriptTest
             }
 
             @Override
-            public void send( final MailMessageParams message )
+            public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
             }
@@ -211,7 +211,7 @@ public class SendMailScriptTest
     {
         runFunction( "/test/send-test.js", "sendWithAttachments" );
 
-        final MailMessageParams message = this.actualMessage;
+        final SendMailParams message = this.actualMessage;
 
         assertEquals( 2, message.getAttachments().size() );
 

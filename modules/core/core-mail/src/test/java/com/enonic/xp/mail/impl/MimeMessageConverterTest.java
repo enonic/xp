@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
 
-import com.enonic.xp.mail.MailMessageParams;
+import com.enonic.xp.mail.SendMailParams;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,15 +35,15 @@ public class MimeMessageConverterTest
     public void testSimpleMail()
         throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"to@bar.com"} )
-            .setFrom( new String[]{"from@bar.com"} )
-            .setCc( new String[]{"cc@bar.com"} )
-            .setBcc( new String[]{"bcc@bar.com"} )
-            .setReplyTo( new String[]{"replyTo@bar.com"} )
-            .setHeaders( Map.of( "X-Custom", "Value", "X-Other", "2" ) )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "to@bar.com" )
+            .from( "from@bar.com" )
+            .cc( "cc@bar.com" )
+            .bcc( "bcc@bar.com" )
+            .replyTo( "replyTo@bar.com" )
+            .headers( Map.of( "X-Custom", "Value", "X-Other", "2" ) )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
@@ -63,14 +63,14 @@ public class MimeMessageConverterTest
     public void testMultiRecipientsMail()
         throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"to@bar.com", "to@foo.com"} )
-            .setFrom( new String[]{"from@bar.com", "from@foo.com"} )
-            .setCc( new String[]{"cc@bar.com", "cc@foo.com"} )
-            .setBcc( new String[]{"bcc@bar.com", "bcc@foo.com"} )
-            .setReplyTo( new String[]{"replyTo@bar.com", "replyTo@foo.com"} )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "to@bar.com", "to@foo.com" )
+            .from( "from@bar.com", "from@foo.com" )
+            .cc( "cc@bar.com", "cc@foo.com" )
+            .bcc( "bcc@bar.com", "bcc@foo.com" )
+            .replyTo( "replyTo@bar.com", "replyTo@foo.com" )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
@@ -88,11 +88,11 @@ public class MimeMessageConverterTest
     public void testRfc822AddressMail()
         throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
-            .setFrom( new String[]{"From Bar <from@bar.com>", "From Foo <from@foo.com>", "<>", "Some User <>", "username@domain.com"} )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "To Bar <to@bar.com>", "To Foo <to@foo.com>" )
+            .from( "From Bar <from@bar.com>", "From Foo <from@foo.com>", "<>", "Some User <>", "username@domain.com" )
             .build();
 
         Message message =
@@ -107,13 +107,14 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testDefaultFromMail() throws Exception
+    public void testDefaultFromMail()
+        throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
-            .setFrom( new String[]{"Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com"} )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "To Bar <to@bar.com>", "To Foo <to@foo.com>" )
+            .from( "Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com" )
             .build();
 
         Message message =
@@ -131,15 +132,17 @@ public class MimeMessageConverterTest
     public void testInvalidDefaultFromMail()
         throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
-            .setFrom( new String[]{"Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com"} )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "To Bar <to@bar.com>", "To Foo <to@foo.com>" )
+            .from( "Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com" )
             .build();
 
-        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () ->
-            new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params ) );
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> new MimeMessageConverter( null,
+                                                                                                                    Session.getDefaultInstance(
+                                                                                                                        new Properties() ) ).convert(
+            params ) );
 
         assertEquals( "To use \"<>\" the \"defaultFromEmail\" configuration must be set in \"com.enonic.xp.mail.cfg\"", ex.getMessage() );
     }
@@ -148,12 +151,12 @@ public class MimeMessageConverterTest
     public void testSendMailWithContentType()
         throws Exception
     {
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"to@bar.com"} )
-            .setFrom( new String[]{"from@bar.com"} )
-            .setContentType( "text/html" )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "to@bar.com" )
+            .from( "from@bar.com" )
+            .contentType( "text/html" )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
@@ -179,12 +182,12 @@ public class MimeMessageConverterTest
         attachment2.put( "fileName", "text.txt" );
         attachment2.put( "data", ByteSource.wrap( "Some text".getBytes() ) );
 
-        MailMessageParams params = MailMessageParams.create()
-            .setSubject( "test subject" )
-            .setBody( "test body" )
-            .setTo( new String[]{"to@bar.com"} )
-            .setFrom( new String[]{"from@bar.com"} )
-            .setAttachments( List.of( attachment1, attachment2 ) )
+        SendMailParams params = SendMailParams.create()
+            .subject( "test subject" )
+            .body( "test body" )
+            .to( "to@bar.com" )
+            .from( "from@bar.com" )
+            .attachments( List.of( attachment1, attachment2 ) )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );

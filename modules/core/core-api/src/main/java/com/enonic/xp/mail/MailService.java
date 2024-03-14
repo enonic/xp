@@ -8,5 +8,5 @@ public interface MailService
     @Deprecated
     void send( MailMessage message );
 
-    void send( MailMessageParams message );
+    void send( SendMailParams message );
 }

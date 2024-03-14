@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
-import com.enonic.xp.mail.MailMessageParams;
+import com.enonic.xp.mail.SendMailParams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,12 +64,8 @@ public class MailServiceImplTest
     @Test
     public void testSend()
     {
-        assertDoesNotThrow( () -> this.mailService.send( MailMessageParams.create()
-                                                             .setSubject( "test subject" )
-                                                             .setBody( "test body" )
-                                                             .setTo( new String[]{"to@bar.com"} )
-                                                             .setFrom( new String[]{"from@bar.com"} )
-                                                             .build() ) );
+        assertDoesNotThrow( () -> this.mailService.send(
+            SendMailParams.create().subject( "test subject" ).body( "test body" ).to( "to@bar.com" ).from( "from@bar.com" ).build() ) );
     }
 
     private void createMockMessage( MimeMessage msg )

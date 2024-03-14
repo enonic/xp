@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -26,7 +25,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.mail.MailException;
-import com.enonic.xp.mail.MailMessageParams;
+import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -45,7 +44,7 @@ class MimeMessageConverter
         this.session = session;
     }
 
-    MimeMessage convert( MailMessageParams params )
+    MimeMessage convert( SendMailParams params )
         throws Exception
     {
         MimeMessage message = new MimeMessage( session );
@@ -105,9 +104,9 @@ class MimeMessageConverter
         return message;
     }
 
-    private String[] resolveFrom( final String[] from )
+    private List<String> resolveFrom( final List<String> from )
     {
-        return Arrays.stream( from ).filter( Objects::nonNull ).map( sender -> {
+        return from.stream().filter( Objects::nonNull ).map( sender -> {
             if ( sender.contains( DEFAULT_FROM_PATTERN ) )
             {
                 if ( defaultFromEmail == null || defaultFromEmail.isEmpty() )
@@ -124,12 +123,12 @@ class MimeMessageConverter
             {
                 return sender;
             }
-        } ).toArray( String[]::new );
+        } ).collect( Collectors.toList() );
     }
 
-    private InternetAddress[] toAddresses( final String[] addressList )
+    private InternetAddress[] toAddresses( final List<String> addressList )
     {
-        return Stream.of( addressList )
+        return addressList.stream()
             .filter( string -> !nullToEmpty( string ).isBlank() )
             .map( this::toAddress )
             .toArray( InternetAddress[]::new );

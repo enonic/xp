@@ -3,11 +3,13 @@ package com.enonic.xp.lib.mail;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.mail.MailMessageParams;
+import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -17,15 +19,15 @@ public final class SendMailHandler
 {
     private static final Logger LOG = LoggerFactory.getLogger( SendMailHandler.class );
 
-    private String[] to;
+    private List<String> to;
 
-    private String[] from;
+    private List<String> from;
 
-    private String[] cc;
+    private List<String> cc;
 
-    private String[] bcc;
+    private List<String> bcc;
 
-    private String[] replyTo;
+    private List<String> replyTo;
 
     private String subject;
 
@@ -41,27 +43,27 @@ public final class SendMailHandler
 
     public void setTo( final String[] to )
     {
-        this.to = to;
+        this.to = arrayToList( to );
     }
 
     public void setFrom( final String[] from )
     {
-        this.from = from;
+        this.from = arrayToList( from );
     }
 
     public void setCc( final String[] cc )
     {
-        this.cc = cc;
+        this.cc = arrayToList( cc );
     }
 
     public void setBcc( final String[] bcc )
     {
-        this.bcc = bcc;
+        this.bcc = arrayToList( bcc );
     }
 
     public void setReplyTo( final String[] replyTo )
     {
-        this.replyTo = replyTo;
+        this.replyTo = arrayToList( replyTo );
     }
 
     public void setContentType( final String contentType )
@@ -93,7 +95,7 @@ public final class SendMailHandler
     {
         try
         {
-            final MailMessageParams params = createParams();
+            final SendMailParams params = createParams();
             this.mailService.get().send( params );
             return true;
         }
@@ -104,19 +106,24 @@ public final class SendMailHandler
         }
     }
 
-    private MailMessageParams createParams()
+    private List<String> arrayToList( final String[] value )
     {
-        return MailMessageParams.create()
-            .setTo( this.to )
-            .setFrom( this.from )
-            .setCc( this.cc )
-            .setBcc( this.bcc )
-            .setReplyTo( this.replyTo )
-            .setSubject( this.subject )
-            .setContentType( this.contentType )
-            .setBody( this.body )
-            .setHeaders( this.headers )
-            .setAttachments( this.attachments )
+        return value == null ? List.of() : Stream.of( value ).collect( Collectors.toList() );
+    }
+
+    private SendMailParams createParams()
+    {
+        return SendMailParams.create()
+            .to( this.to )
+            .from( this.from )
+            .cc( this.cc )
+            .bcc( this.bcc )
+            .replyTo( this.replyTo )
+            .subject( this.subject )
+            .contentType( this.contentType )
+            .body( this.body )
+            .headers( this.headers )
+            .attachments( this.attachments )
             .build();
     }
 
