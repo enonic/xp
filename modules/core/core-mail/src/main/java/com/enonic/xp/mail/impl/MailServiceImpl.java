@@ -34,6 +34,8 @@ public final class MailServiceImpl
 
     private Session session;
 
+    private String defaultFromEmail;
+
     public MailServiceImpl()
     {
         this.simpleExecutor = new SimpleExecutor( Executors::newCachedThreadPool, "mail-service-executor-thread-%d",
@@ -44,6 +46,8 @@ public final class MailServiceImpl
     @Modified
     public void activate( final MailConfig config )
     {
+        this.defaultFromEmail = config.defaultFromEmail();
+
         final Properties properties = new Properties();
 
         properties.put( "mail.transport.protocol", "smtp" );
@@ -92,7 +96,7 @@ public final class MailServiceImpl
     {
         try
         {
-            MimeMessage message = MimeMessageConverter.convert( session, params );
+            MimeMessage message = new MimeMessageConverter( defaultFromEmail, session ).convert( params );
             simpleExecutor.execute( () -> {
                 try
                 {

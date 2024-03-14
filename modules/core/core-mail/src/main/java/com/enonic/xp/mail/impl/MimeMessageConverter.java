@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.activation.DataHandler;
@@ -31,14 +33,26 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 class MimeMessageConverter
 {
-    static MimeMessage convert( Session session, MailMessageParams params )
+    private static final String DEFAULT_FROM_PATTERN = "<>";
+
+    private final String defaultFromEmail;
+
+    private final Session session;
+
+    MimeMessageConverter( String defaultFromEmail, Session session )
+    {
+        this.defaultFromEmail = defaultFromEmail;
+        this.session = session;
+    }
+
+    MimeMessage convert( MailMessageParams params )
         throws Exception
     {
         MimeMessage message = new MimeMessage( session );
 
         message.setSubject( params.getSubject() );
 
-        message.addFrom( toAddresses( params.getFrom() ) );
+        message.addFrom( toAddresses( resolveFrom( params.getFrom() ) ) );
         message.addRecipients( Message.RecipientType.TO, toAddresses( params.getTo() ) );
         message.addRecipients( Message.RecipientType.CC, toAddresses( params.getCc() ) );
         message.addRecipients( Message.RecipientType.BCC, toAddresses( params.getBcc() ) );
@@ -91,15 +105,37 @@ class MimeMessageConverter
         return message;
     }
 
-    private static InternetAddress[] toAddresses( final String[] addressList )
+    private String[] resolveFrom( final String[] from )
+    {
+        return Arrays.stream( from ).filter( Objects::nonNull ).map( sender -> {
+            if ( sender.contains( DEFAULT_FROM_PATTERN ) )
+            {
+                if ( defaultFromEmail == null || defaultFromEmail.isEmpty() )
+                {
+                    throw new IllegalArgumentException(
+                        String.format( "To use \"%s\" the \"defaultFromEmail\" configuration must be set in \"com.enonic.xp.mail.cfg\"",
+                                       DEFAULT_FROM_PATTERN ) );
+                }
+                return sender.equals( DEFAULT_FROM_PATTERN )
+                    ? defaultFromEmail
+                    : sender.replace( DEFAULT_FROM_PATTERN, String.format( "<%s>", defaultFromEmail ) );
+            }
+            else
+            {
+                return sender;
+            }
+        } ).toArray( String[]::new );
+    }
+
+    private InternetAddress[] toAddresses( final String[] addressList )
     {
         return Stream.of( addressList )
             .filter( string -> !nullToEmpty( string ).isBlank() )
-            .map( MimeMessageConverter::toAddress )
+            .map( this::toAddress )
             .toArray( InternetAddress[]::new );
     }
 
-    private static InternetAddress toAddress( final String address )
+    private InternetAddress toAddress( final String address )
         throws MailException
     {
         try
@@ -112,7 +148,7 @@ class MimeMessageConverter
         }
     }
 
-    private static List<Attachment> resolveAttachments( final List<Map<String, Object>> attachments )
+    private List<Attachment> resolveAttachments( final List<Map<String, Object>> attachments )
     {
         if ( attachments == null )
         {
@@ -134,7 +170,7 @@ class MimeMessageConverter
         return result;
     }
 
-    private static <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
+    private <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
     {
         final Object value = object.get( key );
         if ( type.isInstance( value ) )
@@ -145,7 +181,7 @@ class MimeMessageConverter
         return null;
     }
 
-    private static String getMimeType( final String fileName )
+    private String getMimeType( final String fileName )
     {
         if ( fileName == null )
         {

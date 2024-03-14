@@ -26,6 +26,7 @@ import com.enonic.xp.mail.MailMessageParams;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMessageConverterTest
@@ -45,7 +46,7 @@ public class MimeMessageConverterTest
             .setHeaders( Map.of( "X-Custom", "Value", "X-Other", "2" ) )
             .build();
 
-        Message message = MimeMessageConverter.convert( Session.getDefaultInstance( new Properties() ), params );
+        Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getContent() );
@@ -72,7 +73,7 @@ public class MimeMessageConverterTest
             .setReplyTo( new String[]{"replyTo@bar.com", "replyTo@foo.com"} )
             .build();
 
-        Message message = MimeMessageConverter.convert( Session.getDefaultInstance( new Properties() ), params );
+        Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getContent() );
@@ -91,15 +92,56 @@ public class MimeMessageConverterTest
             .setSubject( "test subject" )
             .setBody( "test body" )
             .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
-            .setFrom( new String[]{"From Bar <from@bar.com>", "From Foo <from@foo.com>"} )
+            .setFrom( new String[]{"From Bar <from@bar.com>", "From Foo <from@foo.com>", "<>", "Some User <>", "username@domain.com"} )
             .build();
 
-        Message message = MimeMessageConverter.convert( Session.getDefaultInstance( new Properties() ), params );
+        Message message =
+            new MimeMessageConverter( "noreply@domain.com", Session.getDefaultInstance( new Properties() ) ).convert( params );
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getContent() );
-        assertArrayEquals( toAddresses( "From Bar <from@bar.com>", "From Foo <from@foo.com>" ), message.getFrom() );
+        assertArrayEquals(
+            toAddresses( "From Bar <from@bar.com>", "From Foo <from@foo.com>", "noreply@domain.com", "Some User <noreply@domain.com>",
+                         "username@domain.com" ), message.getFrom() );
         assertArrayEquals( toAddresses( "To Bar <to@bar.com>", "To Foo <to@foo.com>" ), message.getRecipients( Message.RecipientType.TO ) );
+    }
+
+    @Test
+    public void testDefaultFromMail() throws Exception
+    {
+        MailMessageParams params = MailMessageParams.create()
+            .setSubject( "test subject" )
+            .setBody( "test body" )
+            .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
+            .setFrom( new String[]{"Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com"} )
+            .build();
+
+        Message message =
+            new MimeMessageConverter( "noreply@domain.com", Session.getDefaultInstance( new Properties() ) ).convert( params );
+
+        assertEquals( "test subject", message.getSubject() );
+        assertEquals( "test body", message.getContent() );
+        assertArrayEquals(
+            toAddresses( "Username <username@domain.com>", "noreply@domain.com", "Some User <noreply@domain.com>", "username2@domain.com" ),
+            message.getFrom() );
+        assertArrayEquals( toAddresses( "To Bar <to@bar.com>", "To Foo <to@foo.com>" ), message.getRecipients( Message.RecipientType.TO ) );
+    }
+
+    @Test
+    public void testInvalidDefaultFromMail()
+        throws Exception
+    {
+        MailMessageParams params = MailMessageParams.create()
+            .setSubject( "test subject" )
+            .setBody( "test body" )
+            .setTo( new String[]{"To Bar <to@bar.com>", "To Foo <to@foo.com>"} )
+            .setFrom( new String[]{"Username <username@domain.com>", "<>", "Some User <>", "username2@domain.com"} )
+            .build();
+
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () ->
+            new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params ) );
+
+        assertEquals( "To use \"<>\" the \"defaultFromEmail\" configuration must be set in \"com.enonic.xp.mail.cfg\"", ex.getMessage() );
     }
 
     @Test
@@ -114,7 +156,7 @@ public class MimeMessageConverterTest
             .setContentType( "text/html" )
             .build();
 
-        Message message = MimeMessageConverter.convert( Session.getDefaultInstance( new Properties() ), params );
+        Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getContent() );
@@ -145,7 +187,7 @@ public class MimeMessageConverterTest
             .setAttachments( List.of( attachment1, attachment2 ) )
             .build();
 
-        Message message = MimeMessageConverter.convert( Session.getDefaultInstance( new Properties() ), params );
+        Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
         message.saveChanges(); // required to updated headers (mimeType)
 
         MimeMultipart content = (MimeMultipart) message.getContent();
@@ -170,7 +212,6 @@ public class MimeMessageConverterTest
 
         assertEquals( "<myimg>", second.getHeader( "Content-ID" )[0] );
     }
-
 
 
     private InternetAddress[] toAddresses( final String... addresses )
