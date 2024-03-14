@@ -34,6 +34,7 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.trace.Tracer;
 
 public class RescheduleTask
     implements SchedulableTask
@@ -137,16 +138,18 @@ public class RescheduleTask
 
     private void doRun()
     {
-        final Map<ScheduledJobName, ScheduledJob> jobs =
-            OsgiSupport.withService( SchedulerService.class, schedulerService -> adminContext().callWith( schedulerService::list ) )
-                .stream()
-                .collect( Collectors.toMap( ScheduledJob::getName, job -> job ) );
+        Tracer.trace( "system.rescheduleTask", () -> {
+            final Map<ScheduledJobName, ScheduledJob> jobs =
+                OsgiSupport.withService( SchedulerService.class, schedulerService -> adminContext().callWith( schedulerService::list ) )
+                    .stream()
+                    .collect( Collectors.toMap( ScheduledJob::getName, job -> job ) );
 
-        fillJobsToSchedule( jobs );
+            fillJobsToSchedule( jobs );
 
-        final List<FailedJob> failedJobs = scheduleJobs( jobs );
+            final List<FailedJob> failedJobs = scheduleJobs( jobs );
 
-        retryFailedJobs( failedJobs );
+            retryFailedJobs( failedJobs );
+        } );
     }
 
     private List<FailedJob> scheduleJobs( final Map<ScheduledJobName, ScheduledJob> jobs )
