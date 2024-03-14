@@ -32,6 +32,20 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
+    public void createUrl_withRedirect()
+    {
+        when( redirectChecksumService.generateChecksum( "https://example.com" ) ).thenReturn( "some-great-checksum" );
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( this.portalRequest ).
+            idProviderKey( IdProviderKey.system() ).
+            idProviderFunction( "login" )
+            .redirectionUrl( "https://example.com" );
+
+        final String url = this.service.identityUrl( params );
+        assertEquals( "/site/default/draft/_/idprovider/system/login?redirect=https%3A%2F%2Fexample.com&_ticket=some-great-checksum", url );
+    }
+
+    @Test
     public void createUrl_withContentPath()
     {
         final IdentityUrlParams params = new IdentityUrlParams().

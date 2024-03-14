@@ -21,6 +21,7 @@ import com.enonic.xp.style.StyleDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.mock;
 
 public class TextRendererTest
 {
@@ -39,10 +40,8 @@ public class TextRendererTest
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
-        PortalUrlServiceImpl portalUrlService = new PortalUrlServiceImpl();
-        portalUrlService.setMacroService( new MockMacroService() );
-        portalUrlService.setStyleDescriptorService( new MockStyleDescriptorService() );
-        service = portalUrlService;
+        service =
+            new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock() );
         portalRequest.setMode( RenderMode.LIVE );
     }
 

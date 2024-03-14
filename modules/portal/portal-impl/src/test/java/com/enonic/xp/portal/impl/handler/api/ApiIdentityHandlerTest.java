@@ -17,6 +17,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.session.SessionMock;
@@ -50,7 +51,7 @@ public class ApiIdentityHandlerTest
         throws IOException
     {
         IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
-        this.handler = new ApiIdentityHandler( idProviderControllerService );
+        this.handler = new ApiIdentityHandler( idProviderControllerService, mock( RedirectChecksumService.class ) );
 
         when( idProviderControllerService.execute( any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();

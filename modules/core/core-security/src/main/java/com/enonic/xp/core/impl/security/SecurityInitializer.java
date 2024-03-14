@@ -1,5 +1,12 @@
 package com.enonic.xp.core.impl.security;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.List;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +20,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -41,21 +49,49 @@ import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 public final class SecurityInitializer
     extends ExternalInitializer
 {
-    public static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
+    private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
-    static final IdProviderAccessControlList DEFAULT_ID_PROVIDER_ACL =
-        IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
-                                        IdProviderAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
-                                           ADMINISTRATOR ).build(),
-                                        IdProviderAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
+    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
+
+    private static final NodePath KEYS_PATH = new NodePath( NodePath.ROOT, NodeName.from( "keys" ) );
+
+    /**
+     * Generic Key suitable to do HMAC SHA512 hashing.
+     * Should be used for low severity security purposes only, like anti open-redirect attacks.
+     */
+    private static final NodePath GENERIC_KEY_PATH = new NodePath( KEYS_PATH, NodeName.from( "generic-hmac-sha512" ) );
+
+    private static final NodePath IDENTITY_PATH = IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH;
+
+    private static final NodePath ROLES_PATH = new NodePath( IDENTITY_PATH, NodeName.from( PrincipalKey.ROLES_NODE_NAME ) );
 
     private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
 
-    private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
+    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY;
 
-    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
+    static final IdProviderAccessControlList DEFAULT_ID_PROVIDER_ACL =
+        IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
+                                        IdProviderAccessControlEntry.create()
+                                            .principal( RoleKeys.USER_MANAGER_ADMIN )
+                                            .access( ADMINISTRATOR )
+                                            .build(),
+                                        IdProviderAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build() );
 
-    private static final String SYSTEM_ID_PROVIDER_DISPLAY_NAME = "System Id Provider";
+    private static final List<CreateRoleParams> ROLES_TO_CREATE =
+        List.of( CreateRoleParams.create().roleKey( RoleKeys.ADMIN ).displayName( "Administrator" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.AUTHENTICATED ).displayName( "Authenticated" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.EVERYONE ).displayName( "Everyone" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.ADMIN_LOGIN ).displayName( "Administration Console Login" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.USER_MANAGER_APP ).displayName( "Users App" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.USER_MANAGER_ADMIN ).displayName( "Users Administrator" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_APP ).displayName( "Content Manager App" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "Content Manager Expert" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "Content Manager Administrator" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build() );
+
+    private static final List<CreateUserParams> USERS_TO_CREATE =
+        List.of( CreateUserParams.create().userKey( PrincipalKey.ofAnonymous() ).displayName( "Anonymous" ).login( "anonymous" ).build(),
+                 CreateUserParams.create().userKey( SUPER_USER ).displayName( "Super User" ).login( SUPER_USER.getId() ).build() );
 
     private final SecurityService securityService;
 
@@ -74,18 +110,21 @@ public final class SecurityInitializer
         createAdminContext().runWith( () -> {
 
             initializeIdProviderParentFolder();
-            initializeRoleFolder();
-            initializeSystemIdProvider();
+            initializeRoles();
 
-            createRoles();
-            createUsers();
+            initializeSystemIdProvider();
+            initializeUsers();
+
+            initializeKeys();
         } );
     }
 
     @Override
     public boolean isInitialized()
     {
-        return createAdminContext().callWith( () -> securityService.getMemberships( SUPER_USER ).contains( RoleKeys.ADMIN ) );
+        return createAdminContext().callWith(
+            () -> pathInitialized( IDENTITY_PATH ) && rolesInitialized() && systemIdProviderInitialized() &&
+                usersInitialized() && keysInitialized() );
     }
 
     @Override
@@ -96,179 +135,186 @@ public final class SecurityInitializer
 
     private Context createAdminContext()
     {
-        final User admin = User.create().
-            key( SUPER_USER ).
-            login( SUPER_USER.getId() ).
-            build();
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( admin ).
-            build();
-        return ContextBuilder.create().
-            branch( SecurityConstants.BRANCH_SECURITY ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( authInfo ).
-            build();
+        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
+        return ContextBuilder.create()
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     private void initializeIdProviderParentFolder()
     {
-        final NodePath idProviderParentNodePath = IdProviderNodeTranslator.getIdProvidersParentPath();
-        LOG.info( "Initializing [" + idProviderParentNodePath.toString() + "] folder" );
+        if ( !pathInitialized( IDENTITY_PATH ) )
+        {
+            LOG.info( "Initializing [{}] folder", IDENTITY_PATH );
 
-        final AccessControlEntry userManagerFullAccess = AccessControlEntry.create().
-            allowAll().
-            principal( RoleKeys.USER_MANAGER_ADMIN ).
-            build();
+            final AccessControlEntry userManagerFullAccess =
+                AccessControlEntry.create().allowAll().principal( RoleKeys.USER_MANAGER_ADMIN ).build();
 
-        final ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
-            build();
+            final ChildOrder childOrder =
+                ChildOrder.create().add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build();
 
-        nodeService.create( CreateNodeParams.create().
-            parent( idProviderParentNodePath.getParentPath() ).
-            name( idProviderParentNodePath.getName() ).
-            permissions( AccessControlList.create().
-                addAll( SystemConstants.SYSTEM_REPO_DEFAULT_ACL.getEntries() ).
-                add( userManagerFullAccess ).
-                build() ).
-            inheritPermissions( false ).
-            childOrder( childOrder ).
-            build() );
+            nodeService.create( CreateNodeParams.create()
+                                    .parent( IDENTITY_PATH.getParentPath() )
+                                    .name( IDENTITY_PATH.getName() )
+                                    .permissions( AccessControlList.create()
+                                                      .addAll( SystemConstants.SYSTEM_REPO_DEFAULT_ACL.getEntries() )
+                                                      .add( userManagerFullAccess )
+                                                      .build() )
+                                    .inheritPermissions( false )
+                                    .childOrder( childOrder )
+                                    .build() );
+        }
     }
 
-
-    private void initializeRoleFolder()
+    private void initializeKeys()
     {
-        final NodePath rolesNodePath = IdProviderNodeTranslator.getRolesNodePath();
-        LOG.info( "Initializing [" + rolesNodePath + "] folder" );
+        if ( !pathInitialized( KEYS_PATH ) )
+        {
+            LOG.info( "Initializing [{}] folder", KEYS_PATH );
 
-        nodeService.create( CreateNodeParams.create().
-            parent( rolesNodePath.getParentPath() ).
-            name( rolesNodePath.getName() ).
-            inheritPermissions( true ).
-            build() );
+            nodeService.create( CreateNodeParams.create()
+                                    .parent( KEYS_PATH.getParentPath() )
+                                    .name( KEYS_PATH.getName() )
+                                    .inheritPermissions( true )
+                                    .build() );
+        }
+
+        if ( !pathInitialized( GENERIC_KEY_PATH ) )
+        {
+            LOG.info( "Initializing [{}] key", GENERIC_KEY_PATH );
+
+            final SecretKey key;
+            try
+            {
+                key = KeyGenerator.getInstance( "HmacSHA512" ).generateKey();
+            }
+            catch ( NoSuchAlgorithmException e )
+            {
+                throw new IllegalStateException( e );
+            }
+
+            final PropertyTree data = new PropertyTree();
+            data.setString( "key", Base64.getEncoder().encodeToString( key.getEncoded() ) );
+            nodeService.create( CreateNodeParams.create()
+                                    .parent( GENERIC_KEY_PATH.getParentPath() )
+                                    .name( GENERIC_KEY_PATH.getName() )
+                                    .data( data )
+                                    .inheritPermissions( true )
+                                    .build() );
+        }
+    }
+
+    private boolean keysInitialized()
+    {
+        return pathInitialized( KEYS_PATH ) && pathInitialized( GENERIC_KEY_PATH );
     }
 
     private void initializeSystemIdProvider()
     {
-        LOG.info( "Initializing id provider [" + IdProviderKey.system() + "]" );
-
-        final PropertyTree idProviderConfigTree = new PropertyTree();
-        if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
+        if ( !systemIdProviderInitialized() )
         {
-            idProviderConfigTree.setBoolean( "adminUserCreationEnabled", true );
+            LOG.info( "Initializing id provider [{}]", IdProviderKey.system() );
+
+            final PropertyTree idProviderConfigTree = new PropertyTree();
+            if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
+            {
+                idProviderConfigTree.setBoolean( "adminUserCreationEnabled", true );
+            }
+            final IdProviderConfig idProviderConfig =
+                IdProviderConfig.create().applicationKey( SYSTEM_ID_PROVIDER_KEY ).config( idProviderConfigTree ).build();
+
+            final CreateIdProviderParams createParams = CreateIdProviderParams.create()
+                .key( IdProviderKey.system() )
+                .displayName( "System Id Provider" )
+                .idProviderConfig( idProviderConfig )
+                .permissions( DEFAULT_ID_PROVIDER_ACL )
+                .build();
+
+            this.securityService.createIdProvider( createParams );
         }
-        final IdProviderConfig idProviderConfig = IdProviderConfig.create().
-            applicationKey( SYSTEM_ID_PROVIDER_KEY ).
-            config( idProviderConfigTree ).
-            build();
-
-        final CreateIdProviderParams createParams = CreateIdProviderParams.create().
-            key( IdProviderKey.system() ).
-            displayName( SYSTEM_ID_PROVIDER_DISPLAY_NAME ).
-            idProviderConfig( idProviderConfig ).
-            permissions( DEFAULT_ID_PROVIDER_ACL ).
-            build();
-
-        this.securityService.createIdProvider( createParams );
     }
 
-    private void createRoles()
+    private boolean systemIdProviderInitialized()
     {
-        final CreateRoleParams createAdministratorRole = CreateRoleParams.create().
-            roleKey( RoleKeys.ADMIN ).
-            displayName( "Administrator" ).
-            build();
-        addRole( createAdministratorRole );
-
-        final CreateRoleParams createAuthenticatedRole = CreateRoleParams.create().
-            roleKey( RoleKeys.AUTHENTICATED ).
-            displayName( "Authenticated" ).
-            build();
-        addRole( createAuthenticatedRole );
-
-        final CreateRoleParams createEveryoneRole = CreateRoleParams.create().
-            roleKey( RoleKeys.EVERYONE ).
-            displayName( "Everyone" ).
-            build();
-        addRole( createEveryoneRole );
-
-        final CreateRoleParams createAdminLoginRole = CreateRoleParams.create().
-            roleKey( RoleKeys.ADMIN_LOGIN ).
-            displayName( "Administration Console Login" ).
-            build();
-        addRole( createAdminLoginRole );
-
-        final CreateRoleParams createUserManagerAppRole = CreateRoleParams.create().
-            roleKey( RoleKeys.USER_MANAGER_APP ).
-            displayName( "Users App" ).
-            build();
-        addRole( createUserManagerAppRole );
-
-        final CreateRoleParams createUserManager = CreateRoleParams.create().
-            roleKey( RoleKeys.USER_MANAGER_ADMIN ).
-            displayName( "Users Administrator" ).
-            build();
-        addRole( createUserManager );
-
-        final CreateRoleParams createContentManagerAppRole = CreateRoleParams.create().
-            roleKey( RoleKeys.CONTENT_MANAGER_APP ).
-            displayName( "Content Manager App" ).
-            build();
-        addRole( createContentManagerAppRole );
-
-        final CreateRoleParams createContentManagerExpert = CreateRoleParams.create().
-            roleKey( RoleKeys.CONTENT_MANAGER_EXPERT ).
-            displayName( "Content Manager Expert" ).
-            build();
-        addRole( createContentManagerExpert );
-
-        final CreateRoleParams createContentManager = CreateRoleParams.create().
-            roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).
-            displayName( "Content Manager Administrator" ).
-            build();
-        addRole( createContentManager );
-
-        final CreateRoleParams createAuditLogRole = CreateRoleParams.create().
-            roleKey( RoleKeys.AUDIT_LOG ).
-            displayName( "Audit Log" ).
-            build();
-        addRole( createAuditLogRole );
+        return securityService.getIdProvider( IdProviderKey.system() ) != null;
     }
 
-    private void createUsers()
+    private void initializeRoles()
     {
-        final CreateUserParams createAnonymousUser = CreateUserParams.create().
-            userKey( PrincipalKey.ofAnonymous() ).
-            displayName( "Anonymous User" ).
-            login( "anonymous" ).
-            build();
-        addUser( createAnonymousUser );
+        if ( !pathInitialized( ROLES_PATH ) )
+        {
+            LOG.info( "Initializing [{}] folder", ROLES_PATH );
 
-        final CreateUserParams createSuperUser = CreateUserParams.create().
-            userKey( SUPER_USER ).
-            displayName( "Super User" ).
-            login( SUPER_USER.getId() ).
-            build();
-        addUser( createSuperUser );
+            nodeService.create( CreateNodeParams.create()
+                                    .parent( ROLES_PATH.getParentPath() )
+                                    .name( ROLES_PATH.getName() )
+                                    .inheritPermissions( true )
+                                    .build() );
+        }
+        for ( CreateRoleParams createRoleParams : ROLES_TO_CREATE )
+        {
+            addRole( createRoleParams );
+        }
+    }
 
-        addMember( RoleKeys.ADMIN, createSuperUser.getKey() );
+    private boolean rolesInitialized()
+    {
+        if ( !pathInitialized( ROLES_PATH ) )
+        {
+            return false;
+        }
+        for ( CreateRoleParams createRoleParams : ROLES_TO_CREATE )
+        {
+            if ( securityService.getRole( createRoleParams.getKey() ).isEmpty() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean pathInitialized( final NodePath path )
+    {
+        return nodeService.nodeExists( path );
+    }
+
+    private void initializeUsers()
+    {
+        for ( CreateUserParams createUser : USERS_TO_CREATE )
+        {
+            addUser( createUser );
+        }
+        addMember( RoleKeys.ADMIN, SUPER_USER );
+    }
+
+    private boolean usersInitialized()
+    {
+        for ( CreateUserParams createUser : USERS_TO_CREATE )
+        {
+            if ( securityService.getUser( createUser.getKey() ).isEmpty() )
+            {
+                return false;
+            }
+        }
+        return securityService.getMemberships( SUPER_USER ).contains( RoleKeys.ADMIN );
     }
 
     private void addUser( final CreateUserParams createUser )
     {
         try
         {
-            if ( !securityService.getUser( createUser.getKey() ).isPresent() )
+            if ( securityService.getUser( createUser.getKey() ).isEmpty() )
             {
                 securityService.createUser( createUser );
-                LOG.info( "User created: " + createUser.getKey().toString() );
+                LOG.info( "User created: {}", createUser.getKey().toString() );
             }
         }
         catch ( final Exception t )
         {
-            LOG.error( "Unable to initialize user: " + createUser.getKey().toString(), t );
+            LOG.error( "Unable to initialize user: {}", createUser.getKey().toString(), t );
         }
     }
 
@@ -276,7 +322,7 @@ public final class SecurityInitializer
     {
         try
         {
-            if ( !securityService.getRole( createRoleParams.getKey() ).isPresent() )
+            if ( securityService.getRole( createRoleParams.getKey() ).isEmpty() )
             {
                 securityService.createRole( createRoleParams );
                 LOG.info( "Role created: " + createRoleParams.getKey().toString() );
@@ -284,7 +330,7 @@ public final class SecurityInitializer
         }
         catch ( final Exception t )
         {
-            LOG.error( "Unable to initialize role: " + createRoleParams.getKey().toString(), t );
+            LOG.error( "Unable to initialize role: {}", createRoleParams.getKey().toString(), t );
         }
     }
 
@@ -292,12 +338,15 @@ public final class SecurityInitializer
     {
         try
         {
-            securityService.addRelationship( PrincipalRelationship.from( container ).to( member ) );
-            LOG.info( "Added " + member + " as member of " + container );
+            if ( !securityService.getMemberships( member ).contains( container ) )
+            {
+                securityService.addRelationship( PrincipalRelationship.from( container ).to( member ) );
+            }
+            LOG.info( "Added {} as member of {}", member, container );
         }
         catch ( final Exception t )
         {
-            LOG.error( "Unable to add member: " + container + " -> " + member, t );
+            LOG.error( "Unable to add member: {} -> {}", container, member, t );
         }
     }
 
@@ -340,4 +389,3 @@ public final class SecurityInitializer
         }
     }
 }
-

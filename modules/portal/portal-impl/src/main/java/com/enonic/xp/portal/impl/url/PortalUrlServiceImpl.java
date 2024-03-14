@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.concurrent.Callable;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
@@ -30,13 +32,27 @@ import com.enonic.xp.style.StyleDescriptorService;
 public final class PortalUrlServiceImpl
     implements PortalUrlService
 {
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    private MacroService macroService;
+    private final MacroService macroService;
 
-    private StyleDescriptorService styleDescriptorService;
+    private final StyleDescriptorService styleDescriptorService;
+
+    private final RedirectChecksumService redirectChecksumService;
+
+    @Activate
+    public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
+                                 @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
+                                 @Reference final RedirectChecksumService redirectChecksumService )
+    {
+        this.contentService = contentService;
+        this.resourceService = resourceService;
+        this.macroService = macroService;
+        this.styleDescriptorService = styleDescriptorService;
+        this.redirectChecksumService = redirectChecksumService;
+    }
 
     @Override
     public String assetUrl( final AssetUrlParams params )
@@ -77,7 +93,7 @@ public final class PortalUrlServiceImpl
     @Override
     public String identityUrl( final IdentityUrlParams params )
     {
-        return build( new IdentityUrlBuilder(), params );
+        return build( new IdentityUrlBuilder( redirectChecksumService::generateChecksum ), params );
     }
 
     @Override
@@ -98,30 +114,6 @@ public final class PortalUrlServiceImpl
         builder.contentService = this.contentService;
         builder.resourceService = this.resourceService;
         return runWithAdminRole( builder::build );
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setStyleDescriptorService( final StyleDescriptorService styleDescriptorService )
-    {
-        this.styleDescriptorService = styleDescriptorService;
-    }
-
-    @Reference
-    public void setMacroService( final MacroService macroService )
-    {
-        this.macroService = macroService;
     }
 
     private <T> T runWithAdminRole( final Callable<T> callable )
