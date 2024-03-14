@@ -17,6 +17,7 @@ public interface SecurityService
 
     IdProviderAccessControlList getIdProviderPermissions( IdProviderKey idProviderKey );
 
+    @Deprecated
     IdProviderAccessControlList getDefaultIdProviderPermissions();
 
     IdProvider createIdProvider( CreateIdProviderParams createIdProviderParams );

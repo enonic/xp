@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.url;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -13,10 +12,12 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,13 +35,15 @@ public abstract class AbstractPortalUrlServiceImplTest
 
     protected StyleDescriptorService styleDescriptorService;
 
+    protected RedirectChecksumService redirectChecksumService;
+
     HttpServletRequest req;
 
     @BeforeEach
     public void setup()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
-        final Application application = Mockito.mock( Application.class );
+        final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( applicationKey );
 
         req = mock( HttpServletRequest.class );
@@ -53,20 +56,18 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalRequest.setRawRequest( req );
 
-        this.service = new PortalUrlServiceImpl();
-        this.service.setMacroService( new MacroServiceImpl() );
+        this.contentService = mock( ContentService.class );
+        this.resourceService = mock( ResourceService.class );
+        this.styleDescriptorService = mock( StyleDescriptorService.class );
+        when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        this.contentService = Mockito.mock( ContentService.class );
-        this.service.setContentService( this.contentService );
-
-        this.styleDescriptorService = Mockito.mock( StyleDescriptorService.class );
-        when( this.styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.empty() );
-        this.service.setStyleDescriptorService( this.styleDescriptorService );
-
-        this.applicationService = Mockito.mock( ApplicationService.class );
+        this.applicationService = mock( ApplicationService.class );
         when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.service.setResourceService( this.resourceService );
+        this.redirectChecksumService = mock( RedirectChecksumService.class );
+
+        this.service =
+            new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
+                                      this.redirectChecksumService );
     }
 }

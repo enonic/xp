@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.api;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,13 +9,12 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.hash.Hashing;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -39,10 +37,14 @@ public class ApiIdentityHandler
 
     private final IdProviderControllerService idProviderControllerService;
 
+    private final RedirectChecksumService redirectChecksumService;
+
     @Activate
-    public ApiIdentityHandler( @Reference final IdProviderControllerService idProviderControllerService )
+    public ApiIdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
+                               @Reference final RedirectChecksumService redirectChecksumService )
     {
         this.idProviderControllerService = idProviderControllerService;
+        this.redirectChecksumService = redirectChecksumService;
     }
 
     @Override
@@ -145,7 +147,8 @@ public class ApiIdentityHandler
 
     private void checkTicket( final PortalRequest req )
     {
-        if ( getParameter( req, "redirect" ) != null )
+        final String redirect = getParameter( req, "redirect" );
+        if ( redirect != null )
         {
             final String ticket = removeParameter( req, "_ticket" );
             if ( ticket == null )
@@ -153,9 +156,7 @@ public class ApiIdentityHandler
                 throw WebException.badRequest( "Missing ticket parameter" );
             }
 
-            final String jSessionId = getJSessionId();
-            final String expectedTicket = generateTicket( jSessionId );
-            req.setValidTicket( expectedTicket.equals( ticket ) );
+            req.setValidTicket( redirectChecksumService.verifyChecksum( redirect, ticket ) );
         }
     }
 
@@ -169,15 +170,5 @@ public class ApiIdentityHandler
     {
         final Collection<String> values = req.getParams().removeAll( name );
         return values.isEmpty() ? null : values.iterator().next();
-    }
-
-    private String getJSessionId()
-    {
-        return ContextAccessor.current().getLocalScope().getSession().getKey().toString();
-    }
-
-    private String generateTicket( final String jSessionId )
-    {
-        return Hashing.sha1().newHasher().putString( jSessionId, StandardCharsets.UTF_8 ).hash().toString();
     }
 }

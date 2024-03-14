@@ -151,7 +151,7 @@ public final class SecurityServiceImpl
     public IdProviders getIdProviders()
     {
         final FindNodesByParentParams findByParent =
-            FindNodesByParentParams.create().parentPath( IdProviderNodeTranslator.getIdProvidersParentPath() ).build();
+            FindNodesByParentParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByParentResult result = this.nodeService.findByParent( findByParent );
             return this.nodeService.getByIds( result.getNodeIds() );
@@ -371,7 +371,7 @@ public final class SecurityServiceImpl
             UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
             return ( usernamePasswordAuthToken.getIdProvider() == null ||
                 IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
-                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() );
+                PrincipalKey.ofSuperUser().getId().equals( usernamePasswordAuthToken.getUsername() );
         }
         return false;
     }
@@ -382,8 +382,8 @@ public final class SecurityServiceImpl
         if ( this.suPasswordValue.equals( hashedTokenPassword ) )
         {
             final User admin = User.create()
-                .key( SecurityInitializer.SUPER_USER )
-                .login( SecurityInitializer.SUPER_USER.getId() )
+                .key( PrincipalKey.ofSuperUser() )
+                .login( PrincipalKey.ofSuperUser().getId() )
                 .displayName( "Super User" )
                 .build();
             return AuthenticationInfo.create()
@@ -969,7 +969,7 @@ public final class SecurityServiceImpl
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
                 final Node idProviderNode = nodeService.create( CreateNodeParams.create()
-                                                                    .parent( IdProviderNodeTranslator.getIdProvidersParentPath() )
+                                                                    .parent( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH )
                                                                     .name( createIdProviderParams.getKey().toString() )
                                                                     .data( data )
                                                                     .permissions( idProviderNodePermissions )

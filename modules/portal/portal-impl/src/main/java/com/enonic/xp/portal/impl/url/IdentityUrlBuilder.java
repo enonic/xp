@@ -1,20 +1,20 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 import com.google.common.collect.Multimap;
-import com.google.common.hash.Hashing;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 
 final class IdentityUrlBuilder
     extends GenericEndpointUrlBuilder<IdentityUrlParams>
 {
+    private final Function<String, String> checksumGenerator;
 
-    IdentityUrlBuilder()
+    IdentityUrlBuilder( Function<String, String> checksumGenerator )
     {
         super( "idprovider" );
+        this.checksumGenerator = checksumGenerator;
     }
 
     @Override
@@ -47,8 +47,7 @@ final class IdentityUrlBuilder
         {
             params.put( "redirect", this.params.getRedirectionUrl() );
 
-            final String jSessionId = getJSessionId();
-            params.put( "_ticket", generateTicket( jSessionId ) );
+            params.put( "_ticket", checksumGenerator.apply( redirectionUrl ) );
         }
     }
 
@@ -64,21 +63,4 @@ final class IdentityUrlBuilder
         return "/api/idprovider";
     }
 
-    private String getJSessionId()
-    {
-        return ContextAccessor.current().
-            getLocalScope().
-            getSession().
-            getKey().
-            toString();
-    }
-
-    private String generateTicket( final String jSessionId )
-    {
-        return Hashing.sha1().
-            newHasher().
-            putString( jSessionId, StandardCharsets.UTF_8 ).
-            hash().
-            toString();
-    }
 }

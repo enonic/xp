@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.HttpMethod;
@@ -23,38 +24,50 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class IdentityHandlerTest
+class IdentityHandlerTest
     extends BaseHandlerTest
 {
-    private IdentityHandler handler;
+    IdentityHandler handler;
 
-    private PortalRequest request;
+    PortalRequest request;
 
-    private String virtualHostKey;
+    String virtualHostKey;
+
+    RedirectChecksumService redirectChecksumService;
 
     @BeforeEach
     public final void setup()
         throws Exception
     {
         this.request = new PortalRequest();
-        final ContentService contentService = Mockito.mock( ContentService.class );
-        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        final ContentService contentService = mock( ContentService.class );
+        final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 
-        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
+        when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
             if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
+            else if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "login".equals( arg.getFunctionName() ) )
+            {
+                return PortalResponse.create().build();
+            }
             return null;
         } );
 
-        this.handler = new IdentityHandler( contentService, idProviderControllerService );
+        redirectChecksumService = mock( RedirectChecksumService.class );
+
+        this.handler = new IdentityHandler( contentService, idProviderControllerService, redirectChecksumService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
@@ -72,26 +85,26 @@ public class IdentityHandlerTest
     public void testMatch()
     {
         this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/other/a/b" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/idprovider/a/b" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/idprovider/a/b" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
     public void testOptions()
         throws Exception
     {
-        final IdProviderControllerService idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
+        final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( Mockito.mock( ContentService.class ), idProviderControllerService );
+        when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
+        this.handler = new IdentityHandler( mock( ContentService.class ), idProviderControllerService, mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -126,8 +139,37 @@ public class IdentityHandlerTest
         final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build(), null );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
+    }
+
+    @Test
+    public void testHandle_redirect()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
+        this.request.setRawPath( "/site/draft/_/idprovider/myidprovider/login" );
+        when( redirectChecksumService.verifyChecksum( "https://example.com", "some-good-checksum" ) ).thenReturn( true );
+
+        this.request.getParams().put( "redirect", "https://example.com" );
+        this.request.getParams().put( "_ticket", "some-good-checksum" );
+        this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertTrue( this.request.isValidTicket() );
+    }
+
+    @Test
+    public void testHandle_redirect_invalid()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
+        this.request.setRawPath( "/site/draft/_/idprovider/myidprovider/login" );
+        when( redirectChecksumService.verifyChecksum( "https://example.com", "some-bad-checksum" ) ).thenReturn( false );
+
+        this.request.getParams().put( "redirect", "https://example.com" );
+        this.request.getParams().put( "_ticket", "some-bad-checksum" );
+        this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertFalse( this.request.isValidTicket() );
     }
 
     @Test
@@ -136,8 +178,8 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
@@ -157,8 +199,8 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider", "myidprovider" ) );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider", "myidprovider" ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
@@ -175,8 +217,8 @@ public class IdentityHandlerTest
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
-        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.empty() );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.empty() );
 
         VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
 
@@ -194,7 +236,7 @@ public class IdentityHandlerTest
 
         } ).when( rawRequest ).setAttribute( Mockito.any(), Mockito.isA( VirtualHost.class ) );
 
-        Mockito.when( rawRequest.getAttribute( Mockito.isA( String.class ) ) ).thenAnswer( ( InvocationOnMock invocation ) -> {
+        when( rawRequest.getAttribute( Mockito.isA( String.class ) ) ).thenAnswer( ( InvocationOnMock invocation ) -> {
 
             return virtualHostKey.equals( invocation.getArguments()[0] ) ? virtualHost : null;
 
