@@ -1,16 +1,18 @@
 package com.enonic.xp.lib.mail;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.mail.SendMailParams;
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -91,6 +93,12 @@ public final class SendMailHandler
         this.attachments = attachments;
     }
 
+    @Override
+    public void initialize( final BeanContext context )
+    {
+        this.mailService = context.getService( MailService.class );
+    }
+
     public boolean send()
     {
         try
@@ -108,12 +116,12 @@ public final class SendMailHandler
 
     private List<String> arrayToList( final String[] value )
     {
-        return value == null ? List.of() : Stream.of( value ).collect( Collectors.toList() );
+        return value == null ? List.of() : List.of( value );
     }
 
     private SendMailParams createParams()
     {
-        return SendMailParams.create()
+        final SendMailParams.Builder result = SendMailParams.create()
             .to( this.to )
             .from( this.from )
             .cc( this.cc )
@@ -121,15 +129,41 @@ public final class SendMailHandler
             .replyTo( this.replyTo )
             .subject( this.subject )
             .contentType( this.contentType )
-            .body( this.body )
-            .headers( this.headers )
-            .attachments( this.attachments )
-            .build();
+            .body( this.body );
+
+        if ( this.headers != null )
+        {
+            this.headers.forEach( result::addHeader );
+        }
+
+        if ( this.attachments != null )
+        {
+            resolveAttachments( this.attachments ).forEach( result::addAttachment );
+        }
+
+        return result.build();
     }
 
-    @Override
-    public void initialize( final BeanContext context )
+    @SuppressWarnings("unchecked")
+    private List<MailAttachment> resolveAttachments( final List<Map<String, Object>> attachments )
     {
-        this.mailService = context.getService( MailService.class );
+        final List<MailAttachment> result = new ArrayList<>();
+        for ( Map<String, Object> attachmentObject : attachments )
+        {
+            final String name = getValue( attachmentObject, "fileName", String.class );
+            final ByteSource data = getValue( attachmentObject, "data", ByteSource.class );
+            final String mimeType = getValue( attachmentObject, "mimeType", String.class );
+            final Map<String, String> headers = getValue( attachmentObject, "headers", Map.class );
+
+            result.add( MailAttachment.create().data( data ).mimeType( mimeType ).fileName( name ).headers( headers ).build() );
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
+    {
+        final Object value = object.get( key );
+        return type.isInstance( value ) ? (T) value : null;
     }
 }

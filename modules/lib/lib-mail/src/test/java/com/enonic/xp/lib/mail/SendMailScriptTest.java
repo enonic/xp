@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
 
+import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.mail.SendMailParams;
@@ -61,13 +62,13 @@ public class SendMailScriptTest
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertEquals( List.of( "from@bar.com"), message.getFrom() );
-        assertEquals( List.of( "to@bar.com"), message.getTo() );
-        assertEquals( List.of( "cc@bar.com"), message.getCc() );
-        assertEquals( List.of( "bcc@bar.com"), message.getBcc() );
-        assertEquals( List.of( "replyTo@bar.com"), message.getReplyTo() );
-        assertEquals( "Value", message.getHeaders().get( "X-Custom" ) );
-        assertEquals( "2", message.getHeaders().get( "X-Other" ) );
+        assertEquals( List.of( "from@bar.com" ), message.getFrom() );
+        assertEquals( List.of( "to@bar.com" ), message.getTo() );
+        assertEquals( List.of( "cc@bar.com" ), message.getCc() );
+        assertEquals( List.of( "bcc@bar.com" ), message.getBcc() );
+        assertEquals( List.of( "replyTo@bar.com" ), message.getReplyTo() );
+        assertEquals( "Value", message.getHeader( "X-Custom" ) );
+        assertEquals( "2", message.getHeader( "X-Other" ) );
     }
 
     @Test
@@ -79,11 +80,11 @@ public class SendMailScriptTest
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertEquals( List.of( "from@bar.com", "from@foo.com"), message.getFrom() );
-        assertEquals( List.of( "to@bar.com", "to@foo.com"), message.getTo() );
-        assertEquals( List.of( "cc@bar.com", "cc@foo.com"), message.getCc() );
-        assertEquals( List.of( "bcc@bar.com", "bcc@foo.com"), message.getBcc() );
-        assertEquals( List.of( "replyTo@bar.com", "replyTo@foo.com"), message.getReplyTo() );
+        assertEquals( List.of( "from@bar.com", "from@foo.com" ), message.getFrom() );
+        assertEquals( List.of( "to@bar.com", "to@foo.com" ), message.getTo() );
+        assertEquals( List.of( "cc@bar.com", "cc@foo.com" ), message.getCc() );
+        assertEquals( List.of( "bcc@bar.com", "bcc@foo.com" ), message.getBcc() );
+        assertEquals( List.of( "replyTo@bar.com", "replyTo@foo.com" ), message.getReplyTo() );
     }
 
     @Test
@@ -96,8 +97,8 @@ public class SendMailScriptTest
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertEquals( List.of( "From Bar <from@bar.com>", "From Foo <from@foo.com>"), message.getFrom() );
-        assertEquals( List.of( "To Bar <to@bar.com>", "To Foo <to@foo.com>"), message.getTo() );
+        assertEquals( List.of( "From Bar <from@bar.com>", "From Foo <from@foo.com>" ), message.getFrom() );
+        assertEquals( List.of( "To Bar <to@bar.com>", "To Foo <to@foo.com>" ), message.getTo() );
     }
 
     @Test
@@ -135,8 +136,8 @@ public class SendMailScriptTest
 
         assertEquals( "test subject", message.getSubject() );
         assertEquals( "test body", message.getBody() );
-        assertEquals( List.of( "from@bar.com"), message.getFrom() );
-        assertEquals( List.of( "to@bar.com"), message.getTo() );
+        assertEquals( List.of( "from@bar.com" ), message.getFrom() );
+        assertEquals( List.of( "to@bar.com" ), message.getTo() );
         assertEquals( "text/html", message.getContentType() );
     }
 
@@ -215,17 +216,17 @@ public class SendMailScriptTest
 
         assertEquals( 2, message.getAttachments().size() );
 
-        final Map<String, Object> attachment1 = message.getAttachments().get( 0 );
-        assertEquals( "image.png", attachment1.get( "fileName" ) );
-        assertEquals( "image/png", attachment1.get( "mimeType" ) );
+        final MailAttachment attachment1 = message.getAttachments().get( 0 );
+        assertEquals( "image.png", attachment1.getFileName() );
+        assertEquals( "image/png", attachment1.getMimeType() );
 
         assertEquals( "image data", CharStreams.toString(
-            new InputStreamReader( ( (ByteSource) attachment1.get( "data" ) ).openBufferedStream(), StandardCharsets.UTF_8 ) ) );
-        Map<String, Object> headersAttachment1 = (Map<String, Object>) attachment1.get( "headers" );
+            new InputStreamReader( ( attachment1.getData() ).openBufferedStream(), StandardCharsets.UTF_8 ) ) );
+        Map<String, String> headersAttachment1 = attachment1.getHeaders();
         assertEquals( "<myimg>", headersAttachment1.get( "Content-ID" ) );
 
-        final Map<String, Object> attachment2 = message.getAttachments().get( 1 );
-        assertEquals( "text.txt", attachment2.get( "fileName" ) );
+        final MailAttachment attachment2 = message.getAttachments().get( 1 );
+        assertEquals( "text.txt", attachment2.getFileName() );
     }
 
     public ByteSource createByteSource( final String value )

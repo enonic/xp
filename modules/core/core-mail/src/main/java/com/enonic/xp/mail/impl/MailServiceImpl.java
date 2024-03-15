@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
-import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.mail.SendMailParams;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.mail")
 public final class MailServiceImpl
@@ -34,7 +34,7 @@ public final class MailServiceImpl
 
     private Session session;
 
-    private String defaultFromEmail;
+    private volatile String defaultFromEmail;
 
     public MailServiceImpl()
     {

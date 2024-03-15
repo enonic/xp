@@ -3,16 +3,14 @@ package com.enonic.xp.mail.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.AddressException;
@@ -22,11 +20,11 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.google.common.io.ByteSource;
-import com.google.common.net.MediaType;
 
+import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.MailException;
+import com.enonic.xp.mail.MailHeader;
 import com.enonic.xp.mail.SendMailParams;
-import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -57,15 +55,12 @@ class MimeMessageConverter
         message.addRecipients( Message.RecipientType.BCC, toAddresses( params.getBcc() ) );
         message.setReplyTo( toAddresses( params.getReplyTo() ) );
 
-        if ( params.getHeaders() != null )
+        for ( MailHeader header : params.getHeaders() )
         {
-            for ( Map.Entry<String, String> header : params.getHeaders().entrySet() )
-            {
-                message.addHeader( header.getKey(), header.getValue() );
-            }
+            message.addHeader( header.getKey(), header.getValue() );
         }
 
-        final List<Attachment> attachmentList = resolveAttachments( params.getAttachments() );
+        final List<MailAttachment> attachmentList = params.getAttachments();
         if ( attachmentList.isEmpty() )
         {
             message.setText( nullToEmpty( params.getBody() ), "UTF-8" );
@@ -76,32 +71,53 @@ class MimeMessageConverter
         }
         else
         {
-            final Multipart multipart = new MimeMultipart();
-
-            final MimeBodyPart textPart = new MimeBodyPart();
-            textPart.setText( nullToEmpty( params.getBody() ), "UTF-8" );
-            if ( params.getContentType() != null )
-            {
-                textPart.addHeader( "Content-Type", params.getContentType() );
-            }
-            multipart.addBodyPart( textPart );
-
-            for ( Attachment attachment : attachmentList )
-            {
-                final MimeBodyPart messageBodyPart = new MimeBodyPart();
-                DataSource source = new ByteSourceDataSource( attachment.data, attachment.name, attachment.mimeType );
-                messageBodyPart.setDataHandler( new DataHandler( source ) );
-                messageBodyPart.setFileName( attachment.name );
-                for ( String headerName : attachment.headers.keySet() )
-                {
-                    messageBodyPart.addHeader( headerName, attachment.headers.get( headerName ) );
-                }
-                multipart.addBodyPart( messageBodyPart );
-            }
-            message.setContent( multipart );
+            message.setContent( createMultiPart( params ) );
         }
 
         return message;
+    }
+
+    private Multipart createMultiPart( SendMailParams params )
+        throws MessagingException
+    {
+        final Multipart result = new MimeMultipart();
+
+        result.addBodyPart( createTextPart( params.getBody(), params.getContentType() ) );
+        for ( MailAttachment attachment : params.getAttachments() )
+        {
+            result.addBodyPart( createMimeBodyPart( attachment ) );
+        }
+
+        return result;
+    }
+
+    private MimeBodyPart createTextPart( String body, String contentType )
+        throws MessagingException
+    {
+        final MimeBodyPart result = new MimeBodyPart();
+        result.setText( nullToEmpty( body ), "UTF-8" );
+        if ( contentType != null )
+        {
+            result.addHeader( "Content-Type", contentType );
+        }
+        return result;
+    }
+
+    private MimeBodyPart createMimeBodyPart( MailAttachment attachment )
+        throws MessagingException
+    {
+        final MimeBodyPart result = new MimeBodyPart();
+
+        DataSource source = new ByteSourceDataSource( attachment.getData(), attachment.getFileName(), attachment.getMimeType() );
+        result.setDataHandler( new DataHandler( source ) );
+        result.setFileName( attachment.getFileName() );
+
+        for ( Map.Entry<String, String> header : attachment.getHeaders().entrySet() )
+        {
+            result.addHeader( header.getKey(), header.getValue() );
+        }
+
+        return result;
     }
 
     private List<String> resolveFrom( final List<String> from )
@@ -158,69 +174,6 @@ class MimeMessageConverter
         catch ( AddressException e )
         {
             throw new MailException( e.getMessage(), e );
-        }
-    }
-
-    private List<Attachment> resolveAttachments( final List<Map<String, Object>> attachments )
-    {
-        if ( attachments == null )
-        {
-            return Collections.emptyList();
-        }
-        final List<Attachment> result = new ArrayList<>();
-        for ( Map<String, Object> attachmentObject : attachments )
-        {
-            final String name = getValue( attachmentObject, "fileName", String.class );
-            final ByteSource data = getValue( attachmentObject, "data", ByteSource.class );
-            String mimeType = getValue( attachmentObject, "mimeType", String.class );
-            final Map headers = getValue( attachmentObject, "headers", Map.class );
-            if ( name != null && data != null )
-            {
-                mimeType = mimeType == null ? getMimeType( name ) : mimeType;
-                result.add( new Attachment( name, data, mimeType, headers ) );
-            }
-        }
-        return result;
-    }
-
-    private <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
-    {
-        final Object value = object.get( key );
-        if ( type.isInstance( value ) )
-        {
-            //noinspection unchecked
-            return (T) value;
-        }
-        return null;
-    }
-
-    private String getMimeType( final String fileName )
-    {
-        if ( fileName == null )
-        {
-            return MediaType.OCTET_STREAM.toString();
-        }
-
-        final MediaType type = MediaTypes.instance().fromFile( fileName );
-        return type.toString();
-    }
-
-    private static class Attachment
-    {
-        public final String name;
-
-        public final ByteSource data;
-
-        public final String mimeType;
-
-        public final Map<String, String> headers;
-
-        Attachment( final String name, final ByteSource data, final String mimeType, final Map<String, String> headers )
-        {
-            this.name = name;
-            this.data = data;
-            this.mimeType = mimeType;
-            this.headers = headers == null ? Collections.emptyMap() : headers;
         }
     }
 

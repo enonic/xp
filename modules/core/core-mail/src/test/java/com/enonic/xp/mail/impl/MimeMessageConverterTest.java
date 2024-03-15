@@ -3,8 +3,6 @@ package com.enonic.xp.mail.impl;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -21,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
 
+import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.SendMailParams;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -43,7 +42,8 @@ public class MimeMessageConverterTest
             .cc( "cc@bar.com" )
             .bcc( "bcc@bar.com" )
             .replyTo( "replyTo@bar.com" )
-            .headers( Map.of( "X-Custom", "Value", "X-Other", "2" ) )
+            .addHeader( "X-Custom", "Value" )
+            .addHeader( "X-Other", "2" )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );
@@ -172,22 +172,18 @@ public class MimeMessageConverterTest
     public void testSendWithAttachments()
         throws Exception
     {
-        Map<String, Object> attachment1 = new HashMap<>();
-        attachment1.put( "fileName", "image.png" );
-        attachment1.put( "mimeType", "image/png" );
-        attachment1.put( "data", ByteSource.wrap( "image data".getBytes() ) );
-        attachment1.put( "headers", Map.of( "Content-ID", "<myimg>" ) );
-
-        Map<String, Object> attachment2 = new HashMap<>();
-        attachment2.put( "fileName", "text.txt" );
-        attachment2.put( "data", ByteSource.wrap( "Some text".getBytes() ) );
-
         SendMailParams params = SendMailParams.create()
             .subject( "test subject" )
             .body( "test body" )
             .to( "to@bar.com" )
             .from( "from@bar.com" )
-            .attachments( List.of( attachment1, attachment2 ) )
+            .addAttachment( MailAttachment.create()
+                                .fileName( "image.png" )
+                                .mimeType( "image/png" )
+                                .data( ByteSource.wrap( "image data".getBytes() ) )
+                                .headers( Map.of( "Content-ID", "<myimg>" ) )
+                                .build() )
+            .addAttachment( MailAttachment.create().fileName( "text.txt" ).data( ByteSource.wrap( "Some text".getBytes() ) ).build() )
             .build();
 
         Message message = new MimeMessageConverter( null, Session.getDefaultInstance( new Properties() ) ).convert( params );

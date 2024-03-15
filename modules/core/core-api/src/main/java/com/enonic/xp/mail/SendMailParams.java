@@ -1,14 +1,14 @@
 package com.enonic.xp.mail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class SendMailParams
+public final class SendMailParams
 {
     private final List<String> to;
 
@@ -20,28 +20,28 @@ public class SendMailParams
 
     private final List<String> replyTo;
 
+    private final List<MailHeader> headers;
+
+    private final List<MailAttachment> attachments;
+
     private final String subject;
 
     private final String contentType;
 
     private final String body;
 
-    private final Map<String, String> headers;
-
-    private final List<Map<String, Object>> attachments;
-
     private SendMailParams( Builder builder )
     {
-        this.to = builder.to;
-        this.from = builder.from;
-        this.cc = builder.cc;
-        this.bcc = builder.bcc;
-        this.replyTo = builder.replyTo;
+        this.to = List.copyOf( builder.to );
+        this.from = List.copyOf( builder.from );
+        this.cc = List.copyOf( builder.cc );
+        this.bcc = List.copyOf( builder.bcc );
+        this.replyTo = List.copyOf( builder.replyTo );
+        this.headers = List.copyOf( builder.headers );
+        this.attachments = List.copyOf( builder.attachments );
         this.subject = builder.subject;
         this.contentType = builder.contentType;
         this.body = builder.body;
-        this.headers = builder.headers;
-        this.attachments = builder.attachments;
     }
 
     public static Builder create()
@@ -89,12 +89,21 @@ public class SendMailParams
         return body;
     }
 
-    public Map<String, String> getHeaders()
+    public List<MailHeader> getHeaders()
     {
         return headers;
     }
 
-    public List<Map<String, Object>> getAttachments()
+    public String getHeader( String header )
+    {
+        return headers.stream()
+            .filter( h -> h.getKey().equalsIgnoreCase( header ) )
+            .map( MailHeader::getValue )
+            .findFirst()
+            .orElse( null );
+    }
+
+    public List<MailAttachment> getAttachments()
     {
         return attachments;
     }
@@ -111,23 +120,23 @@ public class SendMailParams
 
         private final List<String> replyTo = new ArrayList<>();
 
+        private final List<MailHeader> headers = new ArrayList<>();
+
+        private final List<MailAttachment> attachments = new ArrayList<>();
+
         private String subject;
 
         private String contentType;
 
         private String body;
 
-        private Map<String, String> headers;
-
-        private List<Map<String, Object>> attachments;
-
         public Builder to( final String... to )
         {
-            this.to.addAll( Arrays.asList( to ) );
+            this.to.addAll( List.of( to ) );
             return this;
         }
 
-        public Builder to( final List<String> to )
+        public Builder to( final Collection<String> to )
         {
             this.to.addAll( to );
             return this;
@@ -135,11 +144,11 @@ public class SendMailParams
 
         public Builder from( final String... from )
         {
-            this.from.addAll( Arrays.asList( from ) );
+            this.from.addAll( List.of( from ) );
             return this;
         }
 
-        public Builder from( final List<String> from )
+        public Builder from( final Collection<String> from )
         {
             this.from.addAll( from );
             return this;
@@ -147,11 +156,11 @@ public class SendMailParams
 
         public Builder cc( final String... cc )
         {
-            this.cc.addAll( Arrays.asList( cc ) );
+            this.cc.addAll( List.of( cc ) );
             return this;
         }
 
-        public Builder cc( final List<String> cc )
+        public Builder cc( final Collection<String> cc )
         {
             this.cc.addAll( cc );
             return this;
@@ -159,11 +168,11 @@ public class SendMailParams
 
         public Builder bcc( final String... bcc )
         {
-            this.bcc.addAll( Arrays.asList( bcc ) );
+            this.bcc.addAll( List.of( bcc ) );
             return this;
         }
 
-        public Builder bcc( final List<String> bcc )
+        public Builder bcc( final Collection<String> bcc )
         {
             this.bcc.addAll( bcc );
             return this;
@@ -171,11 +180,11 @@ public class SendMailParams
 
         public Builder replyTo( final String... replyTo )
         {
-            this.replyTo.addAll( Arrays.asList( replyTo ) );
+            this.replyTo.addAll( List.of( replyTo ) );
             return this;
         }
 
-        public Builder replyTo( final List<String> replyTo )
+        public Builder replyTo( final Collection<String> replyTo )
         {
             this.replyTo.addAll( replyTo );
             return this;
@@ -199,15 +208,26 @@ public class SendMailParams
             return this;
         }
 
-        public Builder headers( final Map<String, String> headers )
+        public Builder addHeader( final String key, final String value )
         {
-            this.headers = headers;
+            this.headers.add( MailHeader.from( key, value ) );
             return this;
         }
 
-        public Builder attachments( final List<Map<String, Object>> attachments )
+        public void addHeaders( final Map<String, String> headers )
         {
-            this.attachments = attachments;
+            headers.forEach( this::addHeader );
+        }
+
+        public Builder addAttachment( final MailAttachment attachment )
+        {
+            this.attachments.add( attachment );
+            return this;
+        }
+
+        public Builder addAttachments( final Collection<MailAttachment> attachments )
+        {
+            this.attachments.addAll( attachments );
             return this;
         }
 
