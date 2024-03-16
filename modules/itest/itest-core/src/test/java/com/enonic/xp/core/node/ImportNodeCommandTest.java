@@ -26,7 +26,6 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -176,20 +175,12 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void skip_permissions_on_create()
+    public void merge_permissions_on_create()
         throws Exception
     {
         final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.ofAnonymous() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
+            add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allowAll().build() ).
+            add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).deny( Permission.DELETE ).build() ).
             build();
 
         final Node importNode = Node.create().
@@ -201,7 +192,16 @@ public class ImportNodeCommandTest
             build();
 
         final ImportNodeResult importNodeResult = importNode( importNode, true, false );
-        assertNotEquals( aclList, importNodeResult.getNode().getPermissions() );
+
+        assertTrue( importNodeResult.getNode()
+                        .getPermissions()
+                        .isAllowedFor( TEST_DEFAULT_USER.getKey(), Permission.READ, Permission.CREATE, Permission.MODIFY,
+                                       Permission.PUBLISH ) );
+        assertFalse( importNodeResult.getNode().getPermissions().isAllowedFor( TEST_DEFAULT_USER.getKey(), Permission.DELETE ) );
+        assertTrue( importNodeResult.getNode()
+                        .getPermissions()
+                        .isAllowedFor( PrincipalKey.ofAnonymous(), Permission.CREATE, Permission.READ, Permission.MODIFY,
+                                       Permission.PUBLISH, Permission.DELETE, Permission.WRITE_PERMISSIONS, Permission.READ_PERMISSIONS ) );
     }
 
     @Test
