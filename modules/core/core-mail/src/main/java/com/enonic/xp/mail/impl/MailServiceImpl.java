@@ -1,6 +1,8 @@
 package com.enonic.xp.mail.impl;
 
+import java.time.Duration;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 
 import javax.mail.Address;
 import javax.mail.Authenticator;
@@ -11,20 +13,41 @@ import javax.mail.internet.MimeMessage;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Modified;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.mail.SendMailParams;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.mail")
 public final class MailServiceImpl
     implements MailService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( MailServiceImpl.class );
+
+    private final SimpleExecutor simpleExecutor;
+
     private Session session;
 
+    private volatile String defaultFromEmail;
+
+    public MailServiceImpl()
+    {
+        this.simpleExecutor = new SimpleExecutor( Executors::newCachedThreadPool, "mail-service-executor-thread-%d",
+                                                  e -> LOG.error( "Message sending failed", e ) );
+    }
+
     @Activate
+    @Modified
     public void activate( final MailConfig config )
     {
+        this.defaultFromEmail = config.defaultFromEmail();
+
         final Properties properties = new Properties();
 
         properties.put( "mail.transport.protocol", "smtp" );
@@ -47,6 +70,12 @@ public final class MailServiceImpl
         }
     }
 
+    @Deactivate
+    public void deactivate()
+    {
+        simpleExecutor.shutdownAndAwaitTermination( Duration.ofSeconds( 5 ), neverCommenced -> LOG.warn( "Not all messages were sent" ) );
+    }
+
     @Override
     public void send( final MailMessage message )
     {
@@ -55,6 +84,29 @@ public final class MailServiceImpl
             final MimeMessage mimeMessage = newMessage();
             message.compose( mimeMessage );
             doSend( mimeMessage );
+        }
+        catch ( final Exception e )
+        {
+            throw handleException( e );
+        }
+    }
+
+    @Override
+    public void send( final SendMailParams params )
+    {
+        try
+        {
+            MimeMessage message = new MimeMessageConverter( defaultFromEmail, session ).convert( params );
+            simpleExecutor.execute( () -> {
+                try
+                {
+                    doSend( message );
+                }
+                catch ( Exception e )
+                {
+                    throw new RuntimeException( e );
+                }
+            } );
         }
         catch ( final Exception e )
         {
