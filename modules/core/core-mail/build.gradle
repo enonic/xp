@@ -1,5 +1,6 @@
 dependencies {
     implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
 
     testImplementation ( libs.mockjavamail ) {
         exclude group: 'javax.mail'

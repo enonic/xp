@@ -13,7 +13,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.mail.SendMailParams;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,9 +27,7 @@ public class MailServiceImplTest
     public void setUp()
         throws Exception
     {
-        final MailConfig config = Mockito.mock( MailConfig.class );
-        Mockito.when( config.smtpHost() ).thenReturn( "localhost" );
-        Mockito.when( config.smtpPort() ).thenReturn( 25 );
+        final MailConfig config = Mockito.mock( MailConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         this.mailService = new MailServiceImpl();
         this.mailService.activate( config );
@@ -59,6 +59,13 @@ public class MailServiceImplTest
 
         MailMessage mockMessage = this::createMockMessage;
         assertThrows( MailException.class, () -> mailService.send( mockMessage ) );
+    }
+
+    @Test
+    public void testSend()
+    {
+        assertDoesNotThrow( () -> this.mailService.send(
+            SendMailParams.create().subject( "test subject" ).body( "test body" ).to( "to@bar.com" ).from( "from@bar.com" ).build() ) );
     }
 
     private void createMockMessage( MimeMessage msg )
