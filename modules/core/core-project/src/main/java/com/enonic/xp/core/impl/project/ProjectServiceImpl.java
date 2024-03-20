@@ -130,15 +130,15 @@ public class ProjectServiceImpl
                                      .build() );
             } );
 
-            if ( repositories.stream()
-                .noneMatch( repository -> repository.getId().equals( ProjectConstants.DEFAULT_PROJECT.getName().getRepoId() ) ) )
-            {
-                doInitRootNodes( CreateProjectParams.create()
-                                     .name( ProjectConstants.DEFAULT_PROJECT.getName() )
-                                     .displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() )
-                                     .description( ProjectConstants.DEFAULT_PROJECT.getDescription() )
-                                     .build() );
-            }
+//            if ( repositories.stream()
+//                .noneMatch( repository -> repository.getId().equals( ProjectConstants.DEFAULT_PROJECT.getName().getRepoId() ) ) )
+//            {
+//                doInitRootNodes( CreateProjectParams.create()
+//                                     .name( ProjectConstants.DEFAULT_PROJECT.getName() )
+//                                     .displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() )
+//                                     .description( ProjectConstants.DEFAULT_PROJECT.getDescription() )
+//                                     .build() );
+//            }
         } );
     }
 

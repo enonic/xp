@@ -47,18 +47,18 @@ public final class StatusResource
         new ProductInfoBuilder( this.info ).build( json );
 
         json.set( "context", createContextJson() );
-        json.set( "readonly", createRepoReadOnlyJson() );
+        json.set( "readonly", JsonNodeFactory.instance.booleanNode( false ) ); // https://github.com/enonic/xp/issues/8150
         return json;
     }
 
-    private JsonNode createRepoReadOnlyJson()
-    {
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH );
-
-        final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
-
-        return writeJsonNode != null ? writeJsonNode : JsonNodeFactory.instance.booleanNode( false );
-    }
+//    private JsonNode createRepoReadOnlyJson()
+//    {
+//        final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH );
+//
+//        final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
+//
+//        return writeJsonNode != null ? writeJsonNode : JsonNodeFactory.instance.booleanNode( false );
+//    }
 
     private ObjectNode createContextJson()
     {
