@@ -2,13 +2,15 @@ var assert = require('/lib/xp/testing');
 var context = require('/lib/xp/context');
 
 exports.testNoChange = function () {
-    var result = context.run({}, function () {
+    var result = context.run({
+        repository: 'com.enonic.cms.myproject',
+    }, function () {
         return context.get();
     });
 
     assert.assertJsonEquals({
         'branch': 'draft',
-        'repository': 'com.enonic.cms.default',
+        'repository': 'com.enonic.cms.myproject',
         'authInfo': {
             'principals': [
                 'user:system:anonymous',

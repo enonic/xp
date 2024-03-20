@@ -171,7 +171,8 @@ public final class LocalTaskManagerImpl
     private void doSubmitTask( final DescribedTask runnableTask )
     {
         final TaskId id = runnableTask.getTaskId();
-        final User user = Objects.requireNonNullElse( runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS );
+        final User user = runnableTask.getTaskContext().getAuthInfo() != null ? Objects.requireNonNullElse(
+            runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ) : User.ANONYMOUS;
         final TaskInfo info = TaskInfo.create()
             .id( id )
             .description( runnableTask.getDescription() )

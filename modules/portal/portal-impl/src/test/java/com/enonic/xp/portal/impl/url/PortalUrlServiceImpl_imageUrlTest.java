@@ -13,6 +13,7 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -47,7 +48,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/myproject/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -62,7 +63,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
                       url );
     }
 
@@ -81,7 +82,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
                           "quality=90&background=00ff00&filter=scale%2810%2C10%29", url );
     }
 
@@ -97,7 +98,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/myproject/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -112,7 +113,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/myproject/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -127,7 +128,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             validate();
 
         final String url = this.service.imageUrl( params );
-        assertThat( url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/site/myproject/draft/context/path/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -141,7 +142,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" ).
             validate();
 
-        assertThat( this.service.imageUrl( params  )).startsWith( "/site/default/draft/a/b/mycontent/_/error/404?message=Not+Found." );
+        assertThat( this.service.imageUrl( params  )).startsWith( "/site/myproject/draft/a/b/mycontent/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -161,7 +162,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+            "http://localhost/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
             url );
     }
 
@@ -178,7 +179,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "/site/default/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
+            "/site/myproject/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
             url );
     }
 
@@ -200,7 +201,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
             String url = this.service.imageUrl( params );
             assertEquals(
-                "http://media.enonic.com/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+                "http://media.enonic.com/image/myproject/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
 
             params = new ImageUrlParams().format( "png" )
                 .type( UrlTypeConstants.SERVER_RELATIVE )
@@ -208,7 +209,7 @@ public class PortalUrlServiceImpl_imageUrlTest
                 .scale( "max(300)" );
 
             url = this.service.imageUrl( params );
-            assertEquals( "/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            assertEquals( "/image/myproject/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
         } );
     }
 
@@ -229,7 +230,7 @@ public class PortalUrlServiceImpl_imageUrlTest
         Context context = ContextBuilder.create().build();
         String url = context.callWith( () -> this.service.imageUrl( params ) );
         assertEquals(
-            "http://localhost/api/media/image/default/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            "http://localhost/api/media/image/myproject/draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     private Content createContent()
@@ -267,13 +268,13 @@ public class PortalUrlServiceImpl_imageUrlTest
         Mockito.when( this.contentService.getByPath( content.getPath() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentPath( content.getPath() )
-                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                             .branch( ContentConstants.BRANCH_DRAFT )
                             .build() );
         Mockito.when( this.contentService.getById( content.getId() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentId( content.getId() )
-                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                             .branch( ContentConstants.BRANCH_DRAFT )
                             .build() );
         return content;

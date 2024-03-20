@@ -21,7 +21,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "/site/myproject/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
@@ -34,7 +34,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             param( "a", 3 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/default/draft/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "/site/myproject/draft/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
             application( "otherapplication" );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/service/otherapplication/myservice", url );
+        assertEquals( "/site/myproject/draft/context/path/_/service/otherapplication/myservice", url );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "http://localhost/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "http://localhost/site/myproject/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 
     @Test
@@ -80,6 +80,6 @@ public class PortalUrlServiceImpl_serviceUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.serviceUrl( params );
-        assertEquals( "ws://localhost/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+        assertEquals( "ws://localhost/site/myproject/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 }

@@ -7,7 +7,7 @@
   "url": "http://enonic.com/my/page?debug=true",
   "mode": "edit",
   "webSocket": false,
-  "repositoryId": "com.enonic.cms.default",
+  "repositoryId": "com.enonic.cms.myproject",
   "branch": "master",
   "params": {
     "debug": "true"

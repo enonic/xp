@@ -18,7 +18,7 @@ public class GetRepositoryHandler
 
     public void setRepositoryId( final String repositoryId )
     {
-        this.repositoryId = repositoryId == null ? null : RepositoryId.from( repositoryId );
+        this.repositoryId = RepositoryId.from( repositoryId );
     }
 
     public RepositoryMapper execute()

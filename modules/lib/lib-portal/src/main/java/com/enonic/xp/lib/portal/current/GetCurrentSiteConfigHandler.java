@@ -10,6 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.Site;
@@ -41,13 +42,18 @@ public final class GetCurrentSiteConfigHandler
             }
             else
             {
-                final Project project = this.projectService.get().get( ProjectName.from( ContextAccessor.current().getRepositoryId() ) );
-                if ( project != null )
+                final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+                if ( repositoryId != null )
                 {
-                    final SiteConfig config = project.getSiteConfigs().get( applicationKey );
-                    if ( config != null )
+                    final Project project =
+                        this.projectService.get().get( ProjectName.from( repositoryId ) ); // TODO https://github.com/enonic/xp/issues/10556
+                    if ( project != null )
                     {
-                        appConfigPropertyTree = config.getConfig();
+                        final SiteConfig config = project.getSiteConfigs().get( applicationKey );
+                        if ( config != null )
+                        {
+                            appConfigPropertyTree = config.getConfig();
+                        }
                     }
                 }
             }

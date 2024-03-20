@@ -101,9 +101,10 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Override
+    @Deprecated
     public Contents getContentReferences( final ApplicationKey applicationKey )
     {
-        return this.contentService.findByApplicationKey( applicationKey );
+        return Contents.empty();
     }
 
     @Override

@@ -37,15 +37,17 @@ import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 public class IndexConfigUpgrader
     extends AbstractMetaDumpUpgrader
 {
+    private static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+
     private static final Version MODEL_VERSION = new Version( 7 );
 
     private static final String NAME = "Index config";
 
     private static final Segment INDEX_CONFIG_SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        RepositorySegmentUtils.toSegment( CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
 
     private static final Segment NODE_SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
+        RepositorySegmentUtils.toSegment( CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
 
     public IndexConfigUpgrader( final Path basePath )
@@ -68,7 +70,7 @@ public class IndexConfigUpgrader
     @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
-        if ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) )
+        if ( CONTENT_REPO_ID.equals( repositoryId ) )
         {
             super.upgradeRepository( repositoryId );
         }

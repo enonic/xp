@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -209,16 +208,13 @@ class ProjectServiceImplTest
     void initialize()
     {
         ContextBuilder.from( adminContext() )
-            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( ContentConstants.BRANCH_DRAFT )
             .build()
             .runWith( () -> {
                 final Projects projects = projectService.list();
 
-                assertEquals( 1, projects.getSize() );
-                assertTrue( nodeService.nodeExists( new NodePath( "/content" ) ) );
-                assertTrue( nodeService.nodeExists( new NodePath( "/issues" ) ) );
-                assertTrue( nodeService.nodeExists( new NodePath( "/archive" ) ) );
+                assertEquals( 0, projects.getSize() );
             } );
     }
 
@@ -303,7 +299,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
         final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+            assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
         assertEquals( "Denied [user:system:test-user] user access for [create] operation", ex.getMessage() );
     }
@@ -315,7 +311,7 @@ class ProjectServiceImplTest
 
         contentCustomManagerContext().runWith( () -> {
             final RuntimeException ex =
-                Assertions.assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+                assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
             assertEquals( "Denied [user:system:custom-user] user access for [create] operation", ex.getMessage() );
         } );
@@ -511,7 +507,7 @@ class ProjectServiceImplTest
 
         contentCustomManagerContext().runWith( () -> {
 
-            final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
+            final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
             assertEquals( "Denied [user:system:custom-user] user access for [delete] operation", ex.getMessage() );
         } );
@@ -527,21 +523,9 @@ class ProjectServiceImplTest
             assertNotNull( this.projectService.get( projectName ) );
         } );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
+        final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
         assertEquals( "Denied [user:system:test-user] user access for [delete] operation", ex.getMessage() );
-    }
-
-    @Test
-    void delete_default_project_as_admin()
-    {
-        adminContext().runWith( () -> {
-            assertNotNull( this.projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME ) );
-
-            final RuntimeException ex =
-                Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( ProjectConstants.DEFAULT_PROJECT_NAME ) );
-            assertEquals( "Denied [user:system:repo-test-user] user access for [delete] operation", ex.getMessage() );
-        } );
     }
 
     @Test
@@ -570,10 +554,10 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
         adminContext().runWith( () -> {
-            assertEquals( 4, projectService.list().getSize() );
+            assertEquals( 3, projectService.list().getSize() );
 
             this.projectService.delete( ProjectName.from( "test-project2" ) );
-            assertEquals( 3, projectService.list().getSize() );
+            assertEquals( 2, projectService.list().getSize() );
         } );
 
     }
@@ -587,9 +571,10 @@ class ProjectServiceImplTest
 
         contentAdminContext().runWith( () -> {
             final Projects projects = projectService.list();
-            assertEquals( 4, projects.getSize() );
-            assertTrue(
-                projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
+            assertEquals( 3, projects.getSize() );
+            assertFalse( projects.stream()
+                             .anyMatch( project -> project.getName()
+                                 .equals( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) ) ) );
         } );
     }
 
@@ -600,10 +585,7 @@ class ProjectServiceImplTest
 
         contentManagerContext().runWith( () -> {
             final Projects projects = projectService.list();
-            assertEquals( 1, projects.getSize() );
-            assertTrue(
-                projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
-
+            assertEquals( 0, projects.getSize() );
         } );
     }
 
@@ -630,10 +612,8 @@ class ProjectServiceImplTest
         ContextBuilder.from( contentCustomManagerContext() ).authInfo( authenticationInfo ).build().runWith( () -> {
             final Projects projects = projectService.list();
 
-            assertEquals( 5, projectService.list().getSize() );
+            assertEquals( 4, projectService.list().getSize() );
             assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
-            assertTrue(
-                projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
         } );
     }
 
@@ -676,7 +656,7 @@ class ProjectServiceImplTest
 
         contentManagerContext().runWith( () -> {
             final RuntimeException ex =
-                Assertions.assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
+                assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
             assertEquals( "Denied [user:system:repo-test-user] user access to [test-project] project for [get] operation",
                           ex.getMessage() );
 
@@ -699,33 +679,10 @@ class ProjectServiceImplTest
     {
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
+        final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
 
         assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation", ex.getMessage() );
 
-    }
-
-    @Test
-    void get_empty_default_project_data()
-    {
-        adminContext().runWith( () -> {
-
-            final Project pro = projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDescription(), pro.getDescription() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDisplayName(), pro.getDisplayName() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getIcon(), pro.getIcon() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParents(), pro.getParents() );
-        } );
-
-    }
-
-    @Test
-    void get_default_project()
-    {
-        contentCustomManagerContext().runWith( () -> {
-            final Project defaultProject = projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME );
-            assertNotNull( defaultProject );
-        } );
     }
 
     @Test
@@ -821,7 +778,7 @@ class ProjectServiceImplTest
             }
         } );
 
-        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getIcon( project.getName() ) );
+        assertThrows( ProjectAccessException.class, () -> projectService.getIcon( project.getName() ) );
     }
 
     @Test
@@ -877,16 +834,7 @@ class ProjectServiceImplTest
     @Test
     void get_permissions_wrong_project()
     {
-        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getPermissions( ProjectName.from( "test-project" ) ) );
-    }
-
-    @Test
-    void get_permissions_default_project()
-    {
-        final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectConstants.DEFAULT_PROJECT_NAME ) );
-
-        assertEquals( "Default project has no roles.", ex.getMessage() );
+        assertThrows( ProjectAccessException.class, () -> projectService.getPermissions( ProjectName.from( "test-project" ) ) );
     }
 
     @Test
@@ -917,24 +865,6 @@ class ProjectServiceImplTest
 
             assertEquals( 1, principalRelationships.getSize() );
             assertEquals( principalRelationships.get( 0 ).getTo(), user2.getKey() );
-        } );
-    }
-
-    @Test
-    void modify_default_project_permissions()
-    {
-        adminContext().runWith( () -> {
-            final User user1 = securityService.createUser( CreateUserParams.create()
-                                                               .userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
-                                                               .displayName( "user1" )
-                                                               .login( "user1" )
-                                                               .build() );
-
-            final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.modifyPermissions(
-                ProjectConstants.DEFAULT_PROJECT_NAME, ProjectPermissions.create().addOwner( user1.getKey() ).build() ) );
-
-            assertEquals( "Default project permissions cannot be modified.", ex.getMessage() );
-
         } );
     }
 

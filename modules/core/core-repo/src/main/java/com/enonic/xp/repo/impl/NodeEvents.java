@@ -16,6 +16,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.repository.RepositoryId;
 
 public class NodeEvents
 {
@@ -145,21 +146,32 @@ public class NodeEvents
 
     private static ImmutableMap<String, String> nodeToMap( final NodeBranchEntry node )
     {
-        return ImmutableMap.<String, String>builder().put( "id", node.getNodeId().toString() )
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
+            .put( "id", node.getNodeId().toString() )
             .put( "path", node.getNodePath().toString() )
-            .put( "branch", ContextAccessor.current().getBranch().getValue() )
-            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
-            .build();
+            .put( "branch", ContextAccessor.current().getBranch().getValue() );
+
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        if ( repositoryId != null )
+        {
+            map.put( "repo", repositoryId.toString() );
+        }
+        return map.build();
     }
 
     private static ImmutableMap<String, String> nodeToMap( final Node node )
     {
-        return ImmutableMap.<String, String>builder()
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
             .put( "id", node.id().toString() )
             .put( "path", node.path().toString() )
-            .put( "branch", ContextAccessor.current().getBranch().getValue() )
-            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
-            .build();
+            .put( "branch", ContextAccessor.current().getBranch().getValue() );
+
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        if ( repositoryId != null )
+        {
+            map.put( "repo", repositoryId.toString() );
+        }
+        return map.build();
     }
 
     private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final Branch targetBranch )
@@ -167,8 +179,12 @@ public class NodeEvents
         final ImmutableMap.Builder<String, String> nodeAsMap = ImmutableMap.<String, String>builder()
             .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
             .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
-            .put( "branch", targetBranch.getValue() )
-            .put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            .put( "branch", targetBranch.getValue() );
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        if ( repositoryId != null )
+        {
+            nodeAsMap.put( "repo", repositoryId.toString() );
+        }
         if ( node.getCurrentTargetPath() != null )
         {
             nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );
@@ -178,12 +194,16 @@ public class NodeEvents
 
     private static ImmutableMap<String, String> createMoved( final NodePath previousPath, final Node targetNode )
     {
-        return ImmutableMap.<String, String>builder()
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
             .put( "id", targetNode.id().toString() )
             .put( "path", previousPath.toString() )
-            .put( "branch", ContextAccessor.current().getBranch().getValue() )
-            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
-            .put( "newPath", targetNode.path().toString() )
-            .build();
+            .put( "branch", ContextAccessor.current().getBranch().getValue() );
+        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        if ( repositoryId != null )
+        {
+            map.put( "repo", repositoryId.toString() );
+        }
+        map.put( "newPath", targetNode.path().toString() );
+        return map.build();
     }
 }

@@ -31,6 +31,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -162,6 +163,7 @@ public abstract class ScriptTestSupport
         final PortalRequest request = new PortalRequest();
 
         request.setMode( RenderMode.LIVE );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         request.setBranch( Branch.from( "draft" ) );
         request.setApplicationKey( this.appKey );
         request.setBaseUri( "/site" );

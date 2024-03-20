@@ -27,7 +27,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             param( "a", 3 );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             download( true );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/attachment/download/123456:binaryHash2/a2.jpg", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/attachment/download/123456:binaryHash2/a2.jpg", url );
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             name( "a1.jpg" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             label( "thumb" );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -80,7 +80,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
+        assertEquals( "/site/myproject/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             portalRequest( this.portalRequest );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
+        assertEquals( "/site/myproject/draft/context/path/_/attachment/inline/123456:binaryHash1/a1.jpg", url );
     }
 
     @Test
@@ -112,7 +112,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
+        assertEquals( "http://localhost/site/myproject/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );
     }
 
     @Test
@@ -133,7 +133,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( req.getServerPort() ).thenReturn( 8080 );
 
         String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/api/media/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
+        assertEquals( "http://localhost:8080/api/media/attachment/myproject/draft/123456:binaryHash2/a2.jpg?download", url );
     }
 
     @Test
@@ -152,7 +152,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .download( true );
 
         String url = this.service.attachmentUrl( params );
-        assertEquals( "http://media.enonic.com/attachment/default/draft/123456:binaryHash2/a2.jpg?download", url );
+        assertEquals( "http://media.enonic.com/attachment/myproject/draft/123456:binaryHash2/a2.jpg?download", url );
     }
 
     private Content createContent()

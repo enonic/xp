@@ -4,9 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
 public class RepositoryEventListenerTest
@@ -31,10 +34,11 @@ public class RepositoryEventListenerTest
     public void node_restored_event()
         throws Exception
     {
-        final Event localEvent = RepositoryEvents.restored();
-        repositoryEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+        executeInContext( () -> {
+            final Event localEvent = RepositoryEvents.restored();
+            repositoryEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
+
         Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
     }
@@ -44,12 +48,21 @@ public class RepositoryEventListenerTest
     public void node_restore_initialized()
         throws Exception
     {
-        final Event localEvent = RepositoryEvents.restoreInitialized();
-        repositoryEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+        executeInContext( () -> {
+            final Event localEvent = RepositoryEvents.restoreInitialized();
+            repositoryEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
+
         Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
+    }
+
+    private void executeInContext( final Runnable runnable )
+    {
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .build()
+            .runWith( runnable );
     }
 
 

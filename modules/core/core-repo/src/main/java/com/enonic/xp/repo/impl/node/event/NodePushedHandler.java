@@ -11,6 +11,7 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 public class NodePushedHandler
     extends AbstractNodeEventHandler
 {
+    private static final String CURRENT_TARGET_PATH = "currentTargetPath";
 
     @Override
     public void handleEvent( NodeStorageService storageService, final Event event, final InternalContext context )
@@ -19,10 +20,9 @@ public class NodePushedHandler
 
         for ( final Map<Object, Object> map : valueMapList )
         {
-            final InternalContext nodeContext = createNodeContext( map, context );
             final NodePath currentTargetPath =
                 map.containsKey( CURRENT_TARGET_PATH ) ? new NodePath( map.get( CURRENT_TARGET_PATH ).toString() ) : null;
-            storageService.handleNodePushed( getId( map ), getPath( map ), currentTargetPath, nodeContext );
+            storageService.handleNodePushed( getId( map ), getPath( map ), currentTargetPath, context );
         }
     }
 }

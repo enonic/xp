@@ -8,6 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
@@ -20,6 +22,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,13 +74,12 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = new NodePath( "/nodeName"  );
 
-        final Event localEvent = NodeEvents.created( Node.create().
-            id( nodeId ).
-            parentPath( nodePath.getParentPath() ).
-            name( nodePath.getName() ).
-            build() );
+        executeInContext( () -> {
+            final Event localEvent =
+                NodeEvents.created( Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build() );
 
-        nodeEventListener.onEvent( localEvent );
+            nodeEventListener.onEvent( localEvent );
+        } );
 
         Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                  Mockito.isA( InternalContext.class ) );
@@ -90,15 +92,12 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = new NodePath("/nodeName" );
 
-        final Event localEvent = NodeEvents.created( Node.create().
-            id( nodeId ).
-            parentPath( nodePath.getParentPath() ).
-            name( nodePath.getName() ).
-            build() );
+        executeInContext( () -> {
+            final Event localEvent =
+                NodeEvents.created( Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build() );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                     Mockito.isA( InternalContext.class ) );
@@ -113,11 +112,11 @@ public class NodeEventListenerTest
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).build();
 
-        final Event localEvent = NodeEvents.deleted( NodeBranchEntries.create().add( nodeBranchEntry ).build() );
+        executeInContext( () -> {
+            final Event localEvent = NodeEvents.deleted( NodeBranchEntries.create().add( nodeBranchEntry ).build() );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                     Mockito.isA( InternalContext.class ) );
@@ -135,14 +134,17 @@ public class NodeEventListenerTest
 
         final Node movedNode = Node.create( sourceNode ).parentPath( new NodePath( "/newParent" ) ).build();
 
-        final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
-                                                       .addMovedNode( MoveNodeResult.MovedNode.create()
-                                                                          .node( movedNode )
-                                                                          .previousPath( sourceNode.path() )
-                                                                          .build() )
-                                                       .build() );
+        executeInContext( () -> {
+            final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
+                                                           .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                                              .node( movedNode )
+                                                                              .previousPath( sourceNode.path() )
+                                                                              .build() )
+                                                           .build() );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
+
 
         ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
 
@@ -171,11 +173,11 @@ public class NodeEventListenerTest
             parentPath( new NodePath( "/newParent" ) ).
             build();
 
-        final Event localEvent = NodeEvents.renamed( sourceNode.path(), movedNode );
+        executeInContext( () -> {
+            final Event localEvent = NodeEvents.renamed( sourceNode.path(), movedNode );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
 
         ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
@@ -197,15 +199,11 @@ public class NodeEventListenerTest
             name( nodePath.getName() ).
             build();
 
-        final Node movedNode = Node.create( sourceNode ).
-            parentPath( new NodePath( "/newParent" ) ).
-            build();
+        executeInContext( () -> {
+            final Event localEvent = NodeEvents.duplicated( sourceNode );
 
-        final Event localEvent = NodeEvents.duplicated( sourceNode );
-
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                     Mockito.isA( InternalContext.class ) );
@@ -228,14 +226,22 @@ public class NodeEventListenerTest
             currentTargetPath( previousNodePath ).
             build();
 
-        final Event localEvent = NodeEvents.pushed( List.of( pushNodeEntry ), ContentConstants.BRANCH_MASTER );
+        executeInContext( () -> {
+            final Event localEvent = NodeEvents.pushed( List.of( pushNodeEntry ), ContentConstants.BRANCH_MASTER );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+            nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
+        } );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ),
                                                                                    Mockito.eq( previousNodePath ),
                                                                                    Mockito.isA( InternalContext.class ) );
+    }
+
+    private void executeInContext( final Runnable runnable )
+    {
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .build()
+            .runWith( runnable );
     }
 }

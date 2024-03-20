@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -50,6 +51,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
+        this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setApplicationKey( applicationKey );
         this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setRawPath( "/site" );

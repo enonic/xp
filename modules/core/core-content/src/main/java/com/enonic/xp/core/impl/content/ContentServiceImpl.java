@@ -41,7 +41,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
@@ -117,10 +116,6 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -811,16 +806,10 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     public Contents findByApplicationKey( final ApplicationKey key )
     {
-        final String filedPath =
-            String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY );
-        final ContentQuery query = ContentQuery.create()
-            .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( filedPath ), ValueExpr.string( key.toString() ) ) ) )
-            .size( -1 )
-            .build();
-
-        return this.getByIds( new GetContentByIdsParams( this.find( query ).getContentIds() ) );
+        return Contents.empty();
     }
 
     @Override

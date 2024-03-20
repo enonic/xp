@@ -171,9 +171,7 @@ public final class ExceptionRendererImpl
             request( req ).build();
 
         final Site siteInRequest = req.getSite();
-        final Site site = siteInRequest != null
-            ? siteInRequest
-            : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
+        final Site site = resolveSite( siteInRequest, req );
         if ( site != null )
         {
             req.setSite( site );
@@ -218,6 +216,22 @@ public final class ExceptionRendererImpl
         }
 
         return null;
+    }
+
+    private Site resolveSite( final Site siteInRequest, final PortalRequest req )
+    {
+        if ( siteInRequest != null )
+        {
+            return siteInRequest;
+        }
+        else if ( req.isSiteBase() )
+        {
+            return callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final String errorScriptPath,

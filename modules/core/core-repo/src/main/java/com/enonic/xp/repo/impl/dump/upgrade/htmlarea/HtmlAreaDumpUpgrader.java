@@ -8,7 +8,6 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
@@ -28,16 +27,17 @@ import com.enonic.xp.util.Version;
 public class HtmlAreaDumpUpgrader
     extends AbstractMetaBlobUpgrader
 {
+    private static final RepositoryId DEFAULT_CONTENT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
 
     private static final Version MODEL_VERSION = new Version( 8 );
 
     private static final String NAME = "Html Area";
 
     private static final Segment NODE_SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
+        RepositorySegmentUtils.toSegment( DEFAULT_CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
     private static final Segment INDEX_SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        RepositorySegmentUtils.toSegment( DEFAULT_CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
 
     private final HtmlAreaNodeDataUpgrader nodeDataUpgrader;
 
@@ -62,7 +62,7 @@ public class HtmlAreaDumpUpgrader
     @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
-        if ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) )
+        if ( DEFAULT_CONTENT_REPO_ID.equals( repositoryId ) )
         {
             super.upgradeRepository( repositoryId );
         }

@@ -1,10 +1,12 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
@@ -13,6 +15,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,11 +30,11 @@ public class NodeEventsTest
     {
         final Node created = createNode( "created", new NodePath( "/mynode1/child1" ), "id" );
 
-        Event event = NodeEvents.created( created );
+        Event event = executeInContext( "draft", () -> NodeEvents.created( created ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( "[{id=id, path=/mynode1/child1/created, branch=draft, repo=com.enonic.cms.default}]",
+        assertEquals( "[{id=id, path=/mynode1/child1/created, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -61,15 +64,15 @@ public class NodeEventsTest
                                                                  .currentTargetPath( new NodePath( "/mynode1/pushed3/pushed3" ) )
                                                                  .build() );
 
-        Event event = NodeEvents.pushed( pushNodeEntries, ContentConstants.BRANCH_MASTER );
+        Event event = executeInContext( "master", () -> NodeEvents.pushed( pushNodeEntries, ContentConstants.BRANCH_MASTER ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertTrue( event.hasValue( "nodes" ) );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, event.getType() );
-        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master, repo=com.enonic.cms.default}" +
-                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master, repo=com.enonic.cms.default}" +
-                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, repo=com.enonic.cms.default, currentTargetPath=/mynode1/pushed3/pushed3}]",
+        assertEquals( "[{id=id1, path=/mynode1/pushed1/pushed1, branch=master, repo=com.enonic.cms.myproject}" +
+                          ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master, repo=com.enonic.cms.myproject}" +
+                          ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, repo=com.enonic.cms.myproject, currentTargetPath=/mynode1/pushed3/pushed3}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -78,11 +81,11 @@ public class NodeEventsTest
     {
         final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = NodeEvents.created( deleted );
+        Event event = executeInContext( "draft", () -> NodeEvents.created( deleted ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/deleted, branch=draft, repo=com.enonic.cms.default}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/deleted, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -91,12 +94,12 @@ public class NodeEventsTest
     {
         final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = NodeEvents.duplicated( duplicated );
+        Event event = executeInContext( "draft", () -> NodeEvents.duplicated( duplicated ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.default}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -105,12 +108,12 @@ public class NodeEventsTest
     {
         final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = NodeEvents.updated( updated );
+        Event event = executeInContext( "draft", () -> NodeEvents.updated( updated ));
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_UPDATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/updated, branch=draft, repo=com.enonic.cms.default}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/updated, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -120,17 +123,17 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
 
-        Event event = NodeEvents.moved( MoveNodeResult.create()
-                                            .addMovedNode( MoveNodeResult.MovedNode.create()
-                                                               .node( targetNode )
-                                                               .previousPath( sourceNode.path() )
-                                                               .build() )
-                                            .build() );
+        Event event = executeInContext( "draft", () -> NodeEvents.moved( MoveNodeResult.create()
+                                                                             .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                                                                .node( targetNode )
+                                                                                                .previousPath( sourceNode.path() )
+                                                                                                .build() )
+                                                                             .build() ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_MOVED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.default, newPath=/mynode1/after}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/after}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -140,12 +143,12 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = NodeEvents.renamed( sourceNode.path(), targetNode );
+        Event event = executeInContext( "draft", () -> NodeEvents.renamed( sourceNode.path(), targetNode ));
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.default, newPath=/mynode1/child1/after}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/child1/after}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -154,12 +157,12 @@ public class NodeEventsTest
     {
         final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = NodeEvents.sorted( sorted );
+        Event event = executeInContext( "draft", () -> NodeEvents.sorted( sorted ));
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.default}]",
+        assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
     }
 
@@ -186,6 +189,15 @@ public class NodeEventsTest
             parentPath( root ).
             id( NodeId.from( id ) ).
             build();
+    }
+
+    private <T> T executeInContext( final String branch, final Callable<T> runnable )
+    {
+        return ContextBuilder.create()
+            .branch( branch )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .build()
+            .callWith( runnable );
     }
 
 }

@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,6 +55,7 @@ public class ImageUrlBuilderTest
 
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         portalRequest.setBaseUri( "/site" );
         portalRequest.setRawPath( "/site" );
@@ -73,7 +75,7 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName",
                       stringBuilder.toString() );
     }
 
@@ -85,7 +87,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test+Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test+Name.png",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test+Name.png",
                       stringBuilder.toString() );
     }
 
@@ -97,7 +99,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%20Name.png",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%20Name.png",
                       stringBuilder.toString() );
     }
 
@@ -108,7 +110,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.format( "png" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
                       stringBuilder.toString() );
     }
 
@@ -121,7 +123,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
                       stringBuilder.toString() );
     }
 
@@ -134,7 +136,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.jpg.png",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.jpg.png",
                       stringBuilder.toString() );
     }
 
@@ -145,7 +147,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block(310,175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
                       stringBuilder.toString() );
     }
 
@@ -156,7 +158,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block( 310, 175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
+        assertEquals( "test/myproject/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
                       stringBuilder.toString() );
     }
 }

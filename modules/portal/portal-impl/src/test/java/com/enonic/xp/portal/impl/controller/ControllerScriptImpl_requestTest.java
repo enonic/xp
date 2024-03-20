@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -38,6 +39,7 @@ public class ControllerScriptImpl_requestTest
         this.portalRequest.setPort( 80 );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
+        this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setBranch( Branch.from( "master" ) );
         this.portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.getParams().put( "debug", "true" );

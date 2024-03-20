@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.lib.common.PrincipalMapper;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.PrincipalKey;
@@ -30,7 +31,11 @@ public final class ContextMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "branch", this.context.getBranch().toString() );
-        gen.value( "repository", this.context.getRepositoryId().toString() );
+        final RepositoryId repositoryId = this.context.getRepositoryId();
+        if ( repositoryId != null )
+        {
+            gen.value( "repository", repositoryId.toString() );
+        }
         serializeAuthInfo( gen, this.context.getAuthInfo() );
         serializeAttributes( gen );
     }
