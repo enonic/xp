@@ -58,7 +58,7 @@ public abstract class RepoDependentInitializer
     {
         private NodeService nodeService;
 
-        private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
+        private RepositoryId repositoryId;
 
         private AccessControlList accessControlList;
 
