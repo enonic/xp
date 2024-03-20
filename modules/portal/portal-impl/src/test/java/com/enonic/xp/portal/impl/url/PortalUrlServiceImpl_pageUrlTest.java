@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +25,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/default/draft/context/path?a=3", url );
+        assertEquals( "/site/myproject/draft/context/path?a=3", url );
     }
 
     @Test
@@ -36,7 +37,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/default/draft/context/path/a/b?a=3", url );
+        assertEquals( "/site/myproject/draft/context/path/a/b?a=3", url );
     }
 
     @Test
@@ -47,7 +48,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/default/draft/a/b", url );
+        assertEquals( "/site/myproject/draft/a/b", url );
     }
 
     @Test
@@ -61,7 +62,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -76,7 +77,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             path( "/a/b" );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent", url );
     }
 
     @Test
@@ -86,7 +87,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         when( this.contentService.getById( content.getId() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentId( content.getId() )
-                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                             .branch( ContentConstants.BRANCH_DRAFT )
                             .build() );
 
@@ -95,7 +96,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertThat( url ).startsWith( "/site/default/draft/context/path/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/site/myproject/draft/context/path/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -111,7 +112,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );
+        assertEquals( "http://localhost/site/myproject/draft/context/path?a=3", url );
     }
 
     @Test
@@ -124,6 +125,6 @@ public class PortalUrlServiceImpl_pageUrlTest
             new PageUrlParams().portalRequest( this.portalRequest ).path( "/a/b" ).param( "a", 3 );
 
         final String url = this.service.pageUrl( params );
-        assertEquals( "/default/draft/a/b?a=3", url );
+        assertEquals( "/myproject/draft/a/b?a=3", url );
     }
 }

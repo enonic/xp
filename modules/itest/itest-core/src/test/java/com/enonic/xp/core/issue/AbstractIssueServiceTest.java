@@ -47,7 +47,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public abstract class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
-    public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+    public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.test-repo" );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -162,11 +162,13 @@ public abstract class AbstractIssueServiceTest
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
+            repositoryId( TEST_REPO_ID ).
             build().
             initialize();
         IssueInitializer.create().
             setIndexService( indexService ).
             setNodeService( nodeService ).
+            repositoryId( TEST_REPO_ID ).
             build().
             initialize();
     }

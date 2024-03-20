@@ -6,10 +6,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;
@@ -78,7 +76,7 @@ public class RepositoryEventListener
     {
         try
         {
-            repositoryEventHandler.handleEvent( event, InternalContext.from( ContextAccessor.current() ) );
+            repositoryEventHandler.handleEvent( event );
         }
         catch ( Exception e )
         {

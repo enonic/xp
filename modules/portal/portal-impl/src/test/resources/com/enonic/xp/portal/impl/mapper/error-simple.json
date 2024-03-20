@@ -12,8 +12,8 @@
     "remoteAddress": "10.0.0.1",
     "mode": "live",
     "webSocket": false,
-    "repositoryId": "com.enonic.cms.default",
-    "branch": "draft",
+    "repositoryId": "com.enonic.cms.myproject",
+    "branch": "master",
     "contextPath": "/site/live/master/a",
     "params": {
       "param1": "value1",

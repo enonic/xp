@@ -21,7 +21,7 @@ public final class PortalRequest
 {
     private RenderMode mode = RenderMode.LIVE;
 
-    private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
+    private RepositoryId repositoryId;
 
     private Branch branch = ContentConstants.BRANCH_DRAFT;
 

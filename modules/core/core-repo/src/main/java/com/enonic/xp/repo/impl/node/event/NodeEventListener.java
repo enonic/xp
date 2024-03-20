@@ -1,21 +1,29 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.Map;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryId;
 
 @Component(immediate = true)
 public class NodeEventListener
     implements EventListener
 {
+    private static final String BRANCH = "branch";
+
+    private static final String REPOSITORY_ID = "repo";
+
     private NodeStorageService nodeStorageService;
 
     private static final Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
@@ -82,12 +90,41 @@ public class NodeEventListener
     {
         try
         {
-            nodeEventHandler.handleEvent( this.nodeStorageService, event, InternalContext.from( ContextAccessor.current() ) );
+            nodeEventHandler.handleEvent( this.nodeStorageService, event, createNodeContext( event.getData() ) );
         }
         catch ( Exception e )
         {
             LOG.error( "Not able to handle node-event", e );
         }
+    }
+
+    private InternalContext createNodeContext( final Map<String, Object> map )
+    {
+        final InternalContext.Builder nodeContext = InternalContext.create( ContextAccessor.current() );
+
+        final RepositoryId repositoryId = getRepositoryId( map );
+        if ( repositoryId != null )
+        {
+            nodeContext.repositoryId( repositoryId );
+        }
+
+        final Branch branch = getBranch( map );
+        if ( branch != null )
+        {
+            nodeContext.branch( branch );
+        }
+        return nodeContext.build();
+    }
+
+
+    private RepositoryId getRepositoryId( final Map<String, Object> map )
+    {
+        return map.containsKey( REPOSITORY_ID ) ? RepositoryId.from( map.get( REPOSITORY_ID ).toString() ) : null;
+    }
+
+    private Branch getBranch( final Map<String, Object> map )
+    {
+        return map.containsKey( BRANCH ) ? Branch.from( map.get( BRANCH ).toString() ) : null;
     }
 
     @Reference

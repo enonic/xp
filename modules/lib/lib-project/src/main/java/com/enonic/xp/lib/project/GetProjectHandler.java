@@ -25,15 +25,13 @@ public final class GetProjectHandler
             return null;
         }
 
-        final ProjectPermissions projectPermissions =
-            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? this.projectService.get()
-                .getPermissions( project.getName() ) : null;
+        final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( project.getName() );
 
-        final Boolean readAccess = !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? GetProjectReadAccessCommand.create()
+        final Boolean readAccess = GetProjectReadAccessCommand.create()
             .contentService( this.contentService.get() )
             .projectName( project.getName() )
             .build()
-            .execute() : null;
+            .execute();
 
         final Locale language =
             GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();

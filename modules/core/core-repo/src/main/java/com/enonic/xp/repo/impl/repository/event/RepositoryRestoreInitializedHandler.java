@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.repository.event;
 
 import com.enonic.xp.event.Event;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -20,7 +19,7 @@ public class RepositoryRestoreInitializedHandler
     }
 
     @Override
-    public void handleEvent( final Event event, final InternalContext context )
+    public void handleEvent( final Event event )
     {
         nodeStorageService.invalidate();
         repositoryService.invalidateAll();

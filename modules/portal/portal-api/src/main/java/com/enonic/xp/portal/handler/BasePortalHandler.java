@@ -3,6 +3,7 @@ package com.enonic.xp.portal.handler;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -40,7 +41,11 @@ public abstract class BasePortalHandler
         {
             PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
 
-            ContextAccessor.current().getLocalScope().setAttribute( portalRequest.getRepositoryId() );
+            final RepositoryId repositoryId = portalRequest.getRepositoryId();
+            if ( repositoryId != null )
+            {
+                ContextAccessor.current().getLocalScope().setAttribute( repositoryId );
+            }
             ContextAccessor.current().getLocalScope().setAttribute( portalRequest.getBranch() );
 
             final WebResponse returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );

@@ -28,6 +28,7 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -85,6 +86,7 @@ class ExceptionRendererImplTest
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request.setRawRequest( rawRequest );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
     }
 
     @Test
@@ -193,11 +195,12 @@ class ExceptionRendererImplTest
     @Test
     void render_custom_error_for_404_in_site_path()
     {
+        this.request.setBaseUri( "/site" );
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
-        this.request.setContentPath( ContentPath.from( "/mysite/some/long/path" ) );
+        this.request.setContentPath( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" ) );
 
         final Site site = newSite();
-        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/mysite/some/long/path" )) )).thenReturn( site );
+        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" )) )).thenReturn( site );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =

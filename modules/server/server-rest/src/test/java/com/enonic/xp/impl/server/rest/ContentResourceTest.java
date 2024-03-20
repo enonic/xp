@@ -131,31 +131,6 @@ public class ContentResourceTest
     }
 
     @Test
-    public void reprocess_task_skip_children()
-        throws Exception
-    {
-        Content content = createContent( "content-id", ContentPath.from( "/path/to/content" ) );
-        Content reprocessedContent = Content.create( content ).displayName( "new name" ).build();
-        TaskId taskId = TaskId.from( "task-id" );
-        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        when( this.contentService.reprocess( content.getId() ) ).thenReturn( reprocessedContent );
-        when( this.taskService.submitLocalTask( any() ) ).thenReturn( taskId );
-
-        final String result = request().path( "content/reprocessTask" )
-            .entity( readFromFile( "reprocess_params_skip_children.json" ), MediaType.APPLICATION_JSON_TYPE )
-            .post()
-            .getAsString();
-
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
-            .containsExactly( null, "Reprocess branch:/path/to/content" );
-
-        assertEquals( "{\"taskId\":\"task-id\"}", result );
-    }
-
-    @Test
     public void sync()
         throws Exception
     {

@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.project.init;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -58,7 +57,7 @@ public abstract class RepoDependentInitializer
     {
         private NodeService nodeService;
 
-        private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
+        private RepositoryId repositoryId;
 
         private AccessControlList accessControlList;
 
@@ -84,6 +83,7 @@ public abstract class RepoDependentInitializer
         protected void validate()
         {
             super.validate();
+            Preconditions.checkNotNull( repositoryId, "\"repositoryId\" must be set" );
             Preconditions.checkNotNull( nodeService );
         }
 

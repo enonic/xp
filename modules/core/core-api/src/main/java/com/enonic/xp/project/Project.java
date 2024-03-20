@@ -55,17 +55,16 @@ public final class Project
 
         final PropertyTree repositoryData = repository.getData();
 
-        //TODO: remove default project data for XP8
         if ( repositoryData == null )
         {
-            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+            return null;
         }
 
         final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
         if ( projectData == null )
         {
-            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+            return null;
         }
 
         final Project.Builder project = Project.create()

@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -270,11 +269,11 @@ class RepositoryServiceImplTest
     void protected_cms_repo()
     {
         assertThrows( RepositoryExeption.class,
-                      () -> createAdminContext( ContentConstants.CONTENT_REPO_ID, Branch.from( "master" ) ).callWith(
+                      () -> createAdminContext( RepositoryId.from( "com.enonic.cms.default" ), Branch.from( "draft" ) ).callWith(
                           () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "draft" ) ) ) ) );
 
         assertThrows( RepositoryExeption.class,
-                      () -> createAdminContext( ContentConstants.CONTENT_REPO_ID, Branch.from( "master" ) ).callWith(
+                      () -> createAdminContext( RepositoryId.from( "com.enonic.cms.default" ), Branch.from( "master" ) ).callWith(
                           () -> repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "master" ) ) ) ) );
 
         assertThrows( RepositoryExeption.class,

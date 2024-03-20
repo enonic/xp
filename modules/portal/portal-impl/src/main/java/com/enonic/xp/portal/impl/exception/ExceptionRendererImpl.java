@@ -173,7 +173,7 @@ public final class ExceptionRendererImpl
         final Site siteInRequest = req.getSite();
         final Site site = siteInRequest != null
             ? siteInRequest
-            : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
+            : ( req.isSiteBase() ? callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) ) : null );
         if ( site != null )
         {
             req.setSite( site );
