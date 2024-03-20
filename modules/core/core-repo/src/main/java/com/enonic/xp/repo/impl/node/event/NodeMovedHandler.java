@@ -12,6 +12,7 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 public class NodeMovedHandler
     extends AbstractNodeEventHandler
 {
+    private static final String NEW_PATH = "newPath";
 
     @Override
     public void handleEvent( NodeStorageService nodeStorageService, final Event event, final InternalContext context )
@@ -21,11 +22,10 @@ public class NodeMovedHandler
         for ( final Map<Object, Object> map : valueMapList )
 
         {
-            final InternalContext nodeContext = createNodeContext( map, context );
             final NodeMovedParams nodeMovedParams =
                 new NodeMovedParams( getPath( map ), new NodePath( map.get( NEW_PATH ).toString() ), getId( map ) );
 
-            nodeStorageService.handleNodeMoved( nodeMovedParams, nodeContext );
+            nodeStorageService.handleNodeMoved( nodeMovedParams, context );
         }
     }
 }

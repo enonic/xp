@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -11,7 +9,6 @@ import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +27,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -45,7 +42,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -59,7 +56,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             .path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/site/myproject/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -72,7 +69,7 @@ public class PortalUrlServiceImpl_assetUrlTest
             new AssetUrlParams().portalRequest( this.portalRequest ).application( "otherapplication" ).path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/_/asset/otherapplication:0000000000000002/css/my.css", url );
+        assertEquals( "/site/myproject/draft/_/asset/otherapplication:0000000000000002/css/my.css", url );
     }
 
     @Test
@@ -92,37 +89,37 @@ public class PortalUrlServiceImpl_assetUrlTest
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
         String url = this.service.assetUrl( params );
-        assertEquals( "/main/site/default/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/main/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
         //Calls the method with a virtual mapping /main -> /site/default/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/default/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/main/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
         //Calls the method with a virtual mapping /main -> /site/default/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/default/draft" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/_/asset/myapplication:0000000000000001/css/my.css", url );
 
         //Calls the method with a virtual mapping / -> /site/default/draft/context
         when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context" );
         url = this.service.assetUrl( params );
         assertEquals( "/_/asset/myapplication:0000000000000001/css/my.css", url );
 
         //Calls the method with a virtual mapping /main/path -> /site/default/draft/context/path
         when( virtualHost.getSource() ).thenReturn( "/main/path" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context/path" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/path/_/asset/myapplication:0000000000000001/css/my.css", url );
 
         //Calls the method with a virtual mapping /site/default/draft/context/path -> /site/default/draft/context/path
-        when( virtualHost.getSource() ).thenReturn( "/site/default/draft/context/path" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/default/draft/context/path" );
+        when( virtualHost.getSource() ).thenReturn( "/site/myproject/draft/context/path" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "/site/myproject/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -139,7 +136,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "http://localhost/site/default/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertEquals( "http://localhost/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -151,6 +148,6 @@ public class PortalUrlServiceImpl_assetUrlTest
         final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my other & strange.css" );
 
         final String url = this.service.assetUrl( params );
-        assertEquals( "/site/default/draft/_/asset/myapplication:0000000000000001/css/my%20other%20&%20strange.css", url );
+        assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my%20other%20&%20strange.css", url );
     }
 }

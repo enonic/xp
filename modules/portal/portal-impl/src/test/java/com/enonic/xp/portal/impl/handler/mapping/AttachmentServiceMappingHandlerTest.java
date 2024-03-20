@@ -19,6 +19,7 @@ import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -89,6 +90,7 @@ class AttachmentServiceMappingHandlerTest
                                                             rendererDelegate, siteService, contentService );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setEndpointPath( "/_/attachment/123456/scale-100-100/attachment-name.jpg" );

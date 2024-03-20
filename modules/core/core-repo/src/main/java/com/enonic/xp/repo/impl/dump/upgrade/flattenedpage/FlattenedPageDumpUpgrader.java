@@ -14,7 +14,6 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
@@ -41,8 +40,9 @@ public class FlattenedPageDumpUpgrader
 
     private static final RepositoryId REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
-    private static final Segment SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
+    private static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+
+    private static final Segment SEGMENT = RepositorySegmentUtils.toSegment( CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
     public FlattenedPageDumpUpgrader( final Path basePath )
     {

@@ -8,6 +8,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.HttpMethod;
 
 public class MacroContextMapperTest
@@ -24,6 +25,7 @@ public class MacroContextMapperTest
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );
         portalRequest.setPort( 80 );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         portalRequest.setPath( "/site/live/master/a/b" );
         portalRequest.setRawPath( "/site/live/master/a/b" );
         portalRequest.setContextPath( "/site/live/master/a" );

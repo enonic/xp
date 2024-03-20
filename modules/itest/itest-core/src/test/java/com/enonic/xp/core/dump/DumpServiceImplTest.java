@@ -805,7 +805,7 @@ public class DumpServiceImplTest
 
     private void checkRepositoryUpgrade( final DumpMeta updatedMeta )
     {
-        final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( ContentConstants.CONTENT_REPO_ID );
+        final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( RepositoryId.from( "com.enonic.cms.default" ) );
         assertNotNull( repoDumpResult );
 
         assertNull( repositoryEntryService.getRepositoryEntry( Pre5ContentConstants.CONTENT_REPO_ID ) );

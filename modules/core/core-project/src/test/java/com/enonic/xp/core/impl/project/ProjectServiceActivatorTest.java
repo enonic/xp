@@ -8,14 +8,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SecurityService;
 
@@ -59,11 +60,11 @@ class ProjectServiceActivatorTest
     void setUp()
     {
         when( indexService.isMaster() ).thenReturn( true );
-        when( indexService.waitForYellowStatus() ).thenReturn( true );
-
-        final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeService.create( any() ) ).thenReturn( mockNode );
-        when( repositoryService.list() ).thenReturn( Repositories.empty() );
+        when( repositoryService.list() ).thenReturn( Repositories.from( Repository.create()
+                                                                            .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                                                                            .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
+                                                                                                      ContentConstants.BRANCH_MASTER ) )
+                                                                            .build() ) );
     }
 
     @Test

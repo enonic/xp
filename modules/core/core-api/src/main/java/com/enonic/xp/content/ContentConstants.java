@@ -2,9 +2,6 @@ package com.enonic.xp.content;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -12,8 +9,6 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -22,8 +17,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-
-import static com.enonic.xp.project.ProjectConstants.PROJECT_REPO_ID_DEFAULT;
 
 @PublicApi
 public final class ContentConstants
@@ -35,18 +28,6 @@ public final class ContentConstants
     public static final Branch BRANCH_MASTER = Branch.create().value( "master" ).build();
 
     public static final String CONTENT_REPO_ID_PREFIX = ProjectConstants.PROJECT_REPO_ID_PREFIX;
-
-    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + PROJECT_REPO_ID_DEFAULT );
-
-    @Deprecated
-    public static final Repository CONTENT_REPO =
-        Repository.create().id( CONTENT_REPO_ID ).branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).build();
-
-    @Deprecated
-    public static final Context CONTEXT_DRAFT = ContextBuilder.create().branch( BRANCH_DRAFT ).repositoryId( CONTENT_REPO_ID ).build();
-
-    @Deprecated
-    public static final Context CONTEXT_MASTER = ContextBuilder.create().branch( BRANCH_MASTER ).repositoryId( CONTENT_REPO_ID ).build();
 
     public static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create()
         .add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() )

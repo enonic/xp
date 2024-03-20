@@ -17,12 +17,8 @@ public class NodeCreatedHandler
         final List<Map<Object, Object>> valueMapList = getValueMapList( event );
 
         for ( final Map<Object, Object> map : valueMapList )
-
         {
-            final InternalContext nodeContext = createNodeContext( map, context );
-            nodeStorageService.handleNodeCreated( getId( map ), getPath( map ), nodeContext );
+            nodeStorageService.handleNodeCreated( getId( map ), getPath( map ), context );
         }
     }
-
-
 }

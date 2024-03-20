@@ -86,7 +86,8 @@ public final class ProjectContentEventListener
 
         if ( isContentEvent )
         {
-            this.simpleExecutor.execute( () -> doHandleContentEvent( nodes, event.getType() ) );
+            Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+            this.simpleExecutor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
         }
     }
 
@@ -199,7 +200,6 @@ public final class ProjectContentEventListener
         final AuthenticationInfo authInfo = createAdminAuthInfo();
         return ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_DRAFT )
-            .repositoryId( ContentConstants.CONTENT_REPO_ID )
             .authInfo( authInfo )
             .build();
     }

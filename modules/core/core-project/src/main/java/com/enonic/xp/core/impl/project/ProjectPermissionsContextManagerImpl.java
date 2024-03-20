@@ -26,14 +26,7 @@ public final class ProjectPermissionsContextManagerImpl
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
 
-        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            if ( ProjectAccessHelper.hasManagerAccess( authenticationInfo ) )
-            {
-                return adminContext();
-            }
-        }
-        else if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
+        if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
             hasAnyProjectRole( authenticationInfo, projectName, EnumSet.allOf( ProjectRole.class ) ) )
         {
             return adminContext();
@@ -52,7 +45,7 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initDeleteContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) && !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) )
         {
             return adminContext();
         }
@@ -66,8 +59,7 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initUpdateContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) || ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) &&
-            hasOwnerProjectPermission( projectName, authenticationInfo ) ) )
+        if ( ProjectAccessHelper.hasAdminAccess( authenticationInfo ) || hasOwnerProjectPermission( projectName, authenticationInfo ) )
         {
             return adminContext();
         }

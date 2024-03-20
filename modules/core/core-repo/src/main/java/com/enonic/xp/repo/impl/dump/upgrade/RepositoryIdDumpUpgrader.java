@@ -42,12 +42,14 @@ public class RepositoryIdDumpUpgrader
 
     private static final RepositoryId OLD_REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
-    private static final RepositoryId NEW_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+    private static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+
+    private static final RepositoryId NEW_REPOSITORY_ID = CONTENT_REPO_ID;
 
     private static final String OLD_REPOSITORY_FILE_NAME = OLD_REPOSITORY_ID + ".json";
 
     private static final Segment SEGMENT =
-        RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
+        RepositorySegmentUtils.toSegment( CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
     public RepositoryIdDumpUpgrader( final Path basePath )
     {

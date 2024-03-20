@@ -91,6 +91,7 @@ public interface ContentService
 
     FindContentIdsByQueryResult find( ContentQuery query );
 
+    @Deprecated
     Contents findByApplicationKey( ApplicationKey key );
 
     @Deprecated

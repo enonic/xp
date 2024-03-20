@@ -40,6 +40,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
+import com.enonic.xp.core.impl.project.init.DefaultProjectMigrator;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -131,13 +132,9 @@ public class ProjectServiceImpl
             } );
 
             if ( repositories.stream()
-                .noneMatch( repository -> repository.getId().equals( ProjectConstants.DEFAULT_PROJECT.getName().getRepoId() ) ) )
+                .anyMatch( repository -> repository.getId().equals( DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
             {
-                doInitRootNodes( CreateProjectParams.create()
-                                     .name( ProjectConstants.DEFAULT_PROJECT.getName() )
-                                     .displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() )
-                                     .description( ProjectConstants.DEFAULT_PROJECT.getDescription() )
-                                     .build() );
+                new DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
             }
         } );
     }
@@ -349,10 +346,8 @@ public class ProjectServiceImpl
 
             return Projects.from( projects.stream()
                                       .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
-                                          ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                                              ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
-                                              : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
-                                                                                                    EnumSet.allOf( ProjectRole.class ) ) ) )
+                                          projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
+                                                                                              EnumSet.allOf( ProjectRole.class ) ) )
                                       .collect( ImmutableList.toImmutableList() ) );
         } );
     }
@@ -464,10 +459,7 @@ public class ProjectServiceImpl
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            DeleteProjectRolesCommand.create().securityService( securityService ).projectName( projectName ).build().execute();
-        }
+        DeleteProjectRolesCommand.create().securityService( securityService ).projectName( projectName ).build().execute();
 
         return deletedRepositoryId != null;
     }
@@ -475,11 +467,6 @@ public class ProjectServiceImpl
     @Override
     public ProjectPermissions getPermissions( final ProjectName projectName )
     {
-        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            throw new IllegalArgumentException( "Default project has no roles." );
-        }
-
         return callWithGetContext( () -> doGetPermissions( projectName ), projectName );
     }
 
@@ -491,11 +478,6 @@ public class ProjectServiceImpl
     @Override
     public ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
     {
-        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            throw new IllegalArgumentException( "Default project permissions cannot be modified." );
-        }
-
         return callWithUpdateContext( () -> {
 
             final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
@@ -644,15 +626,12 @@ public class ProjectServiceImpl
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
 
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
-        {
-            UpdateProjectRoleNamesCommand.create()
-                .securityService( securityService )
-                .projectName( params.getName() )
-                .projectDisplayName( params.getDisplayName() )
-                .build()
-                .execute();
-        }
+        UpdateProjectRoleNamesCommand.create()
+            .securityService( securityService )
+            .projectName( params.getName() )
+            .projectDisplayName( params.getDisplayName() )
+            .build()
+            .execute();
 
         final Node updatedContentRootNode = updateProjectSiteConfigs( params.getName(), params.getSiteConfigs() );
 
@@ -733,17 +712,16 @@ public class ProjectServiceImpl
 
         final PropertyTree repositoryData = repository.getData();
 
-        //TODO: remove default project data for XP8
         if ( repositoryData == null )
         {
-            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+            return null;
         }
 
         final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
         if ( projectData == null )
         {
-            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+            return null;
         }
 
         final Project.Builder project = Project.create()

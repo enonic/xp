@@ -59,6 +59,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
@@ -273,6 +274,7 @@ public class DynamicSchemaServiceImplTest
             .setIndexService( indexService )
             .setNodeService( nodeService )
             .setRepositoryService( repositoryService )
+            .repositoryId( ProjectName.from( "my-project" ).getRepoId() )
             .build()
             .initialize();
     }

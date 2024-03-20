@@ -10,9 +10,8 @@ import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -28,9 +27,7 @@ public final class ContextFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
-        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO_ID );
+        final Context context = ContextAccessor.current();
         context.getLocalScope().setAttribute( "__currentTimeMillis", System.currentTimeMillis() );
         context.getLocalScope().setSession( new SessionWrapper( req ) );
 

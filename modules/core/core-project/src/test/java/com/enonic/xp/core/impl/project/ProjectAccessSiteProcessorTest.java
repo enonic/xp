@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -58,8 +59,10 @@ public class ProjectAccessSiteProcessorTest
     @Test
     public void testProcessUpdateByAdmin()
     {
-        final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo(
-            AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.ADMIN ).build() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .authInfo( AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.ADMIN ).build() )
+            .build();
 
         context.runWith( () -> {
             final ProcessUpdateParams params = createProcessUpdateParams( "white", "blue" );
@@ -73,8 +76,10 @@ public class ProjectAccessSiteProcessorTest
     @Test
     public void testProcessUpdateByContentAdmin()
     {
-        final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo(
-            AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .authInfo( AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
+            .build();
 
         context.runWith( () -> {
             final ProcessUpdateParams params = createProcessUpdateParams( "white", "blue" );
@@ -87,8 +92,10 @@ public class ProjectAccessSiteProcessorTest
     @Test
     public void testProcessUpdateWithNoChanges()
     {
-        final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo(
-            AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.ADMIN ).build() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .authInfo( AuthenticationInfo.create().user( TEST_USER ).principals( RoleKeys.ADMIN ).build() )
+            .build();
 
         context.runWith( () -> {
             final ProcessUpdateParams params = createProcessUpdateParams( "white", "white" );
@@ -102,8 +109,10 @@ public class ProjectAccessSiteProcessorTest
     public void testProcessUpdateWithNoRights()
         throws ProjectAccessRequiredException
     {
-        final Context context =
-            ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().user( TEST_USER ).build() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .authInfo( AuthenticationInfo.create().user( TEST_USER ).build() )
+            .build();
 
         context.runWith( () -> {
             final ProcessUpdateParams params = createProcessUpdateParams( "white", "blue" );
@@ -115,8 +124,10 @@ public class ProjectAccessSiteProcessorTest
     @Test
     public void testProcessUpdateWithNoRightsAndNoChanges()
     {
-        final Context context =
-            ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().user( TEST_USER ).build() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .authInfo( AuthenticationInfo.create().user( TEST_USER ).build() )
+            .build();
 
         context.runWith( () -> {
             final ProcessUpdateParams params = createProcessUpdateParams( "white", "white" );

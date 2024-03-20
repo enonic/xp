@@ -3,7 +3,6 @@
   "port": 80,
   "mode": "live",
   "webSocket": false,
-  "repositoryId": "com.enonic.cms.default",
   "branch": "draft",
   "params": {},
   "headers": {},

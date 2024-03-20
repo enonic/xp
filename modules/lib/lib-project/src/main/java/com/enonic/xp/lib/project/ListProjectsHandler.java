@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.enonic.xp.lib.project.command.GetProjectLanguageCommand;
 import com.enonic.xp.lib.project.command.GetProjectReadAccessCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.Projects;
 
@@ -21,16 +20,13 @@ public final class ListProjectsHandler
 
         return projects.stream().
             map( project -> {
-            final ProjectPermissions projectPermissions =
-                !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? this.projectService.get()
-                    .getPermissions( project.getName() ) : null;
+            final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( project.getName() );
 
-            final Boolean readAccess =
-                !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) ? GetProjectReadAccessCommand.create()
-                    .contentService( this.contentService.get() )
-                    .projectName( project.getName() )
-                    .build()
-                    .execute() : null;
+            final Boolean readAccess = GetProjectReadAccessCommand.create()
+                .contentService( this.contentService.get() )
+                .projectName( project.getName() )
+                .build()
+                .execute();
 
             final Locale language = GetProjectLanguageCommand.create()
                 .projectName( project.getName() )
