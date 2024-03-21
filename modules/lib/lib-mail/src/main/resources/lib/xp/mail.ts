@@ -131,3 +131,18 @@ export function send(params: SendMessageParams): boolean {
 
     return bean.send();
 }
+
+
+interface GetDefaultFromEmailHandler {
+    execute(): string | null;
+}
+
+/**
+ * This function returns defaultFromMail.
+ *
+ * @returns {string} The default from e-mail address, or null if not set.
+ */
+export function getDefaultFromEmail(): string | null {
+    const bean = __.newBean<GetDefaultFromEmailHandler>('com.enonic.xp.lib.mail.GetDefaultFromEmailHandler');
+    return bean.execute();
+}

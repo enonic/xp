@@ -9,7 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
-import org.mockito.Mockito;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;
@@ -18,6 +17,8 @@ import com.enonic.xp.mail.SendMailParams;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MailServiceImplTest
 {
@@ -27,7 +28,8 @@ public class MailServiceImplTest
     public void setUp()
         throws Exception
     {
-        final MailConfig config = Mockito.mock( MailConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        final MailConfig config = mock( MailConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( config.defaultFromEmail() ).thenReturn( "noreply@domain.com" );
 
         this.mailService = new MailServiceImpl();
         this.mailService.activate( config );
@@ -66,6 +68,12 @@ public class MailServiceImplTest
     {
         assertDoesNotThrow( () -> this.mailService.send(
             SendMailParams.create().subject( "test subject" ).body( "test body" ).to( "to@bar.com" ).from( "from@bar.com" ).build() ) );
+    }
+
+    @Test
+    public void testGetDefaultFromEmail()
+    {
+        assertEquals( "noreply@domain.com", this.mailService.getDefaultFromEmail() );
     }
 
     private void createMockMessage( MimeMessage msg )
