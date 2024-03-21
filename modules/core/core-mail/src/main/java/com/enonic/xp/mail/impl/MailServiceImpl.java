@@ -114,6 +114,12 @@ public final class MailServiceImpl
         }
     }
 
+    @Override
+    public String getDefaultFromEmail()
+    {
+        return defaultFromEmail;
+    }
+
     private MimeMessage newMessage()
     {
         return new MimeMessage( this.session );
