@@ -45,6 +45,12 @@ public class SendMailScriptTest
             {
                 SendMailScriptTest.this.actualMessage = message;
             }
+
+            @Override
+            public String getDefaultFromEmail()
+            {
+                return "noreply@domain.com";
+            }
         } );
     }
 
@@ -52,6 +58,12 @@ public class SendMailScriptTest
     public void testExample()
     {
         runScript( "/lib/xp/examples/mail/send.js" );
+    }
+
+    @Test
+    public void testGetDefaultFromEmail()
+    {
+        runScript( "/lib/xp/examples/mail/getDefaultFromEmail.js" );
     }
 
     @Test
@@ -119,6 +131,12 @@ public class SendMailScriptTest
             {
                 throw new RuntimeException( "Error sending mail" );
             }
+
+            @Override
+            public String getDefaultFromEmail()
+            {
+                return null;
+            }
         };
         addService( MailService.class, mailService );
 
@@ -159,6 +177,12 @@ public class SendMailScriptTest
             {
                 throw new RuntimeException( "Error sending mail" );
             }
+
+            @Override
+            public String getDefaultFromEmail()
+            {
+                return null;
+            }
         };
         addService( MailService.class, mailService );
 
@@ -191,6 +215,12 @@ public class SendMailScriptTest
             public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
+            }
+
+            @Override
+            public String getDefaultFromEmail()
+            {
+                return null;
             }
         } );
 
