@@ -9,4 +9,6 @@ public interface MailService
     void send( MailMessage message );
 
     void send( SendMailParams message );
+
+    String getDefaultFromEmail();
 }
