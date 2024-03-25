@@ -28,7 +28,7 @@ import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
@@ -219,7 +219,7 @@ class SchedulerServiceImplTest
 
         adminContext().runWith( () -> schedulerService.create( params ) );
 
-        assertThrows( NodeAlreadyExistAtPathException.class, () -> adminContext().runWith( () -> schedulerService.create( params ) ) );
+        assertThrows( NodeIdExistsException.class, () -> adminContext().runWith( () -> schedulerService.create( params ) ) );
     }
 
     @Test

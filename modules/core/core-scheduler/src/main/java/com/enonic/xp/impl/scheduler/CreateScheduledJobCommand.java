@@ -37,8 +37,7 @@ public class CreateScheduledJobCommand
     {
         final PropertyTree data = SchedulerSerializer.toCreateNodeData( params );
 
-        final CreateNodeParams createNodeParams = CreateNodeParams.create().
-            setNodeId( new NodeId() ).
+        final CreateNodeParams createNodeParams = CreateNodeParams.create().setNodeId( NodeId.from( params.getName().getValue() ) ).
             name( params.getName().getValue() ).
             data( data ).
             parent( NodePath.ROOT ).
