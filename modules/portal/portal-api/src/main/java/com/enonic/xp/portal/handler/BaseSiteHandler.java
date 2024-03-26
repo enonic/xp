@@ -8,8 +8,6 @@ import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 public abstract class BaseSiteHandler
     extends BasePortalHandler
 {
@@ -19,9 +17,27 @@ public abstract class BaseSiteHandler
         final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
         if ( result.isEmpty() )
         {
-            throw WebException.notFound( "Repository needs to be specified" );
+            throw WebException.notFound( "Repository must be specified" );
         }
-        return RepositoryUtils.fromContentRepoName( result );
+
+        try
+        {
+            return toRepositoryId( result );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.notFound( String.format( "Repository name is invalid [%s]", result ) );
+        }
+    }
+
+    private static RepositoryId toRepositoryId( String result )
+    {
+        final RepositoryId repositoryId = RepositoryUtils.fromContentRepoName( result );
+        if ( repositoryId == null )
+        {
+            throw new IllegalArgumentException();
+        }
+        return repositoryId;
     }
 
     private static Branch findBranch( final String baseSubPath )
@@ -29,11 +45,18 @@ public abstract class BaseSiteHandler
         final String branchSubPath = findPathAfterRepository( baseSubPath );
         final int index = branchSubPath.indexOf( '/' );
         final String result = branchSubPath.substring( 0, index > 0 ? index : branchSubPath.length() );
-        if ( isNullOrEmpty( result ) )
+        if ( result.isEmpty() )
         {
-            throw WebException.notFound( "Branch needs to be specified" );
+            throw WebException.notFound( "Branch must be specified" );
         }
-        return Branch.from( result );
+        try
+        {
+            return Branch.from( result );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.notFound( String.format( "Branch name is invalid [%s]", result ) );
+        }
     }
 
     private static ContentPath findContentPath( final String baseSubPath )

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl;
+package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,8 +40,8 @@ public class PortalRequestAdapterTest
         when( mockHttpServletRequest.getServerName() ).thenReturn( "localhost" );
         when( mockHttpServletRequest.getRemoteAddr() ).thenReturn( "127.0.0.1" );
         when( mockHttpServletRequest.getServerPort() ).thenReturn( 8080 );
-        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/test/path" );
-        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/path" );
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/test/draft" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft" );
         when( mockHttpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
 
         when( mockHttpServletRequest.getParameterMap() ).thenReturn(
@@ -63,23 +63,83 @@ public class PortalRequestAdapterTest
         assertThat( adaptedRequest.getHost() ).isEqualTo( "localhost" );
         assertThat( adaptedRequest.getRemoteAddress() ).isEqualTo( "127.0.0.1" );
         assertThat( adaptedRequest.getPort() ).isEqualTo( 8080 );
-        assertThat( adaptedRequest.getRawPath() ).isEqualTo( "/test/path" );
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( PortalRequestAdapter.PORTAL_BASE_URI );
+        assertThat( adaptedRequest.getRawPath() ).isEqualTo( "/test/draft" );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/site" );
         assertThat( adaptedRequest.getParams().get( "param1" ) ).containsExactly( "value1", "value2" );
         assertThat( adaptedRequest.getCookies() ).containsAllEntriesOf( Map.of( "cookie1", "value1", "cookie2", "value2" ) );
         assertThat( adaptedRequest.getHeaders() ).containsAllEntriesOf( Map.of("header1", "value1", "header2", "value2") );
     }
 
     @Test
-    public void adaptAdminUriTest()
+    public void adaptSiteLogin()
     {
-        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( PortalRequestAdapter.ADMIN_BASE_URI );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/site" );
+    }
+
+    @Test
+    public void adaptAdminUriTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test/draft" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/site/admin" );
+    }
+
+    @Test
+    public void adaptAdminToolUriTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/tool" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/tool" );
+    }
+
+    @Test
+    public void adaptAdminToolIdProviderUriTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/tool/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/tool" );
+    }
+
+    @Test
+    public void adaptAdminToolUriWithDescriptorTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/tool/app/tool" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/tool/app/tool" );
+    }
+
+    @Test
+    public void adaptWebAppUriTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/webapp/app" );
     }
 
     @Test
@@ -91,6 +151,6 @@ public class PortalRequestAdapterTest
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/test" );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "" );
     }
 }
