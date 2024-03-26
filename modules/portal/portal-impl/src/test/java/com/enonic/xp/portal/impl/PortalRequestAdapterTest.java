@@ -64,7 +64,7 @@ public class PortalRequestAdapterTest
         assertThat( adaptedRequest.getRemoteAddress() ).isEqualTo( "127.0.0.1" );
         assertThat( adaptedRequest.getPort() ).isEqualTo( 8080 );
         assertThat( adaptedRequest.getRawPath() ).isEqualTo( "/test/path" );
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( PortalRequestAdapter.PORTAL_BASE_URI );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/site" );
         assertThat( adaptedRequest.getParams().get( "param1" ) ).containsExactly( "value1", "value2" );
         assertThat( adaptedRequest.getCookies() ).containsAllEntriesOf( Map.of( "cookie1", "value1", "cookie2", "value2" ) );
         assertThat( adaptedRequest.getHeaders() ).containsAllEntriesOf( Map.of("header1", "value1", "header2", "value2") );
@@ -79,7 +79,7 @@ public class PortalRequestAdapterTest
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( PortalRequestAdapter.ADMIN_BASE_URI );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/site/admin" );
     }
 
     @Test

@@ -203,6 +203,7 @@ public final class PortalRequest
 
     public boolean isSiteBase()
     {
-        return baseUri.startsWith( "/site" ) || baseUri.startsWith( "/admin/site" );
+        return baseUri.equals( "/site" ) || baseUri.equals( "/admin/site" ) || baseUri.startsWith( "/site/" ) ||
+            baseUri.startsWith( "/admin/site/" );
     }
 }
