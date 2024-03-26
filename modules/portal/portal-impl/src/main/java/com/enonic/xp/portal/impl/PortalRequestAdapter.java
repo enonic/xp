@@ -9,19 +9,21 @@ import java.util.Optional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNullElse;
 
 public class PortalRequestAdapter
 {
-    public static final String PORTAL_BASE_URI = "/site";
-
-    public static final String ADMIN_BASE_URI = "/admin/site/admin";
 
     public PortalRequest adapt( final HttpServletRequest req )
     {
@@ -29,8 +31,22 @@ public class PortalRequestAdapter
 
         final PortalAttributes portalAttributes = (PortalAttributes) req.getAttribute( PortalAttributes.class.getName() );
 
-        getRenderMode( portalAttributes ).ifPresent( result::setMode );
-        result.setBaseUri( getBaseUri( portalAttributes ).orElseGet( () -> requestUriToBaseUri( req.getRequestURI() ) ) );
+        final String baseUri = getBaseUri( portalAttributes ).orElseGet( () -> requestUriToBaseUri( req.getRequestURI() ) );
+        final Optional<RenderMode> renderMode = getRenderMode( portalAttributes );
+
+        result.setBaseUri( baseUri );
+
+        if ( isSiteBase( baseUri ) )
+        {
+            final String baseSubPath = req.getRequestURI().substring( baseUri.length() + 1 );
+
+            result.setRepositoryId( findRepository( baseSubPath ) );
+            result.setBranch( findBranch( baseSubPath ) );
+        }
+        else
+        {
+            renderMode.ifPresent( result::setMode );
+        }
         result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase( Locale.ROOT ) ) );
         result.setRawRequest( req );
         result.setContentType( req.getContentType() );
@@ -63,16 +79,22 @@ public class PortalRequestAdapter
     {
         if ( requestUri.equals( "/site" ) || requestUri.startsWith( "/site/" ) )
         {
-            return PORTAL_BASE_URI;
+            return "/site";
         }
-        else if ( requestUri.equals( "/admin" ) || requestUri.startsWith( "/admin/" ) )
+        else if ( requestUri.equals( "/admin/site" ) || requestUri.startsWith( "/admin/site/" ) )
         {
-            return ADMIN_BASE_URI;
+            return "/admin/site/admin";
         }
         else
         {
             return requestUri;
         }
+    }
+
+    private static boolean isSiteBase( final String baseUri )
+    {
+        return baseUri.equals( "/site" ) || baseUri.equals( "/admin/site" ) || baseUri.startsWith( "/site/" ) ||
+            baseUri.startsWith( "/admin/site/" );
     }
 
     private static void setHeaders( final HttpServletRequest from, final PortalRequest to )
@@ -103,5 +125,34 @@ public class PortalRequestAdapter
         {
             to.getParams().putAll( entry.getKey(), Arrays.asList( entry.getValue() ) );
         }
+    }
+
+    private static RepositoryId findRepository( final String baseSubPath )
+    {
+        final int index = baseSubPath.indexOf( '/' );
+        final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
+        if ( result.isEmpty() )
+        {
+            throw WebException.notFound( "Repository needs to be specified" );
+        }
+        return RepositoryUtils.fromContentRepoName( result );
+    }
+
+    private static Branch findBranch( final String baseSubPath )
+    {
+        final String branchSubPath = findPathAfterRepository( baseSubPath );
+        final int index = branchSubPath.indexOf( '/' );
+        final String result = branchSubPath.substring( 0, index > 0 ? index : branchSubPath.length() );
+        if ( isNullOrEmpty( result ) )
+        {
+            throw WebException.notFound( "Branch needs to be specified" );
+        }
+        return Branch.from( result );
+    }
+
+    private static String findPathAfterRepository( final String baseSubPath )
+    {
+        final int index = baseSubPath.indexOf( '/' );
+        return baseSubPath.substring( index > 0 && index < baseSubPath.length() ? index + 1 : baseSubPath.length() );
     }
 }
