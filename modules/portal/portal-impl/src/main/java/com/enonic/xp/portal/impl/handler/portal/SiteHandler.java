@@ -30,9 +30,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class SiteHandler
     extends BaseSiteHandler
 {
-    private static final String BASE_URI = "/site";
-
-    private static final String BRANCH_PREFIX = BASE_URI + "/";
+    private static final String SITE_BASE = "/site";
+    private static final String SITE_PREFIX = SITE_BASE + "/";
 
     private List<PrincipalKey> draftBranchAllowedFor;
 
@@ -49,14 +48,14 @@ public class SiteHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( BRANCH_PREFIX );
+        return webRequest.getRawPath().startsWith( SITE_PREFIX );
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
-        final String baseSubPath = webRequest.getRawPath().substring( BRANCH_PREFIX.length() );
-        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, BASE_URI, baseSubPath );
+        final String baseSubPath = webRequest.getRawPath().substring( ( SITE_PREFIX.length() ) );
+        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, SITE_BASE, baseSubPath );
 
         if ( ContentConstants.BRANCH_DRAFT.equals( portalRequest.getBranch() ) )
         {

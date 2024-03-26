@@ -18,7 +18,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.portal.impl.PortalRequestAdapter;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
@@ -59,8 +58,7 @@ public class IdProviderControllerServiceImpl
                 PortalRequest portalRequest = params.getPortalRequest();
                 if ( portalRequest == null )
                 {
-                    portalRequest = new PortalRequestAdapter().
-                        adapt( params.getServletRequest() );
+                    portalRequest = new PortalRequestAdapter().adapt( params.getServletRequest() );
                 }
                 portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
                 portalRequest.setIdProvider( idProvider );

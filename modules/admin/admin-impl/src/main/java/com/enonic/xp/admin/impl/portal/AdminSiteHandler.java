@@ -29,9 +29,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class AdminSiteHandler
     extends BaseSiteHandler
 {
-    private static final String BASE_URI_START = "/admin/site";
+    private static final String ADMIN_SITE_PREFIX = "/admin/site/";
 
-    private static final Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin|inline)" );
+    private static final Pattern BASE_URI_PATTERN = Pattern.compile( "^/admin/site/(edit|preview|admin|inline)" );
 
     private volatile String previewContentSecurityPolicy;
 
@@ -45,7 +45,7 @@ public class AdminSiteHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( BASE_URI_START );
+        return webRequest.getRawPath().startsWith( ADMIN_SITE_PREFIX );
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AdminSiteHandler
         final Matcher matcher = BASE_URI_PATTERN.matcher( webRequest.getRawPath() );
         if ( !matcher.find() )
         {
-            throw WebException.notFound( "Mode needs to be specified" );
+            throw WebException.notFound( "Mode must be specified" );
         }
         final String baseUri = matcher.group( 0 );
         final RenderMode mode = RenderMode.from( matcher.group( 1 ) );

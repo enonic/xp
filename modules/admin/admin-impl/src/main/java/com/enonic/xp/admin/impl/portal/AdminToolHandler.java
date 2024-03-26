@@ -34,7 +34,8 @@ public final class AdminToolHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( AdminToolPortalHandler.ADMIN_TOOL_START );
+        return webRequest.getRawPath().equals( AdminToolPortalHandler.ADMIN_TOOL_BASE ) ||
+            webRequest.getRawPath().startsWith( AdminToolPortalHandler.ADMIN_TOOL_PREFIX );
     }
 
     @Override

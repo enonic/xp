@@ -130,7 +130,7 @@ public final class ExceptionRendererImpl
                 return defaultCustomError;
             }
 
-            if ( "/site".equals( portalRequest.getBaseUri() ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
+            if ( portalRequest.isSiteBase() && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
                 HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
             {
                 tip = "Tip: Did you remember to publish the site?";
