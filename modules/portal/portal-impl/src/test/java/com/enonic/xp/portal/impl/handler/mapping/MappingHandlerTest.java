@@ -123,7 +123,7 @@ public class MappingHandlerTest
     public void methodNotAllowed()
     {
         final PortalResponse response = PortalResponse.create().build();
-        this.request.setBaseUri( "/admin/site" );
+        this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/site/content" ) );
         this.request.setMethod( HttpMethod.LOCK );
         final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request, response, null ) );
@@ -296,7 +296,7 @@ public class MappingHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
-        assertEquals( "/site/draft/site", this.request.getContextPath() );
+        assertEquals( "/site/default/draft/site", this.request.getContextPath() );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping )

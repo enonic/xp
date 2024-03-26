@@ -24,6 +24,7 @@ import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -41,7 +42,6 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 
 class MappingHandlerHelper
 {
-
     private static final Pattern PATTERN = Pattern.compile( "^/_/([^/]+)/.*" );
 
     private final ProjectService projectService;
@@ -57,7 +57,6 @@ class MappingHandlerHelper
     private final ControllerMappingsResolver controllerMappingsResolver;
 
     private final ContentResolver contentResolver;
-
 
     MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
                           final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
@@ -131,7 +130,8 @@ class MappingHandlerHelper
             request.setContent( content );
             request.setSite( site );
             request.setContextPath(
-                request.getBaseUri() + "/" + request.getBranch() + ( site != null ? site.getPath() : ContentPath.ROOT ) );
+                request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
+                    ( site != null ? site.getPath() : ContentPath.ROOT ) );
             request.setApplicationKey( mapping.getApplication() );
 
             if ( mapping.isController() )

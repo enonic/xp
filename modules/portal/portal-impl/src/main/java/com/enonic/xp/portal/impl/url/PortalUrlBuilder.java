@@ -18,14 +18,12 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -45,21 +43,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected ContentService contentService;
 
     protected ResourceService resourceService;
-
-    private String getBaseUri()
-    {
-        return this.portalRequest.getBaseUri();
-    }
-
-    private Branch getBranch()
-    {
-        return this.portalRequest.getBranch();
-    }
-
-    private RepositoryId getRepositoryId()
-    {
-        return this.portalRequest.getRepositoryId();
-    }
 
     public final void setParams( final T params )
     {
@@ -147,7 +130,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
-        appendPart( str, getBaseUri() );
+        appendPart( str, this.portalRequest.getBaseUri() );
 
         final Multimap<String, String> params = LinkedListMultimap.create();
         buildUrl( str, params );
@@ -190,8 +173,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( this.portalRequest.isSiteBase() )
         {
-            appendPart( url, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
-            appendPart( url, getBranch().toString() );
+            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            appendPart( url, this.portalRequest.getBranch().toString() );
         }
     }
 
@@ -227,12 +210,12 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected final String buildErrorUrl( final int code, final String message )
     {
         final StringBuilder str = new StringBuilder();
-        appendPart( str, getBaseUri() );
+        appendPart( str, this.portalRequest.getBaseUri() );
 
         if ( this.portalRequest.isSiteBase() )
         {
-            appendPart( str, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
-            appendPart( str, getBranch().toString() );
+            appendPart( str, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            appendPart( str, this.portalRequest.getBranch().toString() );
             appendPart( str, this.portalRequest.getContentPath().toString() );
         }
 

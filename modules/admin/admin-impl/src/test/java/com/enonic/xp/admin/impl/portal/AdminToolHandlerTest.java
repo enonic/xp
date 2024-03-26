@@ -46,7 +46,6 @@ public class AdminToolHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
 
         this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
@@ -70,7 +69,7 @@ public class AdminToolHandlerTest
         this.portalRequest.setMode( RenderMode.ADMIN );
         final DescriptorKey defaultDescriptorKey = AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY;
         this.portalRequest.setBaseUri(
-            AdminToolPortalHandler.ADMIN_TOOL_PREFIX + defaultDescriptorKey.getApplicationKey() + "/" + defaultDescriptorKey.getName() );
+            AdminToolPortalHandler.ADMIN_TOOL_BASE + "/" + defaultDescriptorKey.getApplicationKey() + "/" + defaultDescriptorKey.getName() );
         this.portalRequest.setApplicationKey( defaultDescriptorKey.getApplicationKey() );
 
         this.webResponse = WebResponse.create().build();
@@ -94,7 +93,6 @@ public class AdminToolHandlerTest
 
     @Test
     public void testWithoutPermissions()
-        throws Exception
     {
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
@@ -103,7 +101,6 @@ public class AdminToolHandlerTest
 
     @Test
     public void testWithNoDescriptor()
-        throws Exception
     {
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
@@ -112,7 +109,6 @@ public class AdminToolHandlerTest
 
     @Test
     public void testWithNoAccessToApplication()
-        throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
         this.portalRequest.setRawPath( "/admin/tool/webapp/tool/1" );
