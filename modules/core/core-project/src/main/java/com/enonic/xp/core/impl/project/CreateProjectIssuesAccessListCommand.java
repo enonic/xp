@@ -27,7 +27,7 @@ public final class CreateProjectIssuesAccessListCommand
 
     private AccessControlList createIssuesRootPermissions()
     {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        if ( projectName == null )
         {
             return null;
         }
