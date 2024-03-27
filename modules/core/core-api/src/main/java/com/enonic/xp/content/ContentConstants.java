@@ -36,6 +36,7 @@ public final class ContentConstants
 
     public static final String CONTENT_REPO_ID_PREFIX = ProjectConstants.PROJECT_REPO_ID_PREFIX;
 
+    @Deprecated
     public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + PROJECT_REPO_ID_DEFAULT );
 
     @Deprecated

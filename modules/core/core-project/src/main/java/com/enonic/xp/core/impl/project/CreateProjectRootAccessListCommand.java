@@ -32,7 +32,7 @@ public final class CreateProjectRootAccessListCommand
 
     private AccessControlList createContentRootPermissions()
     {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        if ( projectName == null )
         {
             return null;
         }

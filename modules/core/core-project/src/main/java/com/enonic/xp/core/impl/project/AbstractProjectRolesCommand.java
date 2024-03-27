@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -98,7 +97,7 @@ abstract class AbstractProjectRolesCommand
         void validate()
         {
             Preconditions.checkNotNull( securityService, "securityService cannot be null" );
-            Preconditions.checkArgument( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ), "Default project has no roles" );
+//            Preconditions.checkArgument( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ), "Default project has no roles" );
         }
     }
 
