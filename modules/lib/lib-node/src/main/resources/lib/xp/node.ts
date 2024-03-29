@@ -253,6 +253,8 @@ interface NodeHandler {
 
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
+    applyPermissions(key: string, permissions: ScriptValue, branches: string[], overwriteChildPermissions: boolean): ApplyPermissionsResult;
+
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
     refresh(mode: RefreshMode): void;
@@ -469,6 +471,22 @@ export interface FindNodesByParentResult {
     }[];
 }
 
+export interface ApplyPermissionsParams {
+    key: string;
+    permissions?: AccessControlEntry[];
+    branches?: string[];
+    overwriteChildPermissions?: boolean;
+}
+
+export interface ApplyPermissionsResult {
+    [nodeId: string]: BranchResult[];
+}
+
+export interface BranchResult {
+    branch: string;
+    node: Node;
+}
+
 export type RefreshMode = 'SEARCH' | 'STORAGE' | 'ALL';
 
 export interface GetCommitParams {
@@ -487,6 +505,9 @@ export interface CommitParams {
     message?: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface SetRootPermissionsParams {
     _permissions: AccessControlEntry[];
 }
@@ -612,6 +633,8 @@ export interface RepoConnection {
     refresh(mode?: RefreshMode): void;
 
     setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData>;
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
 
     commit(params: CommitParams): NodeCommit;
 
@@ -1002,6 +1025,8 @@ class RepoConnectionImpl
     }
 
     /**
+     * @deprecated
+     *
      * Set the root node permissions and inherit.
      *
      * @example-ref examples/node/modifyRootPermissions.js
@@ -1015,6 +1040,27 @@ class RepoConnectionImpl
         checkRequired(params, '_permissions');
 
         return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
+    }
+
+    /**
+     * Apply permissions to a node.
+     *
+     * @example-ref examples/node/applyPermissions.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or ID of the node.
+     * @param {object} [params.permissions] the permission json
+     * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
+     * @param {boolean} [params.overwriteChildPermissions] Overwrite child permissions. Default is false.
+     *
+     * @returns {object} Result of the apply permissions operation.
+     */
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
+        checkRequired(params, 'key');
+
+        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions), params.branches,
+            params.overwriteChildPermissions));
     }
 
     /**

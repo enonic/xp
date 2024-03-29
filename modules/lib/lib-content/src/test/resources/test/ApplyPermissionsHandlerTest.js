@@ -1,9 +1,9 @@
 var assert = require('/lib/xp/testing.js');
 var contentLib = require('/lib/xp/content.js');
 
-exports.setPermissionsMissingPrincipals = function () {
+exports.applyPermissionsMissingPrincipals = function () {
 
-    var result = contentLib.setPermissions({
+    var result = contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{
@@ -16,9 +16,9 @@ exports.setPermissionsMissingPrincipals = function () {
     assert.assertEquals(false, result);
 };
 
-exports.setPermissionsNotFoundByPath = function () {
+exports.applyPermissionsNotFoundByPath = function () {
 
-    var result = contentLib.setPermissions({
+    var result = contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{
@@ -31,9 +31,9 @@ exports.setPermissionsNotFoundByPath = function () {
     assert.assertEquals(false, result);
 };
 
-exports.setPermissionsNotFoundById = function () {
+exports.applyPermissionsNotFoundById = function () {
 
-    var result = contentLib.setPermissions({
+    var result = contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{

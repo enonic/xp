@@ -107,6 +107,7 @@ public interface NodeService
 
     Node getRoot();
 
+    @Deprecated
     Node setRootPermissions( AccessControlList accessControlList );
 
     ImportNodeResult importNode( ImportNodeParams params );

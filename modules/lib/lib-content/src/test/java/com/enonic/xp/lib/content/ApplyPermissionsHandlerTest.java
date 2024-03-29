@@ -13,7 +13,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
-public class SetPermissionsHandlerTest
+public class ApplyPermissionsHandlerTest
     extends BaseContentHandlerTest
 {
 
@@ -29,10 +29,10 @@ public class SetPermissionsHandlerTest
         addService( SecurityService.class, securityService );
 
         final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
-            value );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
+            .thenReturn( value );
 
-        runScript( "/lib/xp/examples/content/setPermissions.js" );
+        runScript( "/lib/xp/examples/content/applyPermissions.js" );
     }
 
     @Test
@@ -47,45 +47,42 @@ public class SetPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
-            Optional.empty() );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
+            .thenReturn( Optional.empty() );
 
-        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsMissingPrincipals" );
+        runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsMissingPrincipals" );
     }
 
     @Test
     public void testContentNotFoundByPath()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) )
-            .thenThrow( ContentNotFoundException.class );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
         final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
-            value );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
+            .thenReturn( value );
 
-        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundByPath" );
+        runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsNotFoundByPath" );
     }
 
     @Test
     public void testContentNotFoundById()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) )
-            .thenThrow(
-                ContentNotFoundException.class );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
         final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
-            value );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
+            .thenReturn( value );
 
-        runFunction( "/test/SetPermissionsHandlerTest.js", "setPermissionsNotFoundById" );
+        runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsNotFoundById" );
     }
 
 }
