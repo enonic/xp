@@ -1,5 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.concurrent.Callable;
+
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -9,6 +16,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand
@@ -66,19 +76,17 @@ public class ImportNodeCommand
             node = updateNode( doGetByPath( this.importNode.path() ) );
         }
 
-        return ImportNodeResult.create().
-            node( node ).
-            preExisting( exists ).
-            build();
+        return ImportNodeResult.create().node( node ).preExisting( exists ).build();
     }
 
     private Node createNode()
     {
         final Node node;
+
         if ( this.importNode.isRoot() )
         {
-            final CreateRootNodeParams.Builder createRootNodeParams = CreateRootNodeParams.create().
-                childOrder( this.importNode.getChildOrder() );
+            final CreateRootNodeParams.Builder createRootNodeParams =
+                CreateRootNodeParams.create().childOrder( this.importNode.getChildOrder() );
 
             if ( this.importPermissionsOnCreate )
             {
@@ -89,31 +97,33 @@ public class ImportNodeCommand
         }
         else
         {
-            final CreateNodeParams.Builder createNodeParams = CreateNodeParams.create().
-                setNodeId( this.importNode.id() ).
-                nodeType( this.importNode.getNodeType() ).
-                childOrder( this.importNode.getChildOrder() ).
-                setBinaryAttachments( this.binaryAttachments ).
-                data( this.importNode.data() ).
-                indexConfigDocument( this.importNode.getIndexConfigDocument() ).
-                insertManualStrategy( this.insertManualStrategy ).
-                manualOrderValue( this.importNode.getManualOrderValue() ).
-                name( this.importNode.name().toString() ).
-                parent( this.importNode.parentPath() ).
-                setNodeId( this.importNode.id() );
+            PermissionsMergingStrategy mergingStrategy =
+                this.importPermissionsOnCreate ? PermissionsMergingStrategy.DEFAULT : PermissionsMergingStrategy.OVERWRITE;
 
-            if ( this.importPermissionsOnCreate )
-            {
+            final AccessControlList permissions =
+                mergingStrategy.mergePermissions( this.importNode.getPermissions(), getParentPermissions( this.importNode ) );
 
-                createNodeParams.permissions( this.importNode.getPermissions() );
-            }
+            final CreateNodeParams createNodeParams = CreateNodeParams.create()
+                .setNodeId( this.importNode.id() )
+                .nodeType( this.importNode.getNodeType() )
+                .childOrder( this.importNode.getChildOrder() )
+                .setBinaryAttachments( this.binaryAttachments )
+                .data( this.importNode.data() )
+                .indexConfigDocument( this.importNode.getIndexConfigDocument() )
+                .insertManualStrategy( this.insertManualStrategy )
+                .manualOrderValue( this.importNode.getManualOrderValue() )
+                .name( this.importNode.name().toString() )
+                .parent( this.importNode.parentPath() )
+                .setNodeId( this.importNode.id() )
+                .permissions( permissions )
+                .build();
 
-            node = CreateNodeCommand.create( this ).
-                params( createNodeParams.build() ).
-                timestamp( this.importNode.getTimestamp() ).
-                binaryService( binaryService ).
-                build().
-                execute();
+            node = CreateNodeCommand.create( this )
+                .params( createNodeParams )
+                .timestamp( this.importNode.getTimestamp() )
+                .binaryService( binaryService )
+                .build()
+                .execute();
         }
         refresh( refresh );
         return node;
@@ -121,23 +131,59 @@ public class ImportNodeCommand
 
     private Node updateNode( final Node existingNode )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            dryRun( this.dryRun ).
-            id( existingNode.id() ).
-            setBinaryAttachments( this.binaryAttachments ).
-            editor( editableNode -> {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
+            .dryRun( this.dryRun )
+            .id( existingNode.id() )
+            .setBinaryAttachments( this.binaryAttachments )
+            .editor( editableNode -> {
                 editableNode.data = this.importNode.data();
-                if ( this.importPermissions )
-                {
-                    editableNode.permissions = this.importNode.getPermissions();
-                }
-            } ).build();
+//                if ( this.importPermissions )
+//                {
+//                    editableNode.permissions = this.importNode.getPermissions();
+//                }
+            } )
+            .refresh( RefreshMode.ALL )
+            .build();
 
-        return UpdateNodeCommand.create( this ).
-            params( updateNodeParams ).
-            binaryService( binaryService ).
-            build().
-            execute();
+        final Node updatedNode =
+            UpdateNodeCommand.create( this ).params( updateNodeParams ).binaryService( binaryService ).build().execute();
+
+        if ( this.importPermissions )
+        {
+            return ApplyNodePermissionsCommand.create( this )
+                .params( ApplyNodePermissionsParams.create()
+                             .nodeId( existingNode.id() )
+                             .permissions( PermissionsMergingStrategy.DEFAULT.mergePermissions( this.importNode.getPermissions(),
+                                                                                                getParentPermissions( this.importNode ) ) )
+                             .build() )
+                .build()
+                .execute()
+                .getBranchResults()
+                .get( existingNode.id() )
+                .stream()
+                .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.getBranch() ) )
+                .findAny()
+                .map( ApplyNodePermissionsResult.BranchResult::getNode )
+                .orElse( updatedNode );
+        }
+
+        return updatedNode;
+    }
+
+    private AccessControlList getParentPermissions( final Node node )
+    {
+        final Node parentNode = node.parentPath() != null ? callAsAdmin( () -> doGetByPath( node.parentPath() ) ) : null;
+        return parentNode != null ? parentNode.getPermissions() : AccessControlList.empty();
+    }
+
+    private <T> T callAsAdmin( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+
+        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     public static final class Builder

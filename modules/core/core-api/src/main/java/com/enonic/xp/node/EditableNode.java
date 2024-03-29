@@ -5,7 +5,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public class EditableNode
@@ -20,9 +19,6 @@ public class EditableNode
 
     public ChildOrder childOrder;
 
-    public AccessControlList permissions;
-
-
     public NodeType nodeType;
 
     public EditableNode( final Node source )
@@ -32,7 +28,6 @@ public class EditableNode
         this.indexConfigDocument = source.getIndexConfigDocument();
         this.manualOrderValue = source.getManualOrderValue();
         this.childOrder = source.getChildOrder();
-        this.permissions = source.getPermissions();
         this.nodeType = source.getNodeType();
     }
 
@@ -43,7 +38,6 @@ public class EditableNode
             indexConfigDocument( indexConfigDocument ).
             manualOrderValue( manualOrderValue ).
             childOrder( childOrder ).
-            permissions( permissions ).
             nodeType( nodeType ).
             build();
     }

@@ -59,6 +59,11 @@ public class ApplyNodePermissionsCommand
         return new Builder();
     }
 
+    public static Builder create( AbstractNodeCommand source )
+    {
+        return new Builder( source );
+    }
+
     public ApplyNodePermissionsResult execute()
     {
         if ( params.getBranches().contains( this.sourceBranch ) )
@@ -217,6 +222,11 @@ public class ApplyNodePermissionsCommand
 
         private Builder()
         {
+        }
+
+        private Builder( AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final ApplyNodePermissionsParams val )

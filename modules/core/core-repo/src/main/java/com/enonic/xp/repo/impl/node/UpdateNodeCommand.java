@@ -41,11 +41,6 @@ public final class UpdateNodeCommand
         final EditableNode editableNode = new EditableNode( persistedNode );
         params.getEditor().edit( editableNode );
 
-        if ( !persistedNode.getPermissions().equals( editableNode.permissions ) )
-        {
-            requireContextUserPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode );
-        }
-
         final AttachedBinaries updatedBinaries = UpdatedAttachedBinariesResolver.create().
             editableNode( editableNode ).
             persistedNode( persistedNode ).

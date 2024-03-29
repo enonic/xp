@@ -104,7 +104,6 @@ public class UpdateNodeParamsFactory
             editableNode.indexConfigDocument = indexConfigFactory.produce();
             editableNode.data = nodeData;
             editableNode.manualOrderValue = editedContent.getManualOrderValue();
-            editableNode.permissions = editedContent.getPermissions();
         };
     }
 

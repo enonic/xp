@@ -17,6 +17,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ContentServiceImplTest_importContent
@@ -46,7 +47,7 @@ class ContentServiceImplTest_importContent
     }
 
     @Test
-    void keepSourcePermissionsOnCreate()
+    void mergePermissionsWithParentOnCreate()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -66,7 +67,8 @@ class ContentServiceImplTest_importContent
 
         final Content importedContent = ctxDraftDest().callWith( () -> this.contentService.importContent( importContentParams ).getContent() );
 
-        assertEquals( sourceContent.getPermissions(), importedContent.getPermissions() );
+        assertEquals( 8, importedContent.getPermissions().getAllPrincipals().getSize() );
+        assertFalse( importedContent.getPermissions().getEntry( TEST_DEFAULT_USER.getKey() ).isAllowed( Permission.DELETE ) );
     }
 
     @Test

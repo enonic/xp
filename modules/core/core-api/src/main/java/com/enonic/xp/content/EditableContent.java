@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public class EditableContent
@@ -26,10 +25,7 @@ public class EditableContent
     public Page page;
 
     public boolean valid;
-
     public Thumbnail thumbnail;
-
-    public AccessControlList permissions;
 
     public PrincipalKey owner;
 
@@ -64,7 +60,6 @@ public class EditableContent
         this.page = source.getPage() != null ? source.getPage().copy() : null;
         this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
-        this.permissions = source.getPermissions();
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.creator = source.getCreator();
@@ -86,7 +81,6 @@ public class EditableContent
             page( page ).
             valid( valid ).
             thumbnail( thumbnail ).
-            permissions( permissions ).
             owner( owner ).
             language( language ).
             creator( creator ).
