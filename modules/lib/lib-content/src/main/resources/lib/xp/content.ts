@@ -1020,6 +1020,9 @@ export interface AccessControlEntry {
     deny?: Permission[];
 }
 
+/**
+ * @deprecated Use the new {@link ApplyPermissionsParams} interface instead.
+ */
 export interface SetPermissionsParams {
     key: string;
     inheritPermissions?: boolean;
@@ -1027,24 +1030,39 @@ export interface SetPermissionsParams {
     permissions?: AccessControlEntry[];
 }
 
+export interface ApplyPermissionsParams {
+    key: string;
+    overwriteChildPermissions?: boolean;
+    permissions?: AccessControlEntry[];
+}
+
+export interface ApplyPermissionsResult {
+    [nodeId: string]: BranchResult[];
+}
+
+export interface BranchResult {
+    branch: string;
+    content: Content;
+}
+
 export interface Permissions {
     permissions?: AccessControlEntry[];
 }
 
-interface SetPermissionsHandler {
+interface ApplyPermissionsHandler {
     setKey(value: string): void;
-
-    setInheritPermissions(value: boolean): void;
 
     setOverwriteChildPermissions(value: boolean): void;
 
     setPermissions(value: ScriptValue): void;
 
-    execute(): boolean;
+    execute(): ApplyPermissionsResult;
 }
 
 /**
  * Sets permissions on a content.
+ *
+ * @deprecated Please use {@link applyPermissions}.
  *
  * @example-ref examples/content/setPermissions.js
  *
@@ -1059,13 +1077,51 @@ interface SetPermissionsHandler {
  * @returns {boolean} True if successful, false otherwise.
  */
 export function setPermissions(params: SetPermissionsParams): boolean {
-    const bean = __.newBean<SetPermissionsHandler>('com.enonic.xp.lib.content.SetPermissionsHandler');
+    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
     }
-    if (params.inheritPermissions) {
-        bean.setInheritPermissions(params.inheritPermissions);
+    if (params.overwriteChildPermissions) {
+        bean.setOverwriteChildPermissions(params.overwriteChildPermissions);
+    }
+    if (params.permissions) {
+        bean.setPermissions(__.toScriptValue(params.permissions));
+    }
+    const result = bean.execute();
+
+    for (const nodeId in result) {
+        const branchResults = result[nodeId];
+        for (const branchResult of branchResults) {
+            if (branchResult.content !== null) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Applies permissions to a content.
+ *
+ * @example-ref examples/content/applyPermissions.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
+ * @param {array} [params.permissions] Array of permissions.
+ * @param {string} params.permissions.principal Principal key.
+ * @param {array} params.permissions.allow Allowed permissions.
+ * @param {array} params.permissions.deny Denied permissions.
+ *
+ * @returns {object} Result of the apply permissions operation.
+ */
+export function applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
+    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
+
+    if (params.key) {
+        bean.setKey(params.key);
     }
     if (params.overwriteChildPermissions) {
         bean.setOverwriteChildPermissions(params.overwriteChildPermissions);

@@ -1,7 +1,11 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
+
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -200,10 +204,9 @@ public class NodeHandler
             build() );
     }
 
-    @SuppressWarnings("unused")
-    public Object setRootPermissions( final ScriptValue value )
+    private static AccessControlList getAccessControlList( final ScriptValue permissions )
     {
-        final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( value );
+        final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( permissions );
 
         final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
         final Iterable<PropertySet> asPropertySets = asPropertyTree.getSets( "_permissions" );
@@ -213,7 +216,14 @@ public class NodeHandler
             throw new IllegalArgumentException( "Did not find parameter [_permissions]" );
         }
 
-        final AccessControlList permissions = new PermissionsFactory( asPropertySets ).create();
+        return new PermissionsFactory( asPropertySets ).create();
+    }
+
+    @SuppressWarnings("unused")
+    @Deprecated
+    public Object setRootPermissions( final ScriptValue value )
+    {
+        final AccessControlList permissions = getAccessControlList( value );
 
         return execute( SetRootPermissionsHandler.create().
             permissions( permissions ).
@@ -248,6 +258,21 @@ public class NodeHandler
                             .refresh( params.refresh() )
                             .dataProcessor( params.dataProcessor() )
                             .includeChildren( params.includeChildren() )
+                            .nodeService( this.nodeService )
+                            .build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object applyPermissions( final String key, final ScriptValue permissions, final List<String> branches,
+                                    final boolean overwriteChildPermissions )
+    {
+        final AccessControlList accessControlEntries = getAccessControlList( permissions );
+
+        return execute( ApplyPermissionsHandler.create()
+                            .nodeKey( NodeKey.from( key ) )
+                            .branches( branches.stream().map( Branch::from ).collect( Branches.collecting() ) )
+                            .overwriteChildPermissions( overwriteChildPermissions )
+                            .permissions( accessControlEntries )
                             .nodeService( this.nodeService )
                             .build() );
     }
