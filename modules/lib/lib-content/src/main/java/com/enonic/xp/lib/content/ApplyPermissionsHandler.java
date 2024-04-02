@@ -21,10 +21,10 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public final class SetPermissionsHandler
+public final class ApplyPermissionsHandler
     implements ScriptBean
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SetPermissionsHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplyPermissionsHandler.class );
 
     private ContentService contentService;
 
@@ -50,38 +50,26 @@ public final class SetPermissionsHandler
     {
         if ( permissions != null )
         {
-            final List<AccessControlEntry> accessControlEntries = permissions.getArray().
-                stream().
-                map( this::convertToAccessControlEntry ).
-                collect( Collectors.toList() );
+            final List<AccessControlEntry> accessControlEntries =
+                permissions.getArray().stream().map( this::convertToAccessControlEntry ).collect( Collectors.toList() );
 
-            this.permissions = AccessControlList.
-                create().
-                addAll( accessControlEntries ).
-                build();
+            this.permissions = AccessControlList.create().addAll( accessControlEntries ).build();
         }
     }
 
     private AccessControlEntry convertToAccessControlEntry( ScriptValue permission )
     {
-        final String principal = permission.getMember( "principal" ).
-            getValue( String.class );
-        final List<Permission> allowedPermissions = permission.getMember( "allow" ).
-            getArray( String.class ).
-            stream().
-            map( Permission::valueOf ).
-            collect( Collectors.toList() );
-        final List<Permission> deniedPermissions = permission.getMember( "deny" ).
-            getArray( String.class ).
-            stream().
-            map( Permission::valueOf ).
-            collect( Collectors.toList() );
+        final String principal = permission.getMember( "principal" ).getValue( String.class );
+        final List<Permission> allowedPermissions =
+            permission.getMember( "allow" ).getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() );
+        final List<Permission> deniedPermissions =
+            permission.getMember( "deny" ).getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() );
 
-        return AccessControlEntry.create().
-            principal( PrincipalKey.from( principal ) ).
-            allow( allowedPermissions ).
-            deny( deniedPermissions ).
-            build();
+        return AccessControlEntry.create()
+            .principal( PrincipalKey.from( principal ) )
+            .allow( allowedPermissions )
+            .deny( deniedPermissions )
+            .build();
     }
 
     public boolean execute()
@@ -100,11 +88,11 @@ public final class SetPermissionsHandler
 
         if ( contentId != null )
         {
-            contentService.applyPermissions( ApplyContentPermissionsParams.create().
-                contentId( contentId ).
-                permissions( permissions ).
-                overwriteChildPermissions( overwriteChildPermissions ).
-                build() );
+            contentService.applyPermissions( ApplyContentPermissionsParams.create()
+                                                 .contentId( contentId )
+                                                 .permissions( permissions )
+                                                 .overwriteChildPermissions( overwriteChildPermissions )
+                                                 .build() );
 
             return true;
         }

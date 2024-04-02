@@ -4,6 +4,7 @@ import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.security.acl.AccessControlList;
 
+@Deprecated
 public class SetRootPermissionsHandler
     extends AbstractNodeHandler
 {
