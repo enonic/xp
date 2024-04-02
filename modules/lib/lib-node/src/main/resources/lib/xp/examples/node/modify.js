@@ -17,22 +17,6 @@ var repo = nodeLib.connect({
 function editor(node) {
 
     node._childOrder = 'updatedOrderField DESC';
-    node._permissions = [
-        {
-            'principal': 'user:system:newUser',
-            'allow': [
-                'CREATE'
-            ],
-            'deny': []
-        },
-        {
-            'principal': 'role:newRole',
-            'allow': [
-                'MODIFY'
-            ],
-            'deny': []
-        }
-    ];
     node._indexConfig = {
         default: 'fulltext',
         configs: {
@@ -100,16 +84,9 @@ var expected = {
     },
     '_permissions': [
         {
-            'principal': 'user:system:newUser',
+            'principal': 'role:system.everyone',
             'allow': [
-                'CREATE'
-            ],
-            'deny': []
-        },
-        {
-            'principal': 'role:newRole',
-            'allow': [
-                'MODIFY'
+                'READ'
             ],
             'deny': []
         }
