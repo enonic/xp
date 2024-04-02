@@ -8,10 +8,6 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,42 +78,6 @@ public class ModifyNodeExecutorTest
 
         assertEquals( ChildOrder.reverseManualOrder(), editableNode.childOrder );
     }
-
-    @Test
-    public void update_permissions()
-        throws Exception
-    {
-        final Node originalNode = Node.create().
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            permissions( AccessControlList.empty() ).
-            build();
-
-        final EditableNode editableNode = new EditableNode( originalNode );
-
-        final PropertyTree updateScript = new PropertyTree();
-        final PropertySet propertySet = new PropertySet();
-        propertySet.setString( "principal", "role:newRole" );
-        propertySet.addString( "allow", "READ" );
-        propertySet.addString( "allow", "MODIFY" );
-        updateScript.addSet( "_permissions", propertySet );
-
-        ModifyNodeExecutor.create().
-            editableNode( editableNode ).
-            propertyTree( updateScript ).
-            build().
-            execute();
-
-        final AccessControlList newPermissions = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "role:newRole" ) ).
-                allow( Permission.READ, Permission.MODIFY ).
-                build() ).
-            build();
-
-        assertEquals( newPermissions, editableNode.permissions );
-    }
-
 
     @Test
     public void remove_not_in_new_tree()

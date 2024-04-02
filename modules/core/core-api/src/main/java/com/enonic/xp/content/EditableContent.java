@@ -29,6 +29,7 @@ public class EditableContent
 
     public Thumbnail thumbnail;
 
+    @Deprecated
     public AccessControlList permissions;
 
     public PrincipalKey owner;
@@ -64,7 +65,6 @@ public class EditableContent
         this.page = source.getPage() != null ? source.getPage().copy() : null;
         this.valid = source.isValid();
         this.thumbnail = source.getThumbnail();
-        this.permissions = source.getPermissions();
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.creator = source.getCreator();
@@ -86,7 +86,6 @@ public class EditableContent
             page( page ).
             valid( valid ).
             thumbnail( thumbnail ).
-            permissions( permissions ).
             owner( owner ).
             language( language ).
             creator( creator ).
