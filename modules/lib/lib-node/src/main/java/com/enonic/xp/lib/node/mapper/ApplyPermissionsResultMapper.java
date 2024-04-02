@@ -22,11 +22,9 @@ public class ApplyPermissionsResultMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-//        gen.map();
         for ( Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : result.getBranchResults().entrySet() )
         {
             gen.map( entry.getKey().toString() );
-//            gen.value( "nodeId", entry.getKey() );
 
             gen.array( "branchResults" );
             entry.getValue().forEach( branchResult -> {
@@ -38,6 +36,5 @@ public class ApplyPermissionsResultMapper
             gen.end();
             gen.end();
         }
-//        gen.end();
     }
 }
