@@ -1074,12 +1074,6 @@ public final class SecurityServiceImpl
     {
         nodeService.applyPermissions( ApplyNodePermissionsParams.create().nodeId( nodeId ).permissions( permissions ).build() );
         nodeService.refresh( RefreshMode.ALL );
-//
-//        nodeService.update( UpdateNodeParams.create()
-//                                .id( nodeId )
-//                                .editor( editableNode -> editableNode.permissions = permissions )
-//                                .refresh( RefreshMode.ALL )
-//                                .build() );
     }
 
     private <T> T callWithContext( Callable<T> runnable )

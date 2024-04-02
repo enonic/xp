@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public class EditableContent
@@ -25,7 +26,11 @@ public class EditableContent
     public Page page;
 
     public boolean valid;
+
     public Thumbnail thumbnail;
+
+    @Deprecated
+    public AccessControlList permissions;
 
     public PrincipalKey owner;
 

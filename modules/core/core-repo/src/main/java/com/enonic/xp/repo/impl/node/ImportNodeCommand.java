@@ -137,10 +137,6 @@ public class ImportNodeCommand
             .setBinaryAttachments( this.binaryAttachments )
             .editor( editableNode -> {
                 editableNode.data = this.importNode.data();
-//                if ( this.importPermissions )
-//                {
-//                    editableNode.permissions = this.importNode.getPermissions();
-//                }
             } )
             .refresh( RefreshMode.ALL )
             .build();
