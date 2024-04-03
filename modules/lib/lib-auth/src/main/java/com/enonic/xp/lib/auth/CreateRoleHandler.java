@@ -40,7 +40,7 @@ public final class CreateRoleHandler
     {
         final Role role = this.securityService.get().createRole( CreateRoleParams.create().
             roleKey( PrincipalKey.ofRole( name ) ).
-            displayName( this.displayName ).
+            displayName( this.displayName != null ? this.displayName : this.name ).
             description( this.description ).
             build() );
         return new PrincipalMapper( role );

@@ -46,9 +46,12 @@ public final class CreateUserHandler
 
     public PrincipalMapper createUser()
     {
-        final User user = this.securityService.get().createUser(
-            CreateUserParams.create().displayName( this.displayName ).email( this.email ).login( this.name ).userKey(
-                PrincipalKey.ofUser( this.idProviderKey, this.name ) ).build() );
+        final User user = this.securityService.get().createUser( CreateUserParams.create().
+            displayName( this.displayName != null ? this.displayName : this.name ).
+            email( this.email ).
+            login( this.name ).
+            userKey( PrincipalKey.ofUser( this.idProviderKey, this.name ) ).
+            build() );
         return new PrincipalMapper( user );
     }
 
