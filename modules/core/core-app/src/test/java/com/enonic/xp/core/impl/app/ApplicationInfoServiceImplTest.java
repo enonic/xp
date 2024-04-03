@@ -172,7 +172,7 @@ public class ApplicationInfoServiceImplTest
         mockReferences( this.applicationKey );
         final Contents contentReferences = this.service.getContentReferences( this.applicationKey );
 
-        assertEquals( contentReferences.getSize(), 2 );
+        assertEquals( contentReferences.getSize(), 0 );
     }
 
     @Test
@@ -217,7 +217,7 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getParts().getSize(), 2 );
         assertEquals( applicationInfo.getLayouts().getSize(), 2 );
         assertEquals( applicationInfo.getRelations().getSize(), 2 );
-        assertEquals( applicationInfo.getContentReferences().getSize(), 2 );
+        assertEquals( applicationInfo.getContentReferences().getSize(), 0 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
         assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );

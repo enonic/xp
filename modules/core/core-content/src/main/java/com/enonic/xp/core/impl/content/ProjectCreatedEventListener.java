@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -104,11 +103,7 @@ public final class ProjectCreatedEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .branch( ContentConstants.BRANCH_DRAFT )
-            .repositoryId( ContentConstants.CONTENT_REPO_ID )
-            .authInfo( authInfo )
-            .build();
+        return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()

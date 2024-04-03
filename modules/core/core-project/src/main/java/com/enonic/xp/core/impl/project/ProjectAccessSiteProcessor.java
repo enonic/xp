@@ -58,12 +58,8 @@ public final class ProjectAccessSiteProcessor
         {
             if ( !ProjectAccessHelper.hasAdminAccess( authenticationInfo ) )
             {
-                if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-                {
-                    throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey() );
-                }
-                else if ( !this.projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, projectName,
-                                                                                    Set.of( ProjectRole.OWNER ) ) )
+                if ( !this.projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, projectName,
+                                                                               Set.of( ProjectRole.OWNER ) ) )
                 {
                     throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
                 }

@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -16,8 +15,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class ProjectAccessHelper
 {
     private static final PrincipalKeys ADMIN_ACCESS = PrincipalKeys.from( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN );
-
-    private static final PrincipalKeys MANAGER_ACCESS = PrincipalKeys.from( ADMIN_ACCESS, List.of( RoleKeys.CONTENT_MANAGER_APP ) );
 
     public static PrincipalKey createRoleKey( final ProjectName projectName, final ProjectRole projectRole )
     {
@@ -34,11 +31,6 @@ public class ProjectAccessHelper
     public static boolean hasAdminAccess( final AuthenticationInfo authenticationInfo )
     {
         return ADMIN_ACCESS.stream().anyMatch( authenticationInfo::hasRole );
-    }
-
-    public static boolean hasManagerAccess( final AuthenticationInfo authenticationInfo )
-    {
-        return MANAGER_ACCESS.stream().anyMatch( authenticationInfo::hasRole );
     }
 
     private static PrincipalKey doCreateRoleKey( final ProjectName projectName, final ProjectRole projectRole )

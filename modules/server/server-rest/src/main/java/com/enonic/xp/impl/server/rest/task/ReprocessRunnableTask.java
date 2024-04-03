@@ -146,8 +146,8 @@ public class ReprocessRunnableTask
     private Context createContext()
     {
         return ContextBuilder.create()
-            .branch( Branch.from( branch.getValue() ) )
-            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .branch( branch )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID ) // TODO RDP
             .authInfo( ContextAccessor.current().getAuthInfo() )
             .build();
     }

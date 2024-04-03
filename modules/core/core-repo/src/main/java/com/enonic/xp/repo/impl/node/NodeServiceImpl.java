@@ -199,7 +199,11 @@ public class NodeServiceImpl
     {
         return Tracer.trace( "node.getByPath", trace -> {
             trace.put( "path", path );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+            if ( repositoryId != null )
+            {
+                trace.put( "repo", repositoryId.toString() );
+            }
             trace.put( "branch", ContextAccessor.current().getBranch() );
         }, () -> executeGetByPath( path ), ( trace, node ) -> {
             if ( node != null )
