@@ -11,6 +11,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.CreateProjectRolesCommand;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.Node;
@@ -60,25 +61,33 @@ public class DefaultProjectMigrator
 
     private final SecurityService securityService;
 
-    public DefaultProjectMigrator( final NodeService nodeService, final SecurityService securityService )
+    private final IndexService indexService;
+
+    public DefaultProjectMigrator( final NodeService nodeService, final SecurityService securityService, final IndexService indexService )
     {
         this.nodeService = nodeService;
         this.securityService = securityService;
+        this.indexService = indexService;
     }
 
     public void migrate()
+    {
+        if ( indexService.isMaster() )
+        {
+            doMigrate();
+        }
+    }
+
+    private void doMigrate()
     {
         List.of( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER )
             .forEach( branch -> createAdminContext( branch ).runWith( () -> {
                 migrateContentNode();
                 migrateIssueNode();
-
-                nodeService.refresh( RefreshMode.ALL );
             } ) );
 
         createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( () -> {
             migrateArchiveNode();
-            nodeService.refresh( RefreshMode.ALL );
         } );
 
         CreateProjectRolesCommand.create()

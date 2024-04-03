@@ -134,7 +134,7 @@ public class ProjectServiceImpl
             if ( repositories.stream()
                 .anyMatch( repository -> repository.getId().equals( DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
             {
-                new DefaultProjectMigrator( nodeService, securityService ).migrate();
+                new DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
             }
         } );
     }
