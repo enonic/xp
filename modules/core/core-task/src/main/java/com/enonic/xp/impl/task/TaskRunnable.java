@@ -36,10 +36,10 @@ final class TaskRunnable
         Thread.currentThread().setName( betterThreadName() );
         try
         {
+            User user = runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
             Tracer.trace( "task.run", trace -> {
                 trace.put( "taskId", runnableTask.getTaskId() );
-                trace.put( "user",
-                           Objects.requireNonNullElse( runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ).getKey() );
+                trace.put( "user", Objects.requireNonNullElse( user, User.ANONYMOUS ).getKey() );
                 trace.put( "app", runnableTask.getApplicationKey() );
             }, this::doRun, ( trace, success ) -> trace.put( "success", success ) );
         }

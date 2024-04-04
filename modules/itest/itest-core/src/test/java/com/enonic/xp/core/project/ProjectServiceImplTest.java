@@ -536,10 +536,10 @@ class ProjectServiceImplTest
     void delete_default_project_as_admin()
     {
         adminContext().runWith( () -> {
-            assertNotNull( this.projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+            assertNotNull( this.projectService.get( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) ) );
 
-            final RuntimeException ex =
-                Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+            final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete(
+                ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) ) );
             assertEquals( "Denied [user:system:repo-test-user] user access for [delete] operation", ex.getMessage() );
         } );
     }
@@ -708,13 +708,15 @@ class ProjectServiceImplTest
     @Test
     void get_empty_default_project_data()
     {
-        adminContext().runWith( () -> {
+        final Project defaultProject =
+            Project.create().name( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) ).displayName( "Default" ).build();
 
-            final Project pro = projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDescription(), pro.getDescription() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDisplayName(), pro.getDisplayName() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getIcon(), pro.getIcon() );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParents(), pro.getParents() );
+        adminContext().runWith( () -> {
+            final Project pro = projectService.get( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) );
+            assertEquals( defaultProject.getDescription(), pro.getDescription() );
+            assertEquals( defaultProject.getDisplayName(), pro.getDisplayName() );
+            assertEquals( defaultProject.getIcon(), pro.getIcon() );
+            assertEquals( defaultProject.getParents(), pro.getParents() );
         } );
 
     }
@@ -723,7 +725,7 @@ class ProjectServiceImplTest
     void get_default_project()
     {
         contentCustomManagerContext().runWith( () -> {
-            final Project defaultProject = projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME );
+            final Project defaultProject = projectService.get( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) );
             assertNotNull( defaultProject );
         } );
     }
@@ -884,7 +886,7 @@ class ProjectServiceImplTest
     void get_permissions_default_project()
     {
         final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ) ) );
 
         assertEquals( "Default project has no roles.", ex.getMessage() );
     }
@@ -931,7 +933,7 @@ class ProjectServiceImplTest
                                                                .build() );
 
             final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.modifyPermissions(
-                ProjectConstants.DEFAULT_PROJECT_NAME, ProjectPermissions.create().addOwner( user1.getKey() ).build() ) );
+                ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) ), ProjectPermissions.create().addOwner( user1.getKey() ).build() ) );
 
             assertEquals( "Default project permissions cannot be modified.", ex.getMessage() );
 

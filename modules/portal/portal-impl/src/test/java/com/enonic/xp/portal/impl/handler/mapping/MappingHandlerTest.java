@@ -29,6 +29,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -85,6 +86,7 @@ public class MappingHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
         ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( controllerScript );
@@ -296,7 +298,7 @@ public class MappingHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
-        assertEquals( "/site/default/draft/site", this.request.getContextPath() );
+        assertEquals( "/site/myproject/draft/site", this.request.getContextPath() );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping )

@@ -60,7 +60,7 @@ public class GetCurrentSiteConfigScriptTest
     public void configFromProject()
     {
         final Project project = TestDataFixtures.newDefaultProject().build();
-        Mockito.when( projectService.get( ProjectName.from( ContextAccessor.current().getRepositoryId() ) ) ).thenReturn( project );
+        Mockito.when( projectService.get( ProjectName.from( this.portalRequest.getRepositoryId() ) ) ).thenReturn( project );
 
         runFunction( "/test/getCurrentSiteConfig-test.js", "configFromProject" );
     }

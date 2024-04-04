@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpMethod;
 
@@ -28,6 +29,7 @@ public class PortalRequestMapperTest
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "localhost" );
         this.portalRequest.setPort( 80 );
+        this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setRemoteAddress( "10.0.0.1" );
         this.portalRequest.setPath( "/site/live/master/a/b" );
         this.portalRequest.setRawPath( "/site/live/master/a/b" );

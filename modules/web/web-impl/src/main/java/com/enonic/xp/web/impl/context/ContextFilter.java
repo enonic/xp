@@ -29,8 +29,6 @@ public final class ContextFilter
         throws Exception
     {
         final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
-//        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO_ID );
         context.getLocalScope().setAttribute( "__currentTimeMillis", System.currentTimeMillis() );
         context.getLocalScope().setSession( new SessionWrapper( req ) );
 

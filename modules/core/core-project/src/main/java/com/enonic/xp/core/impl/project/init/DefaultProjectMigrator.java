@@ -86,9 +86,7 @@ public class DefaultProjectMigrator
                 migrateIssueNode();
             } ) );
 
-        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( () -> {
-            migrateArchiveNode();
-        } );
+        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::migrateArchiveNode );
 
         CreateProjectRolesCommand.create()
             .securityService( securityService )

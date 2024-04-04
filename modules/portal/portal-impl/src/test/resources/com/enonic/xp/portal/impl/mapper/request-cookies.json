@@ -10,7 +10,7 @@
   "mode": "live",
   "webSocket": false,
   "validTicket": true,
-  "repositoryId": "com.enonic.cms.default",
+  "repositoryId": "com.enonic.cms.myproject",
   "branch": "draft",
   "contextPath": "/site/live/master/a",
   "params": {

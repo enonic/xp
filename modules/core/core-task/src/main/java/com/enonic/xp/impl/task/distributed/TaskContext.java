@@ -2,8 +2,6 @@ package com.enonic.xp.impl.task.distributed;
 
 import java.io.Serializable;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
@@ -89,16 +87,8 @@ public final class TaskContext
             return this;
         }
 
-        private void validate()
-        {
-            Preconditions.checkNotNull( repo, "repositoryId must be set" );
-            Preconditions.checkNotNull( branch, "branch must be set" );
-            Preconditions.checkNotNull( authInfo, "authInfo must be set" );
-        }
-
         public TaskContext build()
         {
-            validate();
             return new TaskContext( this );
         }
 

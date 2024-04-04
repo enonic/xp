@@ -1,7 +1,5 @@
 package com.enonic.xp.project;
 
-import com.enonic.xp.content.ContentConstants;
-
 public final class ProjectConstants
 {
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";
@@ -20,12 +18,6 @@ public final class ProjectConstants
     public static final String PROJECT_ICON_PROPERTY = "icon";
 
     public static final String PROJECT_PARENTS_PROPERTY = "parents";
-
-    @Deprecated
-    public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
-
-    @Deprecated
-    public static final Project DEFAULT_PROJECT = Project.create().name( DEFAULT_PROJECT_NAME ).displayName( "Default" ).build();
 
     private ProjectConstants()
     {

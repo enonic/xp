@@ -11,7 +11,6 @@ log.info('Context as JSON %s', result);
 // Context returned.
 var expected = {
     'branch': 'draft',
-    'repository': 'com.enonic.cms.default',
     'authInfo': {
         'principals': [
             'user:system:anonymous',

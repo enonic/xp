@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -11,10 +9,8 @@ import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_componentUrlTest
@@ -28,7 +24,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             param( "a", 3 );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/site/default/draft/context/path?a=3", url );
+        assertEquals( "/site/myproject/draft/context/path?a=3", url );
     }
 
     @Test
@@ -40,7 +36,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             portalRequest( this.portalRequest );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/component/main/0", url );
+        assertEquals( "/site/myproject/draft/context/path/_/component/main/0", url );
     }
 
     @Test
@@ -51,7 +47,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/component/other/1", url );
+        assertEquals( "/site/myproject/draft/context/path/_/component/other/1", url );
     }
 
     @Test
@@ -63,7 +59,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/site/default/draft/a/b/_/component/other/1", url );
+        assertEquals( "/site/myproject/draft/a/b/_/component/other/1", url );
     }
 
     @Test
@@ -78,7 +74,7 @@ public class PortalUrlServiceImpl_componentUrlTest
             component( "other/1" );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/component/other/1", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/component/other/1", url );
     }
 
     @Test
@@ -94,7 +90,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.componentUrl( params );
-        assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );
+        assertEquals( "http://localhost/site/myproject/draft/context/path?a=3", url );
     }
 
     private void addComponent()

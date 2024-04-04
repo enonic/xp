@@ -3,7 +3,6 @@ package com.enonic.xp.lib.portal.current;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.portal.PortalRequest;
@@ -41,7 +40,7 @@ public final class GetCurrentSiteConfigHandler
             }
             else
             {
-                final Project project = this.projectService.get().get( ProjectName.from( ContextAccessor.current().getRepositoryId() ) );
+                final Project project = this.projectService.get().get( ProjectName.from( this.request.getRepositoryId() ) );
                 if ( project != null )
                 {
                     final SiteConfig config = project.getSiteConfigs().get( applicationKey );
