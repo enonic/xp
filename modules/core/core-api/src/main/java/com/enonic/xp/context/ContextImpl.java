@@ -1,7 +1,6 @@
 package com.enonic.xp.context;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import com.google.common.collect.ImmutableMap;
@@ -28,12 +27,6 @@ final class ContextImpl
     public RepositoryId getRepositoryId()
     {
         return getAttribute( RepositoryId.class );
-//        final RepositoryId repositoryId = getAttribute( RepositoryId.class );
-//        if ( repositoryId != null )
-//        {
-//            return repositoryId;
-//        }
-//        throw new IllegalStateException( "RepositoryId is not set in the context" );
     }
 
     @Override

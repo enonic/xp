@@ -17,7 +17,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.repository.RepositoryId;
