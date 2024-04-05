@@ -47,7 +47,7 @@ export interface LoginParams {
 
 export interface LoginResult {
     authenticated: boolean;
-    message: string;
+    message?: string;
     user?: User;
 }
 
