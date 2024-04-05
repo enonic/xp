@@ -51,8 +51,6 @@ public final class SecurityInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
 
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
-
     private static final NodePath KEYS_PATH = new NodePath( NodePath.ROOT, NodeName.from( "keys" ) );
 
     /**
@@ -89,9 +87,15 @@ public final class SecurityInitializer
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "Content Manager Administrator" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build() );
 
-    private static final List<CreateUserParams> USERS_TO_CREATE =
-        List.of( CreateUserParams.create().userKey( PrincipalKey.ofAnonymous() ).displayName( "Anonymous" ).login( "anonymous" ).build(),
-                 CreateUserParams.create().userKey( SUPER_USER ).displayName( "Super User" ).login( SUPER_USER.getId() ).build() );
+    private static final List<CreateUserParams> USERS_TO_CREATE = List.of( CreateUserParams.create()
+                                                                               .userKey( PrincipalKey.ofAnonymous() )
+                                                                               .displayName( "Anonymous User" )
+                                                                               .login( PrincipalKey.ofAnonymous().getId() )
+                                                                               .build(), CreateUserParams.create()
+                                                                               .userKey( PrincipalKey.ofSuperUser() )
+                                                                               .displayName( "Super User" )
+                                                                               .login( PrincipalKey.ofSuperUser().getId() )
+                                                                               .build() );
 
     private final SecurityService securityService;
 
@@ -135,7 +139,7 @@ public final class SecurityInitializer
 
     private Context createAdminContext()
     {
-        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
+        final User admin = User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         return ContextBuilder.create()
             .branch( SecurityConstants.BRANCH_SECURITY )
@@ -287,7 +291,7 @@ public final class SecurityInitializer
         {
             addUser( createUser );
         }
-        addMember( RoleKeys.ADMIN, SUPER_USER );
+        addMember( RoleKeys.ADMIN, PrincipalKey.ofSuperUser() );
     }
 
     private boolean usersInitialized()
@@ -299,7 +303,7 @@ public final class SecurityInitializer
                 return false;
             }
         }
-        return securityService.getMemberships( SUPER_USER ).contains( RoleKeys.ADMIN );
+        return securityService.getMemberships( PrincipalKey.ofSuperUser() ).contains( RoleKeys.ADMIN );
     }
 
     private void addUser( final CreateUserParams createUser )
