@@ -72,7 +72,7 @@ public class ContentServiceImplTest_applyPermissions
 
         verify( listener, times( 2 ) ).permissionsApplied( 1 );
 
-        assertEquals( 2, result.getResults().size() );
+        assertEquals( 2, result.getBranchResults().size() );
 
         assertEquals( content.getPermissions(),
                       result.getResult( content.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
@@ -115,7 +115,7 @@ public class ContentServiceImplTest_applyPermissions
 
         verify( listener, times( 1 ) ).notEnoughRights( 1 );
 
-        assertEquals( 1, result.getResults().size() );
+        assertEquals( 1, result.getBranchResults().size() );
         assertNull( result.getResult( content.getId(), ContextAccessor.current().getBranch() ) );
     }
 

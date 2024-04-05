@@ -43,7 +43,7 @@ public final class ApplyContentPermissionsResult
         return ContentPaths.empty();
     }
 
-    public Map<ContentId, List<BranchResult>> getResults()
+    public Map<ContentId, List<BranchResult>> getBranchResults()
     {
         return branchResults;
     }

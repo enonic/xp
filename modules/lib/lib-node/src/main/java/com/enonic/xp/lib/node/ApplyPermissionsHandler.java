@@ -13,6 +13,10 @@ public class ApplyPermissionsHandler
 
     private final AccessControlList permissions;
 
+    private final AccessControlList addPermissions;
+
+    private final AccessControlList removePermissions;
+
     private final Branches branches;
 
     private final boolean overwriteChildPermissions;
@@ -21,7 +25,9 @@ public class ApplyPermissionsHandler
     {
         super( builder );
         this.nodeKey = builder.nodeKey;
-        this.permissions = builder.permissions;
+        this.permissions = builder.permissions.build();
+        this.addPermissions = builder.addPermissions.build();
+        this.removePermissions = builder.removePermissions.build();
         this.branches = builder.branches;
         this.overwriteChildPermissions = builder.overwriteChildPermissions;
     }
@@ -39,6 +45,8 @@ public class ApplyPermissionsHandler
         return new ApplyPermissionsResultMapper( this.nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                         .nodeId( nodeId )
                                                                                         .permissions( permissions )
+                                                                                        .addPermissions( addPermissions )
+                                                                                        .removePermissions( removePermissions )
                                                                                         .overwriteChildPermissions(
                                                                                             overwriteChildPermissions )
                                                                                         .addBranches( branches )
@@ -48,9 +56,13 @@ public class ApplyPermissionsHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeKey nodeKey;
+        private final AccessControlList.Builder permissions = AccessControlList.create();
 
-        private AccessControlList permissions;
+        private final AccessControlList.Builder addPermissions = AccessControlList.create();
+
+        private final AccessControlList.Builder removePermissions = AccessControlList.create();
+
+        private NodeKey nodeKey;
 
         private Branches branches;
 
@@ -62,7 +74,28 @@ public class ApplyPermissionsHandler
 
         public Builder permissions( final AccessControlList val )
         {
-            permissions = val;
+            if ( val != null )
+            {
+                permissions.addAll( val );
+            }
+            return this;
+        }
+
+        public Builder addPermissions( final AccessControlList val )
+        {
+            if ( val != null )
+            {
+                addPermissions.addAll( val );
+            }
+            return this;
+        }
+
+        public Builder removePermissions( final AccessControlList val )
+        {
+            if ( val != null )
+            {
+                removePermissions.addAll( val );
+            }
             return this;
         }
 

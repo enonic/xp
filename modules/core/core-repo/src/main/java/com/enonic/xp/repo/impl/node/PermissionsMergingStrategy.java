@@ -11,6 +11,7 @@ sealed interface PermissionsMergingStrategy
 
     KeepChildPermissionsMergingStrategy SKIP = new KeepChildPermissionsMergingStrategy();
 
+
     /**
      * Returns resulting permissions after merging child and parent permissions.
      *

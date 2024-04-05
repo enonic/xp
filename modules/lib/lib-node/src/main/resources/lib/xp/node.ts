@@ -253,7 +253,8 @@ interface NodeHandler {
 
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
-    applyPermissions(key: string, permissions: ScriptValue, branches: string[], overwriteChildPermissions: boolean): ApplyPermissionsResult;
+    applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
+                     overwriteChildPermissions: boolean): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
@@ -474,6 +475,8 @@ export interface FindNodesByParentResult {
 export interface ApplyPermissionsParams {
     key: string;
     permissions?: AccessControlEntry[];
+    addPermissions?: AccessControlEntry[];
+    removePermissions?: AccessControlEntry[];
     branches?: string[];
     overwriteChildPermissions?: boolean;
 }
@@ -1050,6 +1053,8 @@ class RepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {string} params.key Path or ID of the node.
      * @param {object} [params.permissions] the permission json
+     * @param {object} [params.permissions] the permission t
+     * @param {object} [params.permissions] the permission json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
      * @param {boolean} [params.overwriteChildPermissions] Overwrite child permissions. Default is false.
      *
@@ -1059,7 +1064,8 @@ class RepoConnectionImpl
     applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
         checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions), params.branches,
+        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
+            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), params.branches,
             params.overwriteChildPermissions));
     }
 

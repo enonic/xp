@@ -39,6 +39,8 @@ final class ApplyContentPermissionsCommand
         final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
             .nodeId( nodeId )
             .permissions( params.getPermissions() )
+            .addPermissions( params.getAddPermissions() )
+            .removePermissions( params.getRemovePermissions() )
             .overwriteChildPermissions( params.isOverwriteChildPermissions() )
             .applyPermissionsListener( params.getListener() )
             .addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );

@@ -1034,6 +1034,8 @@ export interface ApplyPermissionsParams {
     key: string;
     overwriteChildPermissions?: boolean;
     permissions?: AccessControlEntry[];
+    addPermissions?: AccessControlEntry[];
+    removePermissions?: AccessControlEntry[];
 }
 
 export interface ApplyPermissionsResult {
@@ -1055,6 +1057,10 @@ interface ApplyPermissionsHandler {
     setOverwriteChildPermissions(value: boolean): void;
 
     setPermissions(value: ScriptValue): void;
+
+    setAddPermissions(value: ScriptValue): void;
+
+    setRemovePermissions(value: ScriptValue): void;
 
     execute(): ApplyPermissionsResult;
 }
@@ -1110,10 +1116,12 @@ export function setPermissions(params: SetPermissionsParams): boolean {
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
  * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
- * @param {array} [params.permissions] Array of permissions.
+ * @param {array} [params.permissions] Array of permissions. Cannot be used together with addPermissions and removePermissions.
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.
  * @param {array} params.permissions.deny Denied permissions.
+ * @param {array} [params.addPermissions] Array of permissions to add. Cannot be used together with permissions.
+ * @param {array} [params.removePermissions] Array of permissions to remove. Cannot be used together with permissions.
  *
  * @returns {object} Result of the apply permissions operation.
  */
@@ -1129,6 +1137,13 @@ export function applyPermissions(params: ApplyPermissionsParams): ApplyPermissio
     if (params.permissions) {
         bean.setPermissions(__.toScriptValue(params.permissions));
     }
+    if (params.addPermissions) {
+        bean.setAddPermissions(__.toScriptValue(params.addPermissions));
+    }
+    if (params.removePermissions) {
+        bean.setRemovePermissions(__.toScriptValue(params.removePermissions));
+    }
+
     return __.toNativeObject(bean.execute());
 }
 

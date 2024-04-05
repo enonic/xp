@@ -3,7 +3,7 @@ var contentLib = require('/lib/xp/content.js');
 
 exports.applyPermissionsMissingPrincipals = function () {
 
-    var result = contentLib.applyPermissions({
+    assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{
@@ -11,14 +11,12 @@ exports.applyPermissionsMissingPrincipals = function () {
             allow: ['READ'],
             deny: ['DELETE']
         }]
-    });
-
-    assert.assertEquals(false, result);
+    }));
 };
 
 exports.applyPermissionsNotFoundByPath = function () {
 
-    var result = contentLib.applyPermissions({
+    assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{
@@ -26,14 +24,12 @@ exports.applyPermissionsNotFoundByPath = function () {
             allow: ['READ'],
             deny: ['DELETE']
         }],
-    });
-
-    assert.assertEquals(false, result);
+    }));
 };
 
 exports.applyPermissionsNotFoundById = function () {
 
-    var result = contentLib.applyPermissions({
+    assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
         overwriteChildPermissions: true,
         permissions: [{
@@ -41,7 +37,41 @@ exports.applyPermissionsNotFoundById = function () {
             allow: ['READ'],
             deny: ['DELETE']
         }]
+    }));
+};
+
+exports.applyPermissionsNonCompatible = function () {
+
+    assert.assertThrows(() => contentLib.applyPermissions({
+        key: '/features/js-libraries/mycontent',
+        overwriteChildPermissions: true,
+        permissions: [{
+            principal: 'user:system:anonymous',
+            allow: ['READ']
+        }],
+        addPermissions: [{
+            principal: 'user:system:anonymous',
+            allow: ['MODIFY']
+        }]
+    }));
+};
+
+exports.applyPermissionsAddRemove = function () {
+
+    var result = contentLib.applyPermissions({
+        key: '/features/js-libraries/mycontent',
+        addPermissions: [{
+            principal: 'user:system:anonymous',
+            allow: ['READ']
+        }, {
+            principal: 'role:system.everyone',
+            allow: ['READ']
+        }],
+        removePermissions: [{
+            principal: 'user:system:anonymous',
+            allow: ['MODIFY', 'DELETE']
+        }]
     });
 
-    assert.assertEquals(false, result);
+    assert.assertEquals(1, result['123456'].branchResults.length);
 };
