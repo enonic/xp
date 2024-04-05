@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,7 +12,6 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_identityUrlTest
@@ -30,6 +27,20 @@ public class PortalUrlServiceImpl_identityUrlTest
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/site/default/draft/_/idprovider/system/login", url );
+    }
+
+    @Test
+    public void createUrl_withRedirect()
+    {
+        when( redirectChecksumService.generateChecksum( "https://example.com" ) ).thenReturn( "some-great-checksum" );
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( this.portalRequest ).
+            idProviderKey( IdProviderKey.system() ).
+            idProviderFunction( "login" )
+            .redirectionUrl( "https://example.com" );
+
+        final String url = this.service.identityUrl( params );
+        assertEquals( "/site/default/draft/_/idprovider/system/login?redirect=https%3A%2F%2Fexample.com&_ticket=some-great-checksum", url );
     }
 
     @Test
