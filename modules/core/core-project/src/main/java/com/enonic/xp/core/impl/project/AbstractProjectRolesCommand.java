@@ -97,7 +97,6 @@ abstract class AbstractProjectRolesCommand
         void validate()
         {
             Preconditions.checkNotNull( securityService, "securityService cannot be null" );
-//            Preconditions.checkArgument( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ), "Default project has no roles" );
         }
     }
 

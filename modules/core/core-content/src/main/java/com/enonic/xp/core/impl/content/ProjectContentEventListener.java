@@ -199,7 +199,6 @@ public final class ProjectContentEventListener
         final AuthenticationInfo authInfo = createAdminAuthInfo();
         return ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_DRAFT )
-            .repositoryId( ContentConstants.CONTENT_REPO_ID )
             .authInfo( authInfo )
             .build();
     }

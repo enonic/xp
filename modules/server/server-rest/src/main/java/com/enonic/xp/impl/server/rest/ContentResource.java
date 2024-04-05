@@ -26,7 +26,6 @@ import com.enonic.xp.impl.server.rest.model.ReprocessContentRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
-import com.enonic.xp.impl.server.rest.task.ReprocessRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
@@ -113,24 +112,6 @@ public final class ContentResource
             from = from + resultCount;
         }
         while ( resultCount > 0 );
-    }
-
-    @POST
-    @Path("reprocessTask")
-    public TaskResultJson reprocessTask( final ReprocessContentRequestJson params )
-    {
-        final ReprocessRunnableTask task = ReprocessRunnableTask.create()
-            .contentService( contentService )
-            .branch( params.getBranch() )
-            .contentPath( params.getContentPath() )
-            .skipChildren( params.isSkipChildren() )
-            .build();
-        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                                               .runnableTask( task )
-                                                               .description(
-                                                                   "Reprocess " + params.getBranch() + ":" + params.getContentPath() )
-                                                               .build() );
-        return new TaskResultJson( taskId );
     }
 
     @POST

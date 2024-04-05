@@ -262,7 +262,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             final ContentId contentId = params.getArgument( 0 );
             throw ContentNotFoundException.create()
                 .contentId( contentId )
-                .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .build();
         } );

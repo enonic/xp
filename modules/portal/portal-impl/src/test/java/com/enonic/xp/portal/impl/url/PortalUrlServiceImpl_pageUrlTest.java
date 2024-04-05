@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.repository.RepositoryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,7 +87,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         when( this.contentService.getById( content.getId() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentId( content.getId() )
-                            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+                            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                             .branch( ContentConstants.BRANCH_DRAFT )
                             .build() );
 
