@@ -40,8 +40,10 @@ import static com.enonic.xp.security.acl.Permission.DELETE;
 import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.PUBLISH;
 import static com.enonic.xp.security.acl.Permission.READ;
+import static com.enonic.xp.security.acl.Permission.READ_PERMISSIONS;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -283,6 +285,130 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 1, result.getBranchResults().size() );
         assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ) );
+    }
+
+    @Test
+    void add_and_remove()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        refresh();
+
+        final PrincipalKey principal = PrincipalKey.from( "user:my-provider:my-user" );
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .overwriteChildPermissions( true )
+                                                                                    .addBranches(
+                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addPermissions( AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .allowAll()
+                                                                                                                   .principal( principal )
+                                                                                                                   .build() )
+                                                                                                         .build() )
+                                                                                    .removePermissions( AccessControlList.create()
+                                                                                                            .add(
+                                                                                                                AccessControlEntry.create()
+                                                                                                                    .allow( READ )
+                                                                                                                    .principal( principal )
+                                                                                                                    .build() )
+                                                                                                            .build() )
+                                                                                    .build() );
+
+        assertEquals( 1, result.getBranchResults().size() );
+        assertFalse(
+            result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ ) );
+        assertTrue( result.getBranchResults()
+                        .get( createdNode.id() )
+                        .get( 0 )
+                        .getNode()
+                        .getPermissions()
+                        .isAllowedFor( principal, MODIFY, DELETE, CREATE, PUBLISH, WRITE_PERMISSIONS, READ_PERMISSIONS ) );
+
+    }
+
+    @Test
+    void add_to_existing()
+        throws Exception
+    {
+        final PrincipalKey principal = PrincipalKey.from( "user:my-provider:my-user" );
+
+        final Node createdNode = createNode( CreateNodeParams.create()
+                                                 .name( "my-node" )
+                                                 .parent( NodePath.ROOT )
+                                                 .permissions( AccessControlList.create()
+                                                                   .add( AccessControlEntry.create()
+                                                                             .principal( principal )
+                                                                             .allow( READ )
+                                                                             .build() )
+                                                                   .add( AccessControlEntry.create()
+                                                                             .principal( TEST_DEFAULT_USER.getKey() )
+                                                                             .allowAll()
+                                                                             .build() )
+                                                                   .build() )
+                                                 .build() );
+
+        refresh();
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .overwriteChildPermissions( true )
+                                                                                    .addBranches(
+                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addPermissions( AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .allow( MODIFY )
+                                                                                                                   .principal( principal )
+                                                                                                                   .build() )
+                                                                                                         .build() )
+                                                                                    .build() );
+
+        assertEquals( 1, result.getBranchResults().size() );
+        assertTrue(
+            result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ, MODIFY ) );
+        assertFalse( result.getBranchResults()
+                         .get( createdNode.id() )
+                         .get( 0 )
+                         .getNode()
+                         .getPermissions()
+                         .isAllowedFor( principal, DELETE, CREATE, PUBLISH, WRITE_PERMISSIONS, READ_PERMISSIONS ) );
+
+    }
+
+    @Test
+    void remove_all_on_empty()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        refresh();
+
+        final PrincipalKey principal = PrincipalKey.from( "user:my-provider:my-user" );
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .overwriteChildPermissions( true )
+                                                                                    .addBranches(
+                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addPermissions( AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .allowAll()
+                                                                                                                   .principal( principal )
+                                                                                                                   .build() )
+                                                                                                         .build() )
+                                                                                    .removePermissions( AccessControlList.create()
+                                                                                                            .add(
+                                                                                                                AccessControlEntry.create()
+                                                                                                                    .principal( principal )
+                                                                                                                    .build() )
+                                                                                                            .build() )
+                                                                                    .build() );
+
+        assertEquals( 1, result.getBranchResults().size() );
+        assertFalse( result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().contains( principal ) );
+
     }
 
     private void applyPermissionsWithOverwrite()

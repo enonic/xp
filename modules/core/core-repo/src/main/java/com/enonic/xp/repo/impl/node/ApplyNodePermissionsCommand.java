@@ -174,7 +174,8 @@ public class ApplyNodePermissionsCommand
                                                                              .nodePath( updatedVersionMetadata.getNodePath() )
                                                                              .nodeVersionKey( updatedVersionMetadata.getNodeVersionKey() )
                                                                              .nodeId( updatedVersionMetadata.getNodeId() )
-                                                                             .timestamp( updatedVersionMetadata.getTimestamp() ).build() )
+                                                                             .timestamp( updatedVersionMetadata.getTimestamp() )
+                                                                             .build() )
                                                        .build() ), branch, l -> {
             }, InternalContext.from( ContextAccessor.current() ) );
             return null;
@@ -237,18 +238,20 @@ public class ApplyNodePermissionsCommand
                 {
                     return;
                 }
-                if ( entryToRemove.getAllowedPermissions().isEmpty() )
-                { //remove all if no permissions specified
+                if ( entryToRemove.getAllowedPermissions().isEmpty() ) //remove all if no permissions specified
+                {
                     newPermissions.remove( entryToRemove.getPrincipal() );
                 }
-
-                newPermissions.put( entryToRemove.getPrincipal(), AccessControlEntry.create()
-                    .principal( entryToRemove.getPrincipal() )
-                    .allow( currentACE.getAllowedPermissions()
-                                .stream()
-                                .filter( permission -> !entryToRemove.getAllowedPermissions().contains( permission ) )
-                                .collect( Collectors.toList() ) )
-                    .build() );
+                else
+                {
+                    newPermissions.put( entryToRemove.getPrincipal(), AccessControlEntry.create()
+                        .principal( entryToRemove.getPrincipal() )
+                        .allow( currentACE.getAllowedPermissions()
+                                    .stream()
+                                    .filter( permission -> !entryToRemove.getAllowedPermissions().contains( permission ) )
+                                    .collect( Collectors.toList() ) )
+                        .build() );
+                }
             } );
         }
 
