@@ -55,7 +55,7 @@ felix-logback = { module = "org.apache.felix:org.apache.felix.logback", version 
 felix-logextension = { module = "org.apache.felix:org.apache.felix.log.extension", version = "1.0.0" }
 felix-gogo-command = { module = "org.apache.felix:org.apache.felix.gogo.command", version = "0.16.0" }
 felix-gogo-runtime = { module = "org.apache.felix:org.apache.felix.gogo.runtime", version = "0.16.2" }
-felix-gogo-shell = { module = "org.apache.felix:org.apache.felix.gogo.shell", version = "0.12.0" }
+felix-gogo-shell = { module = "org.apache.felix:org.apache.felix.gogo.shell", version = "1.1.4" }
 felix-shell-remote = { module = "org.apache.felix:org.apache.felix.shell.remote", version = "1.1.2" }
 
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.77" }
