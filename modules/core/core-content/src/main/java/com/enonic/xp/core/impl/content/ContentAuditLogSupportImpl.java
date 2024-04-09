@@ -530,7 +530,7 @@ public class ContentAuditLogSupportImpl
                 .collect( Collectors.toList() ) );
         }
 
-        result.getBranchResults().forEach( ( contentId, branchResults ) -> {
+        result.getResults().forEach( ( contentId, branchResults ) -> {
 
             final PropertySet contentSet = resultSet.addSet( contentId.toString() );
             branchResults.forEach( branchResult -> {
@@ -543,7 +543,7 @@ public class ContentAuditLogSupportImpl
             } );
         } );
 
-        final AuditLogUris auditLogUris = result.getBranchResults()
+        final AuditLogUris auditLogUris = result.getResults()
             .entrySet()
             .stream()
             .flatMap( entry -> entry.getValue()

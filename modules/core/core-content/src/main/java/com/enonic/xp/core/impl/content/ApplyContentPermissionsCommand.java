@@ -51,9 +51,8 @@ final class ApplyContentPermissionsCommand
 
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
-        result.getBranchResults().forEach( ( id, branchResult ) -> {
-            branchResult.forEach( br -> builder.addBranchResult( ContentId.from( id ), br.getBranch(),
-                                                                 br.getNode() != null
+        result.getResults().forEach( ( id, branchResult ) -> {
+            branchResult.forEach( br -> builder.addResult( ContentId.from( id ), br.getBranch(), br.getNode() != null
                                                                      ? ContextBuilder.from( ContextAccessor.current() )
                                                                      .branch( br.getBranch() )
                                                                      .build()
@@ -66,7 +65,7 @@ final class ApplyContentPermissionsCommand
 
     private void commitResult( final ApplyNodePermissionsResult result )
     {
-        final RoutableNodeVersionIds versionIdsToCommit = result.getBranchResults()
+        final RoutableNodeVersionIds versionIdsToCommit = result.getResults()
             .values()
             .stream()
             .flatMap( Collection::stream )

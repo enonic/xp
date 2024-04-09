@@ -100,14 +100,14 @@ public class ApplyNodePermissionsCommandTest
                                                                                                       .build() )
                                                                                     .build() );
 
-        assertEquals( 3, result.getBranchResults().size() );
+        assertEquals( 3, result.getResults().size() );
 
         assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
                       result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
         assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
                       result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
 
-        assertEquals( 1, result.getBranchResults().get( grandChildNode.id() ).size() );
+        assertEquals( 1, result.getResults().get( grandChildNode.id() ).size() );
     }
 
     @Test
@@ -143,7 +143,7 @@ public class ApplyNodePermissionsCommandTest
                                                                                                       .build() )
                                                                                     .build() );
 
-        assertEquals( 2, result.getBranchResults().size() );
+        assertEquals( 2, result.getResults().size() );
 
         assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
                          result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
@@ -183,7 +183,7 @@ public class ApplyNodePermissionsCommandTest
                                                                                                       .build() )
                                                                                     .build() );
 
-        assertEquals( 2, result.getBranchResults().size() );
+        assertEquals( 2, result.getResults().size() );
 
         assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
                          result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
@@ -219,7 +219,7 @@ public class ApplyNodePermissionsCommandTest
                                                                                  .build() )
                                                                .build() ) );
 
-        assertEquals( 2, result.getBranchResults().size() );
+        assertEquals( 2, result.getResults().size() );
 
         assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
                       result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
@@ -283,7 +283,7 @@ public class ApplyNodePermissionsCommandTest
 
         verify( listener, times( 1 ) ).notEnoughRights( 1 );
 
-        assertEquals( 1, result.getBranchResults().size() );
+        assertEquals( 1, result.getResults().size() );
         assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ) );
     }
 
@@ -317,10 +317,9 @@ public class ApplyNodePermissionsCommandTest
                                                                                                             .build() )
                                                                                     .build() );
 
-        assertEquals( 1, result.getBranchResults().size() );
-        assertFalse(
-            result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ ) );
-        assertTrue( result.getBranchResults()
+        assertEquals( 1, result.getResults().size() );
+        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ ) );
+        assertTrue( result.getResults()
                         .get( createdNode.id() )
                         .get( 0 )
                         .getNode()
@@ -365,10 +364,10 @@ public class ApplyNodePermissionsCommandTest
                                                                                                          .build() )
                                                                                     .build() );
 
-        assertEquals( 1, result.getBranchResults().size() );
+        assertEquals( 1, result.getResults().size() );
         assertTrue(
-            result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ, MODIFY ) );
-        assertFalse( result.getBranchResults()
+            result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ, MODIFY ) );
+        assertFalse( result.getResults()
                          .get( createdNode.id() )
                          .get( 0 )
                          .getNode()
@@ -406,8 +405,8 @@ public class ApplyNodePermissionsCommandTest
                                                                                                             .build() )
                                                                                     .build() );
 
-        assertEquals( 1, result.getBranchResults().size() );
-        assertFalse( result.getBranchResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().contains( principal ) );
+        assertEquals( 1, result.getResults().size() );
+        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().contains( principal ) );
 
     }
 
@@ -465,7 +464,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        assertEquals( 6, updateNodes.getBranchResults().size() );
+        assertEquals( 6, updateNodes.getResults().size() );
 
         final Node topNodeUpdated = getNodeById( topNode.id() );
         assertEquals( permissions, topNodeUpdated.getPermissions() );

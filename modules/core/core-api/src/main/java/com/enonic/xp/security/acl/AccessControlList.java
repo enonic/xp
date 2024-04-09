@@ -108,7 +108,7 @@ public final class AccessControlList
         return this.entries.values();
     }
 
-    public Map<PrincipalKey, AccessControlEntry> getMap()
+    public Map<PrincipalKey, AccessControlEntry> asMap()
     {
         return this.entries;
     }

@@ -36,12 +36,12 @@ public class ApplyPermissionsHandlerTest
 
         Mockito.when( this.nodeService.applyPermissions( Mockito.any() ) )
             .thenReturn( ApplyNodePermissionsResult.create()
-                             .addBranchResult( applyNodePermissionsParams.getNodeId(), ContextAccessor.current().getBranch(),
-                                               Node.create( applyNodePermissionsParams.getNodeId() ).build() )
-                             .addBranchResult( applyNodePermissionsParams.getNodeId(), ContentConstants.BRANCH_MASTER,
-                                               Node.create( applyNodePermissionsParams.getNodeId() ).build() )
-                             .addBranchResult( NodeId.from( "nodeId2" ), ContextAccessor.current().getBranch(),
-                                               Node.create( NodeId.from( "nodeId2" ) ).build() )
+                             .addResult( applyNodePermissionsParams.getNodeId(), ContextAccessor.current().getBranch(),
+                                         Node.create( applyNodePermissionsParams.getNodeId() ).build() )
+                             .addResult( applyNodePermissionsParams.getNodeId(), ContentConstants.BRANCH_MASTER,
+                                         Node.create( applyNodePermissionsParams.getNodeId() ).build() )
+                             .addResult( NodeId.from( "nodeId2" ), ContextAccessor.current().getBranch(),
+                                         Node.create( NodeId.from( "nodeId2" ) ).build() )
                              .build() );
 
         Mockito.when( this.nodeService.getByPath( Mockito.any() ) )

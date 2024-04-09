@@ -107,11 +107,11 @@ public class ApplyNodePermissionsCommand
 
         if ( updatedOriginNode == null )
         {
-            results.addBranchResult( nodeId, this.sourceBranch, null );
+            results.addResult( nodeId, this.sourceBranch, null );
             return;
         }
 
-        results.addBranchResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
+        results.addResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
 
         activeVersionMap.keySet().forEach( targetBranch -> {
             if ( targetBranch.equals( this.sourceBranch ) )
@@ -126,7 +126,7 @@ public class ApplyNodePermissionsCommand
                 updatePermissionsInBranch( nodeId, isEqualToOrigin ? updatedOriginNode.nodeVersionMetadata() : null, permissions,
                                            targetBranch );
             ;
-            results.addBranchResult( nodeId, targetBranch, isEqualToOrigin
+            results.addResult( nodeId, targetBranch, isEqualToOrigin
                 ? updatedOriginNode.node()
                 : updatedTargetNode != null ? updatedTargetNode.node() : null );
 
@@ -184,8 +184,8 @@ public class ApplyNodePermissionsCommand
         {
             final Node editedNode = Node.create( persistedNode )
                 .timestamp( Instant.now( CLOCK ) )
-                .permissions(
-                    compileNewPermissions( persistedNode, permissions, params.getAddPermissions(), params.getRemovePermissions() ) )
+                .permissions( compileNewPermissions( persistedNode.getPermissions(), permissions, params.getAddPermissions(),
+                                                     params.getRemovePermissions() ) )
                 .build();
             result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
         }
@@ -204,7 +204,7 @@ public class ApplyNodePermissionsCommand
             .getNodeVersions() : Map.of();
     }
 
-    private AccessControlList compileNewPermissions( final Node persistedNode, final AccessControlList permissions,
+    private AccessControlList compileNewPermissions( final AccessControlList persistedPermissions, final AccessControlList permissions,
                                                      final AccessControlList addPermissions, final AccessControlList removePermissions )
     {
 
@@ -213,7 +213,7 @@ public class ApplyNodePermissionsCommand
             return permissions;
         }
 
-        final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedNode.getPermissions().getMap() );
+        final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );
 
         if ( !addPermissions.isEmpty() )
         {

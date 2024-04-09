@@ -22,7 +22,7 @@ public class ApplyPermissionsResultMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        for ( Map.Entry<ContentId, List<ApplyContentPermissionsResult.BranchResult>> entry : result.getBranchResults().entrySet() )
+        for ( Map.Entry<ContentId, List<ApplyContentPermissionsResult.BranchResult>> entry : result.getResults().entrySet() )
         {
             gen.map( entry.getKey().toString() );
 

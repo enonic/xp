@@ -129,17 +129,17 @@ public class ApplyPermissionsHandlerTest
             .thenReturn( value );
 
         when( contentService.applyPermissions( Mockito.any() ) ).thenReturn(
-            ApplyContentPermissionsResult.create().addBranchResult( content.getId(), ContentConstants.BRANCH_MASTER, content ).build() );
+            ApplyContentPermissionsResult.create().addResult( content.getId(), ContentConstants.BRANCH_MASTER, content ).build() );
 
         runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsAddRemove" );
 
         verify( contentService ).applyPermissions( paramsCaptor.capture() );
 
-        assertEquals( 2, paramsCaptor.getValue().getAddPermissions().getMap().size() );
+        assertEquals( 2, paramsCaptor.getValue().getAddPermissions().asMap().size() );
         assertTrue( paramsCaptor.getValue().getAddPermissions().isAllowedFor( PrincipalKey.ofAnonymous(), Permission.READ ) );
         assertTrue( paramsCaptor.getValue().getAddPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) );
 
-        assertEquals( 1, paramsCaptor.getValue().getRemovePermissions().getMap().size() );
+        assertEquals( 1, paramsCaptor.getValue().getRemovePermissions().asMap().size() );
         assertTrue( paramsCaptor.getValue()
                         .getRemovePermissions()
                         .isAllowedFor( PrincipalKey.ofAnonymous(), Permission.DELETE, Permission.MODIFY ) );
