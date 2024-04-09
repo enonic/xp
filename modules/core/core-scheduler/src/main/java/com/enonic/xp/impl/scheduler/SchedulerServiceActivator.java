@@ -19,6 +19,7 @@ import com.enonic.xp.event.EventListener;
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.SchedulerService;
@@ -136,7 +137,7 @@ public final class SchedulerServiceActivator
                     schedulerService.create( job );
                 }
             }
-            catch ( NodeAlreadyExistAtPathException e )
+            catch ( NodeAlreadyExistAtPathException | NodeIdExistsException e )
             {
                 LOG.debug( String.format( "[%s] job already exist.", job.getName().getValue() ), e );
             }
