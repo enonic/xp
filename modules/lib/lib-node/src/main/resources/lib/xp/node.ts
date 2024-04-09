@@ -1052,7 +1052,7 @@ class RepoConnectionImpl
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.key Path or ID of the node.
-     * @param {object} [params.permissions] the permission json
+     * @param {object} [params.permissions] the permissions json
      * @param {object} [params.addPermissions] the permissions to add json
      * @param {object} [params.removePermissions] the permissions to remove json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
