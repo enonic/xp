@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -12,6 +14,10 @@ public final class ApplyContentPermissionsParams
 
     private final AccessControlList permissions;
 
+    private final AccessControlList addPermissions;
+
+    private final AccessControlList removePermissions;
+
     private final boolean overwriteChildPermissions;
 
     private final ApplyPermissionsListener listener;
@@ -20,8 +26,13 @@ public final class ApplyContentPermissionsParams
     {
         contentId = requireNonNull( builder.contentId );
         overwriteChildPermissions = builder.overwriteChildPermissions;
-        permissions = builder.permissions;
+        permissions = builder.permissions.build();
+        addPermissions = builder.addPermissions.build();
+        removePermissions = builder.removePermissions.build();
         listener = builder.listener;
+
+        Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
+                                     "Permissions cannot be set together with addPermissions or removePermissions" );
     }
 
     public static Builder create()
@@ -44,6 +55,16 @@ public final class ApplyContentPermissionsParams
         return permissions;
     }
 
+    public AccessControlList getAddPermissions()
+    {
+        return addPermissions;
+    }
+
+    public AccessControlList getRemovePermissions()
+    {
+        return removePermissions;
+    }
+
     public ApplyPermissionsListener getListener()
     {
         return listener;
@@ -59,7 +80,11 @@ public final class ApplyContentPermissionsParams
     {
         private ContentId contentId;
 
-        private AccessControlList permissions;
+        private final AccessControlList.Builder permissions = AccessControlList.create();
+
+        private final AccessControlList.Builder addPermissions = AccessControlList.create();
+
+        private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
         private boolean overwriteChildPermissions;
 
@@ -89,7 +114,28 @@ public final class ApplyContentPermissionsParams
 
         public Builder permissions( final AccessControlList permissions )
         {
-            this.permissions = permissions;
+            if ( permissions != null )
+            {
+                this.permissions.addAll( permissions );
+            }
+            return this;
+        }
+
+        public Builder addPermissions( final AccessControlList permissions )
+        {
+            if ( permissions != null )
+            {
+                this.addPermissions.addAll( permissions );
+            }
+            return this;
+        }
+
+        public Builder removePermissions( final AccessControlList permissions )
+        {
+            if ( permissions != null )
+            {
+                this.removePermissions.addAll( permissions );
+            }
             return this;
         }
 

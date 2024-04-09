@@ -206,6 +206,11 @@ public class NodeHandler
 
     private static AccessControlList getAccessControlList( final ScriptValue permissions )
     {
+        if ( permissions == null )
+        {
+            return AccessControlList.empty();
+        }
+
         final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( permissions );
 
         final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
@@ -263,16 +268,21 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object applyPermissions( final String key, final ScriptValue permissions, final List<String> branches,
+    public Object applyPermissions( final String key, final ScriptValue permissions, final ScriptValue addPermissions,
+                                    final ScriptValue removePermissions, final List<String> branches,
                                     final boolean overwriteChildPermissions )
     {
-        final AccessControlList accessControlEntries = getAccessControlList( permissions );
+        final AccessControlList permissionsEntries = getAccessControlList( permissions );
+        final AccessControlList addPermissionsEntries = getAccessControlList( addPermissions );
+        final AccessControlList removePermissionsEntries = getAccessControlList( removePermissions );
 
         return execute( ApplyPermissionsHandler.create()
                             .nodeKey( NodeKey.from( key ) )
                             .branches( branches.stream().map( Branch::from ).collect( Branches.collecting() ) )
                             .overwriteChildPermissions( overwriteChildPermissions )
-                            .permissions( accessControlEntries )
+                            .permissions( permissionsEntries )
+                            .addPermissions( addPermissionsEntries )
+                            .removePermissions( removePermissionsEntries )
                             .nodeService( this.nodeService )
                             .build() );
     }

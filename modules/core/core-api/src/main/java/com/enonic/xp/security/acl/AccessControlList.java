@@ -108,6 +108,11 @@ public final class AccessControlList
         return this.entries.values();
     }
 
+    public Map<PrincipalKey, AccessControlEntry> asMap()
+    {
+        return this.entries;
+    }
+
     public boolean contains( final PrincipalKey principalKey )
     {
         return this.entries.containsKey( principalKey );

@@ -13,12 +13,12 @@ import com.enonic.xp.branch.Branch;
 @PublicApi
 public final class ApplyContentPermissionsResult
 {
-    private final Map<ContentId, List<BranchResult>> branchResults;
+    private final Map<ContentId, List<BranchResult>> results;
 
 
     private ApplyContentPermissionsResult( Builder builder )
     {
-        this.branchResults = (ImmutableMap) builder.branchResults.build().asMap();
+        this.results = (ImmutableMap) builder.results.build().asMap();
     }
 
     public static Builder create()
@@ -29,7 +29,7 @@ public final class ApplyContentPermissionsResult
     @Deprecated
     public ContentPaths getSucceedContents()
     {
-        return branchResults.values()
+        return results.values()
             .stream()
             .filter( l -> l.get( 0 ).content != null )
             .map( l -> l.get( 0 ).content.getPath() )
@@ -45,13 +45,13 @@ public final class ApplyContentPermissionsResult
 
     public Map<ContentId, List<BranchResult>> getResults()
     {
-        return branchResults;
+        return results;
     }
 
     public Content getResult( final ContentId contentId, final Branch branch )
     {
-        final List<BranchResult> results = branchResults.get( contentId );
-        return results != null ? branchResults.get( contentId )
+        final List<BranchResult> results = this.results.get( contentId );
+        return results != null ? this.results.get( contentId )
             .stream()
             .filter( br -> br.getBranch().equals( branch ) )
             .map( BranchResult::getContent )
@@ -86,7 +86,7 @@ public final class ApplyContentPermissionsResult
 
     public static final class Builder
     {
-        private final ImmutableListMultimap.Builder<ContentId, BranchResult> branchResults = ImmutableListMultimap.builder();
+        private final ImmutableListMultimap.Builder<ContentId, BranchResult> results = ImmutableListMultimap.builder();
 
         private Builder()
         {
@@ -104,9 +104,9 @@ public final class ApplyContentPermissionsResult
             return this;
         }
 
-        public Builder addBranchResult( ContentId contentId, Branch branch, Content content )
+        public Builder addResult( ContentId contentId, Branch branch, Content content )
         {
-            branchResults.put( contentId, new BranchResult( branch, content ) );
+            results.put( contentId, new BranchResult( branch, content ) );
             return this;
         }
 

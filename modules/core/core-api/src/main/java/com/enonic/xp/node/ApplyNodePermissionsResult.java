@@ -13,12 +13,12 @@ import com.enonic.xp.branch.Branch;
 @PublicApi
 public final class ApplyNodePermissionsResult
 {
-    private final Map<NodeId, List<BranchResult>> branchResults;
+    private final Map<NodeId, List<BranchResult>> results;
 
 
     private ApplyNodePermissionsResult( Builder builder )
     {
-        this.branchResults = (ImmutableMap) builder.branchResults.build().asMap();
+        this.results = (ImmutableMap) builder.results.build().asMap();
 
     }
 
@@ -30,7 +30,7 @@ public final class ApplyNodePermissionsResult
     @Deprecated
     public Nodes getSucceedNodes()
     {
-        return branchResults.values().stream().map( l -> l.get( 0 ).node ).filter( Objects::nonNull ).collect( Nodes.collecting() );
+        return results.values().stream().map( l -> l.get( 0 ).node ).filter( Objects::nonNull ).collect( Nodes.collecting() );
     }
 
     @Deprecated
@@ -39,16 +39,16 @@ public final class ApplyNodePermissionsResult
         return Nodes.empty();
     }
 
-    public Map<NodeId, List<BranchResult>> getBranchResults()
+    public Map<NodeId, List<BranchResult>> getResults()
     {
-        return branchResults;
+        return results;
     }
 
     public Node getResult( final NodeId nodeId, final Branch branch )
     {
-        final List<BranchResult> results = branchResults.get( nodeId );
+        final List<BranchResult> results = this.results.get( nodeId );
 
-        return results != null ? branchResults.get( nodeId )
+        return results != null ? this.results.get( nodeId )
             .stream().filter( br -> br.branch.equals( branch ) ).map( BranchResult::getNode )
             .filter( Objects::nonNull )
             .findAny()
@@ -81,7 +81,7 @@ public final class ApplyNodePermissionsResult
 
     public static final class Builder
     {
-        private final ImmutableListMultimap.Builder<NodeId, BranchResult> branchResults = ImmutableListMultimap.builder();
+        private final ImmutableListMultimap.Builder<NodeId, BranchResult> results = ImmutableListMultimap.builder();
 
         private Builder()
         {
@@ -99,9 +99,9 @@ public final class ApplyNodePermissionsResult
             return this;
         }
 
-        public Builder addBranchResult( NodeId nodeId, Branch branch, Node node )
+        public Builder addResult( NodeId nodeId, Branch branch, Node node )
         {
-            branchResults.put( nodeId, new BranchResult( branch, node ) );
+            results.put( nodeId, new BranchResult( branch, node ) );
             return this;
         }
 
