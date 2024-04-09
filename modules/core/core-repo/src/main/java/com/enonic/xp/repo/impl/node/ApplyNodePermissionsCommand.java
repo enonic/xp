@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
@@ -29,6 +31,8 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -81,7 +85,7 @@ public class ApplyNodePermissionsCommand
 
         AccessControlList permissions = params.getPermissions();
 
-        if ( permissions == null || permissions.isEmpty() )
+        if ( params.getPermissions().isEmpty() && params.getAddPermissions().isEmpty() && params.getRemovePermissions().isEmpty() )
         {
             permissions = persistedNode.getPermissions();
         }
@@ -103,11 +107,11 @@ public class ApplyNodePermissionsCommand
 
         if ( updatedOriginNode == null )
         {
-            results.addBranchResult( nodeId, this.sourceBranch, null );
+            results.addResult( nodeId, this.sourceBranch, null );
             return;
         }
 
-        results.addBranchResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
+        results.addResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
 
         activeVersionMap.keySet().forEach( targetBranch -> {
             if ( targetBranch.equals( this.sourceBranch ) )
@@ -122,7 +126,7 @@ public class ApplyNodePermissionsCommand
                 updatePermissionsInBranch( nodeId, isEqualToOrigin ? updatedOriginNode.nodeVersionMetadata() : null, permissions,
                                            targetBranch );
             ;
-            results.addBranchResult( nodeId, targetBranch, isEqualToOrigin
+            results.addResult( nodeId, targetBranch, isEqualToOrigin
                 ? updatedOriginNode.node()
                 : updatedTargetNode != null ? updatedTargetNode.node() : null );
 
@@ -147,7 +151,7 @@ public class ApplyNodePermissionsCommand
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
-                                            final AccessControlList permissions, final Branch branch )
+                                                       final AccessControlList permissions, final Branch branch )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
@@ -171,13 +175,18 @@ public class ApplyNodePermissionsCommand
                                                                              .nodeVersionKey( updatedVersionMetadata.getNodeVersionKey() )
                                                                              .nodeId( updatedVersionMetadata.getNodeId() )
                                                                              .timestamp( updatedVersionMetadata.getTimestamp() )
-                                                                             .build() ).build() ), branch, l -> {
+                                                                             .build() )
+                                                       .build() ), branch, l -> {
             }, InternalContext.from( ContextAccessor.current() ) );
             return null;
         }
         else
         {
-            final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions ).build();
+            final Node editedNode = Node.create( persistedNode )
+                .timestamp( Instant.now( CLOCK ) )
+                .permissions( compileNewPermissions( persistedNode.getPermissions(), permissions, params.getAddPermissions(),
+                                                     params.getRemovePermissions() ) )
+                .build();
             result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
         }
 
@@ -193,6 +202,60 @@ public class ApplyNodePermissionsCommand
             .build()
             .execute()
             .getNodeVersions() : Map.of();
+    }
+
+    private AccessControlList compileNewPermissions( final AccessControlList persistedPermissions, final AccessControlList permissions,
+                                                     final AccessControlList addPermissions, final AccessControlList removePermissions )
+    {
+
+        if ( !permissions.isEmpty() )
+        {
+            return permissions;
+        }
+
+        final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );
+
+        if ( !addPermissions.isEmpty() )
+        {
+            addPermissions.getEntries().forEach( entryToAdd -> {
+                newPermissions.compute( entryToAdd.getPrincipal(), ( key, entry ) -> entry == null
+                    ? entryToAdd
+                    : AccessControlEntry.create()
+                        .principal( entry.getPrincipal() )
+                        .allow( entry.getAllowedPermissions() )
+                        .allow( entryToAdd.getAllowedPermissions() )
+                        .deny( entry.getDeniedPermissions() )
+                        .deny( entryToAdd.getDeniedPermissions() )
+                        .build() );
+            } );
+        }
+
+        if ( !removePermissions.isEmpty() )
+        {
+            removePermissions.getEntries().forEach( entryToRemove -> {
+                final AccessControlEntry currentACE = newPermissions.get( entryToRemove.getPrincipal() );
+                if ( currentACE == null )
+                {
+                    return;
+                }
+                if ( entryToRemove.getAllowedPermissions().isEmpty() ) //remove all if no permissions specified
+                {
+                    newPermissions.remove( entryToRemove.getPrincipal() );
+                }
+                else
+                {
+                    newPermissions.put( entryToRemove.getPrincipal(), AccessControlEntry.create()
+                        .principal( entryToRemove.getPrincipal() )
+                        .allow( currentACE.getAllowedPermissions()
+                                    .stream()
+                                    .filter( permission -> !entryToRemove.getAllowedPermissions().contains( permission ) )
+                                    .collect( Collectors.toList() ) )
+                        .build() );
+                }
+            } );
+        }
+
+        return AccessControlList.create().addAll( newPermissions.values() ).build();
     }
 
     private static class EmptyApplyPermissionsListener

@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.content;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.lib.content.mapper.ApplyPermissionsResultMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -34,7 +36,11 @@ public final class ApplyPermissionsHandler
 
     private boolean overwriteChildPermissions;
 
-    private AccessControlList permissions;
+    private AccessControlList permissions = AccessControlList.empty();
+
+    private AccessControlList addPermissions = AccessControlList.empty();
+
+    private AccessControlList removePermissions = AccessControlList.empty();
 
     public void setKey( final String key )
     {
@@ -48,22 +54,41 @@ public final class ApplyPermissionsHandler
 
     public void setPermissions( final ScriptValue permissions )
     {
+        this.permissions = fetchPermissions( permissions );
+    }
+
+    public void setAddPermissions( final ScriptValue addPermissions )
+    {
+        this.addPermissions = fetchPermissions( addPermissions );
+    }
+
+    public void setRemovePermissions( final ScriptValue removePermissions )
+    {
+        this.removePermissions = fetchPermissions( removePermissions );
+    }
+
+    private AccessControlList fetchPermissions( final ScriptValue permissions )
+    {
         if ( permissions != null )
         {
             final List<AccessControlEntry> accessControlEntries =
                 permissions.getArray().stream().map( this::convertToAccessControlEntry ).collect( Collectors.toList() );
 
-            this.permissions = AccessControlList.create().addAll( accessControlEntries ).build();
+            return AccessControlList.create().addAll( accessControlEntries ).build();
         }
+
+        return AccessControlList.empty();
     }
 
     private AccessControlEntry convertToAccessControlEntry( ScriptValue permission )
     {
         final String principal = permission.getMember( "principal" ).getValue( String.class );
-        final List<Permission> allowedPermissions =
-            permission.getMember( "allow" ).getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() );
-        final List<Permission> deniedPermissions =
-            permission.getMember( "deny" ).getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() );
+        final List<Permission> allowedPermissions = Optional.ofNullable( permission.getMember( "allow" ) )
+            .map( sv -> sv.getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() ) )
+            .orElse( List.of() );
+        final List<Permission> deniedPermissions = Optional.ofNullable( permission.getMember( "deny" ) )
+            .map( sv -> sv.getArray( String.class ).stream().map( Permission::valueOf ).collect( Collectors.toList() ) )
+            .orElse( List.of() );
 
         return AccessControlEntry.create()
             .principal( PrincipalKey.from( principal ) )
@@ -72,32 +97,32 @@ public final class ApplyPermissionsHandler
             .build();
     }
 
-    public boolean execute()
+    public ApplyPermissionsResultMapper execute()
     {
         return doExecute();
     }
 
-    private boolean doExecute()
+    private ApplyPermissionsResultMapper doExecute()
     {
-        ContentId contentId = getContentId();
-
         if ( !validPrincipals() )
         {
-            return false;
+            throw new IllegalArgumentException( "Invalid principals" );
         }
 
-        if ( contentId != null )
+        final ContentId contentId = getContentId();
+
+        if ( contentId == null )
         {
-            contentService.applyPermissions( ApplyContentPermissionsParams.create()
-                                                 .contentId( contentId )
-                                                 .permissions( permissions )
-                                                 .overwriteChildPermissions( overwriteChildPermissions )
-                                                 .build() );
-
-            return true;
+            throw new IllegalArgumentException( "Content not found: " + this.key );
         }
-
-        return false;
+        return new ApplyPermissionsResultMapper( contentService.applyPermissions( ApplyContentPermissionsParams.create()
+                                                                                      .contentId( contentId )
+                                                                                      .permissions( permissions )
+                                                                                      .addPermissions( addPermissions )
+                                                                                      .removePermissions( removePermissions )
+                                                                                      .overwriteChildPermissions(
+                                                                                          overwriteChildPermissions )
+                                                                                      .build() ) );
     }
 
     private ContentId getContentId()

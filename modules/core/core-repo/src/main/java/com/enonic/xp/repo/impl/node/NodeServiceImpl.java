@@ -824,7 +824,7 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        result.getBranchResults()
+        result.getResults()
             .values()
             .stream()
             .flatMap( Collection::stream )
