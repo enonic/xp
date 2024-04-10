@@ -94,7 +94,7 @@ public final class ApplyContentPermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private ApplyPermissionsMode applyPermissionsMode = ApplyPermissionsMode.SINGLE;
+        private ApplyPermissionsMode applyPermissionsMode;
 
         private ApplyPermissionsListener listener;
 

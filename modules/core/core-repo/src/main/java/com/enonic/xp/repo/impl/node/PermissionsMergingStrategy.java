@@ -5,11 +5,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 sealed interface PermissionsMergingStrategy
     permits DefaultPermissionsMergingStrategy, OverwriteChildPermissionsMergingStrategy, KeepChildPermissionsMergingStrategy
 {
-    DefaultPermissionsMergingStrategy DEFAULT = new DefaultPermissionsMergingStrategy();
+    DefaultPermissionsMergingStrategy MERGE = new DefaultPermissionsMergingStrategy();
 
     OverwriteChildPermissionsMergingStrategy OVERWRITE = new OverwriteChildPermissionsMergingStrategy();
-
-    KeepChildPermissionsMergingStrategy SKIP = new KeepChildPermissionsMergingStrategy();
 
     /**
      * Returns resulting permissions after merging child and parent permissions.

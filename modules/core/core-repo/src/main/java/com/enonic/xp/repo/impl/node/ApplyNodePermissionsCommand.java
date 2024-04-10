@@ -178,7 +178,7 @@ public class ApplyNodePermissionsCommand
         for ( Node child : children )
         {
             final PermissionsMergingStrategy mergingStrategy =
-                ApplyPermissionsMode.SINGLE == params.getMode() ? PermissionsMergingStrategy.DEFAULT : PermissionsMergingStrategy.OVERWRITE;
+                ApplyPermissionsMode.SINGLE == params.getMode() ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
 
             final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
 
