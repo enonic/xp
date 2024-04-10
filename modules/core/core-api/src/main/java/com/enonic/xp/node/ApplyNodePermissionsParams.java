@@ -22,7 +22,7 @@ public final class ApplyNodePermissionsParams
 
     private final AccessControlList removePermissions;
 
-    private final boolean overwriteChildPermissions;
+    private final ApplyPermissionsMode mode;
 
     private final ApplyPermissionsListener listener;
 
@@ -31,10 +31,10 @@ public final class ApplyNodePermissionsParams
     private ApplyNodePermissionsParams( Builder builder )
     {
         nodeId = Objects.requireNonNull( builder.nodeId );
+        mode = Objects.requireNonNullElse( builder.mode, ApplyPermissionsMode.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
-        overwriteChildPermissions = builder.overwriteChildPermissions;
         listener = builder.listener;
         branches = Branches.from( builder.branches.build() );
 
@@ -67,9 +67,15 @@ public final class ApplyNodePermissionsParams
         return removePermissions;
     }
 
+    @Deprecated
     public boolean isOverwriteChildPermissions()
     {
-        return overwriteChildPermissions;
+        return false;
+    }
+
+    public ApplyPermissionsMode getMode()
+    {
+        return mode;
     }
 
     public ApplyPermissionsListener getListener()
@@ -92,7 +98,7 @@ public final class ApplyNodePermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private boolean overwriteChildPermissions;
+        private ApplyPermissionsMode mode;
 
         private ApplyPermissionsListener listener;
 
@@ -135,9 +141,15 @@ public final class ApplyNodePermissionsParams
             return this;
         }
 
+        @Deprecated
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
-            this.overwriteChildPermissions = overwriteChildPermissions;
+            return this;
+        }
+
+        public Builder mode( final ApplyPermissionsMode mode )
+        {
+            this.mode = mode;
             return this;
         }
 

@@ -14,6 +14,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
@@ -87,7 +88,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -104,6 +105,42 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
                       result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
+                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+
+        assertEquals( 1, result.getResults().get( grandChildNode.id() ).size() );
+    }
+
+    @Test
+    void only_children()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
+        final Node grandChildNode = createNode( CreateNodeParams.create().name( "my-node2" ).parent( childNode.path() ).build() );
+
+        pushNodes( WS_OTHER, createdNode.id() );
+        pushNodes( WS_OTHER, childNode.id() );
+
+        refresh();
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .mode( ApplyPermissionsMode.CHILDREN )
+                                                                                    .addBranches(
+                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .permissions( AccessControlList.create()
+                                                                                                      .add( AccessControlEntry.create()
+                                                                                                                .allowAll()
+                                                                                                                .principal(
+                                                                                                                    PrincipalKey.from(
+                                                                                                                        "user:my-provider:my-user" ) )
+                                                                                                                .build() )
+                                                                                                      .build() )
+                                                                                    .build() );
+
+        assertEquals( 2, result.getResults().size() );
+
         assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
                       result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
 
@@ -130,7 +167,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -170,7 +207,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( childNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -207,8 +244,7 @@ public class ApplyNodePermissionsCommandTest
             .branch( ContentConstants.BRANCH_MASTER )
             .build()
             .callWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
-                                                               .nodeId( createdNode.id() )
-                                                               .overwriteChildPermissions( true )
+                                                               .nodeId( createdNode.id() ).mode( ApplyPermissionsMode.TREE )
                                                                .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
                                                                .permissions( AccessControlList.create()
                                                                                  .add( AccessControlEntry.create()
@@ -299,7 +335,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -353,7 +389,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -388,7 +424,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .overwriteChildPermissions( true )
+                                                                                    .mode( ApplyPermissionsMode.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -455,8 +491,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create()
             .nodeId( topNode.id() )
-            .permissions( topNode.getPermissions() )
-            .overwriteChildPermissions( true )
+            .permissions( topNode.getPermissions() ).mode( ApplyPermissionsMode.TREE )
             .applyPermissionsListener( mock( ApplyPermissionsListener.class ) )
             .build();
 
