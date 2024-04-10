@@ -79,7 +79,6 @@ public class ApiHandler
         List<String> result = new ArrayList<>();
 
         result.add( "media" );
-        result.add( "idprovider" );
         result.addAll( applicationService.getInstalledApplications().stream().filter( application -> {
             ResourceKey resourceKey = ResourceKey.from( application.getKey(), "api/api.js" );
             return resourceService.getResource( resourceKey ).exists();

@@ -152,42 +152,4 @@ public class PortalUrlServiceImpl_identityUrlTest
         final String url = this.service.identityUrl( params );
         assertEquals( "http://localhost/site/default/draft/_/idprovider/system/login", url );
     }
-
-    @Test
-    public void createUrlForSlashApiWithVhostContextConfig()
-    {
-        this.portalRequest.setBaseUri( "" );
-        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
-
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .type( UrlTypeConstants.ABSOLUTE )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
-
-        Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( "idProviderService.baseUrl", "http://media.enonic.com" );
-
-        String url = context.callWith( () -> this.service.identityUrl( params ) );
-        assertEquals( "http://media.enonic.com/system/login", url );
-    }
-
-    @Test
-    public void createUrlForSlashApi()
-    {
-        this.portalRequest.setBaseUri( "" );
-        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
-
-        when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getScheme() ).thenReturn( "http" );
-        when( req.getServerPort() ).thenReturn( 80 );
-
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .type( UrlTypeConstants.ABSOLUTE )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
-
-        Context context = ContextBuilder.create().build();
-        String url = context.callWith( () -> this.service.identityUrl( params ) );
-        assertEquals( "http://localhost/api/idprovider/system/login", url );
-    }
 }
