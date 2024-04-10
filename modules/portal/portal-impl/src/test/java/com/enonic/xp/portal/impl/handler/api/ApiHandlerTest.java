@@ -120,7 +120,6 @@ public class ApiHandlerTest
         assertTrue( objectAsMap.containsKey( "resources" ) );
         assertTrue( objectAsMap.get( "resources" ).contains( "myapplication" ) );
         assertTrue( objectAsMap.get( "resources" ).contains( "media" ) );
-        assertTrue( objectAsMap.get( "resources" ).contains( "idprovider" ) );
     }
 
 }
