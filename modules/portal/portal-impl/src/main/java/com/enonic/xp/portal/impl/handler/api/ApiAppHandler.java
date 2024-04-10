@@ -37,7 +37,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public class ApiAppHandler
     extends BaseWebHandler
 {
-    public static final Pattern PATTERN = Pattern.compile( "^(/admin)?/api/(?<appKey>(?!media|idprovider)[^/]+)/(?<restPath>.*)?$" );
+    public static final Pattern PATTERN = Pattern.compile( "^/api/(?<appKey>(?!media|idprovider)[^/]+)/(?<restPath>.*)?$" );
 
     private final ControllerScriptFactory controllerScriptFactory;
 

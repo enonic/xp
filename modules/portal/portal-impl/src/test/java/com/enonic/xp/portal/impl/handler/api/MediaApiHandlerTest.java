@@ -173,12 +173,6 @@ public class MediaApiHandlerTest
 
         this.request.setRawPath( "/api/media/attachment/default/master/123456/attachment-name.jpg?download" );
         assertTrue( this.handler.canHandle( this.request ) );
-
-        this.request.setRawPath( "/admin/api/media/attachment/default/master/123456/attachment-name.jpg?download" );
-        assertTrue( this.handler.canHandle( this.request ) );
-
-        this.request.setRawPath( "/adm/api/media/attachment/default/master/123456/attachment-name.jpg?download" );
-        assertFalse( this.handler.canHandle( this.request ) );
     }
 
     @Test
@@ -213,8 +207,6 @@ public class MediaApiHandlerTest
         assertNotNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
 
-        this.request.setRawPath( "/admin/api/media/attachment/default/master/123456/logo.png?download" );
-
         res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
@@ -233,12 +225,6 @@ public class MediaApiHandlerTest
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
         assertEquals( HttpStatus.UNAUTHORIZED, exception.getStatus() );
         assertEquals( "You don't have permission to access this resource", exception.getMessage() );
-
-        this.request.setRawPath( "/admin/api/media/attachment/default/draft/123456/logo.png" );
-
-        exception = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
-        assertEquals( HttpStatus.UNAUTHORIZED, exception.getStatus() );
-        assertEquals( "You don't have permission to access this resource", exception.getMessage() );
     }
 
     @Test
@@ -255,7 +241,7 @@ public class MediaApiHandlerTest
         assertEquals( MediaType.PNG, res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
 
-        this.request.setRawPath( "/admin/api/media/image/default/master/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/api/media/image/default/master/123456/scale-100-100/image-name.jpg" );
 
         res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );

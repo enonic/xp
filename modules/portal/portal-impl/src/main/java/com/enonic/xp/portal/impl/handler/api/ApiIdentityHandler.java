@@ -33,7 +33,7 @@ public class ApiIdentityHandler
     extends BaseWebHandler
 {
     private static final Pattern PATTERN =
-        Pattern.compile( "^(/admin)?/api/idprovider/(?<idProviderName>[^/]+)(/(?<functionName>(login|logout)))?(?<restPath>.+)?$" );
+        Pattern.compile( "^/api/idprovider/(?<idProviderName>[^/]+)(/(?<functionName>(login|logout)))?(?<restPath>.+)?$" );
 
     private final IdProviderControllerService idProviderControllerService;
 
@@ -50,7 +50,7 @@ public class ApiIdentityHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( "/api/idprovider" ) || webRequest.getRawPath().startsWith( "/admin/api/idprovider" );
+        return webRequest.getRawPath().startsWith( "/api/idprovider" );
     }
 
     @Override

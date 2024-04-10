@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -159,7 +160,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         appendParams( str, params.entries() );
 
         final String rawPath = portalRequest.getRawPath();
-        final boolean isSlashAPI = rawPath.startsWith( "/api/" ) || rawPath.startsWith( "/admin/api/" );
+        final boolean isSlashAPI = rawPath.startsWith( "/api/" );
 
         if ( isSlashAPI && !mustBeRewritten )
         {
@@ -176,8 +177,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( isSlashAPI )
         {
-            String targetPrefix = rawPath.startsWith( "/admin/api/" ) ? "/admin" + getTargetUriPrefix() : getTargetUriPrefix();
-            targetUri = targetPrefix + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
+            String targetPrefix = getTargetUriPrefix();
+            targetUri = Objects.requireNonNullElse( targetPrefix, "" ) + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
         }
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );

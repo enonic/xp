@@ -14,7 +14,7 @@ final class PageUrlBuilder
     {
         super.buildUrl( url, params );
 
-        if ( this.portalRequest.getRawPath().startsWith( "/api/" ) || this.portalRequest.getRawPath().startsWith( "/admin/api/" ) )
+        if ( this.portalRequest.getRawPath().startsWith( "/api/" ) )
         {
             url.setLength( 0 );
             appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
