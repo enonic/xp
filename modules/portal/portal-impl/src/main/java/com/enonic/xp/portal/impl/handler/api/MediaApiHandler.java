@@ -49,7 +49,7 @@ public class MediaApiHandler
     extends BaseWebHandler
 {
     private static final Pattern PATTERN =
-        Pattern.compile( "^/(admin/)?api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
+        Pattern.compile( "^/api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
 
     private static final Pattern ATTACHMENT_REST_PATH_PATTERN =
         Pattern.compile( "^(?<id>[^/^:]+)(?::(?<fingerprint>[^/]+))?/(?<name>[^/?]+)(?:\\?download)?$" );
@@ -101,7 +101,7 @@ public class MediaApiHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( "/admin/api/media/" ) || webRequest.getRawPath().startsWith( "/api/media/" );
+        return webRequest.getRawPath().startsWith( "/api/media/" );
     }
 
     @Override

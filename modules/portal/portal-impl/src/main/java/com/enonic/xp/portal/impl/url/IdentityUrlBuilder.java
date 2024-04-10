@@ -20,7 +20,7 @@ final class IdentityUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" ) || portalRequest.getRawPath().startsWith( "/admin/api/" );
+        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
         if ( isSlashAPI )
         {
             url.setLength( 0 );

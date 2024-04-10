@@ -32,7 +32,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public class ApiHandler
     extends BaseWebHandler
 {
-    private static final Pattern URL_PATTERN = Pattern.compile( "^(/admin)?/api$" );
+    private static final Pattern URL_PATTERN = Pattern.compile( "^/api$" );
 
     private static final ApplicationKey WELCOME_APP_KEY = ApplicationKey.from( "com.enonic.xp.app.welcome" );
 

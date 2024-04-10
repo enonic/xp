@@ -89,7 +89,7 @@ public class ApiAppHandlerTest
         assertFalse( this.handler.canHandle( webRequest ) );
 
         when( webRequest.getRawPath() ).thenReturn( "/admin/api/com.enonic.app.myapp/" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        assertFalse( this.handler.canHandle( webRequest ) );
 
         when( webRequest.getRawPath() ).thenReturn( "/adm/api/com.enonic.app.myapp/" );
         assertFalse( this.handler.canHandle( webRequest ) );
@@ -106,10 +106,6 @@ public class ApiAppHandlerTest
 
         assertDoesNotThrow( () -> this.handler.doHandle( request, null, null ) );
 
-        request.setRawPath( "/admin/api/com.enonic.app.myapp/" );
-
-        assertDoesNotThrow( () -> this.handler.doHandle( request, null, null ) );
-
         request.setRawPath( "/api/com.enonic.app.myapp/" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
@@ -120,11 +116,6 @@ public class ApiAppHandlerTest
         when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( apiDescriptor );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
-        assertEquals( "You don't have permission to access API for [com.enonic.app.myapp]", ex.getMessage() );
-
-        request.setRawPath( "/admin/api/com.enonic.app.myapp/" );
-
-        ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
         assertEquals( "You don't have permission to access API for [com.enonic.app.myapp]", ex.getMessage() );
     }
 

@@ -76,7 +76,7 @@ public class ApiIdentityHandlerTest
         assertTrue( handler.canHandle( request ) );
 
         request.setRawPath( "/admin/api/idprovider/system/_static/css/main.css" );
-        assertTrue( handler.canHandle( request ) );
+        assertFalse( handler.canHandle( request ) );
 
         request.setRawPath( "/adm/api/idprovider/system/_static/css/main.css" );
         assertFalse( handler.canHandle( request ) );
