@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.lib.content.mapper.ApplyPermissionsResultMapper;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -34,7 +35,7 @@ public final class ApplyPermissionsHandler
 
     private String key;
 
-    private boolean overwriteChildPermissions;
+    private ApplyPermissionsMode mode;
 
     private AccessControlList permissions = AccessControlList.empty();
 
@@ -47,9 +48,14 @@ public final class ApplyPermissionsHandler
         this.key = key;
     }
 
+    @Deprecated
     public void setOverwriteChildPermissions( final boolean overwriteChildPermissions )
     {
-        this.overwriteChildPermissions = overwriteChildPermissions;
+    }
+
+    public void setMode( final String mode )
+    {
+        this.mode = mode != null ? ApplyPermissionsMode.valueOf( mode ) : null;
     }
 
     public void setPermissions( final ScriptValue permissions )
@@ -120,8 +126,7 @@ public final class ApplyPermissionsHandler
                                                                                       .permissions( permissions )
                                                                                       .addPermissions( addPermissions )
                                                                                       .removePermissions( removePermissions )
-                                                                                      .overwriteChildPermissions(
-                                                                                          overwriteChildPermissions )
+                                                                                      .applyPermissionsMode( mode )
                                                                                       .build() ) );
     }
 

@@ -2,11 +2,11 @@ package com.enonic.xp.content;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplyContentPermissionsParamsTest
 {
@@ -14,8 +14,7 @@ public class ApplyContentPermissionsParamsTest
     public void testCreate()
     {
         final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
-            .contentId( ContentId.from( "id1" ) )
-            .overwriteChildPermissions( true )
+            .contentId( ContentId.from( "id1" ) ).applyPermissionsMode( ApplyPermissionsMode.TREE )
             .permissions( AccessControlList.create().build() )
             .applyContentPermissionsListener( new ApplyPermissionsListener()
             {
@@ -40,7 +39,7 @@ public class ApplyContentPermissionsParamsTest
             .build();
 
         assertEquals( ContentId.from( "id1" ), params.getContentId() );
-        assertTrue( params.isOverwriteChildPermissions() );
+        assertEquals( ApplyPermissionsMode.TREE, params.getMode() );
         assertEquals( AccessControlList.create().build(), params.getPermissions() );
         assertNotNull( params.getListener() );
     }

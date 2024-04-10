@@ -75,3 +75,15 @@ exports.applyPermissionsAddRemove = function () {
 
     assert.assertEquals(1, result['123456'].branchResults.length);
 };
+
+exports.applyPermissionsTreeMode = function () {
+
+    var result = contentLib.applyPermissions({
+        key: '/features/js-libraries/mycontent',
+        permissions: [{
+            principal: 'user:system:anonymous',
+            allow: ['READ']
+        }],
+        mode: "TREE"
+    });
+};

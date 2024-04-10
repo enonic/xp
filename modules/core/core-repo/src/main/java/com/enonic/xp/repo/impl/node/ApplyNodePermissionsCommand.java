@@ -16,6 +16,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -101,6 +102,37 @@ public class ApplyNodePermissionsCommand
 
     private void doApplyPermissions( final NodeId nodeId, final AccessControlList permissions )
     {
+        NodeVersionData updatedPersistedNode;
+
+        if ( ApplyPermissionsMode.CHILDREN == params.getMode() && params.getNodeId().equals( nodeId ) )
+        {
+            final Node persistedNode = doGetById( nodeId );
+
+            if ( persistedNode == null )
+            {
+                return;
+            }
+
+            updatedPersistedNode = new NodeVersionData( persistedNode,
+                                                        nodeStorageService.getVersion( nodeId, persistedNode.getNodeVersionId(),
+                                                                                       InternalContext.from(
+                                                                                           ContextAccessor.current() ) ) );
+        }
+        else
+        {
+            updatedPersistedNode = doApplyOnNode( nodeId, permissions );
+        }
+
+        if ( updatedPersistedNode == null )
+        {
+            return;
+        }
+
+        doApplyOnChildren( permissions, updatedPersistedNode );
+    }
+
+    private NodeVersionData doApplyOnNode( final NodeId nodeId, final AccessControlList permissions )
+    {
         final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId );
 
         final NodeVersionData updatedOriginNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
@@ -108,7 +140,7 @@ public class ApplyNodePermissionsCommand
         if ( updatedOriginNode == null )
         {
             results.addResult( nodeId, this.sourceBranch, null );
-            return;
+            return null;
         }
 
         results.addResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
@@ -131,7 +163,11 @@ public class ApplyNodePermissionsCommand
                 : updatedTargetNode != null ? updatedTargetNode.node() : null );
 
         } );
+        return updatedOriginNode;
+    }
 
+    private void doApplyOnChildren( final AccessControlList permissions, final NodeVersionData updatedOriginNode )
+    {
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
                 NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedOriginNode.node().path() ).build(),
                 SingleRepoSearchSource.from( ContextBuilder.from( ContextAccessor.current() ).branch( this.sourceBranch ).build() ) )
@@ -142,7 +178,7 @@ public class ApplyNodePermissionsCommand
         for ( Node child : children )
         {
             final PermissionsMergingStrategy mergingStrategy =
-                params.isOverwriteChildPermissions() ? PermissionsMergingStrategy.OVERWRITE : PermissionsMergingStrategy.DEFAULT;
+                ApplyPermissionsMode.SINGLE == params.getMode() ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
 
             final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
 

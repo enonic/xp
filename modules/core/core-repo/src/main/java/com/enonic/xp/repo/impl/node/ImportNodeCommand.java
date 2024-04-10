@@ -98,7 +98,7 @@ public class ImportNodeCommand
         else
         {
             PermissionsMergingStrategy mergingStrategy =
-                this.importPermissionsOnCreate ? PermissionsMergingStrategy.DEFAULT : PermissionsMergingStrategy.OVERWRITE;
+                this.importPermissionsOnCreate ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
 
             final AccessControlList permissions =
                 mergingStrategy.mergePermissions( this.importNode.getPermissions(), getParentPermissions( this.importNode ) );
@@ -149,8 +149,8 @@ public class ImportNodeCommand
             return ApplyNodePermissionsCommand.create( this )
                 .params( ApplyNodePermissionsParams.create()
                              .nodeId( existingNode.id() )
-                             .permissions( PermissionsMergingStrategy.DEFAULT.mergePermissions( this.importNode.getPermissions(),
-                                                                                                getParentPermissions( this.importNode ) ) )
+                             .permissions( PermissionsMergingStrategy.MERGE.mergePermissions( this.importNode.getPermissions(),
+                                                                                              getParentPermissions( this.importNode ) ) )
                              .build() )
                 .build()
                 .execute().getResults()
