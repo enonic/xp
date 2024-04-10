@@ -17,6 +17,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -106,8 +107,7 @@ public class ContentServiceImplTest_applyPermissions
         final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
 
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
-            .contentId( content.getId() )
-            .overwriteChildPermissions( true )
+            .contentId( content.getId() ).applyPermissionsMode( ApplyPermissionsMode.TREE )
             .applyContentPermissionsListener( listener )
             .build();
 

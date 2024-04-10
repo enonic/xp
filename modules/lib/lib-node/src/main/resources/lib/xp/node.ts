@@ -254,7 +254,7 @@ interface NodeHandler {
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
     applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
-                     overwriteChildPermissions: boolean): ApplyPermissionsResult;
+                     mode: string): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
@@ -478,7 +478,7 @@ export interface ApplyPermissionsParams {
     addPermissions?: AccessControlEntry[];
     removePermissions?: AccessControlEntry[];
     branches?: string[];
-    overwriteChildPermissions?: boolean;
+    mode?: string;
 }
 
 export interface ApplyPermissionsResult {
@@ -1056,7 +1056,7 @@ class RepoConnectionImpl
      * @param {object} [params.addPermissions] the permissions to add json
      * @param {object} [params.removePermissions] the permissions to remove json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
-     * @param {boolean} [params.overwriteChildPermissions] Overwrite child permissions. Default is false.
+     * @param {string} [params.mode] Mode of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
      *
      * @returns {object} Result of the apply permissions operation.
      */
@@ -1065,8 +1065,8 @@ class RepoConnectionImpl
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
-            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), params.branches,
-            params.overwriteChildPermissions));
+            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), __.nullOrValue(params.branches),
+            __.nullOrValue(params.mode)));
     }
 
     /**

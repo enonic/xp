@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.lib.node.mapper.ApplyPermissionsResultMapper;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -19,7 +20,7 @@ public class ApplyPermissionsHandler
 
     private final Branches branches;
 
-    private final boolean overwriteChildPermissions;
+    private final ApplyPermissionsMode mode;
 
     private ApplyPermissionsHandler( final Builder builder )
     {
@@ -29,7 +30,7 @@ public class ApplyPermissionsHandler
         this.addPermissions = builder.addPermissions.build();
         this.removePermissions = builder.removePermissions.build();
         this.branches = builder.branches;
-        this.overwriteChildPermissions = builder.overwriteChildPermissions;
+        this.mode = builder.mode;
     }
 
     public static Builder create()
@@ -46,9 +47,7 @@ public class ApplyPermissionsHandler
                                                                                         .nodeId( nodeId )
                                                                                         .permissions( permissions )
                                                                                         .addPermissions( addPermissions )
-                                                                                        .removePermissions( removePermissions )
-                                                                                        .overwriteChildPermissions(
-                                                                                            overwriteChildPermissions )
+                                                                                        .removePermissions( removePermissions ).mode( mode )
                                                                                         .addBranches( branches )
                                                                                         .build() ) );
     }
@@ -62,11 +61,12 @@ public class ApplyPermissionsHandler
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
+        private ApplyPermissionsMode mode;
+
         private NodeKey nodeKey;
 
         private Branches branches;
 
-        private boolean overwriteChildPermissions;
 
         private Builder()
         {
@@ -111,9 +111,15 @@ public class ApplyPermissionsHandler
             return this;
         }
 
+        public Builder mode( final ApplyPermissionsMode val )
+        {
+            mode = val;
+            return this;
+        }
+
+        @Deprecated
         public Builder overwriteChildPermissions( final boolean val )
         {
-            overwriteChildPermissions = val;
             return this;
         }
 

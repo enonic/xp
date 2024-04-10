@@ -519,7 +519,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addBoolean( "overwriteChildPermissions", params.isOverwriteChildPermissions() );
+        paramsSet.addString( "mode", params.getMode().toString() );
 
         if ( params.getPermissions() != null )
         {

@@ -11,6 +11,7 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -146,5 +147,29 @@ public class ApplyPermissionsHandlerTest
 
     }
 
+    @Test
+    public void testTreeMode()
+        throws Exception
+    {
+        final ArgumentCaptor<ApplyContentPermissionsParams> paramsCaptor = ArgumentCaptor.forClass( ApplyContentPermissionsParams.class );
 
+        final Content content = TestDataFixtures.newExampleContent();
+        when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
+
+        SecurityService securityService = Mockito.mock( SecurityService.class );
+        addService( SecurityService.class, securityService );
+
+        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
+            .thenReturn( value );
+
+        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn(
+            ApplyContentPermissionsResult.create().addResult( content.getId(), ContentConstants.BRANCH_MASTER, content ).build() );
+
+        runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsTreeMode" );
+
+        verify( contentService ).applyPermissions( paramsCaptor.capture() );
+
+        assertEquals( ApplyPermissionsMode.TREE, paramsCaptor.getValue().getMode() );
+    }
 }

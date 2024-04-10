@@ -3,9 +3,11 @@ package com.enonic.xp.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.node.ApplyPermissionsMode;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 @PublicApi
 public final class ApplyContentPermissionsParams
@@ -18,14 +20,14 @@ public final class ApplyContentPermissionsParams
 
     private final AccessControlList removePermissions;
 
-    private final boolean overwriteChildPermissions;
+    private final ApplyPermissionsMode applyPermissionsMode;
 
     private final ApplyPermissionsListener listener;
 
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
-        overwriteChildPermissions = builder.overwriteChildPermissions;
+        applyPermissionsMode = requireNonNullElse( builder.applyPermissionsMode, ApplyPermissionsMode.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
@@ -45,9 +47,15 @@ public final class ApplyContentPermissionsParams
         return contentId;
     }
 
+    @Deprecated
     public boolean isOverwriteChildPermissions()
     {
-        return overwriteChildPermissions;
+        return false;
+    }
+
+    public ApplyPermissionsMode getMode()
+    {
+        return applyPermissionsMode;
     }
 
     public AccessControlList getPermissions()
@@ -86,7 +94,7 @@ public final class ApplyContentPermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private boolean overwriteChildPermissions;
+        private ApplyPermissionsMode applyPermissionsMode = ApplyPermissionsMode.SINGLE;
 
         private ApplyPermissionsListener listener;
 
@@ -100,9 +108,15 @@ public final class ApplyContentPermissionsParams
             return this;
         }
 
+        @Deprecated
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
-            this.overwriteChildPermissions = overwriteChildPermissions;
+            return this;
+        }
+
+        public Builder applyPermissionsMode( final ApplyPermissionsMode applyPermissionsMode )
+        {
+            this.applyPermissionsMode = applyPermissionsMode;
             return this;
         }
 
