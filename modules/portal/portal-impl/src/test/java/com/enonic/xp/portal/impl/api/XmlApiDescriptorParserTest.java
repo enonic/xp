@@ -3,7 +3,9 @@ package com.enonic.xp.portal.impl.api;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
@@ -24,7 +26,7 @@ public class XmlApiDescriptorParserTest
     public void setup()
     {
         this.builder = ApiDescriptor.create();
-        this.builder.applicationKey( ApplicationKey.from( "myapplication:myapi" ) );
+        this.builder.key( DescriptorKey.from( ApplicationKey.from( "myapplication" ), "myapi" ) );
 
         this.parser = new XmlApiDescriptorParser( this.builder );
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -49,7 +51,7 @@ public class XmlApiDescriptorParserTest
     private void assertResult()
     {
         final ApiDescriptor result = this.builder.build();
-        assertEquals( "myapplication:myapi", result.getApplicationKey().toString() );
+        assertEquals( "myapplication:myapi", result.key().toString() );
 
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );

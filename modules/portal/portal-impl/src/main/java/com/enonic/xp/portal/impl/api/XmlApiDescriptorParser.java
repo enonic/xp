@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.api;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.DomElement;

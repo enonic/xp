@@ -1,27 +1,25 @@
-package com.enonic.xp.portal.impl.api;
+package com.enonic.xp.api;
 
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
 public final class ApiDescriptor
 {
-    private static final String API_DESCRIPTOR_PATH = "api/api.xml";
-
-    private final ApplicationKey applicationKey;
+    private final DescriptorKey key;
 
     private final PrincipalKeys allowedPrincipals;
 
     private ApiDescriptor( final Builder builder )
     {
-        this.applicationKey = builder.applicationKey;
+        this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
     }
 
-    public ApplicationKey getApplicationKey()
+    public DescriptorKey key()
     {
-        return applicationKey;
+        return key;
     }
 
     public PrincipalKeys getAllowedPrincipals()
@@ -35,9 +33,21 @@ public final class ApiDescriptor
             allowedPrincipals.stream().anyMatch( principalKeys::contains );
     }
 
-    public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
+    public ResourceKey toResourceKey( final String extension )
     {
-        return ResourceKey.from( applicationKey, API_DESCRIPTOR_PATH );
+        return toResourceKey( this.key, extension );
+    }
+
+    public static ResourceKey toResourceKey( final DescriptorKey key, final String extension )
+    {
+        if ( "api".equals( key.getName() ) )
+        {
+            return ResourceKey.from( key.getApplicationKey(), "apis/api." + extension );
+        }
+        else
+        {
+            return ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + "." + extension );
+        }
     }
 
     public static Builder create()
@@ -47,8 +57,7 @@ public final class ApiDescriptor
 
     public static class Builder
     {
-
-        private ApplicationKey applicationKey;
+        private DescriptorKey key;
 
         private PrincipalKeys allowedPrincipals;
 
@@ -56,9 +65,9 @@ public final class ApiDescriptor
         {
         }
 
-        public Builder applicationKey( final ApplicationKey applicationKey )
+        public Builder key( final DescriptorKey key )
         {
-            this.applicationKey = applicationKey;
+            this.key = key;
             return this;
         }
 

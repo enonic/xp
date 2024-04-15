@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.api;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,15 +8,16 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.api.ApiDescriptor;
-import com.enonic.xp.portal.impl.api.ApiDescriptorService;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -37,7 +39,8 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public class ApiAppHandler
     extends BaseWebHandler
 {
-    public static final Pattern PATTERN = Pattern.compile( "^/api/(?<appKey>(?!media|idprovider)[^/]+)/(?<restPath>.*)?$" );
+    public static final Pattern PATTERN =
+        Pattern.compile( "^/(_|api)/(?<appKey>(?!media|idprovider|widgets|asset|attachment|image|component|service|error)[^/]+)(?:/(?<apiKey>[^/]+))?(?<restPath>/.*)?$" );
 
     private final ControllerScriptFactory controllerScriptFactory;
 
@@ -61,41 +64,43 @@ public class ApiAppHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return PATTERN.matcher( webRequest.getRawPath() ).matches();
+        final String input = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+        return PATTERN.matcher( input ).matches();
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
+        Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
         matcher.matches();
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( "appKey" ) );
+        final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
 
-        checkAccessIfNeeded( applicationKey );
+        final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
 
         final Trace trace = Tracer.newTrace( "handleAPI" );
         if ( trace == null )
         {
-            return handleAPIRequest( portalRequest, applicationKey );
+            return handleAPIRequest( portalRequest, apiDescriptor );
         }
         return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = handleAPIRequest( portalRequest, applicationKey );
+            final WebResponse resp = handleAPIRequest( portalRequest, apiDescriptor );
             addTraceInfo( trace, resp );
             return resp;
         } );
     }
 
-    private WebResponse handleAPIRequest( final PortalRequest portalRequest, final ApplicationKey applicationKey )
+    private WebResponse handleAPIRequest( final PortalRequest portalRequest, final ApiDescriptor apiDescriptor )
     {
         try
         {
             PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
 
-            final WebResponse returnedWebResponse = executeController( portalRequest, applicationKey );
+            final WebResponse returnedWebResponse = executeController( portalRequest, apiDescriptor );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
         }
@@ -109,17 +114,23 @@ public class ApiAppHandler
         }
     }
 
-    private void checkAccessIfNeeded( final ApplicationKey applicationKey )
+    private ApiDescriptor resolveApiDescriptor( final ApplicationKey applicationKey, final String apiKey )
     {
-        final ApiDescriptor apiDescriptor = apiDescriptorService.getByApplication( applicationKey );
-        if ( apiDescriptor != null )
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, apiKey );
+        final ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
+        if ( apiDescriptor == null )
         {
-            final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
-            if ( !apiDescriptor.isAccessAllowed( principals ) )
-            {
-                throw WebException.forbidden( String.format( "You don't have permission to access API for [%s]", applicationKey ) );
-            }
+            throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
         }
+
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+        if ( !apiDescriptor.isAccessAllowed( principals ) )
+        {
+            throw WebException.forbidden(
+                String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiKey, applicationKey ) );
+        }
+
+        return apiDescriptor;
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final ApplicationKey applicationKey )
@@ -133,17 +144,18 @@ public class ApiAppHandler
         return portalRequest;
     }
 
-    private PortalResponse executeController( final PortalRequest req, final ApplicationKey applicationKey )
+    private PortalResponse executeController( final PortalRequest req, final ApiDescriptor apiDescriptor )
         throws Exception
     {
-        final ControllerScript script = getScript( applicationKey );
+        final ControllerScript script = getScript( apiDescriptor );
         final PortalResponse res = script.execute( req );
 
         final WebSocketConfig webSocketConfig = res.getWebSocket();
         final WebSocketContext webSocketContext = req.getWebSocketContext();
         if ( webSocketContext != null && webSocketConfig != null )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, applicationKey );
+            final WebSocketEndpoint webSocketEndpoint =
+                newWebSocketEndpoint( webSocketConfig, script, apiDescriptor.key().getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
 
@@ -161,10 +173,9 @@ public class ApiAppHandler
         return new WebSocketEndpointImpl( config, () -> script );
     }
 
-    private ControllerScript getScript( final ApplicationKey applicationKey )
+    private ControllerScript getScript( final ApiDescriptor apiDescriptor )
     {
-        final ResourceKey script = ResourceKey.from( applicationKey, "api/api.js" );
-
+        final ResourceKey script = apiDescriptor.toResourceKey( "js" );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
