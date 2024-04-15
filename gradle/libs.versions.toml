@@ -96,7 +96,7 @@ jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-d
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.16.1" }
 
 tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
-tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
+tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.9.2" }
 
 metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.25" }
 metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.25" }
