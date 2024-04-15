@@ -7,14 +7,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.api.ApiDescriptor;
-import com.enonic.xp.portal.impl.api.ApiDescriptorService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -33,7 +34,6 @@ import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,22 +76,33 @@ public class ApiAppHandlerTest
     {
         WebRequest webRequest = mock( WebRequest.class );
 
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp" );
-        assertFalse( this.handler.canHandle( webRequest ) );
-
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/contentPath" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp" );
+        assertTrue( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key/" );
+        assertTrue( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key/contentPath" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
         when( webRequest.getRawPath() ).thenReturn( "/path" );
         assertFalse( this.handler.canHandle( webRequest ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/admin/api/com.enonic.app.myapp/" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/api/com.enonic.app.myapp/api-key" );
         assertFalse( this.handler.canHandle( webRequest ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/adm/api/com.enonic.app.myapp/" );
+        when( webRequest.getRawPath() ).thenReturn( "/adm/api/com.enonic.app.myapp/api-key" );
+        assertFalse( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp/api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "/site/project/branch/content-path/_/com.enonic.app.myapp/api-key" );
+        assertTrue( this.handler.canHandle( webRequest ) );
+
+        when( webRequest.getEndpointPath() ).thenReturn( null );
+        when( webRequest.getRawPath() ).thenReturn( "/api/media/api-key" );
         assertFalse( this.handler.canHandle( webRequest ) );
     }
 
@@ -100,23 +111,22 @@ public class ApiAppHandlerTest
     {
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp/" );
+        request.setRawPath( "/api/com.enonic.app.myapp/api/" );
 
-        when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( null );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
 
-        assertDoesNotThrow( () -> this.handler.doHandle( request, null, null ) );
-
-        request.setRawPath( "/api/com.enonic.app.myapp/" );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
+        assertEquals( "API [com.enonic.app.myapp:api] not found", ex.getMessage() );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .applicationKey( ApplicationKey.from( "com.enonic.app.myapp" ) )
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_ADMIN ) )
             .build();
 
-        when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( apiDescriptor );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
-        WebException ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
-        assertEquals( "You don't have permission to access API for [com.enonic.app.myapp]", ex.getMessage() );
+        ex = assertThrows( WebException.class, () -> this.handler.doHandle( request, null, null ) );
+        assertEquals( "You don't have permission to access \"api\" API for \"com.enonic.app.myapp\"", ex.getMessage() );
     }
 
     @Test
@@ -126,18 +136,18 @@ public class ApiAppHandlerTest
 
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp/" );
+        request.setRawPath( "/api/com.enonic.app.myapp" );
         request.setWebSocketContext( webSocketContext );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .applicationKey( ApplicationKey.from( "com.enonic.app.myapp" ) )
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_ADMIN, RoleKeys.ADMIN ) )
             .build();
 
-        when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( apiDescriptor );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
         final ControllerScript script = mock( ControllerScript.class );
-        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "com.enonic.app.myapp:/api/api.js" ) ) ).thenReturn( script );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "com.enonic.app.myapp:/apis/api.js" ) ) ).thenReturn( script );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -164,18 +174,18 @@ public class ApiAppHandlerTest
     {
         final PortalRequest request = new PortalRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
-        request.setRawPath( "/api/com.enonic.app.myapp/" );
+        request.setRawPath( "/api/com.enonic.app.myapp/api" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .applicationKey( ApplicationKey.from( "com.enonic.app.myapp" ) )
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_ADMIN, RoleKeys.ADMIN ) )
             .build();
 
-        when( apiDescriptorService.getByApplication( any( ApplicationKey.class ) ) ).thenReturn( apiDescriptor );
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
         final ControllerScript script = mock( ControllerScript.class );
 
-        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "com.enonic.app.myapp:/api/api.js" ) ) ).thenReturn( script );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "com.enonic.app.myapp:/apis/api.js" ) ) ).thenReturn( script );
         when( script.execute( Mockito.any() ) ).thenThrow( RuntimeException.class );
 
         WebResponse webResponse = ContextBuilder.create()

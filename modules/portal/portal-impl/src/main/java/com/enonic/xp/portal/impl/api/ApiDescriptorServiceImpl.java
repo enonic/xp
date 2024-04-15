@@ -1,10 +1,19 @@
 package com.enonic.xp.portal.impl.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptorService;
+import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -14,34 +23,59 @@ import com.enonic.xp.xml.XmlException;
 public final class ApiDescriptorServiceImpl
     implements ApiDescriptorService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ApiDescriptorServiceImpl.class );
+
     private final ResourceService resourceService;
+
+    private final ApiDescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
     public ApiDescriptorServiceImpl( final @Reference ResourceService resourceService )
     {
         this.resourceService = resourceService;
+        this.descriptorKeyLocator = new ApiDescriptorKeyLocator( this.resourceService );
     }
 
     @Override
-    public ApiDescriptor getByApplication( final ApplicationKey applicationKey )
+    public ApiDescriptor getByKey( final DescriptorKey descriptorKey )
     {
-        final ResourceProcessor<ApplicationKey, ApiDescriptor> processor = newRootProcessor( applicationKey );
-        return this.resourceService.processResource( processor );
+        final ResourceProcessor<DescriptorKey, ApiDescriptor> processor = newRootProcessor( descriptorKey );
+        final ApiDescriptor apiDescriptor = resourceService.processResource( processor );
+        return apiDescriptor != null ? apiDescriptor : ApiDescriptor.create().key( descriptorKey ).build();
     }
 
-    private ResourceProcessor<ApplicationKey, ApiDescriptor> newRootProcessor( final ApplicationKey applicationKey )
+    @Override
+    public ApiDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return new ResourceProcessor.Builder<ApplicationKey, ApiDescriptor>().key( applicationKey )
+        final List<ApiDescriptor> list = new ArrayList<>();
+        for ( final DescriptorKey descriptorKey : descriptorKeyLocator.findKeys( applicationKey ) )
+        {
+            try
+            {
+                list.add( getByKey( descriptorKey ) );
+            }
+            catch ( final IllegalArgumentException e )
+            {
+                LOG.error( "Error in api descriptor: {}", descriptorKey.toString(), e );
+            }
+        }
+
+        return ApiDescriptors.from( list );
+    }
+
+    private ResourceProcessor<DescriptorKey, ApiDescriptor> newRootProcessor( final DescriptorKey key )
+    {
+        return new ResourceProcessor.Builder<DescriptorKey, ApiDescriptor>().key( key )
             .segment( "rootApiDescriptor" )
-            .keyTranslator( ApiDescriptor::toResourceKey )
-            .processor( resource -> loadDescriptor( applicationKey, resource ) )
+            .keyTranslator( descriptorKey -> ApiDescriptor.toResourceKey( descriptorKey, "xml" ) )
+            .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
 
-    private ApiDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
+    private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
         final ApiDescriptor.Builder builder = ApiDescriptor.create();
-        builder.applicationKey( key );
+        builder.key( key );
         parseXml( resource, builder );
         return builder.build();
     }
