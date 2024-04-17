@@ -1032,7 +1032,7 @@ export interface SetPermissionsParams {
 
 export interface ApplyPermissionsParams {
     key: string;
-    mode?: 'SINGLE' | 'TREE' | 'CHILDREN';
+    scope?: 'SINGLE' | 'TREE' | 'CHILDREN';
     permissions?: AccessControlEntry[];
     addPermissions?: AccessControlEntry[];
     removePermissions?: AccessControlEntry[];
@@ -1054,7 +1054,7 @@ export interface Permissions {
 interface ApplyPermissionsHandler {
     setKey(value: string): void;
 
-    setMode(value: string): void;
+    setScope(value: string): void;
 
     setPermissions(value: ScriptValue): void;
 
@@ -1112,7 +1112,7 @@ export function setPermissions(params: SetPermissionsParams): boolean {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @param {string} [params.mode] Mode of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+ * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
  * @param {array} [params.permissions] Array of permissions. Cannot be used together with addPermissions and removePermissions.
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.
@@ -1128,8 +1128,8 @@ export function applyPermissions(params: ApplyPermissionsParams): ApplyPermissio
     if (params.key) {
         bean.setKey(params.key);
     }
-    if (params.mode) {
-        bean.setMode(params.mode);
+    if (params.scope) {
+        bean.setScope(params.scope);
     }
     if (params.permissions) {
         bean.setPermissions(__.toScriptValue(params.permissions));

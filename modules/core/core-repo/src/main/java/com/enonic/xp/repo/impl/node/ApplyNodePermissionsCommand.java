@@ -16,7 +16,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -104,7 +104,7 @@ public class ApplyNodePermissionsCommand
     {
         NodeVersionData updatedPersistedNode;
 
-        if ( ApplyPermissionsMode.CHILDREN == params.getMode() && params.getNodeId().equals( nodeId ) )
+        if ( ApplyPermissionsScope.CHILDREN == params.getScope() && params.getNodeId().equals( nodeId ) )
         {
             final Node persistedNode = doGetById( nodeId );
 
@@ -178,7 +178,7 @@ public class ApplyNodePermissionsCommand
         for ( Node child : children )
         {
             final PermissionsMergingStrategy mergingStrategy =
-                ApplyPermissionsMode.SINGLE == params.getMode() ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
+                ApplyPermissionsScope.SINGLE == params.getScope() ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
 
             final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
 

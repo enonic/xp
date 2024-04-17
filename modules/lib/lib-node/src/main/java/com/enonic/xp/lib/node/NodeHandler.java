@@ -13,7 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -240,7 +240,7 @@ public class NodeHandler
 
     @SuppressWarnings("unused")
     public Object applyPermissions( final String key, final ScriptValue permissions, final ScriptValue addPermissions,
-                                    final ScriptValue removePermissions, final List<String> branches, final String mode )
+                                    final ScriptValue removePermissions, final List<String> branches, final String scope )
     {
         final AccessControlList permissionsEntries = getAccessControlList( permissions );
         final AccessControlList addPermissionsEntries = getAccessControlList( addPermissions );
@@ -251,7 +251,7 @@ public class NodeHandler
                             .branches( Optional.ofNullable( branches )
                                            .map( b -> b.stream().map( Branch::from ).collect( Branches.collecting() ) )
                                            .orElse( Branches.empty() ) )
-                            .mode( Optional.ofNullable( mode ).map( ApplyPermissionsMode::valueOf ).orElse( null ) )
+                            .scope( Optional.ofNullable( scope ).map( ApplyPermissionsScope::valueOf ).orElse( null ) )
                             .permissions( permissionsEntries )
                             .addPermissions( addPermissionsEntries )
                             .removePermissions( removePermissionsEntries )

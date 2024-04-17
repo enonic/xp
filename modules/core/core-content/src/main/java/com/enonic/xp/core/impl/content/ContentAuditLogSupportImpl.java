@@ -519,7 +519,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "mode", params.getMode().toString() );
+        paramsSet.addString( "scope", params.getScope().toString() );
 
         if ( params.getPermissions() != null )
         {

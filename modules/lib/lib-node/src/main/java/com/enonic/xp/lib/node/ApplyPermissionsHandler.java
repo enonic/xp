@@ -3,7 +3,7 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.lib.node.mapper.ApplyPermissionsResultMapper;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -20,7 +20,7 @@ public class ApplyPermissionsHandler
 
     private final Branches branches;
 
-    private final ApplyPermissionsMode mode;
+    private final ApplyPermissionsScope scope;
 
     private ApplyPermissionsHandler( final Builder builder )
     {
@@ -30,7 +30,7 @@ public class ApplyPermissionsHandler
         this.addPermissions = builder.addPermissions.build();
         this.removePermissions = builder.removePermissions.build();
         this.branches = builder.branches;
-        this.mode = builder.mode;
+        this.scope = builder.scope;
     }
 
     public static Builder create()
@@ -47,7 +47,8 @@ public class ApplyPermissionsHandler
                                                                                         .nodeId( nodeId )
                                                                                         .permissions( permissions )
                                                                                         .addPermissions( addPermissions )
-                                                                                        .removePermissions( removePermissions ).mode( mode )
+                                                                                        .removePermissions( removePermissions )
+                                                                                        .scope( scope )
                                                                                         .addBranches( branches )
                                                                                         .build() ) );
     }
@@ -61,7 +62,7 @@ public class ApplyPermissionsHandler
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private ApplyPermissionsMode mode;
+        private ApplyPermissionsScope scope;
 
         private NodeKey nodeKey;
 
@@ -111,9 +112,9 @@ public class ApplyPermissionsHandler
             return this;
         }
 
-        public Builder mode( final ApplyPermissionsMode val )
+        public Builder scope( final ApplyPermissionsScope val )
         {
-            mode = val;
+            scope = val;
             return this;
         }
 
