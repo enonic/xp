@@ -254,7 +254,7 @@ interface NodeHandler {
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
     applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
-                     mode: string): ApplyPermissionsResult;
+                     scope: string): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
@@ -478,7 +478,7 @@ export interface ApplyPermissionsParams {
     addPermissions?: AccessControlEntry[];
     removePermissions?: AccessControlEntry[];
     branches?: string[];
-    mode?: string;
+    scope?: string;
 }
 
 export interface ApplyPermissionsResult {
@@ -1056,7 +1056,7 @@ class RepoConnectionImpl
      * @param {object} [params.addPermissions] the permissions to add json
      * @param {object} [params.removePermissions] the permissions to remove json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
-     * @param {string} [params.mode] Mode of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
      *
      * @returns {object} Result of the apply permissions operation.
      */
@@ -1066,7 +1066,7 @@ class RepoConnectionImpl
 
         return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
             __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), __.nullOrValue(params.branches),
-            __.nullOrValue(params.mode)));
+            __.nullOrValue(params.scope)));
     }
 
     /**

@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static java.util.Objects.requireNonNull;
@@ -20,14 +20,14 @@ public final class ApplyContentPermissionsParams
 
     private final AccessControlList removePermissions;
 
-    private final ApplyPermissionsMode applyPermissionsMode;
+    private final ApplyPermissionsScope applyPermissionsScope;
 
     private final ApplyPermissionsListener listener;
 
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
-        applyPermissionsMode = requireNonNullElse( builder.applyPermissionsMode, ApplyPermissionsMode.SINGLE );
+        applyPermissionsScope = requireNonNullElse( builder.applyPermissionsScope, ApplyPermissionsScope.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
@@ -53,9 +53,9 @@ public final class ApplyContentPermissionsParams
         return false;
     }
 
-    public ApplyPermissionsMode getMode()
+    public ApplyPermissionsScope getScope()
     {
-        return applyPermissionsMode;
+        return applyPermissionsScope;
     }
 
     public AccessControlList getPermissions()
@@ -94,7 +94,7 @@ public final class ApplyContentPermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private ApplyPermissionsMode applyPermissionsMode;
+        private ApplyPermissionsScope applyPermissionsScope;
 
         private ApplyPermissionsListener listener;
 
@@ -114,9 +114,9 @@ public final class ApplyContentPermissionsParams
             return this;
         }
 
-        public Builder applyPermissionsMode( final ApplyPermissionsMode applyPermissionsMode )
+        public Builder applyPermissionsScope( final ApplyPermissionsScope applyPermissionsScope )
         {
-            this.applyPermissionsMode = applyPermissionsMode;
+            this.applyPermissionsScope = applyPermissionsScope;
             return this;
         }
 

@@ -3,7 +3,7 @@ package com.enonic.xp.lib.project.command;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -39,8 +39,7 @@ public final class ApplyProjectReadAccessCommand
             : doRemoveEveryonePermissions( contentRoot.getPermissions() );
 
         contentService.applyPermissions( ApplyContentPermissionsParams.create().
-            permissions( newList ).
-            contentId( contentRoot.getId() ).applyPermissionsMode( ApplyPermissionsMode.TREE ).
+            permissions( newList ).contentId( contentRoot.getId() ).applyPermissionsScope( ApplyPermissionsScope.TREE ).
             build() );
 
         return GetProjectReadAccessCommand.create().

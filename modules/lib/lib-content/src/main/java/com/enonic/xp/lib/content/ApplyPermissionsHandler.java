@@ -14,7 +14,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.lib.content.mapper.ApplyPermissionsResultMapper;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -35,7 +35,7 @@ public final class ApplyPermissionsHandler
 
     private String key;
 
-    private ApplyPermissionsMode mode;
+    private ApplyPermissionsScope scope;
 
     private AccessControlList permissions = AccessControlList.empty();
 
@@ -53,9 +53,9 @@ public final class ApplyPermissionsHandler
     {
     }
 
-    public void setMode( final String mode )
+    public void setScope( final String scope )
     {
-        this.mode = mode != null ? ApplyPermissionsMode.valueOf( mode ) : null;
+        this.scope = scope != null ? ApplyPermissionsScope.valueOf( scope ) : null;
     }
 
     public void setPermissions( final ScriptValue permissions )
@@ -126,7 +126,7 @@ public final class ApplyPermissionsHandler
                                                                                       .permissions( permissions )
                                                                                       .addPermissions( addPermissions )
                                                                                       .removePermissions( removePermissions )
-                                                                                      .applyPermissionsMode( mode )
+                                                                                      .applyPermissionsScope( scope )
                                                                                       .build() ) );
     }
 

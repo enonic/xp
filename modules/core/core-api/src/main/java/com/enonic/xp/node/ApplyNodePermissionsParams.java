@@ -22,7 +22,7 @@ public final class ApplyNodePermissionsParams
 
     private final AccessControlList removePermissions;
 
-    private final ApplyPermissionsMode mode;
+    private final ApplyPermissionsScope scope;
 
     private final ApplyPermissionsListener listener;
 
@@ -31,7 +31,7 @@ public final class ApplyNodePermissionsParams
     private ApplyNodePermissionsParams( Builder builder )
     {
         nodeId = Objects.requireNonNull( builder.nodeId );
-        mode = Objects.requireNonNullElse( builder.mode, ApplyPermissionsMode.SINGLE );
+        scope = Objects.requireNonNullElse( builder.scope, ApplyPermissionsScope.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
@@ -73,9 +73,9 @@ public final class ApplyNodePermissionsParams
         return false;
     }
 
-    public ApplyPermissionsMode getMode()
+    public ApplyPermissionsScope getScope()
     {
-        return mode;
+        return scope;
     }
 
     public ApplyPermissionsListener getListener()
@@ -98,7 +98,7 @@ public final class ApplyNodePermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private ApplyPermissionsMode mode;
+        private ApplyPermissionsScope scope;
 
         private ApplyPermissionsListener listener;
 
@@ -147,9 +147,9 @@ public final class ApplyNodePermissionsParams
             return this;
         }
 
-        public Builder mode( final ApplyPermissionsMode mode )
+        public Builder scope( final ApplyPermissionsScope scope )
         {
-            this.mode = mode;
+            this.scope = scope;
             return this;
         }
 

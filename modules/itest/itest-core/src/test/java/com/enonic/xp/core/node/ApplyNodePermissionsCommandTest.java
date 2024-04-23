@@ -14,7 +14,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
-import com.enonic.xp.node.ApplyPermissionsMode;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
@@ -88,7 +88,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -126,7 +126,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.CHILDREN )
+                                                                                    .scope( ApplyPermissionsScope.CHILDREN )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -167,7 +167,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -207,7 +207,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( childNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .permissions( AccessControlList.create()
@@ -244,7 +244,8 @@ public class ApplyNodePermissionsCommandTest
             .branch( ContentConstants.BRANCH_MASTER )
             .build()
             .callWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
-                                                               .nodeId( createdNode.id() ).mode( ApplyPermissionsMode.TREE )
+                                                               .nodeId( createdNode.id() )
+                                                               .scope( ApplyPermissionsScope.TREE )
                                                                .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
                                                                .permissions( AccessControlList.create()
                                                                                  .add( AccessControlEntry.create()
@@ -335,7 +336,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -389,7 +390,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -424,7 +425,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .mode( ApplyPermissionsMode.TREE )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches(
                                                                                         Branches.from( ContentConstants.BRANCH_MASTER ) )
                                                                                     .addPermissions( AccessControlList.create()
@@ -490,8 +491,7 @@ public class ApplyNodePermissionsCommandTest
         refresh();
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create()
-            .nodeId( topNode.id() )
-            .permissions( topNode.getPermissions() ).mode( ApplyPermissionsMode.TREE )
+            .nodeId( topNode.id() ).permissions( topNode.getPermissions() ).scope( ApplyPermissionsScope.TREE )
             .applyPermissionsListener( mock( ApplyPermissionsListener.class ) )
             .build();
 
