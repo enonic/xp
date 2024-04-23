@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
@@ -14,6 +18,7 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 
@@ -44,12 +49,14 @@ final class MovedEventSyncArchiver
         final List<ContentToSync> contentsToSync =
             contents.stream().filter( content -> isToSyncContent( content.getTargetContent() ) ).collect( Collectors.toList() );
 
-        final Set<Content> allArchived = getAllArchived( contentsToSync );
-        final Set<ContentId> allArchivedIds = allArchived.stream().map( Content::getId ).collect( Collectors.toSet() );
+        final Map<Content, Context> allArchived = getAllArchived( contentsToSync );
+        final Set<ContentId> allArchivedIds = allArchived.keySet().stream().map( Content::getId ).collect( Collectors.toSet() );
 
-        final Set<Content> toExclude = allArchived.stream()
-            .filter( content -> !( content.getInherit().contains( ContentInheritType.CONTENT ) &&
-                allArchivedIds.containsAll( getInboundDependencies( content.getId() ).getSet() ) ) )
+        final Set<Content> toExclude = allArchived.entrySet()
+            .stream()
+            .filter( entry -> !( entry.getKey().getInherit().contains( ContentInheritType.CONTENT ) &&
+                allArchivedIds.containsAll( getInboundDependencies( entry ).getSet() ) ) )
+            .map( Map.Entry::getKey )
             .collect( Collectors.toSet() );
 
         final Set<Content> toArchive = contentsToSync.stream()
@@ -69,36 +76,49 @@ final class MovedEventSyncArchiver
             .collect( Collectors.toSet() );
     }
 
-    private ContentIds getInboundDependencies( final ContentId contentId )
+    private ContentIds getInboundDependencies( Map.Entry<Content, Context> entry )
     {
-        return this.contentService.find( ContentQuery.create()
-                                             .queryFilter( BooleanFilter.create()
-                                                               .must( IdFilter.create()
-                                                                          .fieldName( ContentIndexPath.REFERENCES.getPath() )
-                                                                          .value( contentId.toString() )
-                                                                          .build() )
-                                                               .mustNot( IdFilter.create()
-                                                                             .fieldName( ContentIndexPath.ID.getPath() )
-                                                                             .value( contentId.toString() )
+        return entry.getValue()
+            .callWith( () -> this.contentService.find( ContentQuery.create()
+                                                           .queryFilter( BooleanFilter.create()
+                                                                             .must( IdFilter.create()
+                                                                                        .fieldName( ContentIndexPath.REFERENCES.getPath() )
+                                                                                        .value( entry.getKey().getId().toString() )
+                                                                                        .build() )
+                                                                             .mustNot( IdFilter.create()
+                                                                                           .fieldName( ContentIndexPath.ID.getPath() )
+                                                                                           .value( entry.getKey().getId().toString() )
+                                                                                           .build() )
                                                                              .build() )
-                                                               .build() )
-                                             .size( -1 )
-                                             .build() ).getContentIds();
+                                                           .size( -1 )
+                                                           .build() ).getContentIds() );
     }
 
-    private Set<Content> getAllArchived( final List<ContentToSync> contentToSync )
+    private Map<Content, Context> getAllArchived( final List<ContentToSync> contentToSync )
     {
-        return Stream.concat( contentToSync.stream()
-                                  .map( content -> content.getTargetContext()
-                                      .callWith( () -> this.contentService.findByParent( FindContentByParentParams.create()
-                                                                                             .parentId( content.getSourceContent().getId() )
-                                                                                             .recursive( true )
-                                                                                             .size( -1 )
-                                                                                             .build() ) ) )
-                                  .flatMap( result -> result.getContents().stream() ),
-                              contentToSync.stream().map( ContentToSync::getTargetContent ) ).collect( Collectors.toSet() );
-    }
+        final Stream<Map.Entry<Content, Context>> childrenStream = contentToSync.stream()
+            .map( content -> content.getTargetContext()
+                .callWith( () -> this.contentService.findByParent(
+                        FindContentByParentParams.create().parentId( content.getSourceContent().getId() ).recursive( true ).size( -1 ).build() )
+                    .getContents()
+                    .stream().map( child -> Maps.immutableEntry( child, content.getTargetContext() ) ) ) )
+            .flatMap( s -> s );
 
+        final Stream<Map.Entry<Content, Context>> parentStream =
+            contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetContext() ) );
+
+        return Stream.concat( childrenStream, parentStream )
+            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( a, b ) -> {
+                if ( Objects.deepEquals( a, b ) )
+                {
+                    return a;
+                }
+                else
+                {
+                    throw new IllegalStateException( "Target contexts cannot be different for one archive batch" );
+                }
+            } ) );
+    }
 
     static class Builder
         extends MovedEventSyncSynchronizer.Builder<Builder>
