@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,7 +19,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 
@@ -101,14 +101,23 @@ final class MovedEventSyncArchiver
                 .callWith( () -> this.contentService.findByParent(
                         FindContentByParentParams.create().parentId( content.getSourceContent().getId() ).recursive( true ).size( -1 ).build() )
                     .getContents()
-                    .stream()
-                    .map( child -> Maps.immutableEntry( child, ContextAccessor.current() ) ) ) )
+                    .stream().map( child -> Maps.immutableEntry( child, content.getTargetContext() ) ) ) )
             .flatMap( s -> s );
 
         final Stream<Map.Entry<Content, Context>> parentStream =
             contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetContext() ) );
 
-        return Stream.concat( childrenStream, parentStream ).collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue ) );
+        return Stream.concat( childrenStream, parentStream )
+            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( a, b ) -> {
+                if ( Objects.deepEquals( a, b ) )
+                {
+                    return a;
+                }
+                else
+                {
+                    throw new IllegalStateException( "Target contexts cannot be different for one archive batch" );
+                }
+            } ) );
     }
 
     static class Builder
