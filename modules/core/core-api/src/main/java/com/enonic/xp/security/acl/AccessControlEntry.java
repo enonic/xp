@@ -34,12 +34,22 @@ public final class AccessControlEntry
         return principal;
     }
 
-    public Collection<Permission> getAllowedPermissions()
+    public Iterable<Permission> getAllowedPermissions()
     {
         return allowedPermissions;
     }
 
-    public Collection<Permission> getDeniedPermissions()
+    public Collection<Permission> allowedPermissions()
+    {
+        return allowedPermissions;
+    }
+
+    public Iterable<Permission> getDeniedPermissions()
+    {
+        return deniedPermissions;
+    }
+
+    public Collection<Permission> deniedPermissions()
     {
         return deniedPermissions;
     }

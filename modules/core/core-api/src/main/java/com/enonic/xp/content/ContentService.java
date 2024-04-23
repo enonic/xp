@@ -109,6 +109,7 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
+    @Deprecated
     ContentVersion getActiveVersion( GetActiveContentVersionParams params );
 
     @Deprecated

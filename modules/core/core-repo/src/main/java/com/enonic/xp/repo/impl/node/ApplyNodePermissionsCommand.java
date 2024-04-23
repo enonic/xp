@@ -274,17 +274,15 @@ public class ApplyNodePermissionsCommand
                 {
                     return;
                 }
-                if ( entryToRemove.getAllowedPermissions().isEmpty() ) //remove all if no permissions specified
+                if ( entryToRemove.allowedPermissions().isEmpty() ) //remove all if no permissions specified
                 {
                     newPermissions.remove( entryToRemove.getPrincipal() );
                 }
                 else
                 {
                     newPermissions.put( entryToRemove.getPrincipal(), AccessControlEntry.create()
-                        .principal( entryToRemove.getPrincipal() )
-                        .allow( currentACE.getAllowedPermissions()
-                                    .stream()
-                                    .filter( permission -> !entryToRemove.getAllowedPermissions().contains( permission ) )
+                        .principal( entryToRemove.getPrincipal() ).allow( currentACE.allowedPermissions()
+                                    .stream().filter( permission -> !entryToRemove.allowedPermissions().contains( permission ) )
                                     .collect( Collectors.toList() ) )
                         .build() );
                 }
