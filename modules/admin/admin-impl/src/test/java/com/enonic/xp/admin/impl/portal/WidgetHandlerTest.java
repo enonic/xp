@@ -51,11 +51,8 @@ public class WidgetHandlerTest
     private PortalRequest request;
 
     protected ContentService contentService;
-
     private WidgetDescriptorService widgetDescriptorService;
-
     private ControllerScript controllerScript;
-
     @BeforeEach
     public final void setup()
     {
@@ -116,19 +113,16 @@ public class WidgetHandlerTest
 
         this.request.setMethod( HttpMethod.OPTIONS );
         this.request.setMode( RenderMode.ADMIN );
-
         final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertNotNull( response );
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", response.getHeaders().get( "Allow" ) );
     }
-
     @Test
     public void testNotValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/widgets/" );
-
         try
         {
             this.handler.handle( this.request, WebResponse.create().build(), null );
@@ -169,10 +163,8 @@ public class WidgetHandlerTest
         throws Exception
     {
         mockDescriptor( true );
-
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
-
         final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
@@ -182,17 +174,14 @@ public class WidgetHandlerTest
         assertNull( this.request.getSite() );
         assertNull( this.request.getContent() );
     }
-
     @Test
     public void executeScript_validSite()
         throws Exception
     {
         setupContentAndSite();
         mockDescriptor( true );
-
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
-
         final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
@@ -201,7 +190,6 @@ public class WidgetHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertEquals( "/admin/tool/_/widgets/demo/test", this.request.getContextPath() );
     }
-
     private void setupContentAndSite()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
@@ -234,9 +222,9 @@ public class WidgetHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().
-                        build() ).
-                    build() ).
+                add( PartComponent.create().
+                build() ).
+                build() ).
                 build();
 
             Page page = Page.create().
@@ -248,7 +236,6 @@ public class WidgetHandlerTest
         }
         return content.build();
     }
-
     private Site createSite( final String id, final String path, final String contentTypeName )
     {
         PropertyTree rootDataSet = new PropertyTree();

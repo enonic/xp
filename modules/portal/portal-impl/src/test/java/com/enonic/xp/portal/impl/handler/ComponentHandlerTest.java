@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.render;
+package com.enonic.xp.portal.impl.handler;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.handler.render.RenderBaseHandlerTest;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -34,10 +35,8 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentHandlerTest
     extends RenderBaseHandlerTest
@@ -57,28 +56,6 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testOrder()
-    {
-        assertEquals( 0, this.handler.getOrder() );
-    }
-
-    @Test
-    public void testMatch()
-    {
-        this.request.setEndpointPath( null );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/other/main/1" );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/component/main/1" );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/component/main/1" );
-        assertTrue( this.handler.canHandle( this.request ) );
-    }
-
-    @Test
     public void testOptions()
         throws Exception
     {
@@ -94,7 +71,7 @@ public class ComponentHandlerTest
         this.request.setMethod( HttpMethod.OPTIONS );
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
@@ -117,7 +94,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
@@ -127,7 +104,6 @@ public class ComponentHandlerTest
 
     @Test
     public void getComponentPageNotFound()
-        throws Exception
     {
         setupContentWithoutPage();
 
@@ -136,15 +112,13 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebException e =
-            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertAll( () -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ),
                    () -> assertEquals( "No default template found for content", e.getMessage() ) );
     }
 
     @Test
     public void getComponentNotFound()
-        throws Exception
     {
         setupSite();
         setupContent();
@@ -152,8 +126,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/666" );
 
-        final WebException e =
-            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
         assertEquals( "Page component for [/main-region/666] not found", e.getMessage() );
     }
@@ -167,8 +140,7 @@ public class ComponentHandlerTest
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
         this.request.setContentPath( path );
 
-        final WebException e =
-            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
         assertEquals( "Page [/site/somepath/content] not found", e.getMessage() );
     }
@@ -184,8 +156,7 @@ public class ComponentHandlerTest
 
         this.request.setContentPath( path );
 
-        final WebException e =
-            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
         assertEquals( "Site for [/site/somepath/content] not found", e.getMessage() );
     }
@@ -207,7 +178,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
     }
 
@@ -230,7 +201,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
     }
 
@@ -254,7 +225,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
     }
 
@@ -278,7 +249,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
     }
 
@@ -320,7 +291,7 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( endpointPath );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
     }
 
@@ -366,7 +337,7 @@ public class ComponentHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create()
+        return Content.create()
             .id( ContentId.from( "id" ) )
             .path( ContentPath.from( "site/somepath/content" ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )
@@ -375,10 +346,8 @@ public class ComponentHandlerTest
             .type( contentTypeName )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
-                              .build() );
-
-        content.page( page );
-
-        return content.build();
+                              .build() )
+            .page( page )
+            .build();
     }
 }

@@ -1,7 +1,6 @@
-package com.enonic.xp.portal.impl.handler.api;
+package com.enonic.xp.portal.impl.handler;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -38,16 +37,13 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
-public class MediaApiHandler
-    extends BaseWebHandler
+@Component(service = MediaHandler.class, configurationPid = "com.enonic.xp.portal")
+public class MediaHandler
 {
+
     private static final Pattern PATTERN =
         Pattern.compile( "^/api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
 
@@ -74,11 +70,9 @@ public class MediaApiHandler
     private volatile List<PrincipalKey> draftBranchAllowedFor;
 
     @Activate
-    public MediaApiHandler( @Reference final ContentService contentService, @Reference final ImageService imageService,
-                            @Reference final MediaInfoService mediaInfoService )
+    public MediaHandler( @Reference final ContentService contentService, @Reference final ImageService imageService,
+                         @Reference final MediaInfoService mediaInfoService )
     {
-        super( -2, EnumSet.of( HttpMethod.GET, HttpMethod.OPTIONS ) );
-
         this.contentService = contentService;
         this.imageService = imageService;
         this.mediaInfoService = mediaInfoService;
@@ -98,20 +92,18 @@ public class MediaApiHandler
             .collect( Collectors.toList() );
     }
 
-    @Override
-    protected boolean canHandle( final WebRequest webRequest )
-    {
-        return webRequest.getRawPath().startsWith( "/api/media/" );
-    }
-
-    @Override
-    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
         throws Exception
     {
         Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
         if ( !matcher.matches() )
         {
             return PortalResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
+        }
+
+        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
+        {
+            return HandlerHelper.handleDefaultOptions( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ) );
         }
 
         String repo = matcher.group( "repo" );
@@ -169,9 +161,9 @@ public class MediaApiHandler
         worker.fingerprint = matcher.group( "fingerprint" );
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( "scaleParams" ) );
         worker.name = matcher.group( "name" );
-        worker.filterParam = getParameter( portalRequest, "filter" );
-        worker.qualityParam = getParameter( portalRequest, "quality" );
-        worker.backgroundParam = getParameter( portalRequest, "background" );
+        worker.filterParam = HandlerHelper.getParameter( portalRequest, "filter" );
+        worker.qualityParam = HandlerHelper.getParameter( portalRequest, "quality" );
+        worker.backgroundParam = HandlerHelper.getParameter( portalRequest, "background" );
         worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
         worker.contentSecurityPolicy = this.contentSecurityPolicy;
@@ -189,7 +181,7 @@ public class MediaApiHandler
         }
 
         final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( portalRequest, this.contentService );
-        worker.download = getParameter( portalRequest, "download" ) != null;
+        worker.download = HandlerHelper.getParameter( portalRequest, "download" ) != null;
         worker.id = ContentId.from( matcher.group( "id" ) );
         worker.fingerprint = matcher.group( "fingerprint" );
         worker.name = matcher.group( "name" );
@@ -198,11 +190,5 @@ public class MediaApiHandler
         worker.contentSecurityPolicy = this.contentSecurityPolicy;
         worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
         return worker.execute();
-    }
-
-    private String getParameter( final WebRequest req, final String name )
-    {
-        final Collection<String> values = req.getParams().get( name );
-        return values.isEmpty() ? null : values.iterator().next();
     }
 }

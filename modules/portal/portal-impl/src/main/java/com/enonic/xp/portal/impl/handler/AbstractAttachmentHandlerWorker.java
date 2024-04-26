@@ -20,8 +20,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.MediaTypes;
-import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
@@ -60,12 +58,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
     public PortalResponse execute()
         throws Exception
     {
-        if ( request.getMethod() == HttpMethod.OPTIONS )
-        {
-            // it will be handled by default OPTIONS handler in BaseWebHandler
-            return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        }
-
         final T content = cast( getContent( this.id ) );
         final Attachment attachment = resolveAttachment( content, this.name );
         final BinaryReference binaryReference = attachment.getBinaryReference();

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.identity;
+package com.enonic.xp.portal.impl.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,7 +19,6 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -31,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class IdentityHandlerTest
-    extends BaseHandlerTest
+public class IdentityHandlerTest
 {
     IdentityHandler handler;
 
@@ -76,28 +74,6 @@ class IdentityHandlerTest
     }
 
     @Test
-    public void testOrder()
-    {
-        assertEquals( 0, this.handler.getOrder() );
-    }
-
-    @Test
-    public void testMatch()
-    {
-        this.request.setEndpointPath( null );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/other/a/b" );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/idprovider/a/b" );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/idprovider/a/b" );
-        assertTrue( this.handler.canHandle( this.request ) );
-    }
-
-    @Test
     public void testOptions()
         throws Exception
     {
@@ -108,7 +84,7 @@ class IdentityHandlerTest
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
@@ -122,7 +98,7 @@ class IdentityHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request, PortalResponse.create().build() );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -136,7 +112,7 @@ class IdentityHandlerTest
     public void testHandle()
         throws Exception
     {
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/draft/_/idprovider/myidprovider", this.request.getContextPath() );
@@ -152,7 +128,7 @@ class IdentityHandlerTest
 
         this.request.getParams().put( "redirect", "https://example.com" );
         this.request.getParams().put( "_ticket", "some-good-checksum" );
-        this.handler.handle( this.request, PortalResponse.create().build(), null );
+        this.handler.handle( this.request, PortalResponse.create().build() );
 
         assertTrue( this.request.isValidTicket() );
     }
@@ -167,7 +143,7 @@ class IdentityHandlerTest
 
         this.request.getParams().put( "redirect", "https://example.com" );
         this.request.getParams().put( "_ticket", "some-bad-checksum" );
-        this.handler.handle( this.request, PortalResponse.create().build(), null );
+        this.handler.handle( this.request, PortalResponse.create().build() );
 
         assertFalse( this.request.isValidTicket() );
     }
@@ -185,7 +161,7 @@ class IdentityHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request, PortalResponse.create().build() );
         }
         catch ( final WebException e )
         {
@@ -204,7 +180,7 @@ class IdentityHandlerTest
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
@@ -222,7 +198,7 @@ class IdentityHandlerTest
 
         VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
 
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
@@ -231,16 +207,9 @@ class IdentityHandlerTest
 
     public VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
     {
-        Mockito.doAnswer( ( InvocationOnMock invocation ) -> {
-            return virtualHostKey = (String) invocation.getArguments()[0];
-
-        } ).when( rawRequest ).setAttribute( Mockito.any(), Mockito.isA( VirtualHost.class ) );
-
-        when( rawRequest.getAttribute( Mockito.isA( String.class ) ) ).thenAnswer( ( InvocationOnMock invocation ) -> {
-
-            return virtualHostKey.equals( invocation.getArguments()[0] ) ? virtualHost : null;
-
-        } );
+        Mockito.doAnswer( ( InvocationOnMock invocation ) -> virtualHostKey = (String) invocation.getArguments()[0] )
+            .when( rawRequest )
+            .setAttribute( Mockito.any(), Mockito.isA( VirtualHost.class ) );
 
         return virtualHost;
     }
