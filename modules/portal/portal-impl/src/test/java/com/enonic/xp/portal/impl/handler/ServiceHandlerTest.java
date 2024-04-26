@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.service;
+package com.enonic.xp.portal.impl.handler;
 
 import java.util.Collections;
 import java.util.Set;
@@ -40,7 +40,6 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,9 +47,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ServiceHandlerTest
-    extends BaseHandlerTest
 {
     private ServiceHandler handler;
 
@@ -69,33 +71,28 @@ public class ServiceHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.controllerScript );
+        final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
+        this.controllerScript = mock( ControllerScript.class );
+        when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();
-        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        final Resource resourceNotFound = Mockito.mock( Resource.class );
-        Mockito.when( resourceNotFound.exists() ).thenReturn( false );
-        final Resource resource = Mockito.mock( Resource.class );
-        Mockito.when( resource.exists() ).thenReturn( true );
-        Mockito.when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
+        this.resourceService = mock( ResourceService.class );
+        final Resource resourceNotFound = mock( Resource.class );
+        when( resourceNotFound.exists() ).thenReturn( false );
+        final Resource resource = mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+        when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resourceNotFound );
 
-        this.serviceDescriptorService = Mockito.mock( ServiceDescriptorService.class );
+        this.serviceDescriptorService = mock( ServiceDescriptorService.class );
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
-        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().
-            key( serviceDescriptorKey ).
-            build();
-        Mockito.when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().key( serviceDescriptorKey ).build();
+        when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.contentService = Mockito.mock( ContentService.class );
+        this.contentService = mock( ContentService.class );
 
-        this.handler = new ServiceHandler();
-        this.handler.setControllerScriptFactory( controllerScriptFactory );
-        this.handler.setContentService( this.contentService );
-        this.handler.setServiceDescriptorService( this.serviceDescriptorService );
+        this.handler = new ServiceHandler( contentService, serviceDescriptorService, controllerScriptFactory );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -104,37 +101,15 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void testOrder()
-    {
-        assertEquals( 0, this.handler.getOrder() );
-    }
-
-    @Test
-    public void testMatch()
-    {
-        this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/other/demo/myservice" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/service/demo/myservice" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/service/demo/myservice" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
-    }
-
-    @Test
     public void testOptions()
         throws Exception
     {
         this.request.setMethod( HttpMethod.OPTIONS );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
@@ -148,7 +123,7 @@ public class ServiceHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -164,18 +139,16 @@ public class ServiceHandlerTest
     {
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
         final Set<PrincipalKey> allowedPrincipals = Collections.singleton( PrincipalKey.from( "role:system.admin" ) );
-        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().
-            key( serviceDescriptorKey ).
-            setAllowedPrincipals( allowedPrincipals ).
-            build();
-        Mockito.when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
+        final ServiceDescriptor serviceDescriptor =
+            ServiceDescriptor.create().key( serviceDescriptorKey ).setAllowedPrincipals( allowedPrincipals ).build();
+        when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         boolean forbiddenErrorThrown = false;
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request );
         }
         catch ( WebException e )
         {
@@ -193,10 +166,10 @@ public class ServiceHandlerTest
     {
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
-        Mockito.verify( this.controllerScript ).execute( this.request );
+        verify( this.controllerScript ).execute( this.request );
 
         assertNotNull( this.request.getApplicationKey() );
         assertNull( this.request.getSite() );
@@ -211,10 +184,10 @@ public class ServiceHandlerTest
 
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
-        Mockito.verify( this.controllerScript ).execute( this.request );
+        verify( this.controllerScript ).execute( this.request );
 
         assertNotNull( this.request.getApplicationKey() );
         assertNotNull( this.request.getSite() );
@@ -224,11 +197,10 @@ public class ServiceHandlerTest
 
     @Test
     public void executeScript_invalidSite()
-        throws Exception
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
-        assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
     }
 
     @Test
@@ -238,44 +210,48 @@ public class ServiceHandlerTest
         this.request.setRawPath( "/webapp/demo/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
-        Mockito.verify( this.controllerScript ).execute( this.request );
+        verify( this.controllerScript ).execute( this.request );
         assertNotNull( this.request.getApplicationKey() );
     }
 
     @Test
     public void executeScript_invalidApplication()
-        throws Exception
     {
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         assertThrows( WebException.class, () -> {
-            final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+            final WebResponse response = this.handler.handle( this.request );
             assertEquals( HttpStatus.OK, response.getStatus() );
-            Mockito.verify( this.controllerScript ).execute( this.request );
+            verify( this.controllerScript ).execute( this.request );
             assertNotNull( this.request.getApplicationKey() );
         } );
     }
 
+    @Test
+    void testHandleMethodNotAllowed()
+    {
+        this.request.setMethod( HttpMethod.CONNECT );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
+        assertEquals( "Method CONNECT not allowed", ex.getMessage() );
+    }
+
     private void setupContentAndSite()
-        throws Exception
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( content );
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
 
         final Site site = createSite( "id", "site", "myapplication:contenttypename" );
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( site );
+        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( site );
 
-        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).thenReturn( site );
 
-        Mockito.when( this.contentService.getById( content.getId() ) ).
-            thenReturn( content );
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -296,18 +272,11 @@ public class ServiceHandlerTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
-                add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().descriptor( "myapp:mypart" ).
-                        build() ).
-                    build() ).
-                build();
+            PageRegions pageRegions = PageRegions.create()
+                .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
+                .build();
 
-            Page page = Page.create().
-                template( PageTemplateKey.from( "my-page" ) ).
-                regions( pageRegions ).
-                config( rootDataSet ).
-                build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();
@@ -318,25 +287,19 @@ public class ServiceHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
-        final SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "demo" ) ).
-            config( new PropertyTree() ).
-            build();
+        final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "demo" ) ).config( new PropertyTree() ).build();
 
-        return Site.create().
-            addSiteConfig( siteConfig ).
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+        return Site.create()
+            .addSiteConfig( siteConfig )
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .page( page )
+            .build();
     }
 }

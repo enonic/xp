@@ -1,6 +1,8 @@
-package com.enonic.xp.portal.impl.handler.api;
+package com.enonic.xp.portal.impl.handler;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,24 +25,25 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
-import com.enonic.xp.web.handler.BaseWebHandler;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
-@Component(immediate = true, service = WebHandler.class)
-public class ApiAppHandler
-    extends BaseWebHandler
+@Component(service = SlashApiHandler.class)
+public class SlashApiHandler
 {
-    public static final Pattern PATTERN =
-        Pattern.compile( "^/(_|api)/(?<appKey>(?!media|idprovider|widgets|asset|attachment|image|component|service|error)[^/]+)(?:/(?<apiKey>[^/]+))?(?<restPath>/.*)?$" );
+    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
+    private static final Pattern API_PATTERN = Pattern.compile( "^/(_|api)/(?<appKey>[^/]+)(?:/(?<apiKey>[^/]+))?(?<restPath>/.*)?$" );
+
+    private static final List<String> RESERVED_APP_KEYS =
+        List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
 
     private final ControllerScriptFactory controllerScriptFactory;
 
@@ -51,9 +54,9 @@ public class ApiAppHandler
     private final ExceptionRenderer exceptionRenderer;
 
     @Activate
-    public ApiAppHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                          @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
-                          @Reference final ExceptionRenderer exceptionRenderer )
+    public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
+                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
+                            @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -61,37 +64,60 @@ public class ApiAppHandler
         this.exceptionRenderer = exceptionRenderer;
     }
 
-    @Override
-    protected boolean canHandle( final WebRequest webRequest )
-    {
-        final String input = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
-        return PATTERN.matcher( input ).matches();
-    }
-
-    @Override
-    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
-        Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
-        matcher.matches();
+        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+        Matcher matcher = API_PATTERN.matcher( path );
+        if ( !matcher.matches() )
+        {
+            throw new IllegalStateException( "Invalid API path: " + path );
+        }
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( "appKey" ) );
+
+        if ( RESERVED_APP_KEYS.contains( applicationKey.getName() ) )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Application key [%s] is reserved", applicationKey ) );
+        }
+
+        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
+        }
+
+        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
+        {
+            return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
+        }
+
         final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
+
+        final String restPath = matcher.group( "restPath" );
 
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
 
-        final Trace trace = Tracer.newTrace( "handleAPI" );
+        final Trace trace = Tracer.newTrace( "slashAPI" );
         if ( trace == null )
         {
             return handleAPIRequest( portalRequest, apiDescriptor );
         }
         return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = handleAPIRequest( portalRequest, apiDescriptor );
-            addTraceInfo( trace, resp );
-            return resp;
+            final WebResponse response = handleAPIRequest( portalRequest, apiDescriptor );
+            addTranceInfo( trace, applicationKey, apiKey, restPath, response );
+            return response;
         } );
+    }
+
+    private static void addTranceInfo( final Trace trace, final ApplicationKey applicationKey, final String apiKey, final String restPath,
+                                       final WebResponse response )
+    {
+        trace.put( "app", applicationKey.toString() );
+        trace.put( "api", apiKey );
+        trace.put( "path", restPath );
+        HandlerHelper.addTraceInfo( trace, response );
     }
 
     private WebResponse handleAPIRequest( final PortalRequest portalRequest, final ApiDescriptor apiDescriptor )
