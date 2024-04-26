@@ -1,6 +1,7 @@
-package com.enonic.xp.portal.impl.handler.attachment;
+package com.enonic.xp.portal.impl.handler;
 
 import java.util.EnumSet;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,21 +14,24 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
-import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
-public final class AttachmentHandler
-    extends EndpointHandler
+@Component(service = AttachmentHandler.class)
+public class AttachmentHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(?::([^/]+))?/([^/]+)" );
+    private static final Pattern PATTERN = Pattern.compile( "^([^/]+)/([^/:]+)(?::([^/]+))?/([^/]+)" );
+
+    private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
+
+    private static final Predicate<WebRequest> IS_GET_HEAD_OPTIONS_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
+
+    private static final Predicate<WebRequest> IS_SITE_BASE = req -> req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
 
     private final ContentService contentService;
 
@@ -42,7 +46,6 @@ public final class AttachmentHandler
     @Activate
     public AttachmentHandler( @Reference final ContentService contentService )
     {
-        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
         this.contentService = contentService;
     }
 
@@ -56,24 +59,32 @@ public final class AttachmentHandler
         contentSecurityPolicySvg = config.media_contentSecurityPolicy_svg();
     }
 
-    @Override
-    public boolean canHandle( final WebRequest webRequest )
-    {
-        return super.canHandle( webRequest ) && isSiteBase( webRequest );
-    }
-
-    @Override
-    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public PortalResponse handle( final WebRequest webRequest )
         throws Exception
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
 
-        final String restPath = findRestPath( webRequest );
+        final String restPath = HandlerHelper.findRestPath( webRequest, "attachment" );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
         {
             throw WebException.notFound( "Not a valid attachment url pattern" );
+        }
+
+        if ( !IS_SITE_BASE.test( webRequest ) )
+        {
+            throw WebException.notFound( "Not a valid request" );
+        }
+
+        if ( !IS_GET_HEAD_OPTIONS_METHOD.test( webRequest ) )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
+        }
+
+        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
+        {
+            return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
         final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest, this.contentService );
@@ -87,5 +98,4 @@ public final class AttachmentHandler
         worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
         return worker.execute();
     }
-
 }

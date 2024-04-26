@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.attachment;
+package com.enonic.xp.portal.impl.handler;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -32,7 +32,6 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseHandlerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -40,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,8 +47,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AttachmentHandlerTest
-    extends BaseHandlerTest
+public class AttachmentHandlerTest
 {
     private AttachmentHandler handler;
 
@@ -80,22 +79,18 @@ class AttachmentHandlerTest
     private void setupMedia()
         throws Exception
     {
-        final Attachment attachment = Attachment.create().
-            name( "logo.png" ).
-            mimeType( "image/png" ).
-            label( "small" ).
-            build();
+        final Attachment attachment = Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).build();
 
         final Media content = createMedia( "123456", "path/to/content", attachment );
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-        when( this.contentService.getBinaryKey( eq( content.getId() ), eq( content.getMediaAttachment().getBinaryReference() ) ) ).
-            thenReturn( "98765" );
+        when(
+            this.contentService.getBinaryKey( eq( content.getId() ), eq( content.getMediaAttachment().getBinaryReference() ) ) ).thenReturn(
+            "98765" );
 
         this.mediaBytes = ByteSource.wrap( new byte[]{'0', '1', '2', '3', '4', '5', '6'} );
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
-            thenReturn( this.mediaBytes );
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( this.mediaBytes );
     }
 
     private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
@@ -103,56 +98,21 @@ class AttachmentHandlerTest
         final PropertyTree data = new PropertyTree();
         data.addString( "media", attachments[0].getName() );
 
-        return Media.create().
-            id( ContentId.from( id ) ).
-            path( contentPath ).
-            createdTime( Instant.now() ).
-            type( ContentTypeName.imageMedia() ).
-            permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( RoleKeys.EVERYONE ).
-                    allow( Permission.READ ).
-                    build() ).
-                build() ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifiedTime( Instant.now() ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            data( data ).
-            attachments( Attachments.from( attachments ) ).
-            build();
-    }
-
-    @Test
-    void order()
-    {
-        assertEquals( 0, this.handler.getOrder() );
-    }
-
-    @Test
-    void match()
-    {
-        this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/other/inline/a/b" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/attachment/inline/a/b" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/attachment/inline/a/b" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
-    }
-
-    @Test
-    void methodNotAllowed()
-        throws Exception
-    {
-        assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.DELETE, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.PUT, this.request );
-        assertMethodNotAllowed( this.handler, HttpMethod.TRACE, this.request );
+        return Media.create()
+            .id( ContentId.from( id ) )
+            .path( contentPath )
+            .createdTime( Instant.now() )
+            .type( ContentTypeName.imageMedia() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                              .build() )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifiedTime( Instant.now() )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .data( data )
+            .attachments( Attachments.from( attachments ) )
+            .build();
     }
 
     @Test
@@ -162,7 +122,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
@@ -176,7 +136,7 @@ class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -192,7 +152,7 @@ class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -206,7 +166,7 @@ class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -224,7 +184,7 @@ class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -242,7 +202,7 @@ class AttachmentHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
+            this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -259,7 +219,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=2-4" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -280,7 +240,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=-3" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -301,7 +261,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=4-" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -322,7 +282,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=5-1000" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -343,7 +303,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=0-1,3-4,6-" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.parse( "multipart/byteranges" ), res.getContentType().withoutParameters() );
@@ -374,7 +334,7 @@ class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=many" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -389,7 +349,7 @@ class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
@@ -400,7 +360,7 @@ class AttachmentHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
@@ -410,7 +370,7 @@ class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
 
         assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
     }
@@ -421,7 +381,32 @@ class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'", res.getHeaders().get( "Content-Security-Policy" ) );
     }
+
+    @Test
+    void testHandleMethodNotAllowed()
+    {
+        this.request.setMethod( HttpMethod.DELETE );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
+        assertEquals( "Method DELETE not allowed", ex.getMessage() );
+    }
+
+    @Test
+    void testHandleNotSiteBase()
+    {
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( HttpMethod.GET );
+        portalRequest.setBaseUri( "/unknown" );
+        portalRequest.setRawPath( "path-to-content/_/attachment/mode/id:version/name" );
+        portalRequest.setEndpointPath( "/_/attachment/mode/id:version/name" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Not a valid request", ex.getMessage() );
+    }
+
 }
