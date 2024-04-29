@@ -77,7 +77,7 @@ guava = { module = "com.google.guava:guava", version = "26.0-jre" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
 
-owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20220608.1" }
+owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
 bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.13" }
 
