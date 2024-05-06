@@ -121,7 +121,6 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "type", nullToNull( params.getType() ) );
         paramsSet.addString( "name", nullToNull( params.getName() ) );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
-        paramsSet.addBoolean( "inheritPermissions", params.isInheritPermissions() );
 
         if ( params.getProcessedIds() != null )
         {
@@ -520,8 +519,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addBoolean( "inheritPermissions", params.isInheritPermissions() );
-        paramsSet.addBoolean( "overwriteChildPermissions", params.isOverwriteChildPermissions() );
+        paramsSet.addString( "scope", params.getScope().toString() );
 
         if ( params.getPermissions() != null )
         {
@@ -532,10 +530,32 @@ public class ContentAuditLogSupportImpl
                 .collect( Collectors.toList() ) );
         }
 
-        addContents( resultSet, result.getSkippedContents(), "skippedContents" );
-        addContents( resultSet, result.getSucceedContents(), "succeedContents" );
+        result.getResults().forEach( ( contentId, branchResults ) -> {
 
-        log( "system.content.applyPermissions", data, result.getSucceedContents(), rootContext );
+            final PropertySet contentSet = resultSet.addSet( contentId.toString() );
+            branchResults.forEach( branchResult -> {
+
+                final PropertySet branchSet = contentSet.addSet( branchResult.getBranch().toString() );
+                if ( branchResult.getContent() != null )
+                {
+                    addContentWithPermissions( branchSet, branchResult.getContent() );
+                }
+            } );
+        } );
+
+        final AuditLogUris auditLogUris = result.getResults()
+            .entrySet()
+            .stream()
+            .flatMap( entry -> entry.getValue()
+                .stream()
+                .map( branchResult -> branchResult.getContent() != null ? createAuditLogUri( entry.getKey(),
+                                                                                             ContextBuilder.from( rootContext )
+                                                                                                 .branch( branchResult.getBranch() )
+                                                                                                 .build() ) : null )
+                .filter( Objects::nonNull ) )
+            .collect( AuditLogUris.collecting() );
+
+        log( "system.content.applyPermissions", data, auditLogUris, rootContext );
     }
 
     @Override
@@ -565,6 +585,16 @@ public class ContentAuditLogSupportImpl
     {
         targetSet.setString( "id", content.getId().toString() );
         targetSet.setString( "path", content.getPath().toString() );
+    }
+
+    private void addContentWithPermissions( final PropertySet targetSet, final Content content )
+    {
+        this.addContent( targetSet, content );
+        targetSet.addStrings( "permissions", content.getPermissions()
+            .getEntries()
+            .stream()
+            .map( AccessControlEntry::toString )
+            .collect( Collectors.toList() ) );
     }
 
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )

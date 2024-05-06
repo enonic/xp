@@ -27,10 +27,9 @@ var result1 = repo.setRootPermissions({
             'deny': []
         }
     ],
-    _inheritsPermissions: true
 });
 
-log.info('Modified root node with inheritsPermissions = [%s], permissions: %s', result1._inheritsPermissions,
+log.info('Modified root node, permissions: %s',
     JSON.stringify(result1._permissions, null, 4));
 // END
 

@@ -39,7 +39,6 @@ var expected = {
             },
         'configs': []
         },
-    '_inheritsPermissions': true,
     '_permissions': [
             {
                 'principal': 'role:system.admin',

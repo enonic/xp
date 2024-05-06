@@ -1020,6 +1020,9 @@ export interface AccessControlEntry {
     deny?: Permission[];
 }
 
+/**
+ * @deprecated Use the new {@link ApplyPermissionsParams} interface instead.
+ */
 export interface SetPermissionsParams {
     key: string;
     inheritPermissions?: boolean;
@@ -1027,25 +1030,45 @@ export interface SetPermissionsParams {
     permissions?: AccessControlEntry[];
 }
 
+export interface ApplyPermissionsParams {
+    key: string;
+    scope?: 'SINGLE' | 'TREE' | 'CHILDREN';
+    permissions?: AccessControlEntry[];
+    addPermissions?: AccessControlEntry[];
+    removePermissions?: AccessControlEntry[];
+}
+
+export interface ApplyPermissionsResult {
+    [nodeId: string]: BranchResult[];
+}
+
+export interface BranchResult {
+    branch: string;
+    content: Content;
+}
+
 export interface Permissions {
-    inheritsPermissions: boolean;
     permissions?: AccessControlEntry[];
 }
 
-interface SetPermissionsHandler {
+interface ApplyPermissionsHandler {
     setKey(value: string): void;
 
-    setInheritPermissions(value: boolean): void;
-
-    setOverwriteChildPermissions(value: boolean): void;
+    setScope(value: string): void;
 
     setPermissions(value: ScriptValue): void;
 
-    execute(): boolean;
+    setAddPermissions(value: ScriptValue): void;
+
+    setRemovePermissions(value: ScriptValue): void;
+
+    execute(): ApplyPermissionsResult;
 }
 
 /**
  * Sets permissions on a content.
+ *
+ * @deprecated Please use {@link applyPermissions}.
  *
  * @example-ref examples/content/setPermissions.js
  *
@@ -1060,20 +1083,64 @@ interface SetPermissionsHandler {
  * @returns {boolean} True if successful, false otherwise.
  */
 export function setPermissions(params: SetPermissionsParams): boolean {
-    const bean = __.newBean<SetPermissionsHandler>('com.enonic.xp.lib.content.SetPermissionsHandler');
+    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
     }
-    if (params.inheritPermissions) {
-        bean.setInheritPermissions(params.inheritPermissions);
+    if (params.permissions) {
+        bean.setPermissions(__.toScriptValue(params.permissions));
     }
-    if (params.overwriteChildPermissions) {
-        bean.setOverwriteChildPermissions(params.overwriteChildPermissions);
+    const result = bean.execute();
+
+    for (const nodeId in result) {
+        const branchResults = result[nodeId];
+        for (const branchResult of branchResults) {
+            if (branchResult.content !== null) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Applies permissions to a content.
+ *
+ * @example-ref examples/content/applyPermissions.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+ * @param {array} [params.permissions] Array of permissions. Cannot be used together with addPermissions and removePermissions.
+ * @param {string} params.permissions.principal Principal key.
+ * @param {array} params.permissions.allow Allowed permissions.
+ * @param {array} params.permissions.deny Denied permissions.
+ * @param {array} [params.addPermissions] Array of permissions to add. Cannot be used together with permissions.
+ * @param {array} [params.removePermissions] Array of permissions to remove. Cannot be used together with permissions.
+ *
+ * @returns {object} Result of the apply permissions operation.
+ */
+export function applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
+    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
+
+    if (params.key) {
+        bean.setKey(params.key);
+    }
+    if (params.scope) {
+        bean.setScope(params.scope);
     }
     if (params.permissions) {
         bean.setPermissions(__.toScriptValue(params.permissions));
     }
+    if (params.addPermissions) {
+        bean.setAddPermissions(__.toScriptValue(params.addPermissions));
+    }
+    if (params.removePermissions) {
+        bean.setRemovePermissions(__.toScriptValue(params.removePermissions));
+    }
+
     return __.toNativeObject(bean.execute());
 }
 

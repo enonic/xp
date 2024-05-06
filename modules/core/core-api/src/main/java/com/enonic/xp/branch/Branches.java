@@ -1,5 +1,7 @@
 package com.enonic.xp.branch;
 
+import java.util.stream.Collector;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -27,5 +29,11 @@ public final class Branches
     public static Branches empty()
     {
         return new Branches( ImmutableSet.of() );
+    }
+
+    public static Collector<Branch, ImmutableSet.Builder<Branch>, Branches> collecting()
+    {
+        return Collector.of( ImmutableSet.Builder<Branch>::new, ImmutableSet.Builder::add, ( left, right ) -> left.addAll( right.build() ),
+                             is -> new Branches( is.build() ) );
     }
 }

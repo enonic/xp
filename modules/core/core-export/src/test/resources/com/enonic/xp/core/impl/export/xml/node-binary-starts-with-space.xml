@@ -3,7 +3,6 @@
   <childOrder>modifiedtime DESC</childOrder>
   <nodeType>content</nodeType>
   <timestamp>2020-10-26T13:13:47.452Z</timestamp>
-  <inheritPermissions>true</inheritPermissions>
   <permissions>
     <principal key="role:system.admin">
       <allow type="array">

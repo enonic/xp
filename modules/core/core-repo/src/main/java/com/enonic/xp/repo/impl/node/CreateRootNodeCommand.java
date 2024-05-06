@@ -34,7 +34,7 @@ public class CreateRootNodeCommand
             childOrder( params.getChildOrder() ).
             build();
 
-        return this.nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) ).node();
     }
 
     public static class Builder

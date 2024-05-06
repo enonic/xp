@@ -29,6 +29,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -987,7 +988,7 @@ public final class SecurityServiceImpl
                                         .build() );
 
                 final ApplyNodePermissionsParams applyPermissions =
-                    ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).overwriteChildPermissions( false ).build();
+                    ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).scope( ApplyPermissionsScope.SINGLE ).build();
                 nodeService.applyPermissions( applyPermissions );
 
                 return idProviderNode;
@@ -1060,7 +1061,7 @@ public final class SecurityServiceImpl
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
 
                 final ApplyNodePermissionsParams applyPermissions =
-                    ApplyNodePermissionsParams.create().nodeId( idProviderNode.id() ).overwriteChildPermissions( false ).build();
+                    ApplyNodePermissionsParams.create().nodeId( idProviderNode.id() ).scope( ApplyPermissionsScope.SINGLE ).build();
                 nodeService.applyPermissions( applyPermissions );
             }
 
@@ -1072,11 +1073,8 @@ public final class SecurityServiceImpl
 
     private void setNodePermissions( final NodeId nodeId, final AccessControlList permissions )
     {
-        nodeService.update( UpdateNodeParams.create()
-                                .id( nodeId )
-                                .editor( editableNode -> editableNode.permissions = permissions )
-                                .refresh( RefreshMode.ALL )
-                                .build() );
+        nodeService.applyPermissions( ApplyNodePermissionsParams.create().nodeId( nodeId ).permissions( permissions ).build() );
+        nodeService.refresh( RefreshMode.ALL );
     }
 
     private <T> T callWithContext( Callable<T> runnable )

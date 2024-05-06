@@ -99,7 +99,6 @@ public class NodeVersionServiceImpl
 
             return NodeVersion.create( nodeVersion )
                 .indexConfigDocument( indexConfigDocument )
-                .inheritPermissions( accessControl.isInheritPermissions() )
                 .permissions( accessControl.getPermissions() )
                 .build();
         }

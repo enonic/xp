@@ -183,7 +183,7 @@ public class MoveNodeCommand
 
         final Node movedNode = this.nodeStorageService.store(
             StoreNodeParams.create().node( nodeToMoveBuilder.build() ).movedFrom( persistedNode.path() ).build(),
-            InternalContext.from( ContextAccessor.current() ) );
+            InternalContext.from( ContextAccessor.current() ) ).node();
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
@@ -207,9 +207,6 @@ public class MoveNodeCommand
 
     private void updateStoredNodeProperties( final NodePath newParentPath, final Node.Builder nodeToMoveBuilder )
     {
-        // when moving a Node "inheritPermissions" must be set to false so the permissions are kept with the transfer
-        nodeToMoveBuilder.inheritPermissions( false );
-
         if ( newParentPath.equals( this.newParentPath ) )
         {
             final Node parentNode = doGetByPath( newParentPath );

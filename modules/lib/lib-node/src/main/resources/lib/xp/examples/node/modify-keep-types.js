@@ -52,7 +52,6 @@ var expected = {
         },
         'configs': []
     },
-    '_inheritsPermissions': false,
     '_state': 'DEFAULT',
     '_nodeType': 'default',
     'myString': 'modifiedValue',

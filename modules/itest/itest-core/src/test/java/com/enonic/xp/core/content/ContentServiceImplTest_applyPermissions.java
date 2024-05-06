@@ -9,17 +9,28 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ApplyPermissionsScope;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class ContentServiceImplTest_applyPermissions
@@ -30,43 +41,83 @@ public class ContentServiceImplTest_applyPermissions
     public void content_not_found()
         throws Exception
     {
-        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
-            contentId( ContentId.from( "id1" ) ).
-            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
-            build();
+        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
+            .contentId( ContentId.from( "id1" ) )
+            .applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) )
+            .build();
 
-        final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
-
-        assertEquals( result.getSkippedContents().getSize(), 0 );
-        assertEquals( result.getSucceedContents().getSize(), 0 );
+        assertThrows( NodeNotFoundException.class, () -> this.contentService.applyPermissions( applyParams ) );
     }
 
     @Test
     public void success()
         throws Exception
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
         final Content child =
             this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
 
-        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
-            contentId( content.getId() ).
-            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
-            build();
+        final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
+
+        final ApplyContentPermissionsParams applyParams =
+            ApplyContentPermissionsParams.create().contentId( content.getId() ).applyContentPermissionsListener( listener ).build();
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
-        assertEquals( result.getSkippedContents().getSize(), 0 );
-        assertEquals( result.getSucceedContents().getSize(), 2 );
-        assertTrue( result.getSucceedContents().contains( child.getPath() ) );
-        assertTrue( result.getSucceedContents().contains( content.getPath() ) );
+        verify( listener, times( 2 ) ).permissionsApplied( 1 );
+
+        assertEquals( 2, result.getResults().size() );
+
+        assertEquals( content.getPermissions(),
+                      result.getResult( content.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
+        assertNull( result.getResult( content.getId(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( child.getPermissions(), result.getResult( child.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
+        assertNull( result.getResult( child.getId(), ContentConstants.BRANCH_MASTER ) );
+    }
+
+    @Test
+    public void no_rights()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .inheritPermissions( false )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create()
+                                        .principal( ContextAccessor.current().getAuthInfo().getUser().getKey() )
+                                        .allowAll()
+                                        .deny( Permission.WRITE_PERMISSIONS )
+                                        .build() )
+                              .build() )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+        this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
+
+        final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
+
+        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
+            .contentId( content.getId() )
+            .applyPermissionsScope( ApplyPermissionsScope.TREE )
+            .applyContentPermissionsListener( listener )
+            .build();
+
+        final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
+
+        verify( listener, times( 1 ) ).notEnoughRights( 1 );
+
+        assertEquals( 1, result.getResults().size() );
+        assertNull( result.getResult( content.getId(), ContextAccessor.current().getBranch() ) );
     }
 
     @Test
@@ -74,19 +125,26 @@ public class ContentServiceImplTest_applyPermissions
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
-        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().
-            contentId( content.getId() ).
-            applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) ).
-            build();
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create().contentId( content.getId() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create()
+                                        .principal( ContextAccessor.current().getAuthInfo().getUser().getKey() )
+                                        .allowAll()
+                                        .build() )
+                              .build() )
+            .applyContentPermissionsListener( mock( ApplyPermissionsListener.class ) )
+            .build();
 
         Mockito.reset( auditLogService );
 
@@ -96,6 +154,7 @@ public class ContentServiceImplTest_applyPermissions
         final LogAuditLogParams log = captor.getValue();
 
         assertThat( log.getType() ).isEqualTo( "system.content.applyPermissions" );
-        assertThat( log.getData().getString( "result.succeedContents" ) ).isEqualTo( content.getPath().toString() );
+        assertThat( log.getData().getString( "result." + content.getId() + ".master" ) ).isEqualTo(
+            log.getData().getString( "result." + content.getId() + ".draft" ) );
     }
 }

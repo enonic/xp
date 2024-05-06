@@ -1,6 +1,7 @@
 package com.enonic.xp.security.acl;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -38,7 +39,17 @@ public final class AccessControlEntry
         return allowedPermissions;
     }
 
+    public Collection<Permission> allowedPermissions()
+    {
+        return allowedPermissions;
+    }
+
     public Iterable<Permission> getDeniedPermissions()
+    {
+        return deniedPermissions;
+    }
+
+    public Collection<Permission> deniedPermissions()
     {
         return deniedPermissions;
     }

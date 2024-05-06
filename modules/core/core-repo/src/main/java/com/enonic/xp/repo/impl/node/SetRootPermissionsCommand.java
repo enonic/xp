@@ -18,13 +18,10 @@ public class SetRootPermissionsCommand
 {
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private SetRootPermissionsCommand( final Builder builder )
     {
         super( builder );
         this.permissions = builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public Node execute()
@@ -40,11 +37,10 @@ public class SetRootPermissionsCommand
 
         final Node node = Node.create( rootNode )
             .permissions( this.permissions )
-            .inheritPermissions( this.inheritPermissions )
             .timestamp( Instant.now( CLOCK ) )
             .build();
 
-        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) );
+        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ).node();
     }
 
     public static Builder create()
@@ -62,8 +58,6 @@ public class SetRootPermissionsCommand
     {
         private AccessControlList permissions;
 
-        private boolean inheritPermissions = true;
-
         private Builder()
         {
         }
@@ -76,12 +70,6 @@ public class SetRootPermissionsCommand
         public Builder permissions( final AccessControlList val )
         {
             permissions = val;
-            return this;
-        }
-
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

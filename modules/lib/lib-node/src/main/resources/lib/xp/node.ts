@@ -253,6 +253,9 @@ interface NodeHandler {
 
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
 
+    applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
+                     scope: string): ApplyPermissionsResult;
+
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
     refresh(mode: RefreshMode): void;
@@ -469,6 +472,24 @@ export interface FindNodesByParentResult {
     }[];
 }
 
+export interface ApplyPermissionsParams {
+    key: string;
+    permissions?: AccessControlEntry[];
+    addPermissions?: AccessControlEntry[];
+    removePermissions?: AccessControlEntry[];
+    branches?: string[];
+    scope?: string;
+}
+
+export interface ApplyPermissionsResult {
+    [nodeId: string]: BranchResult[];
+}
+
+export interface BranchResult {
+    branch: string;
+    node: Node;
+}
+
 export type RefreshMode = 'SEARCH' | 'STORAGE' | 'ALL';
 
 export interface GetCommitParams {
@@ -487,9 +508,11 @@ export interface CommitParams {
     message?: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface SetRootPermissionsParams {
     _permissions: AccessControlEntry[];
-    _inheritsPermissions: boolean;
 }
 
 export type Permission = 'READ' | 'CREATE' | 'MODIFY' | 'DELETE' | 'PUBLISH' | 'READ_PERMISSIONS' | 'WRITE_PERMISSIONS';
@@ -540,7 +563,6 @@ export type CommonNodeProperties = {
     _childOrder: string;
     // _id: string; // Not on create
     // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
-    _inheritsPermissions: boolean;
     _manualOrderValue?: number; // Notice optional
     _name: string;
     _nodeType: string;
@@ -555,6 +577,7 @@ export type CommonNodeProperties = {
 export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _indexConfig?: Partial<NodeIndexConfigParams>;
     _parentPath?: string;
+    _inheritsPermissions?: boolean;
 };
 
 export type NodePropertiesOnModify = CommonNodeProperties & {
@@ -613,6 +636,8 @@ export interface RepoConnection {
     refresh(mode?: RefreshMode): void;
 
     setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData>;
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
 
     commit(params: CommitParams): NodeCommit;
 
@@ -1003,13 +1028,14 @@ class RepoConnectionImpl
     }
 
     /**
+     * @deprecated
+     *
      * Set the root node permissions and inherit.
      *
      * @example-ref examples/node/modifyRootPermissions.js
      *
      * @param {object} params JSON with the parameters.
      * @param {object} params._permissions the permission json
-     * @param {object} [params._inheritsPermissions]= true if the permissions should be inherited to children
      *
      * @returns {object} Updated root-node as JSON.
      */
@@ -1017,6 +1043,30 @@ class RepoConnectionImpl
         checkRequired(params, '_permissions');
 
         return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
+    }
+
+    /**
+     * Apply permissions to a node.
+     *
+     * @example-ref examples/node/applyPermissions.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or ID of the node.
+     * @param {object} [params.permissions] the permissions json
+     * @param {object} [params.addPermissions] the permissions to add json
+     * @param {object} [params.removePermissions] the permissions to remove json
+     * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
+     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+     *
+     * @returns {object} Result of the apply permissions operation.
+     */
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
+        checkRequired(params, 'key');
+
+        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
+            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), __.nullOrValue(params.branches),
+            __.nullOrValue(params.scope)));
     }
 
     /**

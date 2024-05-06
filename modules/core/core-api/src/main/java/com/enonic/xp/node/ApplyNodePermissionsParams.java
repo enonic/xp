@@ -2,7 +2,12 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -13,19 +18,28 @@ public final class ApplyNodePermissionsParams
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
+    private final AccessControlList addPermissions;
 
-    private final boolean overwriteChildPermissions;
+    private final AccessControlList removePermissions;
+
+    private final ApplyPermissionsScope scope;
 
     private final ApplyPermissionsListener listener;
+
+    private final Branches branches;
 
     private ApplyNodePermissionsParams( Builder builder )
     {
         nodeId = Objects.requireNonNull( builder.nodeId );
-        permissions = builder.permissions;
-        inheritPermissions = builder.inheritPermissions;
-        overwriteChildPermissions = builder.overwriteChildPermissions;
+        scope = Objects.requireNonNullElse( builder.scope, ApplyPermissionsScope.SINGLE );
+        permissions = builder.permissions.build();
+        addPermissions = builder.addPermissions.build();
+        removePermissions = builder.removePermissions.build();
         listener = builder.listener;
+        branches = Branches.from( builder.branches.build() );
+
+        Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
+                                     "Permissions cannot be set together with addPermissions or removePermissions" );
     }
 
     public static Builder create()
@@ -43,14 +57,25 @@ public final class ApplyNodePermissionsParams
         return permissions;
     }
 
-    public boolean isInheritPermissions()
+    public AccessControlList getAddPermissions()
     {
-        return inheritPermissions;
+        return addPermissions;
     }
 
+    public AccessControlList getRemovePermissions()
+    {
+        return removePermissions;
+    }
+
+    @Deprecated
     public boolean isOverwriteChildPermissions()
     {
-        return overwriteChildPermissions;
+        return false;
+    }
+
+    public ApplyPermissionsScope getScope()
+    {
+        return scope;
     }
 
     public ApplyPermissionsListener getListener()
@@ -58,17 +83,26 @@ public final class ApplyNodePermissionsParams
         return listener;
     }
 
+    public Branches getBranches()
+    {
+        return branches;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
 
-        private AccessControlList permissions;
+        private final AccessControlList.Builder permissions = AccessControlList.create();
 
-        private boolean inheritPermissions;
+        private final AccessControlList.Builder addPermissions = AccessControlList.create();
 
-        private boolean overwriteChildPermissions;
+        private final AccessControlList.Builder removePermissions = AccessControlList.create();
+
+        private ApplyPermissionsScope scope;
 
         private ApplyPermissionsListener listener;
+
+        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
         private Builder()
         {
@@ -82,25 +116,52 @@ public final class ApplyNodePermissionsParams
 
         public Builder permissions( final AccessControlList permissions )
         {
-            this.permissions = permissions;
+            if ( permissions != null )
+            {
+                this.permissions.addAll( permissions.getEntries() );
+            }
             return this;
         }
 
-        public Builder inheritPermissions( final boolean inheritPermissions )
+        public Builder addPermissions( final AccessControlList permissions )
         {
-            this.inheritPermissions = inheritPermissions;
+            if ( permissions != null )
+            {
+                this.addPermissions.addAll( permissions.getEntries() );
+            }
             return this;
         }
 
+        public Builder removePermissions( final AccessControlList permissions )
+        {
+            if ( permissions != null )
+            {
+                this.removePermissions.addAll( permissions.getEntries() );
+            }
+            return this;
+        }
+
+        @Deprecated
         public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
         {
-            this.overwriteChildPermissions = overwriteChildPermissions;
+            return this;
+        }
+
+        public Builder scope( final ApplyPermissionsScope scope )
+        {
+            this.scope = scope;
             return this;
         }
 
         public Builder applyPermissionsListener( final ApplyPermissionsListener listener )
         {
             this.listener = listener;
+            return this;
+        }
+
+        public Builder addBranches( final Branches branches )
+        {
+            this.branches.addAll( branches );
             return this;
         }
 

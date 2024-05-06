@@ -16,9 +16,6 @@ public final class AccessControlJson
     @JsonProperty("permissions")
     private List<AccessControlEntryJson> permissions;
 
-    @JsonProperty("inheritPermissions")
-    private boolean inheritPermissions;
-
     private AccessControlJson()
     {
     }
@@ -26,14 +23,11 @@ public final class AccessControlJson
     private AccessControlJson( final Builder builder )
     {
         permissions = builder.permissions;
-        inheritPermissions = builder.inheritPermissions;
     }
 
     public static AccessControlJson toJson( final NodeVersion nodeVersion )
     {
-        return create().inheritPermissions( nodeVersion.isInheritPermissions() )
-            .permissions( toJson( nodeVersion.getPermissions() ) )
-            .build();
+        return create().permissions( toJson( nodeVersion.getPermissions() ) ).build();
     }
 
     private static List<AccessControlEntryJson> toJson( final AccessControlList acl )
@@ -64,14 +58,12 @@ public final class AccessControlJson
             builder.add( entryJson.fromJson() );
         }
 
-        return new NodeVersionAccessControl( builder.build(), json.inheritPermissions );
+        return new NodeVersionAccessControl( builder.build() );
     }
 
     public static final class Builder
     {
         private List<AccessControlEntryJson> permissions;
-
-        private boolean inheritPermissions;
 
         private Builder()
         {
@@ -80,12 +72,6 @@ public final class AccessControlJson
         public Builder permissions( final List<AccessControlEntryJson> permissions )
         {
             this.permissions = permissions;
-            return this;
-        }
-
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return this;
         }
 

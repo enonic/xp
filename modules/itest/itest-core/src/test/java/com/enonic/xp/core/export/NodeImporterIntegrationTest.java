@@ -448,7 +448,6 @@ public class NodeImporterIntegrationTest
 
         final Node addedNode = nodeService.getByPath( new NodePath( "/mynode" ) );
 
-        assertTrue( addedNode.inheritsPermissions() );
         assertTrue(
             addedNode.getPermissions().isAllowedFor( PrincipalKey.from( "user:system:test-user" ), Permission.READ, Permission.CREATE,
                                                      Permission.MODIFY, Permission.DELETE, Permission.PUBLISH, Permission.READ_PERMISSIONS,

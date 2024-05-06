@@ -10,10 +10,8 @@ import com.enonic.xp.node.NodeType;
 
 import static com.enonic.xp.lib.node.NodePropertyConstants.CHILD_ORDER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
-import static com.enonic.xp.lib.node.NodePropertyConstants.INHERITS_PERMISSIONS;
 import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
-import static com.enonic.xp.lib.node.NodePropertyConstants.PERMISSIONS;
 
 class ModifyNodeExecutor
 {
@@ -46,19 +44,9 @@ class ModifyNodeExecutor
             editableNode.childOrder = ChildOrder.from( propertyTree.getString( CHILD_ORDER ) );
         }
 
-        if ( exists( propertyTree, PERMISSIONS, ValueTypes.PROPERTY_SET ) )
-        {
-            editableNode.permissions = new PermissionsFactory( propertyTree.getSets( PERMISSIONS ) ).create();
-        }
-
         if ( exists( propertyTree, INDEX_CONFIG, ValueTypes.PROPERTY_SET ) )
         {
             editableNode.indexConfigDocument = new IndexConfigFactory( propertyTree.getSet( INDEX_CONFIG ) ).create();
-        }
-
-        if ( exists( propertyTree, INHERITS_PERMISSIONS, ValueTypes.BOOLEAN ) )
-        {
-            editableNode.inheritPermissions = propertyTree.getBoolean( INHERITS_PERMISSIONS );
         }
 
         if ( exists( propertyTree, MANUAL_ORDER_VALUE, ValueTypes.LONG ) )

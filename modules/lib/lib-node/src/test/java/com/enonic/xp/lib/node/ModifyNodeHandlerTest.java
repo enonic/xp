@@ -32,7 +32,8 @@ import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
@@ -99,10 +100,12 @@ public class ModifyNodeHandlerTest
         mySet.setGeoPoint( "myGeoPoint", new GeoPoint( 30, -30 ) );
 
         final Node node = Node.create().
-            id( NodeId.from( "abc" ) ).
-            parentPath( NodePath.ROOT ).
-            data( data ).
-            name( "myNode" ).
+            id( NodeId.from( "abc" ) ).parentPath( NodePath.ROOT )
+            .data( data )
+            .name( "myNode" )
+            .permissions(
+                AccessControlList.of( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() ) )
+            .
             build();
 
         mockGetNode( node );
@@ -122,10 +125,6 @@ public class ModifyNodeHandlerTest
         final ArrayList<String> myArrayValues = Lists.newArrayList( myArray );
         assertEquals( 3, myArrayValues.size() );
         assertTrue( myArrayValues.containsAll( List.of( "modified1", "modified2", "modified3" ) ) );
-
-        final AccessControlList permissions = editedNode.permissions;
-        assertTrue( permissions.getEntry( PrincipalKey.from( "role:newRole" ) ).isAllowed( Permission.MODIFY ) );
-        assertTrue( permissions.getEntry( PrincipalKey.from( "user:system:newUser" ) ).isAllowed( Permission.CREATE ) );
 
         final IndexConfigDocument indexConfigDocument = editedNode.indexConfigDocument;
         assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( "displayName" ) ).isEnabled() );

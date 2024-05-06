@@ -8,7 +8,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 
-public class StoreNodeVersionParams
+public final class StoreNodeVersionParams
 {
     private final NodeId nodeId;
 

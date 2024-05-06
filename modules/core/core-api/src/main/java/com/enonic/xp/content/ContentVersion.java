@@ -34,8 +34,6 @@ public final class ContentVersion
 
     private final AccessControlList permissions;
 
-    private final boolean inheritPermissions;
-
     private ContentVersion( Builder builder )
     {
         this.modifier = builder.modifier;
@@ -49,7 +47,6 @@ public final class ContentVersion
         this.publishInfo = builder.publishInfo;
         this.workflowInfo = builder.workflowInfo;
         this.permissions = builder.permissions;
-        this.inheritPermissions = builder.inheritPermissions;
     }
 
     public PrincipalKey getModifier()
@@ -107,9 +104,10 @@ public final class ContentVersion
         return permissions;
     }
 
+    @Deprecated
     public boolean isInheritPermissions()
     {
-        return inheritPermissions;
+        return false;
     }
 
     public static Builder create()
@@ -151,14 +149,14 @@ public final class ContentVersion
             Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
             Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
             Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( path, that.path ) && inheritPermissions == that.inheritPermissions;
+            Objects.equals( path, that.path );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path,
-                             permissions, inheritPermissions );
+                             permissions );
     }
 
     public static final class Builder
@@ -184,8 +182,6 @@ public final class ContentVersion
         private WorkflowInfo workflowInfo;
 
         private AccessControlList permissions;
-
-        private boolean inheritPermissions;
 
         private Builder()
         {
@@ -254,12 +250,6 @@ public final class ContentVersion
         public Builder permissions( AccessControlList permissions )
         {
             this.permissions = permissions;
-            return this;
-        }
-
-        public Builder inheritPermissions( boolean inheritPermissions )
-        {
-            this.inheritPermissions = inheritPermissions;
             return this;
         }
 
