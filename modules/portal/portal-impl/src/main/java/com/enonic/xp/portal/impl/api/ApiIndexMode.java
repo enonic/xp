@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.api;
 
-import java.util.Objects;
+import java.util.Locale;
 
 public enum ApiIndexMode
 {
@@ -8,6 +8,6 @@ public enum ApiIndexMode
 
     public static ApiIndexMode from( final String value )
     {
-        return ApiIndexMode.valueOf( Objects.requireNonNullElse( value, "auto" ).toUpperCase() );
+        return value != null ? ApiIndexMode.valueOf( value.toUpperCase( Locale.ROOT ) ) : AUTO;
     }
 }

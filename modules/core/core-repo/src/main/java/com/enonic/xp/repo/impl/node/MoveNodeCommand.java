@@ -91,7 +91,7 @@ public class MoveNodeCommand
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 
-        final NodePath newParentPath = Objects.requireNonNullElse( this.newParentPath, existingNode.parentPath() );
+        final NodePath newParentPath = Objects.requireNonNullElseGet( this.newParentPath, existingNode::parentPath );
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {

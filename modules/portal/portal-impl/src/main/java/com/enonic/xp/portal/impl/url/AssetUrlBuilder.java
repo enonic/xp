@@ -44,6 +44,6 @@ final class AssetUrlBuilder
     private static long stableTime()
     {
         final Long localScopeTime = (Long) ContextAccessor.current().getLocalScope().getAttribute( "__currentTimeMillis" );
-        return Objects.requireNonNullElse( localScopeTime, System.currentTimeMillis() );
+        return Objects.requireNonNullElseGet( localScopeTime, System::currentTimeMillis );
     }
 }
