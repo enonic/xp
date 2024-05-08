@@ -52,10 +52,10 @@ public class MediaApiHandler
         Pattern.compile( "^/api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
 
     private static final Pattern ATTACHMENT_REST_PATH_PATTERN =
-        Pattern.compile( "^(?<id>[^/^:]+)(?::(?<fingerprint>[^/]+))?/(?<name>[^/?]+)(?:\\?download)?$" );
+        Pattern.compile( "^(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<name>[^/?]+)(?:\\?download)?$" );
 
     private static final Pattern IMAGE_REST_PATH_PATTERN =
-        Pattern.compile( "^(?<id>[^/^:]+)(?::(?<fingerprint>[^/]+))?/(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
+        Pattern.compile( "^(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
 
     private final ContentService contentService;
 

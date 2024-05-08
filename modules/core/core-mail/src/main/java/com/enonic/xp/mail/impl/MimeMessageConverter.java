@@ -110,8 +110,8 @@ class MimeMessageConverter
     {
         final MimeBodyPart result = new MimeBodyPart();
 
-        String mimeType =
-            Objects.requireNonNullElse( attachment.getMimeType(), MediaTypes.instance().fromFile( attachment.getFileName() ).toString() );
+        String mimeType = Objects.requireNonNullElseGet( attachment.getMimeType(),
+                                                         () -> MediaTypes.instance().fromFile( attachment.getFileName() ).toString() );
 
         DataSource source = new ByteSourceDataSource( attachment.getData(), attachment.getFileName(), mimeType );
         result.setDataHandler( new DataHandler( source ) );
