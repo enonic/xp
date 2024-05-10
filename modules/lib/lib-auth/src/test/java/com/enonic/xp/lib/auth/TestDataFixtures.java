@@ -42,11 +42,11 @@ public class TestDataFixtures
 
     private static PropertyTree getProfile()
     {
-        final PropertySet appPropertySet = new PropertySet();
+        final PropertyTree profile = new PropertyTree();
+        final PropertySet appPropertySet = profile.newSet();
         appPropertySet.setString( "subString", "subStringValue" );
         appPropertySet.setLong( "subLong", 123L );
 
-        final PropertyTree profile = new PropertyTree();
         profile.setSet( "myApp", appPropertySet );
         profile.setString( "string", "stringValue" );
 
@@ -67,7 +67,9 @@ public class TestDataFixtures
 
     public static User getTestUserWithProfile()
     {
-        final PropertySet data = new PropertySet();
+        final PropertyTree profile = new PropertyTree();
+
+        final PropertySet data = profile.newSet();
         data.setString( "untouchedString", "originalValue" );
         data.setBoolean( "untouchedBoolean", true );
         data.setDouble( "untouchedDouble", 2.0 );
@@ -79,7 +81,6 @@ public class TestDataFixtures
         data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
         data.setReference( "untouchedReference", Reference.from( "myReference" ) );
 
-        final PropertyTree profile = new PropertyTree();
         profile.setSet( "myApp", data );
 
         return User.create().
@@ -134,11 +135,11 @@ public class TestDataFixtures
 
     private static IdProviderConfig getTestIdProviderConfig()
     {
-        final PropertySet backgroundPropertySet = new PropertySet();
+        final PropertyTree config = new PropertyTree();
+        final PropertySet backgroundPropertySet = config.newSet();
         backgroundPropertySet.setString( "subString", "subStringValue" );
         backgroundPropertySet.setLong( "subLong", 123L );
 
-        final PropertyTree config = new PropertyTree();
         config.setSet( "set", backgroundPropertySet );
         config.setString( "string", "stringValue" );
 

@@ -12,48 +12,42 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 @PublicApi
 public final class Property
 {
-    private final PropertySet parent;
-
-    private final String name;
+    private final PropertyArray array;
 
     private final int index;
 
     private Value value;
 
-    Property( final String name, final int index, final Value value, final PropertySet parent )
+    Property( final int index, final Value value, final PropertyArray array )
     {
-        checkName( name );
-        this.name = name;
         this.index = index;
         this.value = value;
-        this.parent = parent;
-        setPropertyOnPropertySetValue( value, parent );
+        this.array = array;
+        setPropertyOnPropertySetValue();
     }
 
-    private void setPropertyOnPropertySetValue( final Value value, final PropertySet parent )
+    private void setPropertyOnPropertySetValue()
     {
-        if ( value.isSet() && !value.isNull() )
+        final Object valueObject = value.getObject();
+        if (valueObject instanceof PropertySet)
         {
-            final PropertySet data = value.asData();
-            final PropertyTree tree = parent.getTree();
+            final PropertySet propertySet = (PropertySet) valueObject;
 
-            data.setProperty( this );
-
-            if ( tree != null && data == tree.getRoot() )
+            final PropertyTree tree = array.getParent().getTree();
+            if ( tree != null && propertySet == tree.getRoot() )
             {
-                throw new IllegalArgumentException( "Given PropertySet is already the root PropertySet of the PropertyTree" );
+                throw new IllegalArgumentException( "Given PropertySet is the root PropertySet of the PropertyTree" );
             }
+            propertySet.setProperty( this );
         }
     }
 
     void detach()
     {
-        if ( value.getType().equals( ValueTypes.PROPERTY_SET ) && !value.isNull() )
+        if ( value.getObject() instanceof PropertySet )
         {
             value.asData().detach();
         }
@@ -61,18 +55,19 @@ public final class Property
 
     public void setValue( final Value value )
     {
+        this.array.checkType( value.getType() );
         this.value = value;
-        this.setPropertyOnPropertySetValue( value, this.parent );
+        this.setPropertyOnPropertySetValue();
     }
 
     public PropertySet getParent()
     {
-        return parent;
+        return array.getParent();
     }
 
     public String getName()
     {
-        return name;
+        return array.getName();
     }
 
     public int getIndex()
@@ -82,13 +77,13 @@ public final class Property
 
     public PropertyPath getPath()
     {
-        if ( this.parent.getProperty() != null )
+        if ( array.getParent().getProperty() != null )
         {
-            return PropertyPath.from( this.parent.getProperty().getPath(), PropertyPath.Element.from( this.name, this.index ) );
+            return PropertyPath.from( this.array.getParent().getProperty().getPath(), PropertyPath.Element.from( array.getName(), index ) );
         }
         else
         {
-            return PropertyPath.from( PropertyPath.Element.from( this.name, this.index ) );
+            return PropertyPath.from( PropertyPath.Element.from( array.getName(), index ) );
         }
     }
 
@@ -188,7 +183,7 @@ public final class Property
         {
             throw new NullPointerException( "Property name cannot be null" );
         }
-        if ( nullToEmpty( name ).isBlank() )
+        if ( name.isBlank() )
         {
             throw new IllegalArgumentException( "Property name cannot be blank" );
         }
@@ -216,7 +211,7 @@ public final class Property
 
         final Property property = (Property) o;
 
-        if ( !Objects.equals( name, property.name ) )
+        if ( !Objects.equals( this.array.getName(), property.array.getName() ) )
         {
             return false;
         }
@@ -230,15 +225,16 @@ public final class Property
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, index, value );
+        return Objects.hash( array.getName(), index, value );
     }
 
     @Override
     public String toString()
     {
-        return name + ": " + value;
+        return array.getName() + ": " + value;
     }
 
+    @Deprecated
     public int countAncestors()
     {
         return getPath().elementCount() - 1;
@@ -246,9 +242,6 @@ public final class Property
 
     public Property copyTo( final PropertySet destination )
     {
-        final Value copiedValue = value.copy( destination.getTree() );
-        final Property property = new Property( name, index, copiedValue, destination );
-        destination.add( property );
-        return property;
+        return destination.addProperty( array.getName(), value.copy( destination.getTree() ) );
     }
 }

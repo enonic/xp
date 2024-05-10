@@ -12,41 +12,39 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class PropertyArray
 {
-    private PropertyTree tree;
-
     private final PropertySet parent;
 
     private final String name;
 
     private final ValueType valueType;
 
-    private final List<Property> array = new ArrayList<>();
+    private final List<Property> array;
 
-    PropertyArray( final PropertyTree tree, final PropertySet parent, final String name, final ValueType valueType )
+    PropertyArray( final PropertySet parent, final String name, final ValueType valueType, final int initialCapacity )
     {
         Preconditions.checkNotNull( parent, "parent cannot be null" );
         Preconditions.checkNotNull( name, "name cannot be null" );
         Preconditions.checkNotNull( valueType, "valueType cannot be null" );
-
-        this.tree = tree;
-        this.parent = parent;
         Property.checkName( name );
+
+        this.parent = parent;
         this.name = name;
         this.valueType = valueType;
+        this.array = new ArrayList<>( initialCapacity );
     }
 
     /**
      * Copy constructor.
      */
-    private PropertyArray( final PropertyArray source, final PropertyTree tree, final PropertySet parent )
+    private PropertyArray( final PropertyArray source, final PropertySet parent )
     {
         Preconditions.checkNotNull( source, "source cannot be null" );
-        Preconditions.checkNotNull( tree, "tree cannot be null" );
         Preconditions.checkNotNull( parent, "parent cannot be null" );
-        this.tree = tree;
+
         this.parent = parent;
         this.name = source.name;
         this.valueType = source.valueType;
+        this.array = new ArrayList<>( source.array.size() );
         for ( final Property sourceProperty : source.array )
         {
             array.add( sourceProperty.copyTo( parent ) );
@@ -78,15 +76,6 @@ public final class PropertyArray
         return Objects.hash( name, valueType, array );
     }
 
-    void detach()
-    {
-        this.tree = null;
-        for ( final Property p : array )
-        {
-            p.detach();
-        }
-    }
-
     @Override
     public String toString()
     {
@@ -95,7 +84,7 @@ public final class PropertyArray
             parent.getProperty() != null && parent.getProperty().getType().equals( ValueTypes.PROPERTY_SET );
 
         final StringBuilder s = new StringBuilder();
-        final String indent = " ".repeat( ( countAncestors() + 1 ) * 2 );
+        final String indent = " ".repeat( ( parent.getProperty() != null ? parent.getProperty().getPath().elementCount() + 1 : 1 ) * 2 );
         s.append( indent );
         if ( parentIsPropertySet )
         {
@@ -133,9 +122,10 @@ public final class PropertyArray
         return s.toString();
     }
 
+    @Deprecated
     public int countAncestors()
     {
-        return parent.getProperty() != null ? parent.getProperty().countAncestors() + 1 : 0;
+        return parent.getProperty() != null ? parent.getProperty().getPath().elementCount() : 0;
     }
 
     PropertySet getParent()
@@ -168,45 +158,12 @@ public final class PropertyArray
         return builder.build();
     }
 
-    /**
-     * Creates a new PropertySet attached to the same PropertyTree as this PropertyArray.
-     */
-    PropertySet newSet()
-    {
-        return this.parent.newSet();
-    }
-
-    void addProperty( final Property property )
-    {
-        checkType( property.getType() );
-        this.array.add( property );
-
-        if ( tree != null )
-        {
-            if ( property.getValue().isPropertySet() )
-            {
-                final PropertySet set = property.getSet();
-                if ( set != null )
-                {
-                    set.setPropertyTree( tree );
-                }
-            }
-        }
-    }
-
     Property addValue( final Value value )
     {
         checkType( value.getType() );
-        final Property property = new Property( name, this.array.size(), value, parent );
+
+        final Property property = new Property( array.size(), value, this );
         this.array.add( property );
-        if ( tree != null )
-        {
-            if ( value.getObject() instanceof PropertySet )
-            {
-                final PropertySet set = (PropertySet) value.getObject();
-                set.setPropertyTree( tree );
-            }
-        }
         return property;
     }
 
@@ -215,14 +172,14 @@ public final class PropertyArray
         checkType( value.getType() );
 
         final Property existing = get( index );
-        if ( get( index ) != null )
+        if ( existing != null )
         {
             existing.setValue( value );
             return existing;
         }
         else
         {
-            final Property newProperty = new Property( name, index, value, parent );
+            final Property newProperty = new Property( index, value, this );
             this.array.add( index, newProperty );
             return newProperty;
         }
@@ -248,7 +205,7 @@ public final class PropertyArray
         array.remove( index );
     }
 
-    private void checkType( final ValueType valueType )
+    void checkType( final ValueType valueType )
     {
         if ( !valueType.equals( this.valueType ) )
         {
@@ -258,12 +215,11 @@ public final class PropertyArray
         }
     }
 
-
     /**
      * Makes a copy of this PropertyArray, attaches it to the given PropertyTree and makes the given PropertySet it's parent.
      */
-    PropertyArray copy( final PropertyTree tree, final PropertySet parent )
+    PropertyArray copy( final PropertySet parent )
     {
-        return new PropertyArray( this, tree, parent );
+        return new PropertyArray( this, parent );
     }
 }

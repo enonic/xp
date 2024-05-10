@@ -19,7 +19,7 @@ public class PropertyArrayTest
             public Object getObjectX()
             {
                 PropertyTree tree = new PropertyTree();
-                final PropertyArray propertyArray = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.STRING );
+                final PropertyArray propertyArray = new PropertyArray( tree.getRoot(), "myProp", ValueTypes.STRING, 0 );
                 propertyArray.addValue( ValueFactory.newString( "myValue" ) );
                 return propertyArray;
             }
@@ -28,10 +28,10 @@ public class PropertyArrayTest
             public Object[] getObjectsThatNotEqualsX()
             {
                 PropertyTree tree = new PropertyTree();
-                final PropertyArray propertyArray1 = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.STRING );
+                final PropertyArray propertyArray1 = new PropertyArray( tree.getRoot(), "myProp", ValueTypes.STRING, 0 );
                 propertyArray1.addValue( ValueFactory.newString( "otherValue" ) );
 
-                final PropertyArray propertyArray2 = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.XML );
+                final PropertyArray propertyArray2 = new PropertyArray( tree.getRoot(), "myProp", ValueTypes.XML, 0 );
                 propertyArray2.addValue( ValueFactory.newXml( "otherValue" ) );
 
                 return new Object[]{propertyArray1, propertyArray2};
@@ -41,7 +41,7 @@ public class PropertyArrayTest
             public Object getObjectThatEqualsXButNotTheSame()
             {
                 PropertyTree tree = new PropertyTree();
-                final PropertyArray propertyArray = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.STRING );
+                final PropertyArray propertyArray = new PropertyArray( tree.getRoot(), "myProp", ValueTypes.STRING, 0 );
                 propertyArray.addValue( ValueFactory.newString( "myValue" ) );
                 return propertyArray;
             }
@@ -50,7 +50,7 @@ public class PropertyArrayTest
             public Object getObjectThatEqualsXButNotTheSame2()
             {
                 PropertyTree tree = new PropertyTree();
-                final PropertyArray propertyArray = new PropertyArray( tree, tree.getRoot(), "myProp", ValueTypes.STRING );
+                final PropertyArray propertyArray = new PropertyArray( tree.getRoot(), "myProp", ValueTypes.STRING, 0 );
                 propertyArray.addValue( ValueFactory.newString( "myValue" ) );
                 return propertyArray;
             }

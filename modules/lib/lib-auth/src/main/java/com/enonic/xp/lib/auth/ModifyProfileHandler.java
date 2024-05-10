@@ -109,7 +109,7 @@ public final class ModifyProfileHandler
         }
         else
         {
-            target.profile.setSet( scope, propertyTree.getRoot() );
+            target.profile.setSet( scope, propertyTree.getRoot().copy( target.profile ) );
         }
     }
 

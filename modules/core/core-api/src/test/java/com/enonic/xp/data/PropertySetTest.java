@@ -7,15 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertySetTest
 {
     @Test
     public void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
 
         // exercise & verify
         assertThrows(IndexOutOfBoundsException.class, () -> set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) ));
@@ -24,7 +26,7 @@ public class PropertySetTest
     @Test
     public void setString_creates_Property()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
 
         // exercise
         Property property = set.setString( "myProp", 0, "myValue" );
@@ -36,9 +38,49 @@ public class PropertySetTest
     }
 
     @Test
+    public void setPropertySet()
+    {
+        final PropertyTree tree = new PropertyTree();
+        PropertySet set = tree.newSet();
+
+        final PropertySet propertySet = tree.newSet();
+        propertySet.setString( "myStrProp", "myValue");
+        set.setProperty( "myProp", ValueFactory.newPropertySet( propertySet ) );
+
+        assertEquals( "myValue", set.getValue("myProp.myStrProp").asString() );
+        assertEquals( "myValue", set.getSet( "myProp" ).getProperty().getSet().getValue( "myStrProp" ).asString() );
+
+        set.setProperty( "myProp", ValueFactory.newPropertySet( tree.newSet() ) );
+
+        assertNull( set.getSet( "myProp" ).getProperty().getSet().getValue( "myStrProp" ) );
+    }
+
+    @Test
+    void setString_getProperty()
+    {
+        PropertyTree tree = new PropertyTree();
+        PropertySet a = tree.addSet( "mySet" );
+        PropertySet b = tree.addSet( "mySet" );
+        a.setString( "myProp", 0, "myValue" );
+
+        Property propertyA = a.getProperty();
+        Property propertyB = b.getProperty();
+
+        assertEquals( "mySet", propertyA.getName() );
+        assertEquals( 0, propertyA.getIndex() );
+        assertTrue( propertyA.getValue().isPropertySet() );
+        assertEquals( "myValue", propertyA.getValue().asData().getString( "myProp" ) );
+
+        assertEquals( "mySet", propertyB.getName() );
+        assertEquals( 1, propertyB.getIndex() );
+        assertTrue( propertyB.getValue().isPropertySet() );
+        assertNull( propertyB.getValue().asData().getString( "myProp" ) );
+    }
+
+    @Test
     public void getString()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
         set.setString( "myProp", 0, "myValue" );
 
         // exercise & verify
@@ -61,7 +103,7 @@ public class PropertySetTest
     @Test
     public void addLongs()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
         Property[] properties = set.addLongs( "longs", 1L, 2L, 3L );
 
         assertEquals( Long.valueOf( 1L ), properties[0].getLong() );
@@ -73,7 +115,7 @@ public class PropertySetTest
     public void removeProperties()
     {
         final PropertyTree tree = new PropertyTree();
-        PropertySet set = new PropertySet( tree );
+        PropertySet set = tree.newSet();
         set.addLongs( "longs", 1L, 2L, 3L );
         set.removeProperties( "longs" );
 
@@ -84,7 +126,7 @@ public class PropertySetTest
     @Test
     public void setting_with_same_index_twice_overwrites()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
         set.setString( "a", "1" );
         set.setString( "a", "2" );
 
@@ -138,18 +180,18 @@ public class PropertySetTest
         assertEquals( "a", aProperty.getString() );
         assertEquals( "b", bProperty.getString() );
 
-        assertEquals( "a", set.getPropertyArray( "myString" ).get( 0 ).getString() );
-        assertEquals( "b", set.getPropertyArray( "myString" ).get( 1 ).getString() );
+        assertEquals( "a", set.getProperty( "myString", 0 ).getString() );
+        assertEquals( "b", set.getProperty( "myString", 1 ).getString() );
 
     }
 
     @Test
     public void attaching_detached_PropertySet()
     {
-        PropertySet set = new PropertySet();
+        PropertySet set = new PropertySet(null , 0);
         Property aProperty = set.addString( "myString", "a" );
         Property bProperty = set.addString( "myString", "b" );
-        PropertySet innerSet = new PropertySet();
+        PropertySet innerSet = new PropertySet(null, 0);
         Property innerStringProperty = innerSet.addString( "myInnerString", "a" );
         Property innerSetProperty = set.addSet( "innerSet", innerSet );
 
@@ -170,7 +212,8 @@ public class PropertySetTest
     @Test
     public void toMap()
     {
-        PropertySet set = new PropertySet();
+        PropertySet set = new PropertyTree().newSet();
+
         Property aProperty = set.addString( "myString", "a" );
         Property bProperty = set.addString( "myString", "b" );
         Property cProperty = set.addString( "mySpecialString", "b" );
@@ -182,7 +225,7 @@ public class PropertySetTest
     @Test
     public void replace_value_with_different_type()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
 
         // exercise
         Property property1 = set.setString( "myProp", 0, "myValue" );

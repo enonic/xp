@@ -128,7 +128,7 @@ public final class FormJsonToPropertyTreeTranslator
 
         if ( value.isObject() )
         {
-            PropertySet propertySet = new PropertySet();
+            PropertySet propertySet = propertyTree.newSet();
             value.fields().
                 forEachRemaining( ( field ) -> {
                     if ( field.getValue().isArray() )

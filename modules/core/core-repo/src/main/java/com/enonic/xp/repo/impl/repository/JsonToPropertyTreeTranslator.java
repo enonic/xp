@@ -6,27 +6,19 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 
 final class JsonToPropertyTreeTranslator
 {
-    static PropertyTree translate( final JsonNode json )
-    {
-        final PropertyTree propertyTree = new PropertyTree();
-        traverse( json, propertyTree.getRoot() );
-        return propertyTree;
-    }
-
-    private static void traverse( final JsonNode json, final PropertySet parent )
+    static void translate( final JsonNode json, final PropertySet into )
     {
         final Iterator<Map.Entry<String, JsonNode>> fields = json.fields();
 
         while ( fields.hasNext() )
         {
             final Map.Entry<String, JsonNode> next = fields.next();
-            addValue( parent, next.getKey(), next.getValue() );
+            addValue( into, next.getKey(), next.getValue() );
         }
     }
 
@@ -46,13 +38,8 @@ final class JsonToPropertyTreeTranslator
         }
         else
         {
-            mapValue( parent, key, value );
+            parent.addProperty( key, resolveCoreValue( value ) );
         }
-    }
-
-    private static void mapValue( final PropertySet parent, final String key, final JsonNode value )
-    {
-        parent.addProperty( key, resolveCoreValue( value ) );
     }
 
     private static Value resolveCoreValue( final JsonNode value )
@@ -82,32 +69,6 @@ final class JsonToPropertyTreeTranslator
             return ValueFactory.newBoolean( value.booleanValue() );
         }
 
-        if ( value.isObject() )
-        {
-            return mapSet( value );
-        }
-
         return ValueFactory.newString( value.toString() );
-    }
-
-    private static Value mapSet( final JsonNode value )
-    {
-        PropertySet propertySet = new PropertySet();
-        value.fields().
-            forEachRemaining( ( field ) -> {
-                if ( field.getValue().isArray() )
-                {
-                    for ( final JsonNode arrayNode : field.getValue() )
-                    {
-                        propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
-                    }
-                }
-                else
-                {
-                    propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
-                }
-            } );
-
-        return ValueFactory.newPropertySet( propertySet );
     }
 }

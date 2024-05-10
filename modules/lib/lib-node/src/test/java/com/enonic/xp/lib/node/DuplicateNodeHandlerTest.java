@@ -23,11 +23,11 @@ public class DuplicateNodeHandlerTest
     @Test
     public void testExample()
     {
-        final PropertySet data = new PropertySet();
+        final PropertyTree dataTree = new PropertyTree();
+        final PropertySet data = dataTree.newSet();
         data.addString( "prop1", "Value 1" );
         data.addString( "extraProp", "extraPropValue" );
 
-        final PropertyTree dataTree = new PropertyTree();
         dataTree.addSet( "data", data );
 
         final Node node = Node.create()

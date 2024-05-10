@@ -250,14 +250,14 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        PropertySet invalidSet = new PropertySet();
+        PropertySet invalidSet = invalidData.newSet();
         invalidSet.addDouble( "setString", 1.0d );
         invalidData.addSet( "set", invalidSet );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidSet = new PropertySet();
+        invalidSet = invalidData.newSet();
         invalidSet.addLong( "setDouble", 1L );
         invalidData.addSet( "set", invalidSet );
         update_incorrect_content_data( content, invalidData );

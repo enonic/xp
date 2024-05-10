@@ -10,10 +10,11 @@ public class PropertyTreeJson
 {
     public static PropertyTree fromJson( final List<PropertyArrayJson> list )
     {
-        final PropertyTree tree = new PropertyTree();
+        final PropertyTree tree = new PropertyTree( list.size() );
+        final PropertySet propertySet = tree.getRoot();
         for ( PropertyArrayJson propertyArrayJson : list )
         {
-            propertyArrayJson.fromJson( tree.getRoot() );
+            propertyArrayJson.fromJson( propertySet );
         }
         return tree;
     }

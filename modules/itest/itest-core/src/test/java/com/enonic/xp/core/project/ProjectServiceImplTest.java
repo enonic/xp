@@ -452,7 +452,7 @@ class ProjectServiceImplTest
         final PropertyTree config = new PropertyTree();
         config.addString( "a", "value" );
         config.addBoolean( "b", true );
-        config.addSet( "c", new PropertySet() );
+        config.addSet( "c", config.newSet() );
 
         config.getSet( "c" ).addInstant( "d", Instant.parse( "2022-12-03T10:15:30.00Z" ) );
 
@@ -1077,7 +1077,7 @@ class ProjectServiceImplTest
     void create_with_circle_dependency()
     {
         when( projectConfig.multiInheritance() ).thenReturn( true );
-        
+
         adminContext().runWith( () -> {
             final Project parent = doCreateProject( ProjectName.from( "parent" ), SiteConfigs.empty() );
             final Project child = doCreateProject( ProjectName.from( "child" ), parent.getName(), SiteConfigs.empty() );

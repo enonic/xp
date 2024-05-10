@@ -283,10 +283,10 @@ public class PageHandlerTest
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addReference( "target", Reference.from( "ref" ) );
 
-        final PropertySet shortcutParam1 = new PropertySet();
+        final PropertySet shortcutParam1 = rootDataSet.newSet();
         shortcutParam1.addString( "name", "product" );
         shortcutParam1.addString( "value", "123456" );
-        final PropertySet shortcutParam2 = new PropertySet();
+        final PropertySet shortcutParam2 = rootDataSet.newSet();
         shortcutParam2.addString( "name", "order" );
         shortcutParam2.addString( "value", "abcdef" );
         rootDataSet.addSet( "parameters", shortcutParam1 );

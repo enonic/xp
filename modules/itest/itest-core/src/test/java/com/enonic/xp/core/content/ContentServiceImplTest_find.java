@@ -349,7 +349,7 @@ public class ContentServiceImplTest_find
         final Content child1 = createContent( site.getPath(), "b" );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet fulltext = new PropertySet();
+        final PropertySet fulltext = request.newSet();
         fulltext.addString( "field", "displayName" );
         fulltext.addString( "value", "*d" );
 
@@ -372,7 +372,7 @@ public class ContentServiceImplTest_find
         final Content child1 = createContent( site.getPath(), "b" );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet fulltext = new PropertySet();
+        final PropertySet fulltext = request.newSet();
         fulltext.addStrings( "fields", "displayName" );
         fulltext.addString( "query", "c" );
 
@@ -442,11 +442,11 @@ public class ContentServiceImplTest_find
     public void dsl_exists_set()
     {
         PropertyTree data = new PropertyTree();
-        data.setSet( "myField", new PropertySet() );
+        data.setSet( "myField", data.newSet() );
         final Content content1 = createContent( ContentPath.ROOT, "displayName", data );
 
         data = new PropertyTree();
-        PropertySet set = new PropertySet();
+        PropertySet set = data.newSet();
         set.addString( "sd", "sd" );
 
         data.setSet( "myField", set );
@@ -458,7 +458,7 @@ public class ContentServiceImplTest_find
     private void testExists( final ContentId... existedContents )
     {
         final PropertyTree request = new PropertyTree();
-        final PropertySet exists = new PropertySet();
+        final PropertySet exists = request.newSet();
         exists.addStrings( "field", "data.myField" );
 
         request.addSet( "exists", exists );
@@ -480,8 +480,8 @@ public class ContentServiceImplTest_find
     public void dsl_query_two_root_properties()
     {
         final PropertyTree request = new PropertyTree();
-        request.addSet( "fulltext", new PropertySet() );
-        request.addSet( "ngram", new PropertySet() );
+        request.addSet( "fulltext", request.newSet() );
+        request.addSet( "ngram", request.newSet() );
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
@@ -498,7 +498,7 @@ public class ContentServiceImplTest_find
         final Content child1 = createContent( site.getPath(), "b" );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet like = new PropertySet();
+        final PropertySet like = request.newSet();
         request.addSet( "like", like );
         like.addString( "field", "_path" );
         like.addString( "value", "*a/*" );
@@ -539,7 +539,7 @@ public class ContentServiceImplTest_find
         createContent( site.getPath(), "b", data3 );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet range = new PropertySet();
+        final PropertySet range = request.newSet();
         request.addSet( "range", range );
         range.addString( "field", "data.mylong" );
         range.addLong( "gte", 7L );
@@ -564,7 +564,7 @@ public class ContentServiceImplTest_find
         createContent( site.getPath(), "b" );
 
         final PropertyTree request = new PropertyTree();
-        final PropertySet fulltext = new PropertySet();
+        final PropertySet fulltext = request.newSet();
         request.addSet( "matchAll", fulltext );
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();

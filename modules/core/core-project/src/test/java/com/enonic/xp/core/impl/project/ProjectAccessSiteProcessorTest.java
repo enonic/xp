@@ -143,19 +143,14 @@ public class ProjectAccessSiteProcessorTest
         return ContentType.create().name( ContentTypeName.site() ).superType( ContentTypeName.structured() ).build();
     }
 
-    private PropertySet createSiteConfig( final String bgColor )
-    {
-        PropertySet set = new PropertySet();
-        set.addString( "applicationKey", "com.enonic.app.test" );
-        PropertySet siteConfig = set.addSet( "config" );
-        siteConfig.addString( "backgroundColor", bgColor );
-        return set;
-    }
-
     private Content createContent( final String siteConfigBgColor )
     {
         PropertyTree data = new PropertyTree();
-        data.setSet( "siteConfig", this.createSiteConfig( siteConfigBgColor ) );
+        PropertySet set = data.newSet();
+        set.addString( "applicationKey", "com.enonic.app.test" );
+        PropertySet siteConfig = set.addSet( "config" );
+        siteConfig.addString( "backgroundColor", siteConfigBgColor );
+        data.setSet( "siteConfig", set );
         return Content.create( ContentTypeName.site() ).name( "Site content" ).parentPath( ContentPath.ROOT ).data( data ).id(
             ContentId.from( "content-id" ) ).build();
     }

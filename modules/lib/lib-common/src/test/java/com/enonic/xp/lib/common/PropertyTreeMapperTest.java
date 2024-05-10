@@ -75,10 +75,10 @@ public class PropertyTreeMapperTest
         throws Exception
     {
         final PropertyTree properties = new PropertyTree();
-        final PropertySet subSet1 = new PropertySet();
+        final PropertySet subSet1 = properties.newSet();
         subSet1.setString( "subSet1Value1", "fisk1" );
         subSet1.setString( "subSet2Value2", "ost1" );
-        final PropertySet subSet2 = new PropertySet();
+        final PropertySet subSet2 = properties.newSet();
         subSet2.setString( "subSet2Value1", "fisk2" );
         subSet2.setString( "subSet2Value2", "ost2" );
         properties.addSets( "subSets", subSet1, subSet2 );

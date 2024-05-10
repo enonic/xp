@@ -21,13 +21,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {
-    public static final PropertyPath ROOT = new PropertyPath();
+    public static final PropertyPath ROOT = new PropertyPath( ImmutableList.of() );
 
     public static final String ELEMENT_DIVIDER = ".";
 
     private final ImmutableList<Element> elements;
-
-    private final boolean relative;
 
     public static PropertyPath from( final PropertyPath parentPath, final String element )
     {
@@ -77,18 +75,9 @@ public final class PropertyPath
         return new PropertyPath( ImmutableList.copyOf( pathElements ) );
     }
 
-    private PropertyPath()
-    {
-        this.elements = ImmutableList.of();
-        this.relative = false;
-    }
-
     private PropertyPath( final ImmutableList<Element> pathElements )
     {
-        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
-
         this.elements = pathElements;
-        this.relative = this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
     }
 
     private PropertyPath( final PropertyPath parentPath, final Element element )
@@ -99,7 +88,6 @@ public final class PropertyPath
         final ImmutableList.Builder<Element> elementBuilder = ImmutableList.builder();
         elementBuilder.addAll( parentPath.pathElements() ).add( element );
         this.elements = elementBuilder.build();
-        this.relative = this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
     }
 
     public PropertyPath getParent()
@@ -109,9 +97,10 @@ public final class PropertyPath
 
     public boolean isRelative()
     {
-        return relative;
+        return this != ROOT && ( this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER ) );
     }
 
+    @Deprecated
     public Iterable<String> resolvePathElementNames()
     {
         final List<String> pathElements = new ArrayList<>();
@@ -272,8 +261,6 @@ public final class PropertyPath
 
         private final String name;
 
-        private final boolean hasIndex;
-
         private final int index;
 
         public static Element from( final String element )
@@ -289,7 +276,7 @@ public final class PropertyPath
         public Element( final String element )
         {
             Preconditions.checkNotNull( element, "Element cannot be null" );
-            Preconditions.checkArgument( !isNullOrEmpty( element ), "Element cannot be empty" );
+            Preconditions.checkArgument( !element.isEmpty(), "Element cannot be empty" );
 
             int indexStart = element.indexOf( INDEX_START_MARKER );
             int indexStop = element.indexOf( INDEX_STOP_MARKER );
@@ -298,9 +285,13 @@ public final class PropertyPath
             {
                 if ( indexStop > indexStart + 1 )
                 {
-                    this.hasIndex = true;
                     this.name = element.substring( 0, indexStart );
-                    this.index = Integer.parseInt( element.substring( indexStart + 1, indexStop ) );
+                    final int index = Integer.parseInt( element.substring( indexStart + 1, indexStop ) );
+                    if (index < 0)
+                    {
+                        throw new IllegalArgumentException( "Invalid DataPath element: " + element );
+                    }
+                    this.index = index;
                 }
                 else
                 {
@@ -315,8 +306,7 @@ public final class PropertyPath
                 }
 
                 this.name = element;
-                this.hasIndex = false;
-                this.index = 0;
+                this.index = -1;
             }
         }
 
@@ -328,7 +318,6 @@ public final class PropertyPath
 
             this.name = name;
             this.index = index;
-            this.hasIndex = true;
         }
 
         public String getName()
@@ -338,12 +327,12 @@ public final class PropertyPath
 
         public boolean hasIndex()
         {
-            return hasIndex;
+            return index >= 0;
         }
 
         public int getIndex()
         {
-            return index;
+            return Math.max( index, 0 );
         }
 
         @Override
@@ -360,7 +349,7 @@ public final class PropertyPath
 
             final Element other = (Element) o;
 
-            return index == other.index && name.equals( other.name ) && hasIndex() == other.hasIndex();
+            return index == other.index && name.equals( other.name );
         }
 
         @Override
@@ -376,7 +365,7 @@ public final class PropertyPath
         {
             StringBuilder s = new StringBuilder();
             s.append( name );
-            if ( hasIndex && index > 0 )
+            if ( index > 0 )
             {
                 s.append( INDEX_START_MARKER ).append( index ).append( INDEX_STOP_MARKER );
             }

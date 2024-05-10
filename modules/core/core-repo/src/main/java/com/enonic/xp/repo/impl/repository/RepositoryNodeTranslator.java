@@ -62,7 +62,7 @@ public class RepositoryNodeTranslator
 
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot() );
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot().copy( toBeEdited.data ) );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -89,7 +89,7 @@ public class RepositoryNodeTranslator
 
     private static void toNodeData( final PropertyTree repositoryData, final PropertyTree data )
     {
-        data.addSet( DATA_KEY, repositoryData.getRoot().detach() );
+        data.addSet( DATA_KEY, repositoryData.getRoot().copy( data.getRoot().getTree() ) );
     }
 
     private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
@@ -106,17 +106,17 @@ public class RepositoryNodeTranslator
                     final IndexMapping indexMapping = indexDefinition.getMapping();
                     if ( indexMapping != null )
                     {
-                        final PropertySet indexMappingPropertySet = JsonToPropertyTreeTranslator.translate( indexMapping.getNode() ).
-                            getRoot();
+                        PropertySet indexMappingPropertySet = data.newSet();
+                        JsonToPropertyTreeTranslator.translate( indexMapping.getNode(), indexMappingPropertySet );
                         indexConfigPropertySet.setSet( MAPPING_KEY, indexMappingPropertySet );
                     }
 
                     final IndexSettings indexSettings = indexDefinition.getSettings();
                     if ( indexSettings != null )
                     {
-                        final PropertySet indexSettingsPropertySet = JsonToPropertyTreeTranslator.translate( indexSettings.getNode() ).
-                            getRoot();
-                        indexConfigPropertySet.setSet( SETTINGS_KEY, indexSettingsPropertySet );
+                        PropertySet indexMappingPropertySet = data.newSet();
+                        JsonToPropertyTreeTranslator.translate( indexSettings.getNode(), indexMappingPropertySet );
+                        indexConfigPropertySet.setSet( SETTINGS_KEY, indexMappingPropertySet );
                     }
                 }
             }

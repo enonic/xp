@@ -115,7 +115,7 @@ public class ScheduleAuditLogSupportImpl
         targetSet.setString( "name", params.getName().getValue() );
         targetSet.setString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
         targetSet.setString( ScheduledJobPropertyNames.DESCRIPTOR, params.getDescriptor().toString() );
-        targetSet.setSet( ScheduledJobPropertyNames.CONFIG, params.getConfig().getRoot() );
+        targetSet.setSet( ScheduledJobPropertyNames.CONFIG, params.getConfig().getRoot().copy( targetSet.getTree() ) );
         targetSet.setBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
 
         if ( params.getUser() != null )
@@ -141,7 +141,7 @@ public class ScheduleAuditLogSupportImpl
         targetSet.setString( "name", job.getName().getValue() );
         targetSet.setString( ScheduledJobPropertyNames.DESCRIPTION, job.getDescription() );
         targetSet.setString( ScheduledJobPropertyNames.DESCRIPTOR, job.getDescriptor().toString() );
-        targetSet.setSet( ScheduledJobPropertyNames.CONFIG, job.getConfig().getRoot() );
+        targetSet.setSet( ScheduledJobPropertyNames.CONFIG, job.getConfig().getRoot().copy( targetSet.getTree() ) );
         targetSet.setBoolean( ScheduledJobPropertyNames.ENABLED, job.isEnabled() );
 
         if ( job.getUser() != null )
@@ -162,7 +162,7 @@ public class ScheduleAuditLogSupportImpl
 
     private void addCalendar( final PropertySet targetSet, final ScheduleCalendar calendar )
     {
-        final PropertySet calendarSet = new PropertySet();
+        final PropertySet calendarSet = targetSet.getTree().newSet();
 
         switch ( calendar.getType() )
         {

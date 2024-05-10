@@ -58,7 +58,7 @@ public class LayoutDataSerializerTest
     @Test
     public void testNoComponents()
     {
-        final LayoutComponent parsedLayout = layoutDataSerializer.fromData( new PropertySet() );
+        final LayoutComponent parsedLayout = layoutDataSerializer.fromData( new PropertyTree().newSet() );
         assertTrue(parsedLayout.getRegions().isEmpty());
     }
 

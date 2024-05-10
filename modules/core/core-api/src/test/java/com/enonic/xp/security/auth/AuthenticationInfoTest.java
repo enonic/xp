@@ -140,10 +140,10 @@ public class AuthenticationInfoTest
     void testSerializationWithUserProfile()
         throws Exception
     {
-        final PropertySet data = new PropertySet();
+        final PropertyTree userProfile = new PropertyTree();
+        final PropertySet data = userProfile.newSet();
         data.setString( "subString", "subStringValue" );
         data.setLong( "subLong", 123L );
-        final PropertyTree userProfile = new PropertyTree();
         userProfile.setSet( "myApp", data );
         userProfile.setString( "string", "stringValue" );
 

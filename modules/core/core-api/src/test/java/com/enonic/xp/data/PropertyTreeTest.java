@@ -34,10 +34,10 @@ public class PropertyTreeTest
 {
     @Test
     void equalsContract() {
-        final PropertySet expression1 = new PropertySet();
+        final PropertySet expression1 = new PropertySet(null, 0);
         expression1.addString( "field", "myField" );
 
-        final PropertySet expression2 = new PropertySet();
+        final PropertySet expression2 = new PropertySet(null, 0);
         expression2.addString( "field", "anotherField" );
 
         EqualsVerifier.forClass( PropertyTree.class )
@@ -162,7 +162,12 @@ public class PropertyTreeTest
         sourceTree.addString( "myProp", "myString" );
 
         PropertyTree newTree = new PropertyTree();
-        PropertySet set = newTree.newSet( sourceTree );
+        PropertySet set = newTree.newSet();
+        for ( final Property sourceProperty : sourceTree.getProperties() )
+        {
+            set.addProperty( sourceProperty.getName(), sourceProperty.getValue() );
+        }
+
         newTree.addSet( "mySet", set );
 
         assertEquals( "myString", newTree.getString( "mySet.myProp" ) );
@@ -333,7 +338,7 @@ public class PropertyTreeTest
     @Test
     public void getByValueType()
     {
-        PropertySet set = new PropertySet( new PropertyTree() );
+        PropertySet set = new PropertyTree().newSet();
         Property aProperty = set.addString( "myString", "a" );
         Property bProperty = set.addString( "myString", "b" );
 
@@ -471,10 +476,10 @@ public class PropertyTreeTest
         PropertySet set1 = tree.addSet( "mySet1" );
         set1.addStrings( "strings", "a", "b", "c" );
 
-        PropertySet set2 = new PropertySet();
+        PropertySet set2 = tree.newSet();
         set2.addLongs( "longs", 1L, 2L );
 
-        PropertySet set3 = new PropertySet();
+        PropertySet set3 = new PropertySet( null, 0);
         set3.addLongs( "newlongs", 4L, 6L );
 
         tree.setSet( PropertyPath.from( "mySet1" ), set2 );

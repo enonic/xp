@@ -137,7 +137,7 @@ public class IssueDataSerializer
         final Collection<PropertySet> itemSets = new ArrayList<>();
         for ( final PublishRequestItem item : publishRequest.getItems() )
         {
-            final PropertySet itemSet = new PropertySet();
+            final PropertySet itemSet = issueProperties.getTree().newSet();
             itemSet.setReference( PublishRequestPropertyNames.ITEM_ID, new Reference( NodeId.from( item.getId() ) ) );
             itemSet.setBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE, item.getIncludeChildren() );
             itemSets.add( itemSet );

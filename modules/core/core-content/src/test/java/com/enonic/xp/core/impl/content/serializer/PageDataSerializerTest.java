@@ -62,7 +62,7 @@ public class PageDataSerializerTest
     @Test
     public void noComponentsNoPage()
     {
-        assertNull( pageDataSerializer.fromData( new PropertySet() ) );
+        assertNull( pageDataSerializer.fromData( new PropertyTree().newSet() ) );
     }
 
     @Test

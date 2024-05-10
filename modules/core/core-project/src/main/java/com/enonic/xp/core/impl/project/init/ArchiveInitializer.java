@@ -9,7 +9,6 @@ import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -66,7 +65,7 @@ public final class ArchiveInitializer
 
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
-        data.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        data.setSet( ContentPropertyNames.DATA, data.newSet() );
         data.setString( ContentPropertyNames.CREATOR, ContextAccessor.current().getAuthInfo().getUser().toString() );
         data.setString( ContentPropertyNames.MODIFIER, ContextAccessor.current().getAuthInfo().getUser().toString() );
 

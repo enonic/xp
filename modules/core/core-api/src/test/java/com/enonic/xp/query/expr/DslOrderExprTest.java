@@ -29,10 +29,10 @@ public class DslOrderExprTest
     @Test
     public void equalsContract()
     {
-        final PropertySet expression1 = new PropertySet();
+        final PropertySet expression1 = new PropertyTree().newSet();
         expression1.addString( "field", "myField" );
 
-        final PropertySet expression2 = new PropertySet();
+        final PropertySet expression2 = new PropertyTree().newSet();
         expression2.addString( "field", "anotherField" );
 
         EqualsVerifier.forClass( DslOrderExpr.class )

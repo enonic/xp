@@ -69,7 +69,7 @@ public class PropertyTreeSpeedTest
         {
             for ( int i = 0; i < numberOfChildNodes; i++ )
             {
-                PropertySet set = parent.newSet();
+                PropertySet set = parent.getTree().newSet();
                 parent.addProperty( "myProp", ValueFactory.newPropertySet( set ) );
                 generateBranch( set, numberOfChildNodes, depth - 1 );
 

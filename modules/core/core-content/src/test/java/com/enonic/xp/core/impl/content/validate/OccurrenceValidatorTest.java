@@ -884,7 +884,7 @@ public class OccurrenceValidatorTest
             ContentType.create().name( "myapplication:my_type" ).superType( ContentTypeName.structured() ).form( form ).build();
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setSet( "checkOptionSet.option_3", new PropertySet() );
+        content.getData().setSet( "checkOptionSet.option_3", content.getData().newSet() );
         final ValidationErrors validationResults = validate( content );
         assertFalse( validationResults.hasErrors() );
     }
@@ -908,7 +908,7 @@ public class OccurrenceValidatorTest
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
-        PropertySet propertySet = new PropertySet();
+        PropertySet propertySet = content.getData().newSet();
         propertySet.setProperty( "a", ValueFactory.newString( "Value A" ) );
         propertySet.setProperty( "b", ValueFactory.newString( "Value B" ) );
         content.getData().setSet( "options", propertySet );
@@ -937,7 +937,7 @@ public class OccurrenceValidatorTest
             .build();
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
-        content.getData().setSet( "options", new PropertySet() );
+        content.getData().setSet( "options", content.getData().newSet() );
 
         final ValidationErrors validationResults = validate( content );
         assertFalse( validationResults.hasErrors() );

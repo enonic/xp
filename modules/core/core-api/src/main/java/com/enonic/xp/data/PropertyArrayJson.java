@@ -43,7 +43,7 @@ public class PropertyArrayJson
     void fromJson( final PropertySet parent )
     {
         final ValueType valueType = ValueTypes.getByName( type );
-        final PropertyArray array = new PropertyArray( parent.getTree(), parent, name, valueType );
+        final PropertyArray array = new PropertyArray( parent, name, valueType, values.size() );
 
         for ( final PropertyValueJson valueJson : values )
         {

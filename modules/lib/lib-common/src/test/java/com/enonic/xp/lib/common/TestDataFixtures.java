@@ -32,11 +32,11 @@ public class TestDataFixtures
 
     private static PropertyTree getProfile()
     {
-        final PropertySet appPropertySet = new PropertySet();
+        final PropertyTree profile = new PropertyTree();
+        final PropertySet appPropertySet = profile.newSet();
         appPropertySet.setString( "subString", "subStringValue" );
         appPropertySet.setLong( "subLong", 123L );
 
-        final PropertyTree profile = new PropertyTree();
         profile.setSet( "myApp", appPropertySet );
         profile.setString( "string", "stringValue" );
 

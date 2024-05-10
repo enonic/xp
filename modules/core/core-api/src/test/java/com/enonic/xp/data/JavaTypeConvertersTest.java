@@ -59,8 +59,8 @@ public class JavaTypeConvertersTest
         assertNotNull( JavaTypeConverters.STRING.convertFrom( "test convert" ) );
         assertEquals( "converting", JavaTypeConverters.STRING.convertFrom( "converting" ) );
         assertNotNull( JavaTypeConverters.STRING.convertFrom( LocalDateTime.now() ) );
-        assertNotNull( JavaTypeConverters.STRING.convertFrom( new PropertySet() ) );
-        assertEquals( "\n", JavaTypeConverters.STRING.convertFrom( new PropertySet() ) );
+        assertNotNull( JavaTypeConverters.STRING.convertFrom( new PropertyTree().newSet() ) );
+        assertEquals( "\n", JavaTypeConverters.STRING.convertFrom( new PropertyTree().newSet() ) );
     }
 
     @Test
@@ -126,7 +126,7 @@ public class JavaTypeConvertersTest
         assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( new GeoPoint( 2.2, 3.3 ) ).getClass() );
         assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( "22.22, 33.33" ).getClass() );
 
-        final PropertySet set = new PropertySet();
+        final PropertySet set = new PropertyTree().newSet();
         set.addDouble( "lat", 2.2 );
         set.addDouble( "lon", 3.3 );
         assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( set ).getClass() );
