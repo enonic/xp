@@ -15,6 +15,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -83,6 +84,12 @@ class NodeVersionServiceImplTest
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
+        final PropertySet set = data.newSet();
+        set.setString( "myNameInSet", "myValueInSet" );
+        data.addSet( "mySet", set );
+        data.addSet( "myEmptySet", data.newSet() );
+        data.addSet( "myNullSet", null );
+        data.addString( "myNullString", null );
 
         final NodeVersion nodeVersion = NodeVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).

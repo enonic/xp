@@ -11,6 +11,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class BinaryReferences
     extends AbstractImmutableEntitySet<BinaryReference>
 {
+    private static final BinaryReferences EMPTY = new BinaryReferences( ImmutableSet.of() );
+
     private BinaryReferences( final ImmutableSet<BinaryReference> set )
     {
         super( set );
@@ -18,21 +20,26 @@ public class BinaryReferences
 
     public static BinaryReferences empty()
     {
-        return new BinaryReferences( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static BinaryReferences from( final String... binaryReferences )
     {
-        return new BinaryReferences( Stream.of( binaryReferences ).map( BinaryReference::from ).collect( ImmutableSet.toImmutableSet() ) );
+        return fromInternal( Stream.of( binaryReferences ).map( BinaryReference::from ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static BinaryReferences from( final BinaryReference... binaryReferences )
     {
-        return new BinaryReferences( ImmutableSet.copyOf( binaryReferences ) );
+        return fromInternal( ImmutableSet.copyOf( binaryReferences ) );
     }
 
     public static BinaryReferences from( final Iterable<BinaryReference> binaryReferences )
     {
-        return new BinaryReferences( ImmutableSet.copyOf( binaryReferences ) );
+        return fromInternal( ImmutableSet.copyOf( binaryReferences ) );
+    }
+
+    private static BinaryReferences fromInternal( final ImmutableSet<BinaryReference> set )
+    {
+        return set.isEmpty() ? EMPTY : new BinaryReferences( set );
     }
 }
