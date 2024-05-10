@@ -46,13 +46,8 @@ public final class JsonToPropertyTreeTranslator
         }
         else
         {
-            mapValue( parent, key, value );
+            parent.addProperty( key, resolveCoreValue( value ) );
         }
-    }
-
-    private static void mapValue( final PropertySet parent, final String key, final JsonNode value )
-    {
-        parent.addProperty( key, resolveCoreValue( value ) );
     }
 
     private static Value resolveCoreValue( final JsonNode value )
@@ -82,32 +77,6 @@ public final class JsonToPropertyTreeTranslator
             return ValueFactory.newBoolean( value.booleanValue() );
         }
 
-        if ( value.isObject() )
-        {
-            return mapSet( value );
-        }
-
         return ValueFactory.newString( value.toString() );
-    }
-
-    private static Value mapSet( final JsonNode value )
-    {
-        PropertySet propertySet = new PropertySet();
-        value.fields().
-            forEachRemaining( ( field ) -> {
-                if ( field.getValue().isArray() )
-                {
-                    for ( final JsonNode arrayNode : field.getValue() )
-                    {
-                        propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
-                    }
-                }
-                else
-                {
-                    propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
-                }
-            } );
-
-        return ValueFactory.newPropertySet( propertySet );
     }
 }

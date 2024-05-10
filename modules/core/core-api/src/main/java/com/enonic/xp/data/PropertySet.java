@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,26 +27,30 @@ public final class PropertySet
 
     private Property property;
 
-    private final LinkedHashMap<String, PropertyArray> propertyArrayByName = new LinkedHashMap<>();
+    private final Map<String, PropertyArray> propertyArrayByName;
 
     private boolean ifNotNull = false;
 
+    @Deprecated
     public PropertySet()
     {
         // Creating a detached PropertySet (i.e. no tree set)
+        this.propertyArrayByName = new LinkedHashMap<>();
     }
 
-    PropertySet( final PropertyTree tree )
+    PropertySet( final PropertyTree tree, final int initialCapacity )
     {
         this.tree = tree;
+        this.propertyArrayByName = new LinkedHashMap<>( (int) Math.ceil( initialCapacity / 0.75D ) );
     }
 
     private PropertySet( final PropertySet source, final PropertyTree tree )
     {
         this.tree = tree;
+        this.propertyArrayByName = new LinkedHashMap<>( (int) Math.ceil( source.propertyArrayByName.size() / 0.75D ) );
         for ( final PropertyArray array : source.propertyArrayByName.values() )
         {
-            this.propertyArrayByName.put( array.getName(), array.copy( tree, this ) );
+            this.propertyArrayByName.put( array.getName(), array.copy( this ) );
         }
     }
 
@@ -61,21 +64,21 @@ public final class PropertySet
         return property;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Map<String, Object> toMap()
     {
-        final LinkedHashMap<String, Object> map = new LinkedHashMap<>( propertyArrayByName.size() * 2 );
+        final LinkedHashMap<String, Object> map = new LinkedHashMap<>( (int) Math.ceil( propertyArrayByName.size() / 0.75D ) );
 
-        for ( Map.Entry<String, PropertyArray> entry : this.propertyArrayByName.entrySet() )
+        for ( var entry : this.propertyArrayByName.values() )
         {
-            final String name = entry.getKey();
+            final String name = entry.getName();
 
-            for ( final Property property : entry.getValue().getProperties() )
+            for ( final Property property : entry.getProperties() )
             {
                 final Value value = property.getValue();
                 if ( value.isPropertySet() )
                 {
-                    setMapValue( map, name, value.asData() == null ? new HashMap<>() : value.asData().toMap() );
+                    final PropertySet propertySet = property.getSet();
+                    setMapValue( map, name, propertySet == null ? new LinkedHashMap<>() : propertySet.toMap() );
                 }
                 else
                 {
@@ -168,7 +171,7 @@ public final class PropertySet
         {
             throw new UnsupportedOperationException( "The PropertySet must be attached to a Property before this method can be invoked" );
         }
-        return this.property.countAncestors();
+        return this.property.getPath().elementCount() - 1;
     }
 
     void setProperty( final Property property )
@@ -182,6 +185,7 @@ public final class PropertySet
         return this;
     }
 
+    @Deprecated
     public PropertySet newSet()
     {
         if ( tree == null )
@@ -189,24 +193,36 @@ public final class PropertySet
             throw new IllegalStateException(
                 "The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead." );
         }
-        return new PropertySet( tree );
+        return new PropertySet( tree, 0 );
     }
 
+    // In future make disallow to change parent tree
+    // PropertySet should always be attached to a tree
     void setPropertyTree( final PropertyTree propertyTree )
     {
         if ( this.tree != null && propertyTree != this.tree )
         {
             throw new IllegalArgumentException(
-                "PropertySet already belongs to a ValueTree. Detach it from existing PropertyTree before adding it to another: " +
+                "PropertySet already belongs to another PropertyTree. Detach it from existing PropertyTree before adding it to another: " +
                     this.tree );
         }
         this.tree = propertyTree;
     }
 
+    @Deprecated
     public PropertySet detach()
     {
         this.tree = null;
-        this.propertyArrayByName.values().forEach( com.enonic.xp.data.PropertyArray::detach );
+        this.propertyArrayByName.values().forEach( propertyArray -> {
+            for ( final Property p : propertyArray.getProperties() )
+            {
+                final PropertySet propertySet = p.getSet();
+                if ( propertySet != null )
+                {
+                    propertySet.detach();
+                }
+            }
+        } );
         return this;
     }
 
@@ -227,13 +243,7 @@ public final class PropertySet
         this.propertyArrayByName.put( array.getName(), array );
     }
 
-    void add( final Property property )
-    {
-        final PropertyArray array = getOrCreatePropertyArray( property.getName(), property.getType() );
-        array.addProperty( property );
-    }
-
-    public Property addProperty( final String name, final Value value )
+    private Property withPropertyArray( final String name, final Value value, Function<PropertyArray, Property> function )
     {
         if ( ifNotNull && value.isNull() )
         {
@@ -241,8 +251,28 @@ public final class PropertySet
             return null;
         }
 
-        final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
-        return array.addValue( value );
+        final ValueType type = value.getType();
+        PropertyArray array = this.propertyArrayByName.get( name );
+        if ( array == null || ( array.size() == 0 && !array.getValueType().equals( type ) ) )
+        {
+            array = new PropertyArray( this, name, type, 1 );
+            this.propertyArrayByName.put( name, array );
+        }
+
+        if ( tree != null )
+        {
+            final Object valueObject = value.getObject();
+            if ( valueObject instanceof PropertySet )
+            {
+                ( (PropertySet) valueObject ).setPropertyTree( tree );
+            }
+        }
+        return function.apply( array );
+    }
+
+    public Property addProperty( final String name, final Value value )
+    {
+        return withPropertyArray( name, value, pa -> pa.addValue( value ) );
     }
 
     public Property setProperty( final String path, final Value value )
@@ -255,7 +285,19 @@ public final class PropertySet
         final PropertyPath.Element firstElement = path.getFirstElement();
         if ( path.elementCount() > 1 )
         {
-            final PropertySet propertySet = getOrCreateSet( firstElement.getName(), firstElement.getIndex() );
+            final String name = firstElement.getName();
+            final int index = firstElement.getIndex();
+            final Property existingProperty = getProperty( name, index );
+            final PropertySet propertySet;
+            if ( existingProperty == null )
+            {
+                propertySet = new PropertySet( tree, 1 );
+                setProperty( name, index, ValueFactory.newPropertySet( propertySet ) );
+            }
+            else
+            {
+                propertySet = existingProperty.getSet();
+            }
             return propertySet.setProperty( path.removeFirstPathElement(), value );
         }
         else
@@ -266,40 +308,7 @@ public final class PropertySet
 
     public Property setProperty( final String name, final int index, final Value value )
     {
-        if ( ifNotNull && value.isNull() )
-        {
-            ifNotNull = false;
-            return null;
-        }
-
-        final PropertyArray array = getOrCreatePropertyArray( name, value.getType() );
-        return array.setValue( index, value );
-    }
-
-    private PropertySet getOrCreateSet( final String name, final int index )
-    {
-        final Property existingProperty = getProperty( name, index );
-        if ( existingProperty == null )
-        {
-            final PropertySet set = tree != null ? new PropertySet( tree ) : new PropertySet();
-            setProperty( name, index, ValueFactory.newPropertySet( set ) );
-            return set;
-        }
-        else
-        {
-            return existingProperty.getSet();
-        }
-    }
-
-    private PropertyArray getOrCreatePropertyArray( final String name, final ValueType type )
-    {
-        PropertyArray array = this.propertyArrayByName.get( name );
-        if ( array == null || ( array.size() == 0 && !array.getValueType().equals( type ) ) )
-        {
-            array = new PropertyArray( tree, this, name, type );
-            this.propertyArrayByName.put( name, array );
-        }
-        return array;
+        return withPropertyArray( name, value, pa -> pa.setValue( index, value ) );
     }
 
     public void setValues( final String path, final Iterable<Value> values )
@@ -600,7 +609,7 @@ public final class PropertySet
 
     public PropertySet addSet( final String name )
     {
-        final PropertySet propertySet = tree != null ? new PropertySet( tree ) : new PropertySet();
+        final PropertySet propertySet = new PropertySet( tree, 0 );
         addSet( name, propertySet );
         return propertySet;
     }

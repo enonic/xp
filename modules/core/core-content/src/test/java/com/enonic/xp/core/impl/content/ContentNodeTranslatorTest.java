@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -121,7 +120,7 @@ public class ContentNodeTranslatorTest
     {
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
-        rootDataSet.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        rootDataSet.setSet( ContentPropertyNames.DATA, rootDataSet.newSet() );
         rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         return Node.create().id( ID_1 ).name( "contentRoot" ).parentPath( parentPath ).data( rootDataSet ).build();
@@ -132,7 +131,7 @@ public class ContentNodeTranslatorTest
 
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
-        rootDataSet.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        rootDataSet.setSet( ContentPropertyNames.DATA, rootDataSet.newSet() );
         rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         final Node node1 =

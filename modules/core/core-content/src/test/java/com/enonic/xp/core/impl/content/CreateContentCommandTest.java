@@ -18,7 +18,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
@@ -369,7 +368,7 @@ public class CreateContentCommandTest
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
-        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
         parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
@@ -400,7 +399,7 @@ public class CreateContentCommandTest
     public void createContentWithDefaultLanguage()
     {
         final PropertyTree parentNodeData = new PropertyTree();
-        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
         parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         parentNodeData.setString( ContentPropertyNames.LANGUAGE, "en" );
         final Node parentNode = Node.create()
@@ -470,7 +469,7 @@ public class CreateContentCommandTest
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.site().toString() );
-        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
         parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
@@ -504,7 +503,7 @@ public class CreateContentCommandTest
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.templateFolder().toString() );
-        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
         parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
@@ -538,7 +537,7 @@ public class CreateContentCommandTest
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
-        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
         parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
@@ -630,7 +629,7 @@ public class CreateContentCommandTest
         tree.addString( ContentPropertyNames.TYPE, "folder" );
         tree.addString( ContentPropertyNames.CREATOR, "user:system:user1" );
         tree.addString( ContentPropertyNames.LANGUAGE, language );
-        tree.addSet( ContentPropertyNames.DATA, new PropertySet() );
+        tree.addSet( ContentPropertyNames.DATA, tree.newSet() );
 
         final Node contentRootNode =
             Node.create().id( NodeId.from( "id1" ) ).name( "content" ).parentPath( NodePath.ROOT ).data( tree ).build();
@@ -643,7 +642,7 @@ public class CreateContentCommandTest
                                   final EnumSet<ContentInheritType> inherit )
     {
         final PropertyTree data = new PropertyTree();
-        data.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        data.setSet( ContentPropertyNames.DATA, data.newSet() );
         data.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
         data.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
         data.setString( ContentPropertyNames.LANGUAGE, language );
@@ -660,7 +659,7 @@ public class CreateContentCommandTest
     {
         final PropertyTree nodeData = new PropertyTree();
         nodeData.setString( ContentPropertyNames.TYPE, contentTypeName.toString() );
-        nodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        nodeData.setSet( ContentPropertyNames.DATA, nodeData.newSet() );
         nodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
         final Node node = Node.create().id( NodeId.from( name ) ).name( name ).parentPath( parentPath ).data( nodeData ).build();

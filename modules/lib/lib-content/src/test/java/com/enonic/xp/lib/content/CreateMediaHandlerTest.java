@@ -75,10 +75,10 @@ public class CreateMediaHandlerTest
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> {
             final CreateMediaParams params = (CreateMediaParams) mock.getArguments()[0];
 
-            final PropertySet attachmentSet = new PropertySet();
+            final PropertyTree propertyTree = new PropertyTree();
+            final PropertySet attachmentSet = propertyTree.newSet();
             attachmentSet.addString( "attachment", params.getName() );
 
-            final PropertyTree propertyTree = new PropertyTree();
             propertyTree.addSet( "media", attachmentSet );
 
             return Media.create().

@@ -431,14 +431,14 @@ public class RescheduleTaskTest
     {
         final PropertyTree jobData = new PropertyTree();
 
-        final PropertySet calendar = new PropertySet();
+        final PropertySet calendar = jobData.newSet();
         calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, "ONE_TIME" );
         calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, "2021-02-25T10:44:33.170079900Z" );
 
         jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, "app:key" );
         jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, true );
         jobData.addSet( ScheduledJobPropertyNames.CALENDAR, calendar );
-        jobData.addSet( ScheduledJobPropertyNames.CONFIG, new PropertySet() );
+        jobData.addSet( ScheduledJobPropertyNames.CONFIG, jobData.newSet() );
         jobData.setString( ScheduledJobPropertyNames.CREATOR, "user:system:creator" );
         jobData.setString( ScheduledJobPropertyNames.MODIFIER, "user:system:modifier" );
         jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2021-02-26T10:44:33.170079900Z" );

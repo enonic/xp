@@ -56,9 +56,8 @@ public class ContentServiceImplTest_move
     public void move_from_site_to_root()
         throws Exception
     {
-
         final PropertyTree siteData = new PropertyTree();
-        siteData.setSet( "siteConfig", this.createSiteConfig() );
+        siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
@@ -78,9 +77,8 @@ public class ContentServiceImplTest_move
     public void move_to_the_same_parent()
         throws Exception
     {
-
         final PropertyTree siteData = new PropertyTree();
-        siteData.setSet( "siteConfig", this.createSiteConfig() );
+        siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
@@ -139,9 +137,9 @@ public class ContentServiceImplTest_move
             build();
     }
 
-    private PropertySet createSiteConfig()
+    private PropertySet createSiteConfig(PropertyTree tree)
     {
-        PropertySet set = new PropertySet();
+        PropertySet set = tree.newSet();
         set.addString( "applicationKey", "com.enonic.app.test" );
         set.addSet( "config" );
         return set;

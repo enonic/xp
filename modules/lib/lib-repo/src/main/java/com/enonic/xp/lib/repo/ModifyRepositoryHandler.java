@@ -83,7 +83,7 @@ public class ModifyRepositoryHandler
             }
             else
             {
-                target.data.setSet( scope, propertyTree.getRoot() );
+                target.data.setSet( scope, propertyTree.getRoot().copy( target.data ) );
             }
         }
     }

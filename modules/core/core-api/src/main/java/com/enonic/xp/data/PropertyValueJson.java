@@ -49,7 +49,8 @@ public final class PropertyValueJson
         {
             if ( this.set != null )
             {
-                final PropertySet newSet = array.newSet();
+                final PropertySet newSet = new PropertySet( array.getParent().getTree(), set.size() );
+
                 for ( final PropertyArrayJson propertyArrayJson : set )
                 {
                     propertyArrayJson.fromJson( newSet );
@@ -66,7 +67,6 @@ public final class PropertyValueJson
             value = type.fromJsonValue( v );
         }
 
-        final Property newProperty = new Property( array.getName(), array.size(), value, array.getParent() );
-        array.addProperty( newProperty );
+        array.addValue( value );
     }
 }

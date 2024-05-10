@@ -69,11 +69,11 @@ public class IssueNodeTranslatorTest
 
         issueAsData.addStrings( APPROVERS, "user:myStore:approver-1", "user:myStore:approver-2" );
 
-        final PropertySet publishRequestSet = new PropertySet();
+        final PropertySet publishRequestSet = issueAsData.getTree().newSet();
 
         List<PropertySet> propertySetList = new ArrayList<>();
-        propertySetList.add( createItemSet( "content-id1", false ) );
-        propertySetList.add( createItemSet( "content-id2", true ) );
+        propertySetList.add( createItemSet( "content-id1", false, propertyTree ) );
+        propertySetList.add( createItemSet( "content-id2", true, propertyTree ) );
         publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, propertySetList.toArray( new PropertySet[0] ) );
         issueAsData.addSet( PUBLISH_REQUEST, publishRequestSet );
 
@@ -85,9 +85,9 @@ public class IssueNodeTranslatorTest
             build();
     }
 
-    private static PropertySet createItemSet( final String id, final boolean recursive )
+    private static PropertySet createItemSet( final String id, final boolean recursive, PropertyTree propertyTree )
     {
-        final PropertySet itemSet = new PropertySet();
+        final PropertySet itemSet = propertyTree.newSet();
         itemSet.addString( PublishRequestPropertyNames.ITEM_ID, id );
         itemSet.addBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE, recursive );
         return itemSet;

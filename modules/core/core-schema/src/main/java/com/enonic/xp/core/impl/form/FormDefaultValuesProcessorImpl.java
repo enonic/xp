@@ -6,12 +6,10 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -92,11 +90,12 @@ public final class FormDefaultValuesProcessorImpl
                 FormOptionSetOption option = formItem.toFormOptionSetOption();
                 if ( option.isDefaultOption() )
                 {
-                    dataSet.setProperty( "_selected", ValueFactory.newString( formItem.getName() ) );
+                    dataSet.setString( "_selected", formItem.getName() );
                     if ( dataSet.getProperty( formItem.getName() ) == null )
                     {
-                        Property property = dataSet.setProperty( formItem.getName(), ValueFactory.newPropertySet( new PropertySet() ) );
-                        processFormItems( option.getFormItems(), property.getSet() );
+                        final PropertySet propertySet = dataSet.getTree().newSet();
+                        dataSet.setSet( formItem.getName(), propertySet );
+                        processFormItems( option.getFormItems(), propertySet );
                     }
                 }
             }
@@ -123,13 +122,11 @@ public final class FormDefaultValuesProcessorImpl
     {
         if ( dataSet.getProperty( formItemName, index ) == null )
         {
-            Property property = dataSet.setProperty( formItemName, index, ValueFactory.newPropertySet( new PropertySet() ) );
-            if ( property != null )
+            final PropertySet propertySet = dataSet.getTree().newSet();
+            dataSet.setSet( formItemName, index, propertySet );
+            if ( existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItems ) )
             {
-                if ( existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItems ) )
-                {
-                    processFormItems( formItems, property.getSet() );
-                }
+                processFormItems( formItems, propertySet );
             }
         }
     }

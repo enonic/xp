@@ -541,7 +541,7 @@ public class ContentDataSerializer
         if ( validationErrors != null && validationErrors.hasErrors() )
         {
             contentAsData.addSets( VALIDATION_ERRORS, validationErrors.stream().map( validationError -> {
-                final PropertySet propertySet = new PropertySet();
+                final PropertySet propertySet = contentAsData.getTree().newSet();
                 propertySet.addString( "errorCode", validationError.getErrorCode().toString() );
                 propertySet.addString( "message", validationError.getMessage() );
                 propertySet.addString( "i18n", validationError.getI18n() );

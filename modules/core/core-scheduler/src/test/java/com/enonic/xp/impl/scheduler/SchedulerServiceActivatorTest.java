@@ -244,7 +244,7 @@ class SchedulerServiceActivatorTest
     {
         final PropertyTree jobData = new PropertyTree();
 
-        final PropertySet calendar = new PropertySet();
+        final PropertySet calendar = jobData.newSet();
         calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, params.getCalendar().getType().name() );
         calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, ( (CronCalendar) params.getCalendar() ).getCronValue() );
         calendar.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, ( (CronCalendar) params.getCalendar() ).getTimeZone().getID() );

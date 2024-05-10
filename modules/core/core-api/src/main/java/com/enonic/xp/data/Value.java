@@ -42,9 +42,15 @@ public abstract class Value
         this.object = value.getObject();
     }
 
+    @Deprecated
     public boolean isSet()
     {
-        return this.type.equals( ValueTypes.PROPERTY_SET );
+        return isPropertySet();
+    }
+
+    public boolean isPropertySet()
+    {
+        return type.equals( ValueTypes.PROPERTY_SET );
     }
 
     public boolean isString()
@@ -251,10 +257,5 @@ public abstract class Value
     public boolean isNull()
     {
         return this.object == null;
-    }
-
-    public boolean isPropertySet()
-    {
-        return type.equals( ValueTypes.PROPERTY_SET );
     }
 }

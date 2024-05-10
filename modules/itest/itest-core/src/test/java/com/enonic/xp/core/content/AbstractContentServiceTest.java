@@ -462,13 +462,14 @@ public abstract class AbstractContentServiceTest
             build() );
         final Reference reference = Reference.from( referredContent.getId().toString() );
 
+        //Creates the property tree with value assigned for each attribute
+        PropertyTree data = new PropertyTree();
+
         //Creates a property set
-        PropertySet propertySet = new PropertySet();
+        PropertySet propertySet = data.newSet();
         propertySet.addString( "setString", "stringValue" );
         propertySet.addDouble( "setDouble", 1.5d );
 
-        //Creates the property tree with value assigned for each attribute
-        PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addDouble( "double", 1.4d );
         data.addLong( "long", 2L );

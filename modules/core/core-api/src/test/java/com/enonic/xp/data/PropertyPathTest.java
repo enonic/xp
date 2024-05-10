@@ -8,6 +8,7 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertyPathTest
@@ -94,6 +95,12 @@ public class PropertyPathTest
     public void given_path_with_zero_indexes_explicitly_set_then_toString_returns_path_with_implicit_zero_indexes()
     {
         assertEquals( "a.b", PropertyPath.from( "a[0].b[0]" ).toString() );
+    }
+
+    @Test
+    public void invalid_index()
+    {
+        assertThrows( IllegalArgumentException.class, () -> PropertyPath.from( "a.b[-1]" ) );
     }
 
     @Test

@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -145,69 +144,44 @@ public abstract class BaseContentHandler
             newValue.remove( ContentPropertyNames.SITECONFIG );
 
             final PropertyTree result = this.translateToPropertyTree( newValue, contentTypeName );
-            final List<PropertySet> siteConfigs = createSiteConfigSets( value.get( ContentPropertyNames.SITECONFIG ), contentTypeName );
+            addSiteConfigs( value.get( ContentPropertyNames.SITECONFIG ), contentTypeName, result.getRoot() );
 
-            if ( siteConfigs != null )
-            {
-                siteConfigs.forEach( propertySet -> {
-                    final PropertySet newSet = propertySet.copy( result );
-                    result.addSet( ContentPropertyNames.SITECONFIG, newSet );
-                } );
-            }
             return result;
         }
 
         return this.translateToPropertyTree( value, contentTypeName );
     }
 
-    List<PropertySet> createSiteConfigSets( final Object siteConfig, final ContentTypeName contentTypeName )
+    private void addSiteConfigs( final Object siteConfig, final ContentTypeName contentTypeName, final PropertySet into )
     {
         if ( siteConfig instanceof Map )
         {
-            return List.of( createSitePropertySet( (Map) siteConfig, contentTypeName ) );
+            addSiteConfig( (Map) siteConfig, contentTypeName, into );
         }
 
         if ( siteConfig instanceof List )
         {
-            return createSitePropertySets( (List) siteConfig, contentTypeName );
+            ( (List<Map<String, Object>>) siteConfig ).stream().
+                forEach( sc -> addSiteConfig( sc, contentTypeName, into ) );
         }
-
-        return null;
     }
 
-    private List<PropertySet> createSitePropertySets( final List<Map<String, Object>> siteConfigs, final ContentTypeName contentTypeName )
+    private void addSiteConfig( final Map<String, Object> siteConfig, final ContentTypeName contentTypeName, final PropertySet into )
     {
-        if ( siteConfigs == null )
-        {
-            return null;
-        }
-
-        return siteConfigs.stream().
-            map( siteConfig -> createSitePropertySet( siteConfig, contentTypeName ) ).
-            collect( Collectors.toList() );
-    }
-
-    private PropertySet createSitePropertySet( final Map<String, Object> siteConfig, final ContentTypeName contentTypeName )
-    {
-        if ( siteConfig == null )
-        {
-            return null;
-        }
-
         final ApplicationKey applicationKey = ApplicationKey.from( siteConfig.get( "applicationKey" ).toString() );
         final Map<String, ?> appConfigData = (Map<String, ?>) siteConfig.get( "config" );
 
         if ( appConfigData == null )
         {
-            return null;
+            return;
         }
 
-        final PropertySet propertySet = new PropertySet();
+        final PropertySet propertySet = into.addSet( ContentPropertyNames.SITECONFIG );
 
         propertySet.addString( "applicationKey", applicationKey.toString() );
-        propertySet.addSet( "config", this.translateToPropertyTree( appConfigData, applicationKey, contentTypeName ).getRoot() );
-
-        return propertySet;
+        propertySet.addSet( "config", this.translateToPropertyTree( appConfigData, applicationKey, contentTypeName )
+            .getRoot()
+            .copy( propertySet.getTree() ) );
     }
 
     boolean strictContentValidation( final ContentTypeName contentTypeName )

@@ -44,13 +44,14 @@ public class InputValidatorTest
     @Test
     public void validate_correct_input_types()
     {
+        //Creates the correct data to validate
+        final PropertyTree data = new PropertyTree();
+
         //Creates a property set
-        final PropertySet propertySet = new PropertySet();
+        final PropertySet propertySet = data.newSet();
         propertySet.addString( "setString", "ost" );
         propertySet.addDouble( "setDouble", 123d );
 
-        //Creates the correct data to validate
-        final PropertyTree data = new PropertyTree();
         data.addString( "textLine", "textLine" );
         data.addString( "color", "#12345" );
         data.addString( "comboBox", "value2" );
@@ -154,14 +155,14 @@ public class InputValidatorTest
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        PropertySet invalidSet = new PropertySet();
+        PropertySet invalidSet = invalidData.newSet();
         invalidSet.addDouble( "setString", 1.0d );
         invalidData.addSet( "set", invalidSet );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidSet = new PropertySet();
+        invalidSet = invalidData.newSet();
         invalidSet.addLong( "setDouble", 1L );
         invalidData.addSet( "set", invalidSet );
         validateIncorrectInputType( invalidData );

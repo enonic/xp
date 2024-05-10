@@ -55,10 +55,10 @@ public class PropertyTest
         PropertySet aSet = tree.newSet();
         Property aProperty = tree.addSet( "a", aSet );
 
-        PropertySet bSet = aSet.newSet();
+        PropertySet bSet = tree.newSet();
         Property bProperty = aSet.addSet( "b", bSet );
 
-        PropertySet cSet = bSet.newSet();
+        PropertySet cSet = tree.newSet();
         Property cProperty = bSet.addSet( "c", cSet );
         Property cSubProperty = cSet.addString( "myProp", "value" );
 
@@ -86,6 +86,23 @@ public class PropertyTest
         assertEquals( sourceTree.getProperty( "outerSet.innerSet.myString" ), destinationTree.getProperty( "destiSet.innerSet.myString" ) );
     }
 
+    @Test
+    public void property_copy_indexed()
+    {
+        PropertyTree sourceTree = new PropertyTree();
+        sourceTree.addSet( "outerSet" );
+        sourceTree.addSet( "outerSet" );
+
+        sourceTree.setString( "outerSet[1].innerSet.myString", "myValue" );
+
+        PropertyTree destinationTree = new PropertyTree();
+        PropertySet destiSet = destinationTree.addSet( "destiSet" );
+
+        sourceTree.getProperty( "outerSet[1]" ).copyTo( destiSet );
+
+        assertEquals( sourceTree.getProperty( "outerSet[1].innerSet" ), destinationTree.getProperty( "destiSet.outerSet.innerSet" ) );
+        assertEquals( sourceTree.getProperty( "outerSet[1].innerSet.myString" ), destinationTree.getProperty( "destiSet.outerSet.innerSet.myString" ) );
+    }
 
     @Test
     public void check_exception_is_thrown_when_name_is_null()

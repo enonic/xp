@@ -92,7 +92,7 @@ public class ValueTest
         Value stringValue = ValueFactory.newString( "string" );
         Value binaryReferenceValue = ValueFactory.newBinaryReference( BinaryReference.from( "binary" ) );
         Value booleanValue = ValueFactory.newBoolean( true );
-        Value dataValue = ValueFactory.newPropertySet( new PropertySet() );
+        Value dataValue = ValueFactory.newPropertySet( new PropertyTree().newSet() );
         Value doubleValue = ValueFactory.newDouble( 2.0 );
         Value geoPointValue = ValueFactory.newGeoPoint( GeoPoint.from( "20,20" ) );
         Value instantValue = ValueFactory.newDateTime( Instant.now() );

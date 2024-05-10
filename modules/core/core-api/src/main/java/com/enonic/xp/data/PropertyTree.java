@@ -32,12 +32,12 @@ public final class PropertyTree
      */
     public PropertyTree()
     {
-        root = new PropertySet( this );
+        this( 0 );
     }
 
-    PropertyTree( final PropertyTree source )
+    PropertyTree( final int initialCapacity )
     {
-        root = source.getRoot().copy( this );
+        root = new PropertySet( this, initialCapacity );
     }
 
     PropertyTree( final PropertySet source )
@@ -78,7 +78,7 @@ public final class PropertyTree
 
     public PropertyTree copy()
     {
-        return new PropertyTree( this );
+        return new PropertyTree( this.getRoot() );
     }
 
     public ImmutableList<Property> getProperties( final ValueType valueType )
@@ -94,12 +94,13 @@ public final class PropertyTree
 
     public PropertySet newSet()
     {
-        return new PropertySet( this );
+        return new PropertySet( this, 0 );
     }
 
+    @Deprecated
     public PropertySet newSet( final PropertyTree source )
     {
-        final PropertySet propertySet = new PropertySet( this );
+        final PropertySet propertySet = new PropertySet( this, 0 );
         for ( final Property sourceProperty : source.getProperties() )
         {
             propertySet.addProperty( sourceProperty.getName(), sourceProperty.getValue() );
@@ -973,9 +974,9 @@ public final class PropertyTree
     private void readObject( ObjectInputStream ois )
         throws ClassNotFoundException, IOException
     {
-        root = new PropertySet( this );
-
         final int arraysSize = ois.readInt();
+
+        root = new PropertySet( this, arraysSize );
 
         for ( int i = 0; i < arraysSize; i++ )
         {
@@ -1011,7 +1012,7 @@ public final class PropertyTree
                 return;
             }
 
-            final PropertySet propertySet = new PropertySet();
+            final PropertySet propertySet = new PropertySet( set.getTree(), propertyArraySize );
             set.addSet( name, propertySet );
 
             for ( int i = 0; i < propertyArraySize; i++ )

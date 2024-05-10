@@ -19,7 +19,6 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -150,7 +149,7 @@ public class ContentServiceImplTest_duplicate
         this.nodeService.update( UpdateNodeParams.create().
             id( NodeId.from( content.getId() ) ).
             editor( toBeEdited -> {
-                toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO, new PropertySet() );
+                toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO, toBeEdited.data.newSet() );
                 toBeEdited.data.addString( ContentPropertyNames.ORIGIN_PROJECT, "some-project" );
                 toBeEdited.data.addStrings( ContentPropertyNames.INHERIT, ContentInheritType.CONTENT.name(),
                                             ContentInheritType.NAME.name() );
