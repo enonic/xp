@@ -18,7 +18,7 @@ public final class NodeType
 
     public static NodeType from( final String name )
     {
-        return new NodeType( name );
+        return DEFAULT_NODE_COLLECTION.name.equals( name ) ? DEFAULT_NODE_COLLECTION : new NodeType( name );
     }
 
     public String getName()

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node.dao;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.osgi.service.component.annotations.Activate;
@@ -18,11 +19,15 @@ import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.node.json.ImmutableNodeVersion;
+import com.enonic.xp.repo.impl.node.json.ImmutableProperty;
+import com.enonic.xp.repo.impl.node.json.ImmutableVersionData;
 import com.enonic.xp.repo.impl.node.json.NodeVersionAccessControl;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
@@ -34,7 +39,7 @@ public class NodeVersionServiceImpl
 {
     private final BlobStore blobStore;
 
-    private final Cache<BlobKey, NodeVersion> nodeDataCache;
+    private final Cache<BlobKey, ImmutableNodeVersion> nodeDataCache;
 
     private final Cache<BlobKey, IndexConfigDocument> indexConfigCache;
 
@@ -78,16 +83,19 @@ public class NodeVersionServiceImpl
 
         try
         {
-            final NodeVersion nodeVersion = nodeDataCache.get( nodeBlobKey, () -> {
+            final ImmutableNodeVersion immutableNodeVersion = nodeDataCache.get( nodeBlobKey, () -> {
                 final BlobRecord nodeBlobRecord = getBlobRecord( NodeConstants.NODE_SEGMENT_LEVEL, context.getRepositoryId(), nodeBlobKey );
-                return NodeVersionJsonSerializer.toNodeVersionData( nodeBlobRecord.getBytes() );
+
+                try (var is = nodeBlobRecord.getBytes().openBufferedStream())
+                {
+                    return ImmutableVersionData.deserialize( is );
+                }
             } );
 
             final IndexConfigDocument indexConfigDocument = indexConfigCache.get( indexConfigBlobKey, () -> {
                 final BlobRecord indexConfigBlobRecord =
                     getBlobRecord( NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL, context.getRepositoryId(), indexConfigBlobKey );
                 return NodeVersionJsonSerializer.toIndexConfigDocument( indexConfigBlobRecord.getBytes() );
-
             } );
 
             final NodeVersionAccessControl accessControl = accessControlCache.get( accessControlBlobKey, () -> {
@@ -96,11 +104,16 @@ public class NodeVersionServiceImpl
                 return NodeVersionJsonSerializer.toNodeVersionAccessControl( accessControlBlobRecord.getBytes() );
             } );
 
-
-            return NodeVersion.create( nodeVersion )
+            return NodeVersion.create()
+                .id( immutableNodeVersion.id )
+                .nodeType( immutableNodeVersion.nodeType )
+                .data( toPropertyTree( immutableNodeVersion.data ) )
                 .indexConfigDocument( indexConfigDocument )
-                .inheritPermissions( accessControl.isInheritPermissions() )
+                .childOrder( immutableNodeVersion.childOrder )
+                .manualOrderValue( immutableNodeVersion.manualOrderValue )
                 .permissions( accessControl.getPermissions() )
+                .inheritPermissions( accessControl.isInheritPermissions() )
+                .attachedBinaries( immutableNodeVersion.attachedBinaries )
                 .build();
         }
         catch ( ExecutionException | UncheckedExecutionException e )
@@ -114,6 +127,13 @@ public class NodeVersionServiceImpl
             throw new RuntimeException(
                 "Failed to load blobs with keys: " + nodeBlobKey + ", " + indexConfigBlobKey + ", " + accessControlBlobKey, e );
         }
+    }
+
+    static PropertyTree toPropertyTree( final List<ImmutableProperty> data )
+    {
+        final PropertyTree result = new PropertyTree();
+        ImmutableProperty.addToSet( result.getRoot(), data );
+        return result;
     }
 
     private BlobRecord getBlobRecord( SegmentLevel segmentLevel, RepositoryId repositoryId, BlobKey blobKey )
