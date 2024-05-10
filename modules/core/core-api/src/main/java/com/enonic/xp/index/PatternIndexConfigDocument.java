@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -35,7 +36,7 @@ public final class PatternIndexConfigDocument
     {
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
-        this.pathIndexConfigMap = builder.stringPathIndexConfigMap;
+        this.pathIndexConfigMap = ImmutableMap.copyOf( builder.stringPathIndexConfigMap );
         this.defaultConfig = builder.defaultConfig;
         this.allTextConfig = builder.allTextIndexConfig.build();
     }

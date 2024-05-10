@@ -11,6 +11,8 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public class OrderExpressions
     extends AbstractImmutableEntityList<OrderExpr>
 {
+    private static final OrderExpressions EMPTY = new OrderExpressions( ImmutableList.of() );
+
     private OrderExpressions( final ImmutableList<OrderExpr> list )
     {
         super( list );
@@ -18,17 +20,22 @@ public class OrderExpressions
 
     public static OrderExpressions empty()
     {
-        return new OrderExpressions( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static OrderExpressions from( final OrderExpr... orderExprs )
     {
-        return new OrderExpressions( ImmutableList.copyOf( orderExprs ) );
+        return fromInternal( ImmutableList.copyOf( orderExprs ) );
     }
 
     public static OrderExpressions from( final Collection<OrderExpr> orderExprs )
     {
-        return new OrderExpressions( ImmutableList.copyOf( orderExprs ) );
+        return fromInternal( ImmutableList.copyOf( orderExprs ) );
+    }
+
+    private static OrderExpressions fromInternal( final ImmutableList<OrderExpr> set )
+    {
+        return set.isEmpty() ? EMPTY : new OrderExpressions( set );
     }
 
     public static Builder create()
@@ -48,7 +55,7 @@ public class OrderExpressions
 
         public OrderExpressions build()
         {
-            return new OrderExpressions( this.orderExprs.build() );
+            return fromInternal( orderExprs.build() );
         }
 
     }
