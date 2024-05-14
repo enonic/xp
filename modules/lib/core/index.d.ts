@@ -1,23 +1,27 @@
-export type ComponentDescriptor = `${string}:${string}`;
+import type { NestedRecord } from './util';
 
-export interface NestedRecord {
-	[name: PropertyKey]: NestedRecord | unknown
-}
+// This also makes sure XpLayoutMap, etc are available.
+import type { ComponentDescriptor } from './globalModifying';
 
-declare global {
-    interface XpLayoutMap {
-        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPageMap {
-        [pageDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPartMap {
-        [partDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpXData {
-        [key: string]: Record<string, Record<string, unknown>>;
-    }
-}
+export type { ComponentDescriptor } from './globalModifying';
+export type {
+    App,
+    AppInterface,
+    DoubleUnderscore,
+    DoubleUnderscoreInterface,
+    Log,
+    LogInterface,
+    NewBean,
+    Resolve,
+    ScriptValue,
+    ScriptValueInterface,
+    XpRequire,
+} from './globals';
+export type {
+    Resource,
+    ResourceKey,
+    ResourceKeyInterface,
+} from './resource';
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -225,28 +229,6 @@ type Brand<
 };
 
 export type ByteSource = Brand<object, 'ByteSource'>;
-
-//
-// RESOURCES
-//
-export interface Resource {
-    getSize(): number;
-
-    getTimestamp(): number;
-
-    getStream(): ByteSource;
-
-    exists(): boolean;
-}
-
-export interface ResourceKey {
-    getApplicationKey(): string;
-    getPath(): string;
-    getUri(): string;
-    isRoot(): boolean;
-    getName(): string;
-    getExtension(): string;
-}
 
 //
 // DSL QUERIES
