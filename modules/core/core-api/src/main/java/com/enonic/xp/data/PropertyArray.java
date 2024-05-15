@@ -248,7 +248,7 @@ public final class PropertyArray
         array.remove( index );
     }
 
-    private void checkType( final ValueType valueType )
+    void checkType( final ValueType valueType )
     {
         if ( !valueType.equals( this.valueType ) )
         {

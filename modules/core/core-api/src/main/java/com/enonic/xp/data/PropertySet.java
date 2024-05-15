@@ -264,6 +264,24 @@ public final class PropertySet
         }
     }
 
+    /**
+     * WARNING: This method may be removed at any time.
+     * This method is only used to simulate the behavior of PropertySet Serialisation.
+     * It is not recommended to use it in new code.
+     * <br/>
+     * Ensures that the property with the given name is a PropertySet.
+     * If the property does not exist, empty property (without values) will be created.
+     * If the property with values exists and is not a PropertySet, an exception will be thrown.
+     * Difference with setSet is that this method does not set the property value
+     *
+     * @param name property name
+     */
+    public void ensurePropertySet( final String name )
+    {
+        final PropertyArray array = getOrCreatePropertyArray( name, ValueTypes.PROPERTY_SET );
+        array.checkType( ValueTypes.PROPERTY_SET );
+    }
+
     public Property setProperty( final String name, final int index, final Value value )
     {
         if ( ifNotNull && value.isNull() )

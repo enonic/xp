@@ -40,9 +40,15 @@ public abstract class ImmutableProperty
 
     static ImmutableProperty ofValueSet( final String name, final List<ValueSet> values )
     {
-        return values.size() == 1
-            ? new ImmutablePropertyValueSet1( name, values.get( 0 ) )
-            : new ImmutablePropertyValueSetN( name, values );
+        switch ( values.size() )
+        {
+            case 0:
+                return new ImmutablePropertyValueSet0( name );
+            case 1:
+                return new ImmutablePropertyValueSet1( name, values.get( 0 ) );
+            default:
+                return new ImmutablePropertyValueSetN( name, values );
+        }
     }
 
     static ValueSet nullValueSet()
@@ -67,6 +73,20 @@ public abstract class ImmutableProperty
     abstract static class ValueSet
     {
         public abstract void addValueSet( String name, PropertySet to );
+    }
+
+    private static class ImmutablePropertyValueSet0
+        extends ImmutableProperty
+    {
+        ImmutablePropertyValueSet0( final String name )
+        {
+            super( name );
+        }
+
+        public void addToSet( String name, PropertySet set )
+        {
+            set.ensurePropertySet( name );
+        }
     }
 
     private static class ImmutablePropertyValueSetN
