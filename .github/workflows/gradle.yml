@@ -78,7 +78,7 @@ jobs:
     if: needs.publish_vars.outputs.publish == 'true'
     steps:
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v3
+        uses: benc-uk/workflow-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repo: ${{ matrix.repo }}
