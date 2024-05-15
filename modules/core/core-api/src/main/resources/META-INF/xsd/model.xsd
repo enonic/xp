@@ -430,6 +430,24 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="mounts">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="mount">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="api"/>
+                  <xs:enumeration value="all_sites"/>
+                  <xs:enumeration value="site"/>
+                  <xs:enumeration value="all_webapps"/>
+                  <xs:enumeration value="webapp"/>
+                  <xs:enumeration value="admin"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

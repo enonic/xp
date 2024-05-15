@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,8 +13,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
+import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -21,8 +26,12 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -40,7 +49,13 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public class SlashApiHandler
 {
     private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
+
     private static final Pattern API_PATTERN = Pattern.compile( "^/(_|api)/(?<appKey>[^/]+)(?:/(?<apiKey>[^/]+))?(?<restPath>/.*)?$" );
+
+    private static final Pattern MOUNT_SITE_ENDPOINT_PATTERN =
+        Pattern.compile( "^/(admin/)?site/(?<project>[^/]+)/(?<branch>[^/]+)(?<contentPath>/.*?)/_/" );
+
+    private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>/.*?)/_/" );
 
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
@@ -49,17 +64,24 @@ public class SlashApiHandler
 
     private final ApiDescriptorService apiDescriptorService;
 
+    private final ContentService contentService;
+
+    private final ProjectService projectService;
+
     private final ExceptionMapper exceptionMapper;
 
     private final ExceptionRenderer exceptionRenderer;
 
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
+                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
+                            @Reference final ProjectService projectService, @Reference final ExceptionMapper exceptionMapper,
                             @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
+        this.contentService = contentService;
+        this.projectService = projectService;
         this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
     }
@@ -74,7 +96,7 @@ public class SlashApiHandler
             throw new IllegalStateException( "Invalid API path: " + path );
         }
 
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( "appKey" ) );
+        final ApplicationKey applicationKey = resolveApplicationKey( matcher.group( "appKey" ) );
 
         if ( RESERVED_APP_KEYS.contains( applicationKey.getName() ) )
         {
@@ -91,13 +113,18 @@ public class SlashApiHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
+        final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
+
         final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
 
         final String restPath = matcher.group( "restPath" );
 
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
 
-        final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
+        if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
+        {
+            throw WebException.notFound( String.format( "API [%s] is not mounted", apiDescriptor.key() ) );
+        }
 
         final Trace trace = Tracer.newTrace( "slashAPI" );
         if ( trace == null )
@@ -109,6 +136,92 @@ public class SlashApiHandler
             addTranceInfo( trace, applicationKey, apiKey, restPath, response );
             return response;
         } );
+    }
+
+    private boolean verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    {
+        final String rawPath = portalRequest.getRawPath();
+        final Set<ApiMount> mounts = apiDescriptor.getMounts();
+
+        if ( portalRequest.getEndpointPath() == null && rawPath.startsWith( "/api/" ) )
+        {
+            return mounts.contains( ApiMount.API );
+        }
+        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/tool/" ) )
+        {
+            return mounts.contains( ApiMount.ADMIN );
+        }
+        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
+        {
+            return verifyRequestMountedOnSites( apiDescriptor, portalRequest );
+        }
+        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/webapp/" ) )
+        {
+            return verifyPathMountedOnWebapps( rawPath, apiDescriptor );
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean verifyPathMountedOnWebapps( final String rawPath, final ApiDescriptor apiDescriptor )
+    {
+        final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( rawPath );
+        if ( !webappMatcher.find() )
+        {
+            return false;
+        }
+
+        if ( apiDescriptor.hasMount( ApiMount.ALL_WEBAPPS ) )
+        {
+            return true;
+        }
+
+        if ( !apiDescriptor.hasMount( ApiMount.WEBAPP ) )
+        {
+            return false;
+        }
+
+        final ApplicationKey baseAppKey = resolveApplicationKey( webappMatcher.group( "baseAppKey" ) );
+        return baseAppKey.equals( apiDescriptor.key().getApplicationKey() );
+    }
+
+    private boolean verifyRequestMountedOnSites( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    {
+        final Matcher siteMatcher = MOUNT_SITE_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
+        if ( !siteMatcher.find() )
+        {
+            return false;
+        }
+
+        final ContentPath contentPath = ContentPath.from( siteMatcher.group( "contentPath" ) );
+
+        final Site site = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( portalRequest.getRepositoryId() )
+            .branch( portalRequest.getBranch() )
+            .build()
+            .callWith( () -> contentService.findNearestSiteByPath( contentPath ) );
+
+        if ( apiDescriptor.hasMount( ApiMount.ALL_SITES ) )
+        {
+            return site != null;
+        }
+
+        if ( !apiDescriptor.hasMount( ApiMount.SITE ) )
+        {
+            return false;
+        }
+
+        final boolean isAppInstalledOnSite = site != null && site.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
+
+        if ( !isAppInstalledOnSite )
+        {
+            Project project = projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) );
+            return project != null && project.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
+        }
+
+        return true;
     }
 
     private static void addTranceInfo( final Trace trace, final ApplicationKey applicationKey, final String apiKey, final String restPath,
@@ -216,5 +329,17 @@ public class SlashApiHandler
         final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
         webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
         return webResponse;
+    }
+
+    private ApplicationKey resolveApplicationKey( final String appKey )
+    {
+        try
+        {
+            return ApplicationKey.from( appKey );
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Application key [%s] not found", appKey ) );
+        }
     }
 }

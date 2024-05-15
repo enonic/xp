@@ -2,4 +2,7 @@
   <allow>
     <principal>role:system.admin</principal>
   </allow>
+  <mounts>
+    <mount>api</mount>
+  </mounts>
 </api>
