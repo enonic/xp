@@ -1,11 +1,13 @@
 package com.enonic.xp.repo.impl.node.dao;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
@@ -15,14 +17,17 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.internal.blobstore.cache.CachedBlobStore;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
@@ -86,10 +91,44 @@ class NodeVersionServiceImplTest
         data.addString( "myName", "myValue" );
         final PropertySet set = data.newSet();
         set.setString( "myNameInSet", "myValueInSet" );
-        data.addSet( "mySet", set );
-        data.addSet( "myEmptySet", data.newSet() );
-        data.addSet( "myNullSet", null );
-        data.addString( "myNullString", null );
+        set.addSet( "mySet", set );
+        set.addSet( "myEmptySet", data.newSet() );
+        set.ensurePropertySet( "myNoValuePropertySet" );
+        set.addSet( "myNullSet", null );
+        set.addString( "myNullString", null );
+
+        final NodeVersion nodeVersion = NodeVersion.create().
+            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
+            id( new NodeId() ).
+            childOrder( ChildOrder.defaultOrder() ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create()
+                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
+            build();
+
+        final NodeVersionKey nodeVersionKey = nodeDao.store( nodeVersion, createInternalContext() );
+
+        final NodeVersion returnedNodeVersion = nodeDao.get( nodeVersionKey, createInternalContext() );
+
+        assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
+        assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
+    }
+
+    @Test
+    void getVersion_issue_10558() throws Exception
+    {
+        final List<PropertyArrayJson> list =
+            ObjectMapperHelper.create().readValue( "[\n" + "    {\n" + "        \"name\": \"target\",\n" +
+                                                          "        \"type\": \"Reference\",\n" + "        \"values\": [\n" +
+                                                          "            {\n" +
+                                                          "                \"v\": \"a0f4f654-82c5-4e56-9018-9ffe3f61c6ff\"\n" +
+                                                          "            }\n" + "        ]\n" + "    },\n" + "    {\n" +
+                                                          "        \"name\": \"parameters\",\n" + "        \"type\": \"PropertySet\",\n" +
+                                                          "        \"values\": []\n" + "    }\n" + "]", new TypeReference<>()
+            {
+            } );
+
+        final PropertyTree data = PropertyTreeJson.fromJson( list );
 
         final NodeVersion nodeVersion = NodeVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).

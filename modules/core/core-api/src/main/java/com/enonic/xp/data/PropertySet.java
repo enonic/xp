@@ -252,12 +252,7 @@ public final class PropertySet
         }
 
         final ValueType type = value.getType();
-        PropertyArray array = this.propertyArrayByName.get( name );
-        if ( array == null || ( array.size() == 0 && !array.getValueType().equals( type ) ) )
-        {
-            array = new PropertyArray( this, name, type, 1 );
-            this.propertyArrayByName.put( name, array );
-        }
+        final PropertyArray array = getOrCreatePropertyArray( name, type, 1 );
 
         if ( tree != null )
         {
@@ -268,6 +263,17 @@ public final class PropertySet
             }
         }
         return function.apply( array );
+    }
+
+    private PropertyArray getOrCreatePropertyArray( final String name, final ValueType type, final int initialCapacity )
+    {
+        PropertyArray array = this.propertyArrayByName.get( name );
+        if ( array == null || ( array.size() == 0 && !array.getValueType().equals( type ) ) )
+        {
+            array = new PropertyArray( this, name, type, initialCapacity );
+            this.propertyArrayByName.put( name, array );
+        }
+        return array;
     }
 
     public Property addProperty( final String name, final Value value )
@@ -304,6 +310,24 @@ public final class PropertySet
         {
             return setProperty( firstElement.getName(), firstElement.getIndex(), value );
         }
+    }
+
+    /**
+     * WARNING: This method may be removed at any time.
+     * This method is only used to simulate the behavior of PropertySet Serialisation.
+     * It is not recommended to use it in new code.
+     * <br>
+     * Ensures that the property with the given name is a PropertySet.
+     * If the property does not exist, empty property (without values) will be created.
+     * If the property with values exists and is not a PropertySet, an exception will be thrown.
+     * Difference with setSet is that this method does not set the property value
+     *
+     * @param name property name
+     */
+    public void ensurePropertySet( final String name )
+    {
+        final PropertyArray array = getOrCreatePropertyArray( name, ValueTypes.PROPERTY_SET, 0 );
+        array.checkType( ValueTypes.PROPERTY_SET );
     }
 
     public Property setProperty( final String name, final int index, final Value value )
