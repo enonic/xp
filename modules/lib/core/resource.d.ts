@@ -1,4 +1,12 @@
-import type { Prettify } from './util';
+// Compliant with npm module ts-brand
+type Brand<
+    Base,
+    Branding
+> = Base & {
+  '__type__': Branding
+};
+
+export type ByteSource = Brand<object, 'ByteSource'>;
 
 export declare interface Resource {
     getSize(): number;
@@ -10,7 +18,7 @@ export declare interface Resource {
     exists(): boolean;
 }
 
-export declare interface ResourceKeyInterface {
+export declare interface ResourceKey {
     getApplicationKey(): string;
     getPath(): string;
     getUri(): string;
@@ -18,5 +26,3 @@ export declare interface ResourceKeyInterface {
     getName(): string;
     getExtension(): string;
 }
-
-export declare type ResourceKey = Prettify<ResourceKeyInterface>;

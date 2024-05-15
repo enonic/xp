@@ -1,7 +1,10 @@
-import type { NestedRecord } from './util';
+// NOTE: A global modifying module must have at least one export
 
-// A global modifying module must have at least one export
 export declare type ComponentDescriptor = `${string}:${string}`;
+
+export declare interface NestedRecord {
+	[name: PropertyKey]: NestedRecord | unknown
+}
 
 declare global {
     interface XpBeans {}

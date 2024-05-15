@@ -1,7 +1,6 @@
 import type { ResourceKey } from './resource';
-import type { Prettify } from './util';
 
-export declare interface AppInterface {
+export declare interface App {
     /**
      * The name of the application.
      *
@@ -22,11 +21,9 @@ export declare interface AppInterface {
      * @type Object
      */
     config: Record<string, string | undefined>;
-};
+}
 
-export declare type App = Prettify<AppInterface>
-
-export declare interface LogInterface {
+export declare interface Log {
     /**
      * Log debug message.
      *
@@ -54,11 +51,9 @@ export declare interface LogInterface {
      * @param {Array} args... logging arguments.
      */
     error: (...args: unknown[]) => void;
-};
+}
 
-export declare type Log = Prettify<LogInterface>
-
-export declare interface ScriptValueInterface {
+export declare interface ScriptValue {
     isArray(): boolean;
 
     isObject(): boolean;
@@ -80,14 +75,12 @@ export declare interface ScriptValueInterface {
     getMap(): Record<string, unknown>;
 
     getList(): object[];
-};
-
-export declare type ScriptValue = Prettify<ScriptValueInterface>
+}
 
 export declare type NewBean = <T = unknown, Bean extends keyof XpBeans | string = string>(bean: Bean) =>
     Bean extends keyof XpBeans ? XpBeans[Bean] : T;
 
-export declare interface DoubleUnderscoreInterface {
+export declare interface DoubleUnderscore {
     /**
      * Creates a new JavaScript bean that wraps the given Java class and makes its methods available to be called from JavaScript.
      */
@@ -121,9 +114,7 @@ export declare interface DoubleUnderscoreInterface {
      * @param value Value to register.
      */
     registerMock: (name: string, value: object) => void
-};
-
-export declare type DoubleUnderscore = Prettify<DoubleUnderscoreInterface>
+}
 
 export declare type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;

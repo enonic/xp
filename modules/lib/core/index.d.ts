@@ -1,26 +1,26 @@
-import type { NestedRecord } from './util';
-
 // This also makes sure XpLayoutMap, etc are available.
-import type { ComponentDescriptor } from './globalModifying';
+import type {
+    ComponentDescriptor,
+    NestedRecord,
+} from './globalModifying';
 
-export type { ComponentDescriptor } from './globalModifying';
+export type {
+    ComponentDescriptor,
+    NestedRecord,
+} from './globalModifying';
 export type {
     App,
-    AppInterface,
     DoubleUnderscore,
-    DoubleUnderscoreInterface,
     Log,
-    LogInterface,
     NewBean,
     Resolve,
     ScriptValue,
-    ScriptValueInterface,
     XpRequire,
 } from './globals';
 export type {
+    ByteSource,
     Resource,
     ResourceKey,
-    ResourceKeyInterface,
 } from './resource';
 
 export type UserKey = `user:${string}:${string}`;
@@ -219,16 +219,6 @@ export interface Content<
     variantOf?: string;
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
-
-// Compliant with npm module ts-brand
-type Brand<
-    Base,
-    Branding
-> = Base & {
-  '__type__': Branding
-};
-
-export type ByteSource = Brand<object, 'ByteSource'>;
 
 //
 // DSL QUERIES
