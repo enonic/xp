@@ -1,8 +1,12 @@
 package com.enonic.xp.portal.impl.api;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptors;
+import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.security.PrincipalKey;
@@ -33,9 +37,16 @@ public class ApiDescriptorServiceImplTest
 
         assertNotNull( descriptors );
 
-        final PrincipalKeys allowedPrincipals = descriptors.get( 0 ).getAllowedPrincipals();
+        final ApiDescriptor apiDescriptor = descriptors.get( 0 );
+
+        final PrincipalKeys allowedPrincipals = apiDescriptor.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );
         assertEquals( 1, allowedPrincipals.getSize() );
         assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:system.admin" ) );
+
+        final Set<ApiMount> mounts = apiDescriptor.getMounts();
+        assertNotNull( allowedPrincipals );
+        assertEquals( 1, mounts.size() );
+        assertEquals( mounts.iterator().next(), ApiMount.API );
     }
 }

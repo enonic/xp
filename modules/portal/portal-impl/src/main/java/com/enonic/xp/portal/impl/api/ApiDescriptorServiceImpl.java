@@ -30,7 +30,7 @@ public final class ApiDescriptorServiceImpl
     private final ApiDescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
-    public ApiDescriptorServiceImpl( final @Reference ResourceService resourceService )
+    public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService )
     {
         this.resourceService = resourceService;
         this.descriptorKeyLocator = new ApiDescriptorKeyLocator( this.resourceService );

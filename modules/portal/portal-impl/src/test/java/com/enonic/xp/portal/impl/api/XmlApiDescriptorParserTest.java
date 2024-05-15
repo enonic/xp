@@ -1,9 +1,12 @@
 package com.enonic.xp.portal.impl.api;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -57,6 +60,12 @@ public class XmlApiDescriptorParserTest
         assertNotNull( allowedPrincipals );
         assertEquals( 1, allowedPrincipals.getSize() );
         assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:system.admin" ) );
+
+        final Set<ApiMount> apiMounts = result.getMounts();
+        assertEquals( 3, apiMounts.size() );
+        assertTrue( apiMounts.contains( ApiMount.API ) );
+        assertTrue( apiMounts.contains( ApiMount.ALL_SITES ) );
+        assertTrue( apiMounts.contains( ApiMount.SITE ) );
 
         assertTrue( result.isAccessAllowed( PrincipalKeys.from( "role:system.admin" ) ) );
         assertFalse( result.isAccessAllowed( PrincipalKeys.from( "role:cms.admin" ) ) );

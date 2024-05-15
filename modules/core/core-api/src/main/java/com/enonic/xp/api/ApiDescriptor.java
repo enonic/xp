@@ -1,5 +1,9 @@
 package com.enonic.xp.api;
 
+import java.util.Set;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -11,10 +15,16 @@ public final class ApiDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
+    private final Set<ApiMount> mounts;
+
     private ApiDescriptor( final Builder builder )
     {
+        Preconditions.checkNotNull( builder.key, "key cannot be null" );
+        Preconditions.checkNotNull( builder.mounts, "mounts cannot be null" );
+
         this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
+        this.mounts = Set.copyOf( builder.mounts );
     }
 
     public DescriptorKey key()
@@ -31,6 +41,16 @@ public final class ApiDescriptor
     {
         return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) ||
             allowedPrincipals.stream().anyMatch( principalKeys::contains );
+    }
+
+    public Set<ApiMount> getMounts()
+    {
+        return mounts;
+    }
+
+    public boolean hasMount( final ApiMount mount )
+    {
+        return mounts.contains( mount );
     }
 
     public ResourceKey toResourceKey( final String extension )
@@ -61,6 +81,8 @@ public final class ApiDescriptor
 
         private PrincipalKeys allowedPrincipals;
 
+        private Set<ApiMount> mounts;
+
         private Builder()
         {
         }
@@ -74,6 +96,12 @@ public final class ApiDescriptor
         public Builder allowedPrincipals( final PrincipalKeys allowedPrincipals )
         {
             this.allowedPrincipals = allowedPrincipals;
+            return this;
+        }
+
+        public Builder mounts( final Set<ApiMount> mounts )
+        {
+            this.mounts = mounts;
             return this;
         }
 
