@@ -268,7 +268,7 @@ public final class PropertySet
      * WARNING: This method may be removed at any time.
      * This method is only used to simulate the behavior of PropertySet Serialisation.
      * It is not recommended to use it in new code.
-     * <br/>
+     * <br>
      * Ensures that the property with the given name is a PropertySet.
      * If the property does not exist, empty property (without values) will be created.
      * If the property with values exists and is not a PropertySet, an exception will be thrown.
