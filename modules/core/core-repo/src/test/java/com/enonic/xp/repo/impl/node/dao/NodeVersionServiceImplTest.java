@@ -109,9 +109,9 @@ class NodeVersionServiceImplTest
                                      .defaultConfig( IndexConfig.BY_TYPE ).build() ).
             build();
 
-        final NodeVersionKey nodeVersionKey = nodeDao.store( nodeVersion, createInternalContext() );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
-        final NodeVersion returnedNodeVersion = nodeDao.get( nodeVersionKey, createInternalContext() );
+        final NodeVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
         assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
         assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
