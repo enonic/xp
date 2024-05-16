@@ -56,28 +56,11 @@ jobs:
     needs: [ publish_vars, build ]
     strategy:
       matrix:
-        repo: ["enonic/app-admin-home", "enonic/app-applications", "enonic/app-users", "enonic/app-standardidprovider" ]
+        repo: ["enonic/app-admin-home", "enonic/app-applications", "enonic/app-users", "enonic/app-standardidprovider", "enonic/app-xp-welcome" ]
     runs-on: ubuntu-latest
     if: needs.publish_vars.outputs.publish == 'true'
     steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: ${{ matrix.repo }}
-          event-type: xp
-          client-payload: >
-            ${{ format('{{"ref" : "{0}" }}', github.ref) }}
-
-  dispatch_new:
-    needs: [ publish_vars, build ]
-    strategy:
-      matrix:
-        repo: ["enonic/app-xp-welcome" ]
-    runs-on: ubuntu-latest
-    if: needs.publish_vars.outputs.publish == 'true'
-    steps:
-      - name: Repository Dispatch
+      - name: Workflow Dispatch
         uses: benc-uk/workflow-dispatch@v1
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
