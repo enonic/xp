@@ -313,21 +313,23 @@ public final class PropertySet
     }
 
     /**
-     * WARNING: This method may be removed at any time.
+     * WARNING: This method may be removed at any time. It is not recommended to use it in new code.
      * This method is only used to simulate the behavior of PropertySet Serialisation.
-     * It is not recommended to use it in new code.
+     * See {@link com.enonic.xp.data.PropertyArrayJson#fromJson}
      * <br>
-     * Ensures that the property with the given name is a PropertySet.
+     * <br>
+     * Ensures that the property with the given name has type of valueType given.
      * If the property does not exist, empty property (without values) will be created.
-     * If the property with values exists and is not a PropertySet, an exception will be thrown.
-     * Difference with setSet is that this method does not set the property value
+     * If the property with values exists and is not a type of valueType given, an exception will be thrown.
+     * Difference with setProperty is that this method does not set the property value.
      *
      * @param name property name
+     * @param valueType expected value type
      */
-    public void ensurePropertySet( final String name )
+    public void ensureProperty( final String name, final ValueType valueType )
     {
-        final PropertyArray array = getOrCreatePropertyArray( name, ValueTypes.PROPERTY_SET, 0 );
-        array.checkType( ValueTypes.PROPERTY_SET );
+        final PropertyArray array = getOrCreatePropertyArray( name, valueType, 0 );
+        array.checkType( valueType );
     }
 
     public Property setProperty( final String name, final int index, final Value value )

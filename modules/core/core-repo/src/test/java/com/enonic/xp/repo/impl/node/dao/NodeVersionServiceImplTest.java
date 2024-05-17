@@ -18,11 +18,12 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -96,7 +97,8 @@ class NodeVersionServiceImplTest
         set.setString( "myNameInSet", "myValueInSet" );
         set.addSet( "mySet", set );
         set.addSet( "myEmptySet", data.newSet() );
-        set.ensurePropertySet( "myNoValuePropertySet" );
+        set.ensureProperty( "myNoValuePropertySet", ValueTypes.PROPERTY_SET );
+        set.ensureProperty( "myNoValueString", ValueTypes.STRING );
         set.addSet( "myNullSet", null );
         set.addString( "myNullString", null );
 
@@ -123,9 +125,7 @@ class NodeVersionServiceImplTest
         final List<PropertyArrayJson> list =
             ObjectMapperHelper.create().readValue( "[\n" + "    {\n" + "        \"name\": \"target\",\n" +
                                                           "        \"type\": \"Reference\",\n" + "        \"values\": [\n" +
-                                                          "            {\n" +
-                                                          "                \"v\": \"a0f4f654-82c5-4e56-9018-9ffe3f61c6ff\"\n" +
-                                                          "            }\n" + "        ]\n" + "    },\n" + "    {\n" +
+                                                          "            \n" + "        ]\n" + "    },\n" + "    {\n" +
                                                           "        \"name\": \"parameters\",\n" + "        \"type\": \"PropertySet\",\n" +
                                                           "        \"values\": []\n" + "    }\n" + "]", new TypeReference<>()
             {
