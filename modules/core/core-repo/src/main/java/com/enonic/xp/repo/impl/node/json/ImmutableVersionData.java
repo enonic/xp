@@ -118,7 +118,11 @@ public final class ImmutableVersionData
 
     private static ImmutableProperty convert( final ImmutablePropertyArrayInner internal )
     {
-        if ( internal.type.equals( ValueTypes.PROPERTY_SET ) )
+        if ( internal.values.isEmpty() )
+        {
+            return ImmutableProperty.ofNoValue( internal.name, internal.type );
+        }
+        else if ( internal.type.equals( ValueTypes.PROPERTY_SET ) )
         {
             return ImmutableProperty.ofValueSet( internal.name, internal.values.stream()
                 .map( value -> value.set == null

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueType;
 
 public abstract class ImmutableProperty
 {
@@ -31,11 +32,22 @@ public abstract class ImmutableProperty
         }
     }
 
+    static ImmutableProperty ofNoValue( final String name, final ValueType<?> type )
+    {
+        return new ImmutablePropertyNoValue( name, type );
+    }
+
     static ImmutableProperty ofValue( final String name, final List<Value> values )
     {
-        return values.size() == 1
-            ? new ImmutablePropertyValue1( name, values.get( 0 ) )
-            : new ImmutablePropertyValueN( name, values );
+        switch ( values.size() )
+        {
+            case 0:
+                throw new IllegalArgumentException( "values cannot be empty. ofNoValue must be used instead" );
+            case 1:
+                return new ImmutablePropertyValue1( name, values.get( 0 ) );
+            default:
+                return new ImmutablePropertyValueN( name, values );
+        }
     }
 
     static ImmutableProperty ofValueSet( final String name, final List<ValueSet> values )
@@ -43,7 +55,7 @@ public abstract class ImmutableProperty
         switch ( values.size() )
         {
             case 0:
-                return new ImmutablePropertyValueSet0( name );
+                throw new IllegalArgumentException( "values cannot be empty. ofNoValue must be used instead" );
             case 1:
                 return new ImmutablePropertyValueSet1( name, values.get( 0 ) );
             default:
@@ -75,17 +87,20 @@ public abstract class ImmutableProperty
         public abstract void addValueSet( String name, PropertySet to );
     }
 
-    private static class ImmutablePropertyValueSet0
+    private static class ImmutablePropertyNoValue
         extends ImmutableProperty
     {
-        ImmutablePropertyValueSet0( final String name )
+        ValueType<?> type;
+
+        ImmutablePropertyNoValue( final String name, final ValueType<?> type )
         {
             super( name );
+            this.type = type;
         }
 
         public void addToSet( String name, PropertySet set )
         {
-            set.ensurePropertySet( name );
+            set.ensureProperty( name, type );
         }
     }
 
