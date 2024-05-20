@@ -38,7 +38,7 @@ jakarta-activation = { module = "com.sun.activation:jakarta.activation", version
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "1.6.7" }
 jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", version = "1.3.5" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "2.0.2" }
-jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "2.1.6" }
+jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "4.0.0" }
 
 jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version = "2.3.3" }
 jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.9" }
