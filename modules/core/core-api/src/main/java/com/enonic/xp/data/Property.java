@@ -45,14 +45,6 @@ public final class Property
         }
     }
 
-    void detach()
-    {
-        if ( value.getObject() instanceof PropertySet )
-        {
-            value.asData().detach();
-        }
-    }
-
     public void setValue( final Value value )
     {
         this.array.checkType( value.getType() );
