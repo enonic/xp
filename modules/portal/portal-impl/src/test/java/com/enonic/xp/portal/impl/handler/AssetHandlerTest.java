@@ -212,18 +212,4 @@ public class AssetHandlerTest
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method DELETE not allowed", ex.getMessage() );
     }
-
-    @Test
-    void testHandleNotSiteBase()
-    {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( HttpMethod.GET );
-        portalRequest.setBaseUri( "/unknown" );
-        portalRequest.setRawPath( "contextPath/_/asset/application:ts/pathToAsset" );
-        portalRequest.setEndpointPath( "/_/asset/application:ts/pathToAsset" );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Not a valid request", ex.getMessage() );
-    }
 }

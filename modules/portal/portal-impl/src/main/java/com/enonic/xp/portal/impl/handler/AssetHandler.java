@@ -70,11 +70,6 @@ public class AssetHandler
             throw WebException.notFound( "Not a valid asset url pattern" );
         }
 
-        if ( !IS_SITE_BASE.test( webRequest ) )
-        {
-            throw WebException.notFound( "Not a valid request" );
-        }
-
         if ( !IS_GET_HEAD_OPTIONS_METHOD.test( webRequest ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
