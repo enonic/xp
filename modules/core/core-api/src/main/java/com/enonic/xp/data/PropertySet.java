@@ -196,7 +196,7 @@ public final class PropertySet
         return new PropertySet( tree, 0 );
     }
 
-    // In future make disallow to change parent tree
+    // In future disallow to change parent tree
     // PropertySet should always be attached to a tree
     void setPropertyTree( final PropertyTree propertyTree )
     {
@@ -213,16 +213,18 @@ public final class PropertySet
     public PropertySet detach()
     {
         this.tree = null;
-        this.propertyArrayByName.values().forEach( propertyArray -> {
+        for ( PropertyArray propertyArray : this.propertyArrayByName.values() )
+        {
             for ( final Property p : propertyArray.getProperties() )
             {
-                final PropertySet propertySet = p.getSet();
-                if ( propertySet != null )
+                final Object valueObject = p.getObject();
+
+                if ( valueObject instanceof PropertySet )
                 {
-                    propertySet.detach();
+                    ( (PropertySet) valueObject ).detach();
                 }
             }
-        } );
+        }
         return this;
     }
 

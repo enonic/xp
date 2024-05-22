@@ -210,6 +210,18 @@ public class PropertySetTest
     }
 
     @Test
+    void detach()
+    {
+        PropertySet set = new PropertyTree().newSet();
+        set.setString( "myProp", "myValue" );
+
+        PropertySet detached = set.detach();
+        assertSame( set, detached );
+        assertNull( detached.getTree() );
+        assertEquals( "myValue", detached.getString("myProp") );
+    }
+
+    @Test
     public void toMap()
     {
         PropertySet set = new PropertyTree().newSet();
