@@ -119,7 +119,7 @@ hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version 
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
-resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.9.Final" }
+resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "6.2.9.Final" }
 
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
 jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
