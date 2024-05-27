@@ -92,7 +92,7 @@ graaljs = { module = "org.graalvm.js:js", version = "23.0.4" }
 
 commons-lang = { module = "commons-lang:commons-lang", version = "2.6" }
 commons-io = { module = "commons-io:commons-io", version = "2.16.1" }
-commons-compress = { module = "org.apache.commons:commons-compress", version = "1.26.1" }
+commons-compress = { module = "org.apache.commons:commons-compress", version = "1.26.2" }
 
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
