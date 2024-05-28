@@ -5,6 +5,7 @@ plugins {
 
 configurations {
     lib
+    graal
 }
 
 dependencies {
@@ -12,6 +13,12 @@ dependencies {
     // JNA required for ElasticSearch but can't be refreshed. It should be part of lib
     lib libs.jna
     lib libs.nashorn
+}
+
+dependencies {
+    graal libs.graalvm.polyglot
+    graal libs.graalvm.js
+    graal libs.graalvm.jsse
 }
 
 ext {
@@ -179,6 +186,9 @@ distributions {
             }
             into( '/lib' ) {
                 from( configurations.lib )
+            }
+            into( '/graal' ) {
+                from( configurations.graal )
             }
             into( '/' ) {
                 from( 'src' ) {

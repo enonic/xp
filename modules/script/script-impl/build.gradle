@@ -3,7 +3,7 @@ dependencies {
     implementation project( ':core:core-internal' )
 
     implementation libs.nashorn
-    implementation libs.graaljs
+    implementation libs.graalvm.polyglot
 
     testImplementation( testFixtures( project(":core:core-app") ) )
 
