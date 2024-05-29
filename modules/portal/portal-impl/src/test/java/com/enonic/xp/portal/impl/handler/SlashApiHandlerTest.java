@@ -10,11 +10,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.api.ApiContextPath;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
@@ -28,6 +30,9 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -203,6 +208,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) )
             .allowedPrincipals( PrincipalKeys.create().add( PrincipalKey.from( "role:principalKey" ) ).build() )
             .mounts( Set.of( ApiMount.API ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -223,6 +229,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.API ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -258,6 +265,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.API ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -282,8 +290,9 @@ public class SlashApiHandlerTest
     public void testAnySiteEndpoint()
         throws Exception
     {
+        request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/admin/site/project/branch/path/to/content/_/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/admin/site/project/branch/mysite/_/com.enonic.app.myapp/api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "branch" ) );
 
@@ -291,11 +300,17 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ALL_SITES ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
         final Site site = mock( Site.class );
+        request.setSite( site );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
         when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
 
         WebResponse webResponse = this.handler.handle( request );
@@ -314,6 +329,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.WEBAPP ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -321,103 +337,6 @@ public class SlashApiHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "API [com.enonic.app.myapp:api-key] is not mounted", ex.getMessage() );
-    }
-
-    @Test
-    public void testSiteEndpoint()
-    {
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/admin/site/project/branch/path/to/content/_/_/com.enonic.app.myapp/api-key" );
-        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
-        request.setBranch( Branch.from( "branch" ) );
-
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
-            .mounts( Set.of( ApiMount.SITE ) )
-            .build();
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-
-        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
-        when( siteConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn( null );
-
-        final Site site = mock( Site.class );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "API [com.enonic.app.myapp:api-key] is not mounted", ex.getMessage() );
-    }
-
-
-    @Test
-    public void testSiteEndpointWithFallbackToProject()
-        throws Exception
-    {
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/site/project/branch/path/_/com.enonic.app.myapp/api-key" );
-        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
-        request.setBranch( Branch.from( "branch" ) );
-
-        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
-        when( siteConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn( null );
-
-        final Site site = mock( Site.class );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
-
-        final SiteConfigs projectConfigs = mock( SiteConfigs.class );
-        when( projectConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn(
-            SiteConfig.create().application( ApplicationKey.from( "com.enonic.app.myapp" ) ).config( new PropertyTree() ).build() );
-
-        final Project project = mock( Project.class );
-        when( project.getSiteConfigs() ).thenReturn( projectConfigs );
-        when( projectService.get( any() ) ).thenReturn( project );
-
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
-            .mounts( Set.of( ApiMount.SITE ) )
-            .build();
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-
-        WebResponse webResponse = this.handler.handle( request );
-        assertEquals( HttpStatus.OK, webResponse.getStatus() );
-    }
-
-    @Test
-    public void testSiteEndpointWithConfig()
-        throws Exception
-    {
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/site/project/branch/path/_/com.enonic.app.myapp/api-key" );
-        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
-        request.setBranch( Branch.from( "branch" ) );
-
-        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
-        when( siteConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn(
-            SiteConfig.create().application( ApplicationKey.from( "com.enonic.app.myapp" ) ).config( new PropertyTree() ).build() );
-
-        final Site site = mock( Site.class );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
-
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
-            .mounts( Set.of( ApiMount.SITE ) )
-            .build();
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-
-        WebResponse webResponse = this.handler.handle( request );
-        assertEquals( HttpStatus.OK, webResponse.getStatus() );
     }
 
     @Test
@@ -432,6 +351,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ALL_SITES, ApiMount.SITE ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -453,6 +373,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ALL_SITES, ApiMount.SITE ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -466,32 +387,13 @@ public class SlashApiHandlerTest
     public void testSiteEndpointWithInvalidApplicationName()
     {
         request.setEndpointPath( "/_/ /api-key" );
-        request.setRawPath( "/some/project/branch/_/ /api-key" );
+        request.setRawPath( "/site/project/branch/mysite/_/ /api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "branch" ) );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Application key [ ] not found", ex.getMessage() );
-    }
-
-    @Test
-    public void testWebappEndpoint()
-    {
-        request.setEndpointPath( "/_/com.enonic.app.myapp2/api-key" );
-        request.setRawPath( "/webapp/com.enonic.app.myapp1/path/_/com.enonic.app.myapp2/api-key" );
-
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
-            .allowedPrincipals( null )
-            .mounts( Set.of( ApiMount.WEBAPP ) )
-            .build();
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "API [com.enonic.app.myapp2:api-key] is not mounted", ex.getMessage() );
     }
 
     @Test
@@ -504,6 +406,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.SITE ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -523,6 +426,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.WEBAPP ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -533,16 +437,17 @@ public class SlashApiHandlerTest
     }
 
     @Test
-    public void testAnyWebappEndpoint()
+    public void testAnyWebappEndpointWithSpecificAppWithSubFolder()
         throws Exception
     {
         request.setEndpointPath( "/_/com.enonic.app.myapp2/api-key" );
-        request.setRawPath( "/webapp/com.enonic.app.myapp1/path/_/com.enonic.app.myapp2/api-key" );
+        request.setRawPath( "/webapp/com.enonic.app.myapp1/subfolder/path/_/com.enonic.app.myapp2/api-key" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ALL_WEBAPPS ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -552,7 +457,53 @@ public class SlashApiHandlerTest
     }
 
     @Test
-    public void testWebappEndpointSkippedIfAnyWebappPresent()
+    public void testWebappEndpointWithSpecificAppWithSubFolderWithDefaultContextPath()
+        throws Exception
+    {
+        request.setEndpointPath( "/_/com.enonic.app.myapp2/api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.ALL_WEBAPPS ) )
+            .contextPath( ApiContextPath.DEFAULT )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        request.setRawPath( "/webapp/com.enonic.app.myapp1/subfolder/_/com.enonic.app.myapp2/api-key" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+
+        request.setRawPath( "/webapp/com.enonic.app.myapp1/_/com.enonic.app.myapp2/api-key" );
+
+        WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+    }
+
+    @Test
+    public void testWebapp()
+    {
+        request.setEndpointPath( "/_/com.enonic.app.myapp2/api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.WEBAPP ) )
+            .contextPath( ApiContextPath.DEFAULT )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        request.setRawPath( "/webapp/com.enonic.app.myapp1/_/com.enonic.app.myapp2/api-key" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
+
+    @Test
+    public void testWebappMountIsSkippedIfAnyWebappPresent()
         throws Exception
     {
         request.setEndpointPath( "/_/com.enonic.app.myapp2/api-key" );
@@ -562,6 +513,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp2" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.WEBAPP, ApiMount.ALL_WEBAPPS ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -571,7 +523,7 @@ public class SlashApiHandlerTest
     }
 
     @Test
-    public void testAdminEndpoint()
+    public void testAnyContextPathOnAdmin()
         throws Exception
     {
         request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
@@ -581,6 +533,27 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ADMIN ) )
+            .contextPath( ApiContextPath.ANY )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+    }
+
+    @Test
+    public void testDefaultContextPathOnAdmin()
+        throws Exception
+    {
+        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/admin/tool/_/com.enonic.app.myapp/api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.ADMIN ) )
+            .contextPath( ApiContextPath.DEFAULT )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -599,6 +572,7 @@ public class SlashApiHandlerTest
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( null )
             .mounts( Set.of( ApiMount.ADMIN ) )
+            .contextPath( ApiContextPath.ANY )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -608,5 +582,118 @@ public class SlashApiHandlerTest
         assertEquals( "API [com.enonic.app.myapp:api-key] is not mounted", ex.getMessage() );
     }
 
+    @Test
+    public void testAdminSiteEndpoint()
+        throws Exception
+    {
+        request.setContentPath( ContentPath.from( "/mysite/contentPath" ) );
+        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/admin/site/project/branch/mysite/contentPath/_/com.enonic.app.myapp/api-key" );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+        request.setBranch( Branch.from( "branch" ) );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.ALL_SITES ) )
+            .contextPath( ApiContextPath.ANY )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+
+        WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+    }
+
+
+    @Test
+    public void testDefaultContextPathOnSite()
+        throws Exception
+    {
+        request.setContentPath( ContentPath.from( "/mysite" ) );
+        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/site/project/branch/mysite/_/com.enonic.app.myapp/api-key" );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+        request.setBranch( Branch.from( "branch" ) );
+
+        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
+        when( siteConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn(
+            SiteConfig.create().application( ApplicationKey.from( "com.enonic.app.myapp" ) ).config( new PropertyTree() ).build() );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        when( contentService.getByPath( any() ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.SITE ) )
+            .contextPath( ApiContextPath.DEFAULT )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+    }
+
+    @Test
+    public void testSiteEndpointWithFallbackToProject()
+        throws Exception
+    {
+        request.setContentPath( ContentPath.from( "/mysite" ) );
+        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/site/project/branch/mysite/_/com.enonic.app.myapp/api-key" );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+        request.setBranch( Branch.from( "branch" ) );
+
+        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
+        when( siteConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn( null );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        when( contentService.getByPath( any() ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+
+        final SiteConfigs projectConfigs = mock( SiteConfigs.class );
+        when( projectConfigs.get( ApplicationKey.from( "com.enonic.app.myapp" ) ) ).thenReturn(
+            SiteConfig.create().application( ApplicationKey.from( "com.enonic.app.myapp" ) ).config( new PropertyTree() ).build() );
+
+        final Project project = mock( Project.class );
+        when( project.getSiteConfigs() ).thenReturn( projectConfigs );
+        when( projectService.get( any() ) ).thenReturn( project );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .mounts( Set.of( ApiMount.SITE ) )
+            .contextPath( ApiContextPath.ANY )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+        when( project.getSiteConfigs() ).thenReturn( mock( SiteConfigs.class ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
 
 }

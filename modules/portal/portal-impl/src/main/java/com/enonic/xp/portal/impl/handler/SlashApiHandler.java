@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,20 +10,21 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.api.ApiContextPath;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -55,10 +55,13 @@ public class SlashApiHandler
     private static final Pattern MOUNT_SITE_ENDPOINT_PATTERN =
         Pattern.compile( "^/(admin/)?site/(?<project>[^/]+)/(?<branch>[^/]+)(?<contentPath>/.*?)/_/" );
 
-    private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>/.*?)/_/" );
+    private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>.*?)/_/" );
+
+    private static final Pattern WEBAPP_DEFAULT_CONTEXT_PATH_PATTERN = Pattern.compile( "^/webapp/([^/]+)/_/.*" );
 
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
+
 
     private final ControllerScriptFactory controllerScriptFactory;
 
@@ -113,13 +116,13 @@ public class SlashApiHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
-
         final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
 
         final String restPath = matcher.group( "restPath" );
 
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
+
+        final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
 
         if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
         {
@@ -141,15 +144,14 @@ public class SlashApiHandler
     private boolean verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
         final String rawPath = portalRequest.getRawPath();
-        final Set<ApiMount> mounts = apiDescriptor.getMounts();
 
         if ( portalRequest.getEndpointPath() == null && rawPath.startsWith( "/api/" ) )
         {
-            return mounts.contains( ApiMount.API );
+            return apiDescriptor.hasMount( ApiMount.API );
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/tool/" ) )
         {
-            return mounts.contains( ApiMount.ADMIN );
+            return verifyPathMountedOnAdmin( apiDescriptor, portalRequest );
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {
@@ -157,7 +159,7 @@ public class SlashApiHandler
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/webapp/" ) )
         {
-            return verifyPathMountedOnWebapps( rawPath, apiDescriptor );
+            return verifyPathMountedOnWebapps( apiDescriptor, portalRequest );
         }
         else
         {
@@ -165,10 +167,21 @@ public class SlashApiHandler
         }
     }
 
-    private boolean verifyPathMountedOnWebapps( final String rawPath, final ApiDescriptor apiDescriptor )
+    private boolean verifyPathMountedOnAdmin( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
-        final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( rawPath );
-        if ( !webappMatcher.find() )
+        return apiDescriptor.hasMount( ApiMount.ADMIN ) &&
+            ( apiDescriptor.getContextPath() == ApiContextPath.ANY || portalRequest.getRawPath().startsWith( "/admin/tool/_/" ) );
+    }
+
+    private boolean verifyContextPathMountOnWebapp( final ApiContextPath contextPath, final PortalRequest portalRequest )
+    {
+        return contextPath == ApiContextPath.ANY || WEBAPP_DEFAULT_CONTEXT_PATH_PATTERN.matcher( portalRequest.getRawPath() ).matches();
+    }
+
+    private boolean verifyPathMountedOnWebapps( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    {
+        final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
+        if ( !webappMatcher.find() || !verifyContextPathMountOnWebapp( apiDescriptor.getContextPath(), portalRequest ) )
         {
             return false;
         }
@@ -195,13 +208,9 @@ public class SlashApiHandler
             return false;
         }
 
-        final ContentPath contentPath = ContentPath.from( siteMatcher.group( "contentPath" ) );
+        final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
-        final Site site = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( portalRequest.getRepositoryId() )
-            .branch( portalRequest.getBranch() )
-            .build()
-            .callWith( () -> contentService.findNearestSiteByPath( contentPath ) );
+        final Site site = contentResolverResult.getNearestSite();
 
         if ( apiDescriptor.hasMount( ApiMount.ALL_SITES ) )
         {
@@ -213,12 +222,20 @@ public class SlashApiHandler
             return false;
         }
 
-        final boolean isAppInstalledOnSite = site != null && site.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
+        boolean isAppInstalledOnSite = site != null && site.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
 
         if ( !isAppInstalledOnSite )
         {
-            Project project = projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) );
-            return project != null && project.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
+            final Project project = projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) );
+            if ( project == null || project.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) == null )
+            {
+                return false;
+            }
+        }
+
+        if ( apiDescriptor.getContextPath() == ApiContextPath.DEFAULT )
+        {
+            return "/".equals( contentResolverResult.getSiteRelativePath() );
         }
 
         return true;

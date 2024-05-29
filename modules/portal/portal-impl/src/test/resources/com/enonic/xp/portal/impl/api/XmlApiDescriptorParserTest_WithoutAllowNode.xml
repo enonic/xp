@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api xmlns="urn:enonic:xp:model:1.0">
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
   <mounts>
     <mount>api</mount>
     <mount>all_sites</mount>
     <mount>site</mount>
+    <mount>webapp</mount>
+    <mount>all_webapps</mount>
+    <mount>admin</mount>
   </mounts>
   <context-path>any</context-path>
 </api>

@@ -421,6 +421,13 @@
     <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
+  <xs:simpleType name="apiDescriptorContextPathType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="default"/>
+      <xs:enumeration value="any"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="apiDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="allow">
@@ -448,6 +455,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element minOccurs="0" name="context-path" type="apiDescriptorContextPathType" default="default"/>
     </xs:sequence>
   </xs:complexType>
 
