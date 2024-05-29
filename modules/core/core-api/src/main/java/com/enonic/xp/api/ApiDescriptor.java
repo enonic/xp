@@ -1,5 +1,6 @@
 package com.enonic.xp.api;
 
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -17,6 +18,8 @@ public final class ApiDescriptor
 
     private final Set<ApiMount> mounts;
 
+    private final ApiContextPath contextPath;
+
     private ApiDescriptor( final Builder builder )
     {
         Preconditions.checkNotNull( builder.key, "key cannot be null" );
@@ -25,6 +28,7 @@ public final class ApiDescriptor
         this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
         this.mounts = Set.copyOf( builder.mounts );
+        this.contextPath = Objects.requireNonNullElse( builder.contextPath, ApiContextPath.DEFAULT );
     }
 
     public DescriptorKey key()
@@ -46,6 +50,11 @@ public final class ApiDescriptor
     public Set<ApiMount> getMounts()
     {
         return mounts;
+    }
+
+    public ApiContextPath getContextPath()
+    {
+        return contextPath;
     }
 
     public boolean hasMount( final ApiMount mount )
@@ -83,6 +92,8 @@ public final class ApiDescriptor
 
         private Set<ApiMount> mounts;
 
+        private ApiContextPath contextPath;
+
         private Builder()
         {
         }
@@ -102,6 +113,12 @@ public final class ApiDescriptor
         public Builder mounts( final Set<ApiMount> mounts )
         {
             this.mounts = mounts;
+            return this;
+        }
+
+        public Builder contextPath( final ApiContextPath contextPath )
+        {
+            this.contextPath = contextPath;
             return this;
         }
 

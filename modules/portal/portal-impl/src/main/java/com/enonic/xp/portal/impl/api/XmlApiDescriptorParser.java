@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.api.ApiContextPath;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.security.PrincipalKey;
@@ -25,6 +26,8 @@ public final class XmlApiDescriptorParser
     private static final String MOUNTS_TAG_NAME = "mounts";
 
     private static final String MOUNT_TAG_NAME = "mount";
+
+    private static final String CONTEXT_PATH_TAG_NAME = "context-path";
 
     private final ApiDescriptor.Builder builder;
 
@@ -58,5 +61,11 @@ public final class XmlApiDescriptorParser
             mounts.getChildren( MOUNT_TAG_NAME ).stream().map( mount -> ApiMount.from( mount.getValue() ) ).collect( Collectors.toSet() );
 
         this.builder.mounts( apiMounts );
+
+        DomElement contextPath = root.getChild( CONTEXT_PATH_TAG_NAME );
+        if ( contextPath != null )
+        {
+            this.builder.contextPath( ApiContextPath.from( contextPath.getValue() ) );
+        }
     }
 }

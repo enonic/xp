@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.api.ApiContextPath;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.api.ApiMount;
@@ -48,5 +49,7 @@ public class ApiDescriptorServiceImplTest
         assertNotNull( allowedPrincipals );
         assertEquals( 1, mounts.size() );
         assertEquals( mounts.iterator().next(), ApiMount.API );
+
+        assertEquals( apiDescriptor.getContextPath(), ApiContextPath.DEFAULT );
     }
 }
