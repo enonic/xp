@@ -13,7 +13,7 @@ please read our docs here: https://developer.enonic.com/start.
 
 Before trying to build the project, you need to verify that the following software are installed:
 
-*    [JDK 17](https://adoptium.net/temurin/archive/?version=17) for building and [GraalVM Java 17](https://www.graalvm.org/downloads/) for running.   
+*    [JDK 17](https://adoptium.net/temurin/archive/?version=21) for building and [GraalVM Java 21](https://www.graalvm.org/downloads/) for running.   
 *    [Git](https://git-scm.com/downloads) installed on system.
 
 Build all code and run all tests including integration tests:

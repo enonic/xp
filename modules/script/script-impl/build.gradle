@@ -7,6 +7,8 @@ dependencies {
 
     testImplementation( testFixtures( project(":core:core-app") ) )
 
+    testImplementation libs.graalvm.js
+
     testFixturesApi project( ':core:core-api' )
     testFixturesApi project( ':script:script-api' )
 }
