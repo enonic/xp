@@ -27,7 +27,6 @@ public final class GraalJSContextFactory
         final Context.Builder contextBuilder = Context.newBuilder( "js" )
             .allowHostAccess( HostAccess.newBuilder( HostAccess.ALL ).build() )
             .allowHostClassLookup( className -> true )
-            .option( "js.intl-402", "true" )
             .option( "js.strict", "true" )
             .allowHostClassLoading( true );
 

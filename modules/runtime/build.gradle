@@ -5,13 +5,20 @@ plugins {
 
 configurations {
     lib
+    mods
 }
 
 dependencies {
     lib project( ':launcher:launcher-main' )
     // JNA required for ElasticSearch but can't be refreshed. It should be part of lib
     lib libs.jna
-    lib libs.nashorn
+}
+
+dependencies {
+    mods libs.nashorn
+    mods libs.graalvm.polyglot
+    mods libs.graalvm.js
+    mods libs.graalvm.jsse
 }
 
 ext {
@@ -179,6 +186,9 @@ distributions {
             }
             into( '/lib' ) {
                 from( configurations.lib )
+            }
+            into( '/mods' ) {
+                from( configurations.mods )
             }
             into( '/' ) {
                 from( 'src' ) {

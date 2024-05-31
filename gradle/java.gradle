@@ -30,11 +30,11 @@ dependencies {
 java {
     withSourcesJar()
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = sourceCompatibility
 
 test {
@@ -44,7 +44,7 @@ test {
     systemProperty 'java.awt.headless', 'true'
     systemProperty 'xp.script-engine', project.findProperty("xp.script-engine")?:'Nashorn'
     maxHeapSize = '2G'
-    jvmArgs '-noverify', '-XX:TieredStopAtLevel=1'
+    jvmArgs '-XX:TieredStopAtLevel=1'
 }
 
 

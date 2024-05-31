@@ -89,7 +89,8 @@ public class MessageBundleImplTest
         final Properties properties = new Properties();
         properties.put( "key1", "At {1,time,medium} on {0,date,short}" );
         MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.US );
-        assertEquals( "At 1:56:04 PM on 5/3/21", resourceBundle.localize( "key1", ldms, ltms ) );
+        // https://bugs.openjdk.org/browse/JDK-8304925
+        assertEquals( "At 1:56:04\u202FPM on 5/3/21", resourceBundle.localize( "key1", ldms, ltms ) );
     }
 
     @Test
