@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.net.MediaType;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -15,13 +13,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
-import com.enonic.xp.util.MediaTypes;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -42,15 +36,11 @@ public final class WebAppHandler
 
     public static final Pattern PATTERN = Pattern.compile( PATTERN_PREFIX + "([^/]+)(/(?:.)*)?" );
 
-    private static final String ROOT_ASSET_PREFIX = "assets/";
-
     private ControllerScriptFactory controllerScriptFactory;
 
     private ExceptionMapper exceptionMapper;
 
     private ExceptionRenderer exceptionRenderer;
-
-    private ResourceService resourceService;
 
     public WebAppHandler()
     {
@@ -79,27 +69,13 @@ public final class WebAppHandler
         final Trace trace = Tracer.newTrace( "renderApp" );
         if ( trace == null )
         {
-            return handleAppRequest( portalRequest, applicationKey, restPath );
+            return handleRequest( portalRequest );
         }
         return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = handleAppRequest( portalRequest, applicationKey, restPath );
+            final WebResponse resp = handleRequest( portalRequest );
             addTraceInfo( trace, applicationKey, restPath );
             return resp;
         } );
-    }
-
-    private WebResponse handleAppRequest( final PortalRequest portalRequest, final ApplicationKey applicationKey, final String path )
-    {
-        if ( path != null && !"/".equals( path ) && portalRequest.getMethod() == HttpMethod.GET )
-        {
-            final WebResponse response = serveAsset( applicationKey, path );
-            if ( response != null )
-            {
-                return response;
-            }
-        }
-
-        return handleRequest( portalRequest );
     }
 
     private WebResponse handleRequest( final PortalRequest req )
@@ -164,23 +140,6 @@ public final class WebAppHandler
         return webResponse;
     }
 
-    private WebResponse serveAsset( final ApplicationKey applicationKey, final String path )
-    {
-        final ResourceKey key = ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + path );
-        final Resource resource = this.resourceService.getResource( key );
-
-        if ( !resource.exists() )
-        {
-            return null;
-        }
-
-        final String type = MediaTypes.instance().fromFile( key.getName() ).toString();
-        return PortalResponse.create().
-            body( resource ).
-            contentType( MediaType.parse( type ) ).
-            build();
-    }
-
     private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )
     {
         if ( trace != null )
@@ -208,9 +167,4 @@ public final class WebAppHandler
         this.exceptionRenderer = exceptionRenderer;
     }
 
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
 }

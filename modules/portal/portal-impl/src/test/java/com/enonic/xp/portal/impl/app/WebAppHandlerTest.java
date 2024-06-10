@@ -5,21 +5,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.resource.MockResource;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
-import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
@@ -27,17 +22,18 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WebAppHandlerTest
 {
     private WebAppHandler handler;
 
-    private ResourceService resourceService;
-
     private ControllerScriptFactory controllerScriptFactory;
-
-    private ExceptionRenderer exceptionRenderer;
 
     private PortalRequest request;
 
@@ -46,29 +42,25 @@ public class WebAppHandlerTest
     @BeforeEach
     public void setup()
     {
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        this.exceptionRenderer = Mockito.mock( ExceptionRenderer.class );
+        ExceptionRenderer exceptionRenderer = mock( ExceptionRenderer.class );
+
+        this.controllerScriptFactory = mock( ControllerScriptFactory.class );
 
         this.handler = new WebAppHandler();
-        this.handler.setResourceService( this.resourceService );
         this.handler.setControllerScriptFactory( this.controllerScriptFactory );
         this.handler.setExceptionMapper( new ExceptionMapperImpl() );
-        this.handler.setExceptionRenderer( this.exceptionRenderer );
+        this.handler.setExceptionRenderer( exceptionRenderer );
 
         this.request = new PortalRequest();
-        this.request.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
-        this.chain = Mockito.mock( WebHandlerChain.class );
+        this.request.setRawRequest( mock( HttpServletRequest.class ) );
+        this.chain = mock( WebHandlerChain.class );
 
-        Mockito.when( this.resourceService.getResource( Mockito.any() ) )
-            .thenReturn( MockResource.missing( ResourceKey.from( "myapp:/unknown.txt" ) ) );
-
-        Mockito.when( this.exceptionRenderer.render( Mockito.any(), Mockito.any() ) ).thenReturn(
+        when( exceptionRenderer.render( any(), any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
 
-        final TraceManager manager = Mockito.mock( TraceManager.class );
-        final Trace trace = Mockito.mock( Trace.class );
-        Mockito.when( manager.newTrace( Mockito.any(), Mockito.any() ) ).thenReturn( trace );
+        final TraceManager manager = mock( TraceManager.class );
+        final Trace trace = mock( Trace.class );
+        when( manager.newTrace( any(), any() ) ).thenReturn( trace );
         Tracer.setManager( manager );
     }
 
@@ -82,52 +74,28 @@ public class WebAppHandlerTest
     public void canHandle()
     {
         this.request.setRawPath( "/site/a/b" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setRawPath( "/webapp/myapp" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        assertTrue( this.handler.canHandle( this.request ) );
 
         this.request.setRawPath( "/webapp/myapp/a/b" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
-    }
-
-    private Resource mockResource( final String uri, final byte[] data )
-    {
-        final ResourceKey key = ResourceKey.from( uri );
-        final Resource resource = new MockResource( key, data, System.currentTimeMillis() );
-        Mockito.when( this.resourceService.getResource( key ) ).thenReturn( resource );
-        return resource;
-    }
-
-    @Test
-    public void handle_serveAsset()
-        throws Exception
-    {
-        final Resource resource = mockResource( "myapp:/assets/a/b.txt", "hello".getBytes() );
-
-        this.request.setRawPath( "/webapp/myapp/a/b.txt" );
-        this.request.setMethod( HttpMethod.GET );
-
-        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
-        assertEquals( HttpStatus.OK, response.getStatus() );
-        assertSame( resource, response.getBody() );
+        assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
     public void handle_executeController()
         throws Exception
     {
-        mockResource( "myapp:/assets/a.txt", null );
-
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = Mockito.mock( ControllerScript.class );
-        Mockito.when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+        final ControllerScript script = mock( ControllerScript.class );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
-        Mockito.when( script.execute( Mockito.any() ) ).thenReturn( response );
+        when( script.execute( any() ) ).thenReturn( response );
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
         assertEquals( "/webapp/myapp", this.request.getContextPath() );
@@ -137,8 +105,6 @@ public class WebAppHandlerTest
     public void handle_executeController_error()
         throws Exception
     {
-        mockResource( "myapp:/assets/a.txt", null );
-
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
