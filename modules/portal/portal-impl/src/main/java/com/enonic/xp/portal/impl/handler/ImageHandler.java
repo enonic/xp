@@ -25,6 +25,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
+@Deprecated(since = "8.0", forRemoval = true)
 @Component(service = ImageHandler.class)
 public class ImageHandler
 {

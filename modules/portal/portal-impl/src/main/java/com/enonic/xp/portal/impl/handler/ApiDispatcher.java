@@ -1,20 +1,24 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(service = WebHandler.class)
+@Component(service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
 public class ApiDispatcher
     extends BaseWebHandler
 {
@@ -38,6 +42,11 @@ public class ApiDispatcher
 
     private final MediaHandler mediaHandler;
 
+    private volatile boolean legacyImageServiceEnabled;
+
+    private volatile boolean legacyAttachmentServiceEnabled;
+
+    private volatile boolean legacyHttpServiceEnabled;
 
     @Activate
     public ApiDispatcher( @Reference final SlashApiHandler apiHandler, @Reference final ComponentHandler componentHandler,
@@ -59,6 +68,15 @@ public class ApiDispatcher
         this.mediaHandler = mediaHandler;
     }
 
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        this.legacyImageServiceEnabled = config.legacy_imageService_enabled();
+        this.legacyAttachmentServiceEnabled = config.legacy_attachmentService_enabled();
+        this.legacyHttpServiceEnabled = config.legacy_httpService_enabled();
+    }
+
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
@@ -73,12 +91,13 @@ public class ApiDispatcher
         final String handler = resolveHandler( webRequest );
         return switch ( handler )
         {
-            case "attachment" -> attachmentHandler.handle( webRequest );
-            case "image" -> imageHandler.handle( webRequest );
+            case "attachment" ->
+                doHandleLegacyHandler( webResponse, legacyAttachmentServiceEnabled, () -> attachmentHandler.handle( webRequest ) );
+            case "image" -> doHandleLegacyHandler( webResponse, legacyImageServiceEnabled, () -> imageHandler.handle( webRequest ) );
+            case "service" -> doHandleLegacyHandler( webResponse, legacyHttpServiceEnabled, () -> serviceHandler.handle( webRequest ) );
             case "media" -> mediaHandler.handle( webRequest, webResponse );
             case "error" -> errorHandler.handle( webRequest );
             case "idprovider" -> identityHandler.handle( webRequest, webResponse );
-            case "service" -> serviceHandler.handle( webRequest );
             case "asset" -> assetHandler.handle( webRequest );
             case "component" -> componentHandler.handle( webRequest );
             default -> apiHandler.handle( webRequest );
@@ -94,5 +113,12 @@ public class ApiDispatcher
             throw new IllegalStateException( "Invalid API path: " + path );
         }
         return matcher.group( "handler" );
+    }
+
+    private WebResponse doHandleLegacyHandler( final WebResponse webResponse, final boolean handlerEnabled,
+                                               final Callable<WebResponse> handler )
+        throws Exception
+    {
+        return handlerEnabled ? handler.call() : WebResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
     }
 }
