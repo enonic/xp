@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -54,6 +56,9 @@ public class ApiDispatcherTest
 
         this.handler = new ApiDispatcher( slashApiHandler, componentHandler, assetHandler, serviceHandler, identityHandler, imageHandler,
                                           attachmentHandler, errorHandler, mediaHandler );
+
+        PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        this.handler.activate( portalConfig );
     }
 
     @Test
@@ -282,6 +287,36 @@ public class ApiDispatcherTest
 
         // test handle
         assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
+    }
+
+    @Test
+    public void testLegacyHandler()
+        throws Exception
+    {
+        PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( portalConfig.legacy_imageService_enabled() ).thenReturn( false );
+        when( portalConfig.legacy_attachmentService_enabled() ).thenReturn( false );
+        when( portalConfig.legacy_httpService_enabled() ).thenReturn( false );
+
+        this.handler.activate( portalConfig );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+
+        // test image
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/image/id:version/scale/name" );
+        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/image/id:version/scale/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
+
+        // test attachment
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/attachment/mode/id:version/name" );
+        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/attachment/mode/id:version/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
+
+        // test service
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/service/application/name" );
+        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/service/application/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
     }
 
 }

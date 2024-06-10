@@ -36,6 +36,7 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
+@Deprecated(since = "8.0", forRemoval = true)
 @Component(service = ServiceHandler.class)
 public class ServiceHandler
 {
