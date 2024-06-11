@@ -4,6 +4,8 @@ public @interface PortalConfig
 {
     String asset_cacheControl() default "public, max-age=31536000, immutable";
 
+    boolean asset_legacyContextPath() default false;
+
     String media_public_cacheControl() default "public, max-age=31536000, immutable";
 
     String media_private_cacheControl() default "private, max-age=31536000, immutable";
@@ -13,6 +15,8 @@ public @interface PortalConfig
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
 
     String draftBranchAllowedFor() default "role:system.admin.login";
+
+    boolean idprovider_legacyContextPath() default false;
 
     boolean legacy_attachmentService_enabled() default true;
 

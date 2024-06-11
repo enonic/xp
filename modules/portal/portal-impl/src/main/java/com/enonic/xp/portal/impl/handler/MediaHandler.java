@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -44,27 +45,24 @@ import static com.google.common.base.Strings.nullToEmpty;
 @Component(service = MediaHandler.class, configurationPid = "com.enonic.xp.portal")
 public class MediaHandler
 {
+    private static final Pattern PATTERN = Pattern.compile(
+        "^/(_|api)/media/(?<mediaType>image|attachment)/(?<project>[^/:]+)(?::(?<branch>draft))?/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
 
-    private static final Pattern PATTERN =
-        Pattern.compile( "^/api/media/(?<mediaType>image|attachment)/(?<repo>[^/]+)/(?<branch>[^/]+)/(?<restPath>.*)$" );
+    private static final Pattern ATTACHMENT_REST_PATH_PATTERN = Pattern.compile( "^(?<name>[^/?]+)(\\?(?<params>.*))?$" );
 
-    private static final Pattern ATTACHMENT_REST_PATH_PATTERN =
-        Pattern.compile( "^(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<name>[^/?]+)(?:\\?download)?$" );
-
-    private static final Pattern IMAGE_REST_PATH_PATTERN =
-        Pattern.compile( "^(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
+    private static final Pattern IMAGE_REST_PATH_PATTERN = Pattern.compile( "^(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
 
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
     private static final Predicate<WebRequest> IS_GET_HEAD_OPTIONS_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
-
-    private static final Predicate<WebRequest> IS_SITE_BASE = req -> req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
 
     private final ContentService contentService;
 
     private final ImageService imageService;
 
     private final MediaInfoService mediaInfoService;
+
+    private final DefaultContextPathVerifier defaultContextPathVerifier;
 
     private volatile String privateCacheControlHeaderConfig;
 
@@ -83,6 +81,7 @@ public class MediaHandler
         this.contentService = contentService;
         this.imageService = imageService;
         this.mediaInfoService = mediaInfoService;
+        this.defaultContextPathVerifier = new DefaultContextPathVerifier( contentService );
     }
 
     @Activate
@@ -102,15 +101,10 @@ public class MediaHandler
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
         throws Exception
     {
-        Matcher matcher = PATTERN.matcher( webRequest.getRawPath() );
+        Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
         if ( !matcher.matches() )
         {
             return PortalResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
-        }
-
-        if ( !IS_SITE_BASE.test( webRequest ) )
-        {
-            throw WebException.notFound( "Not a valid request" );
         }
 
         if ( !IS_GET_HEAD_OPTIONS_METHOD.test( webRequest ) )
@@ -123,18 +117,25 @@ public class MediaHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        String repo = matcher.group( "repo" );
-        String branch = matcher.group( "branch" );
+        if ( !defaultContextPathVerifier.verify( webRequest ) )
+        {
+            throw WebException.notFound( "Not a valid media url pattern" );
+        }
+
+        String project = matcher.group( "project" );
+        String branch = Objects.requireNonNullElse( matcher.group( "branch" ), "master" );
         String type = matcher.group( "mediaType" );
+        ContentId id = ContentId.from( matcher.group( "id" ) );
+        String fingerprint = matcher.group( "fingerprint" );
         String restPath = matcher.group( "restPath" );
 
-        RepositoryId repositoryId = RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + repo );
+        RepositoryId repositoryId = RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + project );
 
         PortalRequest portalRequest = createPortalRequest( webRequest, repositoryId, Branch.from( branch ) );
 
         return executeInContext( repositoryId, branch, () -> type.equals( "attachment" )
-            ? doHandleAttachment( portalRequest, restPath )
-            : doHandleImage( portalRequest, restPath ) );
+            ? doHandleAttachment( portalRequest, id, fingerprint, restPath )
+            : doHandleImage( portalRequest, id, fingerprint, restPath ) );
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final RepositoryId repositoryId, final Branch branch )
@@ -163,7 +164,8 @@ public class MediaHandler
             .callWith( callable );
     }
 
-    private PortalResponse doHandleImage( final PortalRequest portalRequest, final String restPath )
+    private PortalResponse doHandleImage( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
+                                          final String restPath )
         throws Exception
     {
         Matcher matcher = IMAGE_REST_PATH_PATTERN.matcher( restPath );
@@ -174,8 +176,8 @@ public class MediaHandler
 
         final ImageHandlerWorker worker =
             new ImageHandlerWorker( portalRequest, this.contentService, this.imageService, this.mediaInfoService );
-        worker.id = ContentId.from( matcher.group( "id" ) );
-        worker.fingerprint = matcher.group( "fingerprint" );
+        worker.id = id;
+        worker.fingerprint = fingerprint;
         worker.scaleParams = new ScaleParamsParser().parse( matcher.group( "scaleParams" ) );
         worker.name = matcher.group( "name" );
         worker.filterParam = HandlerHelper.getParameter( portalRequest, "filter" );
@@ -188,7 +190,8 @@ public class MediaHandler
         return worker.execute();
     }
 
-    private PortalResponse doHandleAttachment( final PortalRequest portalRequest, final String restPath )
+    private PortalResponse doHandleAttachment( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
+                                               final String restPath )
         throws Exception
     {
         Matcher matcher = ATTACHMENT_REST_PATH_PATTERN.matcher( restPath );
@@ -199,8 +202,8 @@ public class MediaHandler
 
         final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( portalRequest, this.contentService );
         worker.download = HandlerHelper.getParameter( portalRequest, "download" ) != null;
-        worker.id = ContentId.from( matcher.group( "id" ) );
-        worker.fingerprint = matcher.group( "fingerprint" );
+        worker.id = id;
+        worker.fingerprint = fingerprint;
         worker.name = matcher.group( "name" );
         worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;

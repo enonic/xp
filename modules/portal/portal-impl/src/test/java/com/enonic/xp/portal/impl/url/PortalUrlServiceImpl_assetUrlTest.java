@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -149,5 +150,32 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my%20other%20&%20strange.css", url );
+    }
+
+    @Test
+    public void createUrlOnVhostMapping()
+    {
+        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
+        when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
+
+        final AssetUrlParams params =
+            new AssetUrlParams().type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).path( "css/my.css" );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( portalConfig.asset_legacyContextPath() ).thenReturn( false );
+
+        VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        this.service.activate( portalConfig );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "http://localhost/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 }
