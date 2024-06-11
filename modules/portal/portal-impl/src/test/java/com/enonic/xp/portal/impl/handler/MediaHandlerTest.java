@@ -29,6 +29,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -158,7 +160,80 @@ public class MediaHandlerTest
     {
         setupMedia();
 
-        this.request.setRawPath( "/api/media/attachment/default/master/123456/logo.png" );
+        this.request.setRawPath( "/api/media/attachment/myproject/123456/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    public void testAttachmentForEndpointOnAdmin()
+        throws Exception
+    {
+        setupMedia();
+
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setRawPath( "/admin/tool/_/media/attachment/myproject/123456/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    public void testAttachmentForEndpointOnWebApp()
+        throws Exception
+    {
+        setupMedia();
+
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/media/attachment/myproject/123456/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    public void testInvalidContextPath()
+    {
+        setupMedia();
+
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setRawPath( "/webapp/com.enonic.app.mywebapp/path/_/media/attachment/myproject/123456/logo.png" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Not a valid media url pattern", ex.getMessage() );
+    }
+
+    @Test
+    public void testAttachmentForEndpointOnSite()
+        throws Exception
+    {
+        setupMedia();
+
+        this.request.setContentPath( ContentPath.from( "/mysite" ) );
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setRawPath( "/site/myproject/master/mysite/_/media/attachment/myproject/123456/logo.png" );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.getByPath( any() ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -174,7 +249,9 @@ public class MediaHandlerTest
     {
         setupMedia();
 
-        this.request.setRawPath( "/api/media/attachment/default/master/123456/logo.png?download" );
+        this.request.setRawPath( "/api/media/attachment/myproject/123456/logo.png?q1=v1&q2=v2&download" );
+        this.request.getParams().put( "q1", "v1" );
+        this.request.getParams().put( "q2", "v2" );
         this.request.getParams().put( "download", "" );
 
         PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
@@ -195,7 +272,7 @@ public class MediaHandlerTest
     @Test
     public void testAttachmentDraftBranchForNotAuthorizedUser()
     {
-        this.request.setRawPath( "/api/media/attachment/default/draft/123456/logo.png" );
+        this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
         WebException exception =
@@ -210,7 +287,7 @@ public class MediaHandlerTest
     {
         setupContent();
 
-        this.request.setRawPath( "/api/media/image/default/master/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
 
         WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -218,7 +295,7 @@ public class MediaHandlerTest
         assertEquals( MediaType.PNG, res.getContentType() );
         assertInstanceOf( ByteSource.class, res.getBody() );
 
-        this.request.setRawPath( "/api/media/image/default/master/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
 
         res = this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -231,7 +308,7 @@ public class MediaHandlerTest
     public void testOptions()
         throws Exception
     {
-        this.request.setRawPath( "/api/media/attachment/default/master/123456/logo.png" );
+        this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
@@ -244,23 +321,10 @@ public class MediaHandlerTest
     void testHandleMethodNotAllowed()
     {
         this.request.setMethod( HttpMethod.DELETE );
-        this.request.setRawPath( "/api/media/attachment/default/master/123456/logo.png" );
+        this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method DELETE not allowed", ex.getMessage() );
-    }
-
-    @Test
-    void testHandleNotSiteBase()
-    {
-        final PortalRequest portalRequest = new PortalRequest();
-        portalRequest.setMethod( HttpMethod.GET );
-        portalRequest.setBaseUri( "/unknown" );
-        portalRequest.setRawPath( "/api/media/attachment/default/master/123456/logo.png" );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest, WebResponse.create().build() ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Not a valid request", ex.getMessage() );
     }
 }

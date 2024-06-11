@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -71,5 +72,13 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
                                       this.redirectChecksumService );
+
+        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
+        when( portalConfig.legacy_attachmentService_enabled() ).thenReturn( true );
+        when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
+        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
+
+        this.service.activate( portalConfig );
     }
 }

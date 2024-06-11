@@ -38,8 +38,8 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
             return uriRewritingResult.getRewrittenUri();
         }
 
-        //Example of URI: /site/draft/context/path/_/asset/myapplication/css/my.css
-        //Corresponding result: /site/draft/_/asset/myapplication/css/my.css
+        //Example of URI: /site/repo/draft/context/path/_/asset/myapplication/css/my.css
+        //Corresponding result: /site/repo/draft/_/asset/myapplication/css/my.css
 
         StringBuilder result = new StringBuilder();
         String uriToProcess = uriRewritingResult.getRewrittenUri();

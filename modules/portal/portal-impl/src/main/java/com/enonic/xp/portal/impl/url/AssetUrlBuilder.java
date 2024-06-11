@@ -11,19 +11,40 @@ import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 final class AssetUrlBuilder
     extends GenericEndpointUrlBuilder<AssetUrlParams>
 {
+    private boolean useLegacyContextPath;
+
     AssetUrlBuilder()
     {
         super( "asset" );
     }
 
+    public void setUseLegacyContextPath( final boolean useLegacyContextPath )
+    {
+        this.useLegacyContextPath = useLegacyContextPath;
+    }
+
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        super.buildUrl( url, params );
+        if ( useLegacyContextPath )
+        {
+            super.buildUrl( url, params );
+        }
+        else
+        {
+            url.setLength( 0 );
+
+            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
+            appendPart( url, virtualHost.getTarget() );
+            appendPart( url, "_" );
+            appendPart( url, this.endpointType );
+        }
 
         final ApplicationKey applicationKey =
             new ApplicationResolver().portalRequest( this.portalRequest ).application( this.params.getApplication() ).resolve();

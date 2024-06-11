@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
@@ -50,14 +51,16 @@ public class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 
+        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
+
         when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
-            if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
+            if ( myIdProvider.equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
-            else if ( IdProviderKey.from( "myidprovider" ).equals( arg.getIdProviderKey() ) && "login".equals( arg.getFunctionName() ) )
+            else if ( myIdProvider.equals( arg.getIdProviderKey() ) && "login".equals( arg.getFunctionName() ) )
             {
                 return PortalResponse.create().build();
             }
@@ -67,11 +70,22 @@ public class IdentityHandlerTest
         redirectChecksumService = mock( RedirectChecksumService.class );
 
         this.handler = new IdentityHandler( contentService, idProviderControllerService, redirectChecksumService );
+        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
+        this.handler.activate( portalConfig );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
         this.request.setRawPath( "/site/draft/_/idprovider/myidprovider?param1=value1" );
         this.request.setRawRequest( rawRequest );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
     @Test
@@ -214,6 +228,37 @@ public class IdentityHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method CONNECT not allowed", ex.getMessage() );
+    }
+
+    @Test
+    public void testContextPathConfiguration()
+        throws Exception
+    {
+        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( false );
+
+        this.handler.activate( portalConfig );
+
+        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
+        this.request.setRawPath( "/_/idprovider/myidprovider/login" );
+
+        WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+
+        // test invalid context path
+        this.request.setRawPath( "/webapp/com.enonic.app.myapp/path/_/idprovider/myidprovider/login" );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+
+        // test legacy context path
+        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
+        this.handler.activate( portalConfig );
+
+        this.request.setRawPath( "/webapp/com.enonic.app.myapp/path/_/idprovider/myidprovider/login" );
+        res = this.handler.handle( this.request, PortalResponse.create().build() );
+
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
     }
 
     public VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )

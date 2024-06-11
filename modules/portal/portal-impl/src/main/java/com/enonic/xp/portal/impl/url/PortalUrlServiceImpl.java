@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
@@ -11,6 +12,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -28,7 +30,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
     implements PortalUrlService
 {
@@ -42,6 +44,14 @@ public final class PortalUrlServiceImpl
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private volatile boolean legacyImageServiceEnabled;
+
+    private volatile boolean legacyAttachmentServiceEnabled;
+
+    private volatile boolean useLegacyAssetContextPath;
+
+    private volatile boolean useLegacyIdProviderContextPath;
+
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
@@ -54,10 +64,22 @@ public final class PortalUrlServiceImpl
         this.redirectChecksumService = redirectChecksumService;
     }
 
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        this.legacyImageServiceEnabled = config.legacy_imageService_enabled();
+        this.legacyAttachmentServiceEnabled = config.legacy_attachmentService_enabled();
+        this.useLegacyAssetContextPath = config.asset_legacyContextPath();
+        this.useLegacyIdProviderContextPath = config.idprovider_legacyContextPath();
+    }
+
     @Override
     public String assetUrl( final AssetUrlParams params )
     {
-        return build( new AssetUrlBuilder(), params );
+        final AssetUrlBuilder builder = new AssetUrlBuilder();
+        builder.setUseLegacyContextPath( useLegacyAssetContextPath );
+        return build( builder, params );
     }
 
     @Override
@@ -81,19 +103,28 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        return build( new ImageUrlBuilder(), params );
+        final ImageUrlBuilder builder = new ImageUrlBuilder();
+        builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
+
+        return build( builder, params );
     }
 
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        return build( new AttachmentUrlBuilder(), params );
+        final AttachmentUrlBuilder builder = new AttachmentUrlBuilder();
+        builder.setLegacyAttachmentServiceEnabled( this.legacyAttachmentServiceEnabled );
+
+        return build( builder, params );
     }
 
     @Override
     public String identityUrl( final IdentityUrlParams params )
     {
-        return build( new IdentityUrlBuilder( redirectChecksumService::generateChecksum ), params );
+        final IdentityUrlBuilder builder = new IdentityUrlBuilder( redirectChecksumService::generateChecksum );
+        builder.setUseLegacyContextPath( useLegacyIdProviderContextPath );
+
+        return build( builder, params );
     }
 
     @Override
@@ -119,12 +150,8 @@ public final class PortalUrlServiceImpl
     private <T> T runWithAdminRole( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-            principals( RoleKeys.ADMIN ).
-            build();
-        return ContextBuilder.from( context ).
-            authInfo( authenticationInfo ).
-            build().
-            callWith( callable );
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 }

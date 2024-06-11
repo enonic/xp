@@ -6,10 +6,13 @@ import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
 
@@ -18,6 +21,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class ImageUrlBuilder
     extends GenericEndpointUrlBuilder<ImageUrlParams>
 {
+    private boolean legacyImageServiceEnabled;
+
     ImageUrlBuilder()
     {
         super( "image" );
@@ -26,26 +31,50 @@ final class ImageUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        params.putAll( this.params.getParams() );
+        final boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+        final String projectName = RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() );
+        final Branch branch = this.portalRequest.getBranch();
 
-        if ( this.portalRequest.isSiteBase() )
+        if ( isSlashAPI )
         {
-            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-            appendPart( url, this.portalRequest.getBranch().toString() );
-        }
+            params.putAll( this.params.getParams() );
 
-        if ( portalRequest.getRawPath().startsWith( "/api/" ) )
-        {
             url.setLength( 0 );
-            appendPart( url, this.endpointType );
-            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-            appendPart( url, this.portalRequest.getBranch().toString() );
+            appendPart( url, "image" );
+            appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
         }
         else
         {
-            appendPart( url, this.portalRequest.getContentPath().toString() );
-            appendPart( url, "_" );
-            appendPart( url, this.endpointType );
+            if ( legacyImageServiceEnabled )
+            {
+                super.buildUrl( url, params );
+            }
+            else
+            {
+                params.putAll( this.params.getParams() );
+
+                final ContentResolverResult contentResolverResult =
+                    new com.enonic.xp.portal.impl.ContentResolver( contentService ).resolve( portalRequest );
+
+                if ( contentResolverResult.getNearestSite() != null )
+                {
+                    appendPart( url, projectName );
+                    appendPart( url, branch.getValue() );
+                    appendPart( url, contentResolverResult.getNearestSite().getPath().toString() );
+                }
+                else
+                {
+                    url.setLength( 0 );
+                    appendPart( url, "site" );
+                    appendPart( url, projectName );
+                    appendPart( url, branch.getValue() );
+                }
+
+                appendPart( url, "_" );
+                appendPart( url, "media" );
+                appendPart( url, "image" );
+                appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
+            }
         }
 
         final Media media = resolveMedia();
@@ -72,6 +101,11 @@ final class ImageUrlBuilder
     protected String getTargetUriPrefix()
     {
         return "/api/media";
+    }
+
+    public void setLegacyImageServiceEnabled( final boolean legacyImageServiceEnabled )
+    {
+        this.legacyImageServiceEnabled = legacyImageServiceEnabled;
     }
 
     private void addParamIfNeeded( final Multimap<String, String> params, final String name, final Object value )

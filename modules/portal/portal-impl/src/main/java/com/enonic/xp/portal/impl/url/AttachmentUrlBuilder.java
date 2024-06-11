@@ -4,26 +4,30 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
 
 final class AttachmentUrlBuilder
     extends PortalUrlBuilder<AttachmentUrlParams>
 {
+    private boolean legacyAttachmentServiceEnabled;
+
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        super.buildUrl( url, params );
-
-        boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+        final boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
+        final String projectName = RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() );
+        final Branch branch = this.portalRequest.getBranch();
 
         if ( isSlashAPI )
         {
             url.setLength( 0 );
             appendPart( url, "attachment" );
-            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-            appendPart( url, this.portalRequest.getBranch().toString() );
+            appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
             if ( this.params.isDownload() )
             {
                 params.put( "download", null );
@@ -31,14 +35,41 @@ final class AttachmentUrlBuilder
         }
         else
         {
-            appendPart( url, this.portalRequest.getContentPath().toString() );
-            appendPart( url, "_" );
-            appendPart( url, "attachment" );
-        }
+            super.buildUrl( url, params );
 
-        if ( !isSlashAPI )
-        {
-            appendPart( url, this.params.isDownload() ? "download" : "inline" );
+            if ( legacyAttachmentServiceEnabled )
+            {
+                appendPart( url, this.portalRequest.getContentPath().toString() );
+                appendPart( url, "_" );
+                appendPart( url, "attachment" );
+                appendPart( url, this.params.isDownload() ? "download" : "inline" );
+            }
+            else
+            {
+                final ContentResolverResult contentResolverResult =
+                    new com.enonic.xp.portal.impl.ContentResolver( contentService ).resolve( portalRequest );
+
+                if ( contentResolverResult.getNearestSite() != null )
+                {
+                    appendPart( url, contentResolverResult.getNearestSite().getPath().toString() );
+                }
+                else
+                {
+                    url.setLength( 0 );
+                    appendPart( url, "site" );
+                    appendPart( url, projectName );
+                    appendPart( url, branch.getValue() );
+                }
+
+                appendPart( url, "_" );
+                appendPart( url, "media" );
+                appendPart( url, "attachment" );
+                appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
+                if ( this.params.isDownload() )
+                {
+                    params.put( "download", null );
+                }
+            }
         }
 
         final Content content = resolveContent();
@@ -59,6 +90,11 @@ final class AttachmentUrlBuilder
     protected String getTargetUriPrefix()
     {
         return "/api/media";
+    }
+
+    public void setLegacyAttachmentServiceEnabled( final boolean legacyAttachmentServiceEnabled )
+    {
+        this.legacyAttachmentServiceEnabled = legacyAttachmentServiceEnabled;
     }
 
     private Content resolveContent()
