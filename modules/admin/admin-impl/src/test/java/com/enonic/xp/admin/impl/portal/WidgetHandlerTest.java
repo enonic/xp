@@ -131,7 +131,7 @@ public class WidgetHandlerTest
         catch ( final WebException e )
         {
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Not a valid service url pattern", e.getMessage() );
+            assertEquals( "Not a valid widgets url pattern", e.getMessage() );
         }
     }
 
@@ -190,6 +190,21 @@ public class WidgetHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertEquals( "/admin/tool/_/widgets/demo/test", this.request.getContextPath() );
     }
+
+    @Test
+    public void testWithIncorrectContextPath()
+    {
+        mockDescriptor( true );
+
+        this.request.setRawPath( "/admin/tool/path/_/widgets/demo/test" );
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.ADMIN );
+
+        WebException response =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
+    }
+
     private void setupContentAndSite()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );

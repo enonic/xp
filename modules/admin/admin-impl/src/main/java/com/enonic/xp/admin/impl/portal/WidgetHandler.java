@@ -43,10 +43,11 @@ public final class WidgetHandler
         final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
-        if ( !matcher.find() )
+        if ( !matcher.find() || !webRequest.getRawPath().startsWith( "/admin/tool/_/" ) )
         {
-            throw WebException.notFound( "Not a valid service url pattern" );
+            throw WebException.notFound( "Not a valid widgets url pattern" );
         }
+
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
         portalRequest.setContextPath( findPreRestPath( portalRequest ) + "/" + matcher.group( 0 ) );
