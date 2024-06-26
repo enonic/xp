@@ -50,7 +50,7 @@ public final class ImageHandlerWorker
     public ScaleParams scaleParams;
 
     public ImageHandlerWorker( final PortalRequest request, final ContentService contentService, final ImageService imageService,
-                        final MediaInfoService mediaInfoService )
+                               final MediaInfoService mediaInfoService )
     {
         super( request, contentService );
         this.imageService = imageService;

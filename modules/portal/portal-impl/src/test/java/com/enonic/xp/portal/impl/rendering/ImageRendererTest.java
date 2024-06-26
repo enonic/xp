@@ -31,8 +31,6 @@ public class ImageRendererTest
         final Media media = ContentFixtures.newMedia();
         Mockito.when( this.contentService.getByPath( media.getPath() ) ).thenReturn( media );
         Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenReturn( media );
-        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
         return media;
     }
 
@@ -61,7 +59,7 @@ public class ImageRendererTest
     public void imageComponentWithImage()
     {
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( createContent(), expected );
     }
@@ -73,7 +71,7 @@ public class ImageRendererTest
         content.getData().setString( "altText", "alternative" );
 
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( content, expected );
     }

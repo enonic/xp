@@ -152,7 +152,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -166,7 +166,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -219,7 +219,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=2-4" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -240,7 +240,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=-3" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -261,7 +261,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=4-" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -282,7 +282,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=5-1000" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -303,7 +303,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=0-1,3-4,6-" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
         assertEquals( MediaType.parse( "multipart/byteranges" ), res.getContentType().withoutParameters() );
@@ -334,7 +334,7 @@ public class AttachmentHandlerTest
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=many" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -349,7 +349,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
@@ -360,17 +360,17 @@ public class AttachmentHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
-    void cacheHeader_fingerprint_missmatch()
+    void cacheHeader_fingerprint_mismatch()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
 
         assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
     }
@@ -381,7 +381,7 @@ public class AttachmentHandlerTest
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
+        final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'", res.getHeaders().get( "Content-Security-Policy" ) );
     }
 

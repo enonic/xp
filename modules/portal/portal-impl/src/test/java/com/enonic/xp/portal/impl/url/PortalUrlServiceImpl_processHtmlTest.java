@@ -40,8 +40,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     public void process_empty_value()
     {
         //Checks the process for a null value
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest );
         String processedHtml = this.service.processHtml( params );
         assertEquals( "", processedHtml );
 
@@ -59,9 +58,8 @@ public class PortalUrlServiceImpl_processHtmlTest
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
@@ -74,68 +72,54 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Creates a content
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"image://" + media.getId() + "\">Image</a>" );
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().portalRequest( this.portalRequest ).value( "<a href=\"image://" + media.getId() + "\">Image</a>" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
-                          "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" + "width-768" +
+                "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
     public void process_single_media()
     {
         //Creates a content with attachments
-        final Attachment thumb = Attachment.
-            create().
-            label( "thumb" ).
-            name( "a1.jpg" ).
-            mimeType( "image/jpeg" ).
-            build();
-        final Attachment source = Attachment.
-            create().
-            label( "source" ).
-            name( "a2.jpg" ).
-            mimeType( "image/jpeg" ).
-            build();
+        final Attachment thumb = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment source = Attachment.create()
+            .label( "source" )
+            .name( "a2.jpg" )
+            .mimeType( "image/jpeg" )
+            .sha512( "bb6d2c0f3112f562ec454654b9aebe7ab47ba865" )
+            .build();
         final Attachments attachments = Attachments.from( thumb, source );
-        final Content content = Content.
-            create( ContentFixtures.newContent() ).
-            attachments( attachments ).
-            build();
+        final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash2" );
 
         Map<String, String> projection = new HashMap<>();
 
         //Process an html text containing an inline link to this content
-        ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            customHtmlProcessor( processorParams -> {
-                processorParams.processDefault( ( element, properties ) -> {
-                    if ( "a".equals( element.getTagName() ) )
-                    {
-                        element.setAttribute( "data-link-ref", "linkRef" );
+        ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest ).customHtmlProcessor( processorParams -> {
+            processorParams.processDefault( ( element, properties ) -> {
+                if ( "a".equals( element.getTagName() ) )
+                {
+                    element.setAttribute( "data-link-ref", "linkRef" );
 
-                        projection.clear();
-                        projection.putAll( properties );
-                    }
-                } );
-                return null;
-            } ).
-            value( "<a href=\"media://inline/" + content.getId() + "\">Media</a>" );
+                    projection.clear();
+                    projection.putAll( properties );
+                }
+            } );
+            return null;
+        } ).value( "<a href=\"media://inline/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
         String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" + source.getName() +
-                "\" data-link-ref=\"linkRef\">Media</a>", processedHtml );
+            "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() + "/" +
+                source.getName() + "\" data-link-ref=\"linkRef\">Media</a>", processedHtml );
 
         assertEquals( content.getId().toString(), projection.get( "contentId" ) );
         assertEquals( "server", projection.get( "type" ) );
@@ -144,26 +128,23 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertNull( projection.get( "queryParams" ) );
 
         //Process an html text containing a download link to this content
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"media://download/" + content.getId() + "\">Media</a>" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"media://download/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/context/path/_/attachment/download/" + content.getId() + ":binaryHash2/" + source.getName() +
-                "\">Media</a>", processedHtml );
+            "<a href=\"/site/myproject/draft/context/path/_/attachment/download/" + content.getId() + "/" +
+                source.getName() + "\">Media</a>", processedHtml );
 
         //Process an html text containing an inline link to this content in a img tag
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"/some/page\"><img src=\"media://inline/" + content.getId() + "\">Media</a>" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"/some/page\"><img src=\"media://inline/" + content.getId() + "\">Media</a>" );
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals(
-            "<a href=\"/some/page\"><img src=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
-                source.getName() + "\">Media</a>", processedHtml );
+        assertEquals( "<a href=\"/some/page\"><img src=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() +
+                          "/" + source.getName() + "\">Media</a>", processedHtml );
 
     }
 
@@ -171,44 +152,34 @@ public class PortalUrlServiceImpl_processHtmlTest
     public void process_multiple_links()
     {
         //Creates a content with attachments
-        final Attachment thumb = Attachment.
-            create().
-            label( "thumb" ).
-            name( "a1.jpg" ).
-            mimeType( "image/jpeg" ).
-            build();
-        final Attachment source = Attachment.
-            create().
-            label( "source" ).
-            name( "a2.jpg" ).
-            mimeType( "image/jpeg" ).
-            build();
+        final Attachment thumb = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment source = Attachment.create()
+            .label( "source" )
+            .name( "a2.jpg" )
+            .mimeType( "image/jpeg" )
+            .sha512( "bb6d2c0f3112f562ec454654b9aebe7ab47ba865" )
+            .build();
         final Attachments attachments = Attachments.from( thumb, source );
-        final Content content = Content.
-            create( ContentFixtures.newContent() ).
-            attachments( attachments ).
-            build();
+        final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash2" );
 
         //Process an html text containing multiple links, on multiple lines, to this content as a media and as a content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p>A content link:&nbsp;<a href=\"content://" + content.getId() + "\">FirstLink</a></p>\n" +
-                       "<p>A second content link:&nbsp;<a href=\"content://" + content.getId() + "\">SecondLink</a>" +
-                       "&nbsp;and a download link:&nbsp;<a href=\"media://download/" + content.getId() + "\">Download</a></p>\n" +
-                       "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
-                       "<a href=\"media://inline/" + content.getId() + "\">Inline</a>" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p>A content link:&nbsp;<a href=\"content://" + content.getId() + "\">FirstLink</a></p>\n" +
+                        "<p>A second content link:&nbsp;<a href=\"content://" + content.getId() + "\">SecondLink</a>" +
+                        "&nbsp;and a download link:&nbsp;<a href=\"media://download/" + content.getId() + "\">Download</a></p>\n" +
+                        "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
+                        "<a href=\"media://inline/" + content.getId() + "\">Inline</a>" );
 
         //Checks the returned value
         final String processedHtml = this.service.processHtml( params );
         assertEquals( "<p>A content link:&nbsp;<a href=\"/site/myproject/draft" + content.getPath() + "\">FirstLink</a></p>\n" +
                           "<p>A second content link:&nbsp;<a href=\"/site/myproject/draft" + content.getPath() + "\">SecondLink</a>" +
                           "&nbsp;and a download link:&nbsp;<a href=\"/site/myproject/draft/context/path/_/attachment/download/" +
-                          content.getId() + ":binaryHash2/" + source.getName() + "\">Download</a></p>\n" +
+                          content.getId() + "/" + source.getName() + "\">Download</a></p>\n" +
                           "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
-                          "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() + ":binaryHash2/" +
-                          source.getName() + "\">Inline</a>", processedHtml );
+                          "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() +
+                          "/" + source.getName() + "\">Inline</a>", processedHtml );
     }
 
     @Test
@@ -224,13 +195,13 @@ public class PortalUrlServiceImpl_processHtmlTest
         } );
 
         //Process an html text containing a link to an unknown content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://123\">Content</a>" );
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().portalRequest( this.portalRequest ).value( "<a href=\"content://123\">Content</a>" );
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
+        assertThat( processedHtml ).matches(
+            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
     }
 
     @Test
@@ -238,21 +209,17 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
             final ContentId contentId = params.getArgument( 0 );
-            throw ContentNotFoundException.create()
-                .contentId( contentId )
-//                .repositoryId( ContentConstants.CONTENT_REPO_ID )
-                .branch( ContentConstants.BRANCH_DRAFT )
-                .build();
+            throw ContentNotFoundException.create().contentId( contentId ).branch( ContentConstants.BRANCH_DRAFT ).build();
         } );
 
         //Process an html text containing a link to an unknown media
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"media://inline/123\">Media</a>" );
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().portalRequest( this.portalRequest ).value( "<a href=\"media://inline/123\">Media</a>" );
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
+        assertThat( processedHtml ).matches(
+            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
     }
 
     @Test
@@ -268,13 +235,13 @@ public class PortalUrlServiceImpl_processHtmlTest
         } );
 
         //Process an html text containing a link to an unknown media
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"image://123\">Image</a>" );
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().portalRequest( this.portalRequest ).value( "<a href=\"image://123\">Image</a>" );
 
         //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertThat( processedHtml ).matches(
+            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
 
     @Test
@@ -285,10 +252,9 @@ public class PortalUrlServiceImpl_processHtmlTest
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().type( UrlTypeConstants.ABSOLUTE )
+            .portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -305,17 +271,14 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Creates a content
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"image://" + media.getId() + "?scale=21:9\">Image</a>" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"image://" + media.getId() + "?scale=21:9\">Image</a>" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+        assertEquals( "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
                           "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -333,28 +296,19 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Creates a content
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
-        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).
-            aspectRatio( "2:1" ).
-            filter( "myfilter" ).
-            build();
-        final StyleDescriptor styleDescriptor = StyleDescriptor.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            addStyleElement( imageStyle ).
-            build();
-        when( styleDescriptorService.getByApplications( Mockito.any() ) ).
-            thenReturn( StyleDescriptors.from( styleDescriptor ) );
+        final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
+        final StyleDescriptor styleDescriptor =
+            StyleDescriptor.create().application( ApplicationKey.from( "myapp" ) ).addStyleElement( imageStyle ).build();
+        when( styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.from( styleDescriptor ) );
 
         final Map<String, String> imageProjection = new HashMap<>();
 
         //Process an html text containing a style
         final String link1 = "<img src=\"image://" + media.getId() + "?style=mystyle\">";
         final String link2 = "<a href=\"image://" + media.getId() + "?style=missingstyle\">Image</a>";
-        final ProcessHtmlParams params1 = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            customHtmlProcessor( processorParams -> {
+        final ProcessHtmlParams params1 =
+            new ProcessHtmlParams().portalRequest( this.portalRequest ).customHtmlProcessor( processorParams -> {
                 processorParams.processDefault( ( element, properties ) -> {
                     if ( "img".equals( element.getTagName() ) )
                     {
@@ -364,21 +318,18 @@ public class PortalUrlServiceImpl_processHtmlTest
                     }
                 } );
                 return processorParams.getDocument().getInnerHtml();
-            } ).
-            value( link1 );
-        final ProcessHtmlParams params2 = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( link2 );
+            } ).value( link1 );
+        final ProcessHtmlParams params2 = new ProcessHtmlParams().portalRequest( this.portalRequest ).value( link2 );
         final String processedLink1 = this.service.processHtml( params1 );
         final String processedLink2 = this.service.processHtml( params2 );
 
         //Checks that the page URL of the content is returned
         final String expectedResult1 =
-            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
         final String expectedResult2 =
-            "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
-                "width-768" + "/" + media.getName() + "\">Image</a>";
+            "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" + "width-768" +
+                "/" + media.getName() + "\">Image</a>";
         assertEquals( expectedResult1, processedLink1 );
         assertEquals( expectedResult2, processedLink2 );
 
@@ -397,25 +348,24 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Creates a content
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
-                       "\"/><figcaption>Caption text</figcaption></figure>" ).
-            imageWidths( List.of( 660, 1024 ) ).imageSizes( " " );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
+                        "\"/><figcaption>Caption text</figcaption></figure>" )
+            .imageWidths( List.of( 660, 1024 ) )
+            .imageSizes( " " );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
-                          media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" " +
-                          "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/width-660/mycontent 660w," +
-                          "/site/myproject/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
-                      processedHtml );
+        assertEquals(
+            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
+                media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" " +
+                "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
+                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-660/mycontent 660w," + "/site/myproject/draft/context/path/_/image/" +
+                media.getId() +
+                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+            processedHtml );
     }
 
     @Test
@@ -424,25 +374,24 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Creates a content
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
-                       "\"/><figcaption>Caption text</figcaption></figure>" ).
-            imageWidths( List.of( 660, 1024 ) ).imageSizes( "(max-width: 960px) 660px" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
+                        "\"/><figcaption>Caption text</figcaption></figure>" )
+            .imageWidths( List.of( 660, 1024 ) )
+            .imageSizes( "(max-width: 960px) 660px" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
-                          media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" " +
-                          "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/width-660/mycontent 660w," +
-                          "/site/myproject/draft/context/path/_/image/" + media.getId() +
-                          ":8cf45815bba82c9711c673c9bb7304039a790026/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
-                      processedHtml );
+        assertEquals(
+            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
+                media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" " +
+                "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
+                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-660/mycontent 660w," + "/site/myproject/draft/context/path/_/image/" +
+                media.getId() +
+                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
+            processedHtml );
     }
 
     @Test
@@ -453,12 +402,10 @@ public class PortalUrlServiceImpl_processHtmlTest
         final Content content = Content.create( ContentFixtures.newContent() ).build();
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash" );
 
         // test without query params
-        ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "\">Text</a></p>\n" );
+        ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "\">Text</a></p>\n" );
 
         String processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "\">Text</a></p>\n", processedHtml );
@@ -467,27 +414,24 @@ public class PortalUrlServiceImpl_processHtmlTest
         String fragmentParam = "fragment=some-fragment";
 
         // test with query and fragment
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) +
-                       "\">Text</a></p>\n" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) +
+                        "\">Text</a></p>\n" );
 
         processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "?k1=v1&amp;k2=v2#some-fragment\">Text</a></p>\n",
                       processedHtml );
 
         // test only with query
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
 
         processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "?k1=v1&amp;k2=v2\">Text</a></p>\n", processedHtml );
 
         // test only with fragment
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "?" + fragmentParam + "\">Text</a></p>\n" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "?" + fragmentParam + "\">Text</a></p>\n" );
 
         processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "#some-fragment\">Text</a></p>\n", processedHtml );
@@ -497,10 +441,9 @@ public class PortalUrlServiceImpl_processHtmlTest
         fragmentParam = "fragment=h%C3%A5ndkl%C3%A6r"; // fragment=håndklær
 
         // test with query and fragment
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) +
-                       "\">Text</a></p>\n" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "?" + String.join( "&", List.of( queryParam, fragmentParam ) ) +
+                        "\">Text</a></p>\n" );
 
         processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "\">Text</a></p>\n", processedHtml );
@@ -510,9 +453,8 @@ public class PortalUrlServiceImpl_processHtmlTest
         queryParam = "query=k%3Dh%25C3%25A5ndkl%25C3%25A6r";
 
         // test with query and fragment
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<p><a href=\"content://" + content.getId() + "?" + queryParam + "\">Text</a></p>\n" );
 
         processedHtml = this.service.processHtml( params );
         assertEquals( "<p><a href=\"/site/myproject/draft" + content.getPath() + "?k=h%C3%A5ndkl%C3%A6r\">Text</a></p>\n", processedHtml );
@@ -526,12 +468,10 @@ public class PortalUrlServiceImpl_processHtmlTest
         final Content content = Content.create( ContentFixtures.newContent() ).build();
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        when( this.contentService.getBinaryKey( content.getId(), source.getBinaryReference() ) ).thenReturn( "binaryHash" );
 
-        ProcessHtmlParams params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Text</a>" ).
-            customHtmlProcessor( processorParams -> {
+        ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Text</a>" )
+            .customHtmlProcessor( processorParams -> {
                 processorParams.processDefault();
                 return processorParams.getDocument().getInnerHtml();
             } );
@@ -544,10 +484,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         final Map<String, String> linkProjection = new HashMap<>();
 
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Text</a>" ).
-            customHtmlProcessor( processorParams -> {
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Text</a>" )
+            .customHtmlProcessor( processorParams -> {
                 processorParams.processDefault( ( element, properties ) -> {
                     if ( "a".equals( element.getTagName() ) )
                     {
@@ -572,10 +511,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         // #######################
 
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Text</a>" ).
-            customHtmlProcessor( processorParams -> {
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Text</a>" )
+            .customHtmlProcessor( processorParams -> {
                 final HtmlDocument document = processorParams.getDocument();
                 document.select( "a" ).forEach( processorParams::processElementDefault );
                 return document.getInnerHtml();
@@ -587,14 +525,14 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         // #######################
 
-        params = new ProcessHtmlParams().
-            portalRequest( this.portalRequest ).
-            value( "<a href=\"content://" + content.getId() + "\">Text</a>\n[correct_macro/]" ).
-            customHtmlProcessor( processorParams -> {
+        params = new ProcessHtmlParams().portalRequest( this.portalRequest )
+            .value( "<a href=\"content://" + content.getId() + "\">Text</a>\n[correct_macro/]" )
+            .customHtmlProcessor( processorParams -> {
                 final HtmlDocument document = processorParams.getDocument();
-                document.select( "a" ).
-                    forEach( element -> processorParams.
-                        processElementDefault( element, ( el, properties ) -> element.setAttribute( "data-link-ref", "linkRef" ) ) );
+                document.select( "a" )
+                    .forEach( element -> processorParams.processElementDefault( element,
+                                                                                ( el, properties ) -> element.setAttribute( "data-link-ref",
+                                                                                                                            "linkRef" ) ) );
 
                 return document.getInnerHtml();
             } );
@@ -611,8 +549,6 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
 
         final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
         final StyleDescriptor styleDescriptor =
@@ -641,7 +577,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         final String processedLink = this.service.processHtml( params );
 
         final String expectedResult =
-            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/" +
+            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
 
         assertEquals( expectedResult, processedLink );
@@ -670,8 +606,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         }
 
         //Processes the input file
-        final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().
-            value( input );
+        final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().value( input );
         final String processedHtml = this.service.processHtml( processHtmlParams );
 
         //Checks that the processed text is equal to the expected output

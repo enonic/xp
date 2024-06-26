@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -21,6 +22,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -62,6 +64,8 @@ public class MediaHandlerTest
 
     private ImageService imageService;
 
+    private MediaInfoService mediaInfoService;
+
     private ByteSource mediaBytes;
 
     @BeforeEach
@@ -69,7 +73,7 @@ public class MediaHandlerTest
     {
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
-        MediaInfoService mediaInfoService = mock( MediaInfoService.class );
+        this.mediaInfoService = mock( MediaInfoService.class );
 
         this.handler = new MediaHandler( this.contentService, imageService, mediaInfoService );
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -84,7 +88,12 @@ public class MediaHandlerTest
 
     private void setupMedia()
     {
-        final Attachment attachment = Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).build();
+        final Attachment attachment = Attachment.create()
+            .name( "logo.png" )
+            .mimeType( "image/png" )
+            .label( "small" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
 
         final Media content = createMedia( "123456", "path/to/content", attachment );
 
@@ -98,65 +107,16 @@ public class MediaHandlerTest
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( this.mediaBytes );
     }
 
-    private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( "media", attachments[0].getName() );
-
-        return Media.create()
-            .id( ContentId.from( id ) )
-            .path( contentPath )
-            .createdTime( Instant.now() )
-            .type( ContentTypeName.imageMedia() )
-            .permissions( AccessControlList.create()
-                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-                              .build() )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifiedTime( Instant.now() )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .data( data )
-            .attachments( Attachments.from( attachments ) )
-            .build();
-    }
-
-    private void setupContent()
+    @Test
+    void testInvalidUrl()
         throws Exception
     {
-        final Attachment attachment = Attachment.create().name( "enonic-logo.png" ).mimeType( "image/png" ).label( "source" ).build();
+        this.request.setEndpointPath( null );
+        this.request.setRawPath( "/api//attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
-        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
-
-        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
-    }
-
-    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( "media", attachments[0].getName() );
-
-        return Media.create()
-            .id( ContentId.from( id ) )
-            .path( contentPath )
-            .createdTime( Instant.now() )
-            .type( ContentTypeName.imageMedia() )
-            .permissions( AccessControlList.create()
-                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-                              .build() )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifiedTime( Instant.now() )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .data( data )
-            .attachments( Attachments.from( attachments ) )
-            .build();
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
     }
 
     @Test
@@ -165,7 +125,8 @@ public class MediaHandlerTest
     {
         setupMedia();
 
-        this.request.setRawPath( "/api/media/attachment/myproject/123456/logo.png" );
+        this.request.setEndpointPath( null );
+        this.request.setRawPath( "/api/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -173,6 +134,7 @@ public class MediaHandlerTest
         assertEquals( MediaType.PNG, res.getContentType() );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
+        assertNotNull( res.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
     }
 
     @Test
@@ -181,8 +143,8 @@ public class MediaHandlerTest
     {
         setupMedia();
 
-        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
-        this.request.setRawPath( "/admin/tool/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/admin/tool/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -432,6 +394,153 @@ public class MediaHandlerTest
                     throw new RuntimeException( e );
                 }
             } );
+    }
+
+    @Test
+    void svgzImage()
+        throws Exception
+    {
+        setupContentSvgz();
+        when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
+
+        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/full/image-name.svgz" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
+        assertInstanceOf( ByteSource.class, res.getBody() );
+        assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
+        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
+                      res.getHeaders().get( "Content-Security-Policy" ) );
+    }
+
+    @Test
+    void gifImage()
+        throws Exception
+    {
+        setupContentGif();
+
+        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.gif" );
+        this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/full/image-name.svgz" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.GIF, res.getContentType() );
+        assertInstanceOf( ByteSource.class, res.getBody() );
+        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
+    private void setupContentSvgz()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create()
+            .name( "enonic-logo.svgz" )
+            .mimeType( "image/svg+xml" )
+            .label( "source" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
+
+        final Content content = createContent( "123456", "path/to/image-name.svgz", attachment );
+
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
+    private void setupContentGif()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create()
+            .name( "enonic-logo.svg" )
+            .mimeType( "image/gif" )
+            .label( "source" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
+
+        final Content content = createContent( "123456", "path/to/image-name.gif", attachment );
+
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
+    private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "media", attachments[0].getName() );
+
+        return Media.create()
+            .id( ContentId.from( id ) )
+            .path( contentPath )
+            .createdTime( Instant.now() )
+            .type( ContentTypeName.imageMedia() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                              .build() )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifiedTime( Instant.now() )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .data( data )
+            .attachments( Attachments.from( attachments ) )
+            .build();
+    }
+
+    private void setupContent()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create()
+            .name( "enonic-logo.png" )
+            .mimeType( "image/png" )
+            .label( "source" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
+
+        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
+
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
+    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "media", attachments[0].getName() );
+
+        return Media.create()
+            .id( ContentId.from( id ) )
+            .path( contentPath )
+            .createdTime( Instant.now() )
+            .type( ContentTypeName.imageMedia() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                              .build() )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifiedTime( Instant.now() )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .data( data )
+            .attachments( Attachments.from( attachments ) )
+            .build();
     }
 
 }
