@@ -74,10 +74,10 @@ final class AttachmentUrlBuilder
         }
 
         final Content content = resolveContent();
-        Attachment attachment = resolveAttachment( content );
-        String hash = resolveHash( content, attachment );
+        final Attachment attachment = resolveAttachment( content );
+        final String hash = resolveHash( content, attachment );
 
-        appendPart( url, content.getId().toString() + ":" + hash );
+        appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, attachment.getName() );
     }
 
@@ -138,6 +138,13 @@ final class AttachmentUrlBuilder
 
     private String resolveHash( final Content content, final Attachment attachment )
     {
-        return this.contentService.getBinaryKey( content.getId(), attachment.getBinaryReference() );
+        if ( legacyAttachmentServiceEnabled )
+        {
+            return this.contentService.getBinaryKey( content.getId(), attachment.getBinaryReference() );
+        }
+        else
+        {
+            return attachment.getSha512() != null ? attachment.getSha512().substring( 0, 32 ) : null;
+        }
     }
 }

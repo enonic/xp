@@ -62,11 +62,12 @@ public final class ContentFixtures
 
     public static Media newMedia()
     {
-        final Attachment attachment = Attachment.create().
-            name( "logo.png" ).
-            mimeType( "image/png" ).
-            label( "small" ).
-            build();
+        final Attachment attachment = Attachment.create()
+            .name( "logo.png" )
+            .mimeType( "image/png" )
+            .label( "small" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
         final PropertyTree data = newPropertyTree();
         data.addString( "media", attachment.getName() );
 

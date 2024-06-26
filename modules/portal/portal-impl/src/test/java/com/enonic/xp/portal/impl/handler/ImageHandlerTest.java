@@ -40,10 +40,10 @@ import com.enonic.xp.web.WebResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -72,6 +72,7 @@ public class ImageHandlerTest
         this.mediaInfoService = mock( MediaInfoService.class );
 
         this.handler = new ImageHandler( this.contentService, this.imageService, this.mediaInfoService );
+
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request.setMethod( HttpMethod.GET );
@@ -233,7 +234,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
     }
 
     @Test
@@ -251,7 +252,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
     }
 
     @Test
@@ -282,7 +283,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
     }
 
     @Test
@@ -323,7 +324,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.GIF, res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }
 
@@ -340,7 +341,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
         assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
                       res.getHeaders().get( "Content-Security-Policy" ) );
@@ -359,7 +360,7 @@ public class ImageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
-        assertTrue( res.getBody() instanceof ByteSource );
+        assertInstanceOf( ByteSource.class, res.getBody() );
         assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
         assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
                       res.getHeaders().get( "Content-Security-Policy" ) );

@@ -176,6 +176,15 @@ public class ImageUrlBuilderTest
     @Test
     public void testImageUrlForAsMedia()
     {
+        final Attachment attachment = Attachment.create()
+            .name( "attachmentName" )
+            .mimeType( "attachmentMimeType" )
+            .size( 1 )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
+
+        when( media.getMediaAttachment() ).thenReturn( attachment );
+
         portalRequest.setBaseUri( "site" );
         portalRequest.setRawPath( "/site/myproject/draft/mysite/path" );
 
@@ -193,13 +202,22 @@ public class ImageUrlBuilderTest
 
         final String url = urlBuilder.build();
         assertEquals(
-            "/site/myproject/draft/mysite/_/media/image/myproject:draft/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
+            "/site/myproject/draft/mysite/_/media/image/myproject:draft/testID:ec25d6e4126c7064f82aaab8b34693fc/block-310-175/testName",
             url );
     }
 
     @Test
     public void testImageUrlForAsMediaWithFallbackToProject()
     {
+        final Attachment attachment = Attachment.create()
+            .name( "attachmentName" )
+            .mimeType( "attachmentMimeType" )
+            .size( 1 )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+            .build();
+
+        when( media.getMediaAttachment() ).thenReturn( attachment );
+
         portalRequest.setBaseUri( "/site" );
         portalRequest.setRawPath( "/site/myproject/draft/path" );
 
@@ -210,8 +228,7 @@ public class ImageUrlBuilderTest
         urlBuilder.setLegacyImageServiceEnabled( false );
 
         final String url = urlBuilder.build();
-        assertEquals(
-            "/site/myproject/draft/_/media/image/myproject:draft/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
-            url );
+        assertEquals( "/site/myproject/draft/_/media/image/myproject:draft/testID:ec25d6e4126c7064f82aaab8b34693fc/block-310-175/testName",
+                      url );
     }
 }

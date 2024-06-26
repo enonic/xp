@@ -34,10 +34,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent() );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params = new ImageUrlParams().portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
@@ -48,11 +45,10 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent() );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            portalRequest( this.portalRequest ).
-            contextPathType( ContextPathType.VHOST.getValue() ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params = new ImageUrlParams().portalRequest( this.portalRequest )
+            .contextPathType( ContextPathType.VHOST.getValue() )
+            .scale( "max(300)" )
+            .validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/myproject/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
@@ -63,15 +59,11 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent() );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            format( "png" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().format( "png" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
-                      url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     @Test
@@ -79,14 +71,13 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent() );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            quality( 90 ).
-            background( "00ff00" ).
-            filter( "scale(10,10)" ).
-            format( "jpg" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params = new ImageUrlParams().quality( 90 )
+            .background( "00ff00" )
+            .filter( "scale(10,10)" )
+            .format( "jpg" )
+            .portalRequest( this.portalRequest )
+            .scale( "max(300)" )
+            .validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
@@ -98,11 +89,8 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         createContent();
 
-        final ImageUrlParams params = new ImageUrlParams().
-            id( "123456" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().id( "123456" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/myproject/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
@@ -113,11 +101,8 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         createContent();
 
-        final ImageUrlParams params = new ImageUrlParams().
-            path( "/a/b/mycontent" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().path( "/a/b/mycontent" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/myproject/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
@@ -128,11 +113,8 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         createContentNotFound();
 
-        final ImageUrlParams params = new ImageUrlParams().
-            id( "123456" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().id( "123456" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
         assertThat( url ).startsWith( "/site/myproject/draft/context/path/_/error/404?message=Not+Found." );
@@ -143,13 +125,10 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent( "non-media", false ) );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            format( "png" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().format( "png" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
-        assertThat( this.service.imageUrl( params  )).startsWith( "/site/myproject/draft/a/b/mycontent/_/error/404?message=Not+Found." );
+        assertThat( this.service.imageUrl( params ) ).startsWith( "/site/myproject/draft/a/b/mycontent/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -157,11 +136,8 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent() );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -169,8 +145,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-            url );
+            "http://localhost/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -178,11 +153,8 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.portalRequest.setContent( createContent( "name with spaces(and-others).png", true ) );
 
-        final ImageUrlParams params = new ImageUrlParams().
-            format( "png" ).
-            portalRequest( this.portalRequest ).
-            scale( "max(300)" ).
-            validate();
+        final ImageUrlParams params =
+            new ImageUrlParams().format( "png" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals(
@@ -207,8 +179,8 @@ public class PortalUrlServiceImpl_imageUrlTest
                 .scale( "max(300)" );
 
             String url = this.service.imageUrl( params );
-            assertEquals(
-                "http://media.enonic.com/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+            assertEquals( "http://media.enonic.com/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                          url );
 
             params = new ImageUrlParams().format( "png" )
                 .type( UrlTypeConstants.SERVER_RELATIVE )
@@ -236,8 +208,8 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         Context context = ContextBuilder.create().build();
         String url = context.callWith( () -> this.service.imageUrl( params ) );
-        assertEquals(
-            "http://localhost/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        assertEquals( "http://localhost/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                      url );
     }
 
     @Test
@@ -257,8 +229,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         Context context = ContextBuilder.create().build();
         String url = context.callWith( () -> this.service.imageUrl( params ) );
-        assertEquals(
-            "http://localhost/api/media/image/myproject/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        assertEquals( "http://localhost/api/media/image/myproject/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     @Test
@@ -282,7 +253,7 @@ public class PortalUrlServiceImpl_imageUrlTest
         // fallback to project, because a site is not provided
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost:8080/site/myproject/draft/_/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+            "http://localhost:8080/site/myproject/draft/_/media/image/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/max-300/mycontent.png",
             url );
     }
 
@@ -314,7 +285,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost:8080/site/myproject/draft/a/b/_/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+            "http://localhost:8080/site/myproject/draft/a/b/_/media/image/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/max-300/mycontent.png",
             url );
     }
 

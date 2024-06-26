@@ -192,7 +192,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         // fallback to project, because a site is not provided
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/site/myproject/draft/_/media/attachment/myproject:draft/123456:binaryHash1/a1.jpg?download", url );
+        assertEquals( "http://localhost:8080/site/myproject/draft/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?download", url );
     }
 
     @Test
@@ -227,7 +227,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( contentService.findNearestSiteByPath( ContentPath.from( "/a/b/mycontent" ) ) ).thenReturn( site );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/site/myproject/draft/a/b/_/media/attachment/myproject:draft/123456:binaryHash1/a1.jpg?a=3&b=4&download", url );
+        assertEquals( "http://localhost:8080/site/myproject/draft/a/b/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?a=3&b=4&download", url );
     }
 
     @Test
@@ -257,8 +257,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private Content createContent()
     {
-        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
-        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpeg" ).build();
+        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).sha512( "ec25d6e4126c7064f82aaab8b34693f1" ).build();
+        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpeg" ).sha512( "ec25d6e4126c7064f82aaab8b34693f2" ).build();
         final Attachments attachments = Attachments.from( a1, a2 );
 
         final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();

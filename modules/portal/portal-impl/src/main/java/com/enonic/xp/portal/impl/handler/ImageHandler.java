@@ -26,7 +26,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 @Deprecated(since = "8.0", forRemoval = true)
-@Component(service = ImageHandler.class)
+@Component(service = ImageHandler.class, configurationPid = "com.enonic.xp.portal")
 public class ImageHandler
 {
     private static final Pattern PATTERN = Pattern.compile( "^([^/:]+)(?::([^/]+))?/([^/]+)/([^/]+)" );
