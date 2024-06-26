@@ -8,6 +8,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
 
@@ -83,7 +84,7 @@ final class AttachmentUrlBuilder
     @Override
     protected String getBaseUrl()
     {
-        return UrlContextHelper.getMediaServiceBaseUrl();
+        return VirtualHostContextHelper.getMediaServiceBaseUrl();
     }
 
     @Override
