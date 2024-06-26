@@ -16,6 +16,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
@@ -23,6 +25,8 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.VirtualHostContextHelper;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -72,6 +76,7 @@ public class MediaHandlerTest
 
         this.request = new PortalRequest();
         this.request.setMethod( HttpMethod.GET );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
@@ -223,6 +228,8 @@ public class MediaHandlerTest
     {
         setupMedia();
 
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setContentPath( ContentPath.from( "/mysite" ) );
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/site/myproject/master/mysite/_/media/attachment/myproject/123456/logo.png" );
@@ -241,6 +248,30 @@ public class MediaHandlerTest
         assertEquals( MediaType.PNG, res.getContentType() );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    public void testMediaEndpointDoesNotAllowedIfSiteContextDoesNotMatch()
+    {
+        setupMedia();
+
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject1" ) );
+        this.request.setBranch( ContentConstants.BRANCH_MASTER );
+        this.request.setContentPath( ContentPath.from( "/mysite" ) );
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
+        this.request.setRawPath( "/site/myproject1/master/mysite/_/media/attachment/myproject/123456/logo.png" );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.getByPath( any() ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+
+        // mediaService.scope does not specified
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
@@ -327,4 +358,64 @@ public class MediaHandlerTest
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method DELETE not allowed", ex.getMessage() );
     }
+
+    @Test
+    void testMediaScopeWithWrongContext()
+    {
+        ContextBuilder.copyOf( ContextAccessor.current() )
+            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "project1, project1:draft, project2" )
+            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
+            .build()
+            .runWith( () -> {
+                this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+                this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+
+                WebException ex =
+                    assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+
+                this.request.setEndpointPath( "/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
+                this.request.setRawPath( "/site/project/branch/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
+
+                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+            } );
+    }
+
+    @Test
+    void testMediaScope()
+        throws Exception
+    {
+        setupContent();
+
+        ContextBuilder.copyOf( ContextAccessor.current() )
+            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "myproject, myproject:draft" )
+            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
+            .build()
+            .runWith( () -> {
+                try
+                {
+                    this.request.setEndpointPath( "/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+                    WebResponse webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/tool/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+                    this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/tool/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+                    WebException ex =
+                        assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                    assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+                }
+                catch ( Exception e )
+                {
+                    throw new RuntimeException( e );
+                }
+            } );
+    }
+
 }

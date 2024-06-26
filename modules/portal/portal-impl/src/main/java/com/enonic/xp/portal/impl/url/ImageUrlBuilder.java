@@ -13,6 +13,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
 
@@ -94,7 +95,7 @@ final class ImageUrlBuilder
     @Override
     protected String getBaseUrl()
     {
-        return UrlContextHelper.getMediaServiceBaseUrl();
+        return VirtualHostContextHelper.getMediaServiceBaseUrl();
     }
 
     @Override

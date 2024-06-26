@@ -99,7 +99,7 @@ public class SlashApiHandler
             throw new IllegalStateException( "Invalid API path: " + path );
         }
 
-        final ApplicationKey applicationKey = resolveApplicationKey( matcher.group( "appKey" ) );
+        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
 
         if ( RESERVED_APP_KEYS.contains( applicationKey.getName() ) )
         {
@@ -196,7 +196,7 @@ public class SlashApiHandler
             return false;
         }
 
-        final ApplicationKey baseAppKey = resolveApplicationKey( webappMatcher.group( "baseAppKey" ) );
+        final ApplicationKey baseAppKey = HandlerHelper.resolveApplicationKey( webappMatcher.group( "baseAppKey" ) );
         return baseAppKey.equals( apiDescriptor.key().getApplicationKey() );
     }
 
@@ -346,17 +346,5 @@ public class SlashApiHandler
         final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
         webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
         return webResponse;
-    }
-
-    private ApplicationKey resolveApplicationKey( final String appKey )
-    {
-        try
-        {
-            return ApplicationKey.from( appKey );
-        }
-        catch ( Exception e )
-        {
-            throw WebException.notFound( String.format( "Application key [%s] not found", appKey ) );
-        }
     }
 }

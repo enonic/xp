@@ -10,12 +10,16 @@ import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 import com.google.common.primitives.Longs;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -117,6 +121,42 @@ public final class HandlerHelper
             trace.put( "status", webResponse.getStatus().value() );
             trace.put( "type", webResponse.getContentType().toString() );
             trace.put( "size", getSize( webResponse ) );
+        }
+    }
+
+    public static RepositoryId resolveRepositoryId( final String value )
+    {
+        try
+        {
+            return RepositoryId.from( value );
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Repository [%s] not found", value ) );
+        }
+    }
+
+    public static Branch resolveBranch( final String value )
+    {
+        try
+        {
+            return Branch.from( value );
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Branch [%s] not found", value ) );
+        }
+    }
+
+    public static ApplicationKey resolveApplicationKey( final String appKey )
+    {
+        try
+        {
+            return ApplicationKey.from( appKey );
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Application key [%s] not found", appKey ) );
         }
     }
 

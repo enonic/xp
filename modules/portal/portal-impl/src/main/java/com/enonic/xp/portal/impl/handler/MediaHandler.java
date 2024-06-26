@@ -27,6 +27,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.project.ProjectConstants;
@@ -46,11 +47,13 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class MediaHandler
 {
     private static final Pattern PATTERN = Pattern.compile(
-        "^/(_|api)/media/(?<mediaType>image|attachment)/(?<project>[^/:]+)(?::(?<branch>draft))?/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
+        "^/(_|api)/media/(?<mediaType>image|attachment)/(?<context>(?<project>[^/:]+)(?::(?<branch>draft))?)/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
 
     private static final Pattern ATTACHMENT_REST_PATH_PATTERN = Pattern.compile( "^(?<name>[^/?]+)(\\?(?<params>.*))?$" );
 
     private static final Pattern IMAGE_REST_PATH_PATTERN = Pattern.compile( "^(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
+
+    private static final Pattern MEDIA_SCOPE_DELIMITER_PATTERN = Pattern.compile( "," );
 
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
@@ -117,25 +120,56 @@ public class MediaHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
+        final RepositoryId repositoryId =
+            HandlerHelper.resolveRepositoryId( ProjectConstants.PROJECT_REPO_ID_PREFIX + matcher.group( "project" ) );
+        final Branch branch = HandlerHelper.resolveBranch( Objects.requireNonNullElse( matcher.group( "branch" ), "master" ) );
+        final String type = matcher.group( "mediaType" );
+        final ContentId id = ContentId.from( matcher.group( "id" ) );
+        final String fingerprint = matcher.group( "fingerprint" );
+        final String restPath = matcher.group( "restPath" );
+
         if ( !defaultContextPathVerifier.verify( webRequest ) )
         {
             throw WebException.notFound( "Not a valid media url pattern" );
         }
 
-        String project = matcher.group( "project" );
-        String branch = Objects.requireNonNullElse( matcher.group( "branch" ), "master" );
-        String type = matcher.group( "mediaType" );
-        ContentId id = ContentId.from( matcher.group( "id" ) );
-        String fingerprint = matcher.group( "fingerprint" );
-        String restPath = matcher.group( "restPath" );
+        verifyMediaScope( matcher.group( "context" ), repositoryId, branch, webRequest );
 
-        RepositoryId repositoryId = RepositoryId.from( ProjectConstants.PROJECT_REPO_ID_PREFIX + project );
-
-        PortalRequest portalRequest = createPortalRequest( webRequest, repositoryId, Branch.from( branch ) );
+        final PortalRequest portalRequest = createPortalRequest( webRequest, repositoryId, branch );
 
         return executeInContext( repositoryId, branch, () -> type.equals( "attachment" )
             ? doHandleAttachment( portalRequest, id, fingerprint, restPath )
             : doHandleImage( portalRequest, id, fingerprint, restPath ) );
+    }
+
+    private void verifyMediaScope( final String projectContext, final RepositoryId repositoryId, final Branch branch,
+                                   final WebRequest webRequest )
+    {
+        if ( webRequest.getEndpointPath() == null )
+        {
+            return;
+        }
+
+        final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
+        if ( mediaServiceScope != null )
+        {
+            if ( MEDIA_SCOPE_DELIMITER_PATTERN.splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
+            {
+                throw WebException.notFound( "Not a valid media url pattern" );
+            }
+        }
+        else
+        {
+            if ( webRequest instanceof PortalRequest )
+            {
+                final PortalRequest portalRequest = (PortalRequest) webRequest;
+                if ( portalRequest.isSiteBase() &&
+                    !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
+                {
+                    throw WebException.notFound( "Not a valid media url pattern" );
+                }
+            }
+        }
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final RepositoryId repositoryId, final Branch branch )
@@ -155,7 +189,7 @@ public class MediaHandler
         return portalRequest;
     }
 
-    private PortalResponse executeInContext( final RepositoryId repositoryId, final String branch, final Callable<PortalResponse> callable )
+    private PortalResponse executeInContext( final RepositoryId repositoryId, final Branch branch, final Callable<PortalResponse> callable )
     {
         return ContextBuilder.copyOf( ContextAccessor.current() )
             .repositoryId( repositoryId )

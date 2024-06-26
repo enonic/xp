@@ -8,15 +8,20 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -102,5 +107,44 @@ public class HandlerHelperTest
 
         webResponse = WebResponse.create().body( "body" ).build();
         assertEquals( 4, HandlerHelper.getSize( webResponse ) );
+    }
+
+    @Test
+    public void testInvalidProjectName()
+    {
+        final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveRepositoryId( "#!@$" ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
+
+    @Test
+    public void testProjectName()
+    {
+        assertEquals( RepositoryId.from( "name" ), HandlerHelper.resolveRepositoryId( "name" ) );
+    }
+
+    @Test
+    public void testInvalidBranchName()
+    {
+        final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveBranch( "#!@$" ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
+
+    @Test
+    public void testBranchName()
+    {
+        assertEquals( Branch.from( "name" ), HandlerHelper.resolveBranch( "name" ) );
+    }
+
+    @Test
+    public void testInvalidApplicationKey()
+    {
+        final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveApplicationKey( "<>" ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
+
+    @Test
+    public void testApplicationName()
+    {
+        assertEquals( ApplicationKey.from( "name" ), HandlerHelper.resolveApplicationKey( "name" ) );
     }
 }
