@@ -13,7 +13,7 @@ public abstract class Initializer
 
     private static final long INITIALIZATION_CHECK_PERIOD = 1000;
 
-    private static final long INITIALIZATION_CHECK_MAX_COUNT = 300;
+    private static final long INITIALIZATION_CHECK_MAX_COUNT = 900;
 
     private final long initializationCheckPeriod;
 
