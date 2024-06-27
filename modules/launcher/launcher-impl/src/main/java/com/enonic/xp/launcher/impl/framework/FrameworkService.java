@@ -14,6 +14,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.startlevel.BundleStartLevel;
@@ -31,13 +32,15 @@ public class FrameworkService
 {
     private static final Logger LOG = LoggerFactory.getLogger( FrameworkService.class );
 
-    public static final int WAIT_FOR_STOP_TIMEOUT_MS = 10_000;
+    private static final int WAIT_FOR_STOP_TIMEOUT_MS = 600_000;
 
     private final ConfigProperties config;
 
     private final List<BundleActivator> activators = new CopyOnWriteArrayList<>();
 
     private final Map<String, Object> services = new ConcurrentHashMap<>();
+
+    private final long stopGracePeriod;
 
     private volatile Felix felix;
 
@@ -46,6 +49,7 @@ public class FrameworkService
     public FrameworkService( final ConfigProperties config )
     {
         this.config = config;
+        this.stopGracePeriod = Long.getLong( "xp.stop.gracePeriod", WAIT_FOR_STOP_TIMEOUT_MS );
     }
 
     public FrameworkService activator( final BundleActivator activator )
@@ -151,7 +155,15 @@ public class FrameworkService
     public void restart()
     {
         LOG.info( "Restarting server..." );
-        stop();
+        try
+        {
+            doStop();
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Restarting failed. Try restarting manually.", e );
+            return;
+        }
         start();
     }
 
@@ -181,7 +193,12 @@ public class FrameworkService
     {
         stopActivators();
         this.felix.stop();
-        this.felix.waitForStop( WAIT_FOR_STOP_TIMEOUT_MS );
+
+        final FrameworkEvent frameworkEvent = this.felix.waitForStop( stopGracePeriod );
+        if ( frameworkEvent.getType() != FrameworkEvent.STOPPED )
+        {
+            throw new IllegalStateException( "Failed to stop framework: " + frameworkEvent.getType(), frameworkEvent.getThrowable() );
+        }
     }
 
     private void startActivators()
