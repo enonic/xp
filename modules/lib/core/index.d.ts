@@ -1,23 +1,27 @@
-export type ComponentDescriptor = `${string}:${string}`;
+// This also makes sure XpLayoutMap, etc are available.
+import type {
+    ComponentDescriptor,
+    NestedRecord,
+} from './globalModifying';
 
-export interface NestedRecord {
-	[name: PropertyKey]: NestedRecord | unknown
-}
-
-declare global {
-    interface XpLayoutMap {
-        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPageMap {
-        [pageDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPartMap {
-        [partDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpXData {
-        [key: string]: Record<string, Record<string, unknown>>;
-    }
-}
+export type {
+    ComponentDescriptor,
+    NestedRecord,
+} from './globalModifying';
+export type {
+    App,
+    DoubleUnderscore,
+    Log,
+    NewBean,
+    Resolve,
+    ScriptValue,
+    XpRequire,
+} from './globals';
+export type {
+    ByteSource,
+    Resource,
+    ResourceKey,
+} from './resource';
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -214,38 +218,6 @@ export interface Content<
     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     variantOf?: string;
     fragment?: Type extends 'portal:fragment' ? _Component : never;
-}
-
-// Compliant with npm module ts-brand
-type Brand<
-    Base,
-    Branding
-> = Base & {
-  '__type__': Branding
-};
-
-export type ByteSource = Brand<object, 'ByteSource'>;
-
-//
-// RESOURCES
-//
-export interface Resource {
-    getSize(): number;
-
-    getTimestamp(): number;
-
-    getStream(): ByteSource;
-
-    exists(): boolean;
-}
-
-export interface ResourceKey {
-    getApplicationKey(): string;
-    getPath(): string;
-    getUri(): string;
-    isRoot(): boolean;
-    getName(): string;
-    getExtension(): string;
 }
 
 //
