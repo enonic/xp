@@ -367,11 +367,17 @@ public class MediaHandlerTest
             .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
             .build()
             .runWith( () -> {
-                this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
-                this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+                this.request.setEndpointPath( null );
+                this.request.setRawPath( "/api/media/image/project/123456/scale-100-100/image-name.jpg" );
 
                 WebException ex =
                     assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+
+                this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+                this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+
+                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
                 this.request.setEndpointPath( "/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
@@ -395,9 +401,19 @@ public class MediaHandlerTest
             .runWith( () -> {
                 try
                 {
+                    this.request.setEndpointPath( null );
+                    this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+                    WebResponse webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+                    this.request.setEndpointPath( null );
+                    this.request.setRawPath( "/api/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
                     this.request.setEndpointPath( "/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-                    WebResponse webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
                     this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
