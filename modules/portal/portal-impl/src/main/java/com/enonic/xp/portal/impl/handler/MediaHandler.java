@@ -145,11 +145,6 @@ public class MediaHandler
     private void verifyMediaScope( final String projectContext, final RepositoryId repositoryId, final Branch branch,
                                    final WebRequest webRequest )
     {
-        if ( webRequest.getEndpointPath() == null )
-        {
-            return;
-        }
-
         final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
         if ( mediaServiceScope != null )
         {
