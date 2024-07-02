@@ -23,11 +23,7 @@ final class DefaultContextPathVerifier
     {
         final String rawPath = webRequest.getRawPath();
 
-        if ( rawPath.startsWith( "/admin/" ) )
-        {
-            return rawPath.startsWith( "/admin/tool/_/" );
-        }
-        else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
+        if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {
             final PortalRequest portalRequest =
                 webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
@@ -35,6 +31,10 @@ final class DefaultContextPathVerifier
             final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
             return "/".equals( contentResolverResult.getSiteRelativePath() );
+        }
+        else if ( rawPath.startsWith( "/admin/" ) )
+        {
+            return rawPath.startsWith( "/admin/tool/_/" );
         }
         else if ( rawPath.startsWith( "/webapp/" ) )
         {
