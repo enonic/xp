@@ -83,7 +83,7 @@ public class MediaHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
-        this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
+        this.request.setContentPath( ContentPath.from( "/" ) );
     }
 
     private void setupMedia()
@@ -431,6 +431,23 @@ public class MediaHandlerTest
         assertEquals( MediaType.GIF, res.getContentType() );
         assertInstanceOf( ByteSource.class, res.getBody() );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
+    @Test
+    void testAttachmentUnderAdminSite()
+        throws Exception
+    {
+        setupMedia();
+
+        this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/admin/site/preview/myproject/master/mysite/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+        assertSame( this.mediaBytes, res.getBody() );
     }
 
     private void setupContentSvgz()
