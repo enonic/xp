@@ -3,26 +3,32 @@ package com.enonic.xp.portal.impl.url;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +43,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+                      url );
     }
 
     @Test
@@ -63,7 +70,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             new ImageUrlParams().format( "png" ).portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        assertEquals( "/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                      url );
     }
 
     @Test
@@ -145,7 +153,8 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
+            "http://localhost/site/myproject/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
+            url );
     }
 
     @Test
@@ -163,37 +172,100 @@ public class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
-    public void createImageUrlForSlashApiWithVhostContextConfig()
+    public void createImageUrlForSlashApiWithContentPathInContext()
     {
-        Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( "mediaService.baseUrl", "http://media.enonic.com" );
+        final PropertyTree siteConfig = new PropertyTree();
+        siteConfig.setString( "baseUrl", "http://media.enonic.com" );
+
+        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
+        when( siteConfigs.get( eq( ApplicationKey.from( "com.enonic.xp.site" ) ) ) ).thenReturn(
+            SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( siteConfig ).build() );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a/b" ) );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        final Content content = createContent();
+        when( contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+        when( contentService.findNearestSiteByPath( eq( content.getPath() ) ) ).thenReturn( site );
 
         this.portalRequest.setBaseUri( "" );
         this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
-        this.portalRequest.setContent( createContent() );
 
-        context.runWith( () -> {
-            ImageUrlParams params = new ImageUrlParams().format( "png" )
-                .type( UrlTypeConstants.ABSOLUTE )
-                .portalRequest( this.portalRequest )
-                .scale( "max(300)" );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .attribute( "contentKey", content.getPath().toString() )
+            .build()
+            .runWith( () -> {
+                ImageUrlParams params = new ImageUrlParams().format( "png" )
+                    .path( content.getPath().toString() )
+                    .type( UrlTypeConstants.ABSOLUTE )
+                    .portalRequest( this.portalRequest )
+                    .scale( "max(300)" );
 
-            String url = this.service.imageUrl( params );
-            assertEquals( "http://media.enonic.com/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
-                          url );
+                String url = this.service.imageUrl( params );
+                assertEquals(
+                    "http://media.enonic.com/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                    url );
 
-            params = new ImageUrlParams().format( "png" )
-                .type( UrlTypeConstants.SERVER_RELATIVE )
-                .portalRequest( this.portalRequest )
-                .scale( "max(300)" );
+                params = new ImageUrlParams().format( "png" )
+                    .path( content.getPath().toString() )
+                    .type( UrlTypeConstants.SERVER_RELATIVE )
+                    .portalRequest( this.portalRequest )
+                    .scale( "max(300)" );
 
-            url = this.service.imageUrl( params );
-            assertEquals( "/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
-        } );
+                url = this.service.imageUrl( params );
+                assertEquals( "/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                              url );
+            } );
     }
 
     @Test
-    public void createUrlForSlashApi()
+    void testCreateUrlWithContentPathInContext()
+    {
+        // Case when contentPath is set in the context and nearest site is not found.
+        // Trying to resolve the base URL from the siteConfig of a project.
+
+        final PropertyTree siteConfig = new PropertyTree();
+        siteConfig.setString( "baseUrl", "http://media.enonic.com" );
+
+        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
+        when( siteConfigs.get( eq( ApplicationKey.from( "com.enonic.xp.site" ) ) ) ).thenReturn(
+            SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( siteConfig ).build() );
+
+        final Project project = mock( Project.class );
+        when( project.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        final Content content = createContent();
+        when( contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/path/to/content" ) ) ) ).thenReturn( null );
+        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
+
+        this.portalRequest.setBaseUri( "" );
+        this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
+
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .attribute( "contentKey", "/path/to/content" )
+            .build()
+            .runWith( () -> {
+                ImageUrlParams params = new ImageUrlParams().format( "png" )
+                    .id( content.getId().toString() )
+                    .type( UrlTypeConstants.ABSOLUTE )
+                    .portalRequest( this.portalRequest )
+                    .scale( "max(300)" );
+
+                String url = this.service.imageUrl( params );
+                assertEquals(
+                    "http://media.enonic.com/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                    url );
+            } );
+    }
+
+    @Test
+    public void createUrlForSlashApiWithoutBaseUrl()
     {
         this.portalRequest.setBaseUri( "" );
         this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
@@ -201,15 +273,24 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
-        when( req.getServerPort() ).thenReturn( 80 );
+        when( req.getServerPort() ).thenReturn( 8080 );
 
-        ImageUrlParams params =
-            new ImageUrlParams().format( "png" ).type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).scale( "max(300)" );
+        ImageUrlParams params = new ImageUrlParams().id( "123456" )
+            .format( "png" )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .portalRequest( this.portalRequest )
+            .scale( "max(300)" );
 
-        Context context = ContextBuilder.create().build();
-        String url = context.callWith( () -> this.service.imageUrl( params ) );
-        assertEquals( "http://localhost/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
-                      url );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .runWith( () -> {
+                String url = this.service.imageUrl( params );
+                assertEquals(
+                    "http://localhost:8080/api/media/image/myproject:draft/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                    url );
+            } );
     }
 
     @Test
@@ -224,12 +305,20 @@ public class PortalUrlServiceImpl_imageUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        ImageUrlParams params =
-            new ImageUrlParams().format( "png" ).type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).scale( "max(300)" );
+        ImageUrlParams params = new ImageUrlParams().id( "123456" )
+            .format( "png" )
+            .type( UrlTypeConstants.ABSOLUTE )
+            .portalRequest( this.portalRequest )
+            .scale( "max(300)" );
 
-        Context context = ContextBuilder.create().build();
-        String url = context.callWith( () -> this.service.imageUrl( params ) );
-        assertEquals( "http://localhost/api/media/image/myproject/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
+        String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> this.service.imageUrl( params ) );
+
+        assertEquals( "http://localhost/api/media/image/myproject/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
+                      url );
     }
 
     @Test

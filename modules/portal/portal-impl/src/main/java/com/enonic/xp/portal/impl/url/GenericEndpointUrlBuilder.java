@@ -9,6 +9,9 @@ import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.normalizePath;
+
 abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     extends PortalUrlBuilder<T>
 {

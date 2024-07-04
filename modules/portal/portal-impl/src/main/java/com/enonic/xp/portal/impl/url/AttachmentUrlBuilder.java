@@ -8,9 +8,10 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 
 final class AttachmentUrlBuilder
     extends PortalUrlBuilder<AttachmentUrlParams>
@@ -27,6 +28,8 @@ final class AttachmentUrlBuilder
         if ( isSlashAPI )
         {
             url.setLength( 0 );
+            appendPart( url, "api" );
+            appendPart( url, "media" );
             appendPart( url, "attachment" );
             appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
             if ( this.params.isDownload() )
@@ -79,18 +82,6 @@ final class AttachmentUrlBuilder
 
         appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, attachment.getName() );
-    }
-
-    @Override
-    protected String getBaseUrl()
-    {
-        return VirtualHostContextHelper.getMediaServiceBaseUrl();
-    }
-
-    @Override
-    protected String getTargetUriPrefix()
-    {
-        return "/api/media";
     }
 
     public void setLegacyAttachmentServiceEnabled( final boolean legacyAttachmentServiceEnabled )

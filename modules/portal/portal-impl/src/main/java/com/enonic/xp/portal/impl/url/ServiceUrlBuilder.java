@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+
 final class ServiceUrlBuilder
     extends GenericEndpointUrlBuilder<ServiceUrlParams>
 {

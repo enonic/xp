@@ -4,6 +4,8 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.GenerateUrlParams;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+
 final class GenerateUrlBuilder
     extends PortalUrlBuilder<GenerateUrlParams>
 {

@@ -14,10 +14,10 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.repository.RepositoryUtils;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class ImageUrlBuilder
@@ -42,6 +42,8 @@ final class ImageUrlBuilder
             params.putAll( this.params.getParams() );
 
             url.setLength( 0 );
+            appendPart( url, "api" );
+            appendPart( url, "media" );
             appendPart( url, "image" );
             appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
         }
@@ -91,18 +93,6 @@ final class ImageUrlBuilder
         addParamIfNeeded( params, "quality", this.params.getQuality() );
         addParamIfNeeded( params, "background", this.params.getBackground() );
         addParamIfNeeded( params, "filter", this.params.getFilter() );
-    }
-
-    @Override
-    protected String getBaseUrl()
-    {
-        return VirtualHostContextHelper.getMediaServiceBaseUrl();
-    }
-
-    @Override
-    protected String getTargetUriPrefix()
-    {
-        return "/api/media";
     }
 
     public void setLegacyImageServiceEnabled( final boolean legacyImageServiceEnabled )

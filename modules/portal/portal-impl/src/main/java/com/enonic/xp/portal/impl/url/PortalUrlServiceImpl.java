@@ -25,6 +25,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -44,6 +45,8 @@ public final class PortalUrlServiceImpl
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final ProjectService projectService;
+
     private volatile boolean legacyImageServiceEnabled;
 
     private volatile boolean legacyAttachmentServiceEnabled;
@@ -55,13 +58,15 @@ public final class PortalUrlServiceImpl
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
-                                 @Reference final RedirectChecksumService redirectChecksumService )
+                                 @Reference final RedirectChecksumService redirectChecksumService,
+                                 @Reference final ProjectService projectService )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
         this.macroService = macroService;
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
+        this.projectService = projectService;
     }
 
     @Activate
@@ -103,10 +108,16 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        final ImageUrlBuilder builder = new ImageUrlBuilder();
-        builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
-
-        return build( builder, params );
+        if ( params.getPortalRequest() != null )
+        {
+            final ImageUrlBuilder builder = new ImageUrlBuilder();
+            builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
+            return build( builder, params );
+        }
+        else
+        {
+            return new ContextImageUrlBuilder( contentService, projectService, params ).build();
+        }
     }
 
     @Override
@@ -144,6 +155,7 @@ public final class PortalUrlServiceImpl
         builder.setParams( params );
         builder.contentService = this.contentService;
         builder.resourceService = this.resourceService;
+        builder.projectService = this.projectService;
         return runWithAdminRole( builder::build );
     }
 
@@ -152,6 +164,6 @@ public final class PortalUrlServiceImpl
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authenticationInfo =
             AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
-        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
+        return ContextBuilder.copyOf( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 }

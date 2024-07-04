@@ -2,22 +2,28 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -124,14 +130,30 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 8080 );
 
-        String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/api/media/attachment/myproject:draft/123456:binaryHash2/a2.jpg?download", url );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .runWith( () -> {
+                String url = this.service.attachmentUrl( params );
+                assertEquals( "http://localhost:8080/api/media/attachment/myproject:draft/123456:binaryHash2/a2.jpg?download", url );
+            } );
     }
 
     @Test
     public void createAttachmentUrlForSlashApiWithVhostContextConfig()
     {
-        ContextAccessor.current().getLocalScope().setAttribute( "mediaService.baseUrl", "http://media.enonic.com" );
+        final PropertyTree siteConfig = new PropertyTree();
+        siteConfig.setString( "baseUrl", "http://media.enonic.com" );
+
+        final SiteConfigs siteConfigs = mock( SiteConfigs.class );
+        when( siteConfigs.get( eq( ApplicationKey.from( "com.enonic.xp.site" ) ) ) ).thenReturn(
+            SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( siteConfig ).build() );
+
+        final Site site = mock( Site.class );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/path/to/content" ) ) ) ).thenReturn( site );
 
         this.portalRequest.setBaseUri( "" );
         this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
@@ -143,8 +165,15 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .portalRequest( this.portalRequest )
             .download( true );
 
-        String url = this.service.attachmentUrl( params );
-        assertEquals( "http://media.enonic.com/attachment/myproject:draft/123456:binaryHash2/a2.jpg?download", url );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .attribute( "contentKey", "/path/to/content" )
+            .build()
+            .runWith( () -> {
+                String url = this.service.attachmentUrl( params );
+                assertEquals( "http://media.enonic.com/api/media/attachment/myproject:draft/123456:binaryHash2/a2.jpg?download", url );
+            } );
     }
 
     @Test
@@ -165,8 +194,14 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .portalRequest( this.portalRequest )
             .download( true );
 
-        String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/api/media/attachment/myproject/123456:binaryHash2/a2.jpg?download", url );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .runWith( () -> {
+                String url = this.service.attachmentUrl( params );
+                assertEquals( "http://localhost:8080/api/media/attachment/myproject/123456:binaryHash2/a2.jpg?download", url );
+            } );
     }
 
     @Test
@@ -192,7 +227,9 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         // fallback to project, because a site is not provided
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/site/myproject/draft/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?download", url );
+        assertEquals(
+            "http://localhost:8080/site/myproject/draft/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?download",
+            url );
     }
 
     @Test
@@ -223,11 +260,13 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getByPath(ContentPath.from( "/a/b" ) ) ).thenReturn( site );
+        when( contentService.getByPath( ContentPath.from( "/a/b" ) ) ).thenReturn( site );
         when( contentService.findNearestSiteByPath( ContentPath.from( "/a/b/mycontent" ) ) ).thenReturn( site );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "http://localhost:8080/site/myproject/draft/a/b/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?a=3&b=4&download", url );
+        assertEquals(
+            "http://localhost:8080/site/myproject/draft/a/b/_/media/attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693f1/a1.jpg?a=3&b=4&download",
+            url );
     }
 
     @Test
@@ -257,8 +296,18 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private Content createContent()
     {
-        final Attachment a1 = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).sha512( "ec25d6e4126c7064f82aaab8b34693f1" ).build();
-        final Attachment a2 = Attachment.create().label( "source" ).name( "a2.jpg" ).mimeType( "image/jpeg" ).sha512( "ec25d6e4126c7064f82aaab8b34693f2" ).build();
+        final Attachment a1 = Attachment.create()
+            .label( "thumb" )
+            .name( "a1.jpg" )
+            .mimeType( "image/jpeg" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693f1" )
+            .build();
+        final Attachment a2 = Attachment.create()
+            .label( "source" )
+            .name( "a2.jpg" )
+            .mimeType( "image/jpeg" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693f2" )
+            .build();
         final Attachments attachments = Attachments.from( a1, a2 );
 
         final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();
