@@ -1,20 +1,22 @@
-package com.enonic.xp.admin.impl.tool;
+package com.enonic.xp.xml.parser;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.parser.XmlModelParser;
 
-public class XmlAdminToolDescriptorParser
-    extends XmlModelParser<XmlAdminToolDescriptorParser>
+@PublicApi
+public final class XmlWebappDescriptorParser
+    extends XmlModelParser<XmlWebappDescriptorParser>
 {
+    private static final String ROOT_TAG_NAME = "webapp";
+
     private static final String APIS_DESCRIPTOR_TAG_NAME = "apis";
 
     private static final String API_DESCRIPTOR_TAG_NAME = "api";
@@ -23,11 +25,11 @@ public class XmlAdminToolDescriptorParser
 
     private static final int API_KEY_INDEX = 1;
 
-    private AdminToolDescriptor.Builder builder;
+    private WebappDescriptor.Builder descriptorBuilder;
 
-    public XmlAdminToolDescriptorParser builder( final AdminToolDescriptor.Builder builder )
+    public XmlWebappDescriptorParser descriptorBuilder( final WebappDescriptor.Builder descriptorBuilder )
     {
-        this.builder = builder;
+        this.descriptorBuilder = descriptorBuilder;
         return this;
     }
 
@@ -35,26 +37,10 @@ public class XmlAdminToolDescriptorParser
     protected void doParse( final DomElement root )
         throws Exception
     {
-        assertTagName( root, "tool" );
-        this.builder.displayName( root.getChildValueTrimmed( "display-name" ) );
-        this.builder.displayNameI18nKey(
-            root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
+        assertTagName( root, ROOT_TAG_NAME );
 
-        this.builder.description( root.getChildValue( "description" ) );
-        this.builder.descriptionI18nKey(
-            root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
-
-        final DomElement allowedPrincipals = root.getChild( "allow" );
-        if ( allowedPrincipals != null )
-        {
-            final List<DomElement> allowedPrincipalList = allowedPrincipals.getChildren( "principal" );
-            for ( DomElement allowedPrincipal : allowedPrincipalList )
-            {
-                this.builder.addAllowedPrincipals( PrincipalKey.from( allowedPrincipal.getValue().trim() ) );
-            }
-        }
-
-        this.builder.apiMounts( ApiMountDescriptors.from( parseApiMounts( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
+        this.descriptorBuilder.applicationKey( this.currentApplication );
+        this.descriptorBuilder.apiMounts( ApiMountDescriptors.from( parseApiMounts( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
     }
 
     private List<ApiMountDescriptor> parseApiMounts( final DomElement apisElement )

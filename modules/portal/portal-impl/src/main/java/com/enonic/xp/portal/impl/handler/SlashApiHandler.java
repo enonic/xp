@@ -10,10 +10,11 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.api.ApiContextPath;
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
-import com.enonic.xp.api.ApiMount;
+import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
@@ -29,9 +30,14 @@ import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -44,6 +50,8 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
+import com.enonic.xp.webapp.WebappDescriptor;
+import com.enonic.xp.webapp.WebappService;
 
 @Component(service = SlashApiHandler.class)
 public class SlashApiHandler
@@ -52,12 +60,9 @@ public class SlashApiHandler
 
     private static final Pattern API_PATTERN = Pattern.compile( "^/(_|api)/(?<appKey>[^/]+)(?:/(?<apiKey>[^/]+))?(?<restPath>/.*)?$" );
 
-    private static final Pattern MOUNT_SITE_ENDPOINT_PATTERN =
-        Pattern.compile( "^/(admin/)?site/(?<project>[^/]+)/(?<branch>[^/]+)(?<contentPath>/.*?)/_/" );
-
     private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>.*?)/_/" );
 
-    private static final Pattern WEBAPP_DEFAULT_CONTEXT_PATH_PATTERN = Pattern.compile( "^/webapp/([^/]+)/_/.*" );
+    private static final Pattern MOUNT_ADMINTOOL_API_PATTERN = Pattern.compile( "^/admin/tool/(?<appKey>[^/]+)/(?<tool>[^/]+)/_/" );
 
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
@@ -75,11 +80,19 @@ public class SlashApiHandler
 
     private final ExceptionRenderer exceptionRenderer;
 
+    private final SiteService siteService;
+
+    private final WebappService webappService;
+
+    private final AdminToolDescriptorService adminToolDescriptorService;
+
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
                             @Reference final ProjectService projectService, @Reference final ExceptionMapper exceptionMapper,
-                            @Reference final ExceptionRenderer exceptionRenderer )
+                            @Reference final ExceptionRenderer exceptionRenderer, @Reference final SiteService siteService,
+                            @Reference final WebappService webappService,
+                            @Reference final AdminToolDescriptorService adminToolDescriptorService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -87,6 +100,9 @@ public class SlashApiHandler
         this.projectService = projectService;
         this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
+        this.siteService = siteService;
+        this.webappService = webappService;
+        this.adminToolDescriptorService = adminToolDescriptorService;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -96,7 +112,7 @@ public class SlashApiHandler
         Matcher matcher = API_PATTERN.matcher( path );
         if ( !matcher.matches() )
         {
-            throw new IllegalStateException( "Invalid API path: " + path );
+            throw new IllegalArgumentException( "Invalid API path: " + path );
         }
 
         final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
@@ -126,7 +142,7 @@ public class SlashApiHandler
 
         if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
         {
-            throw WebException.notFound( String.format( "API [%s] is not mounted", apiDescriptor.key() ) );
+            throw WebException.notFound( String.format( "API [%s] is not mounted", apiDescriptor.getKey() ) );
         }
 
         final Trace trace = Tracer.newTrace( "slashAPI" );
@@ -147,11 +163,7 @@ public class SlashApiHandler
 
         if ( portalRequest.getEndpointPath() == null && rawPath.startsWith( "/api/" ) )
         {
-            return apiDescriptor.hasMount( ApiMount.API );
-        }
-        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/tool/" ) )
-        {
-            return verifyPathMountedOnAdmin( apiDescriptor, portalRequest );
+            return true;
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {
@@ -161,84 +173,109 @@ public class SlashApiHandler
         {
             return verifyPathMountedOnWebapps( apiDescriptor, portalRequest );
         }
+        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/tool/" ) )
+        {
+            return verifyPathMountedOnAdminTool( apiDescriptor, portalRequest );
+        }
         else
         {
             return false;
         }
     }
 
-    private boolean verifyPathMountedOnAdmin( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private boolean verifyPathMountedOnAdminTool( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
-        return apiDescriptor.hasMount( ApiMount.ADMIN ) &&
-            ( apiDescriptor.getContextPath() == ApiContextPath.ANY || portalRequest.getRawPath().startsWith( "/admin/tool/_/" ) );
-    }
+        final Matcher matcher = MOUNT_ADMINTOOL_API_PATTERN.matcher( portalRequest.getRawPath() );
+        if ( !matcher.find() )
+        {
+            return false;
+        }
 
-    private boolean verifyContextPathMountOnWebapp( final ApiContextPath contextPath, final PortalRequest portalRequest )
-    {
-        return contextPath == ApiContextPath.ANY || WEBAPP_DEFAULT_CONTEXT_PATH_PATTERN.matcher( portalRequest.getRawPath() ).matches();
+        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
+        final String tool = matcher.group( "tool" );
+
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, tool );
+        final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( descriptorKey );
+        if ( adminToolDescriptor == null )
+        {
+            return false;
+        }
+
+        return adminToolDescriptor.getApiMounts()
+            .stream()
+            .anyMatch( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
+                descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) );
     }
 
     private boolean verifyPathMountedOnWebapps( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
         final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
-        if ( !webappMatcher.find() || !verifyContextPathMountOnWebapp( apiDescriptor.getContextPath(), portalRequest ) )
-        {
-            return false;
-        }
-
-        if ( apiDescriptor.hasMount( ApiMount.ALL_WEBAPPS ) )
-        {
-            return true;
-        }
-
-        if ( !apiDescriptor.hasMount( ApiMount.WEBAPP ) )
+        if ( !webappMatcher.find() )
         {
             return false;
         }
 
         final ApplicationKey baseAppKey = HandlerHelper.resolveApplicationKey( webappMatcher.group( "baseAppKey" ) );
-        return baseAppKey.equals( apiDescriptor.key().getApplicationKey() );
+
+        final WebappDescriptor webappDescriptor = webappService.getDescriptor( baseAppKey );
+        if ( webappDescriptor == null )
+        {
+            return false;
+        }
+
+        return webappDescriptor.getApiMounts()
+            .stream()
+            .anyMatch( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
+                descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) );
     }
 
     private boolean verifyRequestMountedOnSites( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
-        final Matcher siteMatcher = MOUNT_SITE_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
-        if ( !siteMatcher.find() )
-        {
-            return false;
-        }
-
         final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
         final Site site = contentResolverResult.getNearestSite();
 
-        if ( apiDescriptor.hasMount( ApiMount.ALL_SITES ) )
-        {
-            return site != null;
-        }
+        final SiteConfigs siteConfigs = resolveSiteConfigs( site, portalRequest.getRepositoryId() );
 
-        if ( !apiDescriptor.hasMount( ApiMount.SITE ) )
+        if ( siteConfigs.isEmpty() )
         {
             return false;
         }
 
-        boolean isAppInstalledOnSite = site != null && site.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) != null;
-
-        if ( !isAppInstalledOnSite )
+        for ( SiteConfig siteConfig : siteConfigs )
         {
-            final Project project = projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) );
-            if ( project == null || project.getSiteConfigs().get( apiDescriptor.key().getApplicationKey() ) == null )
+            final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+
+            if ( siteDescriptor != null )
             {
-                return false;
+                final ApiMountDescriptor apiMountDescriptor = siteDescriptor.getApiDescriptors()
+                    .stream()
+                    .filter( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
+                        descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) )
+                    .findAny()
+                    .orElse( null );
+
+                if ( apiMountDescriptor != null )
+                {
+                    return "/".equals( contentResolverResult.getSiteRelativePath() );
+                }
             }
         }
 
-        if ( apiDescriptor.getContextPath() == ApiContextPath.DEFAULT )
-        {
-            return "/".equals( contentResolverResult.getSiteRelativePath() );
-        }
+        return false;
+    }
 
-        return true;
+    private SiteConfigs resolveSiteConfigs( final Site site, final RepositoryId repositoryId )
+    {
+        if ( site != null )
+        {
+            return site.getSiteConfigs();
+        }
+        else
+        {
+            final Project project = projectService.get( ProjectName.from( repositoryId ) );
+            return project == null ? SiteConfigs.empty() : project.getSiteConfigs();
+        }
     }
 
     private static void addTranceInfo( final Trace trace, final ApplicationKey applicationKey, final String apiKey, final String restPath,
@@ -311,7 +348,7 @@ public class SlashApiHandler
         if ( webSocketContext != null && webSocketConfig != null )
         {
             final WebSocketEndpoint webSocketEndpoint =
-                newWebSocketEndpoint( webSocketConfig, script, apiDescriptor.key().getApplicationKey() );
+                newWebSocketEndpoint( webSocketConfig, script, apiDescriptor.getKey().getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
 
