@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.api.ApiMountDescriptor;
+import com.enonic.xp.api.ApiMountDescriptors;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
@@ -59,6 +62,14 @@ public final class XmlSiteParser
 
     private static final String MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE = "invert";
 
+    private static final String APIS_DESCRIPTOR_TAG_NAME = "apis";
+
+    private static final String API_DESCRIPTOR_TAG_NAME = "api";
+
+    private static final int APPLICATION_KEY_INDEX = 0;
+
+    private static final int API_KEY_INDEX = 1;
+
     private SiteDescriptor.Builder siteDescriptorBuilder;
 
     public XmlSiteParser siteDescriptorBuilder( final SiteDescriptor.Builder siteDescriptorBuilder )
@@ -80,6 +91,8 @@ public final class XmlSiteParser
             ResponseProcessorDescriptors.from( parseProcessorDescriptors( root.getChild( PROCESSOR_DESCRIPTORS_PARENT_TAG_NAME ) ) ) );
         this.siteDescriptorBuilder.mappingDescriptors(
             ControllerMappingDescriptors.from( parseMappingDescriptors( root.getChild( MAPPINGS_DESCRIPTOR_TAG_NAME ) ) ) );
+        this.siteDescriptorBuilder.apiDescriptors(
+            ApiMountDescriptors.from( parseApiDescriptors( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
     }
 
     private List<XDataMapping> parseXDatas( final DomElement root )
@@ -91,9 +104,10 @@ public final class XmlSiteParser
     {
         if ( processorDescriptorsParent != null )
         {
-            return processorDescriptorsParent.getChildren( PROCESSOR_DESCRIPTOR_TAG_NAME ).stream().
-                map( this::toProcessorDescriptor ).
-                collect( Collectors.toList() );
+            return processorDescriptorsParent.getChildren( PROCESSOR_DESCRIPTOR_TAG_NAME )
+                .stream()
+                .map( this::toProcessorDescriptor )
+                .collect( Collectors.toList() );
         }
         return Collections.emptyList();
     }
@@ -102,9 +116,22 @@ public final class XmlSiteParser
     {
         if ( mappingDescriptorsParent != null )
         {
-            return mappingDescriptorsParent.getChildren( MAPPING_DESCRIPTOR_TAG_NAME ).stream().
-                map( this::toMappingDescriptor ).
-                collect( Collectors.toList() );
+            return mappingDescriptorsParent.getChildren( MAPPING_DESCRIPTOR_TAG_NAME )
+                .stream()
+                .map( this::toMappingDescriptor )
+                .collect( Collectors.toList() );
+        }
+        return Collections.emptyList();
+    }
+
+    private List<ApiMountDescriptor> parseApiDescriptors( final DomElement apisElement )
+    {
+        if ( apisElement != null )
+        {
+            return apisElement.getChildren( API_DESCRIPTOR_TAG_NAME )
+                .stream()
+                .map( this::toApiMountDescriptor )
+                .collect( Collectors.toList() );
         }
         return Collections.emptyList();
     }
@@ -197,5 +224,46 @@ public final class XmlSiteParser
         }
 
         return builder.build();
+    }
+
+    private ApiMountDescriptor toApiMountDescriptor( final DomElement apiElement )
+    {
+        final ApiMountDescriptor.Builder builder = ApiMountDescriptor.create();
+
+        final String apiMount = apiElement.getValue().trim();
+
+        if ( !apiMount.contains( ":" ) )
+        {
+            builder.applicationKey( this.currentApplication );
+            if ( !apiMount.isBlank() )
+            {
+                builder.apiKey( apiMount );
+            }
+        }
+        else
+        {
+            final String[] parts = apiMount.split( ":", 2 );
+
+            builder.applicationKey( resolveApplicationKey( parts[APPLICATION_KEY_INDEX].trim() ) );
+            final String apiKey = parts[API_KEY_INDEX].trim();
+            if ( !apiKey.isBlank() )
+            {
+                builder.apiKey( apiKey );
+            }
+        }
+
+        return builder.build();
+    }
+
+    private ApplicationKey resolveApplicationKey( final String applicationKey )
+    {
+        try
+        {
+            return ApplicationKey.from( applicationKey );
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalArgumentException( String.format( "Invalid applicationKey '%s'", applicationKey ), e );
+        }
     }
 }

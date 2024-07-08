@@ -1,8 +1,11 @@
 package com.enonic.xp.admin.tool;
 
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
@@ -25,6 +28,8 @@ public class AdminToolDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
+    private final ApiMountDescriptors apiMounts;
+
     private AdminToolDescriptor( final Builder builder )
     {
         key = builder.key;
@@ -33,6 +38,7 @@ public class AdminToolDescriptor
         description = builder.description;
         descriptionI18nKey = builder.descriptionI18nKey;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
+        apiMounts = Objects.requireNonNullElse( builder.apiMounts, ApiMountDescriptors.empty() );
     }
 
     public DescriptorKey getKey()
@@ -77,13 +83,17 @@ public class AdminToolDescriptor
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().
-            anyMatch( allowedPrincipals::contains );
+        return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
     public boolean isAppLauncherApplication()
     {
         return displayName != null;
+    }
+
+    public ApiMountDescriptors getApiMounts()
+    {
+        return apiMounts;
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
@@ -113,6 +123,8 @@ public class AdminToolDescriptor
         private String description;
 
         private String descriptionI18nKey;
+
+        private ApiMountDescriptors apiMounts;
 
         private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
@@ -153,6 +165,12 @@ public class AdminToolDescriptor
         public Builder addAllowedPrincipals( final PrincipalKey allowedPrincipal )
         {
             this.allowedPrincipals.add( allowedPrincipal );
+            return this;
+        }
+
+        public Builder apiMounts( final ApiMountDescriptors apiMountDescriptors )
+        {
+            this.apiMounts = apiMountDescriptors;
             return this;
         }
 

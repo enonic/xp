@@ -121,6 +121,7 @@ public final class AdminToolDescriptorServiceImpl
         try
         {
             final XmlAdminToolDescriptorParser parser = new XmlAdminToolDescriptorParser();
+            parser.currentApplication( resource.getKey().getApplicationKey() );
             parser.builder( builder );
             parser.source( resource.readString() );
             parser.parse();
