@@ -14,6 +14,8 @@ import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+
 final class AssetUrlBuilder
     extends GenericEndpointUrlBuilder<AssetUrlParams>
 {

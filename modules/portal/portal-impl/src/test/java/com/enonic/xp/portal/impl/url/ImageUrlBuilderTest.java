@@ -7,14 +7,17 @@ import com.google.common.collect.HashMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.RoleKeys;
@@ -40,6 +43,8 @@ public class ImageUrlBuilderTest
 
     private ContentService contentService;
 
+    private ProjectService projectService;
+
     @BeforeEach
     public void init()
     {
@@ -61,8 +66,10 @@ public class ImageUrlBuilderTest
         when( contentService.getById( any() ) ).thenReturn( media );
         when( contentService.getBinaryKey( contentId, attachment.getBinaryReference() ) ).thenReturn( "binaryHash" );
 
+        projectService = mock( ProjectService.class );
+
         portalRequest = new PortalRequest();
-        portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
         portalRequest.setBaseUri( "/site" );
@@ -76,6 +83,7 @@ public class ImageUrlBuilderTest
         urlBuilder.setParams( imageUrlParams );
 
         urlBuilder.contentService = contentService;
+        urlBuilder.projectService = projectService;
     }
 
     @Test
@@ -169,7 +177,12 @@ public class ImageUrlBuilderTest
 
         imageUrlParams.scale( "block(310,175)" );
 
-        final String url = urlBuilder.build();
+        final String url = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .callWith( () -> urlBuilder.build() );
+
         assertEquals( "/api/media/image/myproject:draft/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName", url );
     }
 
@@ -200,7 +213,12 @@ public class ImageUrlBuilderTest
 
         urlBuilder.setLegacyImageServiceEnabled( false );
 
-        final String url = urlBuilder.build();
+        final String url = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .callWith( () -> urlBuilder.build() );
+
         assertEquals(
             "/site/myproject/draft/mysite/_/media/image/myproject:draft/testID:ec25d6e4126c7064f82aaab8b34693fc/block-310-175/testName",
             url );
