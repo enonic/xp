@@ -1,5 +1,6 @@
 dependencies {
     implementation project( ':portal:portal-api' )
+    implementation project( ':admin:admin-api' )
     implementation project( ':core:core-internal' )
     implementation libs.attoparser
 

@@ -20,6 +20,7 @@
   <xs:element name="task" type="taskDescriptor"/>
   <xs:element name="styles" type="styleDescriptor"/>
   <xs:element name="api" type="apiDescriptor"/>
+  <xs:element name="webapp" type="webappDescriptor"/>
 
   <xs:complexType name="site">
     <xs:sequence>
@@ -27,6 +28,7 @@
       <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="processors" type="processors"/>
       <xs:element minOccurs="0" name="mappings" type="mappings"/>
+      <xs:element minOccurs="0" name="apis" type="siteApiMount"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -298,6 +300,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="apis" minOccurs="0" type="apiMount"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -421,13 +424,6 @@
     <xs:attribute name="name" type="xs:string"/>
   </xs:complexType>
 
-  <xs:simpleType name="apiDescriptorContextPathType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="default"/>
-      <xs:enumeration value="any"/>
-    </xs:restriction>
-  </xs:simpleType>
-
   <xs:complexType name="apiDescriptor">
     <xs:sequence>
       <xs:element minOccurs="0" name="allow">
@@ -437,25 +433,35 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="mounts">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="mount">
-              <xs:simpleType>
-                <xs:restriction base="xs:string">
-                  <xs:enumeration value="api"/>
-                  <xs:enumeration value="all_sites"/>
-                  <xs:enumeration value="site"/>
-                  <xs:enumeration value="all_webapps"/>
-                  <xs:enumeration value="webapp"/>
-                  <xs:enumeration value="admin"/>
-                </xs:restriction>
-              </xs:simpleType>
-            </xs:element>
-          </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="siteApiMount">
+    <xs:sequence>
+      <xs:element name="api" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="contextPath">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="any"/>
+                <xs:enumeration value="default"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
         </xs:complexType>
       </xs:element>
-      <xs:element minOccurs="0" name="context-path" type="apiDescriptorContextPathType" default="default"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="apiMount">
+    <xs:sequence>
+      <xs:element name="api" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="webappDescriptor">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="apis" type="apiMount"/>
     </xs:sequence>
   </xs:complexType>
 

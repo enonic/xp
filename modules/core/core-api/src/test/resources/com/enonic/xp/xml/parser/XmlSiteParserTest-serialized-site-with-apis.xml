@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="urn:enonic:xp:model:1.0">
+  <apis>
+    <api contextPath="any">myapi1</api>
+    <api contextPath="default">myapi2</api>
+    <api>myapi3</api>
+    <api/>
+  </apis>
+</site>

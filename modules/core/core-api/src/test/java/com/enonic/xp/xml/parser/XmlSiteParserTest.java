@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.api.ApiContextPath;
+import com.enonic.xp.site.api.SiteApiMountDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.support.XmlTestHelper;
@@ -53,6 +55,7 @@ public class XmlSiteParserTest
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getApiDescriptors().getSize() );
     }
 
     @Test
@@ -73,6 +76,7 @@ public class XmlSiteParserTest
         assertEquals( 0, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 0, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getApiDescriptors().getSize() );
     }
 
     @Test
@@ -93,6 +97,7 @@ public class XmlSiteParserTest
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 3, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getApiDescriptors().getSize() );
 
         final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
         final ControllerMappingDescriptor mapping2 = siteDescriptor.getMappingDescriptors().get( 1 );
@@ -205,6 +210,7 @@ public class XmlSiteParserTest
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getApiDescriptors().getSize() );
     }
 
     @Test
@@ -225,6 +231,7 @@ public class XmlSiteParserTest
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 0, siteDescriptor.getApiDescriptors().getSize() );
     }
 
     @Test
@@ -245,6 +252,60 @@ public class XmlSiteParserTest
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+    }
+
+    @Test
+    public void testSiteXmlWithApis()
+    {
+        final String xml = loadTestXml( "serialized-site-with-apis.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 0, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 0, siteDescriptor.getXDataMappings().getSize() );
+        assertEquals( 0, siteDescriptor.getResponseProcessors().getSize() );
+        assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
+        assertEquals( 4, siteDescriptor.getApiDescriptors().getSize() );
+
+        SiteApiMountDescriptor apiDescriptor1 = siteDescriptor.getApiDescriptors().get( 0 );
+        assertEquals( "myapi1", apiDescriptor1.getApiKey() );
+        assertEquals( ApiContextPath.ANY, apiDescriptor1.getContextPath() );
+
+        SiteApiMountDescriptor apiDescriptor2 = siteDescriptor.getApiDescriptors().get( 1 );
+        assertEquals( "myapi2", apiDescriptor2.getApiKey() );
+        assertEquals( ApiContextPath.DEFAULT, apiDescriptor2.getContextPath() );
+
+        SiteApiMountDescriptor apiDescriptor3 = siteDescriptor.getApiDescriptors().get( 2 );
+        assertEquals( "myapi3", apiDescriptor3.getApiKey() );
+        assertEquals( ApiContextPath.DEFAULT, apiDescriptor3.getContextPath() );
+
+        SiteApiMountDescriptor apiDescriptor4 = siteDescriptor.getApiDescriptors().get( 3 );
+        assertEquals( "api", apiDescriptor4.getApiKey() );
+        assertEquals( ApiContextPath.DEFAULT, apiDescriptor4.getContextPath() );
+    }
+
+    @Test
+    public void testSiteXmlWithApisInvalid()
+    {
+        final String xml = loadTestXml( "serialized-site-with-apis-invalid.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        final XmlException exception = assertThrows( XmlException.class, () -> this.parser.source( xml )
+            .currentApplication( applicationKey )
+            .siteDescriptorBuilder( siteDescriptorBuilder )
+            .parse() );
+        assertEquals( "Site API key cannot reference to external APIs.", exception.getMessage() );
     }
 
     private String loadTestFile( final String fileName, Charset charset )
