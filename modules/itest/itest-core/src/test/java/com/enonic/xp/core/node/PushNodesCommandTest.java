@@ -1,7 +1,11 @@
 package com.enonic.xp.core.node;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
@@ -14,8 +18,11 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
+import com.enonic.xp.repo.impl.node.PushNodesCommand;
+import com.enonic.xp.repo.impl.node.ResolveSyncWorkCommand;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -436,6 +443,43 @@ public class PushNodesCommandTest
         final Node prodNode = ctxOther().callWith( () -> getNodeById( child.id() ) );
 
         assertNotNull( prodNode );
+    }
+
+    @Test
+    void push_more_than_1024_nodes_at_once()
+    {
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
+
+        createNodes( rootNode, 10, 3, 1 );
+
+        refresh();
+
+        final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create()
+            .nodeId( rootNode.id() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
+        final Stopwatch started = Stopwatch.createStarted();
+
+        final PushNodesResult result = PushNodesCommand.create()
+            .ids( syncWork.getNodeComparisons().getNodeIds() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
+        started.stop();
+
+        final long elapsed = started.elapsed( TimeUnit.SECONDS );
+        final int number = result.getSuccessfulEntries().size();
+
+        System.out.println( "Pushed : " + number + " in " + started + ", " + ( elapsed == 0 ? "n/a" : ( number / elapsed ) + "/s" ) );
     }
 
     private Node getNodeByPathInOther( final NodePath nodePath )
