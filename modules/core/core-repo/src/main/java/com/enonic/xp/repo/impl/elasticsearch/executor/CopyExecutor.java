@@ -50,8 +50,7 @@ public class CopyExecutor
         final QueryBuilder idFilterBuilder =
             new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( idFilter ) );
 
-        return ElasticsearchQuery.create()
-            .query( QueryBuilders.boolQuery().must( idFilterBuilder ) )
+        return ElasticsearchQuery.create().query( QueryBuilders.boolQuery().filter( idFilterBuilder ) )
             .addIndexName( copyRequest.getStorageSource().getStorageName().getName() )
             .addIndexType( copyRequest.getStorageSource().getStorageType().getName() )
             .size( copyRequest.getNodeIds().size() )
