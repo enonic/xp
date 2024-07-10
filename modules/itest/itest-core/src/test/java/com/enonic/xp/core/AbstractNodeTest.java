@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -523,20 +524,27 @@ public abstract class AbstractNodeTest
 
     protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level )
     {
+        this.createNodes( parent, numberOfNodes, maxLevels, level, ( child ) -> {
+        } );
+    }
+
+    protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level,
+                                      final Consumer<Node> childConsumer )
+    {
+
         for ( int i = 0; i < numberOfNodes; i++ )
         {
             final PropertyTree data = new PropertyTree();
             data.addReference( "myRef", new Reference( parent.id() ) );
 
-            final Node node = createNodeSkipVerification( CreateNodeParams.create().
-                name( "nodeName_" + level + "-" + i ).
-                parent( parent.path() ).
-                data( data ).
-                build() );
+            final Node node = createNodeSkipVerification(
+                CreateNodeParams.create().name( "nodeName_" + level + "-" + i ).parent( parent.path() ).data( data ).build() );
+
+            childConsumer.accept( node );
 
             if ( level < maxLevels )
             {
-                createNodes( node, numberOfNodes, maxLevels, level + 1 );
+                createNodes( node, numberOfNodes, maxLevels, level + 1, childConsumer );
             }
         }
     }

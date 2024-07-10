@@ -1,13 +1,16 @@
 package com.enonic.xp.repo.impl.version.search;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ExcludeEntries
+import com.google.common.collect.ImmutableSet;
+
+public final class ExcludeEntries
     implements Iterable<ExcludeEntry>
 {
     private final Set<ExcludeEntry> excludeEntries;
+
+    private static final ExcludeEntries EMPTY = create().build();
 
     @Override
     public Iterator<ExcludeEntry> iterator()
@@ -15,9 +18,9 @@ public class ExcludeEntries
         return excludeEntries.iterator();
     }
 
-    public static ExcludeEntries empty()
+    private ExcludeEntries( final Builder builder )
     {
-        return new ExcludeEntries( new HashSet<>() );
+        excludeEntries = builder.excludeEntries.build();
     }
 
     public boolean isEmpty()
@@ -25,14 +28,14 @@ public class ExcludeEntries
         return this.excludeEntries.isEmpty();
     }
 
-    private ExcludeEntries( final Set<ExcludeEntry> excludeEntries )
+    public static ExcludeEntries empty()
     {
-        this.excludeEntries = excludeEntries;
+        return EMPTY;
     }
 
-    private ExcludeEntries( final Builder builder )
+    public Set<ExcludeEntry> getSet()
     {
-        excludeEntries = builder.excludeEntries;
+        return excludeEntries;
     }
 
     public static Builder create()
@@ -43,7 +46,7 @@ public class ExcludeEntries
 
     public static final class Builder
     {
-        private final Set<ExcludeEntry> excludeEntries = new HashSet<>();
+        private final ImmutableSet.Builder<ExcludeEntry> excludeEntries = ImmutableSet.builder();
 
         private Builder()
         {

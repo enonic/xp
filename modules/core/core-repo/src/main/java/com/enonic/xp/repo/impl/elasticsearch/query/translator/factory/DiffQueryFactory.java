@@ -1,11 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.HasChildQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.google.common.base.Preconditions;
@@ -62,38 +65,25 @@ public class DiffQueryFactory
 
     private BoolQueryBuilder onlyInQuery( final Branch source, final Branch target )
     {
-        return new BoolQueryBuilder().
-            must( isInBranch( source ) ).
-            mustNot( isInBranch( target ) );
+        return new BoolQueryBuilder().must( isInBranch( source ) ).mustNot( isInBranch( target ) );
     }
 
-    private FilteredQueryBuilder wrapInPathQueryIfNecessary( final BoolQueryBuilder sourceTargetCompares )
+    private QueryBuilder wrapInPathQueryIfNecessary( final BoolQueryBuilder sourceTargetCompares )
     {
 
-        final BoolQueryBuilder pathFilter = new BoolQueryBuilder();
-
-        boolean addedPathFilter = false;
+        final BoolQueryBuilder result = QueryBuilders.boolQuery().filter( sourceTargetCompares );
 
         if ( this.nodePath != null && !this.nodePath.isRoot() )
         {
-            addedPathFilter = true;
-            pathFilter.
-                must( hasPath( this.nodePath, true ) );
+            result.filter( hasPaths( ExcludeEntries.create().add( new ExcludeEntry( this.nodePath, true ) ).build() ) );
         }
 
         if ( !this.excludes.isEmpty() )
         {
-            addedPathFilter = true;
-            for ( final ExcludeEntry exclude : excludes )
-            {
-                pathFilter.
-                    mustNot( hasPath( exclude.getNodePath(), exclude.isRecursive() ) );
-            }
+            result.mustNot( hasPaths( excludes ) );
         }
 
-        return addedPathFilter
-            ? new FilteredQueryBuilder( pathFilter, sourceTargetCompares )
-            : new FilteredQueryBuilder( QueryBuilders.matchAllQuery(), sourceTargetCompares );
+        return result;
     }
 
     private BoolQueryBuilder joinOnlyInQueries( final BoolQueryBuilder inSourceOnly, final BoolQueryBuilder inTargetOnly )
@@ -101,17 +91,28 @@ public class DiffQueryFactory
         return new BoolQueryBuilder().should( inSourceOnly ).should( inTargetOnly );
     }
 
-    private QueryBuilder hasPath( final NodePath nodePath, final boolean recursive )
+    private QueryBuilder hasPaths( final ExcludeEntries excludeEntries )
     {
-        final String queryPath = nodePath.toString().toLowerCase();
+        final BoolQueryBuilder pathQuery = new BoolQueryBuilder().should( new TermsQueryBuilder( BranchIndexPath.PATH.getPath(),
+                                                                                                 excludeEntries.getSet()
+                                                                                                     .stream()
+                                                                                                     .map(
+                                                                                                         excludeEntry -> excludeEntry.nodePath()
+                                                                                                             .toString()
+                                                                                                             .toLowerCase() )
+                                                                                                     .collect( Collectors.toList() ) ) );
 
-        final BoolQueryBuilder pathQuery = new BoolQueryBuilder().
-            should( new TermQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath ) );
+        final Set<NodePath> recursivePaths =
+            excludeEntries.getSet().stream().filter( ExcludeEntry::recursive ).map( ExcludeEntry::nodePath ).collect( Collectors.toSet() );
 
-        if ( recursive )
+        if ( !recursivePaths.isEmpty() )
         {
-            pathQuery.should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
-                                                        queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
+            final String queryPath = nodePath.toString().toLowerCase();
+
+            recursivePaths.forEach( nodePath -> {
+                pathQuery.should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
+                                                            queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
+            } );
         }
 
         return new HasChildQueryBuilder( childStorageType.getName(), pathQuery );
