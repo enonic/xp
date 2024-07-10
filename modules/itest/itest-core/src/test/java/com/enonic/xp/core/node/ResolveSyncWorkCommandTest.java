@@ -1174,7 +1174,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    void push_more_than_1024_nodes_at_once()
+    void resolve_with_more_than_1024_excluded_nodes_at_once()
     {
         final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 
@@ -1193,6 +1193,8 @@ public class ResolveSyncWorkCommandTest
             .searchService( this.searchService )
             .build()
             .execute();
+
+        assertEquals( 1, syncWork.getSize() );
     }
 
     /*

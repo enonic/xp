@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.version.search;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AbstractQuery;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 
 public class NodeVersionDiffQuery
     extends AbstractQuery
@@ -13,7 +14,7 @@ public class NodeVersionDiffQuery
 
     private final NodePath nodePath;
 
-    private final ExcludeEntries excludes;
+    private final NodePaths excludes;
 
     private NodeVersionDiffQuery( Builder builder )
     {
@@ -21,7 +22,7 @@ public class NodeVersionDiffQuery
         this.source = builder.source;
         this.target = builder.target;
         this.nodePath = builder.nodePath;
-        this.excludes = builder.excludes;
+        this.excludes = builder.excludes.build();
     }
 
     public Branch getSource()
@@ -39,7 +40,7 @@ public class NodeVersionDiffQuery
         return nodePath;
     }
 
-    public ExcludeEntries getExcludes()
+    public NodePaths getExcludes()
     {
         return excludes;
     }
@@ -58,7 +59,7 @@ public class NodeVersionDiffQuery
 
         private NodePath nodePath;
 
-        private ExcludeEntries excludes = ExcludeEntries.empty();
+        private final NodePaths.Builder excludes = NodePaths.create();
 
 
         public Builder()
@@ -84,9 +85,9 @@ public class NodeVersionDiffQuery
             return this;
         }
 
-        public Builder excludes( final ExcludeEntries excludes )
+        public Builder excludes( final NodePaths excludes )
         {
-            this.excludes = excludes;
+            this.excludes.addNodePaths( excludes.getSet() );
             return this;
         }
 
