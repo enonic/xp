@@ -1173,6 +1173,28 @@ public class ResolveSyncWorkCommandTest
             child( "node1_1", "node1_2", "node1_3", "node1_4" ) );
     }
 
+    @Test
+    void push_more_than_1024_nodes_at_once()
+    {
+        final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
+
+        final Set<NodeId> childrenIds = new HashSet<>();
+
+        createNodes( rootNode, 10, 3, 1, ( child ) -> childrenIds.add( child.id() ) );
+
+        refresh();
+
+        final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create()
+            .nodeId( rootNode.id() )
+            .target( WS_OTHER )
+            .excludedNodeIds( NodeIds.from( childrenIds ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+    }
+
     /*
      * s1
      ** a1
