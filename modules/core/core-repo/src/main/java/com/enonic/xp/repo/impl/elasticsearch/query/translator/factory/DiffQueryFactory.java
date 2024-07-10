@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -15,10 +14,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.repo.impl.StorageType;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class DiffQueryFactory
@@ -29,7 +27,7 @@ public class DiffQueryFactory
 
     private final NodePath nodePath;
 
-    private final ExcludeEntries excludes;
+    private final NodePaths excludes;
 
     private final StorageType childStorageType;
 
@@ -75,12 +73,12 @@ public class DiffQueryFactory
 
         if ( this.nodePath != null && !this.nodePath.isRoot() )
         {
-            result.filter( hasPaths( ExcludeEntries.create().add( new ExcludeEntry( this.nodePath, true ) ).build() ) );
+            result.filter( hasPaths( NodePaths.from( this.nodePath ), true ) );
         }
 
         if ( !this.excludes.isEmpty() )
         {
-            result.mustNot( hasPaths( excludes ) );
+            result.mustNot( hasPaths( excludes, false ) );
         }
 
         return result;
@@ -91,25 +89,21 @@ public class DiffQueryFactory
         return new BoolQueryBuilder().should( inSourceOnly ).should( inTargetOnly );
     }
 
-    private QueryBuilder hasPaths( final ExcludeEntries excludeEntries )
+    private QueryBuilder hasPaths( final NodePaths excludePaths, final boolean recursive )
     {
         final BoolQueryBuilder pathQuery = new BoolQueryBuilder().should( new TermsQueryBuilder( BranchIndexPath.PATH.getPath(),
-                                                                                                 excludeEntries.getSet()
+                                                                                                 excludePaths.getSet()
                                                                                                      .stream()
-                                                                                                     .map(
-                                                                                                         excludeEntry -> excludeEntry.nodePath()
+                                                                                                     .map( excludeEntry -> excludeEntry
                                                                                                              .toString()
                                                                                                              .toLowerCase() )
                                                                                                      .collect( Collectors.toList() ) ) );
 
-        final Set<NodePath> recursivePaths =
-            excludeEntries.getSet().stream().filter( ExcludeEntry::recursive ).map( ExcludeEntry::nodePath ).collect( Collectors.toSet() );
-
-        if ( !recursivePaths.isEmpty() )
+        if ( recursive )
         {
             final String queryPath = nodePath.toString().toLowerCase();
 
-            recursivePaths.forEach( nodePath -> {
+            excludePaths.forEach( nodePath -> {
                 pathQuery.should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(),
                                                             queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
             } );

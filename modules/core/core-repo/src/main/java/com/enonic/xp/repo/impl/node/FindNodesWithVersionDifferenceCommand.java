@@ -6,13 +6,12 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class FindNodesWithVersionDifferenceCommand
@@ -50,7 +49,7 @@ public class FindNodesWithVersionDifferenceCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        final ExcludeEntries excludeEntries = getExcludePaths( context );
+        final NodePaths excludeEntries = getExcludePaths( context );
 
         final SearchResult result = this.nodeSearchService.query( NodeVersionDiffQuery.create()
                                                                       .source( source )
@@ -64,20 +63,20 @@ public class FindNodesWithVersionDifferenceCommand
         return NodeVersionDiffResultFactory.create( result );
     }
 
-    private ExcludeEntries getExcludePaths( final InternalContext context )
+    private NodePaths getExcludePaths( final InternalContext context )
     {
         if ( this.excludes.isEmpty() )
         {
-            return ExcludeEntries.empty();
+            return NodePaths.empty();
         }
 
-        final ExcludeEntries.Builder builder = ExcludeEntries.create();
+        final NodePaths.Builder builder = NodePaths.create();
 
         final NodeBranchEntries result = this.nodeStorageService.getBranchNodeVersions( excludes, context );
 
         for ( final NodeBranchEntry entry : result )
         {
-            builder.add( new ExcludeEntry( entry.getNodePath(), false ) );
+            builder.addNodePath( entry.getNodePath() );
         }
 
         return builder.build();

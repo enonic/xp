@@ -4,9 +4,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
-import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class HasUnpublishedChildrenCommand
@@ -36,10 +35,7 @@ public class HasUnpublishedChildrenCommand
                                                                  .source( ContextAccessor.current().getBranch() )
                                                                  .target( target )
                                                                  .nodePath( parentNode.path() )
-                                                                 .size( 0 )
-                                                                 .excludes( ExcludeEntries.create()
-                                                                                .add( new ExcludeEntry( parentNode.path(), false ) )
-                                                                                .build() )
+                                                                 .size( 0 ).excludes( NodePaths.from( parentNode.path() ) )
                                                                  .build(), ContextAccessor.current().getRepositoryId() );
 
         return result.getTotalHits() > 0;
