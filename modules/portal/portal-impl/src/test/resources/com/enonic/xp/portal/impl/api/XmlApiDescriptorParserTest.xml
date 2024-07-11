@@ -3,10 +3,4 @@
   <allow>
     <principal>role:system.admin</principal>
   </allow>
-  <mounts>
-    <mount>api</mount>
-    <mount>all_sites</mount>
-    <mount>site</mount>
-  </mounts>
-  <context-path>any</context-path>
 </api>

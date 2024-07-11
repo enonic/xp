@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webapp xmlns="urn:enonic:xp:model:1.0">
+  <apis>
+    <unknown>com.enonic.app.myapp:api-key</unknown>
+  </apis>
+</webapp>

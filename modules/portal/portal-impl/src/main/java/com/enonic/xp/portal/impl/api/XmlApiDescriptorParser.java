@@ -1,14 +1,9 @@
 package com.enonic.xp.portal.impl.api;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.xp.api.ApiContextPath;
 import com.enonic.xp.api.ApiDescriptor;
-import com.enonic.xp.api.ApiMount;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.DomElement;
@@ -22,12 +17,6 @@ public final class XmlApiDescriptorParser
     private static final String ALLOW_TAG_NAME = "allow";
 
     private static final String PRINCIPAL_TAG_NAME = "principal";
-
-    private static final String MOUNTS_TAG_NAME = "mounts";
-
-    private static final String MOUNT_TAG_NAME = "mount";
-
-    private static final String CONTEXT_PATH_TAG_NAME = "context-path";
 
     private final ApiDescriptor.Builder builder;
 
@@ -51,21 +40,6 @@ public final class XmlApiDescriptorParser
                 .map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue().trim() ) )
                 .collect( Collectors.toList() );
             this.builder.allowedPrincipals( PrincipalKeys.from( allowedPrincipalKeys ) );
-        }
-
-        DomElement mounts = root.getChild( MOUNTS_TAG_NAME );
-
-        Preconditions.checkArgument( mounts != null, "Element [\"mounts\"] is required" );
-
-        Set<ApiMount> apiMounts =
-            mounts.getChildren( MOUNT_TAG_NAME ).stream().map( mount -> ApiMount.from( mount.getValue() ) ).collect( Collectors.toSet() );
-
-        this.builder.mounts( apiMounts );
-
-        DomElement contextPath = root.getChild( CONTEXT_PATH_TAG_NAME );
-        if ( contextPath != null )
-        {
-            this.builder.contextPath( ApiContextPath.from( contextPath.getValue() ) );
         }
     }
 }

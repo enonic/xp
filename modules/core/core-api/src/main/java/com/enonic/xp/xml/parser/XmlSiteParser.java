@@ -9,6 +9,9 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.api.ApiContextPath;
+import com.enonic.xp.site.api.SiteApiMountDescriptor;
+import com.enonic.xp.site.api.SiteApiMountDescriptors;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -59,6 +62,12 @@ public final class XmlSiteParser
 
     private static final String MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE = "invert";
 
+    private static final String APIS_DESCRIPTOR_TAG_NAME = "apis";
+
+    private static final String API_DESCRIPTOR_TAG_NAME = "api";
+
+    private static final String API_DESCRIPTOR_CONTEXT_PATH_ATTRIBUTE = "contextPath";
+
     private SiteDescriptor.Builder siteDescriptorBuilder;
 
     public XmlSiteParser siteDescriptorBuilder( final SiteDescriptor.Builder siteDescriptorBuilder )
@@ -80,6 +89,8 @@ public final class XmlSiteParser
             ResponseProcessorDescriptors.from( parseProcessorDescriptors( root.getChild( PROCESSOR_DESCRIPTORS_PARENT_TAG_NAME ) ) ) );
         this.siteDescriptorBuilder.mappingDescriptors(
             ControllerMappingDescriptors.from( parseMappingDescriptors( root.getChild( MAPPINGS_DESCRIPTOR_TAG_NAME ) ) ) );
+        this.siteDescriptorBuilder.apiDescriptors(
+            SiteApiMountDescriptors.from( parseApiDescriptors( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
     }
 
     private List<XDataMapping> parseXDatas( final DomElement root )
@@ -91,9 +102,10 @@ public final class XmlSiteParser
     {
         if ( processorDescriptorsParent != null )
         {
-            return processorDescriptorsParent.getChildren( PROCESSOR_DESCRIPTOR_TAG_NAME ).stream().
-                map( this::toProcessorDescriptor ).
-                collect( Collectors.toList() );
+            return processorDescriptorsParent.getChildren( PROCESSOR_DESCRIPTOR_TAG_NAME )
+                .stream()
+                .map( this::toProcessorDescriptor )
+                .collect( Collectors.toList() );
         }
         return Collections.emptyList();
     }
@@ -102,9 +114,19 @@ public final class XmlSiteParser
     {
         if ( mappingDescriptorsParent != null )
         {
-            return mappingDescriptorsParent.getChildren( MAPPING_DESCRIPTOR_TAG_NAME ).stream().
-                map( this::toMappingDescriptor ).
-                collect( Collectors.toList() );
+            return mappingDescriptorsParent.getChildren( MAPPING_DESCRIPTOR_TAG_NAME )
+                .stream()
+                .map( this::toMappingDescriptor )
+                .collect( Collectors.toList() );
+        }
+        return Collections.emptyList();
+    }
+
+    private List<SiteApiMountDescriptor> parseApiDescriptors( final DomElement apisElement )
+    {
+        if ( apisElement != null )
+        {
+            return apisElement.getChildren( API_DESCRIPTOR_TAG_NAME ).stream().map( this::toApiDescriptor ).collect( Collectors.toList() );
         }
         return Collections.emptyList();
     }
@@ -194,6 +216,25 @@ public final class XmlSiteParser
                 builder.pattern( pattern );
                 builder.invertPattern( invert );
             }
+        }
+
+        return builder.build();
+    }
+
+    private SiteApiMountDescriptor toApiDescriptor( final DomElement apiElement )
+    {
+        final SiteApiMountDescriptor.Builder builder = SiteApiMountDescriptor.create();
+
+        final String apiKey = apiElement.getValue().trim();
+        if ( !apiKey.isBlank() )
+        {
+            builder.apiKey( apiKey );
+        }
+
+        final String contextPath = apiElement.getAttribute( API_DESCRIPTOR_CONTEXT_PATH_ATTRIBUTE );
+        if ( !nullToEmpty( contextPath ).isBlank() )
+        {
+            builder.contextPath( ApiContextPath.from( contextPath ) );
         }
 
         return builder.build();
