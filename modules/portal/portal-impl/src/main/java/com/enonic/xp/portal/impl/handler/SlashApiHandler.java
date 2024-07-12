@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +10,8 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
@@ -43,6 +46,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.api.ApiHandler;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
@@ -84,6 +88,8 @@ public class SlashApiHandler
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
+    private final List<ApiHandler> apiHandlers = new CopyOnWriteArrayList<>();
+
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
@@ -101,6 +107,17 @@ public class SlashApiHandler
         this.siteService = siteService;
         this.webappService = webappService;
         this.adminToolDescriptorService = adminToolDescriptorService;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addApiHandler( final ApiHandler apiHandler )
+    {
+        this.apiHandlers.add( apiHandler );
+    }
+
+    public void removeApiHandler( final ApiHandler apiHandler )
+    {
+        this.apiHandlers.remove( apiHandler );
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -133,6 +150,16 @@ public class SlashApiHandler
         final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
 
         final String restPath = matcher.group( "restPath" );
+
+        final ApiHandler apiHandler = this.apiHandlers.stream()
+            .filter( handler -> applicationKey.equals( handler.getDescriptor().getKey().getApplicationKey() ) )
+            .findFirst()
+            .orElse( null );
+        if ( apiHandler != null )
+        {
+            // TODO verify mounts
+            return apiHandler.handle( webRequest );
+        }
 
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
 
