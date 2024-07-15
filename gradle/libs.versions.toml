@@ -75,7 +75,7 @@ jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
 guava = { module = "com.google.guava:guava", version = "26.0-jre" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.18.1" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
