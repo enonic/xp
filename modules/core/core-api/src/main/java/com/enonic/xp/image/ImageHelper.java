@@ -106,11 +106,22 @@ public final class ImageHelper
     public static void writeImage( OutputStream out, final BufferedImage image, final String format, final int quality )
         throws IOException
     {
+        writeImage( out, image, format, quality, false );
+    }
+
+    public static void writeImage( OutputStream out, final BufferedImage image, final String format, final int quality,
+                                   boolean progressive )
+        throws IOException
+    {
         final ImageWriter writer = getWriterByFormat( format );
         try (ImageOutputStream output = new MemoryCacheImageOutputStream( out ))
         {
             writer.setOutput( output );
             final ImageWriteParam params = writer.getDefaultWriteParam();
+            if ( progressive )
+            {
+                params.setProgressiveMode( ImageWriteParam.MODE_DEFAULT );
+            }
             setCompressionQuality( params, quality );
             writer.write( null, new IIOImage( image, null, null ), params );
         }

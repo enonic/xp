@@ -11,6 +11,10 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -30,6 +34,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
+import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ImageHelper;
@@ -54,6 +59,8 @@ public class ImageServiceImpl
 
     private final MemoryCircuitBreaker circuitBreaker;
 
+    private final Set<String> progressiveOnFormats;
+
     @Activate
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
@@ -65,6 +72,13 @@ public class ImageServiceImpl
 
         this.circuitBreaker = new MemoryCircuitBreaker(
             toMegaBytes( new MemoryLimitParser( Runtime.getRuntime()::maxMemory ).parse( config.memoryLimit() ) ) );
+
+        this.progressiveOnFormats = SimpleCsvParser.parseLine( config.progressive() )
+            .stream()
+            .map( String::trim )
+            .filter( Predicate.not( String::isEmpty ) )
+            .map( s -> s.toLowerCase( Locale.ROOT ) )
+            .collect( Collectors.toUnmodifiableSet() );
     }
 
     @Override
@@ -239,9 +253,13 @@ public class ImageServiceImpl
                             // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
                             // is over-compressed and looks way different from system default compressed image.
                             final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
+
+                            final boolean progressive =
+                                progressiveOnFormats.stream().anyMatch( format -> format.equalsIgnoreCase( readImageParams.getFormat() ) );
+
                             try (OutputStream outputStream = sink.openBufferedStream())
                             {
-                                ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality );
+                                ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
                             }
                             LOG.debug( "Finish writing" );
                             return true;
