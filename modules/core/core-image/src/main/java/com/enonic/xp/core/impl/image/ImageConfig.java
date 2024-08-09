@@ -7,4 +7,6 @@ public @interface ImageConfig
     int filters_maxTotal() default 25;
 
     String memoryLimit() default "10%";
+
+    String progressive() default "jpeg";
 }

@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
@@ -40,8 +42,10 @@ class ImageServiceImplTest
 
     private byte[] imageDataOriginal;
 
+    ImageConfig imageConfig;
+
     @BeforeEach
-    void setUp()
+    void setUp( final TestInfo info )
     {
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
 
@@ -49,7 +53,12 @@ class ImageServiceImplTest
         binaryReference = BinaryReference.from( "binaryRef" );
         contentService = mock( ContentService.class );
 
-        final ImageConfig imageConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        imageConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+
+        if ( info.getTags().contains( "progressive_disabled" ) )
+        {
+            when( imageConfig.progressive() ).thenReturn( "" );
+        }
 
         ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( imageConfig );
@@ -105,6 +114,39 @@ class ImageServiceImplTest
         final ByteSource imageData = imageService.readImage( readImageParams );
 
         assertArrayEquals( imageDataOriginal, imageData.read() );
+    }
+
+    @Test
+    public void readImage_jpeg_progressive_default()
+        throws IOException
+    {
+        mockOriginalImage( "original.png" );
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .mimeType( "image/jpeg" )
+            .build();
+
+        ByteSource imageData = imageService.readImage( readImageParams );
+        assertArrayEquals( readImage( "progressive.jpg" ), imageData.read() );
+    }
+
+    @Test
+    @Tag("progressive_disabled")
+    public void readImage_progressive_disabled()
+        throws IOException
+    {
+        mockOriginalImage( "original.png" );
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .mimeType( "image/jpeg" )
+            .build();
+
+        ByteSource imageData = imageService.readImage( readImageParams );
+        assertArrayEquals( readImage( "not_progressive.jpg" ), imageData.read() );
     }
 
     @Test

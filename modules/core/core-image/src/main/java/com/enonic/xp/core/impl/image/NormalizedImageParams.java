@@ -106,7 +106,7 @@ class NormalizedImageParams
 
     private static String normalizeFormat( final ReadImageParams readImageParams )
     {
-        // Existing should not set format parameter, but if it does all bets are off.
+        // Existing code should not set format parameter, but if it does all bets are off.
         if ( readImageParams.getFormat() != null )
         {
             return readImageParams.getFormat();
