@@ -1,6 +1,6 @@
 pluginManagement {
     plugins {
-        id 'com.gradle.enterprise' version '3.17.5'
+        id 'com.gradle.enterprise' version '3.17.6'
         id 'biz.aQute.bnd.builder' version '6.4.0'
         id 'com.github.jk1.dependency-license-report' version '2.8'
         id 'com.github.ben-manes.versions' version '0.51.0'
