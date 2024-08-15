@@ -3,9 +3,6 @@ package com.enonic.xp.xml;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class DomBuilder
 {
     private final Document document;

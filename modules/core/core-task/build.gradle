@@ -1,11 +1,13 @@
 dependencies {
     implementation project( ':portal:portal-api' )
     implementation project( ':core:core-internal' )
+    implementation project( ':core:core-parser' )
     implementation libs.hazelcast.hazelcast
 
     testImplementation( testFixtures( project(":script:script-impl") ) )
     testImplementation( project(":portal:portal-impl")  )
     testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-parser") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )
     testImplementation( testFixtures( project(":core:core-internal") ) )
 }

@@ -1,0 +1,7 @@
+dependencies {
+    implementation project( ':core:core-api' )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Common', 'Export-Package': 'com.enonic.xp.*' )
+}

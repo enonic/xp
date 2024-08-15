@@ -2,12 +2,13 @@ package com.enonic.xp.xml.parser;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.api.ApiMountDescriptors;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.impl.common.ApiMountResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
@@ -65,10 +66,6 @@ public final class XmlSiteParser
     private static final String APIS_DESCRIPTOR_TAG_NAME = "apis";
 
     private static final String API_DESCRIPTOR_TAG_NAME = "api";
-
-    private static final int APPLICATION_KEY_INDEX = 0;
-
-    private static final int API_KEY_INDEX = 1;
 
     private SiteDescriptor.Builder siteDescriptorBuilder;
 
@@ -228,42 +225,11 @@ public final class XmlSiteParser
 
     private ApiMountDescriptor toApiMountDescriptor( final DomElement apiElement )
     {
-        final ApiMountDescriptor.Builder builder = ApiMountDescriptor.create();
+        final ApiMountResolver apiMountResolver = new ApiMountResolver( apiElement.getValue().trim() );
 
-        final String apiMount = apiElement.getValue().trim();
-
-        if ( !apiMount.contains( ":" ) )
-        {
-            builder.applicationKey( this.currentApplication );
-            if ( !apiMount.isBlank() )
-            {
-                builder.apiKey( apiMount );
-            }
-        }
-        else
-        {
-            final String[] parts = apiMount.split( ":", 2 );
-
-            builder.applicationKey( resolveApplicationKey( parts[APPLICATION_KEY_INDEX].trim() ) );
-            final String apiKey = parts[API_KEY_INDEX].trim();
-            if ( !apiKey.isBlank() )
-            {
-                builder.apiKey( apiKey );
-            }
-        }
-
-        return builder.build();
-    }
-
-    private ApplicationKey resolveApplicationKey( final String applicationKey )
-    {
-        try
-        {
-            return ApplicationKey.from( applicationKey );
-        }
-        catch ( Exception e )
-        {
-            throw new IllegalArgumentException( String.format( "Invalid applicationKey '%s'", applicationKey ), e );
-        }
+        return ApiMountDescriptor.create()
+            .applicationKey( Objects.requireNonNullElse( apiMountResolver.resolveApplicationKey(), this.currentApplication ) )
+            .apiKey( apiMountResolver.resolveApiKey() )
+            .build();
     }
 }

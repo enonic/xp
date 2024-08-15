@@ -89,6 +89,8 @@ addBundle( project( ':admin:admin-api' ), 10 )
 
 // Core bundles
 addBundle( project( ':core:core-event' ), 22 )
+addBundle( project( ':core:core-common' ), 22 )
+addBundle( project( ':core:core-parser' ), 22 )
 addBundle( project( ':core:core-schema' ), 22 )
 addBundle( project( ':core:core-repo' ), 22 )
 addBundle( project( ':core:core-security' ), 22 )

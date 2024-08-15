@@ -1,8 +1,9 @@
 dependencies {
     implementation project( ':core:core-api' )
+    implementation project( ':core:core-parser' )
 
     testFixturesApi project( ':core:core-api' )
-    testImplementation( testFixtures( project(":core:core-app") ) )
+    testImplementation( testFixtures( project( ":core:core-app" ) ) )
 }
 
 jar {

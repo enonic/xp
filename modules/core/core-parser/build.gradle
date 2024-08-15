@@ -1,0 +1,11 @@
+dependencies {
+    api( libs.guava ) {
+        exclude group: 'com.google.code.findbugs'
+    }
+    implementation project( ':core:core-api' )
+    implementation project( ':core:core-common' )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Parser', 'Export-Package': 'com.enonic.xp.*' )
+}
