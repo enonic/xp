@@ -33,6 +33,9 @@ interface ScriptValueDefinition {
 // Declare global types
 //──────────────────────────────────────────────────────────────────────────────
 declare global {
+    interface XpBeans {}
+    interface XpLibraries {}
+
     type NewBean = NewBeanDefinition;
     type ScriptValue = ScriptValueDefinition;
 

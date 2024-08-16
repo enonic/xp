@@ -7,11 +7,9 @@ export interface NestedRecord {
 }
 
 declare global {
-    interface XpBeans {}
     interface XpLayoutMap {
         [layoutDescriptor: ComponentDescriptor]: NestedRecord;
     }
-    interface XpLibraries {}
     interface XpPageMap {
         [pageDescriptor: ComponentDescriptor]: NestedRecord;
     }
