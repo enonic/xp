@@ -28,7 +28,7 @@
             // So they can be imported from without installing old ones into
             // node_modules:
             "@enonic-types/global": ["./global.d.ts"],
-            "@enonic-types/core": ["./core/index.d.ts"],
+            "@enonic-types/core": ["./core/index.d.ts"]
         },
 
         // TODO: This only matters at buildtime, perhaps move to
