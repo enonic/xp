@@ -1,14 +1,24 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
@@ -32,6 +42,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -47,6 +58,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+import com.enonic.xp.web.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -67,7 +79,6 @@ public class SlashApiHandler
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
 
-
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -86,6 +97,8 @@ public class SlashApiHandler
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
+    private final ConcurrentMap<DescriptorKey, UniversalApiHandlerWrapper> dynamicApiHandlers = new ConcurrentHashMap<>();
+
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
@@ -103,6 +116,22 @@ public class SlashApiHandler
         this.siteService = siteService;
         this.webappService = webappService;
         this.adminToolDescriptorService = adminToolDescriptorService;
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addApiHandler( final UniversalApiHandler apiHandler, final Map<String, ?> properties )
+    {
+        final ApiDescriptor apiDescriptor = resolveDynamicApiDescriptor( properties );
+        this.dynamicApiHandlers.put( apiDescriptor.getKey(), new UniversalApiHandlerWrapper( apiHandler, apiDescriptor ) );
+    }
+
+    public void removeApiHandler( final UniversalApiHandler apiHandler )
+    {
+        dynamicApiHandlers.values()
+            .stream()
+            .filter( wrapper -> wrapper.apiHandler.equals( apiHandler ) )
+            .findFirst()
+            .ifPresent( apiHandlerWrapper -> this.dynamicApiHandlers.remove( apiHandlerWrapper.apiDescriptor.getKey() ) );
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -136,23 +165,63 @@ public class SlashApiHandler
 
         final String restPath = matcher.group( "restPath" );
 
-        final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
-
         final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
+
+        final UniversalApiHandlerWrapper dynamicApiHandler = resolveDynamicApiHandler( applicationKey, apiKey, portalRequest );
+
+        if ( dynamicApiHandler != null )
+        {
+            return execute( portalRequest, dynamicApiHandler.apiDescriptor, restPath,
+                            () -> dynamicApiHandler.apiHandler.handle( portalRequest ) );
+        }
+
+        final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
 
         if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
         {
             throw WebException.notFound( String.format( "API [%s] is not mounted", apiDescriptor.getKey() ) );
         }
 
-        final Trace trace = Tracer.newTrace( "slashAPI" );
+        return execute( portalRequest, apiDescriptor, restPath, () -> executeController( portalRequest, apiDescriptor ) );
+    }
+
+    private UniversalApiHandlerWrapper resolveDynamicApiHandler( final ApplicationKey applicationKey, final String apiKey,
+                                                                 final PortalRequest portalRequest )
+    {
+        // If the unnamed API is present, then the named APIs are skipped.
+        UniversalApiHandlerWrapper handlerWrapper = dynamicApiHandlers.get( DescriptorKey.from( applicationKey, "api" ) );
+        if ( handlerWrapper == null )
+        {
+            handlerWrapper = dynamicApiHandlers.get( DescriptorKey.from( applicationKey, apiKey ) );
+        }
+
+        if ( handlerWrapper == null )
+        {
+            return null;
+        }
+
+        verifyAccessToApi( handlerWrapper.apiDescriptor );
+
+        if ( !verifyRequestMounted( handlerWrapper.apiDescriptor, portalRequest ) )
+        {
+            throw WebException.notFound( String.format( "API [%s] is not mounted", handlerWrapper.apiDescriptor.getKey() ) );
+        }
+
+        return handlerWrapper;
+    }
+
+    private WebResponse execute( final PortalRequest portalRequest, final ApiDescriptor apiDescriptor, final String restPath,
+                                 final Supplier<WebResponse> supplier )
+        throws Exception
+    {
+        final Trace trace = Tracer.newTrace( "UniversalAPI" );
         if ( trace == null )
         {
-            return handleAPIRequest( portalRequest, apiDescriptor );
+            return handleAPIRequest( portalRequest, supplier );
         }
         return Tracer.traceEx( trace, () -> {
-            final WebResponse response = handleAPIRequest( portalRequest, apiDescriptor );
-            addTranceInfo( trace, applicationKey, apiKey, restPath, response );
+            final WebResponse response = handleAPIRequest( portalRequest, supplier );
+            addTranceInfo( trace, apiDescriptor.getKey(), restPath, response );
             return response;
         } );
     }
@@ -278,22 +347,22 @@ public class SlashApiHandler
         }
     }
 
-    private static void addTranceInfo( final Trace trace, final ApplicationKey applicationKey, final String apiKey, final String restPath,
+    private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final String restPath,
                                        final WebResponse response )
     {
-        trace.put( "app", applicationKey.toString() );
-        trace.put( "api", apiKey );
+        trace.put( "app", descriptorKey.getApplicationKey().toString() );
+        trace.put( "api", descriptorKey.getName() );
         trace.put( "path", restPath );
         HandlerHelper.addTraceInfo( trace, response );
     }
 
-    private WebResponse handleAPIRequest( final PortalRequest portalRequest, final ApiDescriptor apiDescriptor )
+    private WebResponse handleAPIRequest( final PortalRequest portalRequest, final Supplier<WebResponse> supplier )
     {
         try
         {
             PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
 
-            final WebResponse returnedWebResponse = executeController( portalRequest, apiDescriptor );
+            final WebResponse returnedWebResponse = supplier.get();
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
         }
@@ -309,20 +378,29 @@ public class SlashApiHandler
 
     private ApiDescriptor resolveApiDescriptor( final ApplicationKey applicationKey, final String apiKey )
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, apiKey );
-        final ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
+        // If the unnamed API is present, then the named APIs are skipped.
+        ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( DescriptorKey.from( applicationKey, "api" ) );
         if ( apiDescriptor == null )
         {
-            throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
+            final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, apiKey );
+            apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
+            if ( apiDescriptor == null )
+            {
+                throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
+            }
         }
+        return verifyAccessToApi( apiDescriptor );
+    }
 
+    private ApiDescriptor verifyAccessToApi( final ApiDescriptor apiDescriptor )
+    {
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !apiDescriptor.isAccessAllowed( principals ) )
         {
             throw WebException.forbidden(
-                String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiKey, applicationKey ) );
+                String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiDescriptor.getKey().getName(),
+                               apiDescriptor.getKey().getApplicationKey() ) );
         }
-
         return apiDescriptor;
     }
 
@@ -338,7 +416,6 @@ public class SlashApiHandler
     }
 
     private PortalResponse executeController( final PortalRequest req, final ApiDescriptor apiDescriptor )
-        throws Exception
     {
         final ControllerScript script = getScript( apiDescriptor );
         final PortalResponse res = script.execute( req );
@@ -349,7 +426,14 @@ public class SlashApiHandler
         {
             final WebSocketEndpoint webSocketEndpoint =
                 newWebSocketEndpoint( webSocketConfig, script, apiDescriptor.getKey().getApplicationKey() );
-            webSocketContext.apply( webSocketEndpoint );
+            try
+            {
+                webSocketContext.apply( webSocketEndpoint );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
         }
 
         return res;
@@ -383,5 +467,39 @@ public class SlashApiHandler
         final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
         webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
         return webResponse;
+    }
+
+    private ApiDescriptor resolveDynamicApiDescriptor( final Map<String, ?> properties )
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( (String) properties.get( "applicationKey" ) );
+        final String apiKey = Objects.requireNonNullElse( (String) properties.get( "apiKey" ), "api" );
+        final PrincipalKeys allowedPrincipals = resolveDynamicPrincipalKeys( properties.get( "allowedPrincipals" ) );
+
+        return ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals ).build();
+    }
+
+    private PrincipalKeys resolveDynamicPrincipalKeys( final Object allowedPrincipals )
+    {
+        return switch ( allowedPrincipals )
+        {
+            case null -> null;
+            case String s -> PrincipalKeys.from( s );
+            case String[] strings ->
+                PrincipalKeys.from( Arrays.stream( strings ).map( PrincipalKey::from ).collect( Collectors.toList() ) );
+            default -> throw new IllegalArgumentException( "Invalid allowedPrincipals. Value must be string or string array." );
+        };
+    }
+
+    private static class UniversalApiHandlerWrapper
+    {
+        private final UniversalApiHandler apiHandler;
+
+        private final ApiDescriptor apiDescriptor;
+
+        private UniversalApiHandlerWrapper( final UniversalApiHandler apiHandler, final ApiDescriptor apiDescriptor )
+        {
+            this.apiHandler = apiHandler;
+            this.apiDescriptor = apiDescriptor;
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,6 +51,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
+import com.enonic.xp.web.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -220,12 +222,14 @@ public class SlashApiHandlerTest
         when( webRequest.getEndpointPath() ).thenReturn( null );
         when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
 
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) )
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( applicationKey, "api-key" ) )
             .allowedPrincipals( PrincipalKeys.create().add( PrincipalKey.from( "role:principalKey" ) ).build() )
             .build();
 
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+        when( apiDescriptorService.getByKey( eq( DescriptorKey.from( applicationKey, "api" ) ) ) ).thenReturn( null );
+        when( apiDescriptorService.getByKey( eq( DescriptorKey.from( applicationKey, "api-key" ) ) ) ).thenReturn( apiDescriptor );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -239,8 +243,10 @@ public class SlashApiHandlerTest
         request.setEndpointPath( null );
         request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
 
-        ApiDescriptor apiDescriptor =
-            ApiDescriptor.create().key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) ).allowedPrincipals( null ).build();
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
@@ -271,8 +277,10 @@ public class SlashApiHandlerTest
         request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
         request.setRawRequest( mock( HttpServletRequest.class ) );
 
-        ApiDescriptor apiDescriptor =
-            ApiDescriptor.create().key( DescriptorKey.from( ApplicationKey.from( "myapp" ), "myapi" ) ).allowedPrincipals( null ).build();
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
@@ -712,4 +720,87 @@ public class SlashApiHandlerTest
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
+    @Test
+    void testAddAndRemoveDynamicApiHandler()
+        throws Exception
+    {
+        final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
+        handler.addApiHandler( myUniversalApiHandler, Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+
+        final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .displayName( "My Tool" )
+            .key( descriptorKey )
+            .apiMounts(
+                ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build() ) )
+            .build();
+
+        when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Body", response.getBody().toString() );
+
+        handler.removeApiHandler( myUniversalApiHandler );
+    }
+
+    @Test
+    void testHandleDynamicApiHandlerDoesNotRegister()
+    {
+        final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .displayName( "My Tool" )
+            .key( descriptorKey )
+            .apiMounts(
+                ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build() ) )
+            .build();
+
+        when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+    }
+
+    @Test
+    void testHandleDynamicApiHandlerWhichDoesNotMountToAPI()
+    {
+        final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
+        handler.addApiHandler( myUniversalApiHandler, Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
+        final AdminToolDescriptor toolDescriptor =
+            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( ApiMountDescriptors.empty() ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+
+        final WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
+
+        handler.removeApiHandler( myUniversalApiHandler );
+    }
+
+    private static final class MyUniversalApiHandler
+        implements UniversalApiHandler
+    {
+        @Override
+        public WebResponse handle( final WebRequest request )
+        {
+            return WebResponse.create().body( "Body" ).build();
+        }
+    }
 }
