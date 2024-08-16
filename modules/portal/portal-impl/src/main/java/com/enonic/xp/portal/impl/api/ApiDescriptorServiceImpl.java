@@ -40,8 +40,7 @@ public final class ApiDescriptorServiceImpl
     public ApiDescriptor getByKey( final DescriptorKey descriptorKey )
     {
         final ResourceProcessor<DescriptorKey, ApiDescriptor> processor = newRootProcessor( descriptorKey );
-        final ApiDescriptor apiDescriptor = resourceService.processResource( processor );
-        return apiDescriptor != null ? apiDescriptor : ApiDescriptor.create().key( descriptorKey ).build();
+        return resourceService.processResource( processor );
     }
 
     @Override
