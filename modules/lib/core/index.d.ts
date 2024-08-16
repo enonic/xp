@@ -1,5 +1,3 @@
-export type { ResourceKey } from '@enonic-types/global';
-
 export type ComponentDescriptor = `${string}:${string}`;
 
 export interface NestedRecord {
@@ -7,9 +5,11 @@ export interface NestedRecord {
 }
 
 declare global {
+    interface XpBeans {}
     interface XpLayoutMap {
         [layoutDescriptor: ComponentDescriptor]: NestedRecord;
     }
+    interface XpLibraries {}
     interface XpPageMap {
         [pageDescriptor: ComponentDescriptor]: NestedRecord;
     }
@@ -20,6 +20,132 @@ declare global {
         [key: string]: Record<string, Record<string, unknown>>;
     }
 }
+
+//──────────────────────────────────────────────────────────────────────────────
+// Types that are imported by @enonic-types/global
+//──────────────────────────────────────────────────────────────────────────────
+export interface App {
+    /**
+     * The name of the application.
+     *
+     * @type string
+     */
+    name: string;
+    /**
+     * Version of the application.
+     *
+     * @type string
+     */
+    version: string;
+    /**
+     * Values from the application’s configuration file.
+     * This can be set using $XP_HOME/config/<app.name>.cfg.
+     * Every time the configuration is changed the app is restarted.
+     *
+     * @type Object
+     */
+    config: Record<string, string | undefined>;
+}
+
+export interface DoubleUnderscore {
+    /**
+     * Creates a new JavaScript bean that wraps the given Java class and makes its methods available to be called from JavaScript.
+     */
+    newBean: NewBean;
+    /**
+     * Converts arrays or complex Java objects to JSON.
+     * @param value Value to convert
+     */
+    toNativeObject: <T = unknown>(value: T) => T;
+    /**
+     * Converts JSON to a Java Map structure that can be used as parameters to a Java method on a bean created with newBean.
+     * @param value Value to convert
+     */
+    toScriptValue: <T = object>(value: T) => ScriptValue;
+    /**
+     * Add a disposer that is called when the app is stopped.
+     * @param callback Function to call
+     */
+    disposer: (callback: (...args: unknown[]) => unknown) => void;
+    /**
+     * Converts a JavaScript variable that is undefined to a Java <code>null</code> object.
+     * If the JavaScript variable is defined, it is returned as is.
+     * @param value Value to convert
+     */
+    nullOrValue: <T = object>(value: T) => T | null | undefined;
+
+    /**
+     * Doc registerMock.
+     *
+     * @param name Name of mock.
+     * @param value Value to register.
+     */
+    registerMock: (name: string, value: object) => void
+}
+
+export interface Log {
+    /**
+     * Log debug message.
+     *
+     * @param {Array} args... logging arguments.
+     */
+    debug: (...args: unknown[]) => void;
+
+    /**
+     * Log info message.
+     *
+     * @param {Array} args... logging arguments.
+     */
+    info: (...args: unknown[]) => void;
+
+    /**
+     * Log warning message.
+     *
+     * @param {Array} args... logging arguments.
+     */
+    warning: (...args: unknown[]) => void;
+
+    /**
+     * Log error message.
+     *
+     * @param {Array} args... logging arguments.
+     */
+    error: (...args: unknown[]) => void;
+}
+
+export type NewBean = <T = unknown, Bean extends keyof XpBeans | string = string>(bean: Bean) =>
+    Bean extends keyof XpBeans ? XpBeans[Bean] : T;
+
+export type Resolve = (path: string) => ResourceKey;
+
+export interface ScriptValue {
+    isArray(): boolean;
+
+    isObject(): boolean;
+
+    isValue(): boolean;
+
+    isFunction(): boolean;
+
+    getValue(): unknown;
+
+    getKeys(): string[];
+
+    hasMember(key: string): boolean;
+
+    getMember(key: string): ScriptValueDefinition;
+
+    getArray(): ScriptValueDefinition[];
+
+    getMap(): Record<string, unknown>;
+
+    getList(): object[];
+}
+
+export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
+    Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
+
+//──────────────────────────────────────────────────────────────────────────────
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -228,6 +354,9 @@ type Brand<
 
 export type ByteSource = Brand<object, 'ByteSource'>;
 
+//
+// RESOURCES
+//
 export interface Resource {
     getSize(): number;
 
@@ -236,6 +365,15 @@ export interface Resource {
     getStream(): ByteSource;
 
     exists(): boolean;
+}
+
+export interface ResourceKey {
+    getApplicationKey(): string;
+    getPath(): string;
+    getUri(): string;
+    isRoot(): boolean;
+    getName(): string;
+    getExtension(): string;
 }
 
 //

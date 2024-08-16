@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, User, UserKey} from '@enonic-types/core';
+import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, ScriptValue, User, UserKey} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, User, Group, Role} from '@enonic-types/core';
+export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, User, Group, Role} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {

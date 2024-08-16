@@ -28,6 +28,7 @@ import type {
     HighlightResult,
     PublishInfo,
     QueryDsl,
+    ScriptValue,
     SortDsl,
 } from '@enonic-types/core';
 
@@ -110,6 +111,7 @@ export type {
     RangeDslExpression,
     Region,
     RoleKey,
+    ScriptValue,
     SingleValueMetricAggregationResult,
     SingleValueMetricAggregationsUnion,
     SortDirection,

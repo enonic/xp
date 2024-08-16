@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {ScriptValue} from '@enonic-types/core';
+
+export type {ScriptValue} from '@enonic-types/core';
+
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
         throw `Parameter '${String(name)}' is required`;

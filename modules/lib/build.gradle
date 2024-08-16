@@ -86,6 +86,12 @@ task prepareGlobalToPublish( type: Copy ) {
     from 'README.md'
     from 'global.d.ts'
 
+    def dependencyLines = [
+        '    "dependencies": {',
+        '        "@enonic-types/core": "' + version + '"',
+        '    }'
+    ]
+
     from( 'package.template.json' ) {
         filter { line ->
             line
@@ -93,6 +99,7 @@ task prepareGlobalToPublish( type: Copy ) {
                 .replaceAll( '%FULL_NAME%|%FILE_NAME%', 'global' )
                 .replaceAll( '%SHORT_NAME%', 'common' )
                 .replaceAll( '%DESCRIPTION%', 'Global variables and functions type definition.' )
+                .replaceAll( /    "dependencies": \{\}/, dependencyLines.join( '\n' ) )
         }
         rename '.+', 'package.json'
     }
@@ -104,11 +111,6 @@ task prepareCoreToPublish( type: Copy ) {
     from "$coreDir/README.md"
     from "$coreDir/index.d.ts"
 
-    def dependencyLines = [
-        '    "dependencies": {',
-        '        "@enonic-types/global": "' + version + '"',
-        '    }'
-    ]
     from( 'package.template.json' ) {
         filter { line ->
             line
@@ -117,7 +119,6 @@ task prepareCoreToPublish( type: Copy ) {
                 .replaceAll( '%FULL_NAME%', 'core' )
                 .replaceAll( '%FILE_NAME%', 'index' )
                 .replaceAll( '%DESCRIPTION%', 'Shared type definition for core libraries.' )
-                .replaceAll( /    "dependencies": \{\}/, dependencyLines.join( '\n' ) )
         }
         rename '.+', 'package.json'
     }
