@@ -1,4 +1,4 @@
-{ // This file is used to build typescript declaration files?
+{ // This file is used to build typescript declaration files
     "extends": "./tsconfig",
     "include": [
       "./lib-*/build/typescript/",
