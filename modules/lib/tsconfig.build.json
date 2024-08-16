@@ -1,9 +1,11 @@
-{
+{ // This file is used to build typescript declaration files?
     "extends": "./tsconfig",
     "include": [
       "./lib-*/build/typescript/",
       "./global.d.ts"
     ],
+    // Since this file extends tsconfig.json which excludes "./**/build", this
+    // file needs it's own exclude.
     "exclude": [
       "./lib-*/*.ts"
     ]

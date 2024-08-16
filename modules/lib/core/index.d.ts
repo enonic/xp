@@ -1,27 +1,27 @@
-// This also makes sure XpLayoutMap, etc are available.
-import type {
-    ComponentDescriptor,
-    NestedRecord,
-} from './globalModifying';
+export type { ResourceKey } from '@enonic-types/global';
 
-export type {
-    ComponentDescriptor,
-    NestedRecord,
-} from './globalModifying';
-export type {
-    App,
-    DoubleUnderscore,
-    Log,
-    NewBean,
-    Resolve,
-    ScriptValue,
-    XpRequire,
-} from './globals';
-export type {
-    ByteSource,
-    Resource,
-    ResourceKey,
-} from './resource';
+export type ComponentDescriptor = `${string}:${string}`;
+
+export interface NestedRecord {
+	[name: PropertyKey]: NestedRecord | unknown
+}
+
+declare global {
+    interface XpBeans {}
+    interface XpLayoutMap {
+        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+    interface XpLibraries {}
+    interface XpPageMap {
+        [pageDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+    interface XpPartMap {
+        [partDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+    interface XpXData {
+        [key: string]: Record<string, Record<string, unknown>>;
+    }
+}
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -220,6 +220,26 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
+// Compliant with npm module ts-brand
+type Brand<
+    Base,
+    Branding
+> = Base & {
+  '__type__': Branding
+};
+
+export type ByteSource = Brand<object, 'ByteSource'>;
+
+export interface Resource {
+    getSize(): number;
+
+    getTimestamp(): number;
+
+    getStream(): ByteSource;
+
+    exists(): boolean;
+}
+
 //
 // DSL QUERIES
 //
@@ -328,9 +348,9 @@ export type QueryDsl = {
     exists: ExistsDslExpression;
 };
 
-type SortDirection = 'ASC' | 'DESC';
+export type SortDirection = 'ASC' | 'DESC';
 
-type DistanceUnit =
+export type DistanceUnit =
     | 'm'
     | 'meters'
     | 'in'

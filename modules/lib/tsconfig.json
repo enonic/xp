@@ -1,17 +1,46 @@
-{
+{ // This file will be used by the IDE.
     "compilerOptions": {
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "lib": ["es5"],
+
+        // TODO: This only matters at buildtime, perhaps move to
+        // tsconfig.build.json
         "removeComments": false,
+
+        // The target setting changes which JS features are downleveled and
+        // which are left intact. Changing target also changes the default value
+        // of lib. You may “mix and match” target and lib settings as desired,
+        // but you could just set target for convenience.
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "target": "es5",
+
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "module": "commonjs",
+
+        // TODO: Maybe use "node16" or "bundler" since we're not using file
+        // extensions in the imports?
+        // 'node10' (previously called 'node') for Node.js versions older than
+        // v10, which only support CommonJS require. You probably won’t need to
+        // use node10 in modern code.
         "moduleResolution": "node",
-        "typeRoots": [
-            "node_modules/@enonic-types"
-        ],
+
+        "paths": {
+            // So they can be imported from without installing old ones into
+            // node_modules:
+            "@enonic-types/global": ["./global.d.ts"],
+            "@enonic-types/core": ["./core/index.d.ts"],
+        },
+
+        // TODO: This only matters at buildtime, perhaps move to
+        // tsconfig.build.json
         "sourceMap": false,
+
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
+
+        // TODO deprecated TypeScript 5.5
+        // Also why was it ever here?
         "noImplicitUseStrict": true
     },
     "exclude": [
