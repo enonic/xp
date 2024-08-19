@@ -38,10 +38,6 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-
-        // TODO deprecated TypeScript 5.5
-        // Also why was it ever here?
-        "noImplicitUseStrict": true
     },
     "exclude": [
         "./**/build",
