@@ -2,19 +2,12 @@ import type {
     App,
     DoubleUnderscore,
     Log,
-    NewBean as NewBeanType,
     Resolve,
-    ScriptValue as ScriptValueInterface,
     XpRequire,
 } from '@enonic-types/core';
 
 
 declare global {
-    // TODO: Remove these two? They are now exported by @enonic-types/core and
-    // shouldn't be polluting the global namespace anymore.
-    type NewBean = NewBeanType;
-    type ScriptValue = ScriptValueInterface;
-
     /**
      * The globally available app object holds information about the contextual application.
      * @example
