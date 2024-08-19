@@ -8,5 +8,9 @@
     // file needs it's own exclude.
     "exclude": [
       "./lib-*/*.ts"
-    ]
+    ],
+    "compilerOptions": {
+      "removeComments": false,
+      "sourceMap": false,
+    }
 }
