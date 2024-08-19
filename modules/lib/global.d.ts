@@ -9,9 +9,6 @@ import type {
 } from '@enonic-types/core';
 
 
-//──────────────────────────────────────────────────────────────────────────────
-// Declare global types
-//──────────────────────────────────────────────────────────────────────────────
 declare global {
     // TODO: Remove these two? They are now exported by @enonic-types/core and
     // shouldn't be polluting the global namespace anymore.
@@ -106,7 +103,5 @@ declare global {
     declare const resolve: Resolve;
 }
 
-//──────────────────────────────────────────────────────────────────────────────
 // Making sure the file is a module
-//──────────────────────────────────────────────────────────────────────────────
 export {};
