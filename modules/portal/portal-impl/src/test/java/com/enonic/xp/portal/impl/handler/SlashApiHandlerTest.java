@@ -639,7 +639,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -662,7 +662,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -682,7 +682,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( null );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -698,7 +698,7 @@ public class SlashApiHandlerTest
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/_/com.enonic.app.external.app/myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -741,7 +741,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -766,7 +766,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -786,7 +786,7 @@ public class SlashApiHandlerTest
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
         request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setRawPath( "/admin/tool/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
 
         final WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );

@@ -45,6 +45,6 @@ public class MainWebHandlerTest
     private void assertRedirect( final WebResponse res )
     {
         assertEquals( 307, res.getStatus().value() );
-        assertEquals( "/admin", res.getHeaders().get( "Location" ) );
+        assertEquals( "/admin/tool", res.getHeaders().get( "Location" ) );
     }
 }

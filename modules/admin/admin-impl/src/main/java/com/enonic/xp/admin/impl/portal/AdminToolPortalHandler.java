@@ -21,7 +21,7 @@ import com.enonic.xp.web.handler.WebHandler;
 public class AdminToolPortalHandler
     extends BasePortalHandler
 {
-    public static final String ADMIN_TOOL_BASE = "/admin";
+    public static final String ADMIN_TOOL_BASE = "/admin/tool";
 
     public static final String ADMIN_TOOL_PREFIX = ADMIN_TOOL_BASE + "/";
 
