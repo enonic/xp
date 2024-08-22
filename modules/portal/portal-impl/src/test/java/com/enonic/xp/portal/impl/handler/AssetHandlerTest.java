@@ -226,7 +226,7 @@ public class AssetHandlerTest
         assertEquals( HttpStatus.OK, res.getStatus() );
 
         // test invalid context path
-        this.request.setRawPath( "/admin/tool/path/_/asset/demo:0000000000000001/css/main.css" );
+        this.request.setRawPath( "/admin/path/_/asset/demo:0000000000000001/css/main.css" );
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }

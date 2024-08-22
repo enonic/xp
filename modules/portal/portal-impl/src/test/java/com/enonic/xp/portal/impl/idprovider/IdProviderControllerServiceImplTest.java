@@ -219,8 +219,8 @@ public class IdProviderControllerServiceImplTest
         Mockito.when( httpServletRequest.getScheme() ).thenReturn( "http" );
         Mockito.when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
         Mockito.when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
-        Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin/tool" );
-        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/admin/tool" );
+        Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin" );
+        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/admin" );
         Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         return httpServletRequest;
     }

@@ -30,7 +30,7 @@ class PortalRequestAdapter
 
     private static final String ADMIN_SITE_PREFIX = "/admin/site/";
 
-    private static final String ADMIN_TOOL_BASE = "/admin/tool";
+    private static final String ADMIN_TOOL_BASE = "/admin";
 
     private static final String ADMIN_TOOL_PREFIX = ADMIN_TOOL_BASE + "/";
 
