@@ -45,14 +45,14 @@ public class AdminToolDescriptorServiceImplTest
     public void generateAdminToolUri()
     {
         final String uri = this.service.generateAdminToolUri( ApplicationKey.from( "myapp1" ).toString(), "myToolName" );
-        assertEquals( "/admin/myapp1/myToolName", uri );
+        assertEquals( "/admin/tool/myapp1/myToolName", uri );
     }
 
     @Test
     public void getHomeToolUri()
     {
         final String uri = this.service.getHomeToolUri();
-        assertEquals( "/admin", uri );
+        assertEquals( "/admin/tool", uri );
     }
 
     @Test

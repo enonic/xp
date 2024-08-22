@@ -34,7 +34,7 @@ final class DefaultContextPathVerifier
         }
         else if ( rawPath.startsWith( "/admin/" ) )
         {
-            return rawPath.startsWith( "/admin/_/" );
+            return rawPath.startsWith( "/admin/tool/_/" );
         }
         else if ( rawPath.startsWith( "/webapp/" ) )
         {

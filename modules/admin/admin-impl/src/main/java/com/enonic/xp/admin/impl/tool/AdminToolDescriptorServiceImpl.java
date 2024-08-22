@@ -25,7 +25,7 @@ import com.enonic.xp.xml.XmlException;
 public final class AdminToolDescriptorServiceImpl
     implements AdminToolDescriptorService
 {
-    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin";
+    private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
     private static final String PATH = "/admin/tools";
 
