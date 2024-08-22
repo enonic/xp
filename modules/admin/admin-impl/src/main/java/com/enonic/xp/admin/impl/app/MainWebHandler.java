@@ -32,7 +32,7 @@ public final class MainWebHandler
     protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final String uri = ServletRequestUrlHelper.createUri( req.getRawRequest(), "/admin/tool" );
+        final String uri = ServletRequestUrlHelper.createUri( req.getRawRequest(), "/admin" );
         return WebResponse.create().
             status( HttpStatus.TEMPORARY_REDIRECT ).
             header( HttpHeaders.LOCATION, uri ).

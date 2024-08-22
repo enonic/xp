@@ -132,7 +132,7 @@ export function getToolUrl(application: string, tool: string): string {
  */
 export function getHomeToolUrl(params: GetHomeToolUrlParams): string {
     return portal.url({
-        path: '/admin/tool',
+        path: '/admin',
         type: params?.type,
     });
 }
