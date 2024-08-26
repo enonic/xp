@@ -4,7 +4,7 @@ junit5 = "5.10.3"
 mockito = "5.12.0"
 slf4j = "1.7.36"
 jetty = "9.4.55.v20240627"
-dropwizard = "4.2.26"
+dropwizard = "4.2.27"
 hazelcast = "3.12.13"
 
 [libraries]
