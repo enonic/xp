@@ -118,8 +118,8 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
-    if (params.parent) {
-        bean.setParents([__.nullOrValue(params.parent)]);
+    if (params.parent != null) {
+        bean.setParents([params.parent]);
     }
     if (params.parents) {
         bean.setParents(__.nullOrValue(params.parents));

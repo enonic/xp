@@ -498,7 +498,7 @@ export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey |
     const bean = __.newBean<AddMembersHandler>('com.enonic.xp.lib.auth.AddMembersHandler');
 
     bean.setPrincipalKey(principalKey);
-    bean.setMembers([].concat(members));
+    bean.setMembers(([] as (UserKey | GroupKey)[]).concat(members));
 
     bean.addMembers();
 }
@@ -525,7 +525,7 @@ export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKe
     const bean = __.newBean<RemoveMembersHandler>('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
     bean.setPrincipalKey(principalKey);
-    bean.setMembers([].concat(members));
+    bean.setMembers(([] as (UserKey | GroupKey)[]).concat(members));
 
     bean.removeMembers();
 }

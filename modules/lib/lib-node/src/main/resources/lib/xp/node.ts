@@ -96,6 +96,16 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
+function assertStringArray(value: unknown, name: string): asserts value is string[] {
+    if (!Array.isArray(value)) {
+        throw new TypeError(`${name} must be an array of strings! Isn't even an array!`);
+    }
+    
+    if (!value.every(item => typeof item === 'string')) {
+        throw new TypeError(`${name} must be an array of strings! Is an array, but contains non-string elements!`);
+    }
+}
+
 export interface TermSuggestion {
     text: string;
     term: TermSuggestionOptions;
@@ -1011,7 +1021,9 @@ class RepoConnectionImpl
         handlerParams.setParentKey(parentKey);
         handlerParams.setStart(start);
         handlerParams.setCount(count);
-        handlerParams.setChildOrder(childOrder);
+        if (childOrder != null) {
+            handlerParams.setChildOrder(childOrder);
+        }
         handlerParams.setCountOnly(countOnly);
         handlerParams.setRecursive(recursive);
 
@@ -1066,9 +1078,11 @@ class RepoConnectionImpl
     applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
         checkRequired(params, 'key');
 
+        const branches = params.branches != null ? params.branches : [];
+        const scope = params.scope != null ? params.scope : 'SINGLE';
+
         return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
-            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), __.nullOrValue(params.branches),
-            __.nullOrValue(params.scope)));
+            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), branches, scope));
     }
 
     /**
@@ -1132,9 +1146,15 @@ class RepoConnectionImpl
 
         handlerParams.setNodeId(nodeId);
         handlerParams.setIncludeChildren(includeChildren);
-        handlerParams.setName(__.nullOrValue(name));
-        handlerParams.setParent(__.nullOrValue(parent));
-        handlerParams.setRefresh(__.nullOrValue(refresh));
+        if (name != null) {
+            handlerParams.setName(name);
+        }
+        if (parent != null) {
+            handlerParams.setParent(parent);
+        }
+        if (refresh != null) {
+            handlerParams.setRefresh(refresh);
+        }
         handlerParams.setDataProcessor(__.toScriptValue(dataProcessor));
 
         return __.toNativeObject(this.nodeHandler.duplicate(handlerParams));
@@ -1292,6 +1312,7 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
         checkRequired(source, 'repoId');
         checkRequired(source, 'branch');
         checkRequired(source, 'principals');
+        assertStringArray(source.principals, 'principals');
         multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
     });
 
