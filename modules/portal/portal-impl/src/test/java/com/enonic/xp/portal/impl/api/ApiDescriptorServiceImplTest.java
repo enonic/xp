@@ -2,10 +2,10 @@ package com.enonic.xp.portal.impl.api;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -33,12 +33,30 @@ public class ApiDescriptorServiceImplTest
         final ApiDescriptors descriptors = this.service.getByApplication( key );
 
         assertNotNull( descriptors );
+        assertEquals( 3, descriptors.getSize() );
 
-        final ApiDescriptor apiDescriptor = descriptors.get( 0 );
-
-        final PrincipalKeys allowedPrincipals = apiDescriptor.getAllowedPrincipals();
-        assertNotNull( allowedPrincipals );
-        assertEquals( 1, allowedPrincipals.getSize() );
-        assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:system.admin" ) );
+        descriptors.forEach( descriptor -> {
+            assertNotNull( descriptor );
+            if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "" ) ) )
+            {
+                final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
+                assertNotNull( allowedPrincipals );
+                assertEquals( 1, allowedPrincipals.getSize() );
+                assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:system.admin" ) );
+            }
+            else if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "api" ) ) )
+            {
+                final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
+                assertNotNull( allowedPrincipals );
+                assertEquals( 1, allowedPrincipals.getSize() );
+                assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:cms.admin" ) );
+            }
+            else if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myapi" ) ) )
+            {
+                final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
+                assertNotNull( allowedPrincipals );
+                assertEquals( 2, allowedPrincipals.getSize() );
+            }
+        } );
     }
 }

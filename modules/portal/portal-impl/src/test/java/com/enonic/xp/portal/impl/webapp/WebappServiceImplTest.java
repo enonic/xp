@@ -42,7 +42,7 @@ public class WebappServiceImplTest
 
         final ApiMountDescriptor apiMountDescriptor2 = webappDescriptor.getApiMounts().get( 1 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor2.getApplicationKey() );
-        assertEquals( "api", apiMountDescriptor2.getApiKey() );
+        assertEquals( "", apiMountDescriptor2.getApiKey() );
     }
 
     @Test

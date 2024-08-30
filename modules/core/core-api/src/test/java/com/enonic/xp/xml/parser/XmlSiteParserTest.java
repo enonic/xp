@@ -283,7 +283,7 @@ public class XmlSiteParserTest
         assertEquals( "myapi3", apiDescriptor3.getApiKey() );
 
         ApiMountDescriptor apiDescriptor4 = siteDescriptor.getApiDescriptors().get( 3 );
-        assertEquals( "api", apiDescriptor4.getApiKey() );
+        assertEquals( "", apiDescriptor4.getApiKey() );
 
         ApiMountDescriptor apiDescriptor5 = siteDescriptor.getApiDescriptors().get( 4 );
         assertEquals( ApplicationKey.from( "com.enonic.app.external" ), apiDescriptor5.getApplicationKey() );

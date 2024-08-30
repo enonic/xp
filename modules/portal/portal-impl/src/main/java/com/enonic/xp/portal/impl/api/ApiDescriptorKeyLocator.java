@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
 public class ApiDescriptorKeyLocator
@@ -24,12 +25,18 @@ public class ApiDescriptorKeyLocator
     {
         return this.service.findFiles( key, this.pattern )
             .stream()
-            .map( resource -> DescriptorKey.from( key, getNameWithoutExtension( resource.getName() ) ) )
+            .map( resource -> DescriptorKey.from( key, resolveDescriptorName( resource ) ) )
             .collect( ImmutableSet.toImmutableSet() );
     }
 
-    private static String getNameWithoutExtension( final String name )
+    private static String resolveDescriptorName( final ResourceKey resourceKey )
     {
+        if ( "/apis/api.xml".equals( resourceKey.getPath() ) )
+        {
+            return "";
+        }
+
+        final String name = resourceKey.getName();
         final int pos = name.lastIndexOf( '.' );
         return pos > 0 ? name.substring( 0, pos ) : name;
     }

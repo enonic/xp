@@ -51,7 +51,7 @@ public class XmlWebappDescriptorParserTest
 
         final ApiMountDescriptor apiMountDescriptor2 = webappDescriptor.getApiMounts().get( 1 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor2.getApplicationKey() );
-        assertEquals( "api", apiMountDescriptor2.getApiKey() );
+        assertEquals( "", apiMountDescriptor2.getApiKey() );
 
         final ApiMountDescriptor apiMountDescriptor3 = webappDescriptor.getApiMounts().get( 2 );
         assertEquals( applicationKey, apiMountDescriptor3.getApplicationKey() );
@@ -59,7 +59,7 @@ public class XmlWebappDescriptorParserTest
 
         final ApiMountDescriptor apiMountDescriptor4 = webappDescriptor.getApiMounts().get( 3 );
         assertEquals( applicationKey, apiMountDescriptor4.getApplicationKey() );
-        assertEquals( "api", apiMountDescriptor4.getApiKey() );
+        assertEquals( "", apiMountDescriptor4.getApiKey() );
 
         final ApiMountDescriptor apiMountDescriptor5 = webappDescriptor.getApiMounts().get( 4 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp2" ), apiMountDescriptor5.getApplicationKey() );

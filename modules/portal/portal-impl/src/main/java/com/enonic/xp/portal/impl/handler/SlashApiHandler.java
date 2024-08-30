@@ -79,6 +79,8 @@ public class SlashApiHandler
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
 
+    private static final String UNNAMED_API_KEY = "";
+
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -161,7 +163,7 @@ public class SlashApiHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), "api" );
+        final String apiKey = Objects.requireNonNullElse( matcher.group( "apiKey" ), UNNAMED_API_KEY );
 
         final String restPath = matcher.group( "restPath" );
 
@@ -189,7 +191,7 @@ public class SlashApiHandler
                                                                  final PortalRequest portalRequest )
     {
         // If the unnamed API is present, then the named APIs are skipped.
-        UniversalApiHandlerWrapper handlerWrapper = dynamicApiHandlers.get( DescriptorKey.from( applicationKey, "api" ) );
+        UniversalApiHandlerWrapper handlerWrapper = dynamicApiHandlers.get( DescriptorKey.from( applicationKey, UNNAMED_API_KEY ) );
         if ( handlerWrapper == null )
         {
             handlerWrapper = dynamicApiHandlers.get( DescriptorKey.from( applicationKey, apiKey ) );
@@ -379,7 +381,7 @@ public class SlashApiHandler
     private ApiDescriptor resolveApiDescriptor( final ApplicationKey applicationKey, final String apiKey )
     {
         // If the unnamed API is present, then the named APIs are skipped.
-        ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( DescriptorKey.from( applicationKey, "api" ) );
+        ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( DescriptorKey.from( applicationKey, UNNAMED_API_KEY ) );
         if ( apiDescriptor == null )
         {
             final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, apiKey );
@@ -452,7 +454,7 @@ public class SlashApiHandler
 
     private ControllerScript getScript( final ApiDescriptor apiDescriptor )
     {
-        final ResourceKey script = apiDescriptor.toResourceKey( "js" );
+        final ResourceKey script = ApiDescriptor.toResourceKey( apiDescriptor.getKey(), "js" );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
@@ -472,7 +474,7 @@ public class SlashApiHandler
     private ApiDescriptor resolveDynamicApiDescriptor( final Map<String, ?> properties )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( (String) properties.get( "applicationKey" ) );
-        final String apiKey = Objects.requireNonNullElse( (String) properties.get( "apiKey" ), "api" );
+        final String apiKey = Objects.requireNonNullElse( (String) properties.get( "apiKey" ), UNNAMED_API_KEY );
         final PrincipalKeys allowedPrincipals = resolveDynamicPrincipalKeys( properties.get( "allowedPrincipals" ) );
 
         return ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals ).build();

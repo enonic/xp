@@ -51,7 +51,11 @@ public final class ApiDescriptorServiceImpl
         {
             try
             {
-                list.add( getByKey( descriptorKey ) );
+                final ApiDescriptor apiDescriptor = getByKey( descriptorKey );
+                if ( apiDescriptor != null )
+                {
+                    list.add( apiDescriptor );
+                }
             }
             catch ( final IllegalArgumentException e )
             {
