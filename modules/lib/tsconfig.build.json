@@ -11,6 +11,6 @@
     ],
     "compilerOptions": {
       "removeComments": false,
-      "sourceMap": false,
+      "sourceMap": false
     }
 }
