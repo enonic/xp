@@ -21,9 +21,6 @@ declare global {
     }
 }
 
-//──────────────────────────────────────────────────────────────────────────────
-// Types that are imported by @enonic-types/global
-//──────────────────────────────────────────────────────────────────────────────
 export interface App {
     /**
      * The name of the application.
@@ -144,8 +141,6 @@ export interface ScriptValue {
 
 export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
-
-//──────────────────────────────────────────────────────────────────────────────
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
