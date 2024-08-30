@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 @PublicApi
 public final class ApiMountDescriptor
 {
-    private static final String DEFAULT_API_KEY = "api";
+    private static final String DEFAULT_API_KEY = "";
 
     private final ApplicationKey applicationKey;
 

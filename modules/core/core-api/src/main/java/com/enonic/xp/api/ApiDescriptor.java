@@ -39,14 +39,9 @@ public final class ApiDescriptor
             allowedPrincipals.stream().anyMatch( principalKeys::contains );
     }
 
-    public ResourceKey toResourceKey( final String extension )
-    {
-        return toResourceKey( this.key, extension );
-    }
-
     public static ResourceKey toResourceKey( final DescriptorKey key, final String extension )
     {
-        if ( "api".equals( key.getName() ) )
+        if ( "".equals( key.getName() ) )
         {
             return ResourceKey.from( key.getApplicationKey(), "apis/api." + extension );
         }

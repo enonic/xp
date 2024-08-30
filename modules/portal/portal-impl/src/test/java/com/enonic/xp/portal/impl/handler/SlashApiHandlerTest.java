@@ -502,7 +502,7 @@ public class SlashApiHandlerTest
         final ApplicationKey webappApplicationKey = ApplicationKey.from( "com.enonic.app.mywebapp" );
 
         final ApiMountDescriptor unnamedApiInWebapp =
-            ApiMountDescriptor.create().applicationKey( webappApplicationKey ).apiKey( "api" ).build();
+            ApiMountDescriptor.create().applicationKey( webappApplicationKey ).build();
 
         final WebappDescriptor webappDescriptor = WebappDescriptor.create()
             .applicationKey( webappApplicationKey )
@@ -511,7 +511,7 @@ public class SlashApiHandlerTest
 
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
 
-        final DescriptorKey apiDescriptorKey = DescriptorKey.from( webappApplicationKey, "api" );
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( webappApplicationKey, "" );
 
         final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
 
