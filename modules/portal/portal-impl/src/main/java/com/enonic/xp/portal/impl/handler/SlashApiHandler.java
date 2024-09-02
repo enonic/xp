@@ -74,7 +74,7 @@ public class SlashApiHandler
 
     private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>.*?)/_/" );
 
-    private static final Pattern MOUNT_ADMINTOOL_API_PATTERN = Pattern.compile( "^/admin/tool/(?<appKey>[^/]+)/(?<tool>[^/]+)/_/" );
+    private static final Pattern MOUNT_ADMINTOOL_API_PATTERN = Pattern.compile( "^/admin/(?<appKey>[^/]+)/(?<tool>[^/]+)/_/" );
 
     private static final List<String> RESERVED_APP_KEYS =
         List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" );
@@ -244,7 +244,7 @@ public class SlashApiHandler
         {
             return verifyPathMountedOnWebapps( apiDescriptor, portalRequest );
         }
-        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/tool/" ) )
+        else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/" ) )
         {
             return verifyPathMountedOnAdminTool( apiDescriptor, portalRequest );
         }

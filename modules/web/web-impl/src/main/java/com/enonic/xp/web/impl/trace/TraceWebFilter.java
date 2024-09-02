@@ -25,7 +25,7 @@ public final class TraceWebFilter
     protected boolean canHandle( final WebRequest req )
     {
         return req.getRawPath().startsWith( "/site/" ) || req.getRawPath().startsWith( "/webapp/" ) ||
-            req.getRawPath().startsWith( "/admin/site/" ) || req.getRawPath().startsWith( "/admin/tool/" );
+            req.getRawPath().startsWith( "/admin/site/" ) || req.getRawPath().startsWith( "/admin/" );
     }
 
     @Override

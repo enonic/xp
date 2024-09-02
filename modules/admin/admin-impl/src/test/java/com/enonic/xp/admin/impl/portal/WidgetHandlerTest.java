@@ -78,7 +78,7 @@ public class WidgetHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/widgets/demo/mywidget" );
-        this.request.setRawPath( "/admin/tool/_/widgets/demo/mywidget" );
+        this.request.setRawPath( "/admin/_/widgets/demo/mywidget" );
     }
 
     @Test
@@ -188,7 +188,7 @@ public class WidgetHandlerTest
         Mockito.verify( this.controllerScript ).execute( this.request );
 
         assertNotNull( this.request.getApplicationKey() );
-        assertEquals( "/admin/tool/_/widgets/demo/test", this.request.getContextPath() );
+        assertEquals( "/admin/_/widgets/demo/test", this.request.getContextPath() );
     }
 
     @Test
@@ -196,7 +196,7 @@ public class WidgetHandlerTest
     {
         mockDescriptor( true );
 
-        this.request.setRawPath( "/admin/tool/path/_/widgets/demo/test" );
+        this.request.setRawPath( "/admin/path/_/widgets/demo/test" );
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
 
