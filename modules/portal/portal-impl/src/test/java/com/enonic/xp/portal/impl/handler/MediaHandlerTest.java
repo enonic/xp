@@ -144,7 +144,7 @@ public class MediaHandlerTest
         setupMedia();
 
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
-        this.request.setRawPath( "/admin/tool/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/admin/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -374,17 +374,17 @@ public class MediaHandlerTest
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
                     this.request.setEndpointPath( "/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
                     this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/tool/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
                     this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/tool/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath( "/admin/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
                     WebException ex =
                         assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
                     assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -404,7 +404,7 @@ public class MediaHandlerTest
         when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.svgz" );
-        this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/admin/_/media/image/myproject/123456/full/image-name.svgz" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -423,7 +423,7 @@ public class MediaHandlerTest
         setupContentGif();
 
         this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.gif" );
-        this.request.setRawPath( "/admin/tool/_/media/image/myproject/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/admin/_/media/image/myproject/123456/full/image-name.svgz" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );

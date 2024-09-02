@@ -43,7 +43,7 @@ public final class WidgetHandler
         final String restPath = findRestPath( webRequest );
         final Matcher matcher = PATTERN.matcher( restPath );
 
-        if ( !matcher.find() || !webRequest.getRawPath().startsWith( "/admin/tool/_/" ) )
+        if ( !matcher.find() || !webRequest.getRawPath().startsWith( "/admin/_/" ) )
         {
             throw WebException.notFound( "Not a valid widgets url pattern" );
         }

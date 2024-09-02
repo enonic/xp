@@ -30,7 +30,7 @@ class PortalRequestAdapter
 
     private static final String ADMIN_SITE_PREFIX = "/admin/site/";
 
-    private static final String ADMIN_TOOL_BASE = "/admin/tool";
+    private static final String ADMIN_TOOL_BASE = "/admin";
 
     private static final String ADMIN_TOOL_PREFIX = ADMIN_TOOL_BASE + "/";
 
@@ -97,21 +97,6 @@ class PortalRequestAdapter
             result.setMode( RenderMode.ADMIN );
 
         }
-        else if ( requestURI.startsWith( ADMIN_TOOL_PREFIX ) )
-        {
-            String subPath = subPath( requestURI, ADMIN_TOOL_PREFIX );
-            final Matcher matcher = Pattern.compile( "^([^/]+)/([^/]+)" ).matcher( subPath );
-            if ( matcher.find() )
-            {
-                result.setBaseUri( ADMIN_TOOL_PREFIX + matcher.group( 0 ) );
-                result.setMode( RenderMode.ADMIN );
-            }
-            else
-            {
-                result.setBaseUri( ADMIN_TOOL_BASE );
-                result.setMode( RenderMode.ADMIN );
-            }
-        }
         else if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
         {
             String subPath = subPath( requestURI, ADMIN_SITE_PREFIX );
@@ -140,6 +125,22 @@ class PortalRequestAdapter
                 result.setBranch( branch );
             }
         }
+        else if ( requestURI.startsWith( ADMIN_TOOL_PREFIX ) )
+        {
+            String subPath = subPath( requestURI, ADMIN_TOOL_PREFIX );
+            final Matcher matcher = Pattern.compile( "^([^/]+)/([^/]+)" ).matcher( subPath );
+            if ( matcher.find() )
+            {
+                result.setBaseUri( ADMIN_TOOL_PREFIX + matcher.group( 0 ) );
+                result.setMode( RenderMode.ADMIN );
+            }
+            else
+            {
+                result.setBaseUri( ADMIN_TOOL_BASE );
+                result.setMode( RenderMode.ADMIN );
+            }
+        }
+
         else if ( requestURI.startsWith( SITE_PREFIX ) )
         {
             String subPath = subPath( requestURI, SITE_PREFIX );
