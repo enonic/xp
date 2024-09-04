@@ -123,7 +123,7 @@ public class SlashApiHandler
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addApiHandler( final UniversalApiHandler apiHandler, final Map<String, ?> properties )
     {
-        final ApiDescriptor apiDescriptor = resolveDynamicApiDescriptor( properties );
+        final ApiDescriptor apiDescriptor = createDynamicApiDescriptor( properties );
         this.dynamicApiHandlers.put( apiDescriptor.getKey(), new UniversalApiHandlerWrapper( apiHandler, apiDescriptor ) );
     }
 
@@ -173,18 +173,34 @@ public class SlashApiHandler
 
         if ( dynamicApiHandler != null )
         {
-            return execute( portalRequest, dynamicApiHandler.apiDescriptor, restPath,
+            return execute( portalRequest, dynamicApiHandler.apiDescriptor.getKey(), restPath,
                             () -> dynamicApiHandler.apiHandler.handle( portalRequest ) );
         }
-
-        final ApiDescriptor apiDescriptor = resolveApiDescriptor( applicationKey, apiKey );
-
-        if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
+        else
         {
-            throw WebException.notFound( String.format( "API [%s] is not mounted", apiDescriptor.getKey() ) );
+            final DescriptorKey descriptorKey = resolveDescriptorKey( applicationKey, apiKey, portalRequest );
+            return execute( portalRequest, descriptorKey, restPath, () -> executeController( portalRequest, descriptorKey ) );
         }
+    }
 
-        return execute( portalRequest, apiDescriptor, restPath, () -> executeController( portalRequest, apiDescriptor ) );
+    private DescriptorKey resolveDescriptorKey( final ApplicationKey applicationKey, final String apiKey,
+                                                final PortalRequest portalRequest )
+    {
+        // If the unnamed API is present, then the named APIs are skipped.
+        DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, UNNAMED_API_KEY );
+        ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
+        if ( apiDescriptor == null )
+        {
+            descriptorKey = DescriptorKey.from( applicationKey, apiKey );
+            apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
+        }
+        if ( apiDescriptor != null )
+        {
+            verifyAccessToApi( apiDescriptor );
+        }
+        verifyRequestMounted( descriptorKey, portalRequest );
+
+        return descriptorKey;
     }
 
     private UniversalApiHandlerWrapper resolveDynamicApiHandler( final ApplicationKey applicationKey, final String apiKey,
@@ -203,16 +219,12 @@ public class SlashApiHandler
         }
 
         verifyAccessToApi( handlerWrapper.apiDescriptor );
-
-        if ( !verifyRequestMounted( handlerWrapper.apiDescriptor, portalRequest ) )
-        {
-            throw WebException.notFound( String.format( "API [%s] is not mounted", handlerWrapper.apiDescriptor.getKey() ) );
-        }
+        verifyRequestMounted( handlerWrapper.apiDescriptor.getKey(), portalRequest );
 
         return handlerWrapper;
     }
 
-    private WebResponse execute( final PortalRequest portalRequest, final ApiDescriptor apiDescriptor, final String restPath,
+    private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey, final String restPath,
                                  final Supplier<WebResponse> supplier )
         throws Exception
     {
@@ -223,38 +235,41 @@ public class SlashApiHandler
         }
         return Tracer.traceEx( trace, () -> {
             final WebResponse response = handleAPIRequest( portalRequest, supplier );
-            addTranceInfo( trace, apiDescriptor.getKey(), restPath, response );
+            addTranceInfo( trace, descriptorKey, restPath, response );
             return response;
         } );
     }
 
-    private boolean verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private void verifyRequestMounted( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
         final String rawPath = portalRequest.getRawPath();
 
+        boolean isMounted = false;
+
         if ( portalRequest.getEndpointPath() == null && rawPath.startsWith( "/api/" ) )
         {
-            return true;
+            isMounted = true;
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {
-            return verifyRequestMountedOnSites( apiDescriptor, portalRequest );
+            isMounted = verifyRequestMountedOnSites( descriptorKey, portalRequest );
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/webapp/" ) )
         {
-            return verifyPathMountedOnWebapps( apiDescriptor, portalRequest );
+            isMounted = verifyPathMountedOnWebapps( descriptorKey, portalRequest );
         }
         else if ( portalRequest.getEndpointPath() != null && rawPath.startsWith( "/admin/" ) )
         {
-            return verifyPathMountedOnAdminTool( apiDescriptor, portalRequest );
+            isMounted = verifyPathMountedOnAdminTool( descriptorKey, portalRequest );
         }
-        else
+
+        if ( !isMounted )
         {
-            return false;
+            throw WebException.notFound( String.format( "API [%s] is not mounted", descriptorKey ) );
         }
     }
 
-    private boolean verifyPathMountedOnAdminTool( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private boolean verifyPathMountedOnAdminTool( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
         final Matcher matcher = MOUNT_ADMINTOOL_API_PATTERN.matcher( portalRequest.getRawPath() );
         if ( !matcher.find() )
@@ -265,8 +280,7 @@ public class SlashApiHandler
         final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
         final String tool = matcher.group( "tool" );
 
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, tool );
-        final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( descriptorKey );
+        final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
         if ( adminToolDescriptor == null )
         {
             return false;
@@ -274,11 +288,11 @@ public class SlashApiHandler
 
         return adminToolDescriptor.getApiMounts()
             .stream()
-            .anyMatch( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
-                descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) );
+            .anyMatch( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+                descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
     }
 
-    private boolean verifyPathMountedOnWebapps( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private boolean verifyPathMountedOnWebapps( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
         final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
         if ( !webappMatcher.find() )
@@ -296,11 +310,11 @@ public class SlashApiHandler
 
         return webappDescriptor.getApiMounts()
             .stream()
-            .anyMatch( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
-                descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) );
+            .anyMatch( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+                descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
     }
 
-    private boolean verifyRequestMountedOnSites( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private boolean verifyRequestMountedOnSites( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
         final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
@@ -321,8 +335,8 @@ public class SlashApiHandler
             {
                 final ApiMountDescriptor apiMountDescriptor = siteDescriptor.getApiDescriptors()
                     .stream()
-                    .filter( descriptor -> descriptor.getApiKey().equals( apiDescriptor.getKey().getName() ) &&
-                        descriptor.getApplicationKey().equals( apiDescriptor.getKey().getApplicationKey() ) )
+                    .filter( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+                        descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) )
                     .findAny()
                     .orElse( null );
 
@@ -378,23 +392,7 @@ public class SlashApiHandler
         }
     }
 
-    private ApiDescriptor resolveApiDescriptor( final ApplicationKey applicationKey, final String apiKey )
-    {
-        // If the unnamed API is present, then the named APIs are skipped.
-        ApiDescriptor apiDescriptor = apiDescriptorService.getByKey( DescriptorKey.from( applicationKey, UNNAMED_API_KEY ) );
-        if ( apiDescriptor == null )
-        {
-            final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, apiKey );
-            apiDescriptor = apiDescriptorService.getByKey( descriptorKey );
-            if ( apiDescriptor == null )
-            {
-                throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
-            }
-        }
-        return verifyAccessToApi( apiDescriptor );
-    }
-
-    private ApiDescriptor verifyAccessToApi( final ApiDescriptor apiDescriptor )
+    private void verifyAccessToApi( final ApiDescriptor apiDescriptor )
     {
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !apiDescriptor.isAccessAllowed( principals ) )
@@ -403,7 +401,6 @@ public class SlashApiHandler
                 String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiDescriptor.getKey().getName(),
                                apiDescriptor.getKey().getApplicationKey() ) );
         }
-        return apiDescriptor;
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final ApplicationKey applicationKey )
@@ -417,9 +414,9 @@ public class SlashApiHandler
         return portalRequest;
     }
 
-    private PortalResponse executeController( final PortalRequest req, final ApiDescriptor apiDescriptor )
+    private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )
     {
-        final ControllerScript script = getScript( apiDescriptor );
+        final ControllerScript script = getScript( descriptorKey );
         final PortalResponse res = script.execute( req );
 
         final WebSocketConfig webSocketConfig = res.getWebSocket();
@@ -427,7 +424,7 @@ public class SlashApiHandler
         if ( webSocketContext != null && webSocketConfig != null )
         {
             final WebSocketEndpoint webSocketEndpoint =
-                newWebSocketEndpoint( webSocketConfig, script, apiDescriptor.getKey().getApplicationKey() );
+                newWebSocketEndpoint( webSocketConfig, script, descriptorKey.getApplicationKey() );
             try
             {
                 webSocketContext.apply( webSocketEndpoint );
@@ -452,9 +449,9 @@ public class SlashApiHandler
         return new WebSocketEndpointImpl( config, () -> script );
     }
 
-    private ControllerScript getScript( final ApiDescriptor apiDescriptor )
+    private ControllerScript getScript( final DescriptorKey descriptorKey )
     {
-        final ResourceKey script = ApiDescriptor.toResourceKey( apiDescriptor.getKey(), "js" );
+        final ResourceKey script = ApiDescriptor.toResourceKey( descriptorKey, "js" );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
@@ -471,7 +468,7 @@ public class SlashApiHandler
         return webResponse;
     }
 
-    private ApiDescriptor resolveDynamicApiDescriptor( final Map<String, ?> properties )
+    private ApiDescriptor createDynamicApiDescriptor( final Map<String, ?> properties )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( (String) properties.get( "applicationKey" ) );
         final String apiKey = Objects.requireNonNullElse( (String) properties.get( "apiKey" ), UNNAMED_API_KEY );
