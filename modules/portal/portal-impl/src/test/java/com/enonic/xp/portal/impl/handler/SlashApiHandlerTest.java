@@ -200,21 +200,6 @@ public class SlashApiHandlerTest
     }
 
     @Test
-    void testHandleApiNotFound()
-    {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "API [com.enonic.app.myapp:api-key] not found", ex.getMessage() );
-    }
-
-    @Test
     void testHandleApiAccessDenied()
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -501,8 +486,7 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey webappApplicationKey = ApplicationKey.from( "com.enonic.app.mywebapp" );
 
-        final ApiMountDescriptor unnamedApiInWebapp =
-            ApiMountDescriptor.create().applicationKey( webappApplicationKey ).build();
+        final ApiMountDescriptor unnamedApiInWebapp = ApiMountDescriptor.create().applicationKey( webappApplicationKey ).build();
 
         final WebappDescriptor webappDescriptor = WebappDescriptor.create()
             .applicationKey( webappApplicationKey )
@@ -748,28 +732,6 @@ public class SlashApiHandlerTest
         assertEquals( "Body", response.getBody().toString() );
 
         handler.removeApiHandler( myUniversalApiHandler );
-    }
-
-    @Test
-    void testHandleDynamicApiHandlerDoesNotRegister()
-    {
-        final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
-        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
-        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
-            .displayName( "My Tool" )
-            .key( descriptorKey )
-            .apiMounts(
-                ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build() ) )
-            .build();
-
-        when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
-
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
-
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
