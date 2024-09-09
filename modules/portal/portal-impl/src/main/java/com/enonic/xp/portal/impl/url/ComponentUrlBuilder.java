@@ -6,6 +6,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.region.Component;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+
 final class ComponentUrlBuilder
     extends PortalUrlBuilder<ComponentUrlParams>
 {

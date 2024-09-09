@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -121,10 +122,15 @@ public class PortalUrlServiceImpl_pageUrlTest
         this.portalRequest.setBaseUri( "" );
         this.portalRequest.setRawPath( "/api/com.enonic.app.appname" );
 
-        final PageUrlParams params =
-            new PageUrlParams().portalRequest( this.portalRequest ).path( "/a/b" ).param( "a", 3 );
+        final PageUrlParams params = new PageUrlParams().portalRequest( this.portalRequest ).path( "/a/b" ).param( "a", 3 );
 
-        final String url = this.service.pageUrl( params );
-        assertEquals( "/myproject/draft/a/b?a=3", url );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .runWith( () -> {
+                final String url = this.service.pageUrl( params );
+                assertEquals( "/a/b?a=3", url );
+            } );
     }
 }

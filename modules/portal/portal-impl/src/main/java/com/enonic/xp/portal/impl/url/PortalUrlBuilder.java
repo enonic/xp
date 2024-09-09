@@ -1,13 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -15,23 +9,33 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.net.UrlEscapers;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendParams;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 
 abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 {
@@ -45,82 +49,12 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     protected ResourceService resourceService;
 
-    protected boolean mustBeRewritten = true;
+    protected ProjectService projectService;
 
     public final void setParams( final T params )
     {
         this.params = params;
         this.portalRequest = this.params.getPortalRequest();
-    }
-
-    protected final void appendPart( final StringBuilder str, final String urlPart )
-    {
-        if ( isNullOrEmpty( urlPart ) )
-        {
-            return;
-        }
-
-        final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
-        final String normalized = normalizePath( urlPart );
-
-        if ( !endsWithSlash )
-        {
-            str.append( "/" );
-        }
-
-        str.append( normalized );
-    }
-
-    private void appendParams( final StringBuilder str, final Collection<Map.Entry<String, String>> params )
-    {
-        if ( params.isEmpty() )
-        {
-            return;
-        }
-        str.append( "?" );
-        final Iterator<Map.Entry<String, String>> it = params.iterator();
-        appendParam( str, it.next() );
-        while ( it.hasNext() )
-        {
-            str.append( "&" );
-            appendParam( str, it.next() );
-        }
-    }
-
-    private void appendParam( final StringBuilder str, final Map.Entry<String, String> param )
-    {
-        final String value = param.getValue();
-        str.append( urlEncode( param.getKey() ) );
-        if ( value != null )
-        {
-            str.append( "=" ).append( urlEncode( value ) );
-        }
-    }
-
-    private String urlEncode( final String value )
-    {
-        return UrlEscapers.urlFormParameterEscaper().escape( value );
-    }
-
-    private String urlEncodePathSegment( final String value )
-    {
-        return UrlEscapers.urlPathSegmentEscaper().escape( value );
-    }
-
-    String normalizePath( final String value )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        if ( !value.contains( "/" ) )
-        {
-            return urlEncodePathSegment( value );
-        }
-
-        return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false ).
-            map( this::urlEncodePathSegment ).collect( Collectors.joining( "/" ) );
     }
 
     public final String build()
@@ -135,21 +69,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
-    protected String getBaseUrl()
-    {
-        return null;
-    }
-
-    protected String getTargetUriPrefix()
-    {
-        return null;
-    }
-
-    public final void setMustBeRewritten( final boolean mustBeRewritten )
-    {
-        this.mustBeRewritten = mustBeRewritten;
-    }
-
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
@@ -159,26 +78,15 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        final String rawPath = portalRequest.getRawPath();
-        final boolean isSlashAPI = rawPath.startsWith( "/api/" );
+        final String targetUri = str.toString();
 
-        if ( isSlashAPI && !mustBeRewritten )
+        if ( !portalRequest.isSiteBase() )
         {
-            return str.toString();
-        }
-
-        final String baseUrl = isSlashAPI ? getBaseUrl() : null;
-        if ( baseUrl != null )
-        {
-            return UrlTypeConstants.SERVER_RELATIVE.equals( this.params.getType() ) ? str.toString() : baseUrl + str;
-        }
-
-        String targetUri = str.toString();
-
-        if ( isSlashAPI )
-        {
-            String targetPrefix = getTargetUriPrefix();
-            targetUri = Objects.requireNonNullElse( targetPrefix, "" ) + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
+            final String baseUrl = resolveBaseUrl();
+            if ( baseUrl != null )
+            {
+                return UrlTypeConstants.SERVER_RELATIVE.equals( this.params.getType() ) ? targetUri : baseUrl + targetUri;
+            }
         }
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );
@@ -202,6 +110,39 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         {
             return uri;
         }
+    }
+
+    private SiteConfigs resolveSiteConfigs()
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        final String contentPath = (String) context.getAttribute( "contentKey" );
+
+        if ( contentPath != null )
+        {
+            final Site site = contentService.findNearestSiteByPath( ContentPath.from( contentPath ) );
+            if ( site != null )
+            {
+                return site.getSiteConfigs();
+            }
+        }
+
+        if ( context.getRepositoryId() != null )
+        {
+            final Project project = projectService.get( ProjectName.from( context.getRepositoryId() ) );
+            if ( project != null )
+            {
+                return project.getSiteConfigs();
+            }
+        }
+
+        return SiteConfigs.empty();
+    }
+
+    private String resolveBaseUrl()
+    {
+        final SiteConfig siteConfig = resolveSiteConfigs().get( ApplicationKey.from( "com.enonic.xp.site" ) );
+        return siteConfig != null ? siteConfig.getConfig().getString( "baseUrl" ) : null;
     }
 
     private static HttpServletRequestWrapper webSocketRequestWrapper( final HttpServletRequest request )
