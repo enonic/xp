@@ -36,7 +36,7 @@ public class MainWebHandlerTest
         assertRedirect( response1 );
 
         request.setRawPath( "/admin" );
-        assertTrue( this.handler.canHandle( request ) );
+        assertFalse( this.handler.canHandle( request ) );
 
         final WebResponse response2 = this.handler.doHandle( request, null, null );
         assertRedirect( response2 );

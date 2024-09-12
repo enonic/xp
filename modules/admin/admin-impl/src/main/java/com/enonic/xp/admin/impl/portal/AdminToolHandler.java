@@ -51,7 +51,7 @@ public final class AdminToolHandler
         final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
-        final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest );
+        final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest.getRawPath() );
         worker.descriptorKey = descriptorKey == null ? AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY : descriptorKey;
 
         final Trace trace = Tracer.newTrace( "portalRequest" );

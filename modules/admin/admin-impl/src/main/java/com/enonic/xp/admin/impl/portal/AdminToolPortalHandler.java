@@ -6,16 +6,21 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.HttpHeaders;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BasePortalHandler;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
+import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true, service = WebHandler.class)
 public class AdminToolPortalHandler
@@ -36,12 +41,26 @@ public class AdminToolPortalHandler
     }
 
     @Override
+    protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    {
+        if ( AdminToolPortalHandler.ADMIN_TOOL_PREFIX.equals( webRequest.getRawPath() ) )
+        {
+            final String uri = ServletRequestUrlHelper.createUri( webRequest.getRawRequest(), "/admin" );
+            return WebResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, uri ).build();
+        }
+        else
+        {
+            return super.doHandle( webRequest, webResponse, webHandlerChain );
+        }
+    }
+
+    @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
         final PortalRequest portalRequest = new PortalRequest( webRequest );
 
-        final DescriptorKey descriptorKey = getDescriptorKey( webRequest );
-        if ( descriptorKey == null )
+        final DescriptorKey descriptorKey = getDescriptorKey( webRequest.getRawPath() );
+        if ( descriptorKey == null || DEFAULT_DESCRIPTOR_KEY.equals( descriptorKey ) )
         {
             portalRequest.setBaseUri( ADMIN_TOOL_BASE );
             portalRequest.setApplicationKey( DEFAULT_DESCRIPTOR_KEY.getApplicationKey() );
@@ -55,13 +74,11 @@ public class AdminToolPortalHandler
         return portalRequest;
     }
 
-    public static DescriptorKey getDescriptorKey( final WebRequest webRequest )
+    public static DescriptorKey getDescriptorKey( final String path )
     {
-        final String path = webRequest.getRawPath();
-
         if ( path.equals( ADMIN_TOOL_BASE ) )
         {
-            return null;
+            return DEFAULT_DESCRIPTOR_KEY;
         }
         else if ( path.startsWith( ADMIN_TOOL_PREFIX ) )
         {

@@ -25,7 +25,7 @@ public final class MainWebHandler
     protected boolean canHandle( final WebRequest req )
     {
         final String path = req.getRawPath();
-        return path.equals( "" ) || path.equals( "/" ) || path.equals( "/admin" ) || path.equals( "/admin/" );
+        return path.isEmpty() || path.equals( "/" );
     }
 
     @Override

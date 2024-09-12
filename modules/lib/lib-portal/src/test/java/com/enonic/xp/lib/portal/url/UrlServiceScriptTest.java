@@ -196,4 +196,10 @@ public class UrlServiceScriptTest
     {
         runScript( "/lib/xp/examples/portal/imagePlaceholder.js" );
     }
+
+    @Test
+    public void testExample_apiUrl()
+    {
+        runScript( "/lib/xp/examples/portal/apiUrl.js" );
+    }
 }

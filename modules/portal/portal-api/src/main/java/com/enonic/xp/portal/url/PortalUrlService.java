@@ -22,4 +22,6 @@ public interface PortalUrlService
     String generateUrl( GenerateUrlParams params );
 
     String processHtml( ProcessHtmlParams params );
+
+    String apiUrl( ApiUrlParams params );
 }
