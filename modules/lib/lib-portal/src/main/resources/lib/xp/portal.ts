@@ -600,3 +600,32 @@ export function imagePlaceholder(params: ImagePlaceholderParams): string {
     bean.setHeight(params?.height ?? 0);
     return bean.createImagePlaceholder();
 }
+
+export interface ApiUrlParams {
+    application: string;
+    api?: string;
+    type?: 'server' | 'absolute' | 'websocket';
+    params?: object;
+}
+
+interface ApiUrlHandler {
+    createUrl(value: object): string;
+}
+
+/**
+ * This function generates a URL pointing to a Universal API.
+ *
+ * @example-ref examples/portal/apiUrl.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} params.application Application to reference to the API.
+ * @param {string} [params.api] Name of the API
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {object} [params.params] Custom parameters to append to the URL.
+ *
+ * @returns {string} The generated URL.
+ */
+export function apiUrl(params: ApiUrlParams): string {
+    const bean = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
+    return bean.createUrl(__.toScriptValue(params));
+}

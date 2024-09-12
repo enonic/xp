@@ -15,6 +15,7 @@ import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
@@ -137,6 +138,25 @@ public final class PortalUrlServiceImpl
     public String processHtml( final ProcessHtmlParams params )
     {
         return new RichTextProcessor( styleDescriptorService, this, macroService ).process( params );
+    }
+
+    @Override
+    public String apiUrl( final ApiUrlParams params )
+    {
+        if ( params == null || params.getApplication() == null )
+        {
+            throw new IllegalArgumentException( "\"application\" is required" );
+        }
+
+        if ( params.getPortalRequest() != null )
+        {
+            return build( new UniversalApiUrlBuilder(), params );
+        }
+        else
+        {
+            // TODO resolve baseUrl
+            return new SlashApiUrlBuilder( params ).build();
+        }
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
