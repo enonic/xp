@@ -13,6 +13,10 @@ declare global {
     }
 }
 
+import type {ScriptValue} from '@enonic-types/core';
+
+export type {ScriptValue} from '@enonic-types/core';
+
 function checkRequiredValue(value: unknown, name: string): void {
     if (value == null) {
         throw `Parameter '${String(name)}' is required`;
