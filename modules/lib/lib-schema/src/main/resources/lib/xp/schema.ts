@@ -116,7 +116,9 @@ export function createSchema(params: CreateDynamicContentSchemaParams): ContentT
     const bean = __.newBean<CreateDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
     bean.setName(params.name);
     bean.setType(params.type);
-    bean.setResource(params.resource);
+    if (params.resource != null) {
+        bean.setResource(params.resource);
+    }
     return __.toNativeObject(bean.execute());
 }
 
@@ -373,9 +375,9 @@ export interface DeleteDynamicContentSchemaParams {
 }
 
 interface DeleteDynamicContentSchemaHandler {
-    setName(value: string);
+    setName(value: string): void;
 
-    setType(value: ContentSchemaType);
+    setType(value: ContentSchemaType): void;
 
     execute(): boolean;
 }

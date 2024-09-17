@@ -1,18 +1,35 @@
 {
+    // This file is mainly be used by the IDE,
+    // but also extended in the tsconfig.build.json file.
     "compilerOptions": {
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "lib": ["es5"],
-        "removeComments": false,
+
+        // The target setting changes which JS features are downleveled and
+        // which are left intact. Changing target also changes the default value
+        // of lib. You may “mix and match” target and lib settings as desired,
+        // but you could just set target for convenience.
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "target": "es5",
+
+        // NOTE: This is probably correct since we're still building for Nashorn.
         "module": "commonjs",
+
+        // NOTE: Even though we are not using Node 9 or older to build, we
+        // cannot change this setting to Node16, since that would require module
+        // to be changed to Node16 aswell, which would break the build.
         "moduleResolution": "node",
-        "typeRoots": [
-            "node_modules/@enonic-types"
-        ],
-        "sourceMap": false,
+
+        "paths": {
+            // So they can be imported from without installing old ones into
+            // node_modules:
+            "@enonic-types/global": ["./global.d.ts"],
+            "@enonic-types/core": ["./core/index.d.ts"]
+        },
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
-        "noImplicitUseStrict": true
+        "strict": true
     },
     "exclude": [
         "./**/build",

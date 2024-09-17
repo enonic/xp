@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, User, UserKey} from '@enonic-types/core';
+import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, ScriptValue, User, UserKey} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, User, Group, Role} from '@enonic-types/core';
+export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, User, Group, Role} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
@@ -498,7 +498,7 @@ export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey |
     const bean = __.newBean<AddMembersHandler>('com.enonic.xp.lib.auth.AddMembersHandler');
 
     bean.setPrincipalKey(principalKey);
-    bean.setMembers([].concat(members));
+    bean.setMembers(([] as (UserKey | GroupKey)[]).concat(members));
 
     bean.addMembers();
 }
@@ -525,7 +525,7 @@ export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKe
     const bean = __.newBean<RemoveMembersHandler>('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
     bean.setPrincipalKey(principalKey);
-    bean.setMembers([].concat(members));
+    bean.setMembers(([] as (UserKey | GroupKey)[]).concat(members));
 
     bean.removeMembers();
 }

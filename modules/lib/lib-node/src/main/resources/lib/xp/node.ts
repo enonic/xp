@@ -24,6 +24,7 @@ import type {
     HighlightResult,
     PrincipalKey,
     QueryDsl,
+    ScriptValue,
     SortDsl,
 } from '@enonic-types/core';
 
@@ -72,6 +73,7 @@ export type {
     QueryDsl,
     RangeDslExpression,
     RoleKey,
+    ScriptValue,
     SingleValueMetricAggregationResult,
     SingleValueMetricAggregationsUnion,
     SortDirection,
@@ -91,6 +93,16 @@ type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
+    }
+}
+
+function assertStringArray(value: unknown, name: string): asserts value is string[] {
+    if (!Array.isArray(value)) {
+        throw new TypeError(`${name} must be an array of strings! Isn't even an array!`);
+    }
+
+    if (!value.every(item => typeof item === 'string')) {
+        throw new TypeError(`${name} must be an array of strings! Is an array, but contains non-string elements!`);
     }
 }
 
@@ -252,6 +264,9 @@ interface NodeHandler {
     getCommit(commitId: string): NodeCommit | null;
 
     setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
+
+    applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
+                     scope: string): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
 
@@ -469,6 +484,24 @@ export interface FindNodesByParentResult {
     }[];
 }
 
+export interface ApplyPermissionsParams {
+    key: string;
+    permissions?: AccessControlEntry[];
+    addPermissions?: AccessControlEntry[];
+    removePermissions?: AccessControlEntry[];
+    branches?: string[];
+    scope?: string;
+}
+
+export interface ApplyPermissionsResult {
+    [nodeId: string]: BranchResult[];
+}
+
+export interface BranchResult {
+    branch: string;
+    node: Node;
+}
+
 export type RefreshMode = 'SEARCH' | 'STORAGE' | 'ALL';
 
 export interface GetCommitParams {
@@ -487,9 +520,11 @@ export interface CommitParams {
     message?: string;
 }
 
+/**
+ * @deprecated
+ */
 export interface SetRootPermissionsParams {
     _permissions: AccessControlEntry[];
-    _inheritsPermissions: boolean;
 }
 
 export type Permission = 'READ' | 'CREATE' | 'MODIFY' | 'DELETE' | 'PUBLISH' | 'READ_PERMISSIONS' | 'WRITE_PERMISSIONS';
@@ -540,7 +575,6 @@ export type CommonNodeProperties = {
     _childOrder: string;
     // _id: string; // Not on create
     // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
-    _inheritsPermissions: boolean;
     _manualOrderValue?: number; // Notice optional
     _name: string;
     _nodeType: string;
@@ -555,6 +589,7 @@ export type CommonNodeProperties = {
 export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _indexConfig?: Partial<NodeIndexConfigParams>;
     _parentPath?: string;
+    _inheritsPermissions?: boolean;
 };
 
 export type NodePropertiesOnModify = CommonNodeProperties & {
@@ -613,6 +648,8 @@ export interface RepoConnection {
     refresh(mode?: RefreshMode): void;
 
     setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData>;
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
 
     commit(params: CommitParams): NodeCommit;
 
@@ -984,7 +1021,9 @@ class RepoConnectionImpl
         handlerParams.setParentKey(parentKey);
         handlerParams.setStart(start);
         handlerParams.setCount(count);
-        handlerParams.setChildOrder(childOrder);
+        if (childOrder != null) {
+            handlerParams.setChildOrder(childOrder);
+        }
         handlerParams.setCountOnly(countOnly);
         handlerParams.setRecursive(recursive);
 
@@ -1003,13 +1042,14 @@ class RepoConnectionImpl
     }
 
     /**
+     * @deprecated
+     *
      * Set the root node permissions and inherit.
      *
      * @example-ref examples/node/modifyRootPermissions.js
      *
      * @param {object} params JSON with the parameters.
      * @param {object} params._permissions the permission json
-     * @param {object} [params._inheritsPermissions]= true if the permissions should be inherited to children
      *
      * @returns {object} Updated root-node as JSON.
      */
@@ -1017,6 +1057,32 @@ class RepoConnectionImpl
         checkRequired(params, '_permissions');
 
         return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
+    }
+
+    /**
+     * Apply permissions to a node.
+     *
+     * @example-ref examples/node/applyPermissions.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or ID of the node.
+     * @param {object} [params.permissions] the permissions json
+     * @param {object} [params.addPermissions] the permissions to add json
+     * @param {object} [params.removePermissions] the permissions to remove json
+     * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
+     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+     *
+     * @returns {object} Result of the apply permissions operation.
+     */
+
+    applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
+        checkRequired(params, 'key');
+
+        const branches = params.branches != null ? params.branches : [];
+        const scope = params.scope != null ? params.scope : 'SINGLE';
+
+        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
+            __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), branches, scope));
     }
 
     /**
@@ -1080,9 +1146,15 @@ class RepoConnectionImpl
 
         handlerParams.setNodeId(nodeId);
         handlerParams.setIncludeChildren(includeChildren);
-        handlerParams.setName(__.nullOrValue(name));
-        handlerParams.setParent(__.nullOrValue(parent));
-        handlerParams.setRefresh(__.nullOrValue(refresh));
+        if (name != null) {
+            handlerParams.setName(name);
+        }
+        if (parent != null) {
+            handlerParams.setParent(parent);
+        }
+        if (refresh != null) {
+            handlerParams.setRefresh(refresh);
+        }
         handlerParams.setDataProcessor(__.toScriptValue(dataProcessor));
 
         return __.toNativeObject(this.nodeHandler.duplicate(handlerParams));
@@ -1240,6 +1312,7 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
         checkRequired(source, 'repoId');
         checkRequired(source, 'branch');
         checkRequired(source, 'principals');
+        assertStringArray(source.principals, 'principals');
         multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
     });
 

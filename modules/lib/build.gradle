@@ -28,7 +28,9 @@ check.dependsOn lint
 
 /* Configure & Build */
 
-task typescript( type: NpmTask, dependsOn: npmInstall ) {
+task typescript( type: NpmTask ) {
+    dependsOn 'npmInstall', 'prepareToPublish'
+
     description = 'Create JS and DTS files from TS'
     args = ['run', 'build']
 
@@ -84,6 +86,12 @@ task prepareGlobalToPublish( type: Copy ) {
     from 'README.md'
     from 'global.d.ts'
 
+    def dependencyLines = [
+        '    "dependencies": {',
+        '        "@enonic-types/core": "' + version + '"',
+        '    }'
+    ]
+
     from( 'package.template.json' ) {
         filter { line ->
             line
@@ -91,6 +99,7 @@ task prepareGlobalToPublish( type: Copy ) {
                 .replaceAll( '%FULL_NAME%|%FILE_NAME%', 'global' )
                 .replaceAll( '%SHORT_NAME%', 'common' )
                 .replaceAll( '%DESCRIPTION%', 'Global variables and functions type definition.' )
+                .replaceAll( /    "dependencies": \{\}/, dependencyLines.join( '\n' ) )
         }
         rename '.+', 'package.json'
     }

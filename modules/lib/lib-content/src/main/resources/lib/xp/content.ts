@@ -28,6 +28,7 @@ import type {
     HighlightResult,
     PublishInfo,
     QueryDsl,
+    ScriptValue,
     SortDsl,
 } from '@enonic-types/core';
 
@@ -110,6 +111,7 @@ export type {
     RangeDslExpression,
     Region,
     RoleKey,
+    ScriptValue,
     SingleValueMetricAggregationResult,
     SingleValueMetricAggregationsUnion,
     SortDirection,
@@ -1335,10 +1337,10 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
-    if (params.focalX != null) {
+    if (focalX != null) {
         bean.setFocalX(focalX);
     }
-    if (params.focalY != null) {
+    if (focalY != null) {
         bean.setFocalY(focalY);
     }
 
@@ -1365,13 +1367,13 @@ interface DuplicateContentHandler {
 
     setWorkflow(value: ScriptValue): void;
 
-    setIncludeChildren(value: boolean);
+    setIncludeChildren(value: boolean): void;
 
-    setVariant(value: boolean);
+    setVariant(value: boolean): void;
 
-    setName(value?: string);
+    setName(value?: string): void;
 
-    setParentPath(value?: string);
+    setParentPath(value?: string): void;
 
     execute(): DuplicateContentsResult;
 }
@@ -1406,8 +1408,12 @@ export function duplicate(params: DuplicateContentParams): DuplicateContentsResu
 
     bean.setContentId(contentId);
     bean.setWorkflow(__.toScriptValue(workflow));
-    bean.setName(__.nullOrValue(name));
-    bean.setParentPath(__.nullOrValue(parent));
+    if (name != null) {
+        bean.setName((name));
+    }
+    if (parent != null) {
+        bean.setParentPath(parent);
+    }
     bean.setIncludeChildren(includeChildren);
     bean.setVariant(variant);
 

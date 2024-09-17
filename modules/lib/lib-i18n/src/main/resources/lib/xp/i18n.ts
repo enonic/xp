@@ -4,6 +4,10 @@ declare global {
     }
 }
 
+import type {ScriptValue} from '@enonic-types/core';
+
+export type {ScriptValue} from '@enonic-types/core';
+
 export interface LocalizeParams {
     key: string;
     locale?: string | string[];
