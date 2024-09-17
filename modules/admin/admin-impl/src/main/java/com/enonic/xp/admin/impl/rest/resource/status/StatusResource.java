@@ -19,6 +19,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.ServerInfo;
 
+@Deprecated
 @Path(ResourceConstants.REST_ROOT + "status")
 @Component(immediate = true, property = "group=admin")
 public final class StatusResource
