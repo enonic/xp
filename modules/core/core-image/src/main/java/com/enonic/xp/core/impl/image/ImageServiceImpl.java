@@ -34,6 +34,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
+import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
@@ -70,8 +71,7 @@ public class ImageServiceImpl
         this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
         this.imageFilterBuilder = imageFilterBuilder;
 
-        this.circuitBreaker = new MemoryCircuitBreaker(
-            toMegaBytes( new MemoryLimitParser( Runtime.getRuntime()::maxMemory ).parse( config.memoryLimit() ) ) );
+        this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
 
         this.progressiveOnFormats = SimpleCsvParser.parseLine( config.progressive() )
             .stream()

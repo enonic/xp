@@ -32,8 +32,8 @@ public final class RepoConfigurationImpl
     }
 
     @Override
-    public int cacheSize()
+    public String cacheCapacity()
     {
-        return Integer.parseInt( this.config.get( "cache.size" ) );
+        return this.config.get( "cache.capacity" );
     }
 }
