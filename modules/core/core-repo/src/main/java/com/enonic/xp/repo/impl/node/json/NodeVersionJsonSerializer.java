@@ -47,7 +47,7 @@ public final class NodeVersionJsonSerializer
     {
         final NodeVersion nodeVersion = toNodeVersionData( data );
 
-        final IndexConfigDocument indexConfigDocument = toIndexConfigDocument( indexConfigDocumentData );
+        final PatternIndexConfigDocument indexConfigDocument = toIndexConfigDocument( indexConfigDocumentData );
 
         final NodeVersionAccessControl accessControl = toNodeVersionAccessControl( accessControlData );
 
@@ -64,7 +64,7 @@ public final class NodeVersionJsonSerializer
         return NodeVersionDataJson.fromJson( readValue( data, NodeVersionDataJson.class ) );
     }
 
-    public static IndexConfigDocument toIndexConfigDocument( final ByteSource data )
+    public static PatternIndexConfigDocument toIndexConfigDocument( final ByteSource data )
         throws IOException
     {
         return IndexConfigDocumentJson.fromJson( readValue( data, IndexConfigDocumentJson.class ) );

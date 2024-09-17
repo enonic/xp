@@ -21,7 +21,7 @@ public final class PatternIndexConfigDocument
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
-    private final Map<String, PathIndexConfig> pathIndexConfigMap;
+    private final ImmutableMap<String, PathIndexConfig> pathIndexConfigMap;
 
     private final IndexConfig defaultConfig;
 
