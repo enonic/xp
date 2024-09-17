@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.image;
+package com.enonic.xp.core.internal;
 
 import java.util.function.LongSupplier;
 

@@ -6,5 +6,5 @@ public interface RepoConfiguration
 {
     Path getSnapshotsDir();
 
-    int cacheSize();
+    String cacheCapacity();
 }

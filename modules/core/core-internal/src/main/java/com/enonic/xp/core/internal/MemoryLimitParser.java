@@ -1,10 +1,8 @@
-package com.enonic.xp.core.impl.image;
+package com.enonic.xp.core.internal;
 
 import java.util.function.LongSupplier;
 
-import com.enonic.xp.util.ByteSizeParser;
-
-public class MemoryLimitParser
+public final class MemoryLimitParser
 {
     private final LongSupplier baselineSupplier;
 
@@ -23,5 +21,10 @@ public class MemoryLimitParser
         {
             return ByteSizeParser.parse( value );
         }
+    }
+
+    public static MemoryLimitParser maxHeap()
+    {
+        return new MemoryLimitParser( Runtime.getRuntime()::maxMemory );
     }
 }

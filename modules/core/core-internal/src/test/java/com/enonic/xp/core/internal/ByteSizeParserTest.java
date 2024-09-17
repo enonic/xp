@@ -1,4 +1,4 @@
-package com.enonic.xp.util;
+package com.enonic.xp.core.internal;
 
 import org.junit.jupiter.api.Test;
 

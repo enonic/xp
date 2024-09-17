@@ -168,7 +168,7 @@ public final class CachedBlobStore
         @Override
         public int weigh( final BlobKey key, final BlobRecord record )
         {
-            return (int) record.getLength();
+            return (int) Math.min( record.getLength(), Integer.MAX_VALUE );
         }
     }
 }

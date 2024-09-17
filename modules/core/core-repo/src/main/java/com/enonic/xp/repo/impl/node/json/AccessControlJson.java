@@ -50,7 +50,7 @@ public final class AccessControlJson
         return new Builder();
     }
 
-    public static NodeVersionAccessControl fromJson( final AccessControlJson json )
+    public static AccessControlList fromJson( final AccessControlJson json )
     {
         final AccessControlList.Builder builder = AccessControlList.create();
         for ( final AccessControlEntryJson entryJson : json.permissions )
@@ -58,7 +58,7 @@ public final class AccessControlJson
             builder.add( entryJson.fromJson() );
         }
 
-        return new NodeVersionAccessControl( builder.build() );
+        return builder.build();
     }
 
     public static final class Builder

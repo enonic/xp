@@ -12,6 +12,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public final class NodeVersionJsonSerializer
 {
@@ -47,13 +48,13 @@ public final class NodeVersionJsonSerializer
     {
         final NodeVersion nodeVersion = toNodeVersionData( data );
 
-        final IndexConfigDocument indexConfigDocument = toIndexConfigDocument( indexConfigDocumentData );
+        final PatternIndexConfigDocument indexConfigDocument = toIndexConfigDocument( indexConfigDocumentData );
 
-        final NodeVersionAccessControl accessControl = toNodeVersionAccessControl( accessControlData );
+        final AccessControlList accessControl = toNodeVersionAccessControl( accessControlData );
 
         return NodeVersion.create( nodeVersion )
             .indexConfigDocument( indexConfigDocument )
-            .permissions( accessControl.getPermissions() )
+            .permissions( accessControl )
             .build();
     }
 
@@ -63,13 +64,13 @@ public final class NodeVersionJsonSerializer
         return NodeVersionDataJson.fromJson( readValue( data, NodeVersionDataJson.class ) );
     }
 
-    public static IndexConfigDocument toIndexConfigDocument( final ByteSource data )
+    public static PatternIndexConfigDocument toIndexConfigDocument( final ByteSource data )
         throws IOException
     {
         return IndexConfigDocumentJson.fromJson( readValue( data, IndexConfigDocumentJson.class ) );
     }
 
-    public static NodeVersionAccessControl toNodeVersionAccessControl( final ByteSource data )
+    public static AccessControlList toNodeVersionAccessControl( final ByteSource data )
         throws IOException
     {
         return AccessControlJson.fromJson( readValue( data, AccessControlJson.class ) );
