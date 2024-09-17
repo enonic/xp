@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {PrincipalKey, User} from '@enonic-types/core';
+import type {PrincipalKey, ScriptValue, User} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, Principal, User} from '@enonic-types/core';
+export type {PrincipalKey, UserKey, Principal, ScriptValue, User} from '@enonic-types/core';
 
 export interface AuthInfo {
     user?: User | null;

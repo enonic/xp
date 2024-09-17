@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {UserKey} from '@enonic-types/core';
+import type {ScriptValue, UserKey} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey} from '@enonic-types/core';
+export type {PrincipalKey, UserKey, GroupKey, RoleKey, ScriptValue} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {

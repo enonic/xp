@@ -1,210 +1,100 @@
-interface XpLibraries {}
+import type {
+    App,
+    DoubleUnderscore,
+    Log,
+    Resolve,
+    XpRequire,
+} from '@enonic-types/core';
 
-interface XpBeans {}
 
-/**
- * The globally available app object holds information about the contextual application.
- * @example
- * var nameVersion = app.name + ' v' + app.version;
- *
- * @global
- * @namespace
- */
-declare const app: {
+declare global {
     /**
-     * The name of the application.
+     * The globally available app object holds information about the contextual application.
+     * @example
+     * var nameVersion = app.name + ' v' + app.version;
      *
-     * @type string
+     * @global
+     * @namespace
      */
-    name: string;
-    /**
-     * Version of the application.
-     *
-     * @type string
-     */
-    version: string;
-    /**
-     * Values from the application’s configuration file.
-     * This can be set using $XP_HOME/config/<app.name>.cfg.
-     * Every time the configuration is changed the app is restarted.
-     *
-     * @type Object
-     */
-    config: Record<string, string | undefined>;
-};
-
-/**
- * Logging functions.
- *
- * @example
- * // Log with simple message
- * log.debug('My log message');
- *
- * @example
- * // Log with placeholders
- * log.info('My %s message with %s', 'log', 'placeholders');
- *
- * @example
- * // Log a JSON object
- * log.warning('My JSON: %s', {a: 1});
- *
- * @example
- * // Log JSON object using string
- * log.error('My JSON: %s', JSON.stringify({a: 1}, null, 2));
- *
- * @global
- * @namespace
- */
-declare const log: {
-    /**
-     * Log debug message.
-     *
-     * @param {Array} args... logging arguments.
-     */
-    debug: (...args: unknown[]) => void;
+    declare const app: App;
 
     /**
-     * Log info message.
+     * Logging functions.
      *
-     * @param {Array} args... logging arguments.
+     * @example
+     * // Log with simple message
+     * log.debug('My log message');
+     *
+     * @example
+     * // Log with placeholders
+     * log.info('My %s message with %s', 'log', 'placeholders');
+     *
+     * @example
+     * // Log a JSON object
+     * log.warning('My JSON: %s', {a: 1});
+     *
+     * @example
+     * // Log JSON object using string
+     * log.error('My JSON: %s', JSON.stringify({a: 1}, null, 2));
+     *
+     * @global
+     * @namespace
      */
-    info: (...args: unknown[]) => void;
+    declare const log: Log;
 
     /**
-     * Log warning message.
+     * Javascript to Java bridge functions.
      *
-     * @param {Array} args... logging arguments.
+     * @example
+     * var bean = __.newBean('com.enonic.xp.MyJavaUtils');
+     *
+     * @example
+     * return __.toNativeObject(bean.findArray(arrayName));
+     *
+     * @global
+     * @namespace
      */
-    warning: (...args: unknown[]) => void;
+    declare const __: DoubleUnderscore;
 
     /**
-     * Log error message.
+     * This globally available function will load a JavaScript file and return the exports as objects.
+     * The function implements parts of the `CommonJS Modules Specification`.
      *
-     * @param {Array} args... logging arguments.
+     * @example
+     * // Require relative to this
+     * var other = require('./other.js');
+     *
+     * @example
+     * // Require absolute
+     * var other = require('/path/to/other.js');
+     *
+     * @example
+     * // Require without .js extension
+     * var other = require('./other');
+     *
+     * @param {string} path Path for javascript file (relative or absolute and .js ending is optional).
+     * @returns {object} Exports from loaded javascript.
+     * @global
      */
-    error: (...args: unknown[]) => void;
-};
+    declare const require: XpRequire;
 
-declare interface ScriptValue {
-    isArray(): boolean;
-
-    isObject(): boolean;
-
-    isValue(): boolean;
-
-    isFunction(): boolean;
-
-    getValue(): unknown;
-
-    getKeys(): string[];
-
-    hasMember(key: string): boolean;
-
-    getMember(key: string): ScriptValue;
-
-    getArray(): ScriptValue[];
-
-    getMap(): Record<string, unknown>;
-
-    getList(): object[];
+    /**
+     * Resolves a path to another file. Can use relative or absolute path.
+     *
+     * @example
+     * // Resolve relative to this
+     * var path = resolve('./other.html');
+     *
+     * @example
+     * // Resolve absolute
+     * var path = resolve('/path/to/other.html');
+     *
+     * @param {string} path Path to resolve.
+     * @returns {*} Reference to an object.
+     * @global
+     */
+    declare const resolve: Resolve;
 }
 
-type NewBean = <T = unknown, Bean extends keyof XpBeans | string = string>(bean: Bean) =>
-    Bean extends keyof XpBeans ? XpBeans[Bean] : T;
-
-/**
- * Javascript to Java bridge functions.
- *
- * @example
- * var bean = __.newBean('com.enonic.xp.MyJavaUtils');
- *
- * @example
- * return __.toNativeObject(bean.findArray(arrayName));
- *
- * @global
- * @namespace
- */
-declare const __: {
-    /**
-     * Creates a new JavaScript bean that wraps the given Java class and makes its methods available to be called from JavaScript.
-     */
-    newBean: NewBean;
-    /**
-     * Converts arrays or complex Java objects to JSON.
-     * @param value Value to convert
-     */
-    toNativeObject: <T = unknown>(value: T) => T;
-    /**
-     * Converts JSON to a Java Map structure that can be used as parameters to a Java method on a bean created with newBean.
-     * @param value Value to convert
-     */
-    toScriptValue: <T = object>(value: T) => ScriptValue;
-    /**
-     * Add a disposer that is called when the app is stopped.
-     * @param callback Function to call
-     */
-    disposer: (callback: (...args: unknown[]) => unknown) => void;
-    /**
-     * Converts a JavaScript variable that is undefined to a Java <code>null</code> object.
-     * If the JavaScript variable is defined, it is returned as is.
-     * @param value Value to convert
-     */
-    nullOrValue: <T = object>(value: T) => T | null | undefined;
-
-    /**
-     * Doc registerMock.
-     *
-     * @param name Name of mock.
-     * @param value Value to register.
-     */
-    registerMock: (name: string, value: object) => void
-};
-
-declare type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
-    Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
-
-/**
- * This globally available function will load a JavaScript file and return the exports as objects.
- * The function implements parts of the `CommonJS Modules Specification`.
- *
- * @example
- * // Require relative to this
- * var other = require('./other.js');
- *
- * @example
- * // Require absolute
- * var other = require('/path/to/other.js');
- *
- * @example
- * // Require without .js extension
- * var other = require('./other');
- *
- * @param {string} path Path for javascript file (relative or absolute and .js ending is optional).
- * @returns {object} Exports from loaded javascript.
- * @global
- */
-declare const require: XpRequire;
-
-/**
- * Resolves a path to another file. Can use relative or absolute path.
- *
- * @example
- * // Resolve relative to this
- * var path = resolve('./other.html');
- *
- * @example
- * // Resolve absolute
- * var path = resolve('/path/to/other.html');
- *
- * @param {string} path Path to resolve.
- * @returns {*} Reference to an object.
- * @global
- */
-declare const resolve: (path: string) => {
-    getApplicationKey(): string;
-    getPath(): string;
-    getUri(): string;
-    isRoot(): boolean;
-    getName(): string;
-    getExtension(): string;
-};
+// Making sure the file is a module
+export {};

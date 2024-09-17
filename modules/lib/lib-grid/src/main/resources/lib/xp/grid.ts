@@ -17,7 +17,7 @@ export type SharedMapValueType = string | number | boolean | object | null;
 
 export type GridMap = Record<string, SharedMapValueType>;
 
-export type SharedMapModifierFn<Map extends GridMap, Key extends keyof Map> = (value: Map[Key] | null) => SharedMapValueType | Record<string, unknown> | object[];
+export type SharedMapModifierFn<Map extends GridMap, Key extends keyof Map> = (value: Map[Key] | null) => ConvertedType;
 
 type ConvertedType = SharedMapValueType | Record<string, unknown> | object[];
 
@@ -48,7 +48,7 @@ export interface ModifyParams<Map extends GridMap, Key extends keyof Map> {
 }
 
 export interface SharedMap<Map extends GridMap> {
-    get<Key extends keyof Map>(key: Key): Map[Key];
+    get<Key extends keyof Map>(key: Key): Map[Key] | null;
 
     set<Key extends keyof Map>(params: SetParams<Map, Key>): void;
 
@@ -74,7 +74,7 @@ class SharedMapImpl<Map extends GridMap>
     private map: JavaSharedMap<Map>;
 
     constructor(mapId: string) {
-        const bean = __.newBean<SharedMapHandler<Map>>('com.enonic.xp.lib.grid.SharedMapHandler');
+        const bean: SharedMapHandler<Map> = __.newBean('com.enonic.xp.lib.grid.SharedMapHandler');
         this.map = bean.getMap(mapId);
     }
 
@@ -84,7 +84,7 @@ class SharedMapImpl<Map extends GridMap>
      * @param {string} key - key the key whose associated value is to be returned
      * @returns {string|number|boolean|JSON|null} the value to which the specified key is mapped, or null if this map contains no mapping for the key
      */
-    get<Key extends keyof Map>(key: Key): Map[Key] {
+    get<Key extends keyof Map>(key: Key): Map[Key] | null {
         return __.toNativeObject(this.map.get(key));
     }
 
@@ -128,9 +128,9 @@ class SharedMapImpl<Map extends GridMap>
 
         const ttlSeconds = __.nullOrValue(params.ttlSeconds);
 
-        function modifierFn<Key extends keyof Map>(oldValue: Map[Key] | null): ConvertedType {
+        const modifierFn = (oldValue: Map[Key] | null): ConvertedType => {
             return convertValue(func.call(this, __.toNativeObject(oldValue)));
-        }
+        };
 
         if (ttlSeconds === null) {
             return __.toNativeObject(this.map.modify(key, modifierFn));
@@ -160,7 +160,7 @@ function convertValue(value: SharedMapValueType): ConvertedType {
     if (typeof value === 'undefined' || value === null) {
         return null;
     } else if (Array.isArray(value)) {
-        return __.toScriptValue(value).getList();
+        return __.toScriptValue<object[]>(value).getList();
     } else if (typeof value === 'object') {
         return __.toScriptValue(value).getMap();
     } else {
