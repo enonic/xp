@@ -16,6 +16,12 @@ declare global {
 const i18n = require('/lib/xp/i18n');
 const portal = require('/lib/xp/portal');
 
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
+    if (obj == null || obj[name] == null) {
+        throw `Parameter '${String(name)}' is required`;
+    }
+}
+
 const helper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
 
 interface AdminLibHelper {
@@ -159,4 +165,34 @@ export function getInstallation(): string {
  */
 export function getVersion(): string {
     return helper.getVersion();
+}
+
+export interface WidgetUrlParams {
+    application: string;
+    widget: string;
+    type?: 'server' | 'absolute';
+    params?: object;
+}
+
+/**
+ * Returns the URL for a widget.
+ *
+ * @param {object} [params] Parameter object
+ * @param {string} params.application Application to reference to a widget.
+ * @param {string} params.widget Name of the widget.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {object} [params.params] Custom parameters to append to the url.
+ *
+ * @returns {string} URL.
+ */
+export function widgetUrl(params: WidgetUrlParams): string {
+    checkRequired(params, 'application');
+    checkRequired(params, 'widget');
+
+    return portal.apiUrl({
+        application: 'admin',
+        api: `widget/${params.application}/${params.widget}`,
+        type: params.type || 'server',
+        params: params.params || {},
+    });
 }
