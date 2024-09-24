@@ -192,6 +192,7 @@ export function widgetUrl(params: WidgetUrlParams): string {
     return portal.apiUrl({
         application: 'admin',
         api: `widget/${params.application}/${params.widget}`,
+        type: params.type || 'server',
         params: params.params || {},
     });
 }
