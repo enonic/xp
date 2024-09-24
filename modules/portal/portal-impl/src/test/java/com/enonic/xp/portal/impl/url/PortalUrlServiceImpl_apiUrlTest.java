@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentPath;
@@ -98,9 +100,10 @@ public class PortalUrlServiceImpl_apiUrlTest
         params.api( "myapi" );
         params.param( "k1", "v1" );
         params.param( "k2", "v2" );
+        params.path( List.of( "språk", "kurs" ) );
 
         final String url = this.service.apiUrl( params );
-        assertEquals( "/api/com.enonic.app.myapp/myapi?k1=v1&k2=v2", url );
+        assertEquals( "/api/com.enonic.app.myapp/myapi/spr%C3%A5k/kurs?k1=v1&k2=v2", url );
     }
 
     @Test
@@ -153,9 +156,10 @@ public class PortalUrlServiceImpl_apiUrlTest
         params.portalRequest( this.portalRequest );
         params.application( "myapp2" );
         params.api( "api2" );
+        params.path( List.of( "språk", "kurs" ) );
 
         final String url = this.service.apiUrl( params );
-        assertEquals( "/api/myapp2/api2", url );
+        assertEquals( "/api/myapp2/api2/spr%C3%A5k/kurs", url );
     }
 
     @Test

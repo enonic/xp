@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,6 +76,11 @@ final class UniversalApiUrlBuilder
         if ( this.params.getApi() != null )
         {
             appendPart( url, this.params.getApi() );
+        }
+        final List<String> path = this.params.getPath();
+        if ( path != null && !path.isEmpty() )
+        {
+            path.forEach( pathPart -> appendPart( url, pathPart ) );
         }
 
         params.putAll( this.params.getParams() );

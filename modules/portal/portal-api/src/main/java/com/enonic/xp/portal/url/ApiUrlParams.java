@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.url;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -16,6 +17,8 @@ public final class ApiUrlParams
 
     private String api;
 
+    private List<String> path;
+
     public String getApplication()
     {
         return application;
@@ -24,6 +27,11 @@ public final class ApiUrlParams
     public String getApi()
     {
         return api;
+    }
+
+    public List<String> getPath()
+    {
+        return path;
     }
 
     public ApiUrlParams application( final String value )
@@ -35,6 +43,12 @@ public final class ApiUrlParams
     public ApiUrlParams api( final String value )
     {
         this.api = Strings.emptyToNull( value );
+        return this;
+    }
+
+    public ApiUrlParams path( final List<String> value )
+    {
+        this.path = value;
         return this;
     }
 
@@ -54,5 +68,6 @@ public final class ApiUrlParams
         super.buildToString( helper );
         helper.add( "api", this.api );
         helper.add( "application", this.application );
+        helper.add( "path", this.path );
     }
 }
