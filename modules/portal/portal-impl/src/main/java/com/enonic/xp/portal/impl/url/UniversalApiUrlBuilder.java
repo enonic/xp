@@ -10,6 +10,9 @@ import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.site.Site;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
+
 final class UniversalApiUrlBuilder
     extends PortalUrlBuilder<ApiUrlParams>
 {
@@ -76,6 +79,8 @@ final class UniversalApiUrlBuilder
         {
             appendPart( url, this.params.getApi() );
         }
+        appendSubPath( url, this.params.getPath() );
+        appendPathSegments( url, this.params.getPathSegments() );
 
         params.putAll( this.params.getParams() );
     }

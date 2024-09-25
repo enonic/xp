@@ -19,6 +19,7 @@ import type {
     Content,
     NestedRecord,
     Region,
+    ScriptValue,
 } from '@enonic-types/core';
 
 export type {
@@ -28,6 +29,12 @@ export type {
     Component,
     Region,
 } from '@enonic-types/core';
+
+function checkRequired<T extends object>(obj: T, name: keyof T): void {
+    if (obj == null || obj[name] === null) {
+        throw `Parameter '${String(name)}' is required`;
+    }
+}
 
 export type Site<Config> = Content<{
     description?: string;
@@ -606,9 +613,12 @@ export interface ApiUrlParams {
     api?: string;
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
+    path?: string | string[];
 }
 
 interface ApiUrlHandler {
+    setPath(value: string | ScriptValue): void;
+
     createUrl(value: object): string;
 }
 
@@ -617,15 +627,39 @@ interface ApiUrlHandler {
  *
  * @example-ref examples/portal/apiUrl.js
  *
- * @param {object} params Input parameters as JSON.
- * @param {string} params.application Application to reference to the API.
- * @param {string} [params.api] Name of the API
- * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {object} [params.params] Custom parameters to append to the URL.
+ * @param {object} urlParams Input parameters as JSON.
+ * @param {string} urlParams.application Application to reference to the API.
+ * @param {string} [urlParams.api] Name of the API
+ * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
+ * @param {object} [urlParams.params] Custom parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
-export function apiUrl(params: ApiUrlParams): string {
+export function apiUrl(urlParams: ApiUrlParams): string {
+    checkRequired(urlParams, 'application');
+
+    const {
+        application,
+        api,
+        type = 'server',
+        path,
+        params,
+    } = urlParams ?? {};
+
     const bean = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+    if (path) {
+        if (Array.isArray(path)) {
+            bean.setPath(__.toScriptValue(path));
+        } else {
+            bean.setPath(path as string);
+        }
+    }
+
+    return bean.createUrl(__.toScriptValue({
+        application,
+        api,
+        type,
+        params,
+    }));
 }

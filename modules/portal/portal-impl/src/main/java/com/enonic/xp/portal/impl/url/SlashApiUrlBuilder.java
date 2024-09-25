@@ -4,6 +4,8 @@ import com.enonic.xp.portal.url.ApiUrlParams;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendParams;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 public class SlashApiUrlBuilder
 {
@@ -23,6 +25,8 @@ public class SlashApiUrlBuilder
         {
             appendPart( url, params.getApi() );
         }
+        appendSubPath( url, this.params.getPath() );
+        appendPathSegments( url, this.params.getPathSegments() );
         appendParams( url, params.getParams().entries() );
         return url.toString();
     }

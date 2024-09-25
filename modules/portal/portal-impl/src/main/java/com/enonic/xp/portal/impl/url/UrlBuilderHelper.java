@@ -35,6 +35,44 @@ public final class UrlBuilderHelper
         str.append( normalized );
     }
 
+    public static void appendPartWithoutNormalization( final StringBuilder str, final String urlPart )
+    {
+        if ( isNullOrEmpty( urlPart ) )
+        {
+            return;
+        }
+
+        final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
+
+        if ( !endsWithSlash && !urlPart.startsWith( "/" ) )
+        {
+            str.append( "/" );
+        }
+
+        str.append( urlPart );
+    }
+
+    public static void appendPathSegments( final StringBuilder url, final Collection<String> pathSegments )
+    {
+        if ( pathSegments != null )
+        {
+            pathSegments.forEach( pathSegment -> {
+                if ( !isNullOrEmpty( pathSegment ) )
+                {
+                    appendPart( url, pathSegment );
+                }
+            } );
+        }
+    }
+
+    public static void appendSubPath( final StringBuilder url, final String subPath )
+    {
+        if ( !isNullOrEmpty( subPath ) )
+        {
+            appendPartWithoutNormalization( url, subPath );
+        }
+    }
+
     public static String normalizePath( final String value )
     {
         if ( !value.contains( "/" ) )
