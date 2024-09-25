@@ -52,18 +52,24 @@ public final class UrlBuilderHelper
         str.append( urlPart );
     }
 
-    public static void appendSubPath( final StringBuilder url, final Object subPath )
+    public static void appendPathSegments( final StringBuilder url, final Collection<String> pathSegments )
     {
-        if ( subPath != null )
+        if ( pathSegments != null )
         {
-            if ( subPath instanceof Collection )
-            {
-                ( (Collection<?>) subPath ).forEach( pathPart -> appendPart( url, (String) pathPart ) );
-            }
-            else
-            {
-                appendPartWithoutNormalization( url, subPath.toString() );
-            }
+            pathSegments.forEach( pathSegment -> {
+                if ( !isNullOrEmpty( pathSegment ) )
+                {
+                    appendPart( url, pathSegment );
+                }
+            } );
+        }
+    }
+
+    public static void appendSubPath( final StringBuilder url, final String subPath )
+    {
+        if ( !isNullOrEmpty( subPath ) )
+        {
+            appendPartWithoutNormalization( url, subPath );
         }
     }
 

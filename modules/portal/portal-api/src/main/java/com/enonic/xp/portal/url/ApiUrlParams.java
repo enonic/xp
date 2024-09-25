@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.url;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -7,7 +8,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.script.ScriptValue;
 
 @PublicApi
 public final class ApiUrlParams
@@ -17,7 +17,9 @@ public final class ApiUrlParams
 
     private String api;
 
-    private Object path;
+    private String path;
+
+    private List<String> pathSegments;
 
     public String getApplication()
     {
@@ -29,9 +31,14 @@ public final class ApiUrlParams
         return api;
     }
 
-    public Object getPath()
+    public String getPath()
     {
         return path;
+    }
+
+    public List<String> getPathSegments()
+    {
+        return pathSegments;
     }
 
     public ApiUrlParams application( final String value )
@@ -46,16 +53,15 @@ public final class ApiUrlParams
         return this;
     }
 
-    public ApiUrlParams path( final Object value )
+    public ApiUrlParams path( final String value )
     {
-        if ( value instanceof ScriptValue && ( (ScriptValue) value ).isArray() )
-        {
-            this.path = ( (ScriptValue) value ).getArray( String.class );
-        }
-        else
-        {
-            this.path = value;
-        }
+        this.path = value;
+        return this;
+    }
+
+    public ApiUrlParams pathSegments( final List<String> pathSegments )
+    {
+        this.pathSegments = pathSegments;
         return this;
     }
 
@@ -76,5 +82,6 @@ public final class ApiUrlParams
         helper.add( "api", this.api );
         helper.add( "application", this.application );
         helper.add( "path", this.path );
+        helper.add( "pathSegments", this.pathSegments );
     }
 }

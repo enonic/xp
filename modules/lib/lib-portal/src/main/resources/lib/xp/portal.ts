@@ -650,7 +650,7 @@ export function apiUrl(urlParams: ApiUrlParams): string {
     const bean = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
     if (path) {
         if (Array.isArray(path)) {
-            bean.setPath(__.toScriptValue(([] as string[]).concat(path)));
+            bean.setPath(__.toScriptValue(path));
         } else {
             bean.setPath(path as string);
         }
