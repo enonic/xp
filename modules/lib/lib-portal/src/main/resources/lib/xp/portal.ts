@@ -19,6 +19,7 @@ import type {
     Content,
     NestedRecord,
     Region,
+    ScriptValue,
 } from '@enonic-types/core';
 
 export type {
@@ -616,7 +617,7 @@ export interface ApiUrlParams {
 }
 
 interface ApiUrlHandler {
-    setPath(value: string[]): void;
+    setPath(value: string | ScriptValue): void;
 
     createUrl(value: object): string;
 }
@@ -642,12 +643,18 @@ export function apiUrl(urlParams: ApiUrlParams): string {
         application,
         api,
         type = 'server',
-        path = [],
+        path,
         params,
     } = urlParams ?? {};
 
     const bean = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
-    bean.setPath(([] as string[]).concat(path));
+    if (path) {
+        if (Array.isArray(path)) {
+            bean.setPath(__.toScriptValue(([] as string[]).concat(path)));
+        } else {
+            bean.setPath(path as string);
+        }
+    }
 
     return bean.createUrl(__.toScriptValue({
         application,

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.site.Site;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 final class UniversalApiUrlBuilder
     extends PortalUrlBuilder<ApiUrlParams>
@@ -77,11 +78,7 @@ final class UniversalApiUrlBuilder
         {
             appendPart( url, this.params.getApi() );
         }
-        final List<String> path = this.params.getPath();
-        if ( path != null && !path.isEmpty() )
-        {
-            path.forEach( pathPart -> appendPart( url, pathPart ) );
-        }
+        appendSubPath( url, this.params.getPath() );
 
         params.putAll( this.params.getParams() );
     }

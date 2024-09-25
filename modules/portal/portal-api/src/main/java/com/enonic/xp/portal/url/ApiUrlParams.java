@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -8,6 +7,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.script.ScriptValue;
 
 @PublicApi
 public final class ApiUrlParams
@@ -17,7 +17,7 @@ public final class ApiUrlParams
 
     private String api;
 
-    private List<String> path;
+    private Object path;
 
     public String getApplication()
     {
@@ -29,7 +29,7 @@ public final class ApiUrlParams
         return api;
     }
 
-    public List<String> getPath()
+    public Object getPath()
     {
         return path;
     }
@@ -46,9 +46,16 @@ public final class ApiUrlParams
         return this;
     }
 
-    public ApiUrlParams path( final List<String> value )
+    public ApiUrlParams path( final Object value )
     {
-        this.path = value;
+        if ( value instanceof ScriptValue && ( (ScriptValue) value ).isArray() )
+        {
+            this.path = ( (ScriptValue) value ).getArray( String.class );
+        }
+        else
+        {
+            this.path = value;
+        }
         return this;
     }
 

@@ -35,6 +35,38 @@ public final class UrlBuilderHelper
         str.append( normalized );
     }
 
+    public static void appendPartWithoutNormalization( final StringBuilder str, final String urlPart )
+    {
+        if ( isNullOrEmpty( urlPart ) )
+        {
+            return;
+        }
+
+        final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
+
+        if ( !endsWithSlash && !urlPart.startsWith( "/" ) )
+        {
+            str.append( "/" );
+        }
+
+        str.append( urlPart );
+    }
+
+    public static void appendSubPath( final StringBuilder url, final Object subPath )
+    {
+        if ( subPath != null )
+        {
+            if ( subPath instanceof Collection )
+            {
+                ( (Collection<?>) subPath ).forEach( pathPart -> appendPart( url, (String) pathPart ) );
+            }
+            else
+            {
+                appendPartWithoutNormalization( url, subPath.toString() );
+            }
+        }
+    }
+
     public static String normalizePath( final String value )
     {
         if ( !value.contains( "/" ) )

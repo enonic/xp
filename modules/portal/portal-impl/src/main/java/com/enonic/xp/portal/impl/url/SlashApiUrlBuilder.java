@@ -1,11 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.List;
-
 import com.enonic.xp.portal.url.ApiUrlParams;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendParams;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 public class SlashApiUrlBuilder
 {
@@ -25,11 +24,7 @@ public class SlashApiUrlBuilder
         {
             appendPart( url, params.getApi() );
         }
-        final List<String> path = this.params.getPath();
-        if ( path != null && !path.isEmpty() )
-        {
-            path.forEach( pathPart -> appendPart( url, pathPart ) );
-        }
+        appendSubPath( url, this.params.getPath() );
         appendParams( url, params.getParams().entries() );
         return url.toString();
     }

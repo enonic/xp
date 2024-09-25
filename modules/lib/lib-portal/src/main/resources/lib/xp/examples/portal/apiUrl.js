@@ -9,7 +9,7 @@ const url = portalLib.apiUrl({
         a: 1,
         b: 2
     },
-    path: 'mypath'
+    path: 'mypath/subpath'
 });
 
 const unnamedApiUrl = portalLib.apiUrl({
@@ -24,6 +24,6 @@ const apiUrl = portalLib.apiUrl({
 
 // END
 
-assert.assertEquals('ApiUrlParams{type=server, params={a=[1], b=[2]}, api=myapi, application=com.enonic.app.myapp, path=[mypath]}', url);
+assert.assertEquals('ApiUrlParams{type=server, params={a=[1], b=[2]}, api=myapi, application=com.enonic.app.myapp, path=mypath/subpath}', url);
 assert.assertEquals('ApiUrlParams{type=server, params={}, application=com.enonic.app.myapp, path=[mypath, myotherpath]}', unnamedApiUrl);
-assert.assertEquals('ApiUrlParams{type=server, params={}, api=myapi, application=com.enonic.app.myapp, path=[]}', apiUrl);
+assert.assertEquals('ApiUrlParams{type=server, params={}, api=myapi, application=com.enonic.app.myapp}', apiUrl);

@@ -163,6 +163,26 @@ public class PortalUrlServiceImpl_apiUrlTest
     }
 
     @Test
+    void testCreateUrlApiWithSupPathAsString()
+    {
+        when( portalRequest.getRawRequest().getRequestURI() ).thenReturn( "/api/myapp1/api1" );
+
+        final ApiUrlParams params = new ApiUrlParams();
+        params.portalRequest( this.portalRequest );
+        params.application( "myapp2" );
+        params.api( "api2" );
+        params.path( "/path/subPath" );
+
+        assertEquals( "/api/myapp2/api2/path/subPath", this.service.apiUrl( params ) );
+
+        params.path( "path/subPath" );
+        assertEquals( "/api/myapp2/api2/path/subPath", this.service.apiUrl( params ) );
+
+        params.path( "path/sub Path" );
+        assertEquals( "/api/myapp2/api2/path/sub Path", this.service.apiUrl( params ) );
+    }
+
+    @Test
     void testCreateUrlInvalid()
     {
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> {

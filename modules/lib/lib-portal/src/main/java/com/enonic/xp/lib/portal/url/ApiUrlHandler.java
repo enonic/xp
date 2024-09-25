@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Multimap;
@@ -12,7 +11,7 @@ public final class ApiUrlHandler
 {
     private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "application", "api", "type", "params" );
 
-    private List<String> path;
+    private Object path;
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
@@ -21,9 +20,9 @@ public final class ApiUrlHandler
         return this.urlService.apiUrl( params );
     }
 
-    public void setPath( final String[] path )
+    public void setPath( final Object path )
     {
-        this.path = path == null ? List.of() : List.of( path );
+        this.path = path;
     }
 
     @Override
