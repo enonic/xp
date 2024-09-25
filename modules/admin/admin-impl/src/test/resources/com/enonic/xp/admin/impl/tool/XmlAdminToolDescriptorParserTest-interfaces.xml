@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<tool xmlns="urn:enonic:xp:model:1.0">
+  <display-name i18n="key.display-name">My admin tool</display-name>
+  <description i18n="key.description">Tool description</description>
+  <allow>
+    <principal>role:system.admin</principal>
+  </allow>
+  <interfaces>
+    <interface>generic</interface>
+    <interface>admin.dashboard</interface>
+  </interfaces>
+</tool>

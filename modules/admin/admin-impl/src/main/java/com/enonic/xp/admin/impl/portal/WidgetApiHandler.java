@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
@@ -22,23 +24,31 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.universalapi.UniversalApiHandler;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=widget", "apiKey=",
+@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
     "allowedPrincipals=role:system.admin.login", "allowedPrincipals=role:system.admin"})
 public class WidgetApiHandler
     implements UniversalApiHandler
 {
-    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
+    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin/widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
+
+    private static final Pattern TOOL_PREFIX_PATTERN = Pattern.compile( "^/admin/(?<appKey>[^/]+)/(?<toolName>[^/]+)" );
+
+    private static final String GENERIC_WIDGET_INTERFACE = "generic";
 
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final WidgetDescriptorService widgetDescriptorService;
 
+    private final AdminToolDescriptorService adminToolDescriptorService;
+
     @Activate
     public WidgetApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                             @Reference final WidgetDescriptorService widgetDescriptorService )
+                             @Reference final WidgetDescriptorService widgetDescriptorService,
+                             @Reference final AdminToolDescriptorService adminToolDescriptorService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.widgetDescriptorService = widgetDescriptorService;
+        this.adminToolDescriptorService = adminToolDescriptorService;
     }
 
     @Override
@@ -66,12 +76,37 @@ public class WidgetApiHandler
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
+        verifyMounts( widgetDescriptor, webRequest );
+
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
         final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
                                                      "admin/widgets/" + descriptorKey.getName() + "/" + descriptorKey.getName() + ".js" );
 
         return controllerScriptFactory.fromScript( script ).execute( portalRequest );
+    }
+
+    private void verifyMounts( final WidgetDescriptor widgetDescriptor, final WebRequest webRequest )
+    {
+        if ( !widgetDescriptor.hasInterface( GENERIC_WIDGET_INTERFACE ) && webRequest.getEndpointPath() != null )
+        {
+            final Matcher toolMatcher = TOOL_PREFIX_PATTERN.matcher( webRequest.getRawPath() );
+            if ( toolMatcher.find() )
+            {
+                final DescriptorKey toolDescriptorKey =
+                    DescriptorKey.from( resolveApplicationKey( toolMatcher.group( "appKey" ) ), toolMatcher.group( "toolName" ) );
+                final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( toolDescriptorKey );
+                if ( adminToolDescriptor != null && !adminToolDescriptor.getInterfaces().isEmpty() )
+                {
+                    if ( widgetDescriptor.getInterfaces().stream().noneMatch( adminToolDescriptor::hasInterface ) )
+                    {
+                        throw WebException.notFound(
+                            String.format( "Widget [%s] is not mounted to admin tool [%s]", widgetDescriptor.getKey(),
+                                           toolDescriptorKey ) );
+                    }
+                }
+            }
+        }
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final DescriptorKey descriptorKey )

@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.tool;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,7 @@ import com.enonic.xp.xml.parser.XmlModelParserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlAdminToolDescriptorParserTest
     extends XmlModelParserTest
@@ -71,6 +74,23 @@ public class XmlAdminToolDescriptorParserTest
         final ApiMountDescriptor apiMountDescriptor4 = toolDescriptor.getApiMounts().get( 3 );
         assertEquals( ApplicationKey.from( "myapplication" ), apiMountDescriptor4.getApplicationKey() );
         assertEquals( "", apiMountDescriptor4.getApiKey() );
+    }
+
+    @Test
+    public void testParseWithInterfaces()
+        throws Exception
+    {
+        parse( this.parser, "-interfaces.xml" );
+
+        final AdminToolDescriptor toolDescriptor = this.builder.build();
+
+        assertResult( toolDescriptor );
+
+        assertEquals( 2, toolDescriptor.getInterfaces().size() );
+
+        final Set<String> interfaces = toolDescriptor.getInterfaces();
+        assertTrue( interfaces.contains( "generic" ) );
+        assertTrue( interfaces.contains( "admin.dashboard" ) );
     }
 
     @Test
