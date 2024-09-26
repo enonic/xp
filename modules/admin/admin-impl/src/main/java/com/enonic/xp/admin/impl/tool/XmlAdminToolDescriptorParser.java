@@ -19,6 +19,10 @@ public class XmlAdminToolDescriptorParser
 
     private static final String API_DESCRIPTOR_TAG_NAME = "api";
 
+    private static final String INTERFACES_DESCRIPTOR_TAG_NAME = "interfaces";
+
+    private static final String INTERFACE_DESCRIPTOR_TAG_NAME = "interface";
+
     private static final int APPLICATION_KEY_INDEX = 0;
 
     private static final int API_KEY_INDEX = 1;
@@ -55,6 +59,16 @@ public class XmlAdminToolDescriptorParser
         }
 
         this.builder.apiMounts( ApiMountDescriptors.from( parseApiMounts( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
+
+        final DomElement interfaces = root.getChild( INTERFACES_DESCRIPTOR_TAG_NAME );
+        if ( interfaces != null )
+        {
+            final List<DomElement> interfaceList = interfaces.getChildren( INTERFACE_DESCRIPTOR_TAG_NAME );
+            for ( DomElement anInterface : interfaceList )
+            {
+                this.builder.addInterface( anInterface.getValue().trim() );
+            }
+        }
     }
 
     private List<ApiMountDescriptor> parseApiMounts( final DomElement apisElement )

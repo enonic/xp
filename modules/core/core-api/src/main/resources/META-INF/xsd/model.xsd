@@ -301,6 +301,13 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="apis" minOccurs="0" type="apiMount"/>
+      <xs:element minOccurs="0" name="interfaces">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="interface" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

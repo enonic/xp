@@ -1,8 +1,12 @@
 package com.enonic.xp.admin.impl.portal;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
@@ -34,13 +38,16 @@ public class WidgetApiHandlerTest
 
     private WidgetDescriptorService widgetDescriptorService;
 
+    private AdminToolDescriptorService adminToolDescriptorService;
+
     @BeforeEach
     public void setUp()
     {
         this.controllerScriptFactory = mock( ControllerScriptFactory.class );
         this.widgetDescriptorService = mock( WidgetDescriptorService.class );
+        this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
 
-        this.handler = new WidgetApiHandler( this.controllerScriptFactory, this.widgetDescriptorService );
+        this.handler = new WidgetApiHandler( this.controllerScriptFactory, this.widgetDescriptorService, this.adminToolDescriptorService );
     }
 
 
@@ -63,8 +70,8 @@ public class WidgetApiHandlerTest
     {
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/widget/<app>/api" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/widget/<app>/api" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/<app>/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/<app>/widgetName" );
 
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Invalid application key: <app>", ex.getMessage() );
@@ -73,22 +80,22 @@ public class WidgetApiHandlerTest
     @Test
     void testNoWidgetDescriptor()
     {
-        when( widgetDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "api" ) ) ) ).thenReturn( null );
+        when( widgetDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" ) ) ) ).thenReturn( null );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/widget/app/api" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/widget/app/api" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Widget [app:api] not found", ex.getMessage() );
+        assertEquals( "Widget [app:widgetName] not found", ex.getMessage() );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
     void testWidgetDescriptorAccessDenied()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "api" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
         WidgetDescriptor widgetDescriptor = mock( WidgetDescriptor.class );
         when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( false );
@@ -98,8 +105,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/widget/app/api" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/widget/app/api" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -108,7 +115,7 @@ public class WidgetApiHandlerTest
     @Test
     void testHandle()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "api" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
         WidgetDescriptor widgetDescriptor = mock( WidgetDescriptor.class );
         when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
@@ -118,8 +125,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/widget/app/api" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/widget/app/api" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -128,5 +135,72 @@ public class WidgetApiHandlerTest
 
         WebResponse response = this.handler.handle( webRequest );
         assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    @Test
+    void testVerifyMounts()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = mock( WidgetDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
+        when( widgetDescriptor.getKey() ).thenReturn( widgetDescriptorKey );
+        when( widgetDescriptor.getInterfaces() ).thenReturn( Set.of( "widgetInterface" ) );
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor =
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "widgetInterface" ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin/widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebResponse response = this.handler.handle( webRequest );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    @Test
+    void testWidgetDoesNotMountedToAdminTool()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = mock( WidgetDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
+        when( widgetDescriptor.getKey() ).thenReturn( widgetDescriptorKey );
+        when( widgetDescriptor.getInterfaces() ).thenReturn( Set.of( "widgetInterface" ) );
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor =
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "admin.dashboard" ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin/widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Widget [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.tool;
 
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -30,6 +31,8 @@ public class AdminToolDescriptor
 
     private final ApiMountDescriptors apiMounts;
 
+    private final ImmutableSet<String> interfaces;
+
     private AdminToolDescriptor( final Builder builder )
     {
         key = builder.key;
@@ -39,6 +42,7 @@ public class AdminToolDescriptor
         descriptionI18nKey = builder.descriptionI18nKey;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
         apiMounts = Objects.requireNonNullElse( builder.apiMounts, ApiMountDescriptors.empty() );
+        interfaces = builder.interfaces.build();
     }
 
     public DescriptorKey getKey()
@@ -86,6 +90,16 @@ public class AdminToolDescriptor
         return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
+    public Set<String> getInterfaces()
+    {
+        return interfaces;
+    }
+
+    public boolean hasInterface( final String interfaceName )
+    {
+        return interfaces.contains( interfaceName );
+    }
+
     public boolean isAppLauncherApplication()
     {
         return displayName != null;
@@ -127,6 +141,8 @@ public class AdminToolDescriptor
         private ApiMountDescriptors apiMounts;
 
         private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
+
+        private final ImmutableSet.Builder<String> interfaces = ImmutableSet.builder();
 
         private Builder()
         {
@@ -171,6 +187,12 @@ public class AdminToolDescriptor
         public Builder apiMounts( final ApiMountDescriptors apiMountDescriptors )
         {
             this.apiMounts = apiMountDescriptors;
+            return this;
+        }
+
+        public Builder addInterface( final String interfaceName )
+        {
+            this.interfaces.add( interfaceName );
             return this;
         }
 
