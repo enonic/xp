@@ -89,7 +89,7 @@ public class XmlAdminToolDescriptorParserTest
         assertEquals( 2, toolDescriptor.getInterfaces().size() );
 
         final Set<String> interfaces = toolDescriptor.getInterfaces();
-        assertTrue( interfaces.contains( "generic" ) );
+        assertTrue( interfaces.contains( "admin.dashboard.content-studio" ) );
         assertTrue( interfaces.contains( "admin.dashboard" ) );
     }
 

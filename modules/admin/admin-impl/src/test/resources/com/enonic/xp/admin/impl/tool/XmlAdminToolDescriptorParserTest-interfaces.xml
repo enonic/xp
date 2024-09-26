@@ -6,7 +6,7 @@
     <principal>role:system.admin</principal>
   </allow>
   <interfaces>
-    <interface>generic</interface>
+    <interface>admin.dashboard.content-studio</interface>
     <interface>admin.dashboard</interface>
   </interfaces>
 </tool>

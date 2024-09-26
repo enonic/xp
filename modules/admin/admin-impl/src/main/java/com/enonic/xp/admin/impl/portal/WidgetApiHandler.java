@@ -96,14 +96,11 @@ public class WidgetApiHandler
                 final DescriptorKey toolDescriptorKey =
                     DescriptorKey.from( resolveApplicationKey( toolMatcher.group( "appKey" ) ), toolMatcher.group( "toolName" ) );
                 final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( toolDescriptorKey );
-                if ( adminToolDescriptor != null && !adminToolDescriptor.getInterfaces().isEmpty() )
+                if ( adminToolDescriptor != null && !adminToolDescriptor.getInterfaces().isEmpty() &&
+                    widgetDescriptor.getInterfaces().stream().noneMatch( adminToolDescriptor::hasInterface ) )
                 {
-                    if ( widgetDescriptor.getInterfaces().stream().noneMatch( adminToolDescriptor::hasInterface ) )
-                    {
-                        throw WebException.notFound(
-                            String.format( "Widget [%s] is not mounted to admin tool [%s]", widgetDescriptor.getKey(),
-                                           toolDescriptorKey ) );
-                    }
+                    throw WebException.notFound(
+                        String.format( "Widget [%s] is not mounted to admin tool [%s]", widgetDescriptor.getKey(), toolDescriptorKey ) );
                 }
             }
         }
