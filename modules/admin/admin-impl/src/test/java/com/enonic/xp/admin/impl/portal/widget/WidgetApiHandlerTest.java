@@ -1,11 +1,10 @@
-package com.enonic.xp.admin.impl.portal;
+package com.enonic.xp.admin.impl.portal.widget;
 
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.admin.impl.portal.widget.WidgetApiHandler;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -48,9 +47,7 @@ public class WidgetApiHandlerTest
         this.widgetDescriptorService = mock( WidgetDescriptorService.class );
         this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
 
-        this.handler =
-            new WidgetApiHandler( this.controllerScriptFactory, this.widgetDescriptorService, this.adminToolDescriptorService, null, null,
-                                  null );
+        this.handler = new WidgetApiHandler( this.widgetDescriptorService, this.controllerScriptFactory, this.adminToolDescriptorService );
     }
 
 

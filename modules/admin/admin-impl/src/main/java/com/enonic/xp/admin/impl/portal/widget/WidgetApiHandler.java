@@ -12,118 +12,76 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
-    "allowedPrincipals=role:system.admin.login", "allowedPrincipals=role:system.admin"})
+@Component(immediate = true, service = WidgetApiHandler.class)
 public class WidgetApiHandler
-    implements UniversalApiHandler
 {
     private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin/widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
-
-    private static final Pattern LIST_WIDGETS_API_PATTERN = Pattern.compile( "^/(_|api)/admin/widget/?$" );
 
     private static final Pattern TOOL_PREFIX_PATTERN = Pattern.compile( "^/admin/(?<appKey>[^/]+)/(?<toolName>[^/]+)" );
 
     private static final String GENERIC_WIDGET_INTERFACE = "generic";
 
-    private final ControllerScriptFactory controllerScriptFactory;
-
     private final WidgetDescriptorService widgetDescriptorService;
+
+    private final ControllerScriptFactory controllerScriptFactory;
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
-    private final LocaleService localeService;
-
-    private final PortalUrlService portalUrlService;
-
-    private final ApplicationDescriptorService applicationDescriptorService;
-
     @Activate
-    public WidgetApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                             @Reference final WidgetDescriptorService widgetDescriptorService,
-                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
-                             @Reference final LocaleService localeService, @Reference final PortalUrlService portalUrlService,
-                             @Reference final ApplicationDescriptorService applicationDescriptorService )
+    public WidgetApiHandler( @Reference final WidgetDescriptorService widgetDescriptorService,
+                             @Reference final ControllerScriptFactory controllerScriptFactory,
+                             @Reference final AdminToolDescriptorService adminToolDescriptorService )
     {
-        this.controllerScriptFactory = controllerScriptFactory;
         this.widgetDescriptorService = widgetDescriptorService;
+        this.controllerScriptFactory = controllerScriptFactory;
         this.adminToolDescriptorService = adminToolDescriptorService;
-        this.localeService = localeService;
-        this.portalUrlService = portalUrlService;
-        this.applicationDescriptorService = applicationDescriptorService;
     }
 
-    @Override
     public WebResponse handle( final WebRequest webRequest )
     {
         final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
 
-        Matcher matcher = LIST_WIDGETS_API_PATTERN.matcher( path );
+        final Matcher matcher = WIDGET_API_PATTERN.matcher( path );
 
-        if ( matcher.matches() )
+        if ( !matcher.find() )
         {
-            if ( webRequest.getParams().containsKey( "widgetInterfaces" ) )
-            {
-                return new GetListAllowedWidgetsHandler( widgetDescriptorService, portalUrlService, localeService ).handle( webRequest );
-            }
-            else if ( webRequest.getParams().containsKey( "icon" ) )
-            {
-                return new GetWidgetIconHandler( widgetDescriptorService, applicationDescriptorService ).handle( webRequest );
-            }
-            else
-            {
-                return WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
-            }
+            throw new IllegalArgumentException( "Invalid Widget API path: " + path );
         }
-        else
+
+        final DescriptorKey descriptorKey =
+            DescriptorKey.from( resolveApplicationKey( matcher.group( "appKey" ) ), matcher.group( "widgetKey" ) );
+
+        final WidgetDescriptor widgetDescriptor = widgetDescriptorService.getByKey( descriptorKey );
+        if ( widgetDescriptor == null )
         {
-            matcher = WIDGET_API_PATTERN.matcher( path );
-
-            if ( !matcher.find() )
-            {
-                throw new IllegalArgumentException( "Invalid Widget API path: " + path );
-            }
-
-            final DescriptorKey descriptorKey =
-                DescriptorKey.from( resolveApplicationKey( matcher.group( "appKey" ) ), matcher.group( "widgetKey" ) );
-
-            final WidgetDescriptor widgetDescriptor = widgetDescriptorService.getByKey( descriptorKey );
-            if ( widgetDescriptor == null )
-            {
-                throw WebException.notFound( String.format( "Widget [%s] not found", descriptorKey ) );
-            }
-
-            final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
-            if ( !widgetDescriptor.isAccessAllowed( principals ) )
-            {
-                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
-            }
-
-            verifyMounts( widgetDescriptor, webRequest );
-
-            final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
-
-            final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
-                                                         "admin/widgets/" + descriptorKey.getName() + "/" + descriptorKey.getName() +
-                                                             ".js" );
-
-            return controllerScriptFactory.fromScript( script ).execute( portalRequest );
+            throw WebException.notFound( String.format( "Widget [%s] not found", descriptorKey ) );
         }
+
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+        if ( !widgetDescriptor.isAccessAllowed( principals ) )
+        {
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
+        }
+
+        verifyMounts( widgetDescriptor, webRequest );
+
+        final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
+
+        final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
+                                                     "admin/widgets/" + descriptorKey.getName() + "/" + descriptorKey.getName() + ".js" );
+
+        return controllerScriptFactory.fromScript( script ).execute( portalRequest );
     }
 
     private void verifyMounts( final WidgetDescriptor widgetDescriptor, final WebRequest webRequest )
@@ -167,5 +125,4 @@ public class WidgetApiHandler
             throw new IllegalArgumentException( "Invalid application key: " + value, e );
         }
     }
-
 }
