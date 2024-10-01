@@ -52,6 +52,7 @@ public class WidgetDescriptor
         this.config = ImmutableMap.copyOf( builder.config );
     }
 
+    @Deprecated
     public String getUrl()
     {
         return URL_PREFIX + getApplicationKey().toString() + "/" + getName();

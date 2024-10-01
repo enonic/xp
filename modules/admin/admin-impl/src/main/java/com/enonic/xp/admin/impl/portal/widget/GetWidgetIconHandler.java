@@ -22,14 +22,6 @@ import com.enonic.xp.web.WebResponse;
 @Component(immediate = true, service = GetWidgetIconHandler.class)
 public class GetWidgetIconHandler
 {
-    static final String ICON_PARAM = "icon";
-
-    private static final String APPLICATION_KEY_PARAM = "app";
-
-    private static final String WIDGET_KEY_PARAM = "widget";
-
-    private static final String HASH_PARAM_OPTIONAL = "hash";
-
     private final WidgetDescriptorService widgetDescriptorService;
 
     private final WidgetIconResolver widgetIconResolver;
@@ -46,9 +38,9 @@ public class GetWidgetIconHandler
     {
         final Multimap<String, String> params = webRequest.getParams();
 
-        final String appKeyStr = params.get( APPLICATION_KEY_PARAM ).iterator().next();
-        final String descriptorName = params.get( WIDGET_KEY_PARAM ).iterator().next();
-        final String hash = params.containsKey( HASH_PARAM_OPTIONAL ) ? params.get( HASH_PARAM_OPTIONAL ).iterator().next() : null;
+        final String appKeyStr = params.get( "app" ).iterator().next();
+        final String descriptorName = params.get( "widget" ).iterator().next();
+        final String version = params.containsKey( "v" ) ? params.get( "v" ).iterator().next() : null;
 
         final DescriptorKey descriptorKey = DescriptorKey.from( resolveApplicationKey( appKeyStr ), descriptorName );
         final WidgetDescriptor widgetDescriptor = this.widgetDescriptorService.getByKey( descriptorKey );
@@ -58,9 +50,9 @@ public class GetWidgetIconHandler
         final WebResponse.Builder<?> responseBuilder =
             WebResponse.create().status( HttpStatus.OK ).body( icon.toByteArray() ).contentType( MediaType.parse( icon.getMimeType() ) );
 
-        if ( Objects.equals( IconHashResolver.resolve( icon ), hash ) )
+        if ( Objects.equals( IconHashResolver.resolve( icon ), version ) )
         {
-            responseBuilder.header( HttpHeaders.CACHE_CONTROL, "max-age=" + 60 * 60 * 24 * 365 );
+            responseBuilder.header( HttpHeaders.CACHE_CONTROL, "public, max-age=" + 60 * 60 * 24 * 365 + ", immutable" );
         }
 
         return responseBuilder.build();

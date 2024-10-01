@@ -43,7 +43,7 @@ public class GetWidgetIconHandlerTest
         final Multimap<String, String> params = HashMultimap.create();
         params.put( "app", "myapp" );
         params.put( "widget", "mywidget" );
-        params.put( "hash", "d41d8cd98f00b204e9800998ecf8427e" );
+        params.put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getParams() ).thenReturn( params );
@@ -59,7 +59,7 @@ public class GetWidgetIconHandlerTest
         when( widgetIconResolver.resolve( eq( widgetDescriptor ) ) ).thenReturn( icon );
 
         final WebResponse webResponse = instance.handle( webRequest );
-        assertEquals( "max-age=31536000", webResponse.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+        assertEquals( "public, max-age=31536000, immutable", webResponse.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
     }
 
     @Test
@@ -68,7 +68,7 @@ public class GetWidgetIconHandlerTest
         final Multimap<String, String> params = HashMultimap.create();
         params.put( "app", "<>" );
         params.put( "widget", "mywidget" );
-        params.put( "hash", "d41d8cd98f00b204e9800998ecf8427e" );
+        params.put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getParams() ).thenReturn( params );

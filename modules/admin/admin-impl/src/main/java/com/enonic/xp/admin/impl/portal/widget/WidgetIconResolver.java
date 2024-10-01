@@ -19,7 +19,7 @@ import com.enonic.xp.icon.Icon;
 @Component(immediate = true, service = WidgetIconResolver.class)
 public class WidgetIconResolver
 {
-    static final String DEFAULT_WIDGET_ICON = "widget.svg";
+    private static final String DEFAULT_WIDGET_ICON = "widget.svg";
 
     private final ApplicationDescriptorService applicationDescriptorService;
 

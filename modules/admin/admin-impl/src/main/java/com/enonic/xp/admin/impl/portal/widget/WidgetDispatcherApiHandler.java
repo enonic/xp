@@ -14,11 +14,8 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.universalapi.UniversalApiHandler;
 
-import static com.enonic.xp.admin.impl.portal.widget.GetListAllowedWidgetsHandler.WIDGET_INTERFACE_PARAM;
-import static com.enonic.xp.admin.impl.portal.widget.GetWidgetIconHandler.ICON_PARAM;
-
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
-    "allowedPrincipals=role:system.admin.login", "allowedPrincipals=role:system.admin"})
+    "allowedPrincipals=role:system.admin.login"})
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {
@@ -50,11 +47,11 @@ public class WidgetDispatcherApiHandler
         {
             final Multimap<String, String> params = webRequest.getParams();
 
-            if ( params.containsKey( WIDGET_INTERFACE_PARAM ) )
+            if ( params.containsKey( "widgetInterface" ) )
             {
                 return listWidgetsHandler.handle( webRequest );
             }
-            else if ( params.containsKey( ICON_PARAM ) )
+            else if ( params.containsKey( "icon" ) )
             {
                 return getWidgetIconHandler.handle( webRequest );
             }

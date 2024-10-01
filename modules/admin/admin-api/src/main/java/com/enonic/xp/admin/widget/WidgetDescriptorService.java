@@ -10,6 +10,7 @@ public interface WidgetDescriptorService
 {
     Descriptors<WidgetDescriptor> getByInterfaces( String... interfaceName );
 
+    @Deprecated
     Descriptors<WidgetDescriptor> getAllowedByInterfaces( String... interfaceName );
 
     Descriptors<WidgetDescriptor> getByApplication( ApplicationKey applicationKey );

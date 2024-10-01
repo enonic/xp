@@ -83,7 +83,7 @@ public class GetListAllowedWidgetsHandlerTest
             .addInterface( "myInterface" )
             .build();
 
-        when( widgetDescriptorService.getAllowedByInterfaces( anyString() ) ).thenReturn( Descriptors.from( widgetDescriptor ) );
+        when( widgetDescriptorService.getByInterfaces( anyString() ) ).thenReturn( Descriptors.from( widgetDescriptor ) );
         when( portalUrlService.apiUrl( any( ApiUrlParams.class ) ) ).thenReturn( "baseApiUrl" );
         when( localeService.getSupportedLocale( anyList(), any( ApplicationKey.class ) ) ).thenReturn( Locale.ENGLISH );
 
@@ -118,7 +118,7 @@ public class GetListAllowedWidgetsHandlerTest
 
         final ObjectNode objectNode = body.get( 0 );
         assertEquals( "myapp:mywidget", objectNode.get( "key" ).asText() );
-        assertEquals( "baseApiUrl?icon&app=myapp&widget=mywidget&hash=d41d8cd98f00b204e9800998ecf8427e", objectNode.get( "iconUrl" ).asText() );
+        assertEquals( "baseApiUrl?icon&app=myapp&widget=mywidget&v=d41d8cd98f00b204e9800998ecf8427e", objectNode.get( "iconUrl" ).asText() );
         assertEquals( "baseApiUrl/myapp/mywidget", objectNode.get( "url" ).asText() );
         assertEquals( "localizedDescription", objectNode.get( "description" ).asText() );
         assertEquals( "myInterface", objectNode.get( "interfaces" ).get( 0 ).asText() );

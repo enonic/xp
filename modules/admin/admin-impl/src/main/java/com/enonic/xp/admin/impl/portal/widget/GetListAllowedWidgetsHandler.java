@@ -24,6 +24,7 @@ import com.google.common.net.UrlEscapers;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
@@ -31,7 +32,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
@@ -41,8 +42,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Component(immediate = true, service = GetListAllowedWidgetsHandler.class)
 public class GetListAllowedWidgetsHandler
 {
-    static final String WIDGET_INTERFACE_PARAM = "widgetInterface";
-
     private static final Logger LOG = LoggerFactory.getLogger( GetListAllowedWidgetsHandler.class );
 
     private final WidgetDescriptorService widgetDescriptorService;
@@ -66,17 +65,17 @@ public class GetListAllowedWidgetsHandler
 
     public WebResponse handle( final WebRequest webRequest )
     {
-        final Collection<String> values = webRequest.getParams().get( WIDGET_INTERFACE_PARAM );
-        final Descriptors<WidgetDescriptor> widgetDescriptors =
-            widgetDescriptorService.getAllowedByInterfaces( values.toArray( new String[0] ) );
+        final Collection<String> values = webRequest.getParams().get( "widgetInterface" );
+
+        final PrincipalKeys userPrincipalKeys = ContextAccessor.current().getAuthInfo().getPrincipals();
+        final Descriptors<WidgetDescriptor> widgetDescriptors = widgetDescriptorService.getByInterfaces( values.toArray( String[]::new ) )
+            .filter( widgetDescriptor -> widgetDescriptor.isAccessAllowed( userPrincipalKeys ) );
 
         final List<ObjectNode> result = new ArrayList<>();
         if ( widgetDescriptors.isNotEmpty() )
         {
-            final String widgetApiBaseUrl = portalUrlService.apiUrl( new ApiUrlParams().portalRequest( new PortalRequest( webRequest ) )
-                                                                         .application( "admin" )
-                                                                         .api( "widget" )
-                                                                         .type( UrlTypeConstants.ABSOLUTE ) );
+            final String widgetApiBaseUrl = portalUrlService.apiUrl(
+                new ApiUrlParams().portalRequest( new PortalRequest( webRequest ) ).application( "admin" ).api( "widget" ) );
 
             widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, widgetApiBaseUrl ) ) );
         }
@@ -151,11 +150,6 @@ public class GetListAllowedWidgetsHandler
     private Locale getLocale( final ApplicationKey applicationKey )
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
-        if ( req == null )
-        {
-            return null;
-        }
-
         return localeService.getSupportedLocale( Collections.list( req.getLocales() ), applicationKey );
     }
 
@@ -171,11 +165,8 @@ public class GetListAllowedWidgetsHandler
         appendParam( iconUrl, "widget", widgetDescriptor.getName() );
 
         final Icon icon = widgetIconResolver.resolve( widgetDescriptor );
-        if ( icon != null )
-        {
-            iconUrl.append( "&" );
-            appendParam( iconUrl, "hash", IconHashResolver.resolve( icon ) );
-        }
+        iconUrl.append( "&" );
+        appendParam( iconUrl, "v", IconHashResolver.resolve( icon ) );
 
         return iconUrl.toString();
     }

@@ -12,11 +12,6 @@ public final class IconHashResolver
 
     public static String resolve( final Icon icon )
     {
-        if ( icon == null )
-        {
-            return null;
-        }
-
         return Hashing.md5().hashBytes( icon.toByteArray() ).toString();
     }
 }
