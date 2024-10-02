@@ -130,9 +130,9 @@ export interface ScriptValue {
 
     hasMember(key: string): boolean;
 
-    getMember(key: string): ScriptValueDefinition;
+    getMember(key: string): ScriptValue;
 
-    getArray(): ScriptValueDefinition[];
+    getArray(): ScriptValue[];
 
     getMap(): Record<string, unknown>;
 
@@ -141,6 +141,121 @@ export interface ScriptValue {
 
 export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
+
+export interface DefaultCookies {
+    [key: string]: string|undefined
+    enonic_xp_tour?: string
+    JSESSIONID?: string
+}
+
+export interface DefaultRequestHeaders {
+    [headerName: string]: string|undefined
+    Accept?: string
+    'Accept-Charset'?: string
+    'Accept-Encoding'?: string
+    'Accept-Language'?: string
+    Authorization?: string
+    'Cache-Control'?: string
+    Connection?: string
+    'Content-Length'?: string
+    'Content-Type'?: string
+    Cookie?: string
+    Language?: string
+    Host?: string
+    'If-None-Match'?: string
+    'Referer'?: string
+    'sec-ch-ua'?: string
+    'sec-ch-ua-mobile'?: string
+    'sec-ch-ua-platform'?: string
+    'Sec-Fetch-Dest'?: string
+    'Sec-Fetch-Mode'?: string
+    'Sec-Fetch-Site'?: string
+    'Sec-Fetch-User'?: string
+    'Upgrade-Insecure-Requests'?: string
+    'User-Agent'?: string
+    'X-Forwarded-For'?: string
+    'X-Forwarded-Host'?: string
+    'X-Forwarded-Proto'?: string
+    'X-Forwarded-Server'?: string
+}
+
+export type LowercaseKeys<T> = {
+    [K in keyof T as Lowercase<string & K>]: T[K]
+};
+
+export interface DefaultOptionalRequestProperties {
+    [index: string]: unknown|undefined; // Custom properties are allowed
+    body?: string
+    contextPath?: string
+    contentType?: string
+    cookies?: DefaultCookies
+    followRedirects?: boolean
+    headers?: DefaultRequestHeaders
+    params?: Record<string, string | string[]>
+    pathParams?: Record<string, string>
+    rawPath?: string
+    repositoryId?: string
+    remoteAddress?: string
+    validTicket?: boolean
+    webSocket?: boolean
+}
+
+type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
+export type Request<
+    T extends Record<string, unknown> = DefaultOptionalRequestProperties
+> = {
+    branch: LiteralUnion<'draft'|'master'>
+    host: string
+    method: LiteralUnion<'GET'|'POST'|'PUT'|'DELETE'|'HEAD'|'OPTIONS'|'PATCH'|'TRACE'|'CONNECT'>
+    mode: LiteralUnion<'edit'|'inline'|'live'|'preview'|'admin'>
+    path: string
+    port: number // |string // TODO Where have I seen this as string?
+    scheme: LiteralUnion<'http'|'https'>
+    url: string
+} & T;
+
+export interface ComplexCookie {
+	value: string
+	path?: string
+	domain?: string
+	comment?: string
+	maxAge?: number
+	secure?: boolean
+	httpOnly?: boolean
+	sameSite?: string
+}
+
+export interface DefaultResponseHeaders extends Record<string,string|number|(string|number)[]|undefined> {
+    'Cache-Control'?: string
+    'Content-Encoding'?: string
+    'Content-Type'?: string
+    'Content-Security-Policy'?: string
+    'Date'?: string
+    Etag?: string|number
+    Location?: string
+}
+
+export interface PageContributions {
+	headBegin?: string[]
+	headEnd?: string[]
+	bodyBegin?: string[]
+	bodyEnd?: string[]
+}
+
+export type Response<
+    T extends Record<string, unknown> = {
+        applyFilters?: boolean
+        body?: string|ByteSource
+        contentType?: string
+        cookies?: Record<string,string|ComplexCookie>
+        headers?: DefaultResponseHeaders
+        pageContributions?: PageContributions
+        postProcess?: boolean
+        redirect?: string
+        status?: number
+    }
+> = T;
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -263,7 +378,13 @@ export interface TextComponent {
 export type Component<
     Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
     Config extends NestedRecord = NestedRecord,
-    Regions extends Record<string, Region> = Record<string, Region>,
+    Regions extends (
+        Descriptor extends LayoutDescriptor
+        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
+        : Record<string, Region>
+    ) = Descriptor extends LayoutDescriptor
+        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
+        : Record<string, Region>,
 > =
     | FragmentComponent
     | LayoutComponent<Descriptor, Config, Regions>
@@ -289,10 +410,26 @@ export interface LayoutRegion<
     components: Components;
 }
 
+// type HasLayout<T extends unknown[]> = T extends [infer F, ...infer R]
+//   ? F extends LayoutComponent | Layout
+//     ? true
+//     : HasLayout<R>
+//   : false;
+
 export type Region<
     Components extends
+    // (
+    //     HasLayout<Components> extends true
+    //     ? (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]
+    //     : (FragmentComponent | PartComponent | TextComponent)[]
+    // ) = (
+    //     HasLayout<Components> extends true
+    //     ? (FragmentComponent | Layout          | Part          | TextComponent)[]
+    //     : (FragmentComponent | Part          | TextComponent)[]
+    // )
         (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
         (FragmentComponent | Layout          | Part          | TextComponent)[]
+// @ts-expect-error TODO LayoutRegion can't eat LayoutComponent nor Layout!!!
 > = PageRegion<Components> | LayoutRegion<Components>;
 
 export interface Content<
