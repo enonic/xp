@@ -100,7 +100,7 @@ function assertStringArray(value: unknown, name: string): asserts value is strin
     if (!Array.isArray(value)) {
         throw new TypeError(`${name} must be an array of strings! Isn't even an array!`);
     }
-    
+
     if (!value.every(item => typeof item === 'string')) {
         throw new TypeError(`${name} must be an array of strings! Is an array, but contains non-string elements!`);
     }
@@ -181,9 +181,9 @@ interface MultiRepoNodeHandleFactory {
     create(context: MultiRepoNodeHandleContext): MultiRepoNodeHandler;
 }
 
-const factory = __.newBean<NodeHandleFactory>('com.enonic.xp.lib.node.NodeHandleFactory');
+const factory: NodeHandleFactory = __.newBean<NodeHandleFactory>('com.enonic.xp.lib.node.NodeHandleFactory');
 
-const multiRepoConnectFactory = __.newBean<MultiRepoNodeHandleFactory>('com.enonic.xp.lib.node.MultiRepoNodeHandleFactory');
+const multiRepoConnectFactory: MultiRepoNodeHandleFactory = __.newBean<MultiRepoNodeHandleFactory>('com.enonic.xp.lib.node.MultiRepoNodeHandleFactory');
 
 function argsToStringArray(argsArray: (string | string[])[]): string[] {
     const array: string[] = [];
@@ -779,7 +779,7 @@ class RepoConnectionImpl
             throw "Parameter key' or 'keys' is required";
         }
 
-        const handlerParams = __.newBean<PushNodeHandlerParams>('com.enonic.xp.lib.node.PushNodeHandlerParams');
+        const handlerParams: PushNodeHandlerParams = __.newBean<PushNodeHandlerParams>('com.enonic.xp.lib.node.PushNodeHandlerParams');
 
         handlerParams.setKey(__.nullOrValue(key));
         handlerParams.setKeys(__.nullOrValue(keys));
@@ -810,7 +810,7 @@ class RepoConnectionImpl
             includeChildren = false,
         } = params ?? {};
 
-        const handlerParams = __.newBean<DiffBranchesHandlerParams>('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
+        const handlerParams: DiffBranchesHandlerParams = __.newBean<DiffBranchesHandlerParams>('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
 
         handlerParams.setKey(key);
         handlerParams.setTargetBranch(target);
@@ -901,7 +901,7 @@ class RepoConnectionImpl
             explain = false,
         } = params ?? {};
 
-        const handlerParams = __.newBean<QueryNodeHandlerParams>('com.enonic.xp.lib.node.QueryNodeHandlerParams');
+        const handlerParams: QueryNodeHandlerParams = __.newBean<QueryNodeHandlerParams>('com.enonic.xp.lib.node.QueryNodeHandlerParams');
 
         handlerParams.setStart(start);
         handlerParams.setCount(count);
@@ -949,7 +949,7 @@ class RepoConnectionImpl
             count = 10,
         } = params ?? {};
 
-        const handlerParams = __.newBean<FindVersionsHandlerParams>('com.enonic.xp.lib.node.FindVersionsHandlerParams');
+        const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>('com.enonic.xp.lib.node.FindVersionsHandlerParams');
 
         handlerParams.setKey(key);
         handlerParams.setStart(start);
@@ -1016,7 +1016,7 @@ class RepoConnectionImpl
             recursive = false,
         } = params ?? {};
 
-        const handlerParams = __.newBean<FindChildrenHandlerParams>('com.enonic.xp.lib.node.FindChildrenHandlerParams');
+        const handlerParams: FindChildrenHandlerParams = __.newBean<FindChildrenHandlerParams>('com.enonic.xp.lib.node.FindChildrenHandlerParams');
 
         handlerParams.setParentKey(parentKey);
         handlerParams.setStart(start);
@@ -1142,7 +1142,7 @@ class RepoConnectionImpl
             refresh,
         } = params ?? {};
 
-        const handlerParams = __.newBean<DuplicateNodeHandlerParams>('com.enonic.xp.lib.node.DuplicateNodeHandlerParams');
+        const handlerParams: DuplicateNodeHandlerParams = __.newBean<DuplicateNodeHandlerParams>('com.enonic.xp.lib.node.DuplicateNodeHandlerParams');
 
         handlerParams.setNodeId(nodeId);
         handlerParams.setIncludeChildren(includeChildren);
@@ -1211,7 +1211,7 @@ class MultiRepoConnectionImpl
             explain = false,
         } = params ?? {};
 
-        const handlerParams = __.newBean<QueryNodeHandlerParams>('com.enonic.xp.lib.node.QueryNodeHandlerParams');
+        const handlerParams: QueryNodeHandlerParams = __.newBean<QueryNodeHandlerParams>('com.enonic.xp.lib.node.QueryNodeHandlerParams');
 
         handlerParams.setStart(start);
         handlerParams.setCount(count);
@@ -1267,7 +1267,7 @@ export function connect(params: ConnectParams): RepoConnection {
     checkRequired(params, 'repoId');
     checkRequired(params, 'branch');
 
-    const nodeHandleContext = __.newBean<NodeHandleContext>('com.enonic.xp.lib.node.NodeHandleContext');
+    const nodeHandleContext: NodeHandleContext = __.newBean<NodeHandleContext>('com.enonic.xp.lib.node.NodeHandleContext');
     nodeHandleContext.setRepoId(params.repoId);
     nodeHandleContext.setBranch(params.branch);
 
@@ -1306,7 +1306,7 @@ export interface MultiRepoConnectParams {
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */
 export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConnection {
-    const multiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
+    const multiRepoNodeHandleContext: MultiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach((source: ConnectParams) => {
         checkRequired(source, 'repoId');

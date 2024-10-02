@@ -58,7 +58,7 @@ interface GeoPointHandler {
  * @returns {*} GeoPoint java-type
  */
 export function geoPoint(lat: number, lon: number): GeoPoint {
-    const bean = __.newBean<GeoPointHandler>('com.enonic.xp.lib.value.GeoPointHandler');
+    const bean: GeoPointHandler = __.newBean<GeoPointHandler>('com.enonic.xp.lib.value.GeoPointHandler');
     return bean.newInstance(lat, lon);
 }
 
@@ -69,7 +69,7 @@ export function geoPoint(lat: number, lon: number): GeoPoint {
  * @returns {*} GeoPoint java-type
  */
 export function geoPointString(value: string): GeoPoint {
-    const bean = __.newBean<GeoPointHandler>('com.enonic.xp.lib.value.GeoPointHandler');
+    const bean: GeoPointHandler = __.newBean<GeoPointHandler>('com.enonic.xp.lib.value.GeoPointHandler');
     return bean.from(value);
 }
 
@@ -93,7 +93,7 @@ interface InstantHandler {
  * @returns {*} Instant java-type
  */
 export function instant(value: string | Date): Instant {
-    const bean = __.newBean<InstantHandler>('com.enonic.xp.lib.value.InstantHandler');
+    const bean: InstantHandler = __.newBean<InstantHandler>('com.enonic.xp.lib.value.InstantHandler');
 
     if (typeof value === 'string') {
         return bean.parse(value);
@@ -119,7 +119,7 @@ interface ReferenceHandler {
  * @returns {*} Reference java-type
  */
 export function reference(value: string): Reference {
-    const refBean = __.newBean<ReferenceHandler>('com.enonic.xp.lib.value.ReferenceHandler');
+    const refBean: ReferenceHandler = __.newBean<ReferenceHandler>('com.enonic.xp.lib.value.ReferenceHandler');
     return refBean.from(value);
 }
 
@@ -170,7 +170,7 @@ interface LocalDateTimeHandler {
  * @returns {*} LocalDateTime java-type
  */
 export function localDateTime(value: string | Date): LocalDateTime {
-    const bean = __.newBean<LocalDateTimeHandler>('com.enonic.xp.lib.value.LocalDateTimeHandler');
+    const bean: LocalDateTimeHandler = __.newBean<LocalDateTimeHandler>('com.enonic.xp.lib.value.LocalDateTimeHandler');
     if (typeof value === 'string') {
         return bean.parse(value);
     } else {
@@ -205,7 +205,7 @@ interface LocalDateHandler {
  * @returns {*} LocalDate java-type
  */
 export function localDate(value: string | Date): LocalDate {
-    const bean = __.newBean<LocalDateHandler>('com.enonic.xp.lib.value.LocalDateHandler');
+    const bean: LocalDateHandler = __.newBean<LocalDateHandler>('com.enonic.xp.lib.value.LocalDateHandler');
 
     if (typeof value === 'string') {
         return bean.parse(value);
@@ -235,7 +235,7 @@ interface LocalTimeHandler {
  * @returns {*} LocalTime java-type
  */
 export function localTime(value: string | Date): LocalTime {
-    const bean = __.newBean<LocalTimeHandler>('com.enonic.xp.lib.value.LocalTimeHandler');
+    const bean: LocalTimeHandler = __.newBean<LocalTimeHandler>('com.enonic.xp.lib.value.LocalTimeHandler');
     if (typeof value === 'string') {
         return bean.parse(value);
     } else {
@@ -269,8 +269,8 @@ interface BinaryAttachmentHandler {
  * @returns {*} BinaryAttachment java-type
  */
 export function binary(name: string, stream: ByteSource): BinaryAttachment {
-    const binaryReferenceBean = __.newBean<BinaryReferenceHandler>('com.enonic.xp.lib.value.BinaryReferenceHandler');
-    const binaryAttachmentBean = __.newBean<BinaryAttachmentHandler>('com.enonic.xp.lib.value.BinaryAttachmentHandler');
+    const binaryReferenceBean: BinaryReferenceHandler = __.newBean<BinaryReferenceHandler>('com.enonic.xp.lib.value.BinaryReferenceHandler');
+    const binaryAttachmentBean: BinaryAttachmentHandler = __.newBean<BinaryAttachmentHandler>('com.enonic.xp.lib.value.BinaryAttachmentHandler');
 
     return binaryAttachmentBean.newInstance(binaryReferenceBean.from(name), stream);
 }

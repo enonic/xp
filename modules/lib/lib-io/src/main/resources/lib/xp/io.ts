@@ -51,7 +51,7 @@ interface IOHandlerBean {
     getResource(key: string | ResourceKey): JavaResource;
 }
 
-const bean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
+const bean: IOHandlerBean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
 
 /**
  * Looks up a resource.
@@ -65,7 +65,7 @@ class ResourceImpl
     private res: JavaResource;
 
     constructor(key: string | ResourceKey) {
-        this.res = bean.getResource(key);
+        this.res = bean.getResource(key) ;
     }
 
     /**

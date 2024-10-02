@@ -182,7 +182,7 @@ interface GetAttachmentsHandler {
 export function get<Hit extends Content<unknown> = Content>(params: GetContentParams): Hit | null {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetContentHandler>('com.enonic.xp.lib.content.GetContentHandler');
+    const bean: GetContentHandler = __.newBean<GetContentHandler>('com.enonic.xp.lib.content.GetContentHandler');
 
     bean.setKey(params.key);
     bean.setVersionId(__.nullOrValue(params.versionId));
@@ -200,7 +200,7 @@ export function get<Hit extends Content<unknown> = Content>(params: GetContentPa
  * @returns {object} An object with all the attachments that belong to the content, where the key is the attachment name. Or null if the content cannot be found.
  */
 export function getAttachments(key: string): Attachments | null {
-    const bean = __.newBean<GetAttachmentsHandler>('com.enonic.xp.lib.content.GetAttachmentsHandler');
+    const bean: GetAttachmentsHandler = __.newBean<GetAttachmentsHandler>('com.enonic.xp.lib.content.GetAttachmentsHandler');
     bean.setKey(__.nullOrValue(key));
     return __.toNativeObject(bean.execute());
 }
@@ -233,7 +233,7 @@ export function getAttachmentStream(params: GetAttachmentStreamParams): ByteSour
     checkRequired(params, 'key');
     checkRequired(params, 'name');
 
-    const bean = __.newBean<GetAttachmentStreamHandler>('com.enonic.xp.lib.content.GetAttachmentStreamHandler');
+    const bean: GetAttachmentStreamHandler = __.newBean<GetAttachmentStreamHandler>('com.enonic.xp.lib.content.GetAttachmentStreamHandler');
 
     bean.setKey(params.key);
     bean.setName(params.name);
@@ -281,7 +281,7 @@ export function addAttachment(params: AddAttachmentParam): void {
     checkRequired(params, 'mimeType');
     checkRequired(params, 'data');
 
-    const bean = __.newBean<AddAttachmentHandler>('com.enonic.xp.lib.content.AddAttachmentHandler');
+    const bean: AddAttachmentHandler = __.newBean<AddAttachmentHandler>('com.enonic.xp.lib.content.AddAttachmentHandler');
 
     bean.setKey(params.key);
     bean.setName(params.name);
@@ -323,7 +323,7 @@ export function removeAttachment(params: RemoveAttachmentParams): void {
         name = [],
     } = params ?? {};
 
-    const bean = __.newBean<RemoveAttachmentHandler>('com.enonic.xp.lib.content.RemoveAttachmentHandler');
+    const bean: RemoveAttachmentHandler = __.newBean<RemoveAttachmentHandler>('com.enonic.xp.lib.content.RemoveAttachmentHandler');
     bean.setKey(key);
     bean.setName(([] as string[]).concat(name));
     bean.execute();
@@ -362,7 +362,7 @@ interface GetSiteHandler {
 export function getSite<Config = Record<string, unknown>>(params: GetSiteParams): Site<Config> | null {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetSiteHandler>('com.enonic.xp.lib.content.GetSiteHandler');
+    const bean: GetSiteHandler = __.newBean<GetSiteHandler>('com.enonic.xp.lib.content.GetSiteHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -392,7 +392,7 @@ interface GetSiteConfigHandler {
  * @returns {object} The site configuration for current application as JSON.
  */
 export function getSiteConfig<Config = Record<string, unknown>>(params: GetSiteConfigParams): Config | null {
-    const bean = __.newBean<GetSiteConfigHandler>('com.enonic.xp.lib.content.GetSiteConfigHandler');
+    const bean: GetSiteConfigHandler = __.newBean<GetSiteConfigHandler>('com.enonic.xp.lib.content.GetSiteConfigHandler');
 
     bean.setKey(__.nullOrValue(params.key));
     bean.setApplicationKey(__.nullOrValue(params.applicationKey));
@@ -423,7 +423,7 @@ interface DeleteContentHandler {
 function _delete(params: DeleteContentParams): boolean {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<DeleteContentHandler>('com.enonic.xp.lib.content.DeleteContentHandler');
+    const bean: DeleteContentHandler = __.newBean<DeleteContentHandler>('com.enonic.xp.lib.content.DeleteContentHandler');
     bean.setKey(params.key);
     return bean.execute();
 }
@@ -491,7 +491,7 @@ export function getChildren<
         sort,
     } = params ?? {};
 
-    const bean = __.newBean<GetChildContentHandler>('com.enonic.xp.lib.content.GetChildContentHandler');
+    const bean: GetChildContentHandler = __.newBean<GetChildContentHandler>('com.enonic.xp.lib.content.GetChildContentHandler');
     bean.setKey(key);
     bean.setStart(start);
     bean.setCount(count);
@@ -590,7 +590,7 @@ export function create<
         workflow,
     } = params ?? {};
 
-    const bean = __.newBean<CreateContentHandler>('com.enonic.xp.lib.content.CreateContentHandler');
+    const bean: CreateContentHandler = __.newBean<CreateContentHandler>('com.enonic.xp.lib.content.CreateContentHandler');
 
     bean.setName(__.nullOrValue(name));
     bean.setParentPath(__.nullOrValue(parentPath));
@@ -665,7 +665,7 @@ export function query<
     Hit extends Content<unknown> = Content,
     AggregationInput extends Aggregations = never
 >(params: QueryContentParams<AggregationInput>): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>> {
-    const bean = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
+    const bean: QueryContentHandler = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(params.start);
     bean.setCount(params.count);
@@ -716,7 +716,7 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
         requireValid = true,
     } = params ?? {};
 
-    const bean = __.newBean<ModifyContentHandler>('com.enonic.xp.lib.content.ModifyContentHandler');
+    const bean: ModifyContentHandler = __.newBean<ModifyContentHandler>('com.enonic.xp.lib.content.ModifyContentHandler');
 
     bean.setKey(key);
     bean.setEditor(__.toScriptValue(editor));
@@ -776,7 +776,7 @@ interface PublishContentHandler {
 export function publish(params: PublishContentParams): PublishContentResult {
     checkRequired(params, 'keys');
 
-    const bean = __.newBean<PublishContentHandler>('com.enonic.xp.lib.content.PublishContentHandler');
+    const bean: PublishContentHandler = __.newBean<PublishContentHandler>('com.enonic.xp.lib.content.PublishContentHandler');
     bean.setKeys(params.keys);
     if (params.schedule) {
         bean.setContentPublishInfo(__.toScriptValue(params.schedule));
@@ -818,7 +818,7 @@ interface UnpublishContentHandler {
 export function unpublish(params: UnpublishContentParams): string[] {
     checkRequired(params, 'keys');
 
-    const bean = __.newBean<UnpublishContentHandler>('com.enonic.xp.lib.content.UnpublishContentHandler');
+    const bean: UnpublishContentHandler = __.newBean<UnpublishContentHandler>('com.enonic.xp.lib.content.UnpublishContentHandler');
     bean.setKeys(params.keys);
     return __.toNativeObject(bean.execute());
 }
@@ -846,7 +846,7 @@ interface ContentExistsHandler {
 export function exists(params: ContentExistsParams): boolean {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<ContentExistsHandler>('com.enonic.xp.lib.content.ContentExistsHandler');
+    const bean: ContentExistsHandler = __.newBean<ContentExistsHandler>('com.enonic.xp.lib.content.ContentExistsHandler');
 
     bean.setKey(params.key);
 
@@ -899,7 +899,7 @@ interface CreateMediaHandler {
 export function createMedia<Data = Record<string, unknown>, Type extends string = string>(params: CreateMediaParams): Content<Data, Type> {
     checkRequired(params, 'name');
 
-    const bean = __.newBean<CreateMediaHandler>('com.enonic.xp.lib.content.CreateMediaHandler');
+    const bean: CreateMediaHandler = __.newBean<CreateMediaHandler>('com.enonic.xp.lib.content.CreateMediaHandler');
 
     bean.setName(params.name);
     bean.setParentPath(__.nullOrValue(params.parentPath));
@@ -945,7 +945,7 @@ export function move<Data = Record<string, unknown>, Type extends string = strin
     checkRequired(params, 'source');
     checkRequired(params, 'target');
 
-    const bean = __.newBean<MoveContentHandler>('com.enonic.xp.lib.content.MoveContentHandler');
+    const bean: MoveContentHandler = __.newBean<MoveContentHandler>('com.enonic.xp.lib.content.MoveContentHandler');
 
     bean.setSource(params.source);
     bean.setTarget(params.target);
@@ -976,7 +976,7 @@ interface ArchiveContentHandler {
 export function archive(params: ArchiveContentParams): string[] {
     checkRequired(params, 'content');
 
-    const bean = __.newBean<ArchiveContentHandler>('com.enonic.xp.lib.content.ArchiveContentHandler');
+    const bean: ArchiveContentHandler = __.newBean<ArchiveContentHandler>('com.enonic.xp.lib.content.ArchiveContentHandler');
     bean.setContent(params.content);
     return __.toNativeObject(bean.execute());
 }
@@ -1008,7 +1008,7 @@ interface RestoreContentHandler {
 export function restore(params: RestoreContentParams): string[] {
     checkRequired(params, 'content');
 
-    const bean = __.newBean<RestoreContentHandler>('com.enonic.xp.lib.content.RestoreContentHandler');
+    const bean: RestoreContentHandler = __.newBean<RestoreContentHandler>('com.enonic.xp.lib.content.RestoreContentHandler');
     bean.setContent(params.content);
     bean.setPath(__.nullOrValue(params.path));
     return __.toNativeObject(bean.execute());
@@ -1085,7 +1085,7 @@ interface ApplyPermissionsHandler {
  * @returns {boolean} True if successful, false otherwise.
  */
 export function setPermissions(params: SetPermissionsParams): boolean {
-    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
+    const bean: ApplyPermissionsHandler = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
@@ -1093,10 +1093,10 @@ export function setPermissions(params: SetPermissionsParams): boolean {
     if (params.permissions) {
         bean.setPermissions(__.toScriptValue(params.permissions));
     }
-    const result = bean.execute();
+    const result: ApplyPermissionsResult = bean.execute();
 
     for (const nodeId in result) {
-        const branchResults = result[nodeId];
+        const branchResults: BranchResult[] = result.nodeId;
         for (const branchResult of branchResults) {
             if (branchResult.content !== null) {
                 return true;
@@ -1125,7 +1125,7 @@ export function setPermissions(params: SetPermissionsParams): boolean {
  * @returns {object} Result of the apply permissions operation.
  */
 export function applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
-    const bean = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
+    const bean: ApplyPermissionsHandler = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
@@ -1166,7 +1166,7 @@ interface GetPermissionsHandler {
  * @returns {object} Content permissions.
  */
 export function getPermissions(params: GetPermissionsParams): Permissions | null {
-    const bean = __.newBean<GetPermissionsHandler>('com.enonic.xp.lib.content.GetPermissionsHandler');
+    const bean: GetPermissionsHandler = __.newBean<GetPermissionsHandler>('com.enonic.xp.lib.content.GetPermissionsHandler');
 
     if (params.key) {
         bean.setKey(params.key);
@@ -1228,7 +1228,7 @@ interface ContentTypeHandler {
  * @returns {ContentType} The content type object if found, or null otherwise. See ContentType type definition below.
  */
 export function getType(name: string): ContentType | null {
-    const bean = __.newBean<ContentTypeHandler>('com.enonic.xp.lib.content.ContentTypeHandler');
+    const bean: ContentTypeHandler = __.newBean<ContentTypeHandler>('com.enonic.xp.lib.content.ContentTypeHandler');
     bean.setName(__.nullOrValue(name));
     return __.toNativeObject(bean.getContentType());
 }
@@ -1241,7 +1241,7 @@ export function getType(name: string): ContentType | null {
  * @returns {ContentType[]} Array with all the content types found. See ContentType type definition below.
  */
 export function getTypes(): ContentType[] {
-    const bean = __.newBean<ContentTypeHandler>('com.enonic.xp.lib.content.ContentTypeHandler');
+    const bean: ContentTypeHandler = __.newBean<ContentTypeHandler>('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
 }
 
@@ -1265,7 +1265,7 @@ interface GetOutboundDependenciesHandler {
 export function getOutboundDependencies(params: GetOutboundDependenciesParams): string[] {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetOutboundDependenciesHandler>('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
+    const bean: GetOutboundDependenciesHandler = __.newBean<GetOutboundDependenciesHandler>('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
 
     bean.setKey(params.key);
 
@@ -1300,7 +1300,7 @@ export function resetInheritance(params: ResetInheritanceParams): void {
     checkRequired(params, 'projectName');
     checkRequired(params, 'inherit');
 
-    const bean = __.newBean<ResetInheritanceHandler>('com.enonic.xp.lib.content.ResetInheritanceHandler');
+    const bean: ResetInheritanceHandler = __.newBean<ResetInheritanceHandler>('com.enonic.xp.lib.content.ResetInheritanceHandler');
 
     bean.setKey(params.key);
     bean.setProjectName(params.projectName);
@@ -1392,7 +1392,7 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
         tags = [],
     } = params;
 
-    const bean = __.newBean<ModifyMediaHandler>('com.enonic.xp.lib.content.ModifyMediaHandler');
+    const bean: ModifyMediaHandler = __.newBean<ModifyMediaHandler>('com.enonic.xp.lib.content.ModifyMediaHandler');
 
     bean.setKey(key);
     bean.setName(name);
@@ -1471,7 +1471,7 @@ export function duplicate(params: DuplicateContentParams): DuplicateContentsResu
         name,
     } = params ?? {};
 
-    const bean = __.newBean<DuplicateContentHandler>('com.enonic.xp.lib.content.DuplicateContentHandler');
+    const bean: DuplicateContentHandler = __.newBean<DuplicateContentHandler>('com.enonic.xp.lib.content.DuplicateContentHandler');
 
     bean.setContentId(contentId);
     bean.setWorkflow(__.toScriptValue(workflow));

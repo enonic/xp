@@ -78,7 +78,7 @@ interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
 export function log<Data extends Record<string, unknown> = Record<string, unknown>>(params: AuditLogParams<Data>): AuditLog<Data> {
     checkRequired(params, 'type');
 
-    const bean = __.newBean<CreateAuditLogHandler<Data>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
+    const bean: CreateAuditLogHandler<Data> = __.newBean<CreateAuditLogHandler<Data>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
     bean.setType(params.type);
     bean.setTime(__.nullOrValue(params.time));
     bean.setSource(params.source ?? app.name);
@@ -112,7 +112,7 @@ interface GetAuditLogHandler {
 export function get(params: GetAuditLogParams): AuditLog | null {
     checkRequired(params, 'id');
 
-    const bean = __.newBean<GetAuditLogHandler>('com.enonic.xp.lib.audit.GetAuditLogHandler');
+    const bean: GetAuditLogHandler = __.newBean<GetAuditLogHandler>('com.enonic.xp.lib.audit.GetAuditLogHandler');
     bean.setId(params.id);
     return __.toNativeObject(bean.execute());
 }
@@ -191,7 +191,7 @@ export function find(params: FindAuditLogParams): AuditLogs {
         objects,
     } = params ?? {};
 
-    const bean = __.newBean<FindAuditLogHandler>('com.enonic.xp.lib.audit.FindAuditLogHandler');
+    const bean: FindAuditLogHandler = __.newBean<FindAuditLogHandler>('com.enonic.xp.lib.audit.FindAuditLogHandler');
     bean.setStart(start);
     bean.setCount(count);
     bean.setIds(__.toScriptValue(ids));
