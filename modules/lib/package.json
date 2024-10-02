@@ -7,7 +7,8 @@
         "build": "tsc --declaration --project tsconfig.build.json",
         "lint": "eslint . --quiet --cache",
         "fix": "eslint . --fix --cache",
-        "jsdoc": "jsdoc --configure jsdoc/conf.json"
+        "jsdoc": "jsdoc --configure jsdoc/conf.json",
+        "test:types": "tsd -t build/npm/global.d.ts -f test/**/*.test-d.ts"
     },
     "repository": {
         "type": "git",
@@ -26,7 +27,8 @@
         "@typescript-eslint/eslint-plugin": "^5.23.0",
         "@typescript-eslint/parser": "^5.23.0",
         "eslint": "^8.15.0",
-        "typescript": "^4.8.4",
-        "jsdoc": "^3.6.11"
+        "jsdoc": "^3.6.11",
+        "tsd": "^0.31.2",
+        "typescript": "^4.8.4"
     }
 }
