@@ -33,18 +33,11 @@ public class ApiDescriptorServiceImplTest
         final ApiDescriptors descriptors = this.service.getByApplication( key );
 
         assertNotNull( descriptors );
-        assertEquals( 3, descriptors.getSize() );
+        assertEquals( 2, descriptors.getSize() );
 
         descriptors.forEach( descriptor -> {
             assertNotNull( descriptor );
-            if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "" ) ) )
-            {
-                final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
-                assertNotNull( allowedPrincipals );
-                assertEquals( 1, allowedPrincipals.getSize() );
-                assertEquals( allowedPrincipals.first(), PrincipalKey.from( "role:system.admin" ) );
-            }
-            else if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "api" ) ) )
+            if ( descriptor.getKey().equals( DescriptorKey.from( ApplicationKey.from( "myapp1" ), "api" ) ) )
             {
                 final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
                 assertNotNull( allowedPrincipals );
