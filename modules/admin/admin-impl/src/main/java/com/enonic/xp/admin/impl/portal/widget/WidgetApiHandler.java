@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.portal;
+package com.enonic.xp.admin.impl.portal.widget;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -22,12 +22,9 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
-    "allowedPrincipals=role:system.admin.login", "allowedPrincipals=role:system.admin"})
+@Component(immediate = true, service = WidgetApiHandler.class)
 public class WidgetApiHandler
-    implements UniversalApiHandler
 {
     private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin/widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
 
@@ -35,27 +32,28 @@ public class WidgetApiHandler
 
     private static final String GENERIC_WIDGET_INTERFACE = "generic";
 
-    private final ControllerScriptFactory controllerScriptFactory;
-
     private final WidgetDescriptorService widgetDescriptorService;
+
+    private final ControllerScriptFactory controllerScriptFactory;
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
     @Activate
-    public WidgetApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                             @Reference final WidgetDescriptorService widgetDescriptorService,
+    public WidgetApiHandler( @Reference final WidgetDescriptorService widgetDescriptorService,
+                             @Reference final ControllerScriptFactory controllerScriptFactory,
                              @Reference final AdminToolDescriptorService adminToolDescriptorService )
     {
-        this.controllerScriptFactory = controllerScriptFactory;
         this.widgetDescriptorService = widgetDescriptorService;
+        this.controllerScriptFactory = controllerScriptFactory;
         this.adminToolDescriptorService = adminToolDescriptorService;
     }
 
-    @Override
     public WebResponse handle( final WebRequest webRequest )
     {
         final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+
         final Matcher matcher = WIDGET_API_PATTERN.matcher( path );
+
         if ( !matcher.find() )
         {
             throw new IllegalArgumentException( "Invalid Widget API path: " + path );

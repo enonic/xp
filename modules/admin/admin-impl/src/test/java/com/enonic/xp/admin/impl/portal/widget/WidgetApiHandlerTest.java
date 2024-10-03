@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.portal;
+package com.enonic.xp.admin.impl.portal.widget;
 
 import java.util.Set;
 
@@ -47,7 +47,7 @@ public class WidgetApiHandlerTest
         this.widgetDescriptorService = mock( WidgetDescriptorService.class );
         this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
 
-        this.handler = new WidgetApiHandler( this.controllerScriptFactory, this.widgetDescriptorService, this.adminToolDescriptorService );
+        this.handler = new WidgetApiHandler( this.widgetDescriptorService, this.controllerScriptFactory, this.adminToolDescriptorService );
     }
 
 
@@ -80,7 +80,8 @@ public class WidgetApiHandlerTest
     @Test
     void testNoWidgetDescriptor()
     {
-        when( widgetDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" ) ) ) ).thenReturn( null );
+        when( widgetDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" ) ) ) ).thenReturn(
+            null );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
