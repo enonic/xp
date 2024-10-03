@@ -76,7 +76,7 @@ interface AssetUrlHandler {
  * @returns {string} The generated URL.
  */
 export function assetUrl(params: AssetUrlParams): string {
-    const bean = __.newBean<AssetUrlHandler>('com.enonic.xp.lib.portal.url.AssetUrlHandler');
+    const bean: AssetUrlHandler = __.newBean<AssetUrlHandler>('com.enonic.xp.lib.portal.url.AssetUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -121,7 +121,7 @@ interface ImageUrlHandler {
  * @returns {string} The generated URL.
  */
 export function imageUrl(params: ImageUrlParams): string {
-    const bean = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
+    const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -152,7 +152,7 @@ interface ComponentUrlHandler {
  * @returns {string} The generated URL.
  */
 export function componentUrl(params: ComponentUrlParams): string {
-    const bean = __.newBean<ComponentUrlHandler>('com.enonic.xp.lib.portal.url.ComponentUrlHandler');
+    const bean: ComponentUrlHandler = __.newBean<ComponentUrlHandler>('com.enonic.xp.lib.portal.url.ComponentUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -187,7 +187,7 @@ interface AttachmentUrlHandler {
  * @returns {string} The generated URL.
  */
 export function attachmentUrl(params: AttachmentUrlParams): string {
-    const bean = __.newBean<AttachmentUrlHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlHandler');
+    const bean: AttachmentUrlHandler = __.newBean<AttachmentUrlHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -214,7 +214,7 @@ interface PageUrlHandler {
  * @returns {string} The generated URL.
  */
 export function pageUrl(params: PageUrlParams): string {
-    const bean = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');
+    const bean: PageUrlHandler = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -243,7 +243,7 @@ interface ServiceUrlHandler {
  * @returns {string} The generated URL.
  */
 export function serviceUrl(params: ServiceUrlParams): string {
-    const bean = __.newBean<ServiceUrlHandler>('com.enonic.xp.lib.portal.url.ServiceUrlHandler');
+    const bean: ServiceUrlHandler = __.newBean<ServiceUrlHandler>('com.enonic.xp.lib.portal.url.ServiceUrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -272,7 +272,7 @@ interface IdProviderUrlHandler {
  * @returns {string} The generated URL.
  */
 export function idProviderUrl(params: IdProviderUrlParams): string {
-    const bean = __.newBean<IdProviderUrlHandler>('com.enonic.xp.lib.portal.url.IdProviderUrlHandler');
+    const bean: IdProviderUrlHandler = __.newBean<IdProviderUrlHandler>('com.enonic.xp.lib.portal.url.IdProviderUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
 
@@ -303,7 +303,7 @@ interface LoginUrlHandler {
  * @returns {string} The generated URL.
  */
 export function loginUrl(params: LoginUrlParams): string {
-    const bean = __.newBean<LoginUrlHandler>('com.enonic.xp.lib.portal.url.LoginUrlHandler');
+    const bean: LoginUrlHandler = __.newBean<LoginUrlHandler>('com.enonic.xp.lib.portal.url.LoginUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
 
@@ -331,7 +331,7 @@ interface LogoutUrlHandler {
  * @returns {string} The generated URL.
  */
 export function logoutUrl(params: LogoutUrlParams): string {
-    const bean = __.newBean<LogoutUrlHandler>('com.enonic.xp.lib.portal.url.LogoutUrlHandler');
+    const bean: LogoutUrlHandler = __.newBean<LogoutUrlHandler>('com.enonic.xp.lib.portal.url.LogoutUrlHandler');
     return bean.createUrl(__.toScriptValue(params ?? {}));
 }
 
@@ -358,7 +358,7 @@ interface UrlHandler {
  * @returns {string} The generated URL.
  */
 export function url(params: UrlParams): string {
-    const bean = __.newBean<UrlHandler>('com.enonic.xp.lib.portal.url.UrlHandler');
+    const bean: UrlHandler = __.newBean<UrlHandler>('com.enonic.xp.lib.portal.url.UrlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -389,7 +389,7 @@ interface ProcessHtmlHandler {
  * @returns {string} The processed HTML.
  */
 export function processHtml(params: ProcessHtmlParams): string {
-    const bean = __.newBean<ProcessHtmlHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlHandler');
+    const bean: ProcessHtmlHandler = __.newBean<ProcessHtmlHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlHandler');
     return bean.createUrl(__.toScriptValue(params));
 }
 
@@ -409,7 +409,7 @@ interface SanitizeHtmlHandler {
  * @returns {string} The sanitized HTML.
  */
 export function sanitizeHtml(html: string): string {
-    const bean = __.newBean<SanitizeHtmlHandler>('com.enonic.xp.lib.portal.SanitizeHtmlHandler');
+    const bean: SanitizeHtmlHandler = __.newBean<SanitizeHtmlHandler>('com.enonic.xp.lib.portal.SanitizeHtmlHandler');
     return __.toNativeObject(bean.sanitizeHtml(html));
 }
 
@@ -426,7 +426,7 @@ interface GetCurrentSiteHandler {
  * @returns {object|null} The current site as JSON.
  */
 export function getSite<Config = Record<string, unknown>>(): Site<Config> | null {
-    const bean = __.newBean<GetCurrentSiteHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteHandler');
+    const bean: GetCurrentSiteHandler = __.newBean<GetCurrentSiteHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteHandler');
     return __.toNativeObject(bean.execute<Config>());
 }
 
@@ -443,7 +443,7 @@ interface GetCurrentSiteConfigHandler {
  * @returns {object|null} The site configuration for current application as JSON.
  */
 export function getSiteConfig<Config = Record<string, unknown>>(): Config | null {
-    const bean = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
+    const bean: GetCurrentSiteConfigHandler = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
     return __.toNativeObject(bean.execute<Config>());
 }
 
@@ -460,7 +460,7 @@ interface GetCurrentContentHandler {
  * @returns {object|null} The current content as JSON.
  */
 export function getContent<Hit extends Content<unknown> = Content>(): Hit | null {
-    const bean = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
+    const bean: GetCurrentContentHandler = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
     return __.toNativeObject(bean.execute<Hit>());
 }
 
@@ -479,7 +479,7 @@ interface GetCurrentComponentHandler<_Component extends Component = Component> {
 export function getComponent<
     _Component extends Component = Component
 >(): _Component | null {
-    const bean = __.newBean<GetCurrentComponentHandler<_Component>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+    const bean: GetCurrentComponentHandler<_Component> = __.newBean<GetCurrentComponentHandler<_Component>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -495,7 +495,7 @@ interface GetCurrentIdProviderKeyHandler {
  * @returns {string|null} The current id provider as JSON.
  */
 export function getIdProviderKey(): string | null {
-    const bean = __.newBean<GetCurrentIdProviderKeyHandler>('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
+    const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -528,7 +528,7 @@ interface MultipartHandler {
  * @returns {object} The multipart form items.
  */
 export function getMultipartForm(): MultipartForm {
-    const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
+    const bean: MultipartHandler = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return __.toNativeObject(bean.getForm());
 }
 
@@ -543,7 +543,7 @@ export function getMultipartForm(): MultipartForm {
  * @returns {object|null} The named multipart form item.
  */
 export function getMultipartItem(name: string, index = 0): MultipartItem | null {
-    const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
+    const bean: MultipartHandler = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return __.toNativeObject(bean.getItem(name, index));
 }
 
@@ -558,7 +558,7 @@ export function getMultipartItem(name: string, index = 0): MultipartItem | null 
  * @returns {*} Stream of multipart item data.
  */
 export function getMultipartStream(name: string, index = 0): ByteSource | null {
-    const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
+    const bean: MultipartHandler = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getBytes(name, index);
 }
 
@@ -573,7 +573,7 @@ export function getMultipartStream(name: string, index = 0): ByteSource | null {
  * @returns {string|null} Text for multipart item data.
  */
 export function getMultipartText(name: string, index = 0): string | null {
-    const bean = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
+    const bean: MultipartHandler = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getText(name, index);
 }
 
@@ -602,7 +602,7 @@ interface ImagePlaceholderHandler {
  * @returns {string} Placeholder image URL.
  */
 export function imagePlaceholder(params: ImagePlaceholderParams): string {
-    const bean = __.newBean<ImagePlaceholderHandler>('com.enonic.xp.lib.portal.url.ImagePlaceholderHandler');
+    const bean: ImagePlaceholderHandler = __.newBean<ImagePlaceholderHandler>('com.enonic.xp.lib.portal.url.ImagePlaceholderHandler');
     bean.setWidth(params?.width ?? 0);
     bean.setHeight(params?.height ?? 0);
     return bean.createImagePlaceholder();
@@ -647,12 +647,12 @@ export function apiUrl(urlParams: ApiUrlParams): string {
         params,
     } = urlParams ?? {};
 
-    const bean = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
+    const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
     if (path) {
         if (Array.isArray(path)) {
             bean.setPath(__.toScriptValue(path));
         } else {
-            bean.setPath(path as string);
+            bean.setPath(path);
         }
     }
 

@@ -101,7 +101,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
         nodeImported,
     } = params ?? {};
 
-    const bean = __.newBean<ImportHandler>('com.enonic.xp.lib.export.ImportHandler');
+    const bean: ImportHandler = __.newBean<ImportHandler>('com.enonic.xp.lib.export.ImportHandler');
 
     bean.setSource(source);
     bean.setTargetNodePath(targetNodePath);
@@ -179,7 +179,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
         nodeExported,
     } = params ?? {};
 
-    const bean = __.newBean<ExportHandler>('com.enonic.xp.lib.export.ExportHandler');
+    const bean: ExportHandler = __.newBean<ExportHandler>('com.enonic.xp.lib.export.ExportHandler');
 
     bean.setSourceNodePath(sourceNodePath);
     bean.setExportName(exportName);

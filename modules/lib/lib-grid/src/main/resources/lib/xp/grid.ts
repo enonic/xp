@@ -6,6 +6,7 @@
  *
  * @module grid
  */
+import {ScriptValue} from '@enonic-types/core';
 
 declare global {
     interface XpLibraries {
@@ -160,9 +161,11 @@ function convertValue(value: SharedMapValueType): ConvertedType {
     if (typeof value === 'undefined' || value === null) {
         return null;
     } else if (Array.isArray(value)) {
-        return __.toScriptValue<object[]>(value).getList();
+        const sv: ScriptValue = __.toScriptValue(value);
+        return sv.getList();
     } else if (typeof value === 'object') {
-        return __.toScriptValue(value).getMap();
+        const sv: ScriptValue = __.toScriptValue(value);
+        return sv.getMap();
     } else {
         return value;
     }

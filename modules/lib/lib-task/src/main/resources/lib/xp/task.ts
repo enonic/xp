@@ -75,7 +75,7 @@ interface ExecuteFunctionHandler {
  * @returns {string} Id of the task that will be executed.
  */
 export function submit(params: SubmitParams): string {
-    const bean = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
+    const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
     checkRequired(params, 'description');
     checkRequired(params, 'task');
@@ -100,7 +100,7 @@ export function submit(params: SubmitParams): string {
  * @returns {string} Id of the task that will be executed.
  */
 export function executeFunction(params: ExecuteFunctionParams): string {
-    const bean = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
+    const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
     checkRequired(params, 'description');
     checkRequired(params, 'func');
@@ -144,7 +144,7 @@ interface SubmitTaskHandler {
 export function submitNamed<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitNamedTaskParams<Config>): string {
     checkRequired(params, 'name');
 
-    const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
+    const bean: SubmitTaskHandler = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
 
     bean.setDescriptor(__.nullOrValue(params.name));
     bean.setConfig(__.toScriptValue(params.config));
@@ -175,7 +175,7 @@ export interface SubmitTaskParams<Config extends Record<string, unknown>> {
 export function submitTask<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitTaskParams<Config>): string {
     checkRequired(params, 'descriptor');
 
-    const bean = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
+    const bean: SubmitTaskHandler = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
 
     bean.setDescriptor(__.nullOrValue(params.descriptor));
     bean.setName(__.nullOrValue(params.name));
@@ -230,7 +230,7 @@ export interface TaskInfo {
 export function list(params?: ListTasksParams): TaskInfo[] {
     const {name, state} = params ?? {};
 
-    const bean = __.newBean<ListTasksHandler>('com.enonic.xp.lib.task.ListTasksHandler');
+    const bean: ListTasksHandler = __.newBean<ListTasksHandler>('com.enonic.xp.lib.task.ListTasksHandler');
 
     bean.setName(__.nullOrValue(name));
     bean.setState(__.nullOrValue(state));
@@ -259,7 +259,7 @@ export function get(taskId: string): TaskInfo | null {
         throw 'Parameter taskId is required';
     }
 
-    const bean = __.newBean<GetTaskHandler>('com.enonic.xp.lib.task.GetTaskHandler');
+    const bean: GetTaskHandler = __.newBean<GetTaskHandler>('com.enonic.xp.lib.task.GetTaskHandler');
     bean.setTaskId(__.nullOrValue(taskId));
     return __.toNativeObject(bean.getTask());
 }
@@ -278,7 +278,7 @@ interface SleepHandler {
  * @param {number} timeMillis The length of time to sleep in milliseconds.
  */
 export function sleep(timeMillis: number): void {
-    const bean = __.newBean<SleepHandler>('com.enonic.xp.lib.task.SleepHandler');
+    const bean: SleepHandler = __.newBean<SleepHandler>('com.enonic.xp.lib.task.SleepHandler');
 
     bean.setTimeMillis(__.nullOrValue(timeMillis) ?? 0);
 
@@ -313,7 +313,7 @@ interface TaskProgressHandler {
  * @param {string} [params.info] Text describing the current progress for the task.
  */
 export function progress(params: TaskProgressParams): void {
-    const bean = __.newBean<TaskProgressHandler>('com.enonic.xp.lib.task.TaskProgressHandler');
+    const bean: TaskProgressHandler = __.newBean<TaskProgressHandler>('com.enonic.xp.lib.task.TaskProgressHandler');
 
     bean.setCurrent(__.nullOrValue(params.current));
     bean.setTotal(__.nullOrValue(params.total));
@@ -336,7 +336,7 @@ interface IsRunningHandler {
  * @returns {boolean} True if there is a task with the specified name or id, and state 'RUNNING'; False otherwise.
  */
 export function isRunning(task: string): boolean {
-    const bean = __.newBean<IsRunningHandler>('com.enonic.xp.lib.task.IsRunningHandler');
+    const bean: IsRunningHandler = __.newBean<IsRunningHandler>('com.enonic.xp.lib.task.IsRunningHandler');
 
     if (task === undefined) {
         throw 'Parameter task is required';

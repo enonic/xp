@@ -25,6 +25,6 @@ interface ClusterIsMasterHandler {
  * @returns {boolean} true if the current node is master; false otherwise.
  */
 export function isMaster(): boolean {
-    const bean = __.newBean<ClusterIsMasterHandler>('com.enonic.xp.lib.cluster.ClusterIsMasterHandler');
+    const bean: ClusterIsMasterHandler = __.newBean<ClusterIsMasterHandler>('com.enonic.xp.lib.cluster.ClusterIsMasterHandler');
     return __.toNativeObject(bean.isMaster());
 }

@@ -17,7 +17,7 @@ interface NamePrettyfier {
  * @module common
  */
 
-const NamePrettyfier = __.newBean<NamePrettyfier>('com.enonic.xp.lib.common.NamePrettyfierHandler');
+const NamePrettyfier: NamePrettyfier = __.newBean<NamePrettyfier>('com.enonic.xp.lib.common.NamePrettyfierHandler');
 
 /**
  * Transform a text string so that it can be safely used in cases where the range of accepted characters is restricted.

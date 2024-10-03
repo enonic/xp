@@ -13,8 +13,26 @@ declare global {
  * @module admin
  */
 
-const i18n = require('/lib/xp/i18n');
-const portal = require('/lib/xp/portal');
+interface ApiUrlParams {
+    application: string;
+    api?: string;
+    type?: 'server' | 'absolute' | 'websocket';
+    params?: object;
+    path?: string | string[];
+}
+
+interface Portal {
+    apiUrl(options: ApiUrlParams): string;
+    assetUrl(options: { application: string; path: string }): string;
+    url(options: { path: string; type?: string }): string;
+}
+
+interface I18n {
+    getPhrases(locale: string[], bundles: string[]): Record<string, string>;
+}
+
+const i18n: I18n = require('/lib/xp/i18n');
+const portal: Portal = require('/lib/xp/portal');
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
@@ -22,7 +40,7 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-const helper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
+const helper: AdminLibHelper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
 
 interface AdminLibHelper {
     getHomeAppName(): string;

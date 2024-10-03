@@ -48,7 +48,7 @@ export interface VirtualHost {
  * @returns {boolean} `true` if vhost mapping is enabled, otherwise `false`.
  */
 export function isEnabled(): boolean {
-    const bean = __.newBean<VirtualHostHandler>('com.enonic.xp.lib.vhost.VirtualHostHandler');
+    const bean: VirtualHostHandler = __.newBean<VirtualHostHandler>('com.enonic.xp.lib.vhost.VirtualHostHandler');
     return __.toNativeObject(bean.isEnabled());
 }
 
@@ -58,6 +58,6 @@ export function isEnabled(): boolean {
  * @returns {VirtualHosts} An object with all the virtual hosts.
  */
 export function list(): VirtualHosts {
-    const bean = __.newBean<VirtualHostHandler>('com.enonic.xp.lib.vhost.VirtualHostHandler');
+    const bean: VirtualHostHandler = __.newBean<VirtualHostHandler>('com.enonic.xp.lib.vhost.VirtualHostHandler');
     return __.toNativeObject(bean.getVirtualHosts());
 }

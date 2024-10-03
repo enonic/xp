@@ -68,7 +68,7 @@ interface ContextHandler {
     newRunParams(): ContextRunParams;
 }
 
-const bean = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandlerBean');
+const bean: ContextHandler = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandlerBean');
 
 /**
  * Runs a function within a specified context.
@@ -87,7 +87,7 @@ const bean = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandle
  * @returns {object} Result of the function execution.
  */
 export function run<T>(context: ContextParams, callback: () => T): T {
-    const params = bean.newRunParams();
+    const params: ContextRunParams = bean.newRunParams();
     params.setCallback(callback);
 
     if (context.repository) {

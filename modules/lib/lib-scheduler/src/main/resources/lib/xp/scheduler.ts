@@ -103,7 +103,7 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     checkRequired(params, 'descriptor');
     checkRequired(params, 'enabled');
 
-    const bean = __.newBean<CreateScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
+    const bean: CreateScheduledJobHandler<Config> = __.newBean<CreateScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
 
     bean.setName(params.name);
     bean.setSchedule(params.schedule);
@@ -141,7 +141,7 @@ interface ModifyScheduledJobHandler<Config extends Record<string, unknown>> {
 export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyScheduledJobParams<Config>): ScheduledJob<Config> {
     checkRequired(params, 'name');
 
-    const bean = __.newBean<ModifyScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.ModifyScheduledJobHandler');
+    const bean: ModifyScheduledJobHandler<Config> = __.newBean<ModifyScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.ModifyScheduledJobHandler');
 
     bean.setName(params.name);
     bean.setEditor(__.toScriptValue(params.editor));
@@ -170,7 +170,7 @@ interface DeleteScheduledJobHandler {
 function _delete(params: DeleteScheduledJobParams): boolean {
     checkRequired(params, 'name');
 
-    const bean = __.newBean<DeleteScheduledJobHandler>('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
+    const bean: DeleteScheduledJobHandler = __.newBean<DeleteScheduledJobHandler>('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
 
     bean.setName(params.name);
 
@@ -202,7 +202,7 @@ interface GetScheduledJobHandler<Config extends Record<string, unknown>> {
 export function get<Config extends Record<string, unknown> = Record<string, unknown>>(params: GetScheduledJobParams): ScheduledJob<Config> | null {
     checkRequired(params, 'name');
 
-    const bean = __.newBean<GetScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.GetScheduledJobHandler');
+    const bean: GetScheduledJobHandler<Config> = __.newBean<GetScheduledJobHandler<Config>>('com.enonic.xp.lib.scheduler.GetScheduledJobHandler');
 
     bean.setName(params.name);
 
@@ -220,7 +220,7 @@ interface ListScheduledJobsHandler<Config extends Record<string, unknown>> {
  *
  */
 export function list<Config extends Record<string, unknown> = Record<string, unknown>>(): ScheduledJob<Config>[] {
-    const bean = __.newBean<ListScheduledJobsHandler<Config>>('com.enonic.xp.lib.scheduler.ListScheduledJobsHandler');
+    const bean: ListScheduledJobsHandler<Config> = __.newBean<ListScheduledJobsHandler<Config>>('com.enonic.xp.lib.scheduler.ListScheduledJobsHandler');
 
     return __.toNativeObject(bean.execute());
 }

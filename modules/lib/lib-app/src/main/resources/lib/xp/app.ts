@@ -59,7 +59,7 @@ interface CreateVirtualApplicationHandler {
 export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
+    const bean: CreateVirtualApplicationHandler = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -85,7 +85,7 @@ interface DeleteVirtualApplicationHandler {
 export function deleteVirtualApplication(params: DeleteVirtualApplicationParams): boolean {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
+    const bean: DeleteVirtualApplicationHandler = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -111,7 +111,7 @@ interface GetApplicationHandler {
 export function get(params: GetApplicationParams): Application {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetApplicationHandler>('com.enonic.xp.lib.app.GetApplicationHandler');
+    const bean: GetApplicationHandler = __.newBean<GetApplicationHandler>('com.enonic.xp.lib.app.GetApplicationHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -126,7 +126,7 @@ interface ListApplicationsHandler {
  * @returns {object[]} applications list.
  */
 export function list(): Application[] {
-    const bean = __.newBean<ListApplicationsHandler>('com.enonic.xp.lib.app.ListApplicationsHandler');
+    const bean: ListApplicationsHandler = __.newBean<ListApplicationsHandler>('com.enonic.xp.lib.app.ListApplicationsHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -161,7 +161,7 @@ interface GetApplicationDescriptorHandler {
  * @returns {object} fetched application descriptor.
  */
 export function getDescriptor(params: GetApplicationDescriptorParams): ApplicationDescriptor {
-    const bean = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
+    const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -187,7 +187,7 @@ interface HasVirtualApplicationHandler {
 export function hasVirtual(params: HasVirtualApplicationParams): boolean {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<HasVirtualApplicationHandler>('com.enonic.xp.lib.app.HasVirtualApplicationHandler');
+    const bean: HasVirtualApplicationHandler = __.newBean<HasVirtualApplicationHandler>('com.enonic.xp.lib.app.HasVirtualApplicationHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
@@ -213,7 +213,7 @@ interface GetApplicationModeHandler {
 export function getApplicationMode(params: GetApplicationModeParams): string | null {
     checkRequired(params, 'key');
 
-    const bean = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
+    const bean: GetApplicationModeHandler = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
     bean.setKey(params.key);
     return __.toNativeObject(bean.execute());
 }
