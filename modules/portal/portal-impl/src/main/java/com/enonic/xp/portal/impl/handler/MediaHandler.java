@@ -66,7 +66,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class MediaHandler
 {
     private static final Pattern PATTERN = Pattern.compile(
-        "^/(_|api)/media:(?<mediaType>image|attachment)/(?<context>(?<project>[^/:]+)(?::(?<branch>draft))?)/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
+        "^/(_|api)/media/(?<mediaType>image|attachment)/(?<context>(?<project>[^/:]+)(?::(?<branch>draft))?)/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
 
     private static final Pattern ATTACHMENT_REST_PATH_PATTERN = Pattern.compile( "^(?<name>[^/?]+)(\\?(?<params>.*))?$" );
 
