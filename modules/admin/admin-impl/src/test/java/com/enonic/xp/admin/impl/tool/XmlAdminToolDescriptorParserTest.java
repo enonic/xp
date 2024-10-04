@@ -57,23 +57,15 @@ public class XmlAdminToolDescriptorParserTest
 
         assertResult( toolDescriptor );
 
-        assertEquals( 4, toolDescriptor.getApiMounts().getSize() );
+        assertEquals( 2, toolDescriptor.getApiMounts().getSize() );
 
         final ApiMountDescriptor apiMountDescriptor1 = toolDescriptor.getApiMounts().get( 0 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor1.getApplicationKey() );
         assertEquals( "api-key", apiMountDescriptor1.getApiKey() );
 
-        final ApiMountDescriptor apiMountDescriptor2 = toolDescriptor.getApiMounts().get( 1 );
-        assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor2.getApplicationKey() );
-        assertEquals( "", apiMountDescriptor2.getApiKey() );
-
-        final ApiMountDescriptor apiMountDescriptor3 = toolDescriptor.getApiMounts().get( 2 );
+        final ApiMountDescriptor apiMountDescriptor3 = toolDescriptor.getApiMounts().get( 1 );
         assertEquals( ApplicationKey.from( "myapplication" ), apiMountDescriptor3.getApplicationKey() );
         assertEquals( "api-key", apiMountDescriptor3.getApiKey() );
-
-        final ApiMountDescriptor apiMountDescriptor4 = toolDescriptor.getApiMounts().get( 3 );
-        assertEquals( ApplicationKey.from( "myapplication" ), apiMountDescriptor4.getApplicationKey() );
-        assertEquals( "", apiMountDescriptor4.getApiKey() );
     }
 
     @Test

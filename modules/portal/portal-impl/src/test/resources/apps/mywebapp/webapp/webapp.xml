@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <webapp xmlns="urn:enonic:xp:model:1.0">
   <apis>
-    <api>com.enonic.app.myapp:api-key</api>
-    <api>com.enonic.app.myapp:</api>
+    <api>com.enonic.app.myapp:api-key1</api>
+    <api>com.enonic.app.myapp:api-key2</api>
   </apis>
 </webapp>

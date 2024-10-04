@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,7 +122,7 @@ public class SlashApiHandlerTest
         request.setMethod( HttpMethod.GET );
         request.setEndpointPath( null );
         request.setWebSocketContext( webSocketContext );
-        request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
         request.setRawRequest( mock( HttpServletRequest.class ) );
 
         final TraceManager manager = mock( TraceManager.class );
@@ -136,31 +135,6 @@ public class SlashApiHandlerTest
     void tearDown()
     {
         Tracer.setManager( null );
-    }
-
-    @Test
-    void testReservedAppKeys()
-    {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-
-        List.of( "attachment", "image", "error", "idprovider", "service", "asset", "component", "widgets", "media" ).forEach( appKey -> {
-            // as endpoint
-            when( webRequest.getEndpointPath() ).thenReturn( "/_/" + appKey + "/path" );
-            when( webRequest.getRawPath() ).thenReturn( "/path/_/" + appKey + "/path" );
-
-            WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
-            assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
-            assertEquals( "Application key [" + appKey + "] is reserved", ex.getMessage() );
-
-            // as API
-            when( webRequest.getEndpointPath() ).thenReturn( null );
-            when( webRequest.getRawPath() ).thenReturn( "/api/" + appKey + "/apiKey/path" );
-
-            ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
-            assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
-            assertEquals( "Application key [" + appKey + "] is reserved", ex.getMessage() );
-        } );
     }
 
     @Test
@@ -184,14 +158,14 @@ public class SlashApiHandlerTest
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.OPTIONS );
 
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp/api-key" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp:api-key" );
 
         WebResponse res = this.handler.handle( webRequest );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", res.getHeaders().get( "Allow" ) );
 
-        when( webRequest.getEndpointPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
 
         res = this.handler.handle( webRequest );
         assertNotNull( res );
@@ -205,7 +179,7 @@ public class SlashApiHandlerTest
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
         when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final ApiDescriptor apiDescriptor = ApiDescriptor.create()
@@ -226,7 +200,7 @@ public class SlashApiHandlerTest
         throws Exception
     {
         request.setEndpointPath( null );
-        request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
@@ -259,7 +233,7 @@ public class SlashApiHandlerTest
         final PortalRequest request = new PortalRequest();
         request.setMethod( HttpMethod.GET );
         request.setEndpointPath( null );
-        request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
         request.setRawRequest( mock( HttpServletRequest.class ) );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
@@ -278,7 +252,7 @@ public class SlashApiHandlerTest
     {
         request.setMethod( HttpMethod.CONNECT );
         request.setEndpointPath( null );
-        request.setRawPath( "/api/com.enonic.app.myapp/api-key" );
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
@@ -289,8 +263,8 @@ public class SlashApiHandlerTest
     void testSiteMountApplicationDoesNotInstalledToSiteAndProject()
     {
         request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp/api-key" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "master" ) );
 
@@ -326,8 +300,8 @@ public class SlashApiHandlerTest
     void testSiteMountSiteDescriptorNotFound()
     {
         request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp/api-key" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "master" ) );
 
@@ -358,8 +332,8 @@ public class SlashApiHandlerTest
     void testSiteMountApiDoesNotDefinedIdApis()
     {
         request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp/api-key" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "master" ) );
 
@@ -396,8 +370,8 @@ public class SlashApiHandlerTest
         throws Exception
     {
         request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key-1" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp/api-key-1" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "master" ) );
 
@@ -434,8 +408,8 @@ public class SlashApiHandlerTest
         throws Exception
     {
         request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/api-key-1" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp/api-key-1" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "master" ) );
 
@@ -470,42 +444,14 @@ public class SlashApiHandlerTest
     @Test
     void testSiteEndpointWithInvalidApplicationName()
     {
-        request.setEndpointPath( "/_/<>/api-key" );
-        request.setRawPath( "/site/project/branch/mysite/_/<>/api-key" );
+        request.setEndpointPath( "/_/<>:api-key" );
+        request.setRawPath( "/site/project/branch/mysite/_/<>:api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
         request.setBranch( Branch.from( "branch" ) );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Application key [<>] not found", ex.getMessage() );
-    }
-
-    @Test
-    void testWebappMountOwnUnnamedAPI()
-        throws Exception
-    {
-        final ApplicationKey webappApplicationKey = ApplicationKey.from( "com.enonic.app.mywebapp" );
-
-        final ApiMountDescriptor unnamedApiInWebapp = ApiMountDescriptor.create().applicationKey( webappApplicationKey ).build();
-
-        final WebappDescriptor webappDescriptor = WebappDescriptor.create()
-            .applicationKey( webappApplicationKey )
-            .apiMounts( ApiMountDescriptors.from( unnamedApiInWebapp ) )
-            .build();
-
-        when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
-
-        final DescriptorKey apiDescriptorKey = DescriptorKey.from( webappApplicationKey, "" );
-
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
-
-        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
-
-        request.setEndpointPath( "/_/com.enonic.app.mywebapp" );
-        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.mywebapp" );
-
-        WebResponse response = this.handler.handle( request );
-        assertEquals( HttpStatus.OK, response.getStatus() );
     }
 
     @Test
@@ -530,15 +476,15 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.myapp/myapi" );
-        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
+        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp:myapi" );
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
         // test it on not root webapp path
-        request.setEndpointPath( "/_/com.enonic.app.myapp/myapi" );
-        request.setRawPath( "/webapp/com.enonic.app.mywebapp/path/_/com.enonic.app.myapp/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
+        request.setRawPath( "/webapp/com.enonic.app.mywebapp/path/_/com.enonic.app.myapp:myapi" );
 
         response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -560,8 +506,8 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.myapp/myapi" );
-        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
+        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -580,8 +526,8 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.myapp/myapi" );
-        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
+        request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/com.enonic.app.myapp:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -594,8 +540,8 @@ public class SlashApiHandlerTest
         final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
-        request.setEndpointPath( "/_/com.enonic.app.myapp/myapi" );
-        request.setRawPath( "/webapp/_/com.enonic.app.myapp/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
+        request.setRawPath( "/webapp/_/com.enonic.app.myapp:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -622,8 +568,8 @@ public class SlashApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -645,8 +591,8 @@ public class SlashApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -665,8 +611,8 @@ public class SlashApiHandlerTest
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( null );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -681,8 +627,8 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/_/com.enonic.app.external.app:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -697,8 +643,8 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/unsupported/path/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/unsupported/path/_/com.enonic.app.external.app:myapi" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -724,8 +670,8 @@ public class SlashApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -747,8 +693,8 @@ public class SlashApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
-        request.setEndpointPath( "/_/com.enonic.app.external.app/myapi" );
-        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app/myapi" );
+        request.setEndpointPath( "/_/com.enonic.app.external.app:myapi" );
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
 
         final WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );

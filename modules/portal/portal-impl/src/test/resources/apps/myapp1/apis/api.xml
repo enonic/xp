@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<api xmlns="urn:enonic:xp:model:1.0">
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</api>

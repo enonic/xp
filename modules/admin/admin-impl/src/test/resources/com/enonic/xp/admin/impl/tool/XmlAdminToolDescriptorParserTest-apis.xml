@@ -7,8 +7,6 @@
   </allow>
   <apis>
     <api>com.enonic.app.myapp:api-key</api>
-    <api>com.enonic.app.myapp:</api>
     <api>api-key</api>
-    <api/>
   </apis>
 </tool>

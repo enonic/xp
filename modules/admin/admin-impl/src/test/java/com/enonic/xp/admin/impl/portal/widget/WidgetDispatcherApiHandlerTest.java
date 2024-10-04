@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -27,7 +28,8 @@ public class WidgetDispatcherApiHandlerTest
         WidgetDispatcherApiHandler handler = new WidgetDispatcherApiHandler( listWidgetsHandler, getWidgetIconHandler, widgetApiHandler );
 
         WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget" );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget" );
         when( webRequest.getParams() ).thenReturn( HashMultimap.create() );
 
         WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest ) );
@@ -54,7 +56,7 @@ public class WidgetDispatcherApiHandlerTest
         assertEquals( response, handler.handle( webRequest ) );
 
         // widget harmonized api
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/myapp/mywidget" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/myapp/mywidget" );
         when( webRequest.getParams() ).thenReturn( null );
         when( widgetApiHandler.handle( webRequest ) ).thenReturn( response );
         assertEquals( response, handler.handle( webRequest ) );

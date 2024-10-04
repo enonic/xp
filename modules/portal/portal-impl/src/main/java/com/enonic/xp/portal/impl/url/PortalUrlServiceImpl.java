@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
@@ -143,17 +144,15 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        if ( params == null || params.getApplication() == null )
-        {
-            throw new IllegalArgumentException( "\"application\" is required" );
-        }
-
+        Objects.requireNonNull( params, "\"params\" is required" );
+        Objects.requireNonNull( params.getApi(), "\"api\" is required" );
         if ( params.getPortalRequest() != null )
         {
             return build( new UniversalApiUrlBuilder(), params );
         }
         else
         {
+            Objects.requireNonNull( params.getApplication(), "\"application\" is required" );
             // TODO resolve baseUrl
             return new SlashApiUrlBuilder( params ).build();
         }

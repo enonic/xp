@@ -271,7 +271,7 @@ public class XmlSiteParserTest
         assertEquals( 0, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 0, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( 0, siteDescriptor.getMappingDescriptors().getSize() );
-        assertEquals( 5, siteDescriptor.getApiDescriptors().getSize() );
+        assertEquals( 4, siteDescriptor.getApiDescriptors().getSize() );
 
         ApiMountDescriptor apiDescriptor1 = siteDescriptor.getApiDescriptors().get( 0 );
         assertEquals( "myapi1", apiDescriptor1.getApiKey() );
@@ -283,11 +283,8 @@ public class XmlSiteParserTest
         assertEquals( "myapi3", apiDescriptor3.getApiKey() );
 
         ApiMountDescriptor apiDescriptor4 = siteDescriptor.getApiDescriptors().get( 3 );
-        assertEquals( "", apiDescriptor4.getApiKey() );
-
-        ApiMountDescriptor apiDescriptor5 = siteDescriptor.getApiDescriptors().get( 4 );
-        assertEquals( ApplicationKey.from( "com.enonic.app.external" ), apiDescriptor5.getApplicationKey() );
-        assertEquals( "myapi", apiDescriptor5.getApiKey() );
+        assertEquals( ApplicationKey.from( "com.enonic.app.external" ), apiDescriptor4.getApplicationKey() );
+        assertEquals( "myapi", apiDescriptor4.getApiKey() );
     }
 
     private String loadTestFile( final String fileName, Charset charset )

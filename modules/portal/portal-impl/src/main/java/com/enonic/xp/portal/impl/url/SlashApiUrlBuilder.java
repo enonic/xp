@@ -20,11 +20,7 @@ public class SlashApiUrlBuilder
     {
         final StringBuilder url = new StringBuilder();
         appendPart( url, "api" );
-        appendPart( url, params.getApplication() );
-        if ( params.getApi() != null )
-        {
-            appendPart( url, params.getApi() );
-        }
+        appendPart( url, params.getApplication() + ":" + params.getApi() );
         appendSubPath( url, this.params.getPath() );
         appendPathSegments( url, this.params.getPathSegments() );
         appendParams( url, params.getParams().entries() );
