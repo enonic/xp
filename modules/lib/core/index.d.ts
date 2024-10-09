@@ -143,13 +143,13 @@ export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: 
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
 
 export interface DefaultCookies {
-    [key: string]: string|undefined
+    [key: string]: string | undefined
     enonic_xp_tour?: string
     JSESSIONID?: string
 }
 
 export interface DefaultRequestHeaders {
-    [headerName: string]: string|undefined
+    [headerName: string]: string | undefined
     Accept?: string
     'Accept-Charset'?: string
     'Accept-Encoding'?: string
@@ -183,37 +183,37 @@ export type LowercaseKeys<T> = {
     [K in keyof T as Lowercase<string & K>]: T[K]
 };
 
-export interface DefaultOptionalRequestProperties {
-    [index: string]: unknown|undefined; // Custom properties are allowed
+export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+// type LooseAutocomplete<T extends string> = T | Omit<string, T>;
+type StrictMergeInterfaces<A, B> = B extends Record<string, unknown>
+    ? Pick<A, Exclude<keyof A, keyof B>> & B
+    : A;
+
+export type Request<
+    T extends Record<string, unknown> | undefined = undefined
+> = StrictMergeInterfaces<{
     body?: string
-    contextPath?: string
+    branch: LiteralUnion<'draft' | 'master'>
     contentType?: string
+    contextPath?: string
     cookies?: DefaultCookies
     followRedirects?: boolean
     headers?: DefaultRequestHeaders
+    host: string
+    method: LiteralUnion<'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'TRACE' | 'CONNECT'>
+    mode: LiteralUnion<'edit' | 'inline' | 'live' | 'preview' | 'admin'>
     params?: Record<string, string | string[]>
+    path: string
     pathParams?: Record<string, string>
+    port: number // |string // TODO Where have I seen this as string?
     rawPath?: string
-    repositoryId?: string
     remoteAddress?: string
+    repositoryId?: string
+    scheme: LiteralUnion<'http' | 'https'>
+    url: string
     validTicket?: boolean
     webSocket?: boolean
-}
-
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
-
-export type Request<
-    T extends Record<string, unknown> = DefaultOptionalRequestProperties
-> = {
-    branch: LiteralUnion<'draft'|'master'>
-    host: string
-    method: LiteralUnion<'GET'|'POST'|'PUT'|'DELETE'|'HEAD'|'OPTIONS'|'PATCH'|'TRACE'|'CONNECT'>
-    mode: LiteralUnion<'edit'|'inline'|'live'|'preview'|'admin'>
-    path: string
-    port: number // |string // TODO Where have I seen this as string?
-    scheme: LiteralUnion<'http'|'https'>
-    url: string
-} & T;
+},T>;
 
 export interface ComplexCookie {
 	value: string
@@ -226,36 +226,51 @@ export interface ComplexCookie {
 	sameSite?: string
 }
 
-export interface DefaultResponseHeaders extends Record<string,string|number|(string|number)[]|undefined> {
+export interface DefaultResponseHeaders extends Record<string,string | number | (string | number)[] | undefined> {
     'Cache-Control'?: string
     'Content-Encoding'?: string
     'Content-Type'?: string
     'Content-Security-Policy'?: string
     'Date'?: string
-    Etag?: string|number
+    Etag?: string | number
     Location?: string
 }
 
 export interface PageContributions {
-	headBegin?: string[]
-	headEnd?: string[]
-	bodyBegin?: string[]
-	bodyEnd?: string[]
+	headBegin?: string | string[]
+	headEnd?: string | string[]
+	bodyBegin?: string | string[]
+	bodyEnd?: string | string[]
 }
 
 export type Response<
-    T extends Record<string, unknown> = {
-        applyFilters?: boolean
-        body?: string|ByteSource
-        contentType?: string
-        cookies?: Record<string,string|ComplexCookie>
-        headers?: DefaultResponseHeaders
-        pageContributions?: PageContributions
-        postProcess?: boolean
-        redirect?: string
-        status?: number
-    }
-> = T;
+    T extends Record<string, unknown> | undefined = undefined
+> = StrictMergeInterfaces<{
+    applyFilters?: boolean
+    body?: string | ByteSource
+    contentType?: LiteralUnion<'text/html' | 'application/json'>
+    cookies?: Record<string,string | ComplexCookie>
+    headers?: DefaultResponseHeaders
+    pageContributions?: PageContributions
+    postProcess?: boolean
+    redirect?: string
+    status?: number
+}, T>;
+
+export type RequestHandler = (request: Request) => Response;
+
+export interface ControllerModule {
+    all: RequestHandler
+    // connect: RequestHandler
+    // delete: RequestHandler
+    get: RequestHandler
+    // head: RequestHandler
+    options: RequestHandler
+    // patch: RequestHandler
+    post: RequestHandler
+    // put: RequestHandler
+    // trace: RequestHandler
+}
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;

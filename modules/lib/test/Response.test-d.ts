@@ -1,4 +1,7 @@
-import type {Response} from '../core/index';
+import type {
+    LiteralUnion,
+    Response,
+} from '../core/index';
 
 import {
     expectAssignable,
@@ -7,6 +10,7 @@ import {
     // expectError,
     // expectNever,
 	expectNotAssignable,
+    printType,
     // expectNotDeprecated,
     // expectNotType,
     // expectType,
@@ -25,11 +29,33 @@ const notFoundResponse  = {
 };
 expectAssignable<Response>(notFoundResponse);
 
-// Scenario: JSON body?
-// expectAssignable<Response>({
-//     body: {}, // TODO
-//     contentType: 'application/json',
-// });
+// Scenario: JSON body
+interface MyObject {
+    key: string
+}
+const object = {
+    key: 'value',
+};
+
+type JsonResponse<Body> = Response<{
+    body: Body,
+    contentType: LiteralUnion<'application/json'>
+}>;
+
+const jsonResponse = {
+    body: object,
+    // Changing contentType is allowed since it's a LiteralUnion
+    contentType: 'application/json;charset=utf-8',
+};
+
+// printType(jsonResponse);
+
+// Untyped body object not allowed
+expectNotAssignable<Response>(jsonResponse);
+
+// Typed body object allowed
+expectAssignable<JsonResponse<MyObject>>(jsonResponse);
+
 
 expectAssignable<Response>({
     body: undefined,
