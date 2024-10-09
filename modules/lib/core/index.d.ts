@@ -142,7 +142,7 @@ export interface ScriptValue {
 export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
 
-export interface DefaultCookies {
+export interface DefaultRequestCookies {
     [key: string]: string | undefined
     enonic_xp_tour?: string
     JSESSIONID?: string
@@ -185,7 +185,7 @@ export type LowercaseKeys<T> = {
 
 export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 // type LooseAutocomplete<T extends string> = T | Omit<string, T>;
-type StrictMergeInterfaces<A, B> = B extends Record<string, unknown>
+export type StrictMergeInterfaces<A, B> = B extends Record<string, unknown>
     ? Pick<A, Exclude<keyof A, keyof B>> & B
     : A;
 
@@ -196,7 +196,7 @@ export type Request<
     branch: LiteralUnion<'draft' | 'master'>
     contentType?: string
     contextPath?: string
-    cookies?: DefaultCookies
+    cookies?: DefaultRequestCookies
     followRedirects?: boolean
     headers?: DefaultRequestHeaders
     host: string
@@ -260,16 +260,16 @@ export type Response<
 export type RequestHandler = (request: Request) => Response;
 
 export interface ControllerModule {
-    all: RequestHandler
-    // connect: RequestHandler
-    // delete: RequestHandler
-    get: RequestHandler
-    // head: RequestHandler
-    options: RequestHandler
-    // patch: RequestHandler
-    post: RequestHandler
-    // put: RequestHandler
-    // trace: RequestHandler
+    all?: RequestHandler
+    // connect?: RequestHandler
+    // delete?: RequestHandler
+    get?: RequestHandler
+    // head:? RequestHandler
+    options?: RequestHandler
+    // patch?: RequestHandler
+    post?: RequestHandler
+    // put?: RequestHandler
+    // trace?: RequestHandler
 }
 
 export type UserKey = `user:${string}:${string}`;

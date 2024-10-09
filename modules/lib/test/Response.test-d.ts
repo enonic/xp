@@ -29,7 +29,24 @@ const notFoundResponse  = {
 };
 expectAssignable<Response>(notFoundResponse);
 
+// ────────────────────────────────────────────────────────────────────────────
+// Scenario: Strictify Response down to a specific Response
+// ────────────────────────────────────────────────────────────────────────────
+type NotFoundResponse = Response<{
+    status: 404
+}>;
+
+expectAssignable<NotFoundResponse>({
+    status: 404 as const,
+});
+
+expectNotAssignable<NotFoundResponse>({
+    status: 200,
+});
+
+// ────────────────────────────────────────────────────────────────────────────
 // Scenario: JSON body
+// ────────────────────────────────────────────────────────────────────────────
 interface MyObject {
     key: string
 }
