@@ -4,13 +4,13 @@ import {
     expectAssignable,
     // expectDeprecated,
     // expectDocCommentIncludes,
-    // expectError,
+    expectError,
     // expectNever,
 	expectNotAssignable,
     // expectNotDeprecated,
     // expectNotType,
     // expectType,
-    // printType,
+    printType,
 } from 'tsd';
 
 
@@ -700,10 +700,16 @@ expectAssignable<Request>({
     scheme: 'string but not http|https',
 });
 
-expectNotAssignable<Request>({
+const branchNotString = {
     ...requiredProperties,
-    branch: 123, // not string
-});
+    branch: 123,
+};
+// printType(branchNotString);
+
+expectNotAssignable<Request>(branchNotString);
+
+// Allowed to change type of branch to number
+expectAssignable<Request<{branch: number}>>(branchNotString);
 
 expectNotAssignable<Request>({
     ...requiredProperties,
@@ -740,8 +746,14 @@ expectNotAssignable<Request>({
     url: 123, // not string
 });
 
-expectAssignable<Request>({
+expectNotAssignable<Request>({
     ...requiredProperties,
-    custom: 'whatever', // Custom property allowed
+    custom: 'whatever', // Untyped custom property NOT allowed
 });
 
+expectAssignable<Request<{
+    custom: string
+}>>({
+    ...requiredProperties,
+    custom: 'whatever', // Typed custom property allowed
+});
