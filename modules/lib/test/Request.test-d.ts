@@ -1,4 +1,8 @@
-import type {Request} from '../core/index';
+import type {
+    Request,
+    StrictMergeInterfaces,
+} from '../core/index';
+import {RequestImplementation} from './RequestImplementation';
 
 import {
     expectAssignable,
@@ -14,9 +18,11 @@ import {
 } from 'tsd';
 
 
+
+
 // Scenario: When implementing a idprovider login function the Request may have a validTicket property
 // Scenario: When implementing a idprovider logout function the Request may have a validTicket property
-const idproviderLogoutRequest = {
+const idproviderLogoutRequest: Request = new RequestImplementation({
     branch: 'draft',
     contextPath: '/_/idprovider/system',
     cookies: {
@@ -26,7 +32,7 @@ const idproviderLogoutRequest = {
     headers: {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         // ...
-    },
+    } as Record<string, string>,
     host: 'localhost',
     method: 'GET',
     mode: 'live',
@@ -41,7 +47,7 @@ const idproviderLogoutRequest = {
     scheme: 'http',
     validTicket: true,
     webSocket: false,
-};
+}).toObject();
 
 // printType(idproviderLogoutRequest);
 
@@ -81,6 +87,9 @@ const webappControllerGetRequest = {
         'Sec-Fetch-User': '?1',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -120,6 +129,9 @@ const pageRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'base%3Afolder%7Cportal%3Asite',
@@ -160,6 +172,9 @@ const layoutControllerGetRequest = {
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'base%3Afolder%7Ccom.example.myproject%3Aperson%7Cportal%3Asite',
@@ -199,6 +214,9 @@ const layoutFragmentRequest ={
         'Sec-Fetch-Site': 'same-origin',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'base%3Afolder%7Ccom.example.myproject%3Aperson%7Cportal%3Asite',
@@ -240,6 +258,9 @@ const partControllerGetRequest = {
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'base%3Afolder%7Ccom.example.myproject%3Aperson%7Cportal%3Asite',
@@ -279,6 +300,9 @@ const partFragmentRequest = {
         'Sec-Fetch-Site': 'same-origin',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'base%3Afolder%7Ccom.example.myproject%3Aperson%7Cportal%3Asite',
@@ -325,6 +349,9 @@ const error = {
             'Sec-Fetch-User': '?1',
             'Upgrade-Insecure-Requests': '1',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        } as Record<string, string>,
+        getHeader: function (header: string): string {
+            return this.headers[header];
         },
         cookies: {
             'app.browse.RecentItemsList': 'base%3Afolder%7Cportal%3Asite',
@@ -367,6 +394,9 @@ const serviceRequest ={
         'Sec-Fetch-Mode': 'no-cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'base%3Afolder%7Cportal%3Asite',
@@ -406,6 +436,9 @@ const siteMappingRequest = {
         'Sec-Fetch-Mode': 'no-cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'base%3Afolder%7Cportal%3Asite',
@@ -452,6 +485,9 @@ const customSelectorRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -493,6 +529,9 @@ const responseProcessorRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     'cookies': {
         'app.browse.RecentItemsList': 'base%3Afolder%7Ccom.example.myproject%3Aperson%7Cportal%3Asite',
@@ -534,6 +573,9 @@ const adminToolRequest = {
         'Sec-Fetch-User': '?1',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -577,6 +619,9 @@ const contextpanelWidgetRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -616,6 +661,9 @@ const dashboardWidgetRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -655,6 +703,9 @@ const menuitemWidgetRequest = {
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: function (header: string): string {
+        return this.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'com.example.myproject%3Aperson%7Cbase%3Afolder%7Cportal%3Asite',
@@ -666,13 +717,22 @@ expectAssignable<Request>(menuitemWidgetRequest);
 // Scenario: Illegal values for properties
 const requiredProperties = {
     branch: 'draft',
+    cookies: {},
+    getHeader: (header: string): string => {
+        return requiredProperties.headers[header];
+    },
+    headers: {} as Record<string, string>,
     host: 'localhost',
     method: 'GET',
     mode: 'admin',
+    params: {},
+    rawPath: '/whatever',
+    remoteAddress: '127.0.0.1',
     path: '/whatever',
     port: 8080,
     scheme: 'http',
     url: 'http://localhost:8080/whatever',
+    webSocket: false,
 };
 expectAssignable<Request>(requiredProperties);
 
@@ -709,7 +769,7 @@ const branchNotString = {
 expectNotAssignable<Request>(branchNotString);
 
 // Allowed to change type of branch to number
-expectAssignable<Request<{branch: number}>>(branchNotString);
+expectAssignable<StrictMergeInterfaces<Request,{branch: number}>>(branchNotString);
 
 expectNotAssignable<Request>({
     ...requiredProperties,
@@ -751,7 +811,7 @@ expectNotAssignable<Request>({
     custom: 'whatever', // Untyped custom property NOT allowed
 });
 
-expectAssignable<Request<{
+expectAssignable<StrictMergeInterfaces<Request,{
     custom: string
 }>>({
     ...requiredProperties,
