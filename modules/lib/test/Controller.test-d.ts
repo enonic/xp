@@ -4,6 +4,7 @@ import type {
     DefaultRequestHeaders,
     Request,
     Response,
+    StrictMergeInterfaces,
 } from '../core/index';
 import {
     expectAssignable,
@@ -51,19 +52,14 @@ const myControllerModule = {
 
 expectAssignable<ControllerModule>(myControllerModule);
 
-type PageRequest = Omit<Request<{
+type PageRequest = Omit<StrictMergeInterfaces<Request,{
     // Only allow literal string
     branch: 'draft' | 'master'
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'TRACE' | 'CONNECT'
+    method: 'GET' | 'POST' |' HEAD' | 'OPTIONS' |' PUT' | 'DELETE' |' TRACE' | 'CONNECT' |' PATCH' | 'PROPFIND' |' PROPPATCH' | 'MKCOL' |' COPY' | 'MOVE' |' LOCK' | 'UNLOCK'
     mode: 'edit' | 'inline' | 'live' | 'preview' | 'admin'
     scheme: 'http' | 'https'
 
     // Make some optional properties required
-    cookies: DefaultRequestCookies
-    headers: DefaultRequestHeaders
-    params: Record<string, string | string[]>
-    rawPath: string
-    remoteAddress: string
     repositoryId: string
     webSocket: boolean
 }>,
@@ -115,6 +111,9 @@ const pageRequest /* : PageRequest */ = {
         'Sec-Fetch-Site': 'same-origin',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+    } as Record<string, string>,
+    getHeader: (header: string): string => {
+        return pageRequest.headers[header];
     },
     cookies: {
         'app.browse.RecentItemsList': 'portal%3Asite',
