@@ -142,11 +142,95 @@ export interface ScriptValue {
 export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
 
+// HTTP State Management Mechanism (February 1997)
+// https://www.ietf.org/rfc/rfc2109.txt
+
+// HTTP State Management Mechanism (April 2011)
+// This document defines the HTTP Cookie and Set-Cookie header fields.
+// https://datatracker.ietf.org/doc/html/rfc6265
+
+// Same-site Cookies (April 6, 2016)
+// Expires: October 8, 2016
+// https://datatracker.ietf.org/doc/html/draft-west-first-party-cookies-07
+
+// Same-Site Cookies (June 20, 2016)
+// Expires: December 22, 2016
+// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-cookie-same-site-00
+
+// Cookies: HTTP State Management Mechanism (10 October 2024)
+// Expires: 13 April 2025
+// https://httpwg.org/http-extensions/draft-ietf-httpbis-rfc6265bis.html
+export interface ComplexCookie {
+    /**
+     * The value of the cookie (optional).
+     * 
+     * @type string
+     */
+    value: string
+    /**
+     * A comment (rfc2109) to document the cookie (optional).
+     * 
+     * @type string
+     */
+    comment?: string
+    /**
+     * The expiration date and time for the cookie (optional).
+     *
+     * @type string
+     */
+    expires?: Date;
+    /**
+     * The domain name for which the cookie is set.
+     *
+     * @type string
+     */
+    domain?: string
+    /**
+     *  Indicates whether the cookie should not be accessible via JavaScript (optional).
+     *
+     * @type string
+     */
+    httpOnly?: boolean
+    /**
+     * The maximum age of the cookie in seconds (optional).
+     *
+     * @type string
+     */
+    maxAge?: number
+    /**
+     * The path on the server where the cookie should be available.
+     *
+     * @type string
+     */
+    path?: string
+    /**
+     *  Specifies the SameSite attribute (draft RFC) for the cookie (optional).
+     *
+     * @type string
+     */
+    sameSite?: LiteralUnion<'lax' | 'strict' | 'none' >;
+    /**
+     * Indicates whether the cookie should only be sent over HTTPS (optional).
+     *
+     * @type string
+     */
+    secure?: boolean
+}
+
+export type RequestCookies = Record<string, string | undefined>;
+export type ResponseCookies = Record<string, string | ComplexCookie | undefined>;
+
 export interface DefaultRequestCookies {
     [key: string]: string | undefined
     enonic_xp_tour?: string
     JSESSIONID?: string
 }
+
+// In com.enonic.xp.web.WebRequest the type is Map<String, String>
+// Undefined is added for convenience, so we can have optional default values for autocompletion.
+export type RequestHeaders = Record<string, string | undefined>;
+
+export type ResponseHeaders = Record<string,string | number | (string | number)[] | undefined>;
 
 export interface DefaultRequestHeaders {
     [headerName: string]: string | undefined
@@ -179,6 +263,8 @@ export interface DefaultRequestHeaders {
     'X-Forwarded-Server'?: string
 }
 
+export type RequestParams = Record<string, string | string[]>;
+
 export type LowercaseKeys<T> = {
     [K in keyof T as Lowercase<string & K>]: T[K]
 };
@@ -189,41 +275,61 @@ export type StrictMergeInterfaces<A, B> = B extends Record<string, unknown>
     ? Pick<A, Exclude<keyof A, keyof B>> & B
     : A;
 
-export type Request<
-    T extends Record<string, unknown> | undefined = undefined
-> = StrictMergeInterfaces<{
-    body?: string
-    branch: LiteralUnion<'draft' | 'master'>
-    contentType?: string
-    contextPath?: string
-    cookies?: DefaultRequestCookies
-    followRedirects?: boolean
-    headers?: DefaultRequestHeaders
+// When the header is not found, the function returns null.
+export type RequestGetHeaderFunction = (headerName: string) => string | null;
+
+// This is the one sent from Java to JavaScript via PortalRequestMapper.
+export interface Request {
+    // Required
+    cookies: DefaultRequestCookies
+    getHeader: RequestGetHeaderFunction
+    headers: DefaultRequestHeaders
     host: string
-    method: LiteralUnion<'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'PATCH' | 'TRACE' | 'CONNECT'>
+    method: LiteralUnion<'GET' | 'POST' |' HEAD' | 'OPTIONS' |' PUT' | 'DELETE' |' TRACE' | 'CONNECT' |' PATCH' | 'PROPFIND' |' PROPPATCH' | 'MKCOL' |' COPY' | 'MOVE' |' LOCK' | 'UNLOCK'>
     mode: LiteralUnion<'edit' | 'inline' | 'live' | 'preview' | 'admin'>
-    params?: Record<string, string | string[]>
+    params: RequestParams
     path: string
-    pathParams?: Record<string, string>
-    port: number // |string // TODO Where have I seen this as string?
-    rawPath?: string
-    remoteAddress?: string
-    repositoryId?: string
+    port: number
+    rawPath: string
+    remoteAddress: string
     scheme: LiteralUnion<'http' | 'https'>
     url: string
-    validTicket?: boolean
-    webSocket?: boolean
-},T>;
+    webSocket: boolean
+    // Optional
 
-export interface ComplexCookie {
-	value: string
-	path?: string
-	domain?: string
-	comment?: string
-	maxAge?: number
-	secure?: boolean
-	httpOnly?: boolean
-	sameSite?: string
+    // Required when contentType is present, but that's not easy to enforce here.
+    // This can only be string, binary data is only available via portal.getMultipartForm
+    body?: string
+
+    branch?: LiteralUnion<'draft' | 'master'>
+    contextPath?: string
+    contentType?: string
+    repositoryId?: string
+    validTicket?: boolean
+}
+
+export type RequestConstructorParams = Omit<Request, 'getHeader'>;
+
+// This is the one sent from JavaScript into Java via PortalRequestSerializer.
+export interface RequestToBeSerializedToJava {
+    branch?: LiteralUnion<'draft' | 'master'>
+
+    // TODO: Maybe it's possible to pass a stream in a HttpFilter.
+    body?: unknown[] | Record<string, unknown> | boolean | number | string | null // | ByteSource
+
+    contentType?: string
+    cookies?: DefaultRequestCookies // TODO Maybe ComplexCookie is supported here?
+    headers?: DefaultRequestHeaders
+    host?: string
+    method?: LiteralUnion<'GET' | 'POST' |' HEAD' | 'OPTIONS' |' PUT' | 'DELETE' |' TRACE' | 'CONNECT' |' PATCH' | 'PROPFIND' |' PROPPATCH' | 'MKCOL' |' COPY' | 'MOVE' |' LOCK' | 'UNLOCK'>
+    mode?: LiteralUnion<'edit' | 'inline' | 'live' | 'preview' | 'admin'>
+    params?: RequestParams
+    path?: string
+    port?: number
+    remoteAddress?: string
+    scheme?: LiteralUnion<'http' | 'https'>
+    url?: string
+    validTicket?: boolean
 }
 
 export interface DefaultResponseHeaders extends Record<string,string | number | (string | number)[] | undefined> {
@@ -236,18 +342,39 @@ export interface DefaultResponseHeaders extends Record<string,string | number | 
     Location?: string
 }
 
+// NOTE Even though PortalResponseSerializer allows non-array values,
+// when it comes back from Java the PortalResponseMapper will always return an array.
+// So perhaps it's better to enforce that, so it's consistent both ways.
+// It also causes problems in ResponseProcessors, since they work with both from and to Java.
+// Type PageContributions is not assignable to type MappedPageContributions
 export interface PageContributions {
-	headBegin?: string | string[]
-	headEnd?: string | string[]
-	bodyBegin?: string | string[]
-	bodyEnd?: string | string[]
+	headBegin?: string[]
+	headEnd?: string[]
+	bodyBegin?: string[]
+	bodyEnd?: string[]
 }
 
-export type Response<
-    T extends Record<string, unknown> | undefined = undefined
-> = StrictMergeInterfaces<{
+export interface MappedPageContributions {
+	headBegin?: string[]
+	headEnd?: string[]
+	bodyBegin?: string[]
+	bodyEnd?: string[]
+}
+
+// export type NotFunction = boolean | number | string | null | undefined;
+// // bigint
+// // symbol
+// export type RecordWithoutFunctions = Record<string, NotFunction| NotFunction[] | RecordWithoutFunctions | RecordWithoutFunctions[]>;
+// export type ArrayWithoutFunctions = Array<NotFunction | RecordWithoutFunctions>;
+
+// Unfortunately, collapses to any
+// export type ResponseBody = ArrayWithoutFunctions | RecordWithoutFunctions | NotFunction | ByteSource;
+export type ResponseBody = unknown[] | Record<string, unknown> | boolean | number | string | null | ByteSource;
+
+// This is the one sent from JavaScript into Java via PortalResponseSerializer.
+export interface Response {
     applyFilters?: boolean
-    body?: string | ByteSource
+    body?: ResponseBody
     contentType?: LiteralUnion<'text/html' | 'application/json'>
     cookies?: Record<string,string | ComplexCookie>
     headers?: DefaultResponseHeaders
@@ -255,21 +382,59 @@ export type Response<
     postProcess?: boolean
     redirect?: string
     status?: number
-}, T>;
+}
 
-export type RequestHandler = (request: Request) => Response;
+// This is the one sent from JavaScript into Java via PortalResponseSerializer.
+// export type Response<
+//     T extends Record<string, unknown> | undefined = undefined
+// > = StrictMergeInterfaces<DefaultResponse, T>;
+
+// This is the one returned from Java to JavaScript via PortalResponseMapper.
+export interface MappedResponse {
+    applyFilters: boolean
+    body?: ResponseBody
+    contentType: LiteralUnion<'text/html' | 'application/json'>
+    cookies: Record<string,string | ComplexCookie>
+    headers: ResponseHeaders
+    pageContributions: MappedPageContributions
+    postProcess: boolean
+    status: number
+}
+
+export type RequestHandler<
+    CustomRequest = Request,
+    CustomResponse = Response
+> = (request: CustomRequest) => CustomResponse;
 
 export interface ControllerModule {
     all?: RequestHandler
     // connect?: RequestHandler
-    // delete?: RequestHandler
+    delete?: RequestHandler
     get?: RequestHandler
-    // head:? RequestHandler
+    head?: RequestHandler
     options?: RequestHandler
     // patch?: RequestHandler
     post?: RequestHandler
-    // put?: RequestHandler
+    put?: RequestHandler
     // trace?: RequestHandler
+    // TODO what about propfind, proppatch, mkcol, copy, move, lock and unlock?
+}
+
+export interface HttpFilterControllerModule<
+    RequestFromJava = Request, // From java
+    RequestToNext extends RequestToBeSerializedToJava = Partial<RequestFromJava>, // To java
+    ResponseFromNext extends Response = Response, // To java
+    ReturnedResponse extends Response = ResponseFromNext // To java
+> {
+    filter: (request: RequestFromJava, next: RequestHandler<RequestToNext,ResponseFromNext>) => ReturnedResponse
+}
+
+export interface ResponseProcessorControllerModule<
+    RequestFromJava = Request, // From java
+    ResponseFromJava extends MappedResponse = MappedResponse, // From java
+    ReturnedResponse extends Response = Partial<ResponseFromJava> // To java
+> {
+    responseProcessor: (request: RequestFromJava, response: ResponseFromJava) => ReturnedResponse
 }
 
 export type UserKey = `user:${string}:${string}`;
