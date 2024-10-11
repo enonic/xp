@@ -3,8 +3,8 @@ import type {
     HttpFilterNext,
     Request,
     RequestHandler,
-    RequestToBeSerializedToJava,
     Response,
+    SerializableRequest,
 } from '../core/index';
 
 import {
@@ -47,7 +47,7 @@ expectAssignable<HttpFilterControllerModule>(httpFilterControllerModule1);
 // Filter manipulating the request and the response
 // ────────────────────────────────────────────────────────────────────────────
 const httpFilterControllerModule2 = {
-    filter: function (req: Request, next: HttpFilterNext<RequestToBeSerializedToJava<Request>, Response>) {
+    filter: function (req: Request, next: HttpFilterNext<SerializableRequest<Request>, Response>) {
         // ERROR: I don't think one can add custom properties to the request, only headers...
         // req.requestLogging = true; // Manipulate request
         req.cookies = {

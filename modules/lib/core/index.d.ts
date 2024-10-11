@@ -291,7 +291,7 @@ export type Request<
     T extends Partial<RequestInterface> = Record<string, never>
 > = StrictMergeInterfaces<DefaultRequest, T>;
 
-export type RequestToBeSerializedToJava<T extends RequestInterface = DefaultRequest> = Omit<
+export type SerializableRequest<T extends RequestInterface = DefaultRequest> = Omit<
     Partial<T>,
     'body' | 'contextPath' | 'rawPath' | 'repositoryId' | 'webSocket'
 > & {
@@ -351,7 +351,7 @@ export type RequestHandler<
 > = (request: RequestFromJava) => ResponseToJava;
 
 export type HttpFilterNext<
-    RequestToJava extends RequestToBeSerializedToJava = RequestToBeSerializedToJava<DefaultRequest>,
+    RequestToJava extends SerializableRequest = SerializableRequest<DefaultRequest>,
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestToJava) => ResponseToJava;
 
@@ -377,7 +377,7 @@ export interface HttpFilterControllerModule<
     filter: (
         request: RequestFromJava,
         next: HttpFilterNext<
-            RequestToBeSerializedToJava<RequestFromJava>,
+            SerializableRequest<RequestFromJava>,
             ResponseFromNext
         >
     ) => ResponseToJava;
