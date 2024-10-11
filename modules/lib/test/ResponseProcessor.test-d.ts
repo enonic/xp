@@ -2,7 +2,7 @@ import type {
     Request,
     MappedResponse,
     Response,
-    ResponseProcessorControllerModule,
+    ResponseProcessorController,
 } from '../core/index';
 
 import {
@@ -29,7 +29,7 @@ import {
 // ────────────────────────────────────────────────────────────────────────────
 // dynamically adds a bodyEnd page contribution to the response
 // ────────────────────────────────────────────────────────────────────────────
-const responseProcessorControllerModule1 = {
+const responseProcessorController1 = {
     responseProcessor: (_req: Request, res: MappedResponse) => {
         const trackingScript = '<script src="http://some.cdn/js/tracker.js"></script>';
     
@@ -45,4 +45,4 @@ const responseProcessorControllerModule1 = {
         return res as Response;
     },
 };
-expectAssignable<ResponseProcessorControllerModule>(responseProcessorControllerModule1);
+expectAssignable<ResponseProcessorController>(responseProcessorController1);
