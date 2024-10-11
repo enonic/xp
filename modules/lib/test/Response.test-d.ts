@@ -1,7 +1,7 @@
 import type {
     LiteralUnion,
     Response,
-    StrictMergeInterfaces,
+    ResponseBody,
 } from '../core/index';
 
 import {
@@ -33,7 +33,7 @@ expectAssignable<Response>(notFoundResponse);
 // ────────────────────────────────────────────────────────────────────────────
 // Scenario: Strictify Response down to a specific Response
 // ────────────────────────────────────────────────────────────────────────────
-type NotFoundResponse = StrictMergeInterfaces<Response,{
+type NotFoundResponse = Response<{
     status: 404
 }>;
 
@@ -48,14 +48,14 @@ expectNotAssignable<NotFoundResponse>({
 // ────────────────────────────────────────────────────────────────────────────
 // Scenario: JSON body
 // ────────────────────────────────────────────────────────────────────────────
-interface MyObject {
+type MyObject = {
     key: string
-}
+};
 const object = {
     key: 'value',
 };
 
-type JsonResponse<Body> = StrictMergeInterfaces<Response,{
+type JsonResponse<Body extends ResponseBody> = Response<{
     body: Body,
     contentType: LiteralUnion<'application/json'>
 }>;
@@ -68,10 +68,10 @@ const jsonResponse = {
 
 // printType(jsonResponse);
 
-// Untyped body object not allowed
-// expectNotAssignable<Response>(jsonResponse); // TODO
+// Untyped body object allowed
+expectAssignable<Response>(jsonResponse);
 
-// Typed body object allowed
+// Typed body object also allowed
 expectAssignable<JsonResponse<MyObject>>(jsonResponse);
 
 

@@ -1,6 +1,5 @@
 import type {
     Request,
-    StrictMergeInterfaces,
 } from '../core/index';
 import {RequestImplementation} from './RequestImplementation';
 
@@ -16,9 +15,6 @@ import {
     // expectType,
     printType,
 } from 'tsd';
-
-
-
 
 // Scenario: When implementing a idprovider login function the Request may have a validTicket property
 // Scenario: When implementing a idprovider logout function the Request may have a validTicket property
@@ -768,8 +764,9 @@ const branchNotString = {
 
 expectNotAssignable<Request>(branchNotString);
 
-// Allowed to change type of branch to number
-expectAssignable<StrictMergeInterfaces<Request,{branch: number}>>(branchNotString);
+// Allowed to change branch from optional to required,
+// but not allowed to change type of branch from string to number
+expectNotAssignable<Request<{branch: string}>>(branchNotString);
 
 expectNotAssignable<Request>({
     ...requiredProperties,
@@ -811,9 +808,10 @@ expectNotAssignable<Request>({
     custom: 'whatever', // Untyped custom property NOT allowed
 });
 
-expectAssignable<StrictMergeInterfaces<Request,{
-    custom: string
-}>>({
-    ...requiredProperties,
-    custom: 'whatever', // Typed custom property allowed
-});
+// Not allowed to add custom properties
+// expectAssignable<Request<{
+//     custom: string
+// }>>({
+//     ...requiredProperties,
+//     custom: 'whatever', // Typed custom property allowed
+// });
