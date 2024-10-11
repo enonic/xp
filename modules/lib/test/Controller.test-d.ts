@@ -1,5 +1,5 @@
 import type {
-    ControllerModule,
+    Controller,
     Request,
     RequestBranch,
     RequestMethod,
@@ -24,7 +24,7 @@ const log = {
     info: (message?: string, ...optionalParams: string[]) => { /* no-op */ },
 };
 
-const myControllerModule = {
+const myController = {
     all: (request: Request) => {
         log.info('all request:%s', JSON.stringify(request, null, 4));
         return {
@@ -51,7 +51,7 @@ const myControllerModule = {
     },
 };
 
-expectAssignable<ControllerModule>(myControllerModule);
+expectAssignable<Controller>(myController);
 
 type PageRequest = Omit<Request<{
     // Only allow literal string
@@ -69,7 +69,7 @@ type PageRequest = Omit<Request<{
 >;
 type PageRequestHandler = (request: PageRequest) => Response;
 
-interface PageControllerModule {
+interface PageController {
     all?: PageRequestHandler
     // connect?: PageRequestHandler
     delete?: PageRequestHandler

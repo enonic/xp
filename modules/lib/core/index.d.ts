@@ -355,7 +355,7 @@ export type HttpFilterNext<
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestToJava) => ResponseToJava;
 
-export interface ControllerModule {
+export interface Controller {
     all?: RequestHandler
     // connect?: RequestHandler
     delete?: RequestHandler
@@ -369,7 +369,70 @@ export interface ControllerModule {
     // TODO what about propfind, proppatch, mkcol, copy, move, lock and unlock?
 }
 
-export interface HttpFilterControllerModule<
+export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
+    exception?: unknown
+    message: string
+    request: T
+    status: number
+}
+
+export type ErrorRequestHandler<
+    Err extends ErrorRequest = ErrorRequest,
+    ResponseToJava extends ResponseInterface = DefaultResponse
+> = (err: Err) => ResponseToJava;
+
+export interface ErrorController {
+    handle400?: ErrorRequestHandler
+    handle401?: ErrorRequestHandler
+    handle402?: ErrorRequestHandler
+    handle403?: ErrorRequestHandler
+    handle404?: ErrorRequestHandler
+    handle405?: ErrorRequestHandler
+    handle406?: ErrorRequestHandler
+    handle407?: ErrorRequestHandler
+    handle408?: ErrorRequestHandler
+    handle409?: ErrorRequestHandler
+    handle410?: ErrorRequestHandler
+    handle411?: ErrorRequestHandler
+    handle412?: ErrorRequestHandler
+    handle413?: ErrorRequestHandler
+    handle414?: ErrorRequestHandler
+    handle415?: ErrorRequestHandler
+    handle416?: ErrorRequestHandler
+    handle417?: ErrorRequestHandler
+    handle418?: ErrorRequestHandler
+    handle421?: ErrorRequestHandler
+    handle422?: ErrorRequestHandler
+    handle423?: ErrorRequestHandler
+    handle424?: ErrorRequestHandler
+    handle425?: ErrorRequestHandler
+    handle426?: ErrorRequestHandler
+    handle428?: ErrorRequestHandler
+    handle429?: ErrorRequestHandler
+    handle431?: ErrorRequestHandler
+    handle451?: ErrorRequestHandler
+    handle500?: ErrorRequestHandler
+    handle501?: ErrorRequestHandler
+    handle502?: ErrorRequestHandler
+    handle503?: ErrorRequestHandler
+    handle504?: ErrorRequestHandler
+    handle505?: ErrorRequestHandler
+    handle506?: ErrorRequestHandler
+    handle507?: ErrorRequestHandler
+    handle508?: ErrorRequestHandler
+    handle510?: ErrorRequestHandler
+    handle511?: ErrorRequestHandler
+    handleError?: ErrorRequestHandler
+}
+
+export interface IdProviderController extends Controller {
+    autoLogin?: RequestHandler
+    handle401?: RequestHandler
+    login?: RequestHandler
+    logout?: RequestHandler
+}
+
+export interface HttpFilterController<
   RequestFromJava extends RequestInterface = DefaultRequest,
   ResponseFromNext extends ResponseInterface = Response,
   ResponseToJava extends ResponseInterface = ResponseFromNext
@@ -383,7 +446,7 @@ export interface HttpFilterControllerModule<
     ) => ResponseToJava;
 }
 
-export interface ResponseProcessorControllerModule<
+export interface ResponseProcessorController<
     RequestFromJava extends RequestInterface = DefaultRequest,
     ResponseFromJava extends MappedResponse = MappedResponse,
     ResponseToJava extends ResponseInterface = Partial<ResponseFromJava>
