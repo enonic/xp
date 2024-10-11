@@ -7,13 +7,13 @@ import {
     expectAssignable,
     // expectDeprecated,
     // expectDocCommentIncludes,
-    expectError,
+    // expectError,
     // expectNever,
 	expectNotAssignable,
     // expectNotDeprecated,
     // expectNotType,
     // expectType,
-    printType,
+    // printType,
 } from 'tsd';
 
 // Scenario: When implementing a idprovider login function the Request may have a validTicket property
