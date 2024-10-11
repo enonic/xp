@@ -1,9 +1,10 @@
 import type {
     HttpFilterControllerModule,
+    HttpFilterNext,
     Request,
     RequestHandler,
+    RequestToBeSerializedToJava,
     Response,
-    StrictMergeInterfaces,
 } from '../core/index';
 
 import {
@@ -45,30 +46,26 @@ expectAssignable<HttpFilterControllerModule>(httpFilterControllerModule1);
 // ────────────────────────────────────────────────────────────────────────────
 // Filter manipulating the request and the response
 // ────────────────────────────────────────────────────────────────────────────
-type RequestFromJava = StrictMergeInterfaces<Request,{
-    requestLogging?: boolean
-}>;
-
-type RequestToNext = RequestFromJava;
-
-type ResponseFromNext = StrictMergeInterfaces<Response,{
-    responseLogging?: boolean
-}>;
-
-type ReturnedResponse = ResponseFromNext;
-
 const httpFilterControllerModule2 = {
-    filter: function (req: RequestFromJava, next: RequestHandler<RequestToNext, ResponseFromNext>) {
+    filter: function (req: Request, next: HttpFilterNext<RequestToBeSerializedToJava<Request>, Response>) {
         // ERROR: I don't think one can add custom properties to the request, only headers...
-        req.requestLogging = true; // Manipulate request
+        // req.requestLogging = true; // Manipulate request
+        req.cookies = {
+            ...req.cookies,
+            'X-Auth-Token': 'letMeIn',
+        };
         log.info('Request:%s', JSON.stringify(req, null, 2));
         const response = next(req); // Continue request pipeline
-        response.responseLogging = true; // Manipulate response
+        // response.responseLogging = true; // Manipulate response
+        if (!response.headers) {
+            response.headers = {};
+        }
+        response.headers['X-Response-Logging'] = 'true';
         log.info('Response:%s', JSON.stringify(response, null, 2));
-        return response as unknown as ReturnedResponse;
+        return response as unknown as Response;
     },
 };
-expectAssignable<HttpFilterControllerModule<RequestFromJava, RequestToNext, ResponseFromNext, ReturnedResponse>>(httpFilterControllerModule2);
+expectAssignable<HttpFilterControllerModule<Request, Response, Response>>(httpFilterControllerModule2);
 
 // ────────────────────────────────────────────────────────────────────────────
 // Filter intercepting the request

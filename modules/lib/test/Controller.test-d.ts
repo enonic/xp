@@ -1,10 +1,11 @@
 import type {
     ControllerModule,
-    DefaultRequestCookies,
-    DefaultRequestHeaders,
     Request,
+    RequestBranch,
+    RequestMethod,
+    RequestMode,
+    RequestScheme,
     Response,
-    StrictMergeInterfaces,
 } from '../core/index';
 import {
     expectAssignable,
@@ -52,12 +53,12 @@ const myControllerModule = {
 
 expectAssignable<ControllerModule>(myControllerModule);
 
-type PageRequest = Omit<StrictMergeInterfaces<Request,{
+type PageRequest = Omit<Request<{
     // Only allow literal string
-    branch: 'draft' | 'master'
-    method: 'GET' | 'POST' |' HEAD' | 'OPTIONS' |' PUT' | 'DELETE' |' TRACE' | 'CONNECT' |' PATCH' | 'PROPFIND' |' PROPPATCH' | 'MKCOL' |' COPY' | 'MOVE' |' LOCK' | 'UNLOCK'
-    mode: 'edit' | 'inline' | 'live' | 'preview' | 'admin'
-    scheme: 'http' | 'https'
+    branch: RequestBranch
+    method: RequestMethod
+    mode: RequestMode
+    scheme: RequestScheme
 
     // Make some optional properties required
     repositoryId: string
@@ -71,14 +72,15 @@ type PageRequestHandler = (request: PageRequest) => Response;
 interface PageControllerModule {
     all?: PageRequestHandler
     // connect?: PageRequestHandler
-    // delete?: PageRequestHandler
+    delete?: PageRequestHandler
     get?: PageRequestHandler
-    // head:? PageRequestHandler
+    head?: PageRequestHandler
     options?: PageRequestHandler
     // patch?: PageRequestHandler
     post?: PageRequestHandler
-    // put?: PageRequestHandler
+    put?: PageRequestHandler
     // trace?: PageRequestHandler
+    // TODO what about propfind, proppatch, mkcol, copy, move, lock and unlock?
 }
 
 const pageRequest /* : PageRequest */ = {
