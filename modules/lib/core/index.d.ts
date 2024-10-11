@@ -607,23 +607,8 @@ export interface LayoutRegion<
     components: Components;
 }
 
-// type HasLayout<T extends unknown[]> = T extends [infer F, ...infer R]
-//   ? F extends LayoutComponent | Layout
-//     ? true
-//     : HasLayout<R>
-//   : false;
-
 export type Region<
     Components extends
-    // (
-    //     HasLayout<Components> extends true
-    //     ? (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]
-    //     : (FragmentComponent | PartComponent | TextComponent)[]
-    // ) = (
-    //     HasLayout<Components> extends true
-    //     ? (FragmentComponent | Layout          | Part          | TextComponent)[]
-    //     : (FragmentComponent | Part          | TextComponent)[]
-    // )
         (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
         (FragmentComponent | Layout          | Part          | TextComponent)[]
 // @ts-expect-error TODO LayoutRegion can't eat LayoutComponent nor Layout!!!
