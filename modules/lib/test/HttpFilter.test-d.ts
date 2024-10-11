@@ -1,5 +1,5 @@
 import type {
-    HttpFilterControllerModule,
+    HttpFilterController,
     HttpFilterNext,
     Request,
     RequestHandler,
@@ -32,7 +32,7 @@ const log = {
 // ────────────────────────────────────────────────────────────────────────────
 // Minimal filter timing the subsequent request
 // ────────────────────────────────────────────────────────────────────────────
-const httpFilterControllerModule1 = {
+const httpFilterController1 = {
     filter: function (req: Request, next: RequestHandler) {
         const before = new Date().getTime();
         const response = next(req);  // next(req) hands over the request to the engine pipeline and returns the response
@@ -41,12 +41,12 @@ const httpFilterControllerModule1 = {
         return response;
     },
 };
-expectAssignable<HttpFilterControllerModule>(httpFilterControllerModule1);
+expectAssignable<HttpFilterController>(httpFilterController1);
 
 // ────────────────────────────────────────────────────────────────────────────
 // Filter manipulating the request and the response
 // ────────────────────────────────────────────────────────────────────────────
-const httpFilterControllerModule2 = {
+const httpFilterController2 = {
     filter: function (req: Request, next: HttpFilterNext<SerializableRequest<Request>, Response>) {
         // ERROR: I don't think one can add custom properties to the request, only headers...
         // req.requestLogging = true; // Manipulate request
@@ -65,12 +65,12 @@ const httpFilterControllerModule2 = {
         return response as unknown as Response;
     },
 };
-expectAssignable<HttpFilterControllerModule<Request, Response, Response>>(httpFilterControllerModule2);
+expectAssignable<HttpFilterController<Request, Response, Response>>(httpFilterController2);
 
 // ────────────────────────────────────────────────────────────────────────────
 // Filter intercepting the request
 // ────────────────────────────────────────────────────────────────────────────
-const httpFilterControllerModule3 = {
+const httpFilterController3 = {
     filter: function (req: Request, next: RequestHandler) {
         if (req.getHeader('X-Auth-Token') !== 'letMeIn') {
             // intercept request pipeline
@@ -84,12 +84,12 @@ const httpFilterControllerModule3 = {
         return next(req);
     },
 };
-expectAssignable<HttpFilterControllerModule>(httpFilterControllerModule3);
+expectAssignable<HttpFilterController>(httpFilterController3);
 
 // ────────────────────────────────────────────────────────────────────────────
 // Filter changing request params
 // ────────────────────────────────────────────────────────────────────────────
-const httpFilterControllerModule4 = {
+const httpFilterController4 = {
     filter: function (req: Request, next: RequestHandler) {
         req.params = {
             param1: 'val', // if param1 was not in the original request it will be added, otherwise the original value will be replaced
@@ -100,4 +100,4 @@ const httpFilterControllerModule4 = {
         return next(req);
     },
 };
-expectAssignable<HttpFilterControllerModule>(httpFilterControllerModule4);
+expectAssignable<HttpFilterController>(httpFilterController4);
