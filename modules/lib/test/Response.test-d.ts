@@ -11,7 +11,7 @@ import {
     // expectError,
     // expectNever,
 	expectNotAssignable,
-    printType,
+    // printType,
     // expectNotDeprecated,
     // expectNotType,
     // expectType,

@@ -11,7 +11,7 @@ import {
     expectAssignable,
     // expectDeprecated,
     // expectDocCommentIncludes,
-    expectError,
+    // expectError,
     // expectNever,
 	expectNotAssignable,
     // expectNotDeprecated,
