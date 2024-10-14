@@ -355,34 +355,27 @@ export type HttpFilterNext<
 > = (request: RequestToJava) => ResponseToJava;
 
 export interface WebSocketSession {
-    id: string,
-    path: string,
-    params: Record<string, unknown>,
-    user: Pick<User,'type'|'key'|'displayName'|'login'|'idProvider'>,
-    // TODO: What about 'type'|'modifiedTime'|'email'?
+    id: string
+    path: string
+
+    // TODO Maybe Record<string, string | string[]>
+    // See com.enonic.xp.portal.impl.mapper.WebSocketEventMapper
+    // And com.enonic.xp.portal.impl.mapper.MapperHelper
+    params: Record<string, unknown>
+
+    user: Omit<User,'type'>
 }
 
-export interface WebSocketOpenEvent<T = string> {
+export type WebSocketEventType = 'open' | 'message' | 'error' | 'close';
+
+export interface WebSocketEvent<T> {
     data: T
+    closeReason?: number
+    error?: string
+    message?: string
     session: WebSocketSession
-    type: 'open'
+    type: WebSocketEventType
 }
-
-export interface WebSocketMessageEvent<T = string> {
-    data: T,
-    message: string
-    session: WebSocketSession,
-    type: 'message',
-}
-
-export interface WebSocketCloseEvent<T = string> {
-    closeReason: number
-    data: T,
-    session: WebSocketSession,
-    type: 'close';
-}
-
-type WebSocketEvent<T> = WebSocketOpenEvent<T> | WebSocketMessageEvent<T> | WebSocketCloseEvent<T>;
 
 type WebSocketEventHandler<T> = (event: WebSocketEvent<T>) => void;
 
