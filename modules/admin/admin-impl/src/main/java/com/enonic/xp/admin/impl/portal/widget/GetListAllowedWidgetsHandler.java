@@ -75,7 +75,7 @@ public class GetListAllowedWidgetsHandler
         if ( widgetDescriptors.isNotEmpty() )
         {
             final String widgetApiBaseUrl = portalUrlService.apiUrl(
-                new ApiUrlParams().portalRequest( new PortalRequest( webRequest ) ).application( "admin" ).api( "widget" ) );
+                new ApiUrlParams().portalRequest( (PortalRequest) webRequest ).application( "admin" ).api( "widget" ) );
 
             widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, widgetApiBaseUrl ) ) );
         }

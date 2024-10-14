@@ -76,7 +76,7 @@ final class UniversalApiUrlBuilder
         }
 
         final String applicationKey =
-            Objects.requireNonNullElse( this.params.getApplication(), portalRequest.getApplicationKey().toString() );
+            Objects.requireNonNullElseGet( this.params.getApplication(), () -> portalRequest.getApplicationKey().toString() );
 
         appendPart( url, applicationKey + ":" + this.params.getApi() );
         appendSubPath( url, this.params.getPath() );
