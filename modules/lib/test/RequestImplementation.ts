@@ -5,6 +5,58 @@ import type {
     RequestHeaders,
 } from '../core/index';
 
+type ReplacerFn = (this: unknown, key: string, value: unknown) => unknown;
+type Replacer =  ReplacerFn | undefined;
+
+export function toStr(
+	value: unknown,
+	replacer? :Replacer,
+	space: string | number | undefined = 4,
+): string {
+	return JSON.stringify(value, replacer, space);
+}
+
+const isObject = (value: object | unknown): value is object =>
+	Object.prototype.toString.call(value).slice(8,-1) === 'Object';
+
+function mapKeys(
+	obj: object,
+	fn: ({
+		key,
+		result,
+		value,
+	}: {
+		key: PropertyKey
+		result: object
+		value: unknown
+	}) => void,
+): object {
+	if (!isObject(obj)) {
+		throw new TypeError(`mapKeys: First param must be an object! got:${toStr(obj)}`);
+	}
+	const result = {};
+	const keys = Object.keys(obj);
+	for (let i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		fn({
+			key,
+			result,
+			value: obj[key],
+		});
+	}
+	return result;
+}
+
+function lcKeys<T extends Record<string,unknown>>(obj: T): T {
+	return mapKeys(obj,({
+		key,
+		result,
+		value,
+	}) => {
+		result[String(key).toLowerCase()] = value;
+	}) as T;
+}
+
 export class RequestImplementation implements Request {
     cookies: RequestCookies;
     headers: RequestHeaders;
@@ -52,7 +104,7 @@ export class RequestImplementation implements Request {
         body,
     }: RequestConstructorParams) {
         this.cookies = cookies;
-        this.headers = headers;
+        this.headers = lcKeys(headers);
         this.host = host;
         this.method = method;
         this.mode = mode;
