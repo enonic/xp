@@ -21,9 +21,9 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -66,7 +66,7 @@ public class GetListAllowedWidgetsHandlerTest
         final Multimap<String, String> params = HashMultimap.create();
         params.put( "widgetInterface", "myInterface" );
 
-        final WebRequest webRequest = mock( WebRequest.class );
+        final PortalRequest webRequest = mock( PortalRequest.class );
         when( webRequest.getParams() ).thenReturn( params );
 
         final Icon icon = mock( Icon.class );
