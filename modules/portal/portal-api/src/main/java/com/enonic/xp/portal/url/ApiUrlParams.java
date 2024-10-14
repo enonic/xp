@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -43,13 +42,13 @@ public final class ApiUrlParams
 
     public ApiUrlParams application( final String value )
     {
-        this.application = Objects.requireNonNull( value );
+        this.application = value;
         return this;
     }
 
     public ApiUrlParams api( final String value )
     {
-        this.api = Strings.emptyToNull( value );
+        this.api = Objects.requireNonNull( value );
         return this;
     }
 

@@ -112,7 +112,7 @@ public class MediaHandlerTest
         throws Exception
     {
         this.request.setEndpointPath( null );
-        this.request.setRawPath( "/api//attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/api/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );
@@ -440,7 +440,8 @@ public class MediaHandlerTest
         setupMedia();
 
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
-        this.request.setRawPath( "/admin/site/preview/myproject/master/mysite/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath(
+            "/admin/site/preview/myproject/master/mysite/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
         assertNotNull( res );

@@ -62,21 +62,14 @@ public final class XmlWebappDescriptorParser
         if ( !apiMount.contains( ":" ) )
         {
             builder.applicationKey( this.currentApplication );
-            if ( !apiMount.isBlank() )
-            {
-                builder.apiKey( apiMount );
-            }
+            builder.apiKey( apiMount );
         }
         else
         {
             final String[] parts = apiMount.split( ":", 2 );
 
             builder.applicationKey( resolveApplicationKey( parts[APPLICATION_KEY_INDEX].trim() ) );
-            final String apiKey = parts[API_KEY_INDEX].trim();
-            if ( !apiKey.isBlank() )
-            {
-                builder.apiKey( apiKey );
-            }
+            builder.apiKey( parts[API_KEY_INDEX].trim() );
         }
 
         return builder.build();

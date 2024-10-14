@@ -41,14 +41,7 @@ public final class ApiDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key, final String extension )
     {
-        if ( "".equals( key.getName() ) )
-        {
-            return ResourceKey.from( key.getApplicationKey(), "apis/api." + extension );
-        }
-        else
-        {
-            return ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + "." + extension );
-        }
+        return ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + "." + extension );
     }
 
     public static Builder create()

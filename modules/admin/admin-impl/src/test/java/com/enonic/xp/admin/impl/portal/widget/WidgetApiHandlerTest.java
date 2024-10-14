@@ -70,8 +70,8 @@ public class WidgetApiHandlerTest
     {
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/<app>/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/<app>/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/<app>/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/<app>/widgetName" );
 
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Invalid application key: <app>", ex.getMessage() );
@@ -85,8 +85,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Widget [app:widgetName] not found", ex.getMessage() );
@@ -106,8 +106,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -126,8 +126,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin/widget/app/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -159,8 +159,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin/widget/app/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -192,8 +192,8 @@ public class WidgetApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin/widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin/widget/app/widgetName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );

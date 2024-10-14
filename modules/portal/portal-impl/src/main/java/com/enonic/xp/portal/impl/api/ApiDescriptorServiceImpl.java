@@ -13,6 +13,7 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
@@ -27,13 +28,13 @@ public final class ApiDescriptorServiceImpl
 
     private final ResourceService resourceService;
 
-    private final ApiDescriptorKeyLocator descriptorKeyLocator;
+    private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
     public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-        this.descriptorKeyLocator = new ApiDescriptorKeyLocator( this.resourceService );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, "/apis", true );
     }
 
     @Override

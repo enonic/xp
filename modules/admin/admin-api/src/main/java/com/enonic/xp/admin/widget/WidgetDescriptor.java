@@ -37,7 +37,7 @@ public class WidgetDescriptor
 
     private final ImmutableMap<String, String> config;
 
-    private static final String URL_PREFIX = "_/admin/widget/";
+    private static final String URL_PREFIX = "_/admin:widget/";
 
     private WidgetDescriptor( final Builder builder )
     {

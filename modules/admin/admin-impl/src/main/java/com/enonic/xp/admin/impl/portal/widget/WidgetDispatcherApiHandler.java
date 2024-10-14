@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -19,7 +20,7 @@ import com.enonic.xp.web.universalapi.UniversalApiHandler;
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {
-    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin/widget/?$" );
+    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin:widget/?$" );
 
     private final GetListAllowedWidgetsHandler listWidgetsHandler;
 
@@ -43,7 +44,7 @@ public class WidgetDispatcherApiHandler
     {
         final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
 
-        if ( WIDGET_API_PATTERN.matcher( path ).matches() )
+        if ( WIDGET_API_PATTERN.matcher( path ).matches() && HttpMethod.GET.equals( webRequest.getMethod() ) )
         {
             final Multimap<String, String> params = webRequest.getParams();
 
