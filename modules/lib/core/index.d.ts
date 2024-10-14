@@ -354,6 +354,38 @@ export type HttpFilterNext<
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestToJava) => ResponseToJava;
 
+export interface WebSocketSession {
+    id: string,
+    path: string,
+    params: Record<string, unknown>,
+    user: Pick<User,'type'|'key'|'displayName'|'login'|'idProvider'>,
+    // TODO: What about 'type'|'modifiedTime'|'email'?
+}
+
+export interface WebSocketOpenEvent<T = string> {
+    data: T
+    session: WebSocketSession
+    type: 'open'
+}
+
+export interface WebSocketMessageEvent<T = string> {
+    data: T,
+    message: string
+    session: WebSocketSession,
+    type: 'message',
+}
+
+export interface WebSocketCloseEvent<T = string> {
+    closeReason: number
+    data: T,
+    session: WebSocketSession,
+    type: 'close';
+}
+
+type WebSocketEvent<T> = WebSocketOpenEvent<T> | WebSocketMessageEvent<T> | WebSocketCloseEvent<T>;
+
+type WebSocketEventHandler<T> = (event: WebSocketEvent<T>) => void;
+
 export interface Controller {
     all?: RequestHandler
     delete?: RequestHandler
@@ -362,6 +394,7 @@ export interface Controller {
     options?: RequestHandler
     post?: RequestHandler
     put?: RequestHandler
+    webSocketEvent?: WebSocketEventHandler
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
