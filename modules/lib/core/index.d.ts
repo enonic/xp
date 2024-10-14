@@ -210,7 +210,7 @@ export interface ComplexCookie {
 
 export type RequestBranch = 'draft' | 'master';
 export type RequestGetHeaderFunction = (headerName: string) => string | null;
-export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE' | ' TRACE' | 'CONNECT' | ' PATCH' | 'PROPFIND' | ' PROPPATCH' | 'MKCOL' | ' COPY' | 'MOVE' | ' LOCK' | 'UNLOCK';
+export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE';
 export type RequestMode = 'edit' | 'inline' | 'live' | 'preview' | 'admin';
 export type RequestParams = Record<string, string | string[]>;
 export type RequestScheme = 'http' | 'https';
@@ -222,7 +222,6 @@ export type RequestHeaders = Record<string, string | undefined>;
 export type ResponseHeaders = Record<string, string | number | (string | number)[] | undefined>;
 
 export interface DefaultRequestCookies extends RequestCookies {
-    enonic_xp_tour?: string
     JSESSIONID?: string
 }
 
@@ -357,16 +356,12 @@ export type HttpFilterNext<
 
 export interface Controller {
     all?: RequestHandler
-    // connect?: RequestHandler
     delete?: RequestHandler
     get?: RequestHandler
     head?: RequestHandler
     options?: RequestHandler
-    // patch?: RequestHandler
     post?: RequestHandler
     put?: RequestHandler
-    // trace?: RequestHandler
-    // TODO what about propfind, proppatch, mkcol, copy, move, lock and unlock?
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {

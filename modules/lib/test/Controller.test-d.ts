@@ -71,16 +71,12 @@ type PageRequestHandler = (request: PageRequest) => Response;
 
 interface PageController {
     all?: PageRequestHandler
-    // connect?: PageRequestHandler
     delete?: PageRequestHandler
     get?: PageRequestHandler
     head?: PageRequestHandler
     options?: PageRequestHandler
-    // patch?: PageRequestHandler
     post?: PageRequestHandler
     put?: PageRequestHandler
-    // trace?: PageRequestHandler
-    // TODO what about propfind, proppatch, mkcol, copy, move, lock and unlock?
 }
 
 const pageRequest /* : PageRequest */ = {
