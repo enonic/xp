@@ -225,6 +225,10 @@ export interface DefaultRequestCookies extends RequestCookies {
     JSESSIONID?: string;
 }
 
+export type SecFetchDest = 'audio' | 'audioworklet' | 'document' | 'embed' | 'empty' | 'fencedframe' | 'font' | 'frame' | 'iframe' | 'image' | 'manifest' | 'object' | 'paintworklet' | 'report' | 'script' | 'serviceworker' | 'sharedworker' | 'style' | 'track' | 'video' | 'webidentity' | 'worker' | 'xslt';
+export type SecFetchMode = 'cors'| 'navigate' | 'no-cors' | 'same-origin' | 'websocket';
+export type SecFetchSite = 'cross-site' | 'same-origin' | 'same-site' | 'none';
+
 export interface DefaultRequestHeaders extends RequestHeaders {
     Accept?: string;
     'Accept-Charset'?: string;
@@ -236,19 +240,18 @@ export interface DefaultRequestHeaders extends RequestHeaders {
     'Content-Length'?: string;
     'Content-Type'?: string;
     Cookie?: string;
-    Language?: string; // Not mentioned here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
     Host?: string;
     'If-None-Match'?: string;
     Referer?: string;
-    'Sec-Fetch-Dest'?: string;
-    'Sec-Fetch-Mode'?: string;
-    'Sec-Fetch-Site'?: string;
-    'Sec-Fetch-User'?: string;
-    'Upgrade-Insecure-Requests'?: string;
+    'Sec-Fetch-Dest'?: LiteralUnion<SecFetchDest>;
+    'Sec-Fetch-Mode'?: LiteralUnion<SecFetchMode>;
+    'Sec-Fetch-Site'?: LiteralUnion<SecFetchSite>
+    'Sec-Fetch-User'?: '?1';
+    'Upgrade-Insecure-Requests'?: '1';
     'User-Agent'?: string;
     'X-Forwarded-For'?: string;
     'X-Forwarded-Host'?: string;
-    'X-Forwarded-Proto'?: string;
+    'X-Forwarded-Proto'?: LiteralUnion<RequestScheme>;
     'X-Forwarded-Server'?: string;
 }
 
