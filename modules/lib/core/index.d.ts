@@ -242,6 +242,7 @@ export interface DefaultRequestHeaders extends RequestHeaders {
     Cookie?: string;
     Host?: string;
     'If-None-Match'?: string;
+    Priority?: string;
     Referer?: string;
     'Sec-Fetch-Dest'?: LiteralUnion<SecFetchDest>;
     'Sec-Fetch-Mode'?: LiteralUnion<SecFetchMode>;
