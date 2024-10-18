@@ -5,15 +5,7 @@ import {RequestImplementation} from './RequestImplementation';
 
 import {
     expectAssignable,
-    // expectDeprecated,
-    // expectDocCommentIncludes,
-    // expectError,
-    // expectNever,
 	expectNotAssignable,
-    // expectNotDeprecated,
-    // expectNotType,
-    // expectType,
-    // printType,
 } from 'tsd';
 
 // Scenario: When implementing a idprovider login function the Request may have a validTicket property
@@ -738,10 +730,10 @@ expectAssignable<Request>({
     branch: 'string but not draft|master',
 });
 
-// LiteralUnion suggests 'GET'|'POST'|'PUT'|'DELETE'|'HEAD'|'OPTIONS', but allows string
+// LiteralUnion suggests 'GET'|'POST'|'PUT'|'DELETE'|'HEAD'|'OPTIONS'|'PATCH'|'TRACE'|'CONNECT', but allows string
 expectAssignable<Request>({
     ...requiredProperties,
-    method: 'string but not GET|POST|PUT|DELETE|HEAD|OPTIONS',
+    method: 'string but not GET|POST|PUT|DELETE|HEAD|OPTIONS|PATCH|TRACE|CONNECT',
 });
 
 // LiteralUnion suggests 'edit'|'inline'|'live'|'preview'|'admin', but allows string

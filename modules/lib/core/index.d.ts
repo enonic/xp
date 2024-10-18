@@ -144,7 +144,7 @@ export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: 
 
 export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
-export type StrictMergeInterfaces<
+export type Merge<
     A,
     B = Record<string, never>
 > = B extends Record<string, never>
@@ -157,13 +157,13 @@ export interface ComplexCookie {
      * 
      * @type string
      */
-    value: string
+    value: string;
     /**
      * A comment (rfc2109) to document the cookie (optional).
      * 
      * @type string
      */
-    comment?: string
+    comment?: string;
     /**
      * The expiration date and time for the cookie (optional).
      *
@@ -175,25 +175,25 @@ export interface ComplexCookie {
      *
      * @type string
      */
-    domain?: string
+    domain?: string;
     /**
      *  Indicates whether the cookie should not be accessible via JavaScript (optional).
      *
      * @type string
      */
-    httpOnly?: boolean
+    httpOnly?: boolean;
     /**
      * The maximum age of the cookie in seconds (optional).
      *
      * @type string
      */
-    maxAge?: number
+    maxAge?: number;
     /**
      * The path on the server where the cookie should be available.
      *
      * @type string
      */
-    path?: string
+    path?: string;
     /**
      *  Specifies the SameSite attribute (draft RFC) for the cookie (optional).
      *
@@ -205,12 +205,12 @@ export interface ComplexCookie {
      *
      * @type string
      */
-    secure?: boolean
+    secure?: boolean;
 }
 
 export type RequestBranch = 'draft' | 'master';
 export type RequestGetHeaderFunction = (headerName: string) => string | null;
-export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE';
+export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE' | 'PATCH' | 'TRACE' | 'CONNECT';
 export type RequestMode = 'edit' | 'inline' | 'live' | 'preview' | 'admin';
 export type RequestParams = Record<string, string | string[]>;
 export type RequestScheme = 'http' | 'https';
@@ -222,73 +222,70 @@ export type RequestHeaders = Record<string, string | undefined>;
 export type ResponseHeaders = Record<string, string | number | (string | number)[] | undefined>;
 
 export interface DefaultRequestCookies extends RequestCookies {
-    JSESSIONID?: string
+    JSESSIONID?: string;
 }
 
 export interface DefaultRequestHeaders extends RequestHeaders {
-    Accept?: string
-    'Accept-Charset'?: string
-    'Accept-Encoding'?: string
-    'Accept-Language'?: string
-    Authorization?: string
-    'Cache-Control'?: string
-    Connection?: string
-    'Content-Length'?: string
-    'Content-Type'?: string
-    Cookie?: string
-    Language?: string
-    Host?: string
-    'If-None-Match'?: string
-    Referer?: string
-    'sec-ch-ua'?: string
-    'sec-ch-ua-mobile'?: string
-    'sec-ch-ua-platform'?: string
-    'Sec-Fetch-Dest'?: string
-    'Sec-Fetch-Mode'?: string
-    'Sec-Fetch-Site'?: string
-    'Sec-Fetch-User'?: string
-    'Upgrade-Insecure-Requests'?: string
-    'User-Agent'?: string
-    'X-Forwarded-For'?: string
-    'X-Forwarded-Host'?: string
-    'X-Forwarded-Proto'?: string
-    'X-Forwarded-Server'?: string
+    Accept?: string;
+    'Accept-Charset'?: string;
+    'Accept-Encoding'?: string;
+    'Accept-Language'?: string;
+    Authorization?: string;
+    'Cache-Control'?: string;
+    Connection?: string;
+    'Content-Length'?: string;
+    'Content-Type'?: string;
+    Cookie?: string;
+    Language?: string; // Not mentioned here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+    Host?: string;
+    'If-None-Match'?: string;
+    Referer?: string;
+    'Sec-Fetch-Dest'?: string;
+    'Sec-Fetch-Mode'?: string;
+    'Sec-Fetch-Site'?: string;
+    'Sec-Fetch-User'?: string;
+    'Upgrade-Insecure-Requests'?: string;
+    'User-Agent'?: string;
+    'X-Forwarded-For'?: string;
+    'X-Forwarded-Host'?: string;
+    'X-Forwarded-Proto'?: string;
+    'X-Forwarded-Server'?: string;
 }
 
 export interface RequestConstructorParams {
-    body?: string
-    branch?: LiteralUnion<RequestBranch>
-    contentType?: string
-    contextPath?: string
-    cookies: RequestCookies
-    headers: RequestHeaders
-    host: string
-    method: LiteralUnion<RequestMethod>
-    mode: LiteralUnion<RequestMode>
-    params: RequestParams
-    path: string
-    port: number
-    rawPath: string
-    remoteAddress: string
-    repositoryId?: string
-    scheme: LiteralUnion<RequestScheme>
-    url: string
-    validTicket?: boolean
-    webSocket: boolean
+    body?: string;
+    branch?: LiteralUnion<RequestBranch>;
+    contentType?: string;
+    contextPath?: string;
+    cookies: RequestCookies;
+    headers: RequestHeaders;
+    host: string;
+    method: LiteralUnion<RequestMethod>;
+    mode: LiteralUnion<RequestMode>;
+    params: RequestParams;
+    path: string;
+    port: number;
+    rawPath: string;
+    remoteAddress: string;
+    repositoryId?: string;
+    scheme: LiteralUnion<RequestScheme>;
+    url: string;
+    validTicket?: boolean;
+    webSocket: boolean;
 }
 
 export interface RequestInterface extends RequestConstructorParams {
-    getHeader: RequestGetHeaderFunction
+    getHeader: RequestGetHeaderFunction;
 }
 
 export interface DefaultRequest extends RequestInterface {
-    cookies: DefaultRequestCookies
-    headers: DefaultRequestHeaders
+    cookies: DefaultRequestCookies;
+    headers: DefaultRequestHeaders;
 }
 
 export type Request<
     T extends Partial<RequestInterface> = Record<string, never>
-> = StrictMergeInterfaces<DefaultRequest, T>;
+> = Merge<DefaultRequest, T>;
 
 export type SerializableRequest<T extends RequestInterface = DefaultRequest> = Omit<
     Partial<T>,
@@ -298,13 +295,13 @@ export type SerializableRequest<T extends RequestInterface = DefaultRequest> = O
 };
 
 export interface DefaultResponseHeaders extends ResponseHeaders {
-    'Cache-Control'?: string
-    'Content-Encoding'?: string
-    'Content-Type'?: string
-    'Content-Security-Policy'?: string
-    'Date'?: string
-    Etag?: string | number
-    Location?: string
+    'Cache-Control'?: string;
+    'Content-Encoding'?: string;
+    'Content-Type'?: string;
+    'Content-Security-Policy'?: string;
+    'Date'?: string;
+    Etag?: string | number;
+    Location?: string;
 }
 
 // NOTE Even though PortalResponseSerializer allows non-array values,
@@ -312,37 +309,37 @@ export interface DefaultResponseHeaders extends ResponseHeaders {
 // So perhaps it's better to enforce that, so it's consistent both ways.
 // It also causes problems in ResponseProcessors, since they work with both from and to Java.
 export interface PageContributions {
-	headBegin?: string[]
-	headEnd?: string[]
-	bodyBegin?: string[]
-	bodyEnd?: string[]
+	headBegin?: string[];
+	headEnd?: string[];
+	bodyBegin?: string[];
+	bodyEnd?: string[];
 }
 
 export type ResponseBody = unknown[] | Record<string, unknown> | boolean | number | string | null | ByteSource;
 
 export interface MappedResponse {
-    applyFilters: boolean
-    body?: ResponseBody
-    contentType: string
-    cookies: ResponseCookies
-    headers: ResponseHeaders
-    pageContributions: PageContributions
-    postProcess: boolean
-    status: number
+    applyFilters: boolean;
+    body?: ResponseBody;
+    contentType: string;
+    cookies: ResponseCookies;
+    headers: ResponseHeaders;
+    pageContributions: PageContributions;
+    postProcess: boolean;
+    status: number;
 }
 
 export interface ResponseInterface extends Partial<MappedResponse> {
-    redirect?: string
+    redirect?: string;
 }
 
 export interface DefaultResponse extends ResponseInterface {
-    contentType?: LiteralUnion<'text/html' | 'application/json'>
-    headers?: DefaultResponseHeaders
+    contentType?: LiteralUnion<'text/html' | 'application/json'>;
+    headers?: DefaultResponseHeaders;
 }
 
 export type Response<
     T extends Partial<ResponseInterface> = Record<string, never>
-> = StrictMergeInterfaces<DefaultResponse, T>;
+> = Merge<DefaultResponse, T>;
 
 export type RequestHandler<
     RequestFromJava extends RequestInterface = DefaultRequest,
@@ -355,46 +352,44 @@ export type HttpFilterNext<
 > = (request: RequestToJava) => ResponseToJava;
 
 export interface WebSocketSession {
-    id: string
-    path: string
-
-    // TODO Maybe Record<string, string | string[]>
-    // See com.enonic.xp.portal.impl.mapper.WebSocketEventMapper
-    // And com.enonic.xp.portal.impl.mapper.MapperHelper
-    params: Record<string, unknown>
-
-    user: Omit<User,'type'>
+    id: string;
+    params: Record<string, string | string[]>;
+    path: string;
+    user: Omit<User,'type'>;
 }
 
 export type WebSocketEventType = 'open' | 'message' | 'error' | 'close';
 
 export interface WebSocketEvent<T> {
-    data: T
-    closeReason?: number
-    error?: string
-    message?: string
-    session: WebSocketSession
-    type: WebSocketEventType
+    data: T;
+    closeReason?: number;
+    error?: string;
+    message?: string;
+    session: WebSocketSession;
+    type: WebSocketEventType;
 }
 
-type WebSocketEventHandler<T> = (event: WebSocketEvent<T>) => void;
+type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
 
 export interface Controller {
-    all?: RequestHandler
-    delete?: RequestHandler
-    get?: RequestHandler
-    head?: RequestHandler
-    options?: RequestHandler
-    post?: RequestHandler
-    put?: RequestHandler
-    webSocketEvent?: WebSocketEventHandler
+    all?: RequestHandler;
+    connect?: RequestHandler;
+    delete?: RequestHandler;
+    get?: RequestHandler;
+    head?: RequestHandler;
+    options?: RequestHandler;
+    patch?: RequestHandler;
+    post?: RequestHandler;
+    put?: RequestHandler;
+    trace?: RequestHandler;
+    webSocketEvent?: WebSocketEventHandler;
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
-    exception?: unknown
-    message: string
-    request: T
-    status: number
+    exception?: unknown;
+    message: string;
+    request: T;
+    status: number;
 }
 
 export type ErrorRequestHandler<
@@ -403,54 +398,54 @@ export type ErrorRequestHandler<
 > = (err: Err) => ResponseToJava;
 
 export interface ErrorController {
-    handle400?: ErrorRequestHandler
-    handle401?: ErrorRequestHandler
-    handle402?: ErrorRequestHandler
-    handle403?: ErrorRequestHandler
-    handle404?: ErrorRequestHandler
-    handle405?: ErrorRequestHandler
-    handle406?: ErrorRequestHandler
-    handle407?: ErrorRequestHandler
-    handle408?: ErrorRequestHandler
-    handle409?: ErrorRequestHandler
-    handle410?: ErrorRequestHandler
-    handle411?: ErrorRequestHandler
-    handle412?: ErrorRequestHandler
-    handle413?: ErrorRequestHandler
-    handle414?: ErrorRequestHandler
-    handle415?: ErrorRequestHandler
-    handle416?: ErrorRequestHandler
-    handle417?: ErrorRequestHandler
-    handle418?: ErrorRequestHandler
-    handle421?: ErrorRequestHandler
-    handle422?: ErrorRequestHandler
-    handle423?: ErrorRequestHandler
-    handle424?: ErrorRequestHandler
-    handle425?: ErrorRequestHandler
-    handle426?: ErrorRequestHandler
-    handle428?: ErrorRequestHandler
-    handle429?: ErrorRequestHandler
-    handle431?: ErrorRequestHandler
-    handle451?: ErrorRequestHandler
-    handle500?: ErrorRequestHandler
-    handle501?: ErrorRequestHandler
-    handle502?: ErrorRequestHandler
-    handle503?: ErrorRequestHandler
-    handle504?: ErrorRequestHandler
-    handle505?: ErrorRequestHandler
-    handle506?: ErrorRequestHandler
-    handle507?: ErrorRequestHandler
-    handle508?: ErrorRequestHandler
-    handle510?: ErrorRequestHandler
-    handle511?: ErrorRequestHandler
-    handleError?: ErrorRequestHandler
+    handle400?: ErrorRequestHandler;
+    handle401?: ErrorRequestHandler;
+    handle402?: ErrorRequestHandler;
+    handle403?: ErrorRequestHandler;
+    handle404?: ErrorRequestHandler;
+    handle405?: ErrorRequestHandler;
+    handle406?: ErrorRequestHandler;
+    handle407?: ErrorRequestHandler;
+    handle408?: ErrorRequestHandler;
+    handle409?: ErrorRequestHandler;
+    handle410?: ErrorRequestHandler;
+    handle411?: ErrorRequestHandler;
+    handle412?: ErrorRequestHandler;
+    handle413?: ErrorRequestHandler;
+    handle414?: ErrorRequestHandler;
+    handle415?: ErrorRequestHandler;
+    handle416?: ErrorRequestHandler;
+    handle417?: ErrorRequestHandler;
+    handle418?: ErrorRequestHandler;
+    handle421?: ErrorRequestHandler;
+    handle422?: ErrorRequestHandler;
+    handle423?: ErrorRequestHandler;
+    handle424?: ErrorRequestHandler;
+    handle425?: ErrorRequestHandler;
+    handle426?: ErrorRequestHandler;
+    handle428?: ErrorRequestHandler;
+    handle429?: ErrorRequestHandler;
+    handle431?: ErrorRequestHandler;
+    handle451?: ErrorRequestHandler;
+    handle500?: ErrorRequestHandler;
+    handle501?: ErrorRequestHandler;
+    handle502?: ErrorRequestHandler;
+    handle503?: ErrorRequestHandler;
+    handle504?: ErrorRequestHandler;
+    handle505?: ErrorRequestHandler;
+    handle506?: ErrorRequestHandler;
+    handle507?: ErrorRequestHandler;
+    handle508?: ErrorRequestHandler;
+    handle510?: ErrorRequestHandler;
+    handle511?: ErrorRequestHandler;
+    handleError?: ErrorRequestHandler;
 }
 
 export interface IdProviderController extends Controller {
-    autoLogin?: RequestHandler
-    handle401?: RequestHandler
-    login?: RequestHandler
-    logout?: RequestHandler
+    autoLogin?: RequestHandler;
+    handle401?: RequestHandler;
+    login?: RequestHandler;
+    logout?: RequestHandler;
 }
 
 export interface HttpFilterController<
@@ -472,7 +467,7 @@ export interface ResponseProcessorController<
     ResponseFromJava extends MappedResponse = MappedResponse,
     ResponseToJava extends ResponseInterface = Partial<ResponseFromJava>
 > {
-    responseProcessor: (request: RequestFromJava, response: ResponseFromJava) => ResponseToJava
+    responseProcessor: (request: RequestFromJava, response: ResponseFromJava) => ResponseToJava;
 }
 
 export type UserKey = `user:${string}:${string}`;

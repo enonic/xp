@@ -3,19 +3,7 @@ import type {
     ErrorRequest,
 } from '../core/index';
 
-import {
-    expectAssignable,
-    // expectDeprecated,
-    // expectDocCommentIncludes,
-    // expectError,
-    // expectNever,
-	// expectNotAssignable,
-    // printType,
-    // expectNotDeprecated,
-    // expectNotType,
-    // expectType,
-    // printType,
-} from 'tsd';
+import {expectAssignable} from 'tsd';
 
 const log = {
     info: (message?: string, ...optionalParams: unknown[]) => { /* no-op */ },
