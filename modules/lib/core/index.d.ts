@@ -371,17 +371,20 @@ export interface WebSocketEvent<T> {
 
 type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
 
-export interface Controller {
-    all?: RequestHandler;
-    connect?: RequestHandler;
-    delete?: RequestHandler;
-    get?: RequestHandler;
-    head?: RequestHandler;
-    options?: RequestHandler;
-    patch?: RequestHandler;
-    post?: RequestHandler;
-    put?: RequestHandler;
-    trace?: RequestHandler;
+export interface Controller<
+    Request extends RequestInterface = DefaultRequest,
+    Response extends ResponseInterface = DefaultResponse,
+> {
+    all?: RequestHandler<Request, Response>;
+    connect?: RequestHandler<Request, Response>;
+    delete?: RequestHandler<Request, Response>;
+    get?: RequestHandler<Request, Response>;
+    head?: RequestHandler<Request, Response>;
+    options?: RequestHandler<Request, Response>;
+    patch?: RequestHandler<Request, Response>;
+    post?: RequestHandler<Request, Response>;
+    put?: RequestHandler<Request, Response>;
+    trace?: RequestHandler<Request, Response>;
     webSocketEvent?: WebSocketEventHandler;
 }
 
