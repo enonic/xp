@@ -7,16 +7,6 @@ import type {
 
 import {
     expectAssignable,
-    // expectDeprecated,
-    // expectDocCommentIncludes,
-    // expectError,
-    // expectNever,
-	// expectNotAssignable,
-    // printType,
-    // expectNotDeprecated,
-    // expectNotType,
-    // expectType,
-    // printType,
 } from 'tsd';
 
 // const log = {

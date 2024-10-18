@@ -19,22 +19,22 @@ export function toStr(
 const isObject = (value: object | unknown): value is object =>
 	Object.prototype.toString.call(value).slice(8,-1) === 'Object';
 
-function mapKeys(
-	obj: object,
+function mapKeys<T extends Record<string, unknown>>(
+	obj: T,
 	fn: ({
 		key,
 		result,
 		value,
 	}: {
 		key: PropertyKey
-		result: object
+		result: T
 		value: unknown
 	}) => void,
-): object {
+): T {
 	if (!isObject(obj)) {
 		throw new TypeError(`mapKeys: First param must be an object! got:${toStr(obj)}`);
 	}
-	const result = {};
+	const result = {} as T;
 	const keys = Object.keys(obj);
 	for (let i = 0; i < keys.length; i++) {
 		const key = keys[i];
@@ -53,8 +53,8 @@ function lcKeys<T extends Record<string,unknown>>(obj: T): T {
 		result,
 		value,
 	}) => {
-		result[String(key).toLowerCase()] = value;
-	}) as T;
+        (result as Record<string, unknown>)[String(key).toLowerCase()] = value;
+	});
 }
 
 export class RequestImplementation implements Request {

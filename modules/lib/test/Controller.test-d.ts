@@ -6,18 +6,11 @@ import type {
     RequestMode,
     RequestScheme,
     Response,
+    WebSocketEventHandler,
 } from '../core/index';
 import {
     expectAssignable,
-    // expectDeprecated,
-    // expectDocCommentIncludes,
-    // expectError,
-    // expectNever,
 	expectNotAssignable,
-    // expectNotDeprecated,
-    // expectNotType,
-    // expectType,
-    // printType,
 } from 'tsd';
 
 const log = {
@@ -27,6 +20,12 @@ const log = {
 const myController = {
     all: (request: Request) => {
         log.info('all request:%s', JSON.stringify(request, null, 4));
+        return {
+            status: 200,
+        };
+    },
+    connect: (request: Request) => {
+        log.info('connect request:%s', JSON.stringify(request, null, 4));
         return {
             status: 200,
         };
@@ -43,8 +42,20 @@ const myController = {
             status: 200,
         };
     },
+    patch: (request: Request) => {
+        log.info('patch request:%s', JSON.stringify(request, null, 4));
+        return {
+            status: 200,
+        };
+    },
     post: (request: Request) => {
         log.info('post request:%s', JSON.stringify(request, null, 4));
+        return {
+            status: 200,
+        };
+    },
+    trace: (request: Request) => {
+        log.info('trace request:%s', JSON.stringify(request, null, 4));
         return {
             status: 200,
         };
@@ -71,12 +82,16 @@ type PageRequestHandler = (request: PageRequest) => Response;
 
 interface PageController {
     all?: PageRequestHandler
+    connect?: PageRequestHandler
     delete?: PageRequestHandler
     get?: PageRequestHandler
     head?: PageRequestHandler
     options?: PageRequestHandler
+    patch?: PageRequestHandler
     post?: PageRequestHandler
     put?: PageRequestHandler
+    trace?: PageRequestHandler
+    webSocketEvent?: WebSocketEventHandler
 }
 
 const pageRequest /* : PageRequest */ = {
