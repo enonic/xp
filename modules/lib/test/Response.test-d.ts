@@ -142,7 +142,3 @@ expectNotAssignable<Response>({
 expectNotAssignable<Response>({
     status: '200', // Not number!
 });
-
-// ────────────────────────────────────────────────────────────────────────────
-// Scenario: Response processor
-// ────────────────────────────────────────────────────────────────────────────
