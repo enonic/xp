@@ -551,16 +551,18 @@ public class PortalUrlServiceImpl_processHtmlTest
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
 
         final ImageStyle imageStyle = ImageStyle.create().name( "mystyle" ).aspectRatio( "2:1" ).filter( "myfilter" ).build();
-        final StyleDescriptor styleDescriptor =
-            StyleDescriptor.create().application( ApplicationKey.from( "myapp" ) ).addStyleElement( imageStyle ).build();
+        final StyleDescriptor styleDescriptor1 =
+            StyleDescriptor.create().application( ApplicationKey.from( "myapp1" ) ).addStyleElement( imageStyle ).build();
+        final StyleDescriptor styleDescriptor2 =
+            StyleDescriptor.create().application( ApplicationKey.from( "myapp2" ) ).addStyleElement( imageStyle ).build();
 
         final Map<String, String> imageProjection = new HashMap<>();
 
-        //Process an html text containing a style
+        //Process a html text containing a style
         final String link1 = "<img src=\"image://" + media.getId() + "?style=mystyle\">";
 
         final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest )
-            .customStyleDescriptorsCallback( () -> StyleDescriptors.from( styleDescriptor ) )
+            .customStyleDescriptorsCallback( () -> StyleDescriptors.from( styleDescriptor1, styleDescriptor2 ) )
             .customHtmlProcessor( processorParams -> {
                 processorParams.processDefault( ( element, properties ) -> {
                     if ( "img".equals( element.getTagName() ) )
