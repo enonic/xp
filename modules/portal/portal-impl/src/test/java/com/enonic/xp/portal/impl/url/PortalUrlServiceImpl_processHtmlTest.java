@@ -340,12 +340,16 @@ public class PortalUrlServiceImpl_processHtmlTest
             aspectRatio( "2:1" ).
             filter( "myfilter" ).
             build();
-        final StyleDescriptor styleDescriptor = StyleDescriptor.create().
-            application( ApplicationKey.from( "myapp" ) ).
+        final StyleDescriptor styleDescriptor1 = StyleDescriptor.create().
+            application( ApplicationKey.from( "myapp1" ) ).
             addStyleElement( imageStyle ).
             build();
-        when( styleDescriptorService.getByApplications( Mockito.any() ) ).
-            thenReturn( StyleDescriptors.from( styleDescriptor ) );
+        final StyleDescriptor styleDescriptor2 = StyleDescriptor.create().
+            application( ApplicationKey.from( "myapp2" ) ).
+            addStyleElement( imageStyle ).
+            build();
+        when( styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn(
+            StyleDescriptors.from( styleDescriptor1, styleDescriptor2 ) );
 
         final Map<String, String> imageProjection = new HashMap<>();
 
