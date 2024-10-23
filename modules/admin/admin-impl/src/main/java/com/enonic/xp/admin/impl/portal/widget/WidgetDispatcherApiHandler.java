@@ -13,7 +13,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
     "allowedPrincipals=role:system.admin.login"})
