@@ -19,7 +19,7 @@ import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=status"})
 public class StatusApiHandler

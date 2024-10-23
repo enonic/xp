@@ -25,6 +25,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -50,7 +51,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -85,6 +86,8 @@ public class SlashApiHandlerTest
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
+    private DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
+
     private PortalRequest request;
 
     @BeforeEach
@@ -99,10 +102,11 @@ public class SlashApiHandlerTest
         siteService = mock( SiteService.class );
         webappService = mock( WebappService.class );
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
+        universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
         handler =
             new SlashApiHandler( controllerScriptFactory, apiDescriptorService, contentService, projectService, new ExceptionMapperImpl(),
-                                 exceptionRenderer, siteService, webappService, adminToolDescriptorService );
+                                 exceptionRenderer, siteService, webappService, adminToolDescriptorService, universalApiHandlerRegistry );
 
         when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
@@ -655,7 +659,8 @@ public class SlashApiHandlerTest
         throws Exception
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
-        handler.addApiHandler( myUniversalApiHandler, Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+        universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
+                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
 
@@ -677,14 +682,15 @@ public class SlashApiHandlerTest
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( "Body", response.getBody().toString() );
 
-        handler.removeApiHandler( myUniversalApiHandler );
+        universalApiHandlerRegistry.removeApiHandler( myUniversalApiHandler );
     }
 
     @Test
     void testHandleDynamicApiHandlerWhichDoesNotMountToAPI()
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
-        handler.addApiHandler( myUniversalApiHandler, Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+        universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
+                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
@@ -699,7 +705,7 @@ public class SlashApiHandlerTest
         final WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
 
-        handler.removeApiHandler( myUniversalApiHandler );
+        universalApiHandlerRegistry.removeApiHandler( myUniversalApiHandler );
     }
 
     private static final class MyUniversalApiHandler
