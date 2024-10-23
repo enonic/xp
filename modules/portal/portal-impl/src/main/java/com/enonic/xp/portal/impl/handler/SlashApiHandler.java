@@ -2,22 +2,15 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
@@ -35,13 +28,14 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -57,7 +51,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
-import com.enonic.xp.web.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -93,7 +86,7 @@ public class SlashApiHandler
 
     private final AdminToolDescriptorService adminToolDescriptorService;
 
-    private final ConcurrentMap<DescriptorKey, UniversalApiHandlerWrapper> dynamicApiHandlers = new ConcurrentHashMap<>();
+    private final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
@@ -101,7 +94,8 @@ public class SlashApiHandler
                             @Reference final ProjectService projectService, @Reference final ExceptionMapper exceptionMapper,
                             @Reference final ExceptionRenderer exceptionRenderer, @Reference final SiteService siteService,
                             @Reference final WebappService webappService,
-                            @Reference final AdminToolDescriptorService adminToolDescriptorService )
+                            @Reference final AdminToolDescriptorService adminToolDescriptorService,
+                            @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -112,22 +106,7 @@ public class SlashApiHandler
         this.siteService = siteService;
         this.webappService = webappService;
         this.adminToolDescriptorService = adminToolDescriptorService;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addApiHandler( final UniversalApiHandler apiHandler, final Map<String, ?> properties )
-    {
-        final ApiDescriptor apiDescriptor = createDynamicApiDescriptor( properties );
-        this.dynamicApiHandlers.put( apiDescriptor.getKey(), new UniversalApiHandlerWrapper( apiHandler, apiDescriptor ) );
-    }
-
-    public void removeApiHandler( final UniversalApiHandler apiHandler )
-    {
-        dynamicApiHandlers.values()
-            .stream()
-            .filter( wrapper -> wrapper.apiHandler.equals( apiHandler ) )
-            .findFirst()
-            .ifPresent( apiHandlerWrapper -> this.dynamicApiHandlers.remove( apiHandlerWrapper.apiDescriptor.getKey() ) );
+        this.universalApiHandlerRegistry = universalApiHandlerRegistry;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -156,7 +135,7 @@ public class SlashApiHandler
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, Objects.requireNonNull( matcher.group( "apiKey" ) ) );
 
-        final UniversalApiHandlerWrapper dynamicApiHandler = dynamicApiHandlers.get( descriptorKey );
+        final DynamicUniversalApiHandler dynamicApiHandler = universalApiHandlerRegistry.getApiHandler( descriptorKey );
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( dynamicApiHandler, descriptorKey );
 
         if ( apiDescriptor != null )
@@ -170,15 +149,15 @@ public class SlashApiHandler
         }
 
         final Supplier<WebResponse> handler = dynamicApiHandler != null
-            ? () -> dynamicApiHandler.apiHandler.handle( portalRequest )
+            ? () -> dynamicApiHandler.handle( portalRequest )
             : () -> executeController( portalRequest, descriptorKey );
 
         return execute( portalRequest, descriptorKey, handler );
     }
 
-    private ApiDescriptor resolveApiDescriptor( UniversalApiHandlerWrapper dynamicApiHandler, final DescriptorKey descriptorKey )
+    private ApiDescriptor resolveApiDescriptor( DynamicUniversalApiHandler dynamicApiHandler, final DescriptorKey descriptorKey )
     {
-        return dynamicApiHandler != null ? dynamicApiHandler.apiDescriptor : apiDescriptorService.getByKey( descriptorKey );
+        return dynamicApiHandler != null ? dynamicApiHandler.getApiDescriptor() : apiDescriptorService.getByKey( descriptorKey );
     }
 
     private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey,
@@ -421,37 +400,4 @@ public class SlashApiHandler
         return webResponse;
     }
 
-    private ApiDescriptor createDynamicApiDescriptor( final Map<String, ?> properties )
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( (String) properties.get( "applicationKey" ) );
-        final String apiKey = Objects.requireNonNull( (String) properties.get( "apiKey" ) );
-        final PrincipalKeys allowedPrincipals = resolveDynamicPrincipalKeys( properties.get( "allowedPrincipals" ) );
-
-        return ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals ).build();
-    }
-
-    private PrincipalKeys resolveDynamicPrincipalKeys( final Object allowedPrincipals )
-    {
-        return switch ( allowedPrincipals )
-        {
-            case null -> null;
-            case String s -> PrincipalKeys.from( s );
-            case String[] strings ->
-                PrincipalKeys.from( Arrays.stream( strings ).map( PrincipalKey::from ).collect( Collectors.toList() ) );
-            default -> throw new IllegalArgumentException( "Invalid allowedPrincipals. Value must be string or string array." );
-        };
-    }
-
-    private static class UniversalApiHandlerWrapper
-    {
-        private final UniversalApiHandler apiHandler;
-
-        private final ApiDescriptor apiDescriptor;
-
-        private UniversalApiHandlerWrapper( final UniversalApiHandler apiHandler, final ApiDescriptor apiDescriptor )
-        {
-            this.apiHandler = apiHandler;
-            this.apiDescriptor = apiDescriptor;
-        }
-    }
 }
