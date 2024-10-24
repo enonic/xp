@@ -130,9 +130,9 @@ export interface ScriptValue {
 
     hasMember(key: string): boolean;
 
-    getMember(key: string): ScriptValueDefinition;
+    getMember(key: string): ScriptValue;
 
-    getArray(): ScriptValueDefinition[];
+    getArray(): ScriptValue[];
 
     getMap(): Record<string, unknown>;
 
@@ -141,6 +141,341 @@ export interface ScriptValue {
 
 export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
     Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
+
+export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
+
+export type Merge<
+    A,
+    B = Record<string, never>
+> = B extends Record<string, never>
+    ? A
+    : Pick<A, Exclude<keyof A, keyof B>> & B;
+
+export interface ComplexCookie {
+    /**
+     * The value of the cookie (optional).
+     * 
+     * @type string
+     */
+    value: string;
+    /**
+     * A comment (rfc2109) to document the cookie (optional).
+     * 
+     * @type string
+     */
+    comment?: string;
+    /**
+     * The expiration date and time for the cookie (optional).
+     *
+     * @type string
+     */
+    expires?: Date;
+    /**
+     * The domain name for which the cookie is set.
+     *
+     * @type string
+     */
+    domain?: string;
+    /**
+     *  Indicates whether the cookie should not be accessible via JavaScript (optional).
+     *
+     * @type string
+     */
+    httpOnly?: boolean;
+    /**
+     * The maximum age of the cookie in seconds (optional).
+     *
+     * @type string
+     */
+    maxAge?: number;
+    /**
+     * The path on the server where the cookie should be available.
+     *
+     * @type string
+     */
+    path?: string;
+    /**
+     *  Specifies the SameSite attribute (draft RFC) for the cookie (optional).
+     *
+     * @type string
+     */
+    sameSite?: LiteralUnion<'lax' | 'strict' | 'none'>;
+    /**
+     * Indicates whether the cookie should only be sent over HTTPS (optional).
+     *
+     * @type string
+     */
+    secure?: boolean;
+}
+
+export type RequestBranch = 'draft' | 'master';
+export type RequestGetHeaderFunction = (headerName: string) => string | null;
+export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE' | 'PATCH' | 'TRACE' | 'CONNECT';
+export type RequestMode = 'edit' | 'inline' | 'live' | 'preview' | 'admin';
+export type RequestParams = Record<string, string | string[]>;
+export type RequestScheme = 'http' | 'https';
+
+export type RequestCookies = Record<string, string | undefined>;
+export type ResponseCookies = Record<string, string | ComplexCookie | undefined>;
+
+export type RequestHeaders = Record<string, string | undefined>;
+export type ResponseHeaders = Record<string, string | number | (string | number)[] | undefined>;
+
+export interface DefaultRequestCookies extends RequestCookies {
+    JSESSIONID?: string;
+}
+
+export type SecFetchDest = 'audio' | 'audioworklet' | 'document' | 'embed' | 'empty' | 'fencedframe' | 'font' | 'frame' | 'iframe' | 'image' | 'manifest' | 'object' | 'paintworklet' | 'report' | 'script' | 'serviceworker' | 'sharedworker' | 'style' | 'track' | 'video' | 'webidentity' | 'worker' | 'xslt';
+export type SecFetchMode = 'cors'| 'navigate' | 'no-cors' | 'same-origin' | 'websocket';
+export type SecFetchSite = 'cross-site' | 'same-origin' | 'same-site' | 'none';
+
+export interface DefaultRequestHeaders extends RequestHeaders {
+    Accept?: string;
+    'Accept-Charset'?: string;
+    'Accept-Encoding'?: string;
+    'Accept-Language'?: string;
+    Authorization?: string;
+    'Cache-Control'?: string;
+    Connection?: string;
+    'Content-Length'?: string;
+    'Content-Type'?: string;
+    Cookie?: string;
+    Host?: string;
+    'If-None-Match'?: string;
+    Priority?: string;
+    Referer?: string;
+    'Sec-Fetch-Dest'?: LiteralUnion<SecFetchDest>;
+    'Sec-Fetch-Mode'?: LiteralUnion<SecFetchMode>;
+    'Sec-Fetch-Site'?: LiteralUnion<SecFetchSite>
+    'Sec-Fetch-User'?: '?1';
+    'Upgrade-Insecure-Requests'?: '1';
+    'User-Agent'?: string;
+    'X-Forwarded-For'?: string;
+    'X-Forwarded-Host'?: string;
+    'X-Forwarded-Proto'?: LiteralUnion<RequestScheme>;
+    'X-Forwarded-Server'?: string;
+}
+
+export interface RequestConstructorParams {
+    body?: string;
+    branch?: LiteralUnion<RequestBranch>;
+    contentType?: string;
+    contextPath?: string;
+    cookies: RequestCookies;
+    headers: RequestHeaders;
+    host: string;
+    method: LiteralUnion<RequestMethod>;
+    mode: LiteralUnion<RequestMode>;
+    params: RequestParams;
+    path: string;
+    port: number;
+    rawPath: string;
+    remoteAddress: string;
+    repositoryId?: string;
+    scheme: LiteralUnion<RequestScheme>;
+    url: string;
+    validTicket?: boolean;
+    webSocket: boolean;
+}
+
+export interface RequestInterface extends RequestConstructorParams {
+    getHeader: RequestGetHeaderFunction;
+}
+
+export interface DefaultRequest extends RequestInterface {
+    cookies: DefaultRequestCookies;
+    headers: DefaultRequestHeaders;
+}
+
+export type Request<
+    T extends Partial<RequestInterface> = Record<string, never>
+> = Merge<DefaultRequest, T>;
+
+export type SerializableRequest<T extends RequestInterface = DefaultRequest> = Omit<
+    Partial<T>,
+    'body' | 'contextPath' | 'rawPath' | 'repositoryId' | 'webSocket'
+> & {
+    body?: unknown[] | Record<string, unknown> | boolean | number | string | null;
+};
+
+export interface DefaultResponseHeaders extends ResponseHeaders {
+    'Cache-Control'?: string;
+    'Content-Encoding'?: string;
+    'Content-Type'?: string;
+    'Content-Security-Policy'?: string;
+    'Date'?: string;
+    Etag?: string | number;
+    Location?: string;
+}
+
+// NOTE Even though PortalResponseSerializer allows non-array values,
+// when it comes back from Java the PortalResponseMapper will always return an array.
+// So perhaps it's better to enforce that, so it's consistent both ways.
+// It also causes problems in ResponseProcessors, since they work with both from and to Java.
+export interface PageContributions {
+	headBegin?: string[];
+	headEnd?: string[];
+	bodyBegin?: string[];
+	bodyEnd?: string[];
+}
+
+export type ResponseBody = unknown[] | Record<string, unknown> | boolean | number | string | null | ByteSource;
+
+export interface MappedResponse {
+    applyFilters: boolean;
+    body?: ResponseBody;
+    contentType: string;
+    cookies: ResponseCookies;
+    headers: ResponseHeaders;
+    pageContributions: PageContributions;
+    postProcess: boolean;
+    status: number;
+}
+
+export interface ResponseInterface extends Partial<MappedResponse> {
+    redirect?: string;
+}
+
+export interface DefaultResponse extends ResponseInterface {
+    contentType?: LiteralUnion<'text/html' | 'application/json'>;
+    headers?: DefaultResponseHeaders;
+}
+
+export type Response<
+    T extends Partial<ResponseInterface> = Record<string, never>
+> = Merge<DefaultResponse, T>;
+
+export type RequestHandler<
+    RequestFromJava extends RequestInterface = DefaultRequest,
+    ResponseToJava extends ResponseInterface = DefaultResponse
+> = (request: RequestFromJava) => ResponseToJava;
+
+export type HttpFilterNext<
+    RequestToJava extends SerializableRequest = SerializableRequest<DefaultRequest>,
+    ResponseToJava extends ResponseInterface = DefaultResponse
+> = (request: RequestToJava) => ResponseToJava;
+
+export interface WebSocketSession {
+    id: string;
+    params: Record<string, string | string[]>;
+    path: string;
+    user: Omit<User,'type'>;
+}
+
+export type WebSocketEventType = 'open' | 'message' | 'error' | 'close';
+
+export interface WebSocketEvent<T> {
+    data: T;
+    closeReason?: number;
+    error?: string;
+    message?: string;
+    session: WebSocketSession;
+    type: WebSocketEventType;
+}
+
+type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
+
+export interface Controller<
+    Request extends RequestInterface = DefaultRequest,
+    Response extends ResponseInterface = DefaultResponse,
+> {
+    all?: RequestHandler<Request, Response>;
+    connect?: RequestHandler<Request, Response>;
+    delete?: RequestHandler<Request, Response>;
+    get?: RequestHandler<Request, Response>;
+    head?: RequestHandler<Request, Response>;
+    options?: RequestHandler<Request, Response>;
+    patch?: RequestHandler<Request, Response>;
+    post?: RequestHandler<Request, Response>;
+    put?: RequestHandler<Request, Response>;
+    trace?: RequestHandler<Request, Response>;
+    webSocketEvent?: WebSocketEventHandler;
+}
+
+export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
+    exception?: unknown;
+    message: string;
+    request: T;
+    status: number;
+}
+
+export type ErrorRequestHandler<
+    Err extends ErrorRequest = ErrorRequest,
+    ResponseToJava extends ResponseInterface = DefaultResponse
+> = (err: Err) => ResponseToJava;
+
+export interface ErrorController {
+    handle400?: ErrorRequestHandler;
+    handle401?: ErrorRequestHandler;
+    handle402?: ErrorRequestHandler;
+    handle403?: ErrorRequestHandler;
+    handle404?: ErrorRequestHandler;
+    handle405?: ErrorRequestHandler;
+    handle406?: ErrorRequestHandler;
+    handle407?: ErrorRequestHandler;
+    handle408?: ErrorRequestHandler;
+    handle409?: ErrorRequestHandler;
+    handle410?: ErrorRequestHandler;
+    handle411?: ErrorRequestHandler;
+    handle412?: ErrorRequestHandler;
+    handle413?: ErrorRequestHandler;
+    handle414?: ErrorRequestHandler;
+    handle415?: ErrorRequestHandler;
+    handle416?: ErrorRequestHandler;
+    handle417?: ErrorRequestHandler;
+    handle418?: ErrorRequestHandler;
+    handle421?: ErrorRequestHandler;
+    handle422?: ErrorRequestHandler;
+    handle423?: ErrorRequestHandler;
+    handle424?: ErrorRequestHandler;
+    handle425?: ErrorRequestHandler;
+    handle426?: ErrorRequestHandler;
+    handle428?: ErrorRequestHandler;
+    handle429?: ErrorRequestHandler;
+    handle431?: ErrorRequestHandler;
+    handle451?: ErrorRequestHandler;
+    handle500?: ErrorRequestHandler;
+    handle501?: ErrorRequestHandler;
+    handle502?: ErrorRequestHandler;
+    handle503?: ErrorRequestHandler;
+    handle504?: ErrorRequestHandler;
+    handle505?: ErrorRequestHandler;
+    handle506?: ErrorRequestHandler;
+    handle507?: ErrorRequestHandler;
+    handle508?: ErrorRequestHandler;
+    handle510?: ErrorRequestHandler;
+    handle511?: ErrorRequestHandler;
+    handleError?: ErrorRequestHandler;
+}
+
+export interface IdProviderController extends Controller {
+    autoLogin?: RequestHandler;
+    handle401?: RequestHandler;
+    login?: RequestHandler;
+    logout?: RequestHandler;
+}
+
+export interface HttpFilterController<
+  RequestFromJava extends RequestInterface = DefaultRequest,
+  ResponseFromNext extends ResponseInterface = Response,
+  ResponseToJava extends ResponseInterface = ResponseFromNext
+> {
+    filter: (
+        request: RequestFromJava,
+        next: HttpFilterNext<
+            SerializableRequest<RequestFromJava>,
+            ResponseFromNext
+        >
+    ) => ResponseToJava;
+}
+
+export interface ResponseProcessorController<
+    RequestFromJava extends RequestInterface = DefaultRequest,
+    ResponseFromJava extends MappedResponse = MappedResponse,
+    ResponseToJava extends ResponseInterface = Partial<ResponseFromJava>
+> {
+    responseProcessor: (request: RequestFromJava, response: ResponseFromJava) => ResponseToJava;
+}
 
 export type UserKey = `user:${string}:${string}`;
 export type GroupKey = `group:${string}:${string}`;
@@ -263,7 +598,13 @@ export interface TextComponent {
 export type Component<
     Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
     Config extends NestedRecord = NestedRecord,
-    Regions extends Record<string, Region> = Record<string, Region>,
+    Regions extends (
+        Descriptor extends LayoutDescriptor
+        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
+        : Record<string, Region>
+    ) = Descriptor extends LayoutDescriptor
+        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
+        : Record<string, Region>,
 > =
     | FragmentComponent
     | LayoutComponent<Descriptor, Config, Regions>
@@ -293,6 +634,7 @@ export type Region<
     Components extends
         (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
         (FragmentComponent | Layout          | Part          | TextComponent)[]
+// @ts-expect-error TODO LayoutRegion can't eat LayoutComponent nor Layout!!!
 > = PageRegion<Components> | LayoutRegion<Components>;
 
 export interface Content<
