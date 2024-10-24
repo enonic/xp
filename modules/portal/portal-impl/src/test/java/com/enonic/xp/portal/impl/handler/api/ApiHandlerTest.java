@@ -6,14 +6,18 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptorService;
+import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.api.ApiConfig;
-import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -22,7 +26,9 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +38,9 @@ public class ApiHandlerTest
 
     private ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    private ApiDescriptorService apiDescriptorService;
+
+    private DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
     private ApiConfig apiConfig;
 
@@ -40,9 +48,10 @@ public class ApiHandlerTest
     public void setUp()
     {
         this.applicationService = mock( ApplicationService.class );
-        this.resourceService = mock( ResourceService.class );
+        this.apiDescriptorService = mock( ApiDescriptorService.class );
+        this.universalApiHandlerRegistry = mock( DynamicUniversalApiHandlerRegistry.class );
 
-        this.handler = new ApiHandler( this.applicationService, this.resourceService );
+        this.handler = new ApiHandler( this.applicationService, this.apiDescriptorService, this.universalApiHandlerRegistry );
         this.apiConfig = mock( ApiConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( apiConfig );
     }
@@ -100,26 +109,50 @@ public class ApiHandlerTest
     public void testDoHandle()
         throws Exception
     {
-        Application application = mock( Application.class );
-        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final Application application = mock( Application.class );
 
+        when( application.getKey() ).thenReturn( applicationKey );
         when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( application ) );
 
-        Resource resource = mock( Resource.class );
-        when( resource.exists() ).thenReturn( true );
-        when( this.resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapplication" ), "api/api.js" ) ) ).thenReturn(
-            resource );
+        final ApiDescriptors apiDescriptors =
+            ApiDescriptors.from( ApiDescriptor.create().key( DescriptorKey.from( applicationKey, "myapi" ) ).build() );
+
+        when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
+
+        final ApiDescriptors dynamicApiDescriptors = ApiDescriptors.from( ApiDescriptor.create()
+                                                                              .key( DescriptorKey.from( "admin:widget" ) )
+                                                                              .allowedPrincipals( PrincipalKeys.from( RoleKeys.ADMIN ) )
+                                                                              .build() );
+
+        when( this.universalApiHandlerRegistry.getAllApiDescriptors() ).thenReturn( dynamicApiDescriptors.getList() );
 
         WebResponse webResponse =
             this.handler.doHandle( mock( WebRequest.class ), mock( WebResponse.class ), mock( WebHandlerChain.class ) );
 
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
         final Object body = webResponse.getBody();
-        assertTrue( body instanceof Map );
-        final Map<String, List<String>> objectAsMap = (Map<String, List<String>>) body;
+        assertInstanceOf( Map.class, body );
+
+        final Map<String, List<Map<String, Object>>> objectAsMap = (Map<String, List<Map<String, Object>>>) body;
         assertTrue( objectAsMap.containsKey( "resources" ) );
-        assertTrue( objectAsMap.get( "resources" ).contains( "myapplication" ) );
-        assertTrue( objectAsMap.get( "resources" ).contains( "media" ) );
+
+        final List<Map<String, Object>> resources = objectAsMap.get( "resources" );
+        assertEquals( 2, resources.size() );
+
+        final Map<String, Object> dynamicApiResource = resources.get( 0 );
+
+        assertEquals( "admin:widget", dynamicApiResource.get( "descriptor" ) );
+        assertEquals( "admin", dynamicApiResource.get( "application" ) );
+        assertEquals( "widget", dynamicApiResource.get( "name" ) );
+        assertEquals( List.of( "role:system.admin" ), dynamicApiResource.get( "allowedPrincipals" ) );
+
+        final Map<String, Object> apiResource = resources.get( 1 );
+
+        assertEquals( "myapplication:myapi", apiResource.get( "descriptor" ) );
+        assertEquals( "myapplication", apiResource.get( "application" ) );
+        assertEquals( "myapi", apiResource.get( "name" ) );
+        assertEquals( List.of(), apiResource.get( "allowedPrincipals" ) );
     }
 
 }

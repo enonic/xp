@@ -2,8 +2,10 @@ package com.enonic.xp.portal.impl.handler.api;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -14,12 +16,16 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.api.ApiConfig;
 import com.enonic.xp.portal.impl.api.ApiIndexMode;
-import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
@@ -38,16 +44,20 @@ public class ApiHandler
 
     private final ApplicationService applicationService;
 
-    private final ResourceService resourceService;
+    private final ApiDescriptorService apiDescriptorService;
+
+    private final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
     private volatile ApiIndexMode apiIndexMode;
 
     @Activate
-    public ApiHandler( final @Reference ApplicationService applicationService, final @Reference ResourceService resourceService )
+    public ApiHandler( @Reference final ApplicationService applicationService, @Reference final ApiDescriptorService apiDescriptorService,
+                       @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
     {
         super( -49, EnumSet.of( HttpMethod.GET, HttpMethod.OPTIONS ) );
         this.applicationService = applicationService;
-        this.resourceService = resourceService;
+        this.apiDescriptorService = apiDescriptorService;
+        this.universalApiHandlerRegistry = universalApiHandlerRegistry;
     }
 
     @Activate
@@ -74,15 +84,32 @@ public class ApiHandler
         return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( Map.of( "resources", getApiResources() ) ).build();
     }
 
-    private List<String> getApiResources()
+    private List<Map<String, Object>> getApiResources()
     {
-        List<String> result = new ArrayList<>();
+        final List<Map<String, Object>> result = new ArrayList<>();
 
-        result.add( "media" );
-        result.addAll( applicationService.getInstalledApplications().stream().filter( application -> {
-            ResourceKey resourceKey = ResourceKey.from( application.getKey(), "api/api.js" );
-            return resourceService.getResource( resourceKey ).exists();
-        } ).map( application -> application.getKey().getName() ).collect( Collectors.toList() ) );
+        universalApiHandlerRegistry.getAllApiDescriptors().forEach( descriptor -> result.add( map( descriptor ) ) );
+
+        applicationService.getInstalledApplications()
+            .forEach( application -> apiDescriptorService.getByApplication( application.getKey() )
+                .forEach( descriptor -> result.add( map( descriptor ) ) ) );
+
+        return result;
+    }
+
+    private Map<String, Object> map( final ApiDescriptor apiDescriptor )
+    {
+        final DescriptorKey descriptorKey = apiDescriptor.getKey();
+
+        final Map<String, Object> result = new LinkedHashMap<>();
+
+        result.put( "descriptor", descriptorKey.toString() );
+        result.put( "application", descriptorKey.getApplicationKey().toString() );
+        result.put( "name", descriptorKey.getName() );
+        result.put( "allowedPrincipals", Objects.requireNonNullElseGet( apiDescriptor.getAllowedPrincipals(), PrincipalKeys::empty )
+            .stream()
+            .map( PrincipalKey::toString )
+            .collect( Collectors.toList() ) );
 
         return result;
     }
