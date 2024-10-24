@@ -308,7 +308,8 @@ public class RichTextProcessor
         return styleDescriptors.stream()
             .flatMap( styleDescriptor -> styleDescriptor.getElements().stream() )
             .filter( elementStyle -> ImageStyle.STYLE_ELEMENT_NAME.equals( elementStyle.getElement() ) )
-            .collect( Collectors.toUnmodifiableMap( ElementStyle::getName, elementStyle -> (ImageStyle) elementStyle ) );
+            .collect( Collectors.toUnmodifiableMap( ElementStyle::getName, elementStyle -> (ImageStyle) elementStyle,
+                                                    ( existingKey, newKey ) -> existingKey ) );
     }
 
     private StyleDescriptors getStyleDescriptors( final PortalRequest portalRequest )
