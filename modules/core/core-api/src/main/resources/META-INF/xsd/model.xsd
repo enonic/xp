@@ -433,6 +433,10 @@
 
   <xs:complexType name="apiDescriptor">
     <xs:sequence>
+      <xs:element minOccurs="0" name="display-name" type="i18n"/>
+      <xs:element minOccurs="0" name="description" type="i18n"/>
+      <xs:element minOccurs="0" name="documentation-url" type="xs:string"/>
+      <xs:element minOccurs="0" name="use-in-slash-api" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow">
         <xs:complexType>
           <xs:sequence>

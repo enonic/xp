@@ -69,7 +69,19 @@ public class UniversalApiHandlerRegistryImpl
         final String apiKey = Objects.requireNonNull( (String) properties.get( "apiKey" ) );
         final PrincipalKeys allowedPrincipals = resolveDynamicPrincipalKeys( properties.get( "allowedPrincipals" ) );
 
-        return ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals ).build();
+        final ApiDescriptor.Builder builder =
+            ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals );
+
+        if ( properties.containsKey( "description" ) )
+        {
+            builder.description( (String) properties.get( "description" ) );
+        }
+        if ( properties.containsKey( "displayName" ) )
+        {
+            builder.displayName( (String) properties.get( "displayName" ) );
+        }
+
+        return builder.build();
     }
 
     private PrincipalKeys resolveDynamicPrincipalKeys( final Object allowedPrincipals )
