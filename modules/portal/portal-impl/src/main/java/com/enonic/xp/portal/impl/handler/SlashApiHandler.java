@@ -138,12 +138,13 @@ public class SlashApiHandler
         final DynamicUniversalApiHandler dynamicApiHandler = universalApiHandlerRegistry.getApiHandler( descriptorKey );
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( dynamicApiHandler, descriptorKey );
 
-        if ( apiDescriptor != null )
+        if ( apiDescriptor == null )
         {
-            verifyAccessToApi( apiDescriptor );
+            throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
         }
 
-        if ( !verifyRequestMounted( descriptorKey, portalRequest ) )
+        verifyAccessToApi( apiDescriptor );
+        if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
         {
             throw WebException.notFound( String.format( "API [%s] is not mounted", descriptorKey ) );
         }
@@ -176,13 +177,14 @@ public class SlashApiHandler
         } );
     }
 
-    private boolean verifyRequestMounted( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
+    private boolean verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
         final String rawPath = portalRequest.getRawPath();
+        final DescriptorKey descriptorKey = apiDescriptor.getKey();
 
         if ( portalRequest.getEndpointPath() == null )
         {
-            return rawPath.startsWith( "/api/" );
+            return rawPath.startsWith( "/api/" ) && apiDescriptor.isSlashApi();
         }
         else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {

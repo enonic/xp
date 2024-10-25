@@ -110,6 +110,10 @@ public class ApiHandler
             .stream()
             .map( PrincipalKey::toString )
             .collect( Collectors.toList() ) );
+        result.put( "displayName", apiDescriptor.getDisplayName() );
+        result.put( "description", apiDescriptor.getDescription() );
+        result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );
+        result.put( "slashApi", apiDescriptor.isSlashApi() );
 
         return result;
     }

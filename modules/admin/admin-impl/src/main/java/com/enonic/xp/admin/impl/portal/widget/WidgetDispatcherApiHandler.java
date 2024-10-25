@@ -9,14 +9,14 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
-    "allowedPrincipals=role:system.admin.login"})
+    "allowedPrincipals=role:system.admin.login", "displayName=Widget API"})
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {

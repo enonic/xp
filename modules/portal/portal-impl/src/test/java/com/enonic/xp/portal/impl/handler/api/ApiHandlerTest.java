@@ -16,8 +16,6 @@ import com.enonic.xp.app.Applications;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.api.ApiConfig;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -49,7 +47,7 @@ public class ApiHandlerTest
     {
         this.applicationService = mock( ApplicationService.class );
         this.apiDescriptorService = mock( ApiDescriptorService.class );
-        this.universalApiHandlerRegistry = mock( DynamicUniversalApiHandlerRegistry.class );
+        this.universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
         this.handler = new ApiHandler( this.applicationService, this.apiDescriptorService, this.universalApiHandlerRegistry );
         this.apiConfig = mock( ApiConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
@@ -120,12 +118,10 @@ public class ApiHandlerTest
 
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
 
-        final ApiDescriptors dynamicApiDescriptors = ApiDescriptors.from( ApiDescriptor.create()
-                                                                              .key( DescriptorKey.from( "admin:widget" ) )
-                                                                              .allowedPrincipals( PrincipalKeys.from( RoleKeys.ADMIN ) )
-                                                                              .build() );
-
-        when( this.universalApiHandlerRegistry.getAllApiDescriptors() ).thenReturn( dynamicApiDescriptors.getList() );
+        universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
+                                                   Map.of( "applicationKey", "admin", "apiKey", "widget", "displayName", "Display Name",
+                                                           "description", "Brief description", "documentationUrl",
+                                                           "https://docs.enonic.com", "slashApi", "true" ) );
 
         WebResponse webResponse =
             this.handler.doHandle( mock( WebRequest.class ), mock( WebResponse.class ), mock( WebHandlerChain.class ) );
@@ -145,7 +141,10 @@ public class ApiHandlerTest
         assertEquals( "admin:widget", dynamicApiResource.get( "descriptor" ) );
         assertEquals( "admin", dynamicApiResource.get( "application" ) );
         assertEquals( "widget", dynamicApiResource.get( "name" ) );
-        assertEquals( List.of( "role:system.admin" ), dynamicApiResource.get( "allowedPrincipals" ) );
+        assertEquals( "Display Name", dynamicApiResource.get( "displayName" ) );
+        assertEquals( "Brief description", dynamicApiResource.get( "description" ) );
+        assertEquals( "https://docs.enonic.com", dynamicApiResource.get( "documentationUrl" ) );
+        assertTrue( (boolean) dynamicApiResource.get( "slashApi" ) );
 
         final Map<String, Object> apiResource = resources.get( 1 );
 
