@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api xmlns="urn:enonic:xp:model:1.0">
+  <display-name>My API</display-name>
+  <description>This is my API</description>
+  <documentation-url>https://apis.enonic.com</documentation-url>
+  <slash-api>false</slash-api>
   <allow>
     <principal>role:system.admin</principal>
   </allow>

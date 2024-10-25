@@ -26,6 +26,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -51,7 +52,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
-import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -215,6 +215,36 @@ public class SlashApiHandlerTest
 
         WebResponse webResponse = this.handler.handle( request );
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
+    }
+
+    @Test
+    void testHandleApiWhenApiDisabled()
+    {
+        request.setEndpointPath( null );
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( null )
+            .slashApi( false )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
+    }
+
+    @Test
+    void testHandleApiWhenApiDescriptorNotFound()
+    {
+        request.setEndpointPath( null );
+        request.setRawPath( "/api/app:unknown" );
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
+
+        WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
     }
 
     @Test

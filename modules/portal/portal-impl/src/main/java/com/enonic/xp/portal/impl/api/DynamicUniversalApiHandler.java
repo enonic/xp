@@ -6,25 +6,22 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 public final class DynamicUniversalApiHandler
+    implements UniversalApiHandler
 {
-    private final UniversalApiHandler apiHandler;
+    final UniversalApiHandler apiHandler;
 
     private final ApiDescriptor apiDescriptor;
 
-    public DynamicUniversalApiHandler( final UniversalApiHandler apiHandler, final ApiDescriptor apiDescriptor )
+    DynamicUniversalApiHandler( final UniversalApiHandler apiHandler, final ApiDescriptor apiDescriptor )
     {
         this.apiHandler = apiHandler;
         this.apiDescriptor = apiDescriptor;
     }
 
+    @Override
     public WebResponse handle( WebRequest request )
     {
         return apiHandler.handle( request );
-    }
-
-    public UniversalApiHandler getApiHandler()
-    {
-        return apiHandler;
     }
 
     public ApiDescriptor getApiDescriptor()

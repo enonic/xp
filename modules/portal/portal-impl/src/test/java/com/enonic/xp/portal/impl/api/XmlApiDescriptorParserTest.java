@@ -53,6 +53,11 @@ public class XmlApiDescriptorParserTest
         final ApiDescriptor result = this.builder.build();
         assertEquals( "myapplication:myapi", result.getKey().toString() );
 
+        assertEquals( "My API", result.getDisplayName() );
+        assertEquals( "This is my API", result.getDescription() );
+        assertEquals( "https://apis.enonic.com", result.getDocumentationUrl() );
+        assertFalse( result.isSlashApi() );
+
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );
         assertEquals( 1, allowedPrincipals.getSize() );

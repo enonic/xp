@@ -21,7 +21,8 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=status"})
+@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=status",
+    "displayName=Status API"})
 public class StatusApiHandler
     implements UniversalApiHandler
 {
