@@ -65,7 +65,7 @@ class ResourceImpl
     private res: JavaResource;
 
     constructor(key: string | ResourceKey) {
-        this.res = bean.getResource(key) ;
+        this.res = bean.getResource(key);
     }
 
     /**
