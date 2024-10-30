@@ -91,28 +91,7 @@ class PortalRequestAdapter
     {
         final String requestURI = from.getRequestURI();
 
-        if ( requestURI.equals( ADMIN_TOOL_BASE ) )
-        {
-            result.setBaseUri( ADMIN_TOOL_BASE );
-            result.setMode( RenderMode.ADMIN );
-
-        }
-        else if ( requestURI.startsWith( ADMIN_TOOL_PREFIX ) )
-        {
-            String subPath = subPath( requestURI, ADMIN_TOOL_PREFIX );
-            final Matcher matcher = Pattern.compile( "^([^/]+)/([^/]+)" ).matcher( subPath );
-            if ( matcher.find() )
-            {
-                result.setBaseUri( ADMIN_TOOL_PREFIX + matcher.group( 0 ) );
-                result.setMode( RenderMode.ADMIN );
-            }
-            else
-            {
-                result.setBaseUri( ADMIN_TOOL_BASE );
-                result.setMode( RenderMode.ADMIN );
-            }
-        }
-        else if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
+        if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
         {
             String subPath = subPath( requestURI, ADMIN_SITE_PREFIX );
 
@@ -139,6 +118,26 @@ class PortalRequestAdapter
                 result.setRepositoryId( repositoryId );
                 result.setBranch( branch );
             }
+        }
+        else if ( requestURI.startsWith( ADMIN_TOOL_PREFIX ) )
+        {
+            String subPath = subPath( requestURI, ADMIN_TOOL_PREFIX );
+            final Matcher matcher = Pattern.compile( "^([^/]+)/([^/]+)" ).matcher( subPath );
+            if ( matcher.find() )
+            {
+                result.setBaseUri( ADMIN_TOOL_PREFIX + matcher.group( 0 ) );
+                result.setMode( RenderMode.ADMIN );
+            }
+            else
+            {
+                result.setBaseUri( ADMIN_TOOL_BASE );
+                result.setMode( RenderMode.ADMIN );
+            }
+        }
+        else if ( requestURI.equals( ADMIN_TOOL_BASE ) || requestURI.startsWith( "/admin/" ) )
+        {
+            result.setBaseUri( ADMIN_TOOL_BASE );
+            result.setMode( RenderMode.ADMIN );
         }
         else if ( requestURI.startsWith( SITE_PREFIX ) )
         {

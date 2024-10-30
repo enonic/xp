@@ -131,6 +131,18 @@ public class PortalRequestAdapterTest
     }
 
     @Test
+    public void adaptAnyAdminUriWithDescriptorTest()
+    {
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/path" );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/tool" );
+    }
+
+    @Test
     public void adaptWebAppUriTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
