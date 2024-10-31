@@ -24,13 +24,18 @@
             // So they can be imported from without installing old ones into
             // node_modules:
             "@enonic-types/global": ["./global.d.ts"],
-            "@enonic-types/core": ["./core/index.d.ts"]
+            "@enonic-types/core": ["./core/index.d.ts"],
+            "/lib/xp/portal": ["./lib-portal/src/main/resources/lib/xp/portal.ts"],
+            "/lib/xp/i18n": ["./lib-i18n/src/main/resources/lib/xp/i18n.ts"]
         },
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "strict": true
     },
+    "include": [
+        "./**/*.ts"
+    ],
     "exclude": [
         "./**/build",
         "./**/out",

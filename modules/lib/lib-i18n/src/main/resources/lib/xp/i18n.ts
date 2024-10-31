@@ -50,7 +50,7 @@ interface LocaleScriptBean {
  * @returns {string} The localized string.
  */
 export function localize(params: LocalizeParams): string {
-    const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    const bean: LocaleScriptBean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
 
     const {
         key,
@@ -82,7 +82,7 @@ export function localize(params: LocalizeParams): string {
  * i18nLib.getPhrases('en', ['i18n/phrases'])
  */
 export function getPhrases(locale: string | string[], bundles: string[]): Record<string, string> {
-    const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    const bean: LocaleScriptBean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
     const locales: string[] = ([] as string[]).concat(locale);
     return __.toNativeObject(bean.getPhrases(locales, bundles));
 }
@@ -95,6 +95,6 @@ export function getPhrases(locale: string | string[], bundles: string[]): Record
  * @returns {string[]} A list of supported locale codes for the specified bundles.
  */
 export function getSupportedLocales(bundles: string[]): string[] {
-    const bean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
+    const bean: LocaleScriptBean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
     return __.toNativeObject(bean.getSupportedLocales(bundles));
 }
