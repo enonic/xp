@@ -34,7 +34,7 @@ interface WebSocketManagerBean {
  * @param {string} id Socket id.
  */
 export function addToGroup(group: string, id: string): void {
-    const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     bean.addToGroup(group, id);
 }
 
@@ -47,7 +47,7 @@ export function addToGroup(group: string, id: string): void {
  * @param {string} id Socket id.
  */
 export function removeFromGroup(group: string, id: string): void {
-    const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     bean.removeFromGroup(group, id);
 }
 
@@ -60,7 +60,7 @@ export function removeFromGroup(group: string, id: string): void {
  * @param {string} message Message as text.
  */
 export function send(id: string, message: string): void {
-    const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     bean.send(id, message);
 }
 
@@ -73,7 +73,7 @@ export function send(id: string, message: string): void {
  * @param {string} message Message as text.
  */
 export function sendToGroup(group: string, message: string): void {
-    const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     bean.sendToGroup(group, message);
 }
 
@@ -85,6 +85,6 @@ export function sendToGroup(group: string, message: string): void {
  * @param {string} group Group name.
  */
 export function getGroupSize(group: string): number {
-    const bean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     return bean.getGroupSize(group);
 }

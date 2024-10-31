@@ -100,7 +100,7 @@ export interface SendMessageParams {
  * @returns {boolean} True if the message was sent successfully, false otherwise.
  */
 export function send(params: SendMessageParams): boolean {
-    const bean = __.newBean<SendMailHandler>('com.enonic.xp.lib.mail.SendMailHandler');
+    const bean: SendMailHandler = __.newBean<SendMailHandler>('com.enonic.xp.lib.mail.SendMailHandler');
 
     checkRequired(params, 'from');
     checkRequired(params, 'to');
@@ -143,6 +143,6 @@ interface GetDefaultFromEmailHandler {
  * @returns {string} The default from e-mail address, or null if not set.
  */
 export function getDefaultFromEmail(): string | null {
-    const bean = __.newBean<GetDefaultFromEmailHandler>('com.enonic.xp.lib.mail.GetDefaultFromEmailHandler');
+    const bean: GetDefaultFromEmailHandler = __.newBean<GetDefaultFromEmailHandler>('com.enonic.xp.lib.mail.GetDefaultFromEmailHandler');
     return bean.execute();
 }
