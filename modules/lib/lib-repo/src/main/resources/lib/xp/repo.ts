@@ -86,7 +86,7 @@ export function refresh(params: RefreshParams): void {
         branch,
     } = params ?? {};
 
-    const bean = __.newBean<RefreshHandler>('com.enonic.xp.lib.repo.RefreshHandler');
+    const bean: RefreshHandler = __.newBean<RefreshHandler>('com.enonic.xp.lib.repo.RefreshHandler');
 
     bean.setMode(__.nullOrValue(mode));
     bean.setRepoId(__.nullOrValue(repo));
@@ -150,7 +150,7 @@ interface CreateRepositoryHandler {
 export function create(params: CreateRepositoryParams): Repository {
     checkRequired(params, 'id');
 
-    const bean = __.newBean<CreateRepositoryHandler>('com.enonic.xp.lib.repo.CreateRepositoryHandler');
+    const bean: CreateRepositoryHandler = __.newBean<CreateRepositoryHandler>('com.enonic.xp.lib.repo.CreateRepositoryHandler');
 
     bean.setRepositoryId(params.id);
     bean.setRootChildOrder(__.nullOrValue(params.rootChildOrder));
@@ -181,7 +181,7 @@ interface DeleteRepositoryHandler {
  */
 function _delete(id: string): boolean {
     checkRequiredValue(id, 'id');
-    const bean = __.newBean<DeleteRepositoryHandler>('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
+    const bean: DeleteRepositoryHandler = __.newBean<DeleteRepositoryHandler>('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.setRepositoryId(id);
     return bean.execute();
 }
@@ -202,7 +202,7 @@ interface ListRepositoriesHandler {
  *
  */
 export function list(): Repository[] {
-    const bean = __.newBean<ListRepositoriesHandler>('com.enonic.xp.lib.repo.ListRepositoriesHandler');
+    const bean: ListRepositoriesHandler = __.newBean<ListRepositoriesHandler>('com.enonic.xp.lib.repo.ListRepositoriesHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -224,7 +224,7 @@ interface GetRepositoryHandler {
 export function get(id: string): Repository | null {
     checkRequiredValue(id, 'id');
 
-    const bean = __.newBean<GetRepositoryHandler>('com.enonic.xp.lib.repo.GetRepositoryHandler');
+    const bean: GetRepositoryHandler = __.newBean<GetRepositoryHandler>('com.enonic.xp.lib.repo.GetRepositoryHandler');
     bean.setRepositoryId(id);
     return __.toNativeObject(bean.execute());
 }
@@ -261,7 +261,7 @@ export function createBranch(params: CreateBranchParams): BranchResult {
     checkRequired(params, 'repoId');
     checkRequired(params, 'branchId');
 
-    const bean = __.newBean<CreateBranchHandler>('com.enonic.xp.lib.repo.CreateBranchHandler');
+    const bean: CreateBranchHandler = __.newBean<CreateBranchHandler>('com.enonic.xp.lib.repo.CreateBranchHandler');
 
     bean.setBranchId(params.branchId);
     bean.setRepoId(params.repoId);
@@ -297,7 +297,7 @@ export function deleteBranch(params: DeleteBranchParams): BranchResult {
     checkRequired(params, 'repoId');
     checkRequired(params, 'branchId');
 
-    const bean = __.newBean<DeleteBranchHandler>('com.enonic.xp.lib.repo.DeleteBranchHandler');
+    const bean: DeleteBranchHandler = __.newBean<DeleteBranchHandler>('com.enonic.xp.lib.repo.DeleteBranchHandler');
     bean.setBranchId(params.branchId);
     bean.setRepoId(params.repoId);
     return __.toNativeObject(bean.execute());
@@ -338,7 +338,7 @@ export function modify(params: ModifyRepositoryParams): Repository {
     checkRequired(params, 'id');
     checkRequired(params, 'editor');
 
-    const bean = __.newBean<ModifyRepositoryHandler>('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
+    const bean: ModifyRepositoryHandler = __.newBean<ModifyRepositoryHandler>('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
 
     bean.setId(params.id);
     bean.setEditor(__.toScriptValue(params.editor));
@@ -375,7 +375,7 @@ export function getBinary(params: GetRepositoryBinaryParams): object {
     checkRequired(params, 'repoId');
     checkRequired(params, 'binaryReference');
 
-    const bean = __.newBean<GetRepositoryBinaryHandler>('com.enonic.xp.lib.repo.GetRepositoryBinaryHandler');
+    const bean: GetRepositoryBinaryHandler = __.newBean<GetRepositoryBinaryHandler>('com.enonic.xp.lib.repo.GetRepositoryBinaryHandler');
 
     bean.setRepositoryId(params.repoId);
     bean.setBinaryReference(params.binaryReference);

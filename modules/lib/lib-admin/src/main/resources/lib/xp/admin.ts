@@ -16,7 +16,7 @@ declare global {
 const i18n = require('/lib/xp/i18n');
 const portal = require('/lib/xp/portal');
 
-const helper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
+const helper: AdminLibHelper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
 
 interface AdminLibHelper {
     getHomeAppName(): string;
