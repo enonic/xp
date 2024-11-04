@@ -23,18 +23,20 @@ public final class ApiDescriptor
 
     private final String documentationUrl;
 
-    private final boolean slashApi;
+    private final boolean mount;
 
     private ApiDescriptor( final Builder builder )
     {
         Preconditions.checkNotNull( builder.key, "key cannot be null" );
+        Preconditions.checkNotNull( builder.allowedPrincipals, "allowedPrincipals cannot be null" );
+        Preconditions.checkArgument( !builder.allowedPrincipals.isEmpty(), "allowedPrincipals cannot be empty" );
 
         this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.documentationUrl = builder.documentationUrl;
-        this.slashApi = Objects.requireNonNullElse( builder.slashApi, true );
+        this.mount = Objects.requireNonNullElse( builder.mount, false );
     }
 
     public DescriptorKey getKey()
@@ -62,15 +64,14 @@ public final class ApiDescriptor
         return documentationUrl;
     }
 
-    public Boolean isSlashApi()
+    public boolean isMount()
     {
-        return slashApi;
+        return mount;
     }
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) ||
-            allowedPrincipals.stream().anyMatch( principalKeys::contains );
+        return principalKeys.contains( RoleKeys.ADMIN ) || allowedPrincipals.stream().anyMatch( principalKeys::contains );
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key, final String extension )
@@ -95,7 +96,7 @@ public final class ApiDescriptor
 
         private String documentationUrl;
 
-        private Boolean slashApi;
+        private Boolean mount;
 
         private Builder()
         {
@@ -131,9 +132,9 @@ public final class ApiDescriptor
             return this;
         }
 
-        public Builder slashApi( final Boolean useInSlashApi )
+        public Builder mount( final Boolean mount )
         {
-            this.slashApi = useInSlashApi;
+            this.mount = mount;
             return this;
         }
 

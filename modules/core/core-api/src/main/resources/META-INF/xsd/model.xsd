@@ -436,7 +436,7 @@
       <xs:element minOccurs="0" name="display-name" type="xs:string"/>
       <xs:element minOccurs="0" name="description" type="xs:string"/>
       <xs:element minOccurs="0" name="documentation-url" type="xs:string"/>
-      <xs:element minOccurs="0" name="slash-api" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="mount" type="xs:boolean"/>
       <xs:element minOccurs="0" name="allow">
         <xs:complexType>
           <xs:sequence>

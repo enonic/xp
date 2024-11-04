@@ -184,7 +184,7 @@ public class SlashApiHandler
 
         if ( portalRequest.getEndpointPath() == null )
         {
-            return rawPath.startsWith( "/api/" ) && apiDescriptor.isSlashApi();
+            return rawPath.startsWith( "/api/" ) && apiDescriptor.isMount();
         }
         else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
         {

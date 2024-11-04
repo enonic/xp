@@ -11,6 +11,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.BuildInfo;
@@ -19,10 +20,9 @@ import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=status",
-    "displayName=Status API"})
+    "displayName=Status API", "allowedPrincipals=role:system.everyone", "mount=true"})
 public class StatusApiHandler
     implements UniversalApiHandler
 {

@@ -24,7 +24,7 @@ public final class XmlApiDescriptorParser
 
     private static final String DOCUMENTATION_URL_TAG_NAME = "documentation-url";
 
-    private static final String SLASH_API_TAG_NAME = "slash-api";
+    private static final String MOUNT_TAG_NAME = "mount";
 
     private final ApiDescriptor.Builder builder;
 
@@ -43,10 +43,10 @@ public final class XmlApiDescriptorParser
         this.builder.description( root.getChildValue( DESCRIPTION_TAG_NAME ) );
         this.builder.documentationUrl( root.getChildValueTrimmed( DOCUMENTATION_URL_TAG_NAME ) );
 
-        final String useInSlashApi = root.getChildValueTrimmed( SLASH_API_TAG_NAME );
-        if ( useInSlashApi != null )
+        final String mount = root.getChildValueTrimmed( MOUNT_TAG_NAME );
+        if ( mount != null )
         {
-            builder.slashApi( Boolean.valueOf( useInSlashApi ) );
+            builder.mount( Boolean.valueOf( mount ) );
         }
 
         DomElement allowedPrincipals = root.getChild( ALLOW_TAG_NAME );

@@ -77,9 +77,9 @@ public class DynamicUniversalApiHandlerRegistry
         {
             builder.documentationUrl( properties.get( "documentationUrl" ).toString() );
         }
-        if ( properties.get( "slashApi" ) != null )
+        if ( properties.get( "mount" ) != null )
         {
-            builder.slashApi( Boolean.valueOf( properties.get( "slashApi" ).toString() ) );
+            builder.mount( Boolean.valueOf( properties.get( "mount" ).toString() ) );
         }
 
         return builder.build();

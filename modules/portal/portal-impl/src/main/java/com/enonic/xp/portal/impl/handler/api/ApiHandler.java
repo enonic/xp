@@ -113,7 +113,7 @@ public class ApiHandler
         result.put( "displayName", apiDescriptor.getDisplayName() );
         result.put( "description", apiDescriptor.getDescription() );
         result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );
-        result.put( "slashApi", apiDescriptor.isSlashApi() );
+        result.put( "mount", apiDescriptor.isMount() );
 
         return result;
     }
