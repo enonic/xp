@@ -208,7 +208,8 @@ public class SlashApiHandlerTest
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( true )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -225,8 +226,8 @@ public class SlashApiHandlerTest
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
-            .slashApi( false )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( false )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -272,7 +273,8 @@ public class SlashApiHandlerTest
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( null )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( true )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -306,7 +308,8 @@ public class SlashApiHandlerTest
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key" );
 
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -343,7 +346,8 @@ public class SlashApiHandlerTest
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key" );
 
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -375,7 +379,8 @@ public class SlashApiHandlerTest
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key" );
 
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -413,7 +418,8 @@ public class SlashApiHandlerTest
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key-1" );
 
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -451,7 +457,8 @@ public class SlashApiHandlerTest
 
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key-1" );
 
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -506,7 +513,8 @@ public class SlashApiHandlerTest
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
 
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -536,7 +544,8 @@ public class SlashApiHandlerTest
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
 
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -556,7 +565,8 @@ public class SlashApiHandlerTest
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( null );
 
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -571,7 +581,8 @@ public class SlashApiHandlerTest
     void testWebappMountInvalidUrl()
     {
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
         request.setEndpointPath( "/_/com.enonic.app.myapp:myapi" );
@@ -587,7 +598,8 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -614,7 +626,8 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -637,7 +650,8 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -657,7 +671,8 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -673,7 +688,8 @@ public class SlashApiHandlerTest
     {
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
         final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
-        final ApiDescriptor apiDescriptor = ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( null ).build();
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
 
         when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
 
@@ -690,7 +706,8 @@ public class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
+                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
 
@@ -720,7 +737,8 @@ public class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi" ) );
+                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
+                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );

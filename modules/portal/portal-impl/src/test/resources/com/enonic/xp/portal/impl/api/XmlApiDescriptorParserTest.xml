@@ -3,7 +3,7 @@
   <display-name>My API</display-name>
   <description>This is my API</description>
   <documentation-url>https://apis.enonic.com</documentation-url>
-  <slash-api>false</slash-api>
+  <mount>false</mount>
   <allow>
     <principal>role:system.admin</principal>
   </allow>

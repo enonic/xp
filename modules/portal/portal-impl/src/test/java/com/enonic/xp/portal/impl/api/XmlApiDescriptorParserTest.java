@@ -13,6 +13,7 @@ import com.enonic.xp.xml.parser.XmlModelParserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlApiDescriptorParserTest
@@ -48,6 +49,16 @@ public class XmlApiDescriptorParserTest
         assertResult();
     }
 
+    @Test
+    public void testParseInvalid()
+        throws Exception
+    {
+        parse( this.parser, "-invalid.xml" );
+
+        IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> this.builder.build() );
+        assertEquals( "allowedPrincipals cannot be empty", exception.getMessage() );
+    }
+
     private void assertResult()
     {
         final ApiDescriptor result = this.builder.build();
@@ -56,7 +67,7 @@ public class XmlApiDescriptorParserTest
         assertEquals( "My API", result.getDisplayName() );
         assertEquals( "This is my API", result.getDescription() );
         assertEquals( "https://apis.enonic.com", result.getDocumentationUrl() );
-        assertFalse( result.isSlashApi() );
+        assertFalse( result.isMount() );
 
         final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
         assertNotNull( allowedPrincipals );
