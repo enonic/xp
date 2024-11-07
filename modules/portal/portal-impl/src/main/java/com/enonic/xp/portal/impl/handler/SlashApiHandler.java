@@ -30,6 +30,7 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -150,7 +151,7 @@ public class SlashApiHandler
         }
 
         final Supplier<WebResponse> handler = dynamicApiHandler != null
-            ? () -> dynamicApiHandler.handle( portalRequest )
+            ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
             : () -> executeController( portalRequest, descriptorKey );
 
         return execute( portalRequest, descriptorKey, handler );
@@ -349,38 +350,43 @@ public class SlashApiHandler
         return portalRequest;
     }
 
+    private WebResponse executeDynamicApiHandler( final PortalRequest req, final DynamicUniversalApiHandler dynamicApiHandler )
+    {
+        final WebResponse res = dynamicApiHandler.handle( req );
+        final WebSocketConfig webSocketConfig = res.getWebSocket();
+
+        applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
+                                 () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler ) );
+
+        return res;
+    }
+
     private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )
     {
         final ControllerScript script = getScript( descriptorKey );
         final PortalResponse res = script.execute( req );
-
         final WebSocketConfig webSocketConfig = res.getWebSocket();
-        final WebSocketContext webSocketContext = req.getWebSocketContext();
+
+        applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
+                                 () -> new WebSocketEndpointImpl( webSocketConfig, () -> script ) );
+
+        return res;
+    }
+
+    private void applyWebSocketIfPresent( final WebSocketContext webSocketContext, final WebSocketConfig webSocketConfig,
+                                          final Supplier<WebSocketEndpoint> webSocketEndpointSupplier )
+    {
         if ( webSocketContext != null && webSocketConfig != null )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, descriptorKey.getApplicationKey() );
             try
             {
-                webSocketContext.apply( webSocketEndpoint );
+                webSocketContext.apply( webSocketEndpointSupplier.get() );
             }
             catch ( IOException e )
             {
                 throw new UncheckedIOException( e );
             }
         }
-
-        return res;
-    }
-
-    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,
-                                                    final ApplicationKey applicationKey )
-    {
-        final Trace trace = Tracer.current();
-        if ( trace != null && !trace.containsKey( "app" ) )
-        {
-            trace.put( "app", applicationKey.toString() );
-        }
-        return new WebSocketEndpointImpl( config, () -> script );
     }
 
     private ControllerScript getScript( final DescriptorKey descriptorKey )

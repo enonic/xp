@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +56,7 @@ import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
+import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
 
@@ -756,6 +758,33 @@ public class SlashApiHandlerTest
         universalApiHandlerRegistry.removeApiHandler( myUniversalApiHandler );
     }
 
+    @Test
+    void testDynamicApiHandlerWithWebSocket()
+        throws Exception
+    {
+        WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
+        universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
+                                                   Map.of( "applicationKey", "myapp", "apiKey", "myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString(), "mount", "true" ) );
+
+        final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
+
+        request.setApplicationKey( apiApplicationKey );
+        request.setEndpointPath( null );
+        request.setRawPath( "/api/myapp:myapi" );
+        request.setWebSocketContext( endpoint -> {
+            endpoint.onEvent( WebSocketEvent.create().build() );
+            return true;
+        } );
+
+        assertEquals( 0, wsUniversalApiHandler.getCounter() );
+
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        assertEquals( 1, wsUniversalApiHandler.getCounter() );
+    }
+
     private static final class MyUniversalApiHandler
         implements UniversalApiHandler
     {
@@ -763,6 +792,33 @@ public class SlashApiHandlerTest
         public WebResponse handle( final WebRequest request )
         {
             return WebResponse.create().body( "Body" ).build();
+        }
+    }
+
+    private static final class WSUniversalApiHandler
+        implements UniversalApiHandler
+    {
+        private static long counter = 0;
+
+        @Override
+        public WebResponse handle( final WebRequest request )
+        {
+            final WebSocketConfig webSocket = new WebSocketConfig();
+            webSocket.setSubProtocols( List.of( "sub-protocol" ) );
+            webSocket.setData( Map.of( "k", "v" ) );
+
+            return WebResponse.create().webSocket( webSocket ).build();
+        }
+
+        @Override
+        public void onSocketEvent( final WebSocketEvent event )
+        {
+            counter++;
+        }
+
+        public long getCounter()
+        {
+            return counter;
         }
     }
 }
