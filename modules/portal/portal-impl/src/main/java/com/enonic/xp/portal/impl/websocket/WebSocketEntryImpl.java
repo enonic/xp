@@ -139,14 +139,7 @@ final class WebSocketEntryImpl
 
     private void doSendMessage( final String message )
     {
-        try
-        {
-            this.session.getBasicRemote().sendText( message );
-        }
-        catch ( final Exception e )
-        {
-            // Do nothing
-        }
+        this.session.getAsyncRemote().sendText( message );
     }
 
     @Override

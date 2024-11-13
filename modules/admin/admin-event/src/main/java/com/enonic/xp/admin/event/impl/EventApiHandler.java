@@ -6,29 +6,35 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.event.impl.json.EventJsonSerializer;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
+import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketEvent;
+import com.enonic.xp.web.websocket.WebSocketEventType;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=event",
-    "displayName=Event API", "allowedPrincipals=role:system.admin.login", "mount=true"})
+@Component(immediate = true, property = {"applicationKey=admin", "apiKey=event", "displayName=Event API",
+    "allowedPrincipals=role:system.admin.login", "mount=true"})
 public class EventApiHandler
-    implements UniversalApiHandler
+    implements UniversalApiHandler, EventListener
 {
+    private static final EventJsonSerializer SERIALIZER = new EventJsonSerializer();
+
     private final WebSocketService webSocketService;
 
-    private final EndpointFactory endpointFactory;
+    private final WebSocketManager webSocketManager;
 
     @Activate
-    public EventApiHandler( @Reference final WebSocketService webSocketService,
-                            @Reference/*(service = EventEndpointFactory.class)*/ final EndpointFactory endpointFactory )
+    public EventApiHandler( @Reference final WebSocketService webSocketService, @Reference WebSocketManager webSocketManager )
     {
         this.webSocketService = webSocketService;
-        this.endpointFactory = endpointFactory;
+        this.webSocketManager = webSocketManager;
     }
 
     @Override
@@ -51,8 +57,21 @@ public class EventApiHandler
     }
 
     @Override
-    public EndpointFactory getEndpointFactory()
+    public void onSocketEvent( final WebSocketEvent event )
     {
-        return endpointFactory;
+        if ( event.getType() == WebSocketEventType.OPEN )
+        {
+            webSocketManager.addToGroup( "com.enonic.xp.admin.event.api", event.getSession().getId() );
+        }
+        if ( event.getType() == WebSocketEventType.CLOSE || event.getType() == WebSocketEventType.ERROR )
+        {
+            webSocketManager.removeFromGroup( "com.enonic.xp.admin.event.api", event.getSession().getId() );
+        }
+    }
+
+    @Override
+    public void onEvent( final Event event )
+    {
+        this.webSocketManager.sendToGroup( "com.enonic.xp.admin.event.api", SERIALIZER.toJson( event ) );
     }
 }
