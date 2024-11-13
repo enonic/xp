@@ -34,6 +34,8 @@ interface AdminLibHelper {
 
     getBaseUri(): string;
 
+    getBaseUriNew(): string;
+
     getHomeToolUri(): string;
 
     getInstallation(): string;
@@ -56,6 +58,15 @@ interface AdminLibHelper {
  */
 export function getBaseUri(): string {
     return helper.getBaseUri();
+}
+
+/**
+ * Returns the base uri.
+ *
+ * @returns {string} Admin base uri.
+ */
+export function getBaseUriNew(): string {
+    return helper.getBaseUriNew();
 }
 
 /**

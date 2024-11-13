@@ -4,6 +4,7 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
 public final class DynamicUniversalApiHandler
@@ -29,6 +30,12 @@ public final class DynamicUniversalApiHandler
     public void onSocketEvent( final WebSocketEvent event )
     {
         apiHandler.onSocketEvent( event );
+    }
+
+    @Override
+    public EndpointFactory getEndpointFactory()
+    {
+        return apiHandler.getEndpointFactory();
     }
 
     public ApiDescriptor getApiDescriptor()

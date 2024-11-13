@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,41 @@ public final class AdminLibHelper
         return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_URI_PREFIX );
     }
 
+    private String subPath( final String requestURI, final String prefix )
+    {
+        final int endpoint = requestURI.indexOf( "/_/" );
+        final int endIndex = endpoint == -1 ? requestURI.length() : endpoint + 1;
+        return requestURI.substring( prefix.length(), endIndex );
+    }
+
+    public String getBaseUriNew()
+    {
+        final String requestURI = ServletRequestHolder.getRequest().getRequestURI();
+
+        String path = null;
+        if ( requestURI.equals( "/admin" ) )
+        {
+            path = "/admin/com.enonic.xp.app.main/home";
+        }
+        else
+        {
+            final Pattern TOOL_CXT_PATTERN = Pattern.compile( "^([^/]+)/([^/]+)" );
+            final String subPath = subPath( requestURI, "/admin/" );
+            final Matcher matcher = TOOL_CXT_PATTERN.matcher( subPath );
+            if ( matcher.find() )
+            {
+                path = "/admin/" + matcher.group( 0 );
+            }
+        }
+
+        if ( path == null )
+        {
+            throw new IllegalArgumentException( String.format( "Invalid tool context: %s", requestURI ) );
+        }
+
+        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), path );
+    }
+
     public String getAssetsUri()
     {
         return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_ASSETS_URI_PREFIX + this.version );
@@ -54,12 +91,14 @@ public final class AdminLibHelper
         return this.adminToolDescriptorService.get().generateAdminToolUri( application, adminTool );
     }
 
-    public String getHomeAppName() {
+    public String getHomeAppName()
+    {
         return ADMIN_APP_NAME;
     }
 
-    public String getLauncherToolUrl() {
-        return generateAdminToolUri(ADMIN_APP_NAME, "launcher");
+    public String getLauncherToolUrl()
+    {
+        return generateAdminToolUri( ADMIN_APP_NAME, "launcher" );
     }
 
     public String getLocale()
