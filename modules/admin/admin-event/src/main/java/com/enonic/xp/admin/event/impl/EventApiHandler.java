@@ -33,7 +33,7 @@ public class EventApiHandler
     private final WebSocketManager webSocketManager;
 
     @Activate
-    public EventApiHandler( @Reference final WebSocketService webSocketService, @Reference WebSocketManager webSocketManager )
+    public EventApiHandler( @Reference final WebSocketService webSocketService, @Reference final WebSocketManager webSocketManager )
     {
         this.webSocketService = webSocketService;
         this.webSocketManager = webSocketManager;
