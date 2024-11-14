@@ -24,6 +24,8 @@ import com.enonic.xp.web.websocket.WebSocketService;
 public class EventApiHandler
     implements UniversalApiHandler, EventListener
 {
+    private static final String GROUP_NAME = "com.enonic.xp.admin.event.api";
+
     private static final EventJsonSerializer SERIALIZER = new EventJsonSerializer();
 
     private final WebSocketService webSocketService;
@@ -61,17 +63,13 @@ public class EventApiHandler
     {
         if ( event.getType() == WebSocketEventType.OPEN )
         {
-            webSocketManager.addToGroup( "com.enonic.xp.admin.event.api", event.getSession().getId() );
-        }
-        if ( event.getType() == WebSocketEventType.CLOSE || event.getType() == WebSocketEventType.ERROR )
-        {
-            webSocketManager.removeFromGroup( "com.enonic.xp.admin.event.api", event.getSession().getId() );
+            webSocketManager.addToGroup( GROUP_NAME, event.getSession().getId() );
         }
     }
 
     @Override
     public void onEvent( final Event event )
     {
-        this.webSocketManager.sendToGroup( "com.enonic.xp.admin.event.api", SERIALIZER.toJson( event ) );
+        this.webSocketManager.sendToGroup( GROUP_NAME, SERIALIZER.toJson( event ) );
     }
 }
