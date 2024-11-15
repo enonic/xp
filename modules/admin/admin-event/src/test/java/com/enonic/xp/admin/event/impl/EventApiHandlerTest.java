@@ -13,7 +13,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
-import com.enonic.xp.web.websocket.WebSocketService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,17 +28,14 @@ public class EventApiHandlerTest
 {
     private EventApiHandler instance;
 
-    private WebSocketService webSocketService;
-
     private WebSocketManager webSocketManager;
 
     @BeforeEach
     void setup()
     {
-        this.webSocketService = mock( WebSocketService.class );
         this.webSocketManager = mock( WebSocketManager.class );
 
-        this.instance = new EventApiHandler( this.webSocketService, this.webSocketManager );
+        this.instance = new EventApiHandler( this.webSocketManager );
     }
 
     @Test
@@ -47,8 +43,7 @@ public class EventApiHandlerTest
     {
         WebRequest request = mock( WebRequest.class );
         when( request.getRawRequest() ).thenReturn( mock( HttpServletRequest.class ) );
-
-        when( this.webSocketService.isUpgradeRequest( request.getRawRequest(), null ) ).thenReturn( true );
+        when( request.isWebSocket() ).thenReturn( true );
 
         WebResponse response = instance.handle( request );
 
@@ -59,16 +54,15 @@ public class EventApiHandlerTest
     }
 
     @Test
-    void testHandleForbidden()
+    void testHandleBadRequest()
     {
         WebRequest request = mock( WebRequest.class );
         when( request.getRawRequest() ).thenReturn( mock( HttpServletRequest.class ) );
-
-        when( this.webSocketService.isUpgradeRequest( request.getRawRequest(), null ) ).thenReturn( false );
+        when( request.isWebSocket() ).thenReturn( false );
 
         WebResponse response = instance.handle( request );
 
-        assertEquals( HttpStatus.FORBIDDEN, response.getStatus() );
+        assertEquals( HttpStatus.BAD_REQUEST, response.getStatus() );
     }
 
     @Test
@@ -83,7 +77,7 @@ public class EventApiHandlerTest
 
         instance.onSocketEvent( event );
 
-        verify( webSocketManager, times( 1 ) ).addToGroup( "com.enonic.xp.admin.event.api", event.getSession().getId() );
+        verify( webSocketManager, times( 1 ) ).addToGroup( "com.enonic.xp.admin.event", event.getSession().getId() );
         verifyNoMoreInteractions( webSocketManager );
     }
 
@@ -108,7 +102,7 @@ public class EventApiHandlerTest
         final Event event = mock( Event.class );
         instance.onEvent( event );
 
-        verify( webSocketManager, times( 1 ) ).sendToGroup( eq( "com.enonic.xp.admin.event.api" ), anyString() );
+        verify( webSocketManager, times( 1 ) ).sendToGroup( eq( "com.enonic.xp.admin.event" ), anyString() );
         verifyNoMoreInteractions( webSocketManager );
     }
 }

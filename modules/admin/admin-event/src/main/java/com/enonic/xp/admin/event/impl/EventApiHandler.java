@@ -17,25 +17,20 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
-import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, property = {"applicationKey=admin", "apiKey=event", "displayName=Event API",
-    "allowedPrincipals=role:system.admin.login", "mount=true"})
+@Component(property = {"applicationKey=admin", "apiKey=event", "displayName=Event API", "allowedPrincipals=role:system.admin.login"})
 public class EventApiHandler
     implements UniversalApiHandler, EventListener
 {
-    private static final String GROUP_NAME = "com.enonic.xp.admin.event.api";
+    private static final String GROUP_NAME = "com.enonic.xp.admin.event";
 
     private static final EventJsonSerializer SERIALIZER = new EventJsonSerializer();
-
-    private final WebSocketService webSocketService;
 
     private final WebSocketManager webSocketManager;
 
     @Activate
-    public EventApiHandler( @Reference final WebSocketService webSocketService, @Reference final WebSocketManager webSocketManager )
+    public EventApiHandler( @Reference final WebSocketManager webSocketManager )
     {
-        this.webSocketService = webSocketService;
         this.webSocketManager = webSocketManager;
     }
 
@@ -44,18 +39,22 @@ public class EventApiHandler
     {
         final WebResponse.Builder<?> responseBuilder = WebResponse.create();
 
-        if ( !webSocketService.isUpgradeRequest( request.getRawRequest(), null ) )
+        if ( !request.isWebSocket() )
         {
-            responseBuilder.status( HttpStatus.FORBIDDEN );
+            responseBuilder.status( HttpStatus.BAD_REQUEST );
             return responseBuilder.build();
         }
 
-        final WebSocketConfig webSocketConfig = new WebSocketConfig();
-        webSocketConfig.setSubProtocols( List.of( "text" ) );
-
-        responseBuilder.webSocket( webSocketConfig );
+        responseBuilder.webSocket( createWebSocketConfig() );
 
         return responseBuilder.build();
+    }
+
+    private WebSocketConfig createWebSocketConfig()
+    {
+        final WebSocketConfig webSocketConfig = new WebSocketConfig();
+        webSocketConfig.setSubProtocols( List.of( "text" ) );
+        return webSocketConfig;
     }
 
     @Override
