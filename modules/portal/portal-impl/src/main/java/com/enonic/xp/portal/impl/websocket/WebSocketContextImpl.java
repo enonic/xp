@@ -27,7 +27,6 @@ final class WebSocketContextImpl
         final EndpointFactoryImpl factory = new EndpointFactoryImpl();
         factory.registry = this.registry;
         factory.endpoint = endpoint;
-
         return this.webSocketService.acceptWebSocket( this.request, this.response, factory );
     }
 }

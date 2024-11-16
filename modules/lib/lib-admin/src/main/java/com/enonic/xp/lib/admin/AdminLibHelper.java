@@ -54,12 +54,14 @@ public final class AdminLibHelper
         return this.adminToolDescriptorService.get().generateAdminToolUri( application, adminTool );
     }
 
-    public String getHomeAppName() {
+    public String getHomeAppName()
+    {
         return ADMIN_APP_NAME;
     }
 
-    public String getLauncherToolUrl() {
-        return generateAdminToolUri(ADMIN_APP_NAME, "launcher");
+    public String getLauncherToolUrl()
+    {
+        return generateAdminToolUri( ADMIN_APP_NAME, "launcher" );
     }
 
     public String getLocale()

@@ -1,6 +1,0 @@
-{
-  "type": "ContentCreatedEvent",
-  "event": {
-    "contentId": "myid"
-  }
-}

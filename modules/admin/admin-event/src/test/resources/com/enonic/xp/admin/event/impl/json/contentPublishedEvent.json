@@ -1,6 +1,0 @@
-{
-  "type": "ContentPublishedEvent",
-  "event": {
-    "contentId": "myid"
-  }
-}
