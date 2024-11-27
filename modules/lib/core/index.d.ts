@@ -578,11 +578,12 @@ export interface PageComponent<
         Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
         Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
 > {
-    type: 'page'
-    descriptor: Descriptor
-    config: Config
-    path: '/'
-    regions: Regions;
+    type?: 'page'
+    descriptor?: Descriptor
+    config?: Config
+    path?: '/'
+    regions?: Regions;
+    template?: string;
 }
 type PageDescriptor = keyof XpPageMap;
 type Page = PageDescriptor extends any // this lets us iterate over every member of the union
