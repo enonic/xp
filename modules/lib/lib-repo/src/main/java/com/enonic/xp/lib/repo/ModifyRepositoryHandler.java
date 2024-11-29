@@ -24,18 +24,11 @@ public class ModifyRepositoryHandler
 
     private ScriptValue editor;
 
-    private String scope;
-
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
     public void setId( final String id )
     {
         this.id = id;
-    }
-
-    public void setScope( final String scope )
-    {
-        this.scope = scope;
     }
 
     public void setEditor( final ScriptValue editor )
@@ -62,29 +55,13 @@ public class ModifyRepositoryHandler
 
     private void updateRepositoryData( final EditableRepository target, final ScriptValue value )
     {
-        if ( value == null )
-        {
-            if ( scope != null )
-            {
-                target.data.removeProperty( scope );
-            }
-        }
-        else
+        if ( value != null )
         {
             final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator().create( value );
-
             target.binaryAttachments = ImmutableList.copyOf( scriptValueTranslatorResult.getBinaryAttachments() );
 
             final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
-
-            if ( scope == null )
-            {
-                target.data = propertyTree;
-            }
-            else
-            {
-                target.data.setSet( scope, propertyTree.getRoot().copy( target.data ) );
-            }
+            target.data = propertyTree.getRoot().getSet( "data" ).toTree();
         }
     }
 
