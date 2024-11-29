@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.RefreshMode;
@@ -9,6 +10,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.SystemConstants;
 
 public class RefreshCommand
 {
@@ -24,7 +26,8 @@ public class RefreshCommand
 
     public void execute()
     {
-        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+        final RepositoryId repositoryId =
+            Objects.requireNonNullElse( ContextAccessor.current().getRepositoryId(), SystemConstants.SYSTEM_REPO_ID );
 
         if ( !indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( repositoryId ) ) )
         {

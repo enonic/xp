@@ -83,47 +83,6 @@ public class ModifyRepositoryHandlerTest
 
     }
 
-    @Test
-    void modifyScoped()
-        throws Exception
-    {
-        runScript( "/lib/xp/examples/repo/modifyScoped.js" );
-
-        ArgumentCaptor<UpdateRepositoryParams> captor = ArgumentCaptor.forClass( UpdateRepositoryParams.class );
-        Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).updateRepository( captor.capture() );
-
-        final UpdateRepositoryParams capturedParams = captor.getValue();
-
-        final EditableRepository edited = new EditableRepository( MOCK_REPO );
-        capturedParams.getEditor().accept( edited );
-
-        assertEquals( "toBeModified", edited.source.getData().getString( "myScopedObject.myScopedString" ), "Test is invalid" );
-        assertEquals( "modified", edited.data.getString( "myScopedObject.myScopedString" ) );
-
-        assertEquals( "toBeKeptValue", edited.data.getString( "toBeKept" ) );
-
-        final BinaryAttachment attachment = edited.binaryAttachments.get( 0 );
-        assertEquals( BinaryReference.from( "myFile" ), attachment.getReference() );
-        assertTrue( attachment.getByteSource().contentEquals( ByteSource.wrap( "Hello World".getBytes() ) ) );
-    }
-
-    @Test
-    void modifyRemoveProperty()
-    {
-        runScript( "/lib/xp/examples/repo/modifyRemoveProperty.js" );
-
-        ArgumentCaptor<UpdateRepositoryParams> captor = ArgumentCaptor.forClass( UpdateRepositoryParams.class );
-        Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).updateRepository( captor.capture() );
-
-        final UpdateRepositoryParams capturedParams = captor.getValue();
-
-        final EditableRepository edited = new EditableRepository( MOCK_REPO );
-        capturedParams.getEditor().accept( edited );
-
-        assertTrue( edited.source.getData().hasProperty( "myScopedObject" ), "Test is invalid" );
-        assertFalse( edited.data.hasProperty( "myScopedObject" ) );
-    }
-
     @SuppressWarnings("unused")
     public ByteSource createByteSource( final String value )
     {

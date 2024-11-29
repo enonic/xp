@@ -4,16 +4,16 @@ const valueLib = require('/lib/xp/value');
 const stream = testInstance.createByteSource('Hello World');
 
 // Editor to call for repo.
-function editor(repoData) {
+function editor(repo) {
 
-    repoData.myString = 'modified';
-    repoData.myArray = ['modified1', 'modified2', 'modified3'];
+    repo.data.myString = 'modified';
+    repo.data.myArray = ['modified1', 'modified2', 'modified3'];
 
-    repoData.myBinaryReference = valueLib.binary('myFile', stream);
+    repo.data.myBinaryReference = valueLib.binary('myFile', stream);
 
-    delete repoData.toBeRemoved;
+    delete repo.data.toBeRemoved;
 
-    return repoData;
+    return repo;
 }
 
 // BEGIN

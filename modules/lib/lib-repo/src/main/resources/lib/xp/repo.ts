@@ -308,6 +308,7 @@ export type EditorFn<T> = (value: T) => T;
 export interface ModifyRepositoryParams {
     id: string;
     editor: EditorFn<Repository>;
+    // Deprecated. Should be removed in 8.0
     scope?: string | null;
 }
 
@@ -315,8 +316,6 @@ interface ModifyRepositoryHandler {
     setId(value: string): void;
 
     setEditor(value: ScriptValue): void;
-
-    setScope(value?: string | null): void;
 
     execute(): Repository;
 }
@@ -328,13 +327,17 @@ interface ModifyRepositoryHandler {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.id Repository ID.
- * @param {string} [params.scope] Scope of the data to retrieve and update.
+ * @param {string} [params.scope] Deprecated: Scope of the data to retrieve and update.
  * @param {function} params.editor Editor callback function.
  *
  * @returns {object} Repository updated as JSON.
  *
  */
 export function modify(params: ModifyRepositoryParams): Repository {
+    if (params.scope) {
+        throw `The parameter 'scope' is not supported`;
+    }
+
     checkRequired(params, 'id');
     checkRequired(params, 'editor');
 
@@ -342,7 +345,6 @@ export function modify(params: ModifyRepositoryParams): Repository {
 
     bean.setId(params.id);
     bean.setEditor(__.toScriptValue(params.editor));
-    bean.setScope(__.nullOrValue(params.scope));
 
     return __.toNativeObject(bean.execute());
 }
