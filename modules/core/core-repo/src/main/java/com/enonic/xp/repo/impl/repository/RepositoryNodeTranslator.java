@@ -21,6 +21,7 @@ import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
@@ -36,6 +37,8 @@ public class RepositoryNodeTranslator
 
     private static final String DATA_KEY = "data";
 
+    private static final String TRANSIENT_KEY = "transient";
+
     public static Node toNode( final Repository repository )
     {
         final PropertyTree repositoryNodeData = new PropertyTree();
@@ -43,6 +46,10 @@ public class RepositoryNodeTranslator
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryNodeData );
         toNodeData( repository.getData(), repositoryNodeData );
+        if ( !repository.getId().toString().startsWith( "system." ) )
+        {
+            repositoryNodeData.setBoolean( TRANSIENT_KEY, repository.isTransient() );
+        }
 
         return Node.create().
             id( NodeId.from( repository.getId() ) ).
@@ -62,7 +69,13 @@ public class RepositoryNodeTranslator
 
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
-        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot().copy( toBeEdited.data ) );
+        return toBeEdited -> {
+            if ( !params.getRepositoryId().toString().startsWith( "system." ) )
+            {
+                toBeEdited.data.setBoolean( TRANSIENT_KEY, params.getTransientFlag() );
+            }
+            toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot().copy( toBeEdited.data ) );
+        };
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -139,6 +152,7 @@ public class RepositoryNodeTranslator
             settings( repositorySettings ).
             data( repositoryData ).
             attachments( node.getAttachedBinaries() ).
+            transientFlag( nodeData.getBoolean( TRANSIENT_KEY ) ).
             build();
     }
 

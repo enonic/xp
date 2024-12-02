@@ -13,11 +13,14 @@ public final class UpdateRepositoryEntryParams
 
     private final BinaryAttachments attachments;
 
+    private final Boolean transientFlag;
+
     private UpdateRepositoryEntryParams( Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.repositoryData = builder.repositoryData;
         this.attachments = builder.attachments.build();
+        this.transientFlag = builder.transientFlag;
     }
 
     public RepositoryId getRepositoryId()
@@ -35,6 +38,11 @@ public final class UpdateRepositoryEntryParams
         return attachments;
     }
 
+    public Boolean getTransientFlag()
+    {
+        return transientFlag;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -47,6 +55,8 @@ public final class UpdateRepositoryEntryParams
         private PropertyTree repositoryData;
 
         private final BinaryAttachments.Builder attachments = BinaryAttachments.create();
+
+        private Boolean transientFlag;
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -66,6 +76,12 @@ public final class UpdateRepositoryEntryParams
             {
                 attachments.forEach( this.attachments::add );
             }
+            return this;
+        }
+
+        public Builder transientFlag( final Boolean value )
+        {
+            this.transientFlag = value;
             return this;
         }
 

@@ -81,6 +81,9 @@ public class ModifyRepositoryHandlerTest
         assertEquals( BinaryReference.from( "myFile" ), attachment.getReference() );
         assertTrue( attachment.getByteSource().contentEquals( ByteSource.wrap( "Hello World".getBytes() ) ) );
 
+        assertFalse( edited.source.isTransient() );
+        assertTrue( edited.transientFlag );
+
     }
 
     @SuppressWarnings("unused")

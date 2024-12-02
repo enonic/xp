@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -84,13 +84,32 @@ public class SnapshotServiceImpl
         return NodeHelper.runAsAdmin( () -> doSnapshot( snapshotParams ) );
     }
 
+    private RepositoryIds resolveRepositoriesIdsToSnapshot( final RepositoryId repositoryId )
+    {
+        if ( repositoryId != null )
+        {
+            return RepositoryIds.from( repositoryId );
+        }
+        else
+        {
+            final RepositoryIds.Builder result = RepositoryIds.create();
+
+            repositoryEntryService.findRepositoryEntryIds()
+                .stream()
+                .map( repositoryEntryService::getRepositoryEntry )
+                .filter( Objects::nonNull )
+                .filter( repository -> !repository.isTransient() )
+                .forEach( repository -> result.add( repository.getId() ) );
+
+            return result.build();
+        }
+    }
+
     private SnapshotResult doSnapshot( final SnapshotParams snapshotParams )
     {
         checkSnapshotRepository();
 
-        final RepositoryIds repositoriesToSnapshot = Optional.ofNullable( snapshotParams.getRepositoryId() )
-            .map( RepositoryIds::from )
-            .orElseGet( repositoryEntryService::findRepositoryEntryIds );
+        final RepositoryIds repositoriesToSnapshot = resolveRepositoriesIdsToSnapshot( snapshotParams.getRepositoryId() );
 
         return SnapshotExecutor.create()
             .snapshotName( snapshotParams.getSnapshotName() )

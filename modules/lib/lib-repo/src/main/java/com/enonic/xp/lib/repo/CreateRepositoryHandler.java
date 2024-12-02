@@ -42,6 +42,8 @@ public class CreateRepositoryHandler
 
     private ChildOrder rootChildOrder;
 
+    private Boolean transientFlag;
+
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
     public void setRepositoryId( final String repositoryId )
@@ -99,6 +101,11 @@ public class CreateRepositoryHandler
         }
     }
 
+    public void setTransient( final Boolean value )
+    {
+        this.transientFlag = value;
+    }
+
     public RepositoryMapper execute()
     {
         final RepositorySettings repositorySettings = RepositorySettings.create().
@@ -110,6 +117,7 @@ public class CreateRepositoryHandler
             repositorySettings( repositorySettings ).
             rootPermissions( rootPermissions ).
             rootChildOrder( rootChildOrder ).
+            transientFlag( transientFlag ).
             build();
 
         final Repository repository = repositoryServiceSupplier.

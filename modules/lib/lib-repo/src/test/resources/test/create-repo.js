@@ -22,6 +22,7 @@ var result = repoLib.create({
 
 assert.assertJsonEquals({
     'id': 'test-repo',
+    'transient': false,
     'branches': [
         'master'
     ],

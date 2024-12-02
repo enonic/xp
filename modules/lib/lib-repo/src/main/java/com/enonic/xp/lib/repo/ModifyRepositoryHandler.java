@@ -62,6 +62,12 @@ public class ModifyRepositoryHandler
 
             final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
             target.data = propertyTree.getRoot().getSet( "data" ).toTree();
+
+            final Boolean transientFlag = propertyTree.getBoolean( "transient" );
+            if ( transientFlag != null )
+            {
+                target.transientFlag = transientFlag;
+            }
         }
     }
 

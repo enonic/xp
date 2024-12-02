@@ -11,6 +11,7 @@ log.info(result.length + ' repositories found');
 // Repositories retrieved.
 var expected = [{
     'id': 'test-repo',
+    'transient': false,
     'branches': [
         'master'
     ],
@@ -18,6 +19,7 @@ var expected = [{
     data: {}
 }, {
     'id': 'another-repo',
+    'transient': false,
     'branches': [
         'master'
     ],

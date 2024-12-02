@@ -5,6 +5,7 @@ const stream = testInstance.createByteSource('Hello World');
 
 // Editor to call for repo.
 function editor(repo) {
+    repo.transient = true;
 
     repo.data.myString = 'modified';
     repo.data.myArray = ['modified1', 'modified2', 'modified3'];
