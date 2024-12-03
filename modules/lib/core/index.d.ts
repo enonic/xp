@@ -110,8 +110,8 @@ export interface Log {
     error: (...args: unknown[]) => void;
 }
 
-export type NewBean = <T = unknown, Bean extends keyof XpBeans | string = string>(bean: Bean) =>
-    Bean extends keyof XpBeans ? XpBeans[Bean] : T;
+export type NewBean = <T = unknown, BEAN extends keyof XpBeans | string = string>(bean: BEAN) =>
+    BEAN extends keyof XpBeans ? XpBeans[BEAN] : T;
 
 export type Resolve = (path: string) => ResourceKey;
 
@@ -139,8 +139,8 @@ export interface ScriptValue {
     getList(): object[];
 }
 
-export type XpRequire = <Key extends keyof XpLibraries | string = string>(path: Key) =>
-    Key extends keyof XpLibraries ? XpLibraries[Key] : unknown;
+export type XpRequire = <KEY extends keyof XpLibraries | string = string>(path: KEY) =>
+    KEY extends keyof XpLibraries ? XpLibraries[KEY] : unknown;
 
 export type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>);
 
@@ -346,14 +346,14 @@ export type Response<
 > = Merge<DefaultResponse, T>;
 
 export type RequestHandler<
-    RequestFromJava extends RequestInterface = DefaultRequest,
-    ResponseToJava extends ResponseInterface = DefaultResponse
-> = (request: RequestFromJava) => ResponseToJava;
+    REQUEST_FROM_JAVA extends RequestInterface = DefaultRequest,
+    RESPONSE_TO_JAVA extends ResponseInterface = DefaultResponse
+> = (request: REQUEST_FROM_JAVA) => RESPONSE_TO_JAVA;
 
 export type HttpFilterNext<
-    RequestToJava extends SerializableRequest = SerializableRequest<DefaultRequest>,
-    ResponseToJava extends ResponseInterface = DefaultResponse
-> = (request: RequestToJava) => ResponseToJava;
+    REQUEST_TO_JAVA extends SerializableRequest = SerializableRequest<DefaultRequest>,
+    RESPONSE_TO_JAVA extends ResponseInterface = DefaultResponse
+> = (request: REQUEST_TO_JAVA) => RESPONSE_TO_JAVA;
 
 export interface WebSocketSession {
     id: string;
@@ -376,19 +376,19 @@ export interface WebSocketEvent<T> {
 type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
 
 export interface Controller<
-    Request extends RequestInterface = DefaultRequest,
-    Response extends ResponseInterface = DefaultResponse,
+    REQUEST extends RequestInterface = DefaultRequest,
+    RESPONSE extends ResponseInterface = DefaultResponse,
 > {
-    all?: RequestHandler<Request, Response>;
-    connect?: RequestHandler<Request, Response>;
-    delete?: RequestHandler<Request, Response>;
-    get?: RequestHandler<Request, Response>;
-    head?: RequestHandler<Request, Response>;
-    options?: RequestHandler<Request, Response>;
-    patch?: RequestHandler<Request, Response>;
-    post?: RequestHandler<Request, Response>;
-    put?: RequestHandler<Request, Response>;
-    trace?: RequestHandler<Request, Response>;
+    all?: RequestHandler<REQUEST, RESPONSE>;
+    connect?: RequestHandler<REQUEST, RESPONSE>;
+    delete?: RequestHandler<REQUEST, RESPONSE>;
+    get?: RequestHandler<REQUEST, RESPONSE>;
+    head?: RequestHandler<REQUEST, RESPONSE>;
+    options?: RequestHandler<REQUEST, RESPONSE>;
+    patch?: RequestHandler<REQUEST, RESPONSE>;
+    post?: RequestHandler<REQUEST, RESPONSE>;
+    put?: RequestHandler<REQUEST, RESPONSE>;
+    trace?: RequestHandler<REQUEST, RESPONSE>;
     webSocketEvent?: WebSocketEventHandler;
 }
 
@@ -400,9 +400,9 @@ export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
 }
 
 export type ErrorRequestHandler<
-    Err extends ErrorRequest = ErrorRequest,
-    ResponseToJava extends ResponseInterface = DefaultResponse
-> = (err: Err) => ResponseToJava;
+    ERROR_REQUEST extends ErrorRequest = ErrorRequest,
+    RESPONSE_TO_JAVA extends ResponseInterface = DefaultResponse
+> = (err: ERROR_REQUEST) => RESPONSE_TO_JAVA;
 
 export interface ErrorController {
     handle400?: ErrorRequestHandler;
@@ -456,25 +456,25 @@ export interface IdProviderController extends Controller {
 }
 
 export interface HttpFilterController<
-  RequestFromJava extends RequestInterface = DefaultRequest,
-  ResponseFromNext extends ResponseInterface = Response,
-  ResponseToJava extends ResponseInterface = ResponseFromNext
+  REQUEST_FROM_JAVA extends RequestInterface = DefaultRequest,
+  REQUEST_FROM_NEXT extends ResponseInterface = Response,
+  RESPONSE_TO_JAVA extends ResponseInterface = REQUEST_FROM_NEXT
 > {
     filter: (
-        request: RequestFromJava,
+        request: REQUEST_FROM_JAVA,
         next: HttpFilterNext<
-            SerializableRequest<RequestFromJava>,
-            ResponseFromNext
+            SerializableRequest<REQUEST_FROM_JAVA>,
+            REQUEST_FROM_NEXT
         >
-    ) => ResponseToJava;
+    ) => RESPONSE_TO_JAVA;
 }
 
 export interface ResponseProcessorController<
-    RequestFromJava extends RequestInterface = DefaultRequest,
-    ResponseFromJava extends MappedResponse = MappedResponse,
-    ResponseToJava extends ResponseInterface = Partial<ResponseFromJava>
+    REQUEST_FROM_JAVA extends RequestInterface = DefaultRequest,
+    RESPONSE_FROM_JAVA extends MappedResponse = MappedResponse,
+    RESPONSE_TO_JAVA extends ResponseInterface = Partial<RESPONSE_FROM_JAVA>
 > {
-    responseProcessor: (request: RequestFromJava, response: ResponseFromJava) => ResponseToJava;
+    responseProcessor: (request: REQUEST_FROM_JAVA, response: RESPONSE_FROM_JAVA) => RESPONSE_TO_JAVA;
 }
 
 export type UserKey = `user:${string}:${string}`;
@@ -525,161 +525,321 @@ export interface PublishInfo {
     first?: string;
 }
 
-export interface FragmentComponent {
-    type: 'fragment'
+// export interface FragmentComponent {
+//     type: 'fragment'
+//     fragment: string;
+//     path: string;
+// }
+
+// export interface LayoutComponent<
+//     DESCRIPTOR extends ComponentDescriptor = ComponentDescriptor,
+//     CONFIG extends NestedRecord = DESCRIPTOR extends LayoutDescriptor
+//         ? XpLayoutMap[DESCRIPTOR]
+//         : NestedRecord,
+//     REGIONS extends LayoutRegions = Record<string, LayoutRegion<(FragmentComponent | RegisteredPart | TextComponent)[]>>
+// > {
+//     type: 'layout'
+//     descriptor: DESCRIPTOR
+//     config: CONFIG
+//     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+//     regions: REGIONS;
+// }
+// type LayoutDescriptor = keyof XpLayoutMap;
+// type RegisteredLayout = LayoutDescriptor extends any // this lets us iterate over every member of the union
+//     ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
+//     : never;
+
+// export interface PartComponent<
+//     DESCRIPTOR extends ComponentDescriptor = ComponentDescriptor,
+//     CONFIG extends NestedRecord =
+//         DESCRIPTOR extends PartDescriptor
+//         ? XpPartMap[DESCRIPTOR]
+//         : NestedRecord
+// > {
+//     type: 'part'
+//     descriptor: DESCRIPTOR
+//     config: CONFIG
+//     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+// }
+// type PartDescriptor = keyof XpPartMap;
+// type RegisteredPart = PartDescriptor extends any // this lets us iterate over every member of the union
+//     ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
+//     : never;
+
+// export interface PageComponent<
+//     DESCRIPTOR extends ComponentDescriptor = ComponentDescriptor,
+//     CONFIG extends NestedRecord =
+//         DESCRIPTOR extends PageDescriptor
+//         ? XpPageMap[DESCRIPTOR]
+//         : NestedRecord,
+//     REGIONS extends PageRegions = Record<string, PageRegion<(FragmentComponent | RegisteredLayout | RegisteredPart | TextComponent)[]>>
+// > {
+//     type: 'page'
+//     descriptor: DESCRIPTOR
+//     config: CONFIG
+//     path: '/'
+//     regions: REGIONS;
+// }
+// type PageDescriptor = keyof XpPageMap;
+// type RegisteredPage = PageDescriptor extends any // this lets us iterate over every member of the union
+//     ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
+//     : never;
+
+// export interface TextComponent {
+//     type: 'text'
+//     path: string
+//     text: string
+// }
+
+// export type Component<
+//     DESCRIPTOR extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
+//     CONFIG extends NestedRecord = NestedRecord,
+//     REGIONS extends (
+//         DESCRIPTOR extends LayoutDescriptor
+//         ? LayoutRegions
+//         : PageRegions
+//     ) = DESCRIPTOR extends LayoutDescriptor
+//         ? Record<string, Region<(FragmentComponent | RegisteredPart | TextComponent)[]>>
+//         : Record<string, Region<(FragmentComponent | RegisteredLayout | RegisteredPart | TextComponent)[]>>
+// > =
+//     | FragmentComponent
+//     | LayoutComponent<DESCRIPTOR, CONFIG, REGIONS>
+//     | PageComponent<DESCRIPTOR, CONFIG, REGIONS>
+//     | PartComponent<DESCRIPTOR, CONFIG>
+//     | TextComponent;
+
+// type ComponentsAllowedInLayoutRegion = FragmentComponent | PartComponent | TextComponent;
+// type ComponentsAllowedInPageRegion = FragmentComponent |  LayoutComponent | PartComponent | TextComponent;
+    
+
+type ComponentType = 'fragment' | 'layout' | 'page' | 'part' | 'text';
+
+interface ComponentInterface {
+    config?: NestedRecord; // Only for Layout, Page and Part
+    descriptor?: string; // Only for Layout, Page and Part
+    path?: string; // Not when Page is from Automatic Page Template
+    regions?: Record<string, RegionInterface>; // Only for Layout and Page
+    template?: string; // When specific page template is used
+    text?: string; // Only for TextComponent
+    type?: ComponentType; // Not when Page is from Automatic Page Template
+}
+export type Component<
+    T extends Partial<ComponentInterface> = Record<string, never>
+> = Merge<ComponentInterface, T>;
+
+interface FragmentComponent {
     fragment: string;
     path: string;
+    type: 'fragment';
 }
+// export type FragmentComponent<
+//     T extends Partial<FragmentInterface> = Record<string, never>
+// > = Merge<FragmentInterface, T>;
 
-export interface LayoutComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord = Descriptor extends LayoutDescriptor
-        ? XpLayoutMap[Descriptor]
-        : NestedRecord,
-    Regions extends
-        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
-        Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
-> {
-    type: 'layout'
-    descriptor: Descriptor
-    config: Config
+interface LayoutInterface {
+    config: NestedRecord;
+    descriptor: ComponentDescriptor;
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
-    regions: Regions;
+    regions: Record<string, RegionInterface>
+    type: 'layout';
 }
-type LayoutDescriptor = keyof XpLayoutMap;
-type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
-    ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
-    : never;
+export type LayoutComponent<
+    T extends Partial<LayoutInterface> = Record<string, never>
+> = Merge<LayoutInterface, T>;
 
-export interface PartComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord =
-        Descriptor extends PartDescriptor
-        ? XpPartMap[Descriptor]
-        : NestedRecord
-> {
-    type: 'part'
-    descriptor: Descriptor
-    config: Config
+interface PageInterface {
+    config?: NestedRecord;
+    descriptor?: ComponentDescriptor;
+    path?: '/'
+    regions?: Record<string, RegionInterface>
+    template?: string; // When specific page template is used
+    type?: 'page';
+}
+export type PageComponent<
+    T extends Partial<PageInterface> = Record<string, never>
+> = Merge<PageInterface, T>;
+
+interface PartInterface {
+    config: NestedRecord;
+    descriptor: ComponentDescriptor;
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
+    type: 'part';
 }
-type PartDescriptor = keyof XpPartMap;
-type Part = PartDescriptor extends any // this lets us iterate over every member of the union
-    ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
-    : never;
-
-export interface PageComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord =
-        Descriptor extends PageDescriptor
-        ? XpPageMap[Descriptor]
-        : NestedRecord,
-    Regions extends
-        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
-        Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
-> {
-    type: 'page'
-    descriptor: Descriptor
-    config: Config
-    path: '/'
-    regions: Regions;
-}
-type PageDescriptor = keyof XpPageMap;
-type Page = PageDescriptor extends any // this lets us iterate over every member of the union
-    ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
-    : never;
+export type PartComponent<
+    T extends Partial<PartInterface> = Record<string, never>
+> = Merge<PartInterface, T>;
 
 export interface TextComponent {
-    type: 'text'
-    path: string
-    text: string
+    path: string;
+    text: string;
+    type: 'text';
 }
+// export type TextComponent<
+//     T extends Partial<TextComponentInterface> = Record<string, never>
+// > = Merge<TextComponentInterface, T>;
 
-export type Component<
-    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
-    Config extends NestedRecord = NestedRecord,
-    Regions extends (
-        Descriptor extends LayoutDescriptor
-        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
-        : Record<string, Region>
-    ) = Descriptor extends LayoutDescriptor
-        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
-        : Record<string, Region>,
-> =
-    | FragmentComponent
-    | LayoutComponent<Descriptor, Config, Regions>
-    | PageComponent<Descriptor, Config, Regions>
-    | PartComponent<Descriptor, Config>
-    | TextComponent;
-
-export interface PageRegion<
-    Components extends
-        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Layout          | Part          | TextComponent)[]
-> {
+interface RegionInterface {
     name: string;
-    components: Components;
+    components: ComponentInterface[];
 }
-
-export interface LayoutRegion<
-    Components extends
-        (FragmentComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Part          | TextComponent)[]
-> {
-    name: string;
-    components: Components;
-}
-
 export type Region<
-    Components extends
-        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Layout          | Part          | TextComponent)[]
-// @ts-expect-error TODO LayoutRegion can't eat LayoutComponent nor Layout!!!
-> = PageRegion<Components> | LayoutRegion<Components>;
+    T extends Partial<RegionInterface> = Record<string, never>
+> = Merge<RegionInterface, T>;
 
-export interface Content<
-    Data = Record<string, unknown>,
-    Type extends string = string,
-    _Component extends (
-        Type extends 'portal:fragment'
-            ? LayoutComponent | PartComponent
-            : PageComponent | Record<string,never>
-        ) = (
-            Type extends 'portal:fragment'
-                ? Layout | Part
-                : Page
-            ),
-    > {
+// Should NOT be able to put a page component in a page region
+interface PageRegionInterface {
+    name: string;
+    components: (FragmentComponent|LayoutInterface|PartInterface|TextComponent)[];
+}
+export type PageRegion<
+    T extends Partial<PageRegionInterface> = Record<string, never>
+> = Merge<PageRegionInterface, T>;
+
+interface LayoutRegionInterface {
+    name: string;
+    components: (FragmentComponent|PartInterface|TextComponent)[];
+}
+export type LayoutRegion<
+    T extends Partial<LayoutRegionInterface> = Record<string, never>
+> = Merge<LayoutRegionInterface, T>;
+
+// export interface PageRegion<
+//     COMPONENTS extends
+//         (ComponentsAllowedInPageRegion)[] =
+//         (FragmentComponent | RegisteredLayout | RegisteredPart | TextComponent)[]
+// > {
+//     name: string;
+//     components: COMPONENTS;
+// }
+
+// export interface LayoutRegion<
+//     COMPONENTS extends
+//         (ComponentsAllowedInLayoutRegion)[] =
+//         (FragmentComponent | RegisteredPart | TextComponent)[]
+// > {
+//     name: string;
+//     components: COMPONENTS;
+// }
+
+// // Simplified to same as PageRegion to avoid complex type errors.
+// export type Region<
+//     COMPONENTS extends
+//         (ComponentsAllowedInPageRegion)[] =
+//         (FragmentComponent | RegisteredLayout | RegisteredPart | TextComponent)[]
+// > = PageRegion<COMPONENTS>;
+
+// type LayoutRegions = Record<string, LayoutRegion>;
+// type PageRegions = Record<string, PageRegion>;
+
+interface CommonContentProperties {
     _id: string;
     _name: string;
     _path: string;
     _score?: number;
-    creator: UserKey;
-    modifier?: UserKey;
+    _sort?: object[];
+    attachments: Record<string, Attachment>;
+    childOrder?: string;
     createdTime: string;
-    modifiedTime?: string;
-    owner: string;
-    data: Type extends 'portal:fragment' ? Record<string,never> : Data;
-    type: Type;
+    creator: UserKey;
     displayName: string;
+    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
     hasChildren: boolean;
     language?: string;
-    valid: boolean;
+    modifiedTime?: string;
+    modifier?: UserKey;
     originProject?: string;
-    childOrder?: string;
-    _sort?: object[];
-    page?: Type extends 'portal:fragment' ? never : _Component;
-    x: XpXData;
-    attachments: Record<string, Attachment>;
+    owner: string;
     publish?: PublishInfo;
+    valid: boolean;
+    variantOf?: string;
     workflow?: {
         state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
         checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
     };
-    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
-    variantOf?: string;
-    fragment?: Type extends 'portal:fragment' ? _Component : never;
+    x: XpXData;
 }
+
+// export interface FragmentContent<
+//     FRAGMENT extends
+//         LayoutInterface | PartInterface | TextComponent =
+//         LayoutInterface | PartInterface | TextComponent
+// > extends CommonContentProperties {
+//     data: Record<string,never>;
+//     fragment: FRAGMENT;
+//     type: 'portal:fragment';
+// }
+
+// export interface PageContent<
+//     DATA extends Record<string, unknown> = Record<string, unknown>,
+//     PAGE extends PageInterface = PageInterface
+// > extends CommonContentProperties {
+//     data: DATA;
+//     page?: PAGE;
+//     type: string;
+// }
+
+export interface Content<
+    DATA = Record<string, unknown>,
+    TYPE extends string = string,
+    COMPONENT extends (
+        TYPE extends 'portal:fragment'
+            ? LayoutInterface | PartInterface | TextComponent
+            : PageInterface
+    ) = (
+        TYPE extends 'portal:fragment'
+            ? LayoutInterface | PartInterface | TextComponent
+            : PageInterface
+    )
+> extends CommonContentProperties {
+    data: TYPE extends 'portal:fragment' ? Record<string,never> : DATA;
+    fragment?: TYPE extends 'portal:fragment' ? COMPONENT : never;
+    page?: TYPE extends 'portal:fragment' ? never : COMPONENT;
+    type: TYPE;
+}
+
+// export interface Content<
+//     DATA = Record<string, unknown>,
+//     TYPE extends string = string,
+//     COMPONENT extends (
+//         TYPE extends 'portal:fragment'
+//             ? LayoutComponent | PartComponent | TextComponent
+//             : PageComponent | Record<string,never> // TODO Since all properties in PageComponent are optional, maybe Record<string,never> isn't needed anymore?
+//         ) = (
+//             TYPE extends 'portal:fragment'
+//                 ? RegisteredLayout | RegisteredPart | TextComponent
+//                 : RegisteredPage
+//             ),
+//     > {
+//     _id: string;
+//     _name: string;
+//     _path: string;
+//     _score?: number;
+//     creator: UserKey;
+//     modifier?: UserKey;
+//     createdTime: string;
+//     modifiedTime?: string;
+//     owner: string;
+//     data: TYPE extends 'portal:fragment' ? Record<string,never> : DATA;
+//     type: TYPE;
+//     displayName: string;
+//     hasChildren: boolean;
+//     language?: string;
+//     valid: boolean;
+//     originProject?: string;
+//     childOrder?: string;
+//     _sort?: object[];
+//     page?: TYPE extends 'portal:fragment' ? never : COMPONENT;
+//     x: XpXData;
+//     attachments: Record<string, Attachment>;
+//     publish?: PublishInfo;
+//     workflow?: {
+//         state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+//         checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
+//     };
+//     inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
+//     variantOf?: string;
+//     fragment?: TYPE extends 'portal:fragment' ? COMPONENT : never;
+// }
 
 // Compliant with npm module ts-brand
 type Brand<
@@ -864,23 +1024,23 @@ export type SortDsl = FieldSortDsl | GeoDistanceSortDsl;
 //
 // START AGGREGATIONS, FILTERS
 //
-export type Bucket<SubAggregations extends Aggregations = Record<never, never>> = AggregationsToAggregationResults<SubAggregations> & {
+export type Bucket<SUB_AGGREGATIONS extends Aggregations = Record<never, never>> = AggregationsToAggregationResults<SUB_AGGREGATIONS> & {
     key: string;
     docCount: number;
 };
 
-export type NumericBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
+export type NumericBucket<SUB_AGGREGATIONS extends Aggregations = Record<never, never>> = Bucket<SUB_AGGREGATIONS> & {
     from?: number;
     to?: number;
 };
 
-export type DateBucket<SubAggregations extends Aggregations = Record<never, never>> = Bucket<SubAggregations> & {
+export type DateBucket<SUB_AGGREGATIONS extends Aggregations = Record<never, never>> = Bucket<SUB_AGGREGATIONS> & {
     from?: string;
     to?: string;
 };
 
-export interface BucketsAggregationResult<SubAggregations extends Aggregations = Record<never, never>> {
-    buckets: (DateBucket<SubAggregations> | NumericBucket<SubAggregations>)[];
+export interface BucketsAggregationResult<SUB_AGGREGATIONS extends Aggregations = Record<never, never>> {
+    buckets: (DateBucket<SUB_AGGREGATIONS> | NumericBucket<SUB_AGGREGATIONS>)[];
 }
 
 export interface StatsAggregationResult {
@@ -895,24 +1055,24 @@ export interface SingleValueMetricAggregationResult {
     value: number;
 }
 
-export type AggregationsResult<SubAggregations extends Aggregations = Record<never, never>> =
-    | BucketsAggregationResult<SubAggregations>
+export type AggregationsResult<SUB_AGGREGATIONS extends Aggregations = Record<never, never>> =
+    | BucketsAggregationResult<SUB_AGGREGATIONS>
     | StatsAggregationResult
     | SingleValueMetricAggregationResult;
 
-export type AggregationsToAggregationResults<AggregationInput extends Aggregations = never> = {
-    [Key in keyof AggregationInput]: AggregationToAggregationResult<AggregationInput[Key]>;
+export type AggregationsToAggregationResults<AGGREGATION_INPUT extends Aggregations = never> = {
+    [Key in keyof AGGREGATION_INPUT]: AggregationToAggregationResult<AGGREGATION_INPUT[Key]>;
 };
 
 type AggregationOrNone<T> = T extends Aggregation ? T : Record<never, never>;
 
-export type AggregationToAggregationResult<Type extends Aggregation> = Type extends GeoDistanceAggregation
+export type AggregationToAggregationResult<TYPE extends Aggregation> = TYPE extends GeoDistanceAggregation
                                                                        ? BucketsAggregationResult
-                                                                       : Type extends Exclude<BucketsAggregationsUnion, GeoDistanceAggregation>
-                                                                         ? BucketsAggregationResult<AggregationOrNone<Type['aggregations']>>
-                                                                         : Type extends SingleValueMetricAggregationsUnion
+                                                                       : TYPE extends Exclude<BucketsAggregationsUnion, GeoDistanceAggregation>
+                                                                         ? BucketsAggregationResult<AggregationOrNone<TYPE['aggregations']>>
+                                                                         : TYPE extends SingleValueMetricAggregationsUnion
                                                                            ? SingleValueMetricAggregationResult
-                                                                           : Type extends StatsAggregation
+                                                                           : TYPE extends StatsAggregation
                                                                              ? StatsAggregationResult
                                                                              : never;
 
