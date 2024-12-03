@@ -14,9 +14,12 @@ public final class EditableRepository
 
     public List<BinaryAttachment> binaryAttachments = new ArrayList<>();
 
+    public boolean transientFlag;
+
     public EditableRepository( final Repository source )
     {
         this.source = source;
         this.data = source.getData().copy();
+        this.transientFlag = source.isTransient();
     }
 }

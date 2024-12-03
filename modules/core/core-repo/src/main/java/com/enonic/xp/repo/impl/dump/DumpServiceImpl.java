@@ -222,8 +222,12 @@ public class DumpServiceImpl
             : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
-            final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds().stream().
-                map( repositoryEntryService::getRepositoryEntry ).filter( Objects::nonNull ).collect( Collectors.toList() );
+            final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
+                .stream()
+                .map( repositoryEntryService::getRepositoryEntry )
+                .filter( Objects::nonNull )
+                .filter( repository -> !repository.isTransient() )
+                .collect( Collectors.toList() );
 
             if ( params.getListener() != null )
             {

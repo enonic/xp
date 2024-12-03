@@ -16,6 +16,7 @@ if (result) {
 // Repository retrieved.
 var expected = {
     'id': 'test-repo',
+    'transient': false,
     'branches': [
         'master'
     ],
