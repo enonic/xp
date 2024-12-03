@@ -350,7 +350,7 @@ public class RepositoryServiceImpl
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
             data( params.getData() ).
-            transientFlag( params.getTransientFlag() ).
+            transientFlag( params.isTransient() ).
             build();
     }
 

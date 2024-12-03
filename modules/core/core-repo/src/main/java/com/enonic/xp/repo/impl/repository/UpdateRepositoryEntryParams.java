@@ -13,7 +13,7 @@ public final class UpdateRepositoryEntryParams
 
     private final BinaryAttachments attachments;
 
-    private final Boolean transientFlag;
+    private final boolean transientFlag;
 
     private UpdateRepositoryEntryParams( Builder builder )
     {
@@ -38,7 +38,7 @@ public final class UpdateRepositoryEntryParams
         return attachments;
     }
 
-    public Boolean getTransientFlag()
+    public boolean isTransient()
     {
         return transientFlag;
     }
@@ -56,7 +56,7 @@ public final class UpdateRepositoryEntryParams
 
         private final BinaryAttachments.Builder attachments = BinaryAttachments.create();
 
-        private Boolean transientFlag;
+        private boolean transientFlag;
 
         public Builder repositoryId( RepositoryId repositoryId )
         {
@@ -79,7 +79,7 @@ public final class UpdateRepositoryEntryParams
             return this;
         }
 
-        public Builder transientFlag( final Boolean value )
+        public Builder transientFlag( final boolean value )
         {
             this.transientFlag = value;
             return this;

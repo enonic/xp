@@ -72,7 +72,7 @@ public class RepositoryNodeTranslator
         return toBeEdited -> {
             if ( !params.getRepositoryId().toString().startsWith( "system." ) )
             {
-                if ( Objects.equals( params.getTransientFlag(), Boolean.TRUE ) )
+                if ( params.isTransient() )
                 {
                     toBeEdited.data.setBoolean( TRANSIENT_KEY, true );
                 }
@@ -159,7 +159,7 @@ public class RepositoryNodeTranslator
             settings( repositorySettings ).
             data( repositoryData ).
             attachments( node.getAttachedBinaries() ).
-            transientFlag( nodeData.getBoolean( TRANSIENT_KEY ) ).
+            transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) ).
             build();
     }
 

@@ -20,7 +20,7 @@ public class CreateRepositoryParams
 
     private final ChildOrder rootChildOrder;
 
-    private final Boolean transientFlag;
+    private final boolean transientFlag;
 
     private CreateRepositoryParams( final Builder builder )
     {
@@ -62,7 +62,7 @@ public class CreateRepositoryParams
         return new Builder();
     }
 
-    public Boolean getTransientFlag()
+    public boolean isTransient()
     {
         return transientFlag;
     }
@@ -102,7 +102,7 @@ public class CreateRepositoryParams
 
         private ChildOrder rootChildOrder = RepositoryConstants.DEFAULT_CHILD_ORDER;
 
-        private Boolean transientFlag;
+        private boolean transientFlag;
 
         private Builder()
         {
@@ -144,7 +144,7 @@ public class CreateRepositoryParams
             return this;
         }
 
-        public Builder transientFlag( final Boolean value )
+        public Builder transientFlag( final boolean value )
         {
             this.transientFlag = value;
             return this;

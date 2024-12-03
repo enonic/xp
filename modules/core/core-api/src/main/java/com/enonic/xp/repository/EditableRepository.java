@@ -14,7 +14,7 @@ public final class EditableRepository
 
     public List<BinaryAttachment> binaryAttachments = new ArrayList<>();
 
-    public Boolean transientFlag;
+    public boolean transientFlag;
 
     public EditableRepository( final Repository source )
     {

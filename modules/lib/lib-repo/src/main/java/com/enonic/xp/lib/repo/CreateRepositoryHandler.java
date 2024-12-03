@@ -42,7 +42,7 @@ public class CreateRepositoryHandler
 
     private ChildOrder rootChildOrder;
 
-    private Boolean transientFlag;
+    private boolean transientFlag;
 
     private Supplier<RepositoryService> repositoryServiceSupplier;
 
@@ -101,7 +101,7 @@ public class CreateRepositoryHandler
         }
     }
 
-    public void setTransient( final Boolean value )
+    public void setTransient( final boolean value )
     {
         this.transientFlag = value;
     }

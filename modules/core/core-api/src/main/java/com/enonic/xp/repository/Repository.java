@@ -32,7 +32,7 @@ public final class Repository
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
         this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
-        this.transientFlag = Objects.requireNonNullElse( builder.transientFlag, false );
+        this.transientFlag = builder.transientFlag;
     }
 
     public RepositoryId getId()
@@ -110,7 +110,7 @@ public final class Repository
 
         private AttachedBinaries attachments;
 
-        private Boolean transientFlag;
+        private boolean transientFlag;
 
         private Builder()
         {
@@ -156,7 +156,7 @@ public final class Repository
             return this;
         }
 
-        public Builder transientFlag( final Boolean value )
+        public Builder transientFlag( final boolean value )
         {
             this.transientFlag = value;
             return this;
