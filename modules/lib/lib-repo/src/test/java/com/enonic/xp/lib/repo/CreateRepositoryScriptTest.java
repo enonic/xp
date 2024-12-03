@@ -28,6 +28,7 @@ public class CreateRepositoryScriptTest
                     id( params.getRepositoryId() ).
                     branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
                     settings( params.getRepositorySettings() ).
+                    transientFlag( params.isTransient() ).
                     build();
             } );
         addService( RepositoryService.class, repositoryService );

@@ -29,7 +29,8 @@ var result2 = repoLib.create({
             'deny': []
         }
     ],
-    rootChildOrder: '_ts DESC'
+    rootChildOrder: '_ts DESC',
+    transient: true,
 });
 
 log.info('Repository created with id ' + result2.id);
@@ -39,6 +40,7 @@ log.info('Repository created with id ' + result2.id);
 // First repository created.
 var expected1 = {
     'id': 'test-repo',
+    'transient': false,
     'branches': [
         'master'
     ],
@@ -51,6 +53,7 @@ assert.assertJsonEquals(expected1, result1);
 var expected2 =
     {
         'id': 'test-repo2',
+        'transient': true,
         'branches': [
             'master'
         ],

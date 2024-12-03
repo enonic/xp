@@ -28,6 +28,7 @@ public class RepositoryMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "id", repository.getId() );
+        gen.value( "transient", repository.isTransient() );
         serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
         serialize( gen, repository.getData() );
