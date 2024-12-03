@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableSet;
@@ -21,7 +22,6 @@ import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
@@ -46,9 +46,9 @@ public class RepositoryNodeTranslator
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryNodeData );
         toNodeData( repository.getData(), repositoryNodeData );
-        if ( !repository.getId().toString().startsWith( "system." ) )
+        if ( !repository.getId().toString().startsWith( "system." ) && repository.isTransient() )
         {
-            repositoryNodeData.setBoolean( TRANSIENT_KEY, repository.isTransient() );
+            repositoryNodeData.setBoolean( TRANSIENT_KEY, true );
         }
 
         return Node.create().
@@ -72,7 +72,14 @@ public class RepositoryNodeTranslator
         return toBeEdited -> {
             if ( !params.getRepositoryId().toString().startsWith( "system." ) )
             {
-                toBeEdited.data.setBoolean( TRANSIENT_KEY, params.getTransientFlag() );
+                if ( Objects.equals( params.getTransientFlag(), Boolean.TRUE ) )
+                {
+                    toBeEdited.data.setBoolean( TRANSIENT_KEY, true );
+                }
+                else
+                {
+                    toBeEdited.data.removeProperty( TRANSIENT_KEY );
+                }
             }
             toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot().copy( toBeEdited.data ) );
         };
