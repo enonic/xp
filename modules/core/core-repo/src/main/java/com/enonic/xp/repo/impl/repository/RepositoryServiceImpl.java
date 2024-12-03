@@ -140,6 +140,7 @@ public class RepositoryServiceImpl
             repositoryId( repositoryId ).
             repositoryData( editableRepository.data ).
             attachments( editableRepository.binaryAttachments ).
+            transientFlag( editableRepository.transientFlag ).
             build();
 
         return repositoryEntryService.updateRepositoryEntry( params );
@@ -349,6 +350,7 @@ public class RepositoryServiceImpl
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
             data( params.getData() ).
+            transientFlag( params.isTransient() ).
             build();
     }
 

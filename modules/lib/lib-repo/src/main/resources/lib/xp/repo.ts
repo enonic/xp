@@ -48,6 +48,7 @@ export interface Repository {
     branches: string[];
     settings?: RepositorySettings;
     data?: Record<string, unknown>;
+    transient: boolean;
 }
 
 export type RepoRefreshType = 'all' | 'search' | 'storage';
@@ -107,7 +108,8 @@ export interface CreateRepositoryParams {
     id: string;
     rootPermissions?: AccessControlEntry[];
     rootChildOrder?: string;
-    settings?: RepositorySettings
+    settings?: RepositorySettings;
+    transient?: boolean;
 }
 
 interface CreateRepositoryHandler {
@@ -118,6 +120,8 @@ interface CreateRepositoryHandler {
     setRootChildOrder(value?: string | null): void;
 
     setIndexDefinitions(value: ScriptValue): void;
+
+    setTransient(value: boolean): void;
 
     execute(): Repository;
 }
@@ -143,6 +147,7 @@ interface CreateRepositoryHandler {
  * @param {IndexDefinition} [params.settings.definitions.search] Search index definition.
  * @param {IndexDefinition} [params.settings.definitions.version] Version index definition.
  * @param {IndexDefinition} [params.settings.definitions.branch] Branch indexes definition.
+ * @param {boolean} [params.transient] Transient flag to mark a repository as a transient.
  *
  * @returns {object} Repository created as JSON.
  *
@@ -159,6 +164,9 @@ export function create(params: CreateRepositoryParams): Repository {
     }
     if (params.rootPermissions) {
         bean.setRootPermissions(__.toScriptValue(params.rootPermissions));
+    }
+    if (params.transient !== undefined && params.transient !== null) {
+        bean.setTransient(params.transient);
     }
 
     return __.toNativeObject(bean.execute());

@@ -20,6 +20,8 @@ public class CreateRepositoryParams
 
     private final ChildOrder rootChildOrder;
 
+    private final boolean transientFlag;
+
     private CreateRepositoryParams( final Builder builder )
     {
         repositoryId = builder.repositoryId;
@@ -27,6 +29,7 @@ public class CreateRepositoryParams
         rootPermissions = builder.rootPermissions;
         data = builder.data;
         rootChildOrder = builder.rootChildOrder;
+        transientFlag = builder.transientFlag;
     }
 
     public RepositoryId getRepositoryId()
@@ -59,6 +62,11 @@ public class CreateRepositoryParams
         return new Builder();
     }
 
+    public boolean isTransient()
+    {
+        return transientFlag;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -73,13 +81,13 @@ public class CreateRepositoryParams
         final CreateRepositoryParams that = (CreateRepositoryParams) o;
         return Objects.equals( repositoryId, that.repositoryId ) && Objects.equals( repositorySettings, that.repositorySettings ) &&
             Objects.equals( data, that.data ) && Objects.equals( rootPermissions, that.rootPermissions ) &&
-            Objects.equals( rootChildOrder, that.rootChildOrder );
+            Objects.equals( rootChildOrder, that.rootChildOrder ) && Objects.equals( transientFlag, that.transientFlag );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( repositoryId, repositorySettings, data, rootPermissions, rootChildOrder );
+        return Objects.hash( repositoryId, repositorySettings, data, rootPermissions, rootChildOrder, transientFlag );
     }
 
     public static final class Builder
@@ -93,6 +101,8 @@ public class CreateRepositoryParams
         private AccessControlList rootPermissions = RepositoryConstants.DEFAULT_REPO_PERMISSIONS;
 
         private ChildOrder rootChildOrder = RepositoryConstants.DEFAULT_CHILD_ORDER;
+
+        private boolean transientFlag;
 
         private Builder()
         {
@@ -131,6 +141,12 @@ public class CreateRepositoryParams
             {
                 this.rootChildOrder = rootChildOrder;
             }
+            return this;
+        }
+
+        public Builder transientFlag( final boolean value )
+        {
+            this.transientFlag = value;
             return this;
         }
 
