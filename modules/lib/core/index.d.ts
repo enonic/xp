@@ -575,7 +575,7 @@ export interface PageComponentWhenSpecificTemplate {
     type: 'page';
 }
 
-export interface PageComponentWhenCustomized<
+export interface PageComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord =
         Descriptor extends PageDescriptor
@@ -591,17 +591,6 @@ export interface PageComponentWhenCustomized<
     regions: Regions;
     type: 'page'
 }
-
-type PageComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
-    Config extends NestedRecord =
-        Descriptor extends PageDescriptor
-        ? XpPageMap[Descriptor]
-        : NestedRecord,
-    Regions extends
-        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
-        Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
-> = PageComponentWhenAutomaticTemplate | PageComponentWhenSpecificTemplate | PageComponentWhenCustomized<Descriptor, Config, Regions>;
 
 type PageDescriptor = keyof XpPageMap;
 type Page = PageDescriptor extends any // this lets us iterate over every member of the union
@@ -662,11 +651,11 @@ export interface Content<
     _Component extends (
         Type extends 'portal:fragment'
             ? LayoutComponent | PartComponent
-            : PageComponent
+            : PageComponent | PageComponentWhenSpecificTemplate | PageComponentWhenAutomaticTemplate
         ) = (
             Type extends 'portal:fragment'
                 ? Layout | Part
-                : Page
+                : Page | PageComponentWhenSpecificTemplate | PageComponentWhenAutomaticTemplate
             ),
     > {
     _id: string;
