@@ -46,7 +46,7 @@ public class RepositoryNodeTranslator
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryNodeData );
         toNodeData( repository.getData(), repositoryNodeData );
-        if ( !repository.getId().toString().startsWith( "system." ) && repository.isTransient() )
+        if ( !SystemConstants.SYSTEM_REPO_ID.equals( repository.getId() ) && repository.isTransient() )
         {
             repositoryNodeData.setBoolean( TRANSIENT_KEY, true );
         }
@@ -70,7 +70,7 @@ public class RepositoryNodeTranslator
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
     {
         return toBeEdited -> {
-            if ( !params.getRepositoryId().toString().startsWith( "system." ) )
+            if ( !SystemConstants.SYSTEM_REPO_ID.equals( params.getRepositoryId() ) )
             {
                 if ( params.isTransient() )
                 {
