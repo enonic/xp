@@ -101,8 +101,10 @@ public class VacuumTaskHandlerTest
         verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertNull( paramsCaptor.getValue().getAgeThreshold() );
-        assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );
-        assertTrue( paramsCaptor.getValue().getTaskNames().containsAll( Set.of( "SegmentVacuumTask", "VersionTableVacuumTask" ) ) );
+        assertEquals( 3, paramsCaptor.getValue().getTaskNames().size() );
+        assertTrue( paramsCaptor.getValue()
+                        .getTaskNames()
+                        .containsAll( Set.of( "SegmentVacuumTask", "VersionTableVacuumTask", "SnapshotsVacuumTask" ) ) );
         assertNotNull( paramsCaptor.getValue().getVacuumListener() );
     }
 }
