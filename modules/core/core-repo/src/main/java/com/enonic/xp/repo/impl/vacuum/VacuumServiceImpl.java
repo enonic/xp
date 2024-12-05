@@ -21,9 +21,9 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 public class VacuumServiceImpl
     implements VacuumService
 {
-    private final VacuumTasks tasks = new VacuumTasks();
-
     private static final Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
+
+    private final VacuumTasks tasks = new VacuumTasks();
 
     private VacuumConfig config;
 
@@ -54,6 +54,8 @@ public class VacuumServiceImpl
             params.getVacuumListener().vacuumBegin( tasks.size() );
         }
 
+        final long ageThreshold = getAgeThresholdMs( params );
+
         final VacuumResult.Builder taskResults = VacuumResult.create();
         for ( final VacuumTask task : tasks )
         {
@@ -61,7 +63,7 @@ public class VacuumServiceImpl
 
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumListener() ).
-                ageThreshold( getAgeThresholdMs( params ) ).
+                ageThreshold( ageThreshold ).
                 versionsBatchSize( config.versionsBatchSize() ).
                 build();
             final VacuumTaskResult taskResult = task.execute( taskParams );

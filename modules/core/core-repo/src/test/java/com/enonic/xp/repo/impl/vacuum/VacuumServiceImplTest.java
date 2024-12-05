@@ -17,7 +17,6 @@ public class VacuumServiceImplTest
     public void runTasks()
         throws Exception
     {
-
         final VacuumServiceImpl service = new VacuumServiceImpl();
         service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
 
