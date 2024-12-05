@@ -76,7 +76,7 @@ public class VacuumTaskHandlerTest
         verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertEquals( "PT2S", paramsCaptor.getValue().getAgeThreshold().toString() );
-        assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );
+        assertEquals( 5, paramsCaptor.getValue().getTaskNames().size() );
         assertTrue( paramsCaptor.getValue().getTaskNames().containsAll( Set.of( "a", "b" ) ) );
         assertNotNull( paramsCaptor.getValue().getVacuumListener() );
     }

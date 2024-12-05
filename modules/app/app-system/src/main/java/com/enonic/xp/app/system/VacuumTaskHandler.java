@@ -1,6 +1,7 @@
 package com.enonic.xp.app.system;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,9 +57,15 @@ public class VacuumTaskHandler
 
         final ProgressReporter progressReporter = TaskProgressReporterContext.current();
 
+        final List<String> taskNames = new ArrayList<>( DEFAULT_VACUUM_TASKS );
+        if ( tasks != null )
+        {
+            taskNames.addAll( tasks );
+        }
+
         final VacuumResult result = vacuumService.vacuum( VacuumParameters.create().
             ageThreshold( ageThreshold != null ? Duration.parse( ageThreshold ) : null ).
-            taskNames( tasks == null || tasks.isEmpty() ? DEFAULT_VACUUM_TASKS : tasks ).
+            taskNames( taskNames ).
             vacuumListener( new VacuumListenerImpl( progressReporter ) ).
             build() );
 
