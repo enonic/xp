@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.vacuum.versiontable;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,6 +60,8 @@ public class VersionTableVacuumCommand
 
     private final Instant until;
 
+    private final Instant untilForTransientRepository;
+
     private final VacuumListener listener;
 
     private final int batchSize;
@@ -76,9 +80,12 @@ public class VersionTableVacuumCommand
         versionService = builder.versionService;
         blobStore = builder.blobStore;
         branchService = builder.branchService;
-        until = Instant.now().minusMillis( builder.params.getAgeThreshold() );
         listener = builder.params.getListener();
         batchSize = builder.params.getVersionsBatchSize();
+
+        final Instant now = builder.clock != null ? Instant.now( builder.clock ) : Instant.now();
+        until = now.minusMillis( builder.params.getAgeThreshold() );
+        untilForTransientRepository = now.minus( 1, ChronoUnit.MINUTES );
     }
 
     public static Builder create()
@@ -109,7 +116,11 @@ public class VersionTableVacuumCommand
 
         NodeVersionId lastVersionId = null;
 
-        NodeVersionQuery query = createQuery( lastVersionId );
+        final Instant ageThreshold = repository.isTransient() ? untilForTransientRepository : until;
+
+        LOG.debug( "Repo is transient: {}, ageThreshold: {}", repository.isTransient(), ageThreshold );
+
+        NodeVersionQuery query = createQuery( lastVersionId, ageThreshold );
         NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
         long hits = versionsResult.getHits();
 
@@ -134,6 +145,8 @@ public class VersionTableVacuumCommand
                 final boolean toDelete = processVersion( repository, version );
                 if ( toDelete )
                 {
+                    LOG.debug( "Version's timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(), version.getNodeId(),
+                               version.getNodeVersionId() );
                     result.deleted();
                     versionService.delete( version.getNodeVersionId(), context );
                     nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
@@ -155,7 +168,7 @@ public class VersionTableVacuumCommand
                 .filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.BINARY_BLOB_KEYS ) )
                 .forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.BINARY_SEGMENT_LEVEL, blobKey ) );
 
-            query = createQuery( lastVersionId );
+            query = createQuery( lastVersionId, ageThreshold );
             versionsResult = nodeService.findVersions( query );
             hits = versionsResult.getHits();
         }
@@ -185,10 +198,10 @@ public class VersionTableVacuumCommand
         switch ( findVersionsInBranches( repository, version ) )
         {
             case NO_VERSION_FOUND:
-                    LOG.debug( "No version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
+                LOG.debug( "No version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
                 return true;
             case OTHER_VERSION_FOUND:
-                    LOG.debug( "Other version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
+                LOG.debug( "Other version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
                 return version.getNodeCommitId() == null;
             default:
                 return false;
@@ -222,7 +235,7 @@ public class VersionTableVacuumCommand
         return nodeFound ? BRANCH_CHECK_RESULT.OTHER_VERSION_FOUND : BRANCH_CHECK_RESULT.NO_VERSION_FOUND;
     }
 
-    private NodeVersionQuery createQuery( NodeVersionId lastVersionId )
+    private NodeVersionQuery createQuery( NodeVersionId lastVersionId, Instant ageThreshold )
     {
         final NodeVersionQuery.Builder builder = NodeVersionQuery.create();
 
@@ -236,7 +249,7 @@ public class VersionTableVacuumCommand
         }
 
         final RangeFilter mustBeOlderThanFilter =
-            RangeFilter.create().fieldName( VersionIndexPath.TIMESTAMP.getPath() ).to( ValueFactory.newDateTime( until ) ).build();
+            RangeFilter.create().fieldName( VersionIndexPath.TIMESTAMP.getPath() ).to( ValueFactory.newDateTime( ageThreshold ) ).build();
 
         return builder.addQueryFilter( mustBeOlderThanFilter )
             .addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) )
@@ -246,6 +259,8 @@ public class VersionTableVacuumCommand
 
     public static final class Builder
     {
+        private Clock clock;
+
         private NodeService nodeService;
 
         private RepositoryService repositoryService;
@@ -295,6 +310,12 @@ public class VersionTableVacuumCommand
         public Builder branchService( final BranchService branchService )
         {
             this.branchService = branchService;
+            return this;
+        }
+
+        public Builder clock( final Clock clock )
+        {
+            this.clock = clock;
             return this;
         }
 
