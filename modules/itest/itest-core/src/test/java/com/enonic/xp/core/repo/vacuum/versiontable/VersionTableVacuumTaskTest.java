@@ -1,11 +1,18 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
+import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -16,6 +23,14 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -137,6 +152,71 @@ class VersionTableVacuumTaskTest
         assertEquals( 0, result.getDeleted() );
 
         assertVersions( node1.id(), 3 );
+    }
+
+    @Test
+    void testDeleteOnTransientRepository()
+    {
+        final Context oldContext = ContextAccessor.current();
+
+        try
+        {
+            final RepositoryId repositoryId = RepositoryId.from( "com.test.transient" + System.currentTimeMillis() );
+            final Context context = ContextBuilder.create()
+                .branch( ContentConstants.BRANCH_MASTER )
+                .repositoryId( repositoryId )
+                .authInfo( AuthenticationInfo.create()
+                               .principals( RoleKeys.ADMIN )
+                               .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                               .build() )
+                .build();
+
+            ContextAccessor.INSTANCE.set( context );
+
+            context.callWith( () -> {
+                createTransientRepo( repositoryId );
+
+                Instant initTime = Instant.now();
+                Clock clock = Clock.fixed( initTime, ZoneId.systemDefault() );
+
+                this.task.setClock( clock );
+
+                final Node node1 = createNode( NodePath.ROOT, "node1" );
+                updateNode( node1.id(), 1 );
+
+                refresh();
+                assertVersions( node1.id(), 2 );
+
+                Instant newTime = initTime.plus( 3, ChronoUnit.MINUTES );
+                this.task.setClock( Clock.fixed( newTime, ZoneId.systemDefault() ) );
+
+                final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().build() ) );
+
+                refresh();
+
+                assertEquals( 3, result.getProcessed() );
+                assertEquals( 1, result.getDeleted() );
+
+                assertVersions( node1.id(), 1 );
+
+                return null;
+            } );
+        }
+        finally
+        {
+            ContextAccessor.INSTANCE.set( oldContext );
+        }
+    }
+
+    private void createTransientRepo( final RepositoryId repositoryId )
+    {
+        final AccessControlList rootPermissions =
+            AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() );
+
+        this.repositoryService.createRepository(
+            CreateRepositoryParams.create().repositoryId( repositoryId ).rootPermissions( rootPermissions ).transientFlag( true ).build() );
+
+        refresh();
     }
 
     private void assertVersions( final NodeId nodeId, final int versions )
