@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
+import com.enonic.xp.node.RemoveSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
@@ -197,8 +197,18 @@ public class SnapshotServiceImpl
         return SnapshotResultsFactory.create( getSnapshotsResponse );
     }
 
+    @Deprecated
     @Override
     public DeleteSnapshotsResult delete( final DeleteSnapshotParams params )
+    {
+        return NodeHelper.runAsAdmin( () -> {
+            final RemoveSnapshotsResult result = doDelete( params );
+            return DeleteSnapshotsResult.create().addAll( result.getSnapshotNames() ).build();
+        } );
+    }
+
+    @Override
+    public RemoveSnapshotsResult remove( final DeleteSnapshotParams params )
     {
         return NodeHelper.runAsAdmin( () -> doDelete( params ) );
     }
@@ -310,52 +320,60 @@ public class SnapshotServiceImpl
         }
     }
 
-    private DeleteSnapshotsResult doDelete( final DeleteSnapshotParams params )
+    private RemoveSnapshotsResult doDelete( final DeleteSnapshotParams params )
     {
-        final DeleteSnapshotsResult.Builder builder = DeleteSnapshotsResult.create();
+        final RemoveSnapshotsResult.Builder builder = RemoveSnapshotsResult.create();
 
         if ( !params.getSnapshotNames().isEmpty() )
         {
-            builder.addAll( deleteByName( params.getSnapshotNames() ) );
+            deleteByName( builder, params.getSnapshotNames() );
         }
 
         if ( params.getBefore() != null )
         {
-            builder.addAll( deleteByBefore( params.getBefore() ) );
+            deleteByBefore( builder, params.getBefore() );
         }
 
         return builder.build();
     }
 
-    private Set<String> deleteByBefore( final Instant before )
+    private void deleteByBefore( final RemoveSnapshotsResult.Builder builder, final Instant before )
     {
-        final Set<String> deleted = new HashSet<>();
-
         final SnapshotResults snapshotResults = doListSnapshots();
 
         for ( final SnapshotResult snapshotResult : snapshotResults )
         {
             if ( snapshotResult.getTimestamp().isBefore( before ) )
             {
-                doDeleteSnapshot( snapshotResult.getName() );
-                deleted.add( snapshotResult.getName() );
+                try
+                {
+                    doDeleteSnapshot( snapshotResult.getName() );
+                    builder.addProcessed( snapshotResult.getName() );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( "Snapshot delete failed: {}", snapshotResult.getName(), e );
+                    builder.addFailed( snapshotResult.getName() );
+                }
             }
         }
-
-        return deleted;
     }
 
-    private Set<String> deleteByName( final Set<String> snapshotNames )
+    private void deleteByName( final RemoveSnapshotsResult.Builder builder, final Set<String> snapshotNames )
     {
-        final Set<String> deletedNames = new HashSet<>();
-
         for ( final String name : snapshotNames )
         {
-            doDeleteSnapshot( name );
-            deletedNames.add( name );
+            try
+            {
+                doDeleteSnapshot( name );
+                builder.addProcessed( name );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Snapshot delete failed: {}", name, e );
+                builder.addFailed( name );
+            }
         }
-
-        return deletedNames;
     }
 
     private void doDeleteSnapshot( final String snapshotName )

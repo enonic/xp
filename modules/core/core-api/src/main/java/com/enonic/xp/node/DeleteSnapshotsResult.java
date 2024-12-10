@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@Deprecated
 @PublicApi
 public class DeleteSnapshotsResult
     extends AbstractImmutableEntitySet<String>
