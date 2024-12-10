@@ -568,13 +568,8 @@ type Part = PartDescriptor extends any // this lets us iterate over every member
     ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
     : never;
 
-export type PageComponentWhenAutomaticTemplate = Record<string,never>;
-export interface PageComponentWhenSpecificTemplate {
-    path: '/';
-    template: string;
-    type: 'page';
-}
-
+// NOTE: This reflect lib-portal.getContent where page templates are resolved.
+// WARNING: This does NOT reflect lib-content.getContent where page templates are NOT resolved!
 export interface PageComponent<
     Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord =
@@ -589,6 +584,7 @@ export interface PageComponent<
     descriptor: Descriptor
     path: '/'
     regions: Regions;
+    template?: string;
     type: 'page'
 }
 
@@ -651,11 +647,11 @@ export interface Content<
     _Component extends (
         Type extends 'portal:fragment'
             ? LayoutComponent | PartComponent
-            : PageComponent | PageComponentWhenSpecificTemplate | PageComponentWhenAutomaticTemplate
+            : PageComponent
         ) = (
             Type extends 'portal:fragment'
                 ? Layout | Part
-                : Page | PageComponentWhenSpecificTemplate | PageComponentWhenAutomaticTemplate
+                : Page
             ),
     > {
     _id: string;

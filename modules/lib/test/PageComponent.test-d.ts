@@ -1,16 +1,30 @@
 import type {
     ComponentDescriptor,
     Content,
+    DoubleUnderscore,
     PageComponent,
+} from '../core/index';
+import type {
     PageComponentWhenAutomaticTemplate,
     PageComponentWhenSpecificTemplate,
-} from '../core/index';
-import {expectAssignable} from 'tsd';
+} from '../lib-content/src/main/resources/lib/xp/content';
+import {
+    expectAssignable,
+    expectNotAssignable,
+} from 'tsd';
+
+declare global {
+    // Ignore this error in code editor, it's needed when running the tests.
+    const __: DoubleUnderscore;
+}
 
 // On a page using automatic page template, the page component is empty.
 const pageComponentWhenAutomaticTemplate = {};
 expectAssignable<PageComponentWhenAutomaticTemplate>(pageComponentWhenAutomaticTemplate);
-expectAssignable<Partial<Content>>({
+
+// NOTE: This reflects lib-portal.getContent where page templates are resolved.
+// WARNING: This does NOT reflect lib-content.getContent where page templates are NOT resolved!
+expectNotAssignable<Partial<Content>>({
     page: pageComponentWhenAutomaticTemplate,
 });
 
@@ -22,7 +36,10 @@ const pageComponentWhenSpecificTemplate = {
     template: '05f00637-2355-43f5-b199-4333ce7e3fbe',
 };
 expectAssignable<PageComponentWhenSpecificTemplate>(pageComponentWhenSpecificTemplate);
-expectAssignable<Partial<Content>>({
+
+// NOTE: This reflects lib-portal.getContent where page templates are resolved.
+// WARNING: This does NOT reflect lib-content.getContent where page templates are NOT resolved!
+expectNotAssignable<Partial<Content>>({
     page: pageComponentWhenSpecificTemplate,
 });
 
