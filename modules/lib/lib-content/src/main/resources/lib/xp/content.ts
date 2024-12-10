@@ -132,6 +132,14 @@ type ContentInheritType = Content['inherit'];
 
 type Workflow = Content['workflow'];
 
+export type PageComponentWhenAutomaticTemplate = Record<string,never>;
+
+export interface PageComponentWhenSpecificTemplate {
+    path: '/';
+    template: string;
+    type: 'page';
+}
+
 export type Schedule = Omit<PublishInfo, 'first'>;
 
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
