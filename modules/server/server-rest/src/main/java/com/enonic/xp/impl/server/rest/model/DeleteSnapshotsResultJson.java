@@ -8,18 +8,26 @@ public class DeleteSnapshotsResultJson
 {
     private final Set<String> deletedSnapshots;
 
-    private DeleteSnapshotsResultJson( final Set<String> deletedSnapshots )
+    private final Set<String> failedSnapshots;
+
+    private DeleteSnapshotsResultJson( final Set<String> deletedSnapshots, final Set<String> failedSnapshots )
     {
         this.deletedSnapshots = deletedSnapshots;
+        this.failedSnapshots = failedSnapshots;
     }
 
     public static DeleteSnapshotsResultJson from( final DeleteSnapshotsResult result )
     {
-        return new DeleteSnapshotsResultJson( result.getSet() );
+        return new DeleteSnapshotsResultJson( result.getSet(), result.getFailedSnapshotNames() );
     }
 
     public Set<String> getDeletedSnapshots()
     {
         return deletedSnapshots;
+    }
+
+    public Set<String> getFailedSnapshots()
+    {
+        return failedSnapshots;
     }
 }
