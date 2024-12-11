@@ -42,20 +42,13 @@ public class SnapshotsVacuumTask
         }
 
         final VacuumTaskResult.Builder builder = VacuumTaskResult.create().taskName( NAME );
-        try
-        {
-            final DeleteSnapshotsResult deleteSnapshotsResult = snapshotService.delete(
-                DeleteSnapshotParams.create().before( Instant.now().minusMillis( params.getAgeThreshold() ) ).build() );
+        final DeleteSnapshotsResult deleteSnapshotsResult =
+            snapshotService.delete( DeleteSnapshotParams.create().before( Instant.now().minusMillis( params.getAgeThreshold() ) ).build() );
 
-            deleteSnapshotsResult.stream().forEach( snapshot -> builder.processed() );
+        deleteSnapshotsResult.stream().forEach( snapshot -> builder.processed() );
+        deleteSnapshotsResult.getFailedSnapshotNames().forEach( snapshot -> builder.failed() );
 
-            return builder.build();
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Failed to vacuum snapshots", e );
-            return builder.failed().build();
-        }
+        return builder.build();
     }
 
     @Override
