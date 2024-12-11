@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.vacuum.snapshots;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.DeleteSnapshotParams;
-import com.enonic.xp.node.RemoveSnapshotsResult;
+import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.snapshot.SnapshotService;
 import com.enonic.xp.vacuum.VacuumListener;
@@ -22,8 +22,8 @@ public class SnapshotsVacuumTaskTest
     void test()
     {
         SnapshotService snapshotService = mock( SnapshotService.class );
-        when( snapshotService.remove( any( DeleteSnapshotParams.class ) ) ).thenReturn(
-            RemoveSnapshotsResult.create().addProcessed( "snapshot" ).build() );
+        when( snapshotService.delete( any( DeleteSnapshotParams.class ) ) ).thenReturn(
+            DeleteSnapshotsResult.create().add( "snapshot" ).build() );
 
         SnapshotsVacuumTask instance = new SnapshotsVacuumTask( snapshotService );
 
@@ -62,6 +62,6 @@ public class SnapshotsVacuumTaskTest
         assertEquals( 0, result.getDeleted() );
         assertEquals( 0, result.getFailed() );
 
-        verify( snapshotService, times( 1 ) ).remove( any( DeleteSnapshotParams.class ) );
+        verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
     }
 }
