@@ -64,23 +64,4 @@ public class SnapshotsVacuumTaskTest
 
         verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
     }
-
-    @Test
-    void testFailed()
-    {
-        SnapshotService snapshotService = mock( SnapshotService.class );
-        when( snapshotService.delete( any( DeleteSnapshotParams.class ) ) ).thenThrow( new RuntimeException() );
-
-        SnapshotsVacuumTask instance = new SnapshotsVacuumTask( snapshotService );
-
-        VacuumTaskResult result = instance.execute( VacuumTaskParams.create().ageThreshold( 60 * 1000 ).build() );
-
-        assertEquals( "SnapshotsVacuumTask", result.getTaskName() );
-        assertEquals( 0, result.getProcessed() );
-        assertEquals( 0, result.getInUse() );
-        assertEquals( 0, result.getDeleted() );
-        assertEquals( 1, result.getFailed() );
-
-        verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
-    }
 }

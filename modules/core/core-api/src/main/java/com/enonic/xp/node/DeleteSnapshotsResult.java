@@ -1,21 +1,32 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public class DeleteSnapshotsResult
-    extends AbstractImmutableEntitySet<String>
 {
+    private final Set<String> deletedSnapshots;
+
+    private final Set<String> failedSnapshots;
+
     private DeleteSnapshotsResult( final Builder builder )
     {
-        super( ImmutableSet.copyOf( builder.snapshotNames ) );
+        this.deletedSnapshots = builder.deletedSnapshots.build();
+        this.failedSnapshots = builder.failedSnapshots.build();
+    }
+
+    public Set<String> getDeletedSnapshots()
+    {
+        return deletedSnapshots;
+    }
+
+    public Set<String> getFailedSnapshots()
+    {
+        return failedSnapshots;
     }
 
     public static Builder create()
@@ -25,18 +36,19 @@ public class DeleteSnapshotsResult
 
     public static class Builder
     {
-        private final Set<String> snapshotNames = new HashSet<>();
+        private final ImmutableSet.Builder<String> deletedSnapshots = ImmutableSet.builder();
 
+        private final ImmutableSet.Builder<String> failedSnapshots = ImmutableSet.builder();
 
         public Builder add( final String snapshotName )
         {
-            this.snapshotNames.add( snapshotName );
+            this.deletedSnapshots.add( snapshotName );
             return this;
         }
 
-        public Builder addAll( final Collection<String> snapshotNames )
+        public Builder addFailed( final String snapshotName )
         {
-            this.snapshotNames.addAll( snapshotNames );
+            this.failedSnapshots.add( snapshotName );
             return this;
         }
 
