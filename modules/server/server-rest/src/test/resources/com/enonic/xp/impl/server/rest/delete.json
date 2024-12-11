@@ -1,5 +1,6 @@
 {
   "deletedSnapshots": [
     "snapshot1"
-  ]
+  ],
+  "failedSnapshots": []
 }
