@@ -5,8 +5,6 @@ import java.time.Instant;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
@@ -19,8 +17,6 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 public class SnapshotsVacuumTask
     implements VacuumTask
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SnapshotsVacuumTask.class );
-
     private static final int ORDER = 400;
 
     private static final String NAME = "SnapshotsVacuumTask";
@@ -45,8 +41,8 @@ public class SnapshotsVacuumTask
         final DeleteSnapshotsResult deleteSnapshotsResult =
             snapshotService.delete( DeleteSnapshotParams.create().before( Instant.now().minusMillis( params.getAgeThreshold() ) ).build() );
 
-        deleteSnapshotsResult.stream().forEach( snapshot -> builder.processed() );
-        deleteSnapshotsResult.getFailedSnapshotNames().forEach( snapshot -> builder.failed() );
+        deleteSnapshotsResult.getDeletedSnapshots().forEach( snapshot -> builder.processed() );
+        deleteSnapshotsResult.getFailedSnapshots().forEach( snapshot -> builder.failed() );
 
         return builder.build();
     }

@@ -18,7 +18,7 @@ public class DeleteSnapshotsResultJson
 
     public static DeleteSnapshotsResultJson from( final DeleteSnapshotsResult result )
     {
-        return new DeleteSnapshotsResultJson( result.getSet(), result.getFailedSnapshotNames() );
+        return new DeleteSnapshotsResultJson( result.getDeletedSnapshots(), result.getFailedSnapshots() );
     }
 
     public Set<String> getDeletedSnapshots()

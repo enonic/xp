@@ -13,17 +13,22 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class DeleteSnapshotsResult
     extends AbstractImmutableEntitySet<String>
 {
-    private final Set<String> failedSnapshotNames;
+    private final Set<String> failedSnapshots;
 
     private DeleteSnapshotsResult( final Builder builder )
     {
         super( ImmutableSet.copyOf( builder.snapshotNames ) );
-        this.failedSnapshotNames = ImmutableSet.copyOf( builder.failedSnapshotNames );
+        this.failedSnapshots = ImmutableSet.copyOf( builder.failedSnapshots );
     }
 
-    public Set<String> getFailedSnapshotNames()
+    public Set<String> getDeletedSnapshots()
     {
-        return failedSnapshotNames;
+        return this.getSet();
+    }
+
+    public Set<String> getFailedSnapshots()
+    {
+        return failedSnapshots;
     }
 
     public static Builder create()
@@ -35,7 +40,7 @@ public class DeleteSnapshotsResult
     {
         private final Set<String> snapshotNames = new HashSet<>();
 
-        private final Set<String> failedSnapshotNames = new HashSet<>();
+        private final Set<String> failedSnapshots = new HashSet<>();
 
 
         public Builder add( final String snapshotName )
@@ -53,7 +58,7 @@ public class DeleteSnapshotsResult
 
         public Builder addFailed( final String snapshotName )
         {
-            this.failedSnapshotNames.add( snapshotName );
+            this.failedSnapshots.add( snapshotName );
             return this;
         }
 

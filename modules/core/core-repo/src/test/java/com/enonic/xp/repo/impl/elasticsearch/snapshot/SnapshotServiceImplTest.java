@@ -102,9 +102,9 @@ public class SnapshotServiceImplTest
         assertEquals( 2, result.getSize() );
         assertTrue( result.getSet().contains( "snapshot1" ) );
         assertTrue( result.getSet().contains( "snapshot3" ) );
-        assertEquals( 2, result.getFailedSnapshotNames().size() );
-        assertTrue( result.getFailedSnapshotNames().contains( "snapshot2" ) );
-        assertTrue( result.getFailedSnapshotNames().contains( "snapshot4" ) );
+        assertEquals( 2, result.getFailedSnapshots().size() );
+        assertTrue( result.getFailedSnapshots().contains( "snapshot2" ) );
+        assertTrue( result.getFailedSnapshots().contains( "snapshot4" ) );
     }
 
     private static SnapshotInfo mockSnapshot( String name, SnapshotState state, Instant endTime )
