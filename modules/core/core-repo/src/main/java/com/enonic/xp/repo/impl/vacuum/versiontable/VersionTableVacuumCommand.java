@@ -145,12 +145,19 @@ public class VersionTableVacuumCommand
                 final boolean toDelete = processVersion( repository, version );
                 if ( toDelete )
                 {
-                    LOG.debug( "Version's timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(), version.getNodeId(),
-                               version.getNodeVersionId() );
-                    result.deleted();
-                    versionService.delete( version.getNodeVersionId(), context );
-                    nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
-                    binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
+                    if ( checkThatVersionIsOld( version, ageThreshold ) )
+                    {
+                        LOG.debug( "Version's timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(),
+                                   version.getNodeId(), version.getNodeVersionId() );
+                        result.deleted();
+                        versionService.delete( version.getNodeVersionId(), context );
+                        nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
+                        binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
+                    }
+                    else
+                    {
+                        result.inUse();
+                    }
                 }
                 else
                 {
@@ -254,6 +261,54 @@ public class VersionTableVacuumCommand
         return builder.addQueryFilter( mustBeOlderThanFilter )
             .addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) )
             .size( batchSize )
+            .build();
+    }
+
+    private boolean checkThatVersionIsOld( NodeVersionMetadata previousVersion, Instant ageThreshold )
+    {
+        final NodeVersionQuery query = findNextVersion( previousVersion.getNodeVersionId(), ageThreshold );
+        final NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
+        final long hits = versionsResult.getHits();
+
+        if ( hits == 0 )
+        {
+            LOG.debug( "No next version found for version [{}].", previousVersion.getNodeVersionId() );
+            return true;
+        }
+
+        final NodeVersionMetadata nextVersion = versionsResult.getNodeVersionsMetadata().iterator().next();
+
+        final Instant tsOfPrevVersion = previousVersion.getTimestamp();
+        final Instant tsOfNextVersion = nextVersion.getTimestamp();
+
+        final boolean shouldBeDeleted = tsOfPrevVersion.isBefore( ageThreshold ) && ageThreshold.isBefore( tsOfNextVersion );
+
+        LOG.debug(
+            "Checking if version [{}] should be deleted. tsOfPrevVersion: {}, tsOfNextVersion: {}, ageThreshold: {}. Should be deleted: {}",
+            previousVersion.getNodeVersionId(), tsOfPrevVersion, tsOfNextVersion, ageThreshold, shouldBeDeleted );
+
+        return shouldBeDeleted;
+    }
+
+    private NodeVersionQuery findNextVersion( NodeVersionId lastVersionId, Instant ageThreshold )
+    {
+        final NodeVersionQuery.Builder builder = NodeVersionQuery.create();
+
+        if ( lastVersionId != null )
+        {
+            final RangeFilter versionIdFilter = RangeFilter.create()
+                .fieldName( VersionIndexPath.VERSION_ID.getPath() )
+                .gt( ValueFactory.newString( lastVersionId.toString() ) )
+                .build();
+            builder.addQueryFilter( versionIdFilter );
+        }
+
+        final RangeFilter filter =
+            RangeFilter.create().fieldName( VersionIndexPath.TIMESTAMP.getPath() ).from( ValueFactory.newDateTime( ageThreshold ) ).build();
+
+        return builder.addQueryFilter( filter )
+            .addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.ASC ) )
+            .size( 1 )
             .build();
     }
 
