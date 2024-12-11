@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
-import com.enonic.xp.node.RemoveSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
@@ -197,18 +196,8 @@ public class SnapshotServiceImpl
         return SnapshotResultsFactory.create( getSnapshotsResponse );
     }
 
-    @Deprecated
     @Override
     public DeleteSnapshotsResult delete( final DeleteSnapshotParams params )
-    {
-        return NodeHelper.runAsAdmin( () -> {
-            final RemoveSnapshotsResult result = doDelete( params );
-            return DeleteSnapshotsResult.create().addAll( result.getSnapshotNames() ).build();
-        } );
-    }
-
-    @Override
-    public RemoveSnapshotsResult remove( final DeleteSnapshotParams params )
     {
         return NodeHelper.runAsAdmin( () -> doDelete( params ) );
     }
@@ -320,9 +309,9 @@ public class SnapshotServiceImpl
         }
     }
 
-    private RemoveSnapshotsResult doDelete( final DeleteSnapshotParams params )
+    private DeleteSnapshotsResult doDelete( final DeleteSnapshotParams params )
     {
-        final RemoveSnapshotsResult.Builder builder = RemoveSnapshotsResult.create();
+        final DeleteSnapshotsResult.Builder builder = DeleteSnapshotsResult.create();
 
         if ( !params.getSnapshotNames().isEmpty() )
         {
@@ -337,7 +326,7 @@ public class SnapshotServiceImpl
         return builder.build();
     }
 
-    private void deleteByBefore( final RemoveSnapshotsResult.Builder builder, final Instant before )
+    private void deleteByBefore( final DeleteSnapshotsResult.Builder builder, final Instant before )
     {
         final SnapshotResults snapshotResults = doListSnapshots();
 
@@ -348,7 +337,7 @@ public class SnapshotServiceImpl
                 try
                 {
                     doDeleteSnapshot( snapshotResult.getName() );
-                    builder.addProcessed( snapshotResult.getName() );
+                    builder.add( snapshotResult.getName() );
                 }
                 catch ( Exception e )
                 {
@@ -359,14 +348,14 @@ public class SnapshotServiceImpl
         }
     }
 
-    private void deleteByName( final RemoveSnapshotsResult.Builder builder, final Set<String> snapshotNames )
+    private void deleteByName( final DeleteSnapshotsResult.Builder builder, final Set<String> snapshotNames )
     {
         for ( final String name : snapshotNames )
         {
             try
             {
                 doDeleteSnapshot( name );
-                builder.addProcessed( name );
+                builder.add( name );
             }
             catch ( Exception e )
             {

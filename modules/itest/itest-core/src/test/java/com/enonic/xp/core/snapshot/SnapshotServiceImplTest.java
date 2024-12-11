@@ -252,7 +252,7 @@ public class SnapshotServiceImplTest
 
         this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
 
-        this.snapshotService.remove( DeleteSnapshotParams.create().add( "my-snapshot" ).build() );
+        this.snapshotService.delete( DeleteSnapshotParams.create().add( "my-snapshot" ).build() );
 
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
 

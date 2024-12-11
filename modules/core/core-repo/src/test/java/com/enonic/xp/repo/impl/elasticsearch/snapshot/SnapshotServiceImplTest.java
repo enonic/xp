@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
-import com.enonic.xp.node.RemoveSnapshotsResult;
+import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
@@ -62,7 +62,7 @@ public class SnapshotServiceImplTest
     }
 
     @Test
-    void testRemove()
+    void testDelete()
     {
         final RepositoryMetaData repositoryMetaData = new RepositoryMetaData( "enonic-xp-snapshot-repo", "fs", Settings.settingsBuilder()
             .put( "compress", true )
@@ -96,15 +96,15 @@ public class SnapshotServiceImplTest
             argThat( request -> "snapshot2".equals( request.snapshot() ) || "snapshot4".equals( request.snapshot() ) ) ) ).thenThrow(
             new ElasticsearchException( "Failed to delete snapshot" ) );
 
-        final RemoveSnapshotsResult result = instance.remove(
+        final DeleteSnapshotsResult result = instance.delete(
             DeleteSnapshotParams.create().add( "snapshot1" ).add( "snapshot2" ).before( now.minus( 2, ChronoUnit.HOURS ) ).build() );
 
-        assertEquals( 2, result.getSnapshotNames().size() );
-        assertTrue( result.getSnapshotNames().contains( "snapshot1" ) );
-        assertTrue( result.getSnapshotNames().contains( "snapshot3" ) );
-        assertEquals( 2, result.getFailedSnapshotNames().size() );
-        assertTrue( result.getFailedSnapshotNames().contains( "snapshot2" ) );
-        assertTrue( result.getFailedSnapshotNames().contains( "snapshot4" ) );
+        assertEquals( 2, result.getDeletedSnapshots().size() );
+        assertTrue( result.getDeletedSnapshots().contains( "snapshot1" ) );
+        assertTrue( result.getDeletedSnapshots().contains( "snapshot3" ) );
+        assertEquals( 2, result.getFailedSnapshots().size() );
+        assertTrue( result.getFailedSnapshots().contains( "snapshot2" ) );
+        assertTrue( result.getFailedSnapshots().contains( "snapshot4" ) );
     }
 
     private static SnapshotInfo mockSnapshot( String name, SnapshotState state, Instant endTime )
