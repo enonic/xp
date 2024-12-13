@@ -69,7 +69,7 @@ public class BranchEntryProcessor
                 nodeCommitId( meta.getNodeCommitId() ).
                 build() );
 
-            validateOrAddBinary( nodeVersion, result );
+            addBinary( nodeVersion, result );
 
             result.successful();
         }
