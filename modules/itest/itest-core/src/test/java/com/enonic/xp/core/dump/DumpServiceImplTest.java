@@ -116,12 +116,7 @@ public class DumpServiceImplTest
     public void setUp()
         throws Exception
     {
-        this.dumpService = new DumpServiceImpl( eventPublisher );
-        this.dumpService.setBlobStore( BLOB_STORE );
-        this.dumpService.setNodeService( this.nodeService );
-        this.dumpService.setNodeRepositoryService( this.nodeRepositoryService );
-        this.dumpService.setNodeStorageService( this.storageService );
-        this.dumpService.setRepositoryEntryService( this.repositoryEntryService );
+        this.dumpService = new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService , this.repositoryEntryService, this.nodeRepositoryService, this.storageService );
         this.dumpService.setBasePath( temporaryFolder );
     }
 

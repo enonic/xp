@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
@@ -43,24 +41,18 @@ class AbstractEntryProcessor
         repositoryId = builder.repositoryId;
     }
 
-    void validateOrAddBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
+    void addBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
     {
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         nodeVersion.getAttachedBinaries().forEach( binary -> {
-
-            final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
-            final BlobRecord existingRecord = this.blobStore.getRecord( segment, BlobKey.from( binary.getBlobKey() ) );
-
-            if ( existingRecord == null )
+            try
             {
-                try
-                {
-                    final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, binary.getBlobKey() );
-                    this.blobStore.addRecord( segment, dumpBinary );
-                }
-                catch ( RepoLoadException e )
-                {
-                    reportBinaryError( nodeVersion, result, binary, e );
-                }
+                final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, binary.getBlobKey() );
+                this.blobStore.addRecord( segment, dumpBinary );
+            }
+            catch ( RepoLoadException e )
+            {
+                reportBinaryError( nodeVersion, result, binary, e );
             }
         } );
     }
