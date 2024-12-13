@@ -83,15 +83,15 @@ public class DumpServiceImpl
     private static final List<RepositoryId> SYSTEM_REPO_IDS =
         List.of( RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) );
 
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private RepositoryEntryService repositoryEntryService;
+    private final RepositoryEntryService repositoryEntryService;
 
-    private NodeRepositoryService nodeRepositoryService;
+    private final NodeRepositoryService nodeRepositoryService;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeStorageService nodeStorageService;
 
     private final EventPublisher eventPublisher;
 
@@ -100,9 +100,16 @@ public class DumpServiceImpl
     private Path basePath = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
 
     @Activate
-    public DumpServiceImpl( @Reference EventPublisher eventPublisher )
+    public DumpServiceImpl( @Reference EventPublisher eventPublisher, @Reference BlobStore blobStore, @Reference NodeService nodeService,
+                            @Reference RepositoryEntryService repositoryEntryService, @Reference NodeRepositoryService nodeRepositoryService,
+                            @Reference NodeStorageService nodeStorageService )
     {
         this.xpVersion = VersionInfo.get().getVersion();
+        this.blobStore = blobStore;
+        this.nodeService = nodeService;
+        this.repositoryEntryService = repositoryEntryService;
+        this.nodeRepositoryService = nodeRepositoryService;
+        this.nodeStorageService = nodeStorageService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -486,36 +493,6 @@ public class DumpServiceImpl
         {
             throw new RepoDumpException( "Cannot create dump directory", e );
         }
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setBlobStore( final BlobStore blobStore )
-    {
-        this.blobStore = blobStore;
-    }
-
-    @Reference
-    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
-    {
-        this.repositoryEntryService = repositoryEntryService;
-    }
-
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
     }
 
     public void setBasePath( final Path basePath )
