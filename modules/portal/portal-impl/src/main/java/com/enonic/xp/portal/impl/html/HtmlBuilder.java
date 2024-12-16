@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.exception;
+package com.enonic.xp.portal.impl.html;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -6,7 +6,7 @@ import java.util.Deque;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 
-final class HtmlBuilder
+public final class HtmlBuilder
 {
     private final Escaper escaper;
 
@@ -16,17 +16,20 @@ final class HtmlBuilder
 
     private boolean addedInner;
 
-    HtmlBuilder()
+    private boolean closedEmptyTag;
+
+    public HtmlBuilder()
     {
         this.escaper = HtmlEscapers.htmlEscaper();
         this.str = new StringBuilder();
         this.openTags = new ArrayDeque<>();
         this.addedInner = false;
+        this.closedEmptyTag = false;
     }
 
     private void closeIfNeeded()
     {
-        if ( !this.addedInner && !this.openTags.isEmpty() )
+        if ( !this.closedEmptyTag && !this.addedInner && !this.openTags.isEmpty() )
         {
             this.str.append( '>' );
         }
@@ -41,6 +44,7 @@ final class HtmlBuilder
 
         this.openTags.push( name );
         this.addedInner = false;
+        this.closedEmptyTag = false;
 
         return this;
     }
@@ -57,6 +61,8 @@ final class HtmlBuilder
     {
         this.str.append( "/>" );
         this.openTags.pop();
+        this.closedEmptyTag = true;
+
         return this;
     }
 
@@ -68,6 +74,7 @@ final class HtmlBuilder
         this.str.append( value );
         this.str.append( '"' );
         this.addedInner = false;
+        this.closedEmptyTag = false;
         return this;
     }
 
@@ -81,6 +88,7 @@ final class HtmlBuilder
         closeIfNeeded();
         this.str.append( text );
         this.addedInner = true;
+        this.closedEmptyTag = false;
         return this;
     }
 

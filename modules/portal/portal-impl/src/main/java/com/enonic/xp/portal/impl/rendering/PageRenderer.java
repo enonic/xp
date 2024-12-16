@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.portal.impl.processor.ProcessorChainResolver;
 import com.enonic.xp.portal.impl.processor.ResponseProcessorExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
@@ -21,6 +22,7 @@ import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
 import static com.enonic.xp.portal.RenderMode.INLINE;
+import static com.enonic.xp.portal.RenderMode.LIVE;
 import static com.enonic.xp.portal.RenderMode.PREVIEW;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
@@ -78,36 +80,60 @@ public final class PageRenderer
 
     private PortalResponse renderDefaultFragmentPage( final RenderMode mode, final Content content )
     {
-        String html = "<!DOCTYPE html>" + "<html>" + "<head>" + "<meta charset=\"utf-8\"/><title>" + content.getDisplayName() + "</title>" +
-            "</head>";
+        final HtmlBuilder html = new HtmlBuilder();
+        html.text( "<!DOCTYPE html>" );
+        html.open( "html" );
+
+        html.open( "head" );
+        html.open( "title" ).escapedText( content.getDisplayName() ).close();
+        html.close();
+
+        html.open( "body" );
         if ( mode == EDIT )
         {
-            html += "<body " + PORTAL_COMPONENT_ATTRIBUTE + "=\"page\">";
+            html.attribute( PORTAL_COMPONENT_ATTRIBUTE, "page" );
         }
-        else
-        {
-            html += "<body>";
-        }
-        html += "<!--#" + COMPONENT_INSTRUCTION_PREFIX + " " + FRAGMENT_COMPONENT + "-->";
-        html += "</body></html>";
+        html.text( "<!--#" + COMPONENT_INSTRUCTION_PREFIX + " " + FRAGMENT_COMPONENT + "-->" );
+        html.close();
 
-        return PortalResponse.create().status( HttpStatus.OK ).contentType( MediaType.HTML_UTF_8 ).body( html ).postProcess( true ).build();
+        html.close();
+
+        return PortalResponse.create()
+            .status( HttpStatus.OK )
+            .contentType( MediaType.HTML_UTF_8 )
+            .body( html.toString() )
+            .postProcess( true )
+            .build();
     }
 
     private PortalResponse renderForNoPageDescriptor( final RenderMode mode, final Content content )
     {
-        String html = "<html>" + "<head>" + "<meta charset=\"utf-8\"/>" + "<title>" + content.getDisplayName() + "</title>" + "</head>";
+        final HtmlBuilder html = new HtmlBuilder();
+
+        html.open( "html" );
+
+        html.open( "head" );
+        html.open( "title" ).escapedText( content.getDisplayName() ).close();
+        html.close();
+
         if ( mode == EDIT )
         {
-            html += "<body " + PORTAL_COMPONENT_ATTRIBUTE + "=\"page\"></body>";
+            html.open( "body" ).attribute( PORTAL_COMPONENT_ATTRIBUTE, "page" ).text( "" ).close();
         }
         else
         {
-            html += "<body></body>";
+            html.open( "body" ).text( "" ).close();
         }
-        html += "</html>";
 
-        HttpStatus status = ( mode == INLINE || mode == PREVIEW ) ? HttpStatus.IM_A_TEAPOT : HttpStatus.OK;
-        return PortalResponse.create().status( status ).contentType( MediaType.HTML_UTF_8 ).body( html ).postProcess( true ).build();
+        html.close();
+
+        HttpStatus status = mode == LIVE ? HttpStatus.SERVICE_UNAVAILABLE : HttpStatus.IM_A_TEAPOT;
+
+        return PortalResponse.create()
+            .status( status )
+            .contentType( MediaType.HTML_UTF_8 )
+            .body( html.toString() )
+            .postProcess( true )
+            .build();
     }
 }
