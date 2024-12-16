@@ -75,6 +75,21 @@ public class LoginHandlerTest
     }
 
     @Test
+    public void testLoginWithSkipAuth()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithSkipAuth" );
+
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
+        final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
+        assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
     public void testLoginWithScopeNONE()
     {
         ContextAccessor.current().getLocalScope().setSession( null );
