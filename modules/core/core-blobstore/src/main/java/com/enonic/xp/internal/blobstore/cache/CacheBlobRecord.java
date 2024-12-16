@@ -20,8 +20,12 @@ public class CacheBlobRecord
     public CacheBlobRecord( final BlobRecord blobRecord )
         throws IOException
     {
-        this.blobKey = blobRecord.getKey();
         this.content = ByteSource.wrap( blobRecord.getBytes().read() );
+        this.blobKey = BlobKey.from( this.content );
+        if ( !blobRecord.getKey().equals( this.blobKey ) )
+        {
+            throw new IOException( "BlobKey must be the same as the key of the BlobRecord" );
+        }
         this.lastModified = blobRecord.lastModified();
     }
 

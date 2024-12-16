@@ -16,7 +16,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
@@ -127,12 +126,6 @@ public class NodeVersionServiceImpl
         }
         catch ( ExecutionException | UncheckedExecutionException e )
         {
-            if ( blobStore instanceof CachingBlobStore )
-            {
-                ( (CachingBlobStore) blobStore ).invalidate( null, nodeBlobKey );
-                ( (CachingBlobStore) blobStore ).invalidate( null, indexConfigBlobKey );
-                ( (CachingBlobStore) blobStore ).invalidate( null, accessControlBlobKey );
-            }
             throw new RuntimeException(
                 "Failed to load blobs with keys: " + nodeBlobKey + ", " + indexConfigBlobKey + ", " + accessControlBlobKey, e );
         }

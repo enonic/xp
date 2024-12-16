@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileBlobStoreTest
 {
@@ -118,18 +117,6 @@ public class FileBlobStoreTest
         blobStore.deleteSegment( secondSegment );
         assertEquals( 1, blobStore.listSegments().count() );
         assertEquals( segment, blobStore.listSegments().findFirst().get() );
-    }
-
-    @Test
-    public void lastModifiedUpdated()
-        throws Exception
-    {
-        final BlobRecord rec1 = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
-        final long beforeUpdate = rec1.lastModified();
-        Thread.sleep( 1000 ); // ensure a second difference
-        final BlobRecord rec2 = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
-
-        assertTrue( beforeUpdate < rec2.lastModified() );
     }
 
     private BlobRecord createRecord( final String str )

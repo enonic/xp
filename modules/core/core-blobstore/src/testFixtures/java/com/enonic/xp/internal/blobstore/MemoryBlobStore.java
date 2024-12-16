@@ -36,10 +36,9 @@ public class MemoryBlobStore
     public BlobRecord addRecord( final Segment segment, final ByteSource in )
         throws BlobStoreException
     {
-        final BlobKey key = BlobKey.from( in );
-        final MemoryBlobRecord record = new MemoryBlobRecord( key, in );
+        final MemoryBlobRecord record = new MemoryBlobRecord( in );
 
-        return doStoreRecord( segment, key, record );
+        return doStoreRecord( segment, record.getKey(), record );
     }
 
     private BlobRecord doStoreRecord( final Segment segment, final BlobKey key, final BlobRecord record )

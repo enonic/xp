@@ -1,6 +1,7 @@
 package com.enonic.xp.internal.blobstore.cache;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -76,7 +77,6 @@ public final class CachedBlobStore
         throws BlobStoreException
     {
         this.store.removeRecord( segment, key );
-        this.cache.invalidate( key );
     }
 
     @Override
@@ -87,21 +87,32 @@ public final class CachedBlobStore
 
     private BlobRecord addToCache( final BlobRecord record )
     {
-        if ( record.getLength() <= this.sizeThreshold )
+        // Quick check to avoid caching large blobs
+        if ( record.getLength() > this.sizeThreshold )
         {
-            try
-            {
-                final CacheBlobRecord cacheBlobRecord = new CacheBlobRecord( record );
-                this.cache.put( record.getKey(), cacheBlobRecord );
-                return cacheBlobRecord;
-            }
-            catch ( IOException e )
-            {
-                LOG.error( "Could not create cache blob-record", e );
-            }
+            return record;
         }
 
-        return record;
+        // Don't do heavy lifting if the blob is already in the cache
+        final BlobKey key = record.getKey();
+        final CacheBlobRecord present = this.cache.getIfPresent( key );
+        if ( present != null )
+        {
+            return present;
+        }
+
+        // We don't want return blobs that do not actually reside in cache (for instance record gets evacuated immediately after being added)
+        try
+        {
+            this.cache.put( key, new CacheBlobRecord( record ) );
+        }
+        catch ( IOException e )
+        {
+            // blobs that could not be cached should be just returned as-is
+            LOG.error( "Could not create cache blob-record", e );
+        }
+
+        return Objects.requireNonNullElse( this.cache.getIfPresent( key ), record );
     }
 
     @Override
