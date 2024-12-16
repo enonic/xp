@@ -20,6 +20,8 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.handler.render.PageResolver;
+import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -58,10 +60,21 @@ class MappingHandlerHelper
 
     private final ContentResolver contentResolver;
 
+    private final PageResolver pageResolver;
+
     MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
                           final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
                           final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
                           final ContentResolver contentResolver )
+    {
+        this( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver,
+              contentResolver, null );
+    }
+
+    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
+                          final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
+                          final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
+                          final ContentResolver contentResolver, final PageResolver pageResolver )
     {
         this.projectService = projectService;
         this.resourceService = resourceService;
@@ -70,6 +83,7 @@ class MappingHandlerHelper
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
         this.contentResolver = contentResolver;
+        this.pageResolver = pageResolver;
     }
 
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
@@ -100,8 +114,6 @@ class MappingHandlerHelper
 
         final Site site = resolvedContent.getNearestSite();
 
-        final Content content = resolvedContent.getContent();
-
         final SiteConfigs siteConfigs;
 
         if ( site != null )
@@ -119,15 +131,29 @@ class MappingHandlerHelper
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
-        final Optional<ControllerMappingDescriptor> resolve =
+        final Content content = resolvedContent.getContent();
+
+        final Optional<ControllerMappingDescriptor> optionalControllerMapping =
             controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs,
                                                 getServiceType( request ) );
 
-        if ( resolve.isPresent() )
+        if ( optionalControllerMapping.isPresent() )
         {
-            final ControllerMappingDescriptor mapping = resolve.get();
+            final ControllerMappingDescriptor mapping = optionalControllerMapping.get();
 
-            request.setContent( content );
+            if ( content == null || pageResolver == null )
+            {
+                request.setContent( content );
+            }
+            else
+            {
+                final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+                final Content effectiveContent = Content.create( content ).page( resolvedPage.getEffectivePage() ).build();
+                request.setContent( effectiveContent );
+                request.setApplicationKey( resolvedPage.getApplicationKey() );
+                request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+            }
+
             request.setSite( site );
             request.setContextPath(
                 request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
@@ -138,17 +164,12 @@ class MappingHandlerHelper
             {
                 return handleController( request, mapping );
             }
-            else
-            {
-                return handleFilter( request, webResponse, webHandlerChain, mapping );
-            }
-        }
-        else
-        {
-            return webHandlerChain.handle( request, webResponse );
-        }
-    }
 
+            return handleFilter( request, webResponse, webHandlerChain, mapping );
+        }
+
+        return webHandlerChain.handle( request, webResponse );
+    }
 
     private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
         throws Exception

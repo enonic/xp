@@ -14,9 +14,13 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -27,6 +31,7 @@ import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.Resource;
@@ -80,6 +85,12 @@ public class MappingHandlerTest
 
     private ProjectService projectService;
 
+    private PageTemplateService pageTemplateService;
+
+    private PageDescriptorService pageDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     @BeforeEach
     public final void setup()
         throws Exception
@@ -107,9 +118,13 @@ public class MappingHandlerTest
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
         this.projectService = mock( ProjectService.class );
+        this.pageTemplateService = mock( PageTemplateService.class );
+        this.pageDescriptorService = mock( PageDescriptorService.class );
+        this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
         this.handler = new MappingHandler( siteService, contentService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                           rendererDelegate, projectService );
+                                           rendererDelegate, projectService, pageTemplateService, pageDescriptorService,
+                                           layoutDescriptorService );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -230,6 +245,8 @@ public class MappingHandlerTest
 
         when( rendererDelegate.render( eq( projectMapping ), same( request ) ) ).thenReturn(
             PortalResponse.create().body( "Project body" ).build() );
+        final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "project-app1" );
+        when( this.contentService.findNearestSiteByPath( any( ContentPath.class) ) ).thenReturn( site );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -302,7 +319,7 @@ public class MappingHandlerTest
     private void setupContentAndSite( final ControllerMappingDescriptor mapping )
     {
         final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", true );
-        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
+        final Site site = createSite( "id", "site", "myapplication:contenttypename", "myapplication" );
 
         final ContentPath path = ContentPath.from( "site/somesite/content" ).asAbsolute();
         when( this.contentService.getByPath( path ) ).thenReturn( content );
@@ -310,6 +327,8 @@ public class MappingHandlerTest
         when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.pageTemplateService.getByKey( any( PageTemplateKey.class ) ) ).thenReturn( createPageTemplate() );
 
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping );
         final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
@@ -336,10 +355,11 @@ public class MappingHandlerTest
 
         when( this.contentService.getByPath( path ) ).thenReturn( content );
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        when( this.pageTemplateService.getByKey( any( PageTemplateKey.class ) ) ).thenReturn( createPageTemplate() );
 
         if ( siteMapping != null )
         {
-            final Site site = createSite( "id", "mysite", "myapplication:contenttypename" );
+            final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "myapplication" );
             when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
 
             final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
@@ -383,7 +403,7 @@ public class MappingHandlerTest
         return content.build();
     }
 
-    private Site createSite( final String id, final String path, final String contentTypeName )
+    private Site createSite( final String id, final String path, final String contentTypeName, final String appKey )
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
@@ -391,7 +411,7 @@ public class MappingHandlerTest
         Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
         final SiteConfig siteConfig =
-            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build();
+            SiteConfig.create().application( ApplicationKey.from( appKey ) ).config( new PropertyTree() ).build();
         return Site.create()
             .siteConfigs( SiteConfigs.from( siteConfig ) )
             .id( ContentId.from( id ) )
@@ -414,5 +434,17 @@ public class MappingHandlerTest
                 .forEach( project::addSiteConfig ) );
 
         return project.build();
+    }
+
+    private PageTemplate createPageTemplate()
+    {
+        final PageTemplate.Builder pageTemplate = PageTemplate.newPageTemplate()
+            .key( PageTemplateKey.from( "my-page-tempalte" ) )
+            .controller( DescriptorKey.from( "my-template-controller" ) )
+            .id( ContentId.from( "pageTemplateId" ) )
+            .path( ContentPath.from( "site/somesite/template" ) )
+            .type( ContentTypeName.pageTemplate() );
+
+        return pageTemplate.build();
     }
 }
