@@ -11,6 +11,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -19,6 +21,7 @@ import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -62,6 +65,12 @@ class ComponentServiceMappingHandlerTest
 
     private FilterScript filterScript;
 
+    private PageTemplateService pageTemplateService;
+
+    private PageDescriptorService pageDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     @BeforeEach
     final void setup()
     {
@@ -72,6 +81,9 @@ class ComponentServiceMappingHandlerTest
         RendererDelegate rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
         this.webHandlerChain = mock( WebHandlerChain.class );
+        this.pageTemplateService = mock( PageTemplateService.class );
+        this.pageDescriptorService = mock( PageDescriptorService.class );
+        this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
         ControllerScript controllerScript = mock( ControllerScript.class );
@@ -85,7 +97,8 @@ class ComponentServiceMappingHandlerTest
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.handler = new ComponentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                                           rendererDelegate, siteService, contentService );
+                                                           rendererDelegate, siteService, contentService, pageTemplateService,
+                                                           pageDescriptorService, layoutDescriptorService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
