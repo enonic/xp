@@ -45,6 +45,13 @@ export interface LoginParams {
     sessionTimeout?: number;
 }
 
+export interface LoginWithoutPasswordParams {
+    user: string;
+    idProvider?: string;
+    scope?: LoginScopeType;
+    sessionTimeout?: number;
+}
+
 export interface LoginResult {
     authenticated: boolean;
     message?: string;
@@ -67,6 +74,12 @@ interface LoginHandler {
     login(): LoginResult;
 }
 
+const isLoginParams = (params: unknown): params is LoginParams =>
+    typeof params === 'object' &&
+    params !== null &&
+    'user' in params &&
+    ('password' in params || 'skipAuth' in params);
+
 /**
  * Login a user with the specified idProvider, userName, password and scope.
  *
@@ -81,13 +94,11 @@ interface LoginHandler {
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
  * @returns {LoginResult} Information for logged-in user.
  */
-export function login(params: LoginParams): LoginResult {
+export function login(params: LoginParams | LoginWithoutPasswordParams): LoginResult {
     checkRequired(params, 'user');
 
     const {
         user,
-        skipAuth = false,
-        password,
         idProvider,
         scope = 'SESSION' as LoginScopeType,
         sessionTimeout,
@@ -96,21 +107,23 @@ export function login(params: LoginParams): LoginResult {
     const bean: LoginHandler = __.newBean<LoginHandler>('com.enonic.xp.lib.auth.LoginHandler');
 
     bean.setUser(user);
+    bean.setScope(scope);
+    bean.setSessionTimeout(__.nullOrValue(sessionTimeout));
 
-    if (params.skipAuth) {
-        bean.setSkipAuth(skipAuth);
-    } else {
-        checkRequired(params, 'password');
-        bean.setPassword(password);
+    if (isLoginParams(params)) {
+        const skipAuth = params.skipAuth ?? false;
+        const password = params.password;
+
+        if (skipAuth) {
+            bean.setSkipAuth(true);
+        } else {
+            checkRequiredValue(password, 'password');
+            bean.setPassword(password);
+        }
     }
-
     if (idProvider) {
         bean.setIdProvider(([] as string[]).concat(idProvider));
     }
-
-    bean.setScope(scope);
-
-    bean.setSessionTimeout(__.nullOrValue(sessionTimeout));
 
     return __.toNativeObject(bean.login());
 }
