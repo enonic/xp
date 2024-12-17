@@ -22,7 +22,6 @@ import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
 import static com.enonic.xp.portal.RenderMode.INLINE;
-import static com.enonic.xp.portal.RenderMode.LIVE;
 import static com.enonic.xp.portal.RenderMode.PREVIEW;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
@@ -127,7 +126,7 @@ public final class PageRenderer
 
         html.close();
 
-        HttpStatus status = mode == LIVE ? HttpStatus.SERVICE_UNAVAILABLE : HttpStatus.IM_A_TEAPOT;
+        final HttpStatus status = mode == INLINE ? HttpStatus.IM_A_TEAPOT : HttpStatus.SERVICE_UNAVAILABLE;
 
         return PortalResponse.create()
             .status( status )
