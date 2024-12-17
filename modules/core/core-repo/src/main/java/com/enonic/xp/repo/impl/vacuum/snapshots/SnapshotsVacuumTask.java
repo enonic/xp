@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.vacuum.snapshots;
 
-import java.time.Instant;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,7 +38,7 @@ public class SnapshotsVacuumTask
         final VacuumTaskResult.Builder builder = VacuumTaskResult.create().taskName( NAME );
 
         final DeleteSnapshotsResult deleteSnapshotsResult =
-            snapshotService.delete( DeleteSnapshotParams.create().before( Instant.now().minusMillis( params.getAgeThreshold() ) ).build() );
+            snapshotService.delete( DeleteSnapshotParams.create().before( params.getVacuumStartedAt().minusMillis( params.getAgeThreshold() ) ).build() );
 
         deleteSnapshotsResult.getDeletedSnapshots().forEach( snapshot -> builder.processed() );
         deleteSnapshotsResult.getFailedSnapshots().forEach( snapshot -> builder.failed() );

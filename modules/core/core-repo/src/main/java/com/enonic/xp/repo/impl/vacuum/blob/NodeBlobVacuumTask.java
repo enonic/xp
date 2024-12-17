@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.vacuum.blob;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -17,24 +18,32 @@ public class NodeBlobVacuumTask
 
     private static final String NAME = "NodeBlobVacuumTask";
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
+
+    @Activate
+    public NodeBlobVacuumTask( @Reference final NodeService nodeService, @Reference final BlobStore blobStore )
+    {
+        this.nodeService = nodeService;
+        this.blobStore = blobStore;
+    }
 
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        if (params.hasListener()) {
+        if ( params.hasListener() )
+        {
             params.getListener().taskBegin( NAME, null );
         }
-        return NodeBlobVacuumCommand.create().
-            blobStore( blobStore ).
-            nodeService( nodeService ).
-            params( params ).
-            build().
-            execute().
-            taskName( NAME ).
-            build();
+        return NodeBlobVacuumCommand.create()
+            .blobStore( blobStore )
+            .nodeService( nodeService )
+            .params( params )
+            .build()
+            .execute()
+            .taskName( NAME )
+            .build();
     }
 
     @Override
@@ -47,17 +56,5 @@ public class NodeBlobVacuumTask
     public String name()
     {
         return NAME;
-    }
-
-    @Reference
-    public void setBlobStore( final BlobStore blobStore )
-    {
-        this.blobStore = blobStore;
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
     }
 }

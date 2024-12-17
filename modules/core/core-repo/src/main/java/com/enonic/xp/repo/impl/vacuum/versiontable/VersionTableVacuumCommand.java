@@ -83,7 +83,7 @@ public class VersionTableVacuumCommand
         listener = builder.params.getListener();
         batchSize = builder.params.getVersionsBatchSize();
 
-        final Instant now = builder.clock != null ? Instant.now( builder.clock ) : Instant.now();
+        final Instant now = builder.clock != null ? Instant.now( builder.clock ) : builder.params.getVacuumStartedAt();
         until = now.minusMillis( builder.params.getAgeThreshold() );
         untilForTransientRepository = now.minus( 1, ChronoUnit.MINUTES );
     }
@@ -149,8 +149,11 @@ public class VersionTableVacuumCommand
                                version.getNodeVersionId() );
                     result.deleted();
                     versionService.delete( version.getNodeVersionId(), context );
-                    nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
-                    binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
+                    if ( repository.isTransient() )
+                    {
+                        nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
+                        binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
+                    }
                 }
                 else
                 {

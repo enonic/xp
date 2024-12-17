@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.vacuum.blob;
 
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mockito.Mockito;
@@ -59,7 +60,7 @@ public abstract class AbstractBlobVacuumTaskTest
 
         final VacuumTask task = createTask();
 
-        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).build() );
+        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( 0 ).build() );
 
         assertEquals( 3, result.getProcessed() );
         assertEquals( 2, result.getDeleted() );
@@ -101,7 +102,8 @@ public abstract class AbstractBlobVacuumTaskTest
                 blobReportCount.incrementAndGet();
             }
         };
-        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).listener( progressListener ).build() );
+        final VacuumTaskResult result = task.execute(
+            VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( 0 ).listener( progressListener ).build() );
 
         assertEquals( 3, result.getProcessed() );
         assertEquals( 2, result.getDeleted() );
@@ -116,7 +118,7 @@ public abstract class AbstractBlobVacuumTaskTest
         this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
 
         final VacuumTask task = createTask();
-        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().build() );
+        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() );
 
         assertEquals( 0, result.getProcessed() );
     }

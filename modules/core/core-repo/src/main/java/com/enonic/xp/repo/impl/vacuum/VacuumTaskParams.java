@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.vacuum;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.Objects;
 
 import com.enonic.xp.vacuum.VacuumListener;
 
@@ -14,11 +16,14 @@ public final class VacuumTaskParams
 
     private final int versionsBatchSize;
 
+    private final Instant vacuumStartedAt;
+
     private VacuumTaskParams( final Builder builder )
     {
         ageThreshold = builder.ageThreshold;
         listener = builder.listener;
         versionsBatchSize = builder.versionsBatchSize;
+        vacuumStartedAt = Objects.requireNonNull( builder.vacuumStartedAt );
     }
 
     public long getAgeThreshold()
@@ -31,13 +36,19 @@ public final class VacuumTaskParams
         return listener;
     }
 
-    public boolean hasListener() {
+    public boolean hasListener()
+    {
         return listener != null;
     }
 
     public int getVersionsBatchSize()
     {
         return versionsBatchSize;
+    }
+
+    public Instant getVacuumStartedAt()
+    {
+        return vacuumStartedAt;
     }
 
     public static Builder create()
@@ -52,6 +63,8 @@ public final class VacuumTaskParams
         private VacuumListener listener;
 
         private int versionsBatchSize = DEFAULT_VERSIONS_BATCH_SIZE;
+
+        private Instant vacuumStartedAt;
 
         private Builder()
         {
@@ -72,6 +85,12 @@ public final class VacuumTaskParams
         public Builder versionsBatchSize( final int versionsBatchSize )
         {
             this.versionsBatchSize = versionsBatchSize;
+            return this;
+        }
+
+        public Builder vacuumStartedAt( final Instant vacuumStartedAt )
+        {
+            this.vacuumStartedAt = vacuumStartedAt;
             return this;
         }
 
