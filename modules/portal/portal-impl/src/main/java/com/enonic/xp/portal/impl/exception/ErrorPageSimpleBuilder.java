@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
+
 public class ErrorPageSimpleBuilder
     implements ErrorPageBuilder
 {

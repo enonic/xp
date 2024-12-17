@@ -31,6 +31,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -91,7 +92,7 @@ public class PageRendererTest
 
         // verify
         final String response =
-            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
+            "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
         assertEquals( response, portalResponse.getAsString() );
     }
 
@@ -133,7 +134,7 @@ public class PageRendererTest
 
         // verify
         final String response =
-            "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
+            "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
         assertEquals( response, portalResponse.getAsString() );
     }
 
@@ -149,7 +150,7 @@ public class PageRendererTest
         PortalResponse portalResponse = renderer.render( content, portalRequest );
 
         // verify
-        final String response = "<html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body></body></html>";
+        final String response = "<html><head><title>My Content</title></head><body></body></html>";
         assertEquals( response, portalResponse.getAsString() );
     }
 
@@ -166,8 +167,63 @@ public class PageRendererTest
 
         // verify
         final String response =
-            "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
+            "<!DOCTYPE html><html><head><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
         assertEquals( response, portalResponse.getAsString() );
+    }
+
+    @Test
+    void renderForNoPageDescriptorLiveMode()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.LIVE );
+        content = createContent( "aaa", "my_content", "myapplication:my_type" );
+        this.portalRequest.setContent( content );
+        this.portalRequest.setPageDescriptor( null );
+
+        // exercise
+        PortalResponse portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response = "<html><head><title>My Content</title></head><body></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
+    }
+
+    @Test
+    void renderForNoPageDescriptorEditMode()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.EDIT );
+        content = createContent( "aaa", "my_content", "myapplication:my_type" );
+        this.portalRequest.setContent( content );
+        this.portalRequest.setPageDescriptor( null );
+
+        // exercise
+        PortalResponse portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response = "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
+    }
+
+    @Test
+    void renderForNoPageDescriptorEscape()
+    {
+        // setup
+        portalRequest.setMode( RenderMode.EDIT );
+        final String name = "Chip & Dail";
+        content = Content.create( createContent( "aaa", name, "myapplication:my_type" ) ).displayName( name ).build();
+        this.portalRequest.setContent( content );
+        this.portalRequest.setPageDescriptor( null );
+
+        // exercise
+        PortalResponse portalResponse = renderer.render( content, portalRequest );
+
+        // verify
+        final String response = "<html><head><title>Chip &amp; Dail</title></head><body data-portal-component-type=\"page\"></body></html>";
+        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )

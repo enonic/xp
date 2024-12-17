@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.exception;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
