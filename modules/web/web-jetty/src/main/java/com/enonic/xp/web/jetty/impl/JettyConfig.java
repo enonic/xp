@@ -99,7 +99,7 @@ public @interface JettyConfig
     /**
      * True if GZip should be enabled.
      */
-    boolean gzip_enabled() default true;
+    boolean gzip_enabled() default false;
 
     /**
      * Content will only be compressed if content length is either unknown or greater than value.
