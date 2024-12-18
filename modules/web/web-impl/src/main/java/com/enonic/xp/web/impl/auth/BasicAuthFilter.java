@@ -49,6 +49,12 @@ public final class BasicAuthFilter
 
     private void login( final HttpServletRequest req )
     {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( authInfo.isAuthenticated() )
+        {
+            return;
+        }
+
         final String header = req.getHeader( HttpHeaders.AUTHORIZATION );
         if ( header == null )
         {
@@ -75,8 +81,8 @@ public final class BasicAuthFilter
             return null;
         }
 
-        final String type = header.substring( 0, 5 ).toUpperCase();
-        if ( !type.equals( HttpServletRequest.BASIC_AUTH ) )
+        final String type = header.substring( 0, 5 );
+        if ( !type.equalsIgnoreCase( HttpServletRequest.BASIC_AUTH ) )
         {
             return null;
         }
@@ -84,14 +90,14 @@ public final class BasicAuthFilter
         final String val = header.substring( 6 );
 
         final String decoded = new String( Base64.getDecoder().decode( val ), StandardCharsets.UTF_8 );
-        final String[] parts = decoded.split( ":" );
 
-        if ( parts.length != 2 )
+        int pos = decoded.indexOf( ':' );
+        if ( pos == -1 )
         {
             return null;
         }
 
-        return parts;
+        return new String[]{decoded.substring( 0, pos ), decoded.substring( pos + 1 )};
     }
 
     private AuthenticationInfo authenticate( final String user, final String password )

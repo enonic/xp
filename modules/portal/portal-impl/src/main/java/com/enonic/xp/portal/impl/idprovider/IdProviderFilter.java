@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
@@ -48,8 +49,12 @@ public final class IdProviderFilter
         }
 
         //Wraps the response to handle 403 errors
-        final IdProviderResponseWrapper responseWrapper = new IdProviderResponseWrapper( idProviderControllerService, req, res );
+        final HttpServletResponse response = DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+            ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
+            : res;
+
         final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
-        chain.doFilter( requestWrapper, responseWrapper );
+
+        chain.doFilter( requestWrapper, response );
     }
 }

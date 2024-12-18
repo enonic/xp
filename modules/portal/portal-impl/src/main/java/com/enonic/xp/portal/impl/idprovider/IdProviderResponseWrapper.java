@@ -2,7 +2,8 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -13,9 +14,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.Exceptions;
-
 
 public class IdProviderResponseWrapper
     extends HttpServletResponseWrapper
@@ -40,7 +38,14 @@ public class IdProviderResponseWrapper
     @Override
     public void setStatus( final int sc )
     {
-        handleError( sc );
+        try
+        {
+            handleError( sc );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
 
         if ( !errorHandled )
         {
@@ -54,7 +59,7 @@ public class IdProviderResponseWrapper
     {
         if ( errorHandled )
         {
-            return new PrintWriter( new StringWriter() );
+            return new PrintWriter( Writer.nullWriter() );
         }
         return super.getWriter();
     }
@@ -124,43 +129,30 @@ public class IdProviderResponseWrapper
     }
 
     private void handleError( final int sc )
+        throws IOException
     {
         if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() )
         {
-            try
+            final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+                .functionName( "handle401" )
+                .servletRequest( request )
+                .response( response )
+                .build();
+            final boolean responseSerialized = idProviderControllerService.execute( executionParams ) != null;
+            if ( responseSerialized )
             {
-                final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-                    functionName( "handle401" ).
-                    servletRequest( request ).
-                    response( response ).
-                    build();
-                final boolean responseSerialized = idProviderControllerService.execute( executionParams ) != null;
-                if ( responseSerialized )
-                {
-                    errorHandled = true;
-                }
-            }
-            catch ( IOException e )
-            {
-                throw Exceptions.unchecked( e );
+                errorHandled = true;
             }
         }
     }
 
     private boolean isUnauthorizedError( final int sc )
     {
-        return 401 == sc || ( 403 == sc && !isAuthenticated() );
+        return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
     }
 
     private boolean isErrorAlreadyHandled()
     {
         return Boolean.TRUE.equals( request.getAttribute( "error.handled" ) );
-    }
-
-
-    private boolean isAuthenticated()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return authInfo.isAuthenticated();
     }
 }
