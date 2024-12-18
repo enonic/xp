@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
@@ -11,7 +12,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.repo.impl.SecurityHelper;
+import com.enonic.xp.snapshot.SnapshotService;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
@@ -25,7 +28,15 @@ public class VacuumServiceImpl
 
     private final VacuumTasks tasks = new VacuumTasks();
 
+    private final SnapshotService snapshotService;
+
     private VacuumConfig config;
+
+    @Activate
+    public VacuumServiceImpl( @Reference final SnapshotService snapshotService )
+    {
+        this.snapshotService = snapshotService;
+    }
 
     @Activate
     public void activate( final VacuumConfig config )
@@ -46,6 +57,8 @@ public class VacuumServiceImpl
 
     private VacuumResult doVacuum( final VacuumParameters params )
     {
+        final Instant vacuumStartedAt = Instant.now();
+
         //Retrieves the tasks to execute
         VacuumTasks tasks = getTasks( params );
         LOG.info( "Starting vacuum. Running " + tasks.size() + " tasks..." );
@@ -61,20 +74,39 @@ public class VacuumServiceImpl
         {
             LOG.info( "Running vacuum task [" + task.name() + "]..." );
 
-            final VacuumTaskParams taskParams = VacuumTaskParams.create().
-                listener( params.getVacuumListener() ).
-                ageThreshold( ageThreshold ).
-                versionsBatchSize( config.versionsBatchSize() ).
-                build();
+            final VacuumTaskParams taskParams = VacuumTaskParams.create()
+                .listener( params.getVacuumListener() )
+                .ageThreshold( ageThreshold )
+                .versionsBatchSize( config.versionsBatchSize() )
+                .vacuumStartedAt( vacuumStartedAt )
+                .build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
 
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );
             LOG.info( "Vacuum task [" + task.name() + "] done" );
         }
+
+        deleteSnapshotsIfNecessary( vacuumStartedAt );
+
         LOG.info( "Vacuum done" );
 
         return taskResults.build();
+    }
+
+    private void deleteSnapshotsIfNecessary( final Instant startedAt )
+    {
+        if ( tasks.hasTaskByName( "BinaryBlobVacuumTask" ) || tasks.hasTaskByName( "NodeBlobVacuumTask" ) )
+        {
+            try
+            {
+                snapshotService.delete( DeleteSnapshotParams.create().before( startedAt ).build() );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Failed to delete snapshots", e );
+            }
+        }
     }
 
     private VacuumTasks getTasks( final VacuumParameters params )

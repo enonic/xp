@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum.snapshots;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.DeleteSnapshotParams;
@@ -54,7 +56,7 @@ public class SnapshotsVacuumTaskTest
             public void processed( final long count )
             {
             }
-        } ).ageThreshold( 60 * 1000 ).build() );
+        } ).ageThreshold( 60 * 1000 ).vacuumStartedAt( Instant.now() ).build() );
 
         assertEquals( "SnapshotsVacuumTask", result.getTaskName() );
         assertEquals( 1, result.getProcessed() );
