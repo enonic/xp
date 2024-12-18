@@ -35,6 +35,7 @@ public class GZipConfiguratorTest
     @Test
     public void testConfigure()
     {
+        Mockito.when( this.config.gzip_enabled() ).thenReturn( true );
         configure();
 
         final GzipHandler handler = getHandler();
