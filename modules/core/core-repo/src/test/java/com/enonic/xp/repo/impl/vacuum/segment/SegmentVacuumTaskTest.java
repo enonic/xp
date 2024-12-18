@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum.segment;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -76,8 +78,7 @@ public class SegmentVacuumTaskTest
         task.setRepositoryService( repositoryService );
         task.setNodeService( nodeService );
 
-        final VacuumTaskParams vacuumParameters = VacuumTaskParams.create().
-            build();
+        final VacuumTaskParams vacuumParameters = VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build();
         final VacuumTaskResult result = task.execute( vacuumParameters );
 
         assertEquals( 2, result.getProcessed() );

@@ -72,7 +72,7 @@ class VersionTableVacuumTaskTest
 
         assertVersions( node1.id(), expectedVersionCount );
 
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).
             ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             versionsBatchSize( versionsBatchSize ).
             build() ) );
@@ -99,6 +99,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
+            vacuumStartedAt( Instant.now() ).
             ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
@@ -122,6 +123,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
+            vacuumStartedAt( Instant.now() ).
             ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
             build() ) );
         refresh();
@@ -143,9 +145,12 @@ class VersionTableVacuumTaskTest
         refresh();
         assertVersions( node1.id(), 3 );
 
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            ageThreshold( Duration.of( 1, ChronoUnit.HOURS ).toMillis() ).
-            build() ) );
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create()
+                                                                                            .vacuumStartedAt( Instant.now() )
+                                                                                            .ageThreshold(
+                                                                                                Duration.of( 1, ChronoUnit.HOURS )
+                                                                                                    .toMillis() )
+                                                                                            .build() ) );
         refresh();
 
         assertEquals( 0, result.getProcessed() );
@@ -190,7 +195,7 @@ class VersionTableVacuumTaskTest
                 Instant newTime = initTime.plus( 3, ChronoUnit.MINUTES );
                 this.task.setClock( Clock.fixed( newTime, ZoneId.systemDefault() ) );
 
-                final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().build() ) );
+                final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() ) );
 
                 refresh();
 

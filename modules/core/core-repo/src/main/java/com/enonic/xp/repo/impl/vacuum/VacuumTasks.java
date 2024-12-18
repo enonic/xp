@@ -30,4 +30,9 @@ class VacuumTasks
     {
         return this.tasks.remove( task );
     }
+
+    public boolean hasTaskByName( final String taskName )
+    {
+        return this.tasks.stream().anyMatch( task -> task.name().equals( taskName ) );
+    }
 }

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -109,7 +108,7 @@ public class SegmentVacuumCommand
                 .repositoryId( SystemConstants.SYSTEM_REPO_ID )
                 .branch( SystemConstants.BRANCH_SYSTEM )
                 .build();
-            final Instant since = Instant.now().minusMillis( params.getAgeThreshold() );
+            final Instant since = params.getVacuumStartedAt().minusMillis( params.getAgeThreshold() );
             final NodeVersionQuery findRecentVersionsQuery = NodeVersionQuery.create()
                 .nodeId( NodeId.from( repositoryId ) )
                 .addQueryFilter( RangeFilter.create()

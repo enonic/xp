@@ -9,7 +9,8 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 
 
-public class BinaryBlobVacuumTaskTest extends AbstractBlobVacuumTaskTest
+public class BinaryBlobVacuumTaskTest
+    extends AbstractBlobVacuumTaskTest
 {
     @Override
     @BeforeEach
@@ -47,9 +48,6 @@ public class BinaryBlobVacuumTaskTest extends AbstractBlobVacuumTaskTest
     @Override
     protected VacuumTask createTask()
     {
-        final BinaryBlobVacuumTask task = new BinaryBlobVacuumTask();
-        task.setBlobStore( this.blobStore );
-        task.setNodeService( this.nodeService );
-        return task;
+        return new BinaryBlobVacuumTask( this.nodeService, this.blobStore );
     }
 }
