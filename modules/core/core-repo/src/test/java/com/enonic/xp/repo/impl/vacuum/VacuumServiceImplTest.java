@@ -88,7 +88,30 @@ public class VacuumServiceImplTest
     public void runTasksWithDeletingSnapshots()
     {
         final SnapshotService snapshotService = mock( SnapshotService.class );
-        when( snapshotService.delete( mock( DeleteSnapshotParams.class ) ) ).thenReturn( DeleteSnapshotsResult.create().build() );
+        when( snapshotService.delete( any( DeleteSnapshotParams.class ) ) ).thenReturn( DeleteSnapshotsResult.create().build() );
+
+        final VacuumServiceImpl service = new VacuumServiceImpl( snapshotService );
+        service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
+
+        final NodeService nodeService = mock( NodeService.class );
+        final BlobStore blobStore = mock( BlobStore.class );
+
+        service.addTask( new BinaryBlobVacuumTask( nodeService, blobStore ) );
+        service.addTask( new NodeBlobVacuumTask( nodeService, blobStore ) );
+
+        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
+
+        assertEquals( 2, result.getResults().size() );
+
+        verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
+    }
+
+    @Test
+    public void runTasksWithDeletingSnapshotsFailed()
+    {
+        final SnapshotService snapshotService = mock( SnapshotService.class );
+
+        when( snapshotService.delete( any( DeleteSnapshotParams.class ) ) ).thenThrow( RuntimeException.class );
 
         final VacuumServiceImpl service = new VacuumServiceImpl( snapshotService );
         service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
