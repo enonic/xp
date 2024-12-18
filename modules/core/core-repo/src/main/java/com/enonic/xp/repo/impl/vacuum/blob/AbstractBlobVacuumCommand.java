@@ -98,7 +98,7 @@ public abstract class AbstractBlobVacuumCommand
 
     private boolean isOldBlobRecord( final BlobRecord blobRecord )
     {
-        return System.currentTimeMillis() - blobRecord.lastModified() >= params.getAgeThreshold();
+        return params.getVacuumStartedAt().toEpochMilli() - blobRecord.lastModified() >= params.getAgeThreshold();
     }
 
     private boolean isUsedByVersion( final Segment segment, final BlobKey blobKey )

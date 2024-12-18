@@ -48,9 +48,6 @@ public class NodeBlobVacuumTaskTest
     @Override
     protected VacuumTask createTask()
     {
-        final NodeBlobVacuumTask task = new NodeBlobVacuumTask();
-        task.setBlobStore( this.blobStore );
-        task.setNodeService( this.nodeService );
-        return task;
+        return new NodeBlobVacuumTask( this.nodeService, this.blobStore );
     }
 }
