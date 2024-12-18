@@ -3,6 +3,7 @@ dependencies {
     implementation project( ':core:core-internal' )
 
     testImplementation( testFixtures( project(":web:web-jetty") ) )
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {
