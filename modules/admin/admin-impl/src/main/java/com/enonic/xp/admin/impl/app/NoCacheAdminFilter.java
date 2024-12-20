@@ -53,7 +53,6 @@ public class NoCacheAdminFilter
                     {
                         value = "private, " + value;
                     }
-                    value = value.replaceAll( "public", "private" );
                 }
                 else
                 {
