@@ -50,8 +50,7 @@ public class TextRendererTest
     {
         // setup
         textComponent = TextComponent.create().build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -66,8 +65,7 @@ public class TextRendererTest
         // setup
         portalRequest.setMode( RenderMode.EDIT );
         textComponent = TextComponent.create().build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -81,8 +79,7 @@ public class TextRendererTest
         // setup
         portalRequest.setMode( RenderMode.PREVIEW );
         textComponent = TextComponent.create().build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -97,8 +94,7 @@ public class TextRendererTest
         // setup
         portalRequest.setMode( RenderMode.INLINE );
         textComponent = TextComponent.create().build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -114,8 +110,7 @@ public class TextRendererTest
         // setup
         String text = "<h2>hello</h2><p>How are you?</p>";
         textComponent = TextComponent.create().text( text ).build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -130,8 +125,7 @@ public class TextRendererTest
         // setup
         String text = "<figure><img src=\"src\" />\n" + "<figcaption style=\"text-align: left;\"></figcaption>\n" + "</figure>";
         textComponent = TextComponent.create().text( text ).build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
@@ -147,8 +141,7 @@ public class TextRendererTest
         portalRequest.setMode( RenderMode.EDIT );
         String text = "<h2>hello</h2><p>How are you?</p>";
         textComponent = TextComponent.create().text( text ).build();
-        renderer = new TextRenderer();
-        renderer.setPortalUrlService( service );
+        renderer = new TextRenderer( service );
 
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
