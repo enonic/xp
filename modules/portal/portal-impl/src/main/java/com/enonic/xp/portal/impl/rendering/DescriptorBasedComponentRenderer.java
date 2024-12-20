@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import java.text.MessageFormat;
-
-import com.google.common.html.HtmlEscapers;
+import com.google.common.base.Function;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -12,6 +10,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
@@ -19,26 +18,31 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNullElse;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>
 {
-    private static final String EMPTY_COMPONENT_EDIT_MODE_HTML =
-        "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
-
-    private static final String EMPTY_COMPONENT_PREVIEW_MODE_HTML =
-        "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
-
-    private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
-        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
-
     private static final LiveEditAttributeInjection LIVE_EDIT_ATTRIBUTE_INJECTION = new LiveEditAttributeInjection();
 
     private final ControllerScriptFactory controllerScriptFactory;
 
-    public DescriptorBasedComponentRenderer( final ControllerScriptFactory controllerScriptFactory )
+    private final Class<R> type;
+
+    private final Function<DescriptorKey, ComponentDescriptor> componentDescriptorGetter;
+
+    public DescriptorBasedComponentRenderer( final ControllerScriptFactory controllerScriptFactory, final Class<R> type,
+                                             final Function<DescriptorKey, ComponentDescriptor> componentDescriptorGetter )
     {
         this.controllerScriptFactory = controllerScriptFactory;
+        this.type = type;
+        this.componentDescriptorGetter = componentDescriptorGetter;
+    }
+
+    @Override
+    public Class<R> getType()
+    {
+        return type;
     }
 
     @Override
@@ -64,7 +68,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         final ComponentDescriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
         {
-            return renderEmptyComponent( component, portalRequest );
+            return renderEmptyComponent( component );
         }
 
         final ResourceKey script = descriptor.getComponentPath().resolve( descriptor.getComponentPath().getName() + ".js" );
@@ -89,11 +93,10 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 {
                     if ( portalResponse.getStatus().equals( HttpStatus.METHOD_NOT_ALLOWED ) )
                     {
-                        final String errorMessage = "No method provided to handle request";
-                        return renderErrorComponentPlaceHolder( component, errorMessage );
+                        return renderErrorComponentPlaceHolder( component, "No method provided to handle request" );
                     }
 
-                    return renderEmptyComponent( component, portalRequest );
+                    return renderEmptyComponent( component );
                 }
             }
 
@@ -108,32 +111,13 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         }
     }
 
-    private PortalResponse renderEmptyComponent( final DescriptorBasedComponent component, final PortalRequest portalRequest )
+    private PortalResponse renderEmptyComponent( final DescriptorBasedComponent component )
     {
-        final RenderMode renderMode = portalRequest.getMode();
-        if ( renderMode == RenderMode.EDIT )
-        {
-            return renderEmptyComponentEditMode( component );
-        }
-        else
-        {
-            return renderEmptyComponentPreviewMode( component );
-        }
-    }
-
-    private PortalResponse renderEmptyComponentEditMode( final DescriptorBasedComponent component )
-    {
-        final String html = MessageFormat.format( EMPTY_COMPONENT_EDIT_MODE_HTML, component.getType().toString() );
-
-        return PortalResponse.create().
-            contentType( MediaType.HTML_UTF_8 ).
-            body( html ).
-            build();
-    }
-
-    private PortalResponse renderEmptyComponentPreviewMode( final DescriptorBasedComponent component )
-    {
-        final String html = MessageFormat.format( EMPTY_COMPONENT_PREVIEW_MODE_HTML, component.getType().toString() );
+        final String html = new HtmlBuilder().open( "div" )
+            .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
+            .text( "" )
+            .close()
+            .toString();
 
         return PortalResponse.create().
             contentType( MediaType.HTML_UTF_8 ).
@@ -143,9 +127,16 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     private PortalResponse renderErrorComponentPlaceHolder( final DescriptorBasedComponent component, final String errorMessage )
     {
-        final String escapedMessage = errorMessage == null ? "" : HtmlEscapers.htmlEscaper().escape( errorMessage );
-        final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
-
+        final String html = new HtmlBuilder().open( "div" )
+            .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
+            .attribute( "data-portal-placeholder", "true" )
+            .attribute( "data-portal-placeholder-error", "true" )
+            .open( "span" )
+            .attribute( "class", "data-portal-placeholder-error" )
+            .escapedText( requireNonNullElse( errorMessage, "" ) )
+            .close()
+            .close()
+            .toString();
         return PortalResponse.create().
             contentType( MediaType.HTML_UTF_8 ).
             body( html ).
@@ -155,8 +146,6 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     private ComponentDescriptor resolveDescriptor( final DescriptorBasedComponent component )
     {
         final DescriptorKey descriptorKey = component.getDescriptor();
-        return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );
+        return descriptorKey == null ? null : componentDescriptorGetter.apply( descriptorKey );
     }
-
-    protected abstract ComponentDescriptor getComponentDescriptor( DescriptorKey descriptorKey );
 }
