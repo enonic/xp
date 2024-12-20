@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import java.text.MessageFormat;
-
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -11,6 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlElement;
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.region.TextComponent;
@@ -21,9 +21,13 @@ import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMP
 public final class TextRenderer
     implements Renderer<TextComponent>
 {
-    PortalUrlService service;
+    private final PortalUrlService portalUrlService;
 
-    private static final String COMPONENT_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
+    @Activate
+    public TextRenderer( @Reference final PortalUrlService portalUrlService )
+    {
+        this.portalUrlService = portalUrlService;
+    }
 
     @Override
     public Class<TextComponent> getType()
@@ -42,7 +46,7 @@ public final class TextRenderer
         final String text = textComponent.getText();
         if ( renderMode == RenderMode.EDIT )
         {
-            portalResponseBuilder.body( MessageFormat.format( COMPONENT_HTML, textComponent.getType().toString(), text ) );
+            portalResponseBuilder.body( renderHtml( textComponent, text ) );
         }
         else
         {
@@ -52,26 +56,27 @@ public final class TextRenderer
             }
             else
             {
-                ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).
-                    value( text ).
-                    customHtmlProcessor( processor -> {
+                ProcessHtmlParams params =
+                    new ProcessHtmlParams().portalRequest( portalRequest ).value( text ).customHtmlProcessor( processor -> {
                         processor.processDefault();
-                        processor.getDocument().select( "figcaption:empty" ).
-                            forEach( HtmlElement::remove );
+                        processor.getDocument().select( "figcaption:empty" ).forEach( HtmlElement::remove );
                         return processor.getDocument().getInnerHtml();
                     } );
 
-                final String processedHtml = service.processHtml( params );
-                portalResponseBuilder.body( MessageFormat.format( COMPONENT_HTML, textComponent.getType().toString(), processedHtml ) );
+                final String processedHtml = portalUrlService.processHtml( params );
+                portalResponseBuilder.body( renderHtml( textComponent, processedHtml ) );
             }
         }
 
         return portalResponseBuilder.build();
     }
 
-    @Reference
-    public void setPortalUrlService( final PortalUrlService service )
+    private static String renderHtml( final TextComponent textComponent, final String text )
     {
-        this.service = service;
+        return new HtmlBuilder().open( "section" )
+            .attribute( PORTAL_COMPONENT_ATTRIBUTE, textComponent.getType().toString() )
+            .text( text )
+            .close()
+            .toString();
     }
 }

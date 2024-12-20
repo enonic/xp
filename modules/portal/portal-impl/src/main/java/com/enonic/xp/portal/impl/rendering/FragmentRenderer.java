@@ -1,11 +1,8 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import java.text.MessageFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.content.Content;
@@ -15,6 +12,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -22,17 +20,10 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.web.HttpStatus;
 
 public final class FragmentRenderer
 {
-    private static final String EMPTY_FRAGMENT_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
-
-    private static final String EDIT_MODE_FRAGMENT_WRAPPER_HTML =
-        "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</div>";
-
-    private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
-        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
-
     private static final Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
 
     private final ContentService contentService;
@@ -58,22 +49,28 @@ public final class FragmentRenderer
 
         if ( component.getFragment() == null )
         {
-            return renderEmptyFragment( renderMode, component );
+            if ( renderMode == RenderMode.EDIT )
+            {
+                return renderEmptyFragmentInEdit( component );
+            }
+            else
+            {
+                return renderResponse( "", HttpStatus.NOT_FOUND );
+            }
         }
 
         final Component fragmentComponent = getFragmentComponent( component );
         if ( fragmentComponent == null )
         {
-            LOG.warn( "Fragment content could not be found. ContentId: " + component.getFragment().toString() );
+            LOG.warn( "Fragment content could not be found. ContentId: {}", component.getFragment() );
 
             if ( renderMode == RenderMode.EDIT )
             {
-                final String errorMessage = "Fragment content could not be found";
-                return renderErrorComponentPlaceHolder( component, errorMessage );
+                return renderErrorComponentPlaceHolderInEdit( component, "Fragment content could not be found" );
             }
             else
             {
-                return renderEmptyFragment( renderMode, component );
+                renderResponse( "", HttpStatus.NOT_FOUND );
             }
         }
 
@@ -98,7 +95,7 @@ public final class FragmentRenderer
 
             if ( body.contains( noMethodErrorMessage ) )
             {
-                return renderErrorComponentPlaceHolder( component, noMethodErrorMessage );
+                return renderErrorComponentPlaceHolderInEdit( component, noMethodErrorMessage );
             }
 
             return wrapFragmentForEditMode( fragmentResponse, type );
@@ -108,8 +105,11 @@ public final class FragmentRenderer
 
     private PortalResponse wrapFragmentForEditMode( final PortalResponse response, final String type )
     {
-        final String body = (String) response.getBody();
-        final String wrappedBody = MessageFormat.format( EDIT_MODE_FRAGMENT_WRAPPER_HTML, type, body );
+        final String wrappedBody = new HtmlBuilder().open( "div" )
+            .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, type )
+            .text( (String) response.getBody() )
+            .close()
+            .toString();
         return PortalResponse.create( response ).body( wrappedBody ).build();
     }
 
@@ -176,17 +176,33 @@ public final class FragmentRenderer
         return layoutBuilder.regions( regionsBuilder.build() ).build();
     }
 
-    private PortalResponse renderEmptyFragment( final RenderMode renderMode, final FragmentComponent component )
+    private PortalResponse renderEmptyFragmentInEdit( final FragmentComponent component )
     {
-        final String type = component.getType().toString();
-        final String html = renderMode == RenderMode.EDIT ? MessageFormat.format( EMPTY_FRAGMENT_HTML, type ) : "";
-        return PortalResponse.create().body( html ).contentType( MediaType.HTML_UTF_8 ).postProcess( false ).build();
+        final String html = new HtmlBuilder().open( "div" )
+            .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
+            .close()
+            .toString();
+        return renderResponse( html, HttpStatus.OK );
     }
 
-    private PortalResponse renderErrorComponentPlaceHolder( final FragmentComponent component, final String errorMessage )
+    private static PortalResponse renderResponse( final String html, HttpStatus status )
     {
-        final String escapedMessage = HtmlEscapers.htmlEscaper().escape( errorMessage );
-        final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
-        return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).postProcess( false ).body( html ).build();
+        return PortalResponse.create().body( html ).status( status ).contentType( MediaType.HTML_UTF_8 ).postProcess( false ).build();
+    }
+
+    private PortalResponse renderErrorComponentPlaceHolderInEdit( final FragmentComponent component, final String errorMessage )
+    {
+        final String html = new HtmlBuilder().open( "div" )
+            .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
+            .attribute( "data-portal-placeholder", "true" )
+            .attribute( "data-portal-placeholder-error", "true" )
+            .open( "span" )
+            .attribute( "class", "data-portal-placeholder-error" )
+            .escapedText( errorMessage )
+            .close()
+            .close()
+            .toString();
+
+        return renderResponse( html, HttpStatus.OK );
     }
 }
