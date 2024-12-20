@@ -1,11 +1,13 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.osgi.service.component.annotations.Activate;
+import java.text.MessageFormat;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -16,28 +18,24 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.ImageComponent;
-import com.enonic.xp.web.HttpStatus;
 
 @Component(immediate = true, service = Renderer.class)
 public final class ImageRenderer
     implements Renderer<ImageComponent>
 {
+    private static final String EMPTY_IMAGE_HTML = "<figure " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></figure>";
+
+    private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
+        "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
+
     private static final Logger LOG = LoggerFactory.getLogger( ImageRenderer.class );
 
-    private final PortalUrlService urlService;
+    private PortalUrlService urlService;
 
-    private final ContentService contentService;
-
-    @Activate
-    public ImageRenderer( @Reference final PortalUrlService urlService, @Reference final ContentService contentService )
-    {
-        this.urlService = urlService;
-        this.contentService = contentService;
-    }
+    private ContentService contentService;
 
     @Override
     public Class<ImageComponent> getType()
@@ -57,6 +55,8 @@ public final class ImageRenderer
 
         private final PortalRequest portalRequest;
 
+        private static final String ERROR_IMAGE_NOT_FOUND = "Image could not be found";
+
         private ImageComponentRenderer( final ImageComponent component, final PortalRequest portalRequest )
         {
             this.component = component;
@@ -69,7 +69,7 @@ public final class ImageRenderer
             {
                 if ( component.hasImage() )
                 {
-                    return renderResponse( generateImageHtml(), HttpStatus.OK );
+                    return renderOkResponse( generateImageHtml() );
                 }
                 return renderResponseNoImage();
             }
@@ -81,30 +81,45 @@ public final class ImageRenderer
 
         private String generateImageHtml()
         {
-            final HtmlBuilder htmlBuilder = new HtmlBuilder();
+            final StringBuilder html = new StringBuilder();
 
-            htmlBuilder.open( "figure" )
-                .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
-                .open( "img" )
-                .attribute( "style", "width: 100%" )
-                .attribute( "src", buildUrl() );
+            appendFigureTag( html );
 
+            return html.toString();
+        }
+
+        private void appendFigureTag( final StringBuilder html )
+        {
+            openFigureTag( html );
+            appendImageTag( html );
+            appendCaptionTag( html );
+            closeFigureTag( html );
+        }
+
+        private void openFigureTag( final StringBuilder html )
+        {
+            final String type = component.getType().toString();
+            html.append( "<figure " ).append( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE ).append( "=\"" ).append( type ).append(
+                "\">" );
+        }
+
+        private void appendImageTag( final StringBuilder html )
+        {
+            html.append( "<img style=\"width: 100%\" src=\"" ).append( buildUrl() ).append( "\" " );
+
+            appendAltAttribute( html );
+
+            html.append( "/>" );
+        }
+
+        private void appendAltAttribute( final StringBuilder html )
+        {
             final String altText = getImageAlternativeText();
 
             if ( altText != null )
             {
-                htmlBuilder.attribute( "alt", altText );
+                html.append( "alt=\"" ).append( altText ).append( "\"" );
             }
-            htmlBuilder.closeEmpty();
-
-            if ( component.hasCaption() )
-            {
-                htmlBuilder.open( "figcaption" ).escapedText( component.getCaption() ).close();
-            }
-
-            htmlBuilder.close();
-
-            return htmlBuilder.toString();
         }
 
         private String buildUrl()
@@ -146,14 +161,27 @@ public final class ImageRenderer
             return null;
         }
 
-        private PortalResponse renderResponse( final String html, final HttpStatus status )
+        private void appendCaptionTag( final StringBuilder html )
         {
-            return PortalResponse.create().body( html ).contentType( MediaType.HTML_UTF_8 ).status( status ).postProcess( false ).build();
+            if ( component.hasCaption() )
+            {
+                html.append( "<figcaption>" ).append( component.getCaption() ).append( "</figcaption>" );
+            }
+        }
+
+        private void closeFigureTag( final StringBuilder html )
+        {
+            html.append( "</figure>" );
+        }
+
+        private PortalResponse renderOkResponse( final String html )
+        {
+            return PortalResponse.create().body( html ).contentType( MediaType.HTML_UTF_8 ).postProcess( false ).build();
         }
 
         private PortalResponse renderResponseImageNotFound()
         {
-            LOG.warn( "Image content could not be found. ContentId: {}", component.getImage() );
+            LOG.warn( "Image content could not be found. ContentId: " + component.getImage().toString() );
 
             final RenderMode renderMode = portalRequest.getMode();
 
@@ -162,7 +190,9 @@ public final class ImageRenderer
                 return renderErrorResponse();
             }
 
-            return renderEmptyFigure( HttpStatus.NOT_FOUND );
+            final String componentType = component.getType().toString();
+
+            return renderOkResponse( MessageFormat.format( EMPTY_IMAGE_HTML, componentType ) );
         }
 
         private PortalResponse renderResponseNoImage()
@@ -171,36 +201,32 @@ public final class ImageRenderer
 
             if ( renderMode == RenderMode.EDIT )
             {
-                return renderEmptyFigure( HttpStatus.OK );
+                final String componentType = component.getType().toString();
+
+                return renderOkResponse( MessageFormat.format( EMPTY_IMAGE_HTML, componentType ) );
             }
 
-            return renderResponse( "", HttpStatus.NOT_FOUND );
-        }
-
-        private PortalResponse renderEmptyFigure( final HttpStatus status )
-        {
-            final String html = new HtmlBuilder().open( "figure" )
-                .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
-                .text( "" )
-                .close()
-                .toString();
-            return renderResponse( html, status );
+            return renderOkResponse( "" );
         }
 
         private PortalResponse renderErrorResponse()
         {
-            final String html = new HtmlBuilder().open( "div" )
-                .attribute( RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE, component.getType().toString() )
-                .attribute( "data-portal-placeholder", "true" )
-                .attribute( "data-portal-placeholder-error", "true" )
-                .open( "span" )
-                .attribute( "class", "data-portal-placeholder-error" )
-                .text( "Image could not be found" )
-                .close()
-                .close()
-                .toString();
+            final String escapedMessage = HtmlEscapers.htmlEscaper().escape( ERROR_IMAGE_NOT_FOUND );
+            final String html = MessageFormat.format( COMPONENT_PLACEHOLDER_ERROR_HTML, component.getType().toString(), escapedMessage );
 
             return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).postProcess( false ).body( html ).build();
         }
+    }
+
+    @Reference
+    public void setUrlService( final PortalUrlService urlService )
+    {
+        this.urlService = urlService;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

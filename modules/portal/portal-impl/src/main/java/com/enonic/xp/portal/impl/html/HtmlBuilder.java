@@ -69,9 +69,9 @@ public final class HtmlBuilder
     public HtmlBuilder attribute( final String name, final String value )
     {
         this.str.append( ' ' );
-        this.str.append( escaper.escape( name ) );
+        this.str.append( name );
         this.str.append( "=\"" );
-        this.str.append( escaper.escape( value ) );
+        this.str.append( value );
         this.str.append( '"' );
         this.addedInner = false;
         this.closedEmptyTag = false;

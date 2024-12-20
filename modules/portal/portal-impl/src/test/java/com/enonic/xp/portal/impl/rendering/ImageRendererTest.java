@@ -14,13 +14,14 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.url.AbstractPortalUrlServiceImplTest;
 import com.enonic.xp.region.ImageComponent;
-import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageRendererTest
     extends AbstractPortalUrlServiceImplTest
 {
+    private PortalResponse portalResponse;
+
     private ImageComponent imageComponent;
 
     private ImageRenderer renderer;
@@ -38,6 +39,7 @@ public class ImageRendererTest
     @BeforeEach
     public void before()
     {
+        portalResponse = PortalResponse.create().build();
         portalRequest.setMode( RenderMode.LIVE );
     }
 
@@ -46,14 +48,13 @@ public class ImageRendererTest
     {
         // setup
         imageComponent = ImageComponent.create().build();
-        renderer = new ImageRenderer( this.service, contentService );
+        renderer = new ImageRenderer();
 
         // exercise
-        PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
+        portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
         assertEquals( "", portalResponse.getAsString() );
-        assertEquals( HttpStatus.NOT_FOUND, portalResponse.getStatus() );
     }
 
     @Test
@@ -84,10 +85,12 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
         imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
-        renderer = new ImageRenderer( this.service, contentService );
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
 
         // exercise
-        PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
+        portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
         assertEquals( expected, portalResponse.getAsString() );
@@ -100,15 +103,14 @@ public class ImageRendererTest
         // setup
         portalRequest.setMode( RenderMode.EDIT );
         imageComponent = ImageComponent.create().build();
-        renderer = new ImageRenderer( this.service, contentService );
+        renderer = new ImageRenderer();
 
         // exercise
-        PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
+        portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
         String result = "<figure data-portal-component-type=\"image\"></figure>";
         assertEquals( result, portalResponse.getAsString() );
-        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
     }
 
     @Test
@@ -124,15 +126,16 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
         imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
-        renderer = new ImageRenderer( this.service, contentService );
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
 
         // exercise
-        PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
+        portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
         String result = "<figure data-portal-component-type=\"image\"></figure>";
         assertEquals( result, portalResponse.getAsString() );
-        assertEquals( HttpStatus.NOT_FOUND, portalResponse.getStatus() );
     }
 
     @Test
@@ -150,16 +153,17 @@ public class ImageRendererTest
 
         imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
 
-        renderer = new ImageRenderer( this.service, contentService );
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
 
         // exercise
-        PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
+        portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
         String result =
             "<div data-portal-component-type=\"image\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">Image could not be found</span></div>";
         assertEquals( result, portalResponse.getAsString() );
-        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
     }
 
     @Test
@@ -172,10 +176,11 @@ public class ImageRendererTest
 
         imageComponent = ImageComponent.create().image( ContentId.from( "id" ) ).build();
 
-        renderer = new ImageRenderer(this.service, contentService );
+        renderer = new ImageRenderer();
+        renderer.setUrlService( this.service );
+        renderer.setContentService( contentService );
 
         PortalResponse response = renderer.render( imageComponent, portalRequest );
         assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getAsString() );
-        assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
     }
 }
