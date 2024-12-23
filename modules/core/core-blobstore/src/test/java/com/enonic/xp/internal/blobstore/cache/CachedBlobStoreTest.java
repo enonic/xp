@@ -1,6 +1,5 @@
 package com.enonic.xp.internal.blobstore.cache;
 
-import java.time.Instant;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +12,8 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -39,25 +37,20 @@ public class CachedBlobStoreTest
             build();
     }
 
-    private BlobRecord newRecord( final String key, final long size )
+    private BlobRecord newRecord()
     {
-        return newRecord( key, size, System.currentTimeMillis() );
+        return new MemoryBlobRecord( ByteSource.wrap( new byte[10] ) );
     }
 
-    private BlobRecord newRecord( final String key, final long size, final long lastModified )
+    private BlobRecord newLargeRecord()
     {
-        final BlobRecord record = Mockito.mock( BlobRecord.class );
-        Mockito.when( record.getKey() ).thenReturn( BlobKey.from( key ) );
-        Mockito.when( record.getLength() ).thenReturn( size );
-        Mockito.when( record.getBytes() ).thenReturn( ByteSource.wrap( "these are my bytes".getBytes() ) );
-        Mockito.when( record.lastModified() ).thenReturn( lastModified );
-        return record;
+        return new MemoryBlobRecord( ByteSource.wrap( new byte[20] ) );
     }
 
     @Test
     public void getSmallRecord()
     {
-        final BlobRecord record = newRecord( "0123", 10L );
+        final BlobRecord record = newRecord();
         assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
 
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
@@ -74,7 +67,7 @@ public class CachedBlobStoreTest
     @Test
     public void addSmallRecord()
     {
-        final BlobRecord record = newRecord( "0123", 10L );
+        final BlobRecord record = newRecord();
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
@@ -90,9 +83,10 @@ public class CachedBlobStoreTest
 
     @Test
     public void addLargeRecord()
+        throws Exception
     {
-        final BlobRecord record = newRecord( "0123", 20L );
-        final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
+        final BlobRecord record = newLargeRecord();
+        final ByteSource byteSource = ByteSource.wrap( record.getBytes().read() );
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
@@ -109,7 +103,7 @@ public class CachedBlobStoreTest
     public void removeRecord()
         throws Exception
     {
-        final BlobRecord record = newRecord( "0123", 10L );
+        final BlobRecord record = newRecord();
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
@@ -125,7 +119,7 @@ public class CachedBlobStoreTest
     public void invalidate()
         throws Exception
     {
-        final BlobRecord record = newRecord( "0123", 10L );
+        final BlobRecord record = newRecord();
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
 
         this.cachedBlobStore.getRecord( this.segment, record.getKey() );
@@ -143,7 +137,7 @@ public class CachedBlobStoreTest
     public void lastModified()
         throws Exception
     {
-        final BlobRecord record = newRecord( "0123", 10L, Instant.now().toEpochMilli() );
+        final BlobRecord record = newRecord();
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
 
         final BlobRecord firstRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
@@ -153,33 +147,6 @@ public class CachedBlobStoreTest
         final BlobRecord secondRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
         assertNotNull( secondRetrieval );
         assertEquals( secondRetrieval.lastModified(), record.lastModified() );
-    }
-
-    @Test
-    public void lastModified_updated()
-        throws Exception
-    {
-        final MemoryBlobStore memoryBlobStore = new MemoryBlobStore();
-        final ByteSource source = ByteSource.wrap( "abc".getBytes() );
-
-        final BlobRecord record = memoryBlobStore.addRecord( this.segment, source );
-
-        this.cachedBlobStore = CachedBlobStore.create().blobStore( memoryBlobStore ).memoryCapacity( 100 ).sizeThreshold( 10 ).build();
-
-        // Cache this
-        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-
-        // Add same record again
-        final BlobRecord updatedRecord = this.cachedBlobStore.addRecord( this.segment, source );
-
-        // Only single entry added
-        try (Stream<BlobRecord> stream = this.cachedBlobStore.list( this.segment )) {
-            assertThat(stream).hasSize(1);
-        }
-
-        final BlobRecord retrievedAfterStore = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-        assertNotNull( retrievedAfterStore );
-        assertEquals( updatedRecord.lastModified(), retrievedAfterStore.lastModified() );
     }
 
     @Test
@@ -193,7 +160,7 @@ public class CachedBlobStoreTest
     @Test
     public void deleteSegment()
     {
-        final BlobRecord record = newRecord( "0123", 10L );
+        final BlobRecord record = newRecord();
         assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
         assertNotNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
@@ -203,5 +170,37 @@ public class CachedBlobStoreTest
         cachedBlobStore.deleteSegment( segment );
         Mockito.verify( blobStore ).deleteSegment( segment );
         assertNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
+    }
+
+    @Test
+    void dontCacheCorrupted() {
+        final BlobRecord corruptedRecord  = new BlobRecord() {
+
+            @Override
+            public BlobKey getKey()
+            {
+                return BlobKey.from( "invalidKey" );
+            }
+
+            @Override
+            public long getLength()
+            {
+                return 10;
+            }
+
+            @Override
+            public ByteSource getBytes()
+            {
+                return ByteSource.wrap( new byte[10] );
+            }
+
+            @Override
+            public long lastModified()
+            {
+                return 0;
+            }
+        };
+        cachedBlobStore.addRecord( segment, corruptedRecord );
+        assertNull( cachedBlobStore.getRecord( segment, BlobKey.from( "invalidKey" ) ) );
     }
 }

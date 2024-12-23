@@ -2,10 +2,10 @@ package com.enonic.xp.internal.blobstore.file;
 
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -172,11 +172,14 @@ public final class FileBlobStore
         if ( !Files.exists( file ) )
         {
             Files.createDirectories( file.getParent() );
-            in.copyTo( MoreFiles.asByteSink( file ) );
-        }
-        else
-        {
-            Files.setLastModifiedTime( file, FileTime.fromMillis( System.currentTimeMillis() ) );
+            try (var inStream = in.openStream())
+            {
+                Files.copy( inStream, file );
+            }
+            catch ( FileAlreadyExistsException e )
+            {
+                LOG.debug( "File already exists [{}]", file, e );
+            }
         }
 
         return new FileBlobRecord( key, file );
