@@ -1,4 +1,4 @@
-package com.enonic.xp.web.impl.auth;
+package com.enonic.xp.impl.server.auth;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
