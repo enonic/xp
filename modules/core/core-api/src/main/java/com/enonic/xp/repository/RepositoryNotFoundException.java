@@ -1,9 +1,9 @@
 package com.enonic.xp.repository;
 
-import com.enonic.xp.exception.BaseException;
+import com.enonic.xp.exception.NotFoundException;
 
 public class RepositoryNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public RepositoryNotFoundException( final RepositoryId repositoryId )
     {
