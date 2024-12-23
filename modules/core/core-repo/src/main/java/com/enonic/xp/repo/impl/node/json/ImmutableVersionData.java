@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
@@ -39,10 +39,13 @@ public final class ImmutableVersionData
     {
     }
 
-    public static ImmutableNodeVersion deserialize( final InputStream is )
+    public static ImmutableNodeVersion deserialize( final ByteSource bytes )
         throws IOException
     {
-        return OBJECT_MAPPER.readValue( is, ImmutableNodeVersion.class );
+        try (var is = bytes.openBufferedStream())
+        {
+            return OBJECT_MAPPER.readValue( is, ImmutableNodeVersion.class );
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

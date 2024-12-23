@@ -1,6 +1,8 @@
 package com.enonic.xp.internal.blobstore.cache;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -76,7 +78,6 @@ public final class CachedBlobStore
         throws BlobStoreException
     {
         this.store.removeRecord( segment, key );
-        this.cache.invalidate( key );
     }
 
     @Override
@@ -87,21 +88,32 @@ public final class CachedBlobStore
 
     private BlobRecord addToCache( final BlobRecord record )
     {
-        if ( record.getLength() <= this.sizeThreshold )
+        // Quick check to avoid caching large blobs
+        if ( record.getLength() > this.sizeThreshold )
         {
-            try
-            {
-                final CacheBlobRecord cacheBlobRecord = new CacheBlobRecord( record );
-                this.cache.put( record.getKey(), cacheBlobRecord );
-                return cacheBlobRecord;
-            }
-            catch ( IOException e )
-            {
-                LOG.error( "Could not create cache blob-record", e );
-            }
+            return record;
         }
 
-        return record;
+        // Don't do heavy lifting if the blob is already in the cache
+        final BlobKey key = record.getKey();
+        final CacheBlobRecord present = this.cache.getIfPresent( key );
+        if ( present != null )
+        {
+            return present;
+        }
+
+        try
+        {
+            // We don't want return blobs that are not in cache - as we want them to garbage collected ASAP,
+            // so we dont use get() with loader here
+            this.cache.put( key, new CacheBlobRecord( record ) );
+        }
+        catch ( IOException e )
+        {
+            LOG.warn( "Could not cache blob-record with key {}", key, e );
+        }
+        // If we could not load the blob into cache, we return the original record
+        return Objects.requireNonNullElse( this.cache.getIfPresent( key ), record );
     }
 
     @Override
@@ -169,6 +181,60 @@ public final class CachedBlobStore
         public int weigh( final BlobKey key, final BlobRecord record )
         {
             return (int) Math.min( record.getLength(), Integer.MAX_VALUE );
+        }
+    }
+
+    private static final class CacheBlobRecord
+        implements BlobRecord
+    {
+        final BlobKey blobKey;
+
+        final long lastModified;
+
+        final ByteSource content;
+
+        CacheBlobRecord( final BlobRecord blobRecord )
+            throws IOException
+        {
+            this.content = ByteSource.wrap( blobRecord.getBytes().read() );
+            this.blobKey = BlobKey.from( this.content );
+            if ( !blobRecord.getKey().equals( this.blobKey ) )
+            {
+                throw new IOException( String.format( "Cache BlobKey must be the same as the key of the BlobRecord: %s != %s", this.blobKey,
+                                                      blobRecord.getKey() ) );
+            }
+            this.lastModified = blobRecord.lastModified();
+        }
+
+        @Override
+        public BlobKey getKey()
+        {
+            return this.blobKey;
+        }
+
+        @Override
+        public long getLength()
+        {
+            try
+            {
+                return content.size();
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        }
+
+        @Override
+        public ByteSource getBytes()
+        {
+            return this.content;
+        }
+
+        @Override
+        public long lastModified()
+        {
+            return this.lastModified;
         }
     }
 }

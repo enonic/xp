@@ -2,9 +2,7 @@ package com.enonic.xp.repo.impl.node.json;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
@@ -18,12 +16,12 @@ public final class NodeVersionJsonSerializer
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    public static byte[] toNodeVersionBytes( final NodeVersion nodeVersion )
+    public static byte[] toNodeVersionBytes( final NodeVersion nodeVersion ) throws IOException
     {
         return writeValueAsBytes( NodeVersionDataJson.toJson( nodeVersion ) );
     }
 
-    public static byte[] toIndexConfigDocumentBytes( final NodeVersion nodeVersion )
+    public static byte[] toIndexConfigDocumentBytes( final NodeVersion nodeVersion ) throws IOException
     {
         final IndexConfigDocumentJson entityIndexConfig;
         final IndexConfigDocument indexConfig = nodeVersion.getIndexConfigDocument();
@@ -38,7 +36,7 @@ public final class NodeVersionJsonSerializer
         return writeValueAsBytes( entityIndexConfig );
     }
 
-    public static byte[] toAccessControlBytes( final NodeVersion nodeVersion )
+    public static byte[] toAccessControlBytes( final NodeVersion nodeVersion ) throws IOException
     {
         return writeValueAsBytes( AccessControlJson.toJson( nodeVersion ) );
     }
@@ -85,15 +83,8 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    private static byte[] writeValueAsBytes( Object object )
+    private static byte[] writeValueAsBytes( Object object ) throws IOException
     {
-        try
-        {
-            return MAPPER.writeValueAsBytes( object );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return MAPPER.writeValueAsBytes( object );
     }
 }

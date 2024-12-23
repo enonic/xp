@@ -29,7 +29,6 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
-import com.enonic.xp.internal.blobstore.cache.CachedBlobStore;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
@@ -221,15 +220,13 @@ class NodeVersionServiceImplTest
 
         RuntimeException e =
             assertThrows( RuntimeException.class, () -> executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
-        assertTrue( e.getMessage().startsWith( "Failed to load blobs with keys" ) );
+        assertTrue( e.getMessage().startsWith( "Failed to load blob" ) );
     }
 
     @Test
     public void avoidCachingVersionCorrupted()
         throws Exception
     {
-        final CachedBlobStore cachedBlobStore = CachedBlobStore.create().blobStore( BLOB_STORE ).build();
-
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
@@ -250,11 +247,10 @@ class NodeVersionServiceImplTest
         final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
         final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) );
         BLOB_STORE.addRecord( segment, corruptedBlob );
-        cachedBlobStore.invalidate( segment, blob.getKey() );
 
         RuntimeException e =
             assertThrows( RuntimeException.class, () -> executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
-        assertTrue( e.getMessage().startsWith( "Failed to load blobs with keys" ) );
+        assertTrue( e.getMessage().startsWith( "Failed to load blob" ) );
 
         // restore original blob in source blob store
         BLOB_STORE.addRecord( segment, blob );

@@ -5,14 +5,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mockito.Mockito;
 
-import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -43,7 +41,7 @@ public abstract class AbstractBlobVacuumTaskTest
             thenAnswer( ( invocation ) -> {
                 final NodeVersionQuery query = invocation.getArgument( 0 );
                 final ValueFilter valueFilter = (ValueFilter) query.getQueryFilters().first();
-                if ( valueFilter.getValues().contains( ValueFactory.newString( createBlobKey( 'a' ).toString() ) ) )
+                if ( valueFilter.getValues().contains( ValueFactory.newString( BlobKey.from( ByteSource.wrap( "a-stuff".getBytes() ) ).toString() ) ) )
                 {
                     return NodeVersionQueryResult.empty( 1 );
                 }
@@ -54,9 +52,9 @@ public abstract class AbstractBlobVacuumTaskTest
     public void test_delete_unused()
         throws Exception
     {
-        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
-        this.blobStore.addRecord( segment, createBlobRecord( 'b' ) );
-        this.blobStore.addRecord( segment, createBlobRecord( 'c' ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "a-stuff".getBytes() ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "b-stuff".getBytes() ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "c-stuff".getBytes() ) );
 
         final VacuumTask task = createTask();
 
@@ -70,9 +68,9 @@ public abstract class AbstractBlobVacuumTaskTest
     public void test_progress_report()
         throws Exception
     {
-        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
-        this.blobStore.addRecord( segment, createBlobRecord( 'b' ) );
-        this.blobStore.addRecord( segment, createBlobRecord( 'c' ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "a-stuff".getBytes() ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "b-stuff".getBytes() ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "c-stuff".getBytes() ) );
 
         final VacuumTask task = createTask();
 
@@ -115,7 +113,7 @@ public abstract class AbstractBlobVacuumTaskTest
     public void age_threshold()
         throws Exception
     {
-        this.blobStore.addRecord( segment, createBlobRecord( 'a' ) );
+        this.blobStore.addRecord( segment, ByteSource.wrap( "a-stuff".getBytes() ) );
 
         final VacuumTask task = createTask();
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() );
@@ -124,14 +122,4 @@ public abstract class AbstractBlobVacuumTaskTest
     }
 
     protected abstract VacuumTask createTask();
-
-    private MemoryBlobRecord createBlobRecord( final char id )
-    {
-        return new MemoryBlobRecord( createBlobKey( id ), ByteSource.wrap( "stuff".getBytes() ) );
-    }
-
-    private BlobKey createBlobKey( final char value )
-    {
-        return BlobKey.from( Strings.padStart( "", 40, value ) );
-    }
 }

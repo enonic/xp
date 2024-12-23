@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node.dao;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -11,12 +13,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.Weigher;
 import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
@@ -64,95 +64,97 @@ public class NodeVersionServiceImpl
     @Override
     public NodeVersionKey store( final NodeVersion nodeVersion, final InternalContext context )
     {
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
-        final byte[] nodeJsonString = NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion );
-        final BlobRecord nodeBlobRecord = blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJsonString ) );
+        final RepositoryId repositoryId = context.getRepositoryId();
 
-        final Segment indexConfigSegment =
-            RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
-        final byte[] indexConfigDocumentString = NodeVersionJsonSerializer.toIndexConfigDocumentBytes( nodeVersion );
-        final BlobRecord indexConfigBlobRecord = blobStore.addRecord( indexConfigSegment, ByteSource.wrap( indexConfigDocumentString ) );
+        final BlobKey accessControlBlobKey =
+            serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL,
+                                       NodeVersionJsonSerializer::toAccessControlBytes );
+        final BlobKey indexConfigBlobKey = serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL,
+                                                                      NodeVersionJsonSerializer::toIndexConfigDocumentBytes );
+        final BlobKey nodeBlobKey = serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.NODE_SEGMENT_LEVEL,
+                                                               NodeVersionJsonSerializer::toNodeVersionBytes );
 
-        final Segment accessControlSegment =
-            RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
-        final byte[] accessControlString = NodeVersionJsonSerializer.toAccessControlBytes( nodeVersion );
-        final BlobRecord accessControlBlobRecord = blobStore.addRecord( accessControlSegment, ByteSource.wrap( accessControlString ) );
+        return NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
+    }
 
-        return NodeVersionKey.from( nodeBlobRecord.getKey(), indexConfigBlobRecord.getKey(), accessControlBlobRecord.getKey() );
+    private BlobKey serializeAndAddBlobRecord( final NodeVersion nodeVersion, final RepositoryId repositoryId, final SegmentLevel segmentLevel,
+                                                   IOFunction<NodeVersion, byte[]> serializer )
+    {
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
+        final byte[] nodeJson;
+        try
+        {
+            nodeJson = serializer.apply( nodeVersion );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+        return blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJson ) ).getKey();
     }
 
     @Override
     public NodeVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
-        final BlobKey nodeBlobKey = nodeVersionKey.getNodeBlobKey();
-        final BlobKey indexConfigBlobKey = nodeVersionKey.getIndexConfigBlobKey();
-        final BlobKey accessControlBlobKey = nodeVersionKey.getAccessControlBlobKey();
+        final RepositoryId repositoryId = context.getRepositoryId();
 
-        try
-        {
-            final ImmutableNodeVersion immutableNodeVersion = nodeDataCache.get( nodeBlobKey, () -> {
-                final BlobRecord nodeBlobRecord = getBlobRecord( NodeConstants.NODE_SEGMENT_LEVEL, context.getRepositoryId(), nodeBlobKey );
-                final ByteSource bytes = nodeBlobRecord.getBytes();
-                try (var is = bytes.openBufferedStream())
-                {
-                    return new WithWeight<>( ImmutableVersionData.deserialize( is ), bytes.size() );
-                }
-            } ).value;
+        final AccessControlList accessControl =
+            fetchAndDeserializeCached( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, nodeVersionKey.getAccessControlBlobKey(),
+                                       NodeVersionJsonSerializer::toNodeVersionAccessControl, accessControlCache );
 
-            final PatternIndexConfigDocument indexConfigDocument = indexConfigCache.get( indexConfigBlobKey, () -> {
-                final BlobRecord indexConfigBlobRecord =
-                    getBlobRecord( NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL, context.getRepositoryId(), indexConfigBlobKey );
-                final ByteSource bytes = indexConfigBlobRecord.getBytes();
-                return new WithWeight<>( NodeVersionJsonSerializer.toIndexConfigDocument( bytes ), bytes.size() );
-            } ).value;
+        final PatternIndexConfigDocument indexConfigDocument =
+            fetchAndDeserializeCached( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL, nodeVersionKey.getIndexConfigBlobKey(),
+                                       NodeVersionJsonSerializer::toIndexConfigDocument, indexConfigCache );
 
-            final AccessControlList accessControl = accessControlCache.get( accessControlBlobKey, () -> {
-                final BlobRecord accessControlBlobRecord =
-                    getBlobRecord( NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, context.getRepositoryId(), accessControlBlobKey );
-                final ByteSource bytes = accessControlBlobRecord.getBytes();
-                return new WithWeight<>( NodeVersionJsonSerializer.toNodeVersionAccessControl( bytes ), bytes.size() );
-            } ).value;
+        final ImmutableNodeVersion immutableNodeVersion =
+            fetchAndDeserializeCached( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL, nodeVersionKey.getNodeBlobKey(),
+                                       ImmutableVersionData::deserialize, nodeDataCache );
 
-            return NodeVersion.create()
-                .id( immutableNodeVersion.id )
-                .nodeType( immutableNodeVersion.nodeType )
-                .data( toPropertyTree( immutableNodeVersion.data ) )
-                .childOrder( immutableNodeVersion.childOrder )
-                .manualOrderValue( immutableNodeVersion.manualOrderValue )
-                .attachedBinaries( immutableNodeVersion.attachedBinaries )
-                .indexConfigDocument( indexConfigDocument )
-                .permissions( accessControl )
-                .build();
-        }
-        catch ( ExecutionException | UncheckedExecutionException e )
-        {
-            if ( blobStore instanceof CachingBlobStore )
-            {
-                ( (CachingBlobStore) blobStore ).invalidate( null, nodeBlobKey );
-                ( (CachingBlobStore) blobStore ).invalidate( null, indexConfigBlobKey );
-                ( (CachingBlobStore) blobStore ).invalidate( null, accessControlBlobKey );
-            }
-            throw new RuntimeException(
-                "Failed to load blobs with keys: " + nodeBlobKey + ", " + indexConfigBlobKey + ", " + accessControlBlobKey, e );
-        }
+        return NodeVersion.create()
+            .id( immutableNodeVersion.id )
+            .nodeType( immutableNodeVersion.nodeType )
+            .data( toPropertyTree( immutableNodeVersion.data ) )
+            .childOrder( immutableNodeVersion.childOrder )
+            .manualOrderValue( immutableNodeVersion.manualOrderValue )
+            .attachedBinaries( immutableNodeVersion.attachedBinaries )
+            .indexConfigDocument( indexConfigDocument )
+            .permissions( accessControl )
+            .build();
     }
 
-    static PropertyTree toPropertyTree( final List<ImmutableProperty> data )
+    private static PropertyTree toPropertyTree( final List<ImmutableProperty> data )
     {
         final PropertyTree result = new PropertyTree();
         ImmutableProperty.addToSet( result.getRoot(), data );
         return result;
     }
 
-    private BlobRecord getBlobRecord( SegmentLevel segmentLevel, RepositoryId repositoryId, BlobKey blobKey )
+    private <T> T fetchAndDeserializeCached( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
+                                             final IOFunction<ByteSource, T> deserializer, Cache<BlobKey, WithWeight<T>> cache )
     {
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
-        final BlobRecord nodeBlobRecord = blobStore.getRecord( nodeSegment, blobKey );
-        if ( nodeBlobRecord == null )
+        try
         {
-            throw new IllegalStateException( "Cannot get node blob with blobKey: " + blobKey + ". Blob is null in segment " + nodeSegment );
+            return cache.get( blobKey, () -> fetchAndDeserialize( repositoryId, segmentLevel, blobKey, deserializer ) ).value;
         }
-        return nodeBlobRecord;
+        catch ( ExecutionException e )
+        {
+            throw new RuntimeException( String.format( "Failed to load blob %s [%s/%s]", blobKey, repositoryId, segmentLevel ),
+                                        e.getCause() );
+        }
+    }
+
+    private <T> WithWeight<T> fetchAndDeserialize( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey,
+                                                   final IOFunction<ByteSource, T> deserializer )
+        throws IOException
+    {
+        final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
+        final BlobRecord blobRecord = blobStore.getRecord( segment, blobKey );
+        if ( blobRecord == null )
+        {
+            throw new IllegalStateException( String.format( "Blob record not found %s [%s/%s]", blobKey, repositoryId, segmentLevel ) );
+        }
+        final ByteSource bytes = blobRecord.getBytes();
+        return new WithWeight<>( deserializer.apply( bytes ), blobRecord.getLength() );
     }
 
     private static class WithWeight<T>
@@ -168,5 +170,10 @@ public class NodeVersionServiceImpl
         }
 
         static final Weigher<BlobKey, WithWeight<?>> WEIGHTER = ( key, value ) -> value.weight;
+    }
+
+    @FunctionalInterface
+    private interface IOFunction<T, R> {
+        R apply( T t) throws IOException;
     }
 }

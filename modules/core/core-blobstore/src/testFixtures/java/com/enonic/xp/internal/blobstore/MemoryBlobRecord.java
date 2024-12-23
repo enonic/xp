@@ -18,6 +18,11 @@ public class MemoryBlobRecord
 
     private final long lastModified;
 
+    public MemoryBlobRecord( final ByteSource source )
+    {
+        this( BlobKey.from( source ), source );
+    }
+
     public MemoryBlobRecord( final BlobKey blobKey, final ByteSource source )
     {
         this.blobKey = blobKey;

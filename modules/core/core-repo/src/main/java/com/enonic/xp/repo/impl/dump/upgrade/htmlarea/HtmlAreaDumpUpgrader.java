@@ -132,9 +132,9 @@ public class HtmlAreaDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final byte[] serializedUpgradedNodeVersion = NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) ;
         try
         {
+            final byte[] serializedUpgradedNodeVersion = NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ) ;
             dumpBlobRecord.override( serializedUpgradedNodeVersion );
         }
         catch ( IOException e )
