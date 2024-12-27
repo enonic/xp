@@ -1,10 +1,10 @@
 package com.enonic.xp.repository;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.exception.BaseException;
+import com.enonic.xp.exception.NotFoundException;
 
 public class BranchNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
     public BranchNotFoundException( final Branch branch )
     {
