@@ -276,7 +276,7 @@ public class IndexServiceInternalImpl
             }
             catch ( IndexNotFoundException e )
             {
-                LOG.warn( "Could not close index [" + indexName + "], not found" );
+                LOG.warn( "Could not close index [{}], not found", indexName );
             }
         }
     }
@@ -292,11 +292,11 @@ public class IndexServiceInternalImpl
             try
             {
                 this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
-                LOG.info( "Opened index " + indexName );
+                LOG.info( "Opened index {}", indexName );
             }
             catch ( ElasticsearchException e )
             {
-                LOG.error( "Could not open index [" + indexName + "]", e );
+                LOG.error( "Could not open index [{}]", indexName, e );
                 throw new IndexException( "Cannot open index [" + indexName + "]", e );
             }
         }
@@ -313,7 +313,7 @@ public class IndexServiceInternalImpl
         }
         catch ( ElasticsearchException e )
         {
-            LOG.warn( "Failed to delete index {}", indexName );
+            LOG.warn( "Failed to delete index {}", indexName, e );
         }
     }
 }

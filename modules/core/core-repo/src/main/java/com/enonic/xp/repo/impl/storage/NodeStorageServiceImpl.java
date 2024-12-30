@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -171,6 +172,12 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public void deleteFromIndex( final NodeId nodeId, final InternalContext internalContext )
+    {
+        indexDataService.delete( Collections.singleton( nodeId ), internalContext );
+    }
+
+    @Override
     public void updateVersion( final Node node, final InternalContext context )
     {
         //TODO Check
@@ -225,7 +232,9 @@ public class NodeStorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions() ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
+        return canRead( nodeVersion.getPermissions(), context )
+            ? NodeFactory.create( nodeVersion, nodeBranchEntry )
+            : null;
     }
 
     @Override
@@ -240,7 +249,9 @@ public class NodeStorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions() ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
+        return canRead( nodeVersion.getPermissions(), context )
+            ? NodeFactory.create( nodeVersion, nodeBranchEntry )
+            : null;
     }
 
     @Override
@@ -275,7 +286,7 @@ public class NodeStorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionMetadata.getNodeVersionKey(), context );
 
-        if ( nodeVersion == null || !canRead( nodeVersion.getPermissions() ) )
+        if ( nodeVersion == null || !canRead( nodeVersion.getPermissions(), context ) )
         {
             return null;
         }
@@ -287,6 +298,12 @@ public class NodeStorageServiceImpl
     public NodeVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         return this.nodeVersionService.get( nodeVersionKey, context );
+    }
+
+    @Override
+    public AccessControlList getNodePermissions( final NodeVersionKey nodeVersionKey, final InternalContext context )
+    {
+        return this.nodeVersionService.getPermissions( nodeVersionKey, context );
     }
 
     @Override
@@ -302,7 +319,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context )
+    public NodeVersionMetadata getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         return this.versionService.getVersion( nodeVersionId, context );
     }
@@ -369,17 +386,17 @@ public class NodeStorageServiceImpl
     {
         final Nodes.Builder filteredNodes = Nodes.create();
 
-        nodeBranchEntries
-            .map( nodeBranchEntry -> Map.entry( nodeBranchEntry, nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ) ) )
-            .filter( entry -> canRead( entry.getValue().getPermissions() ) )
+        nodeBranchEntries.map(
+                nodeBranchEntry -> Map.entry( nodeBranchEntry, nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ) ) )
+            .filter( entry -> canRead( entry.getValue().getPermissions(), context ) )
             .map( entry -> NodeFactory.create( entry.getValue(), entry.getKey() ) )
             .forEach( filteredNodes::add );
 
         return filteredNodes.build();
     }
 
-    private boolean canRead( final AccessControlList permissions )
+    private boolean canRead( final AccessControlList permissions, final InternalContext context )
     {
-        return NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.READ, permissions );
+        return NodePermissionsResolver.hasPermission( context.getPrincipalsKeys(), Permission.READ, permissions );
     }
 }

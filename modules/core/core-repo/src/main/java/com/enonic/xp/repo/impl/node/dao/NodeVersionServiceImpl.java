@@ -34,6 +34,7 @@ import com.enonic.xp.repo.impl.node.json.NodeVersionAccessControl;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @Component
 public class NodeVersionServiceImpl
@@ -121,6 +122,14 @@ public class NodeVersionServiceImpl
             .permissions( accessControl.getPermissions() )
             .inheritPermissions( accessControl.isInheritPermissions() )
             .build();
+    }
+
+    @Override
+    public AccessControlList getPermissions( final NodeVersionKey nodeVersionKey, final InternalContext context )
+    {
+        final RepositoryId repositoryId = context.getRepositoryId();
+        return fetchAndDeserializeCached( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, nodeVersionKey.getAccessControlBlobKey(),
+                                       NodeVersionJsonSerializer::toNodeVersionAccessControl, accessControlCache ).getPermissions();
     }
 
     private static PropertyTree toPropertyTree( final List<ImmutableProperty> data )

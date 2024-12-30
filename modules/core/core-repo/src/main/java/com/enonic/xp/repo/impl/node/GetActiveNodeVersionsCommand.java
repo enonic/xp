@@ -50,7 +50,7 @@ public class GetActiveNodeVersionsCommand
 
             if ( nodeBranchEntry != null )
             {
-                builder.add( branch, this.nodeStorageService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(),
+                builder.add( branch, this.nodeStorageService.getVersion( nodeBranchEntry.getVersionId(),
                                                                          InternalContext.from( context ) ) );
             }
         }

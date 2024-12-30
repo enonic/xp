@@ -66,7 +66,8 @@ final class ApplyNodePermissionsCommand
 
     private void applyPermissions( final AccessControlList permissions, final Node node )
     {
-        if ( NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, node.getPermissions() ) )
+        if ( NodePermissionsResolver.userHasPermission( ContextAccessor.current().getAuthInfo(), Permission.WRITE_PERMISSIONS,
+                                                        node.getPermissions() ) )
         {
             final Node childApplied = storePermissions( permissions, node );
 

@@ -22,6 +22,7 @@ import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeStorageService
 {
@@ -34,6 +35,8 @@ public interface NodeStorageService
     void storeCommit( StoreNodeCommitParams params, InternalContext context );
 
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
+
+    void deleteFromIndex( NodeId nodeId, InternalContext internalContext );
 
     void updateVersion( Node node, InternalContext context );
 
@@ -53,11 +56,13 @@ public interface NodeStorageService
 
     NodeVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
 
+    AccessControlList getNodePermissions( NodeVersionKey nodeVersionKey, InternalContext context );
+
     NodeBranchEntry getBranchNodeVersion( NodeId nodeId, InternalContext context );
 
     NodeBranchEntries getBranchNodeVersions( NodeIds nodeIds, InternalContext context );
 
-    NodeVersionMetadata getVersion( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
+    NodeVersionMetadata getVersion( NodeVersionId nodeVersionId, InternalContext context );
 
     NodeCommitEntry getCommit( NodeCommitId nodeCommitId, InternalContext context );
 
