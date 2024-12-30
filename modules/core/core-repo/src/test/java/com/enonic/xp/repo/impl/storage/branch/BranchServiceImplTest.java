@@ -30,14 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BranchServiceImplTest
 {
-
     private BranchServiceImpl branchService;
 
     private StorageDao storageDao;
 
     private SearchDao searchDao;
-
-    private InternalContext context;
 
     @BeforeEach
     public void setup()
@@ -47,12 +44,6 @@ public class BranchServiceImplTest
         this.searchDao = Mockito.mock( SearchDao.class );
 
         this.branchService = new BranchServiceImpl( storageDao, searchDao );
-
-        context = InternalContext.create().
-            branch( Branch.from( "myBranch" ) ).
-            authInfo( AuthenticationInfo.unAuthenticated() ).
-            repositoryId( RepositoryId.from( "my-repo" ) ).
-            build();
     }
 
 
@@ -63,6 +54,7 @@ public class BranchServiceImplTest
         final InternalContext context = InternalContext.create().
             branch( Branch.from( "myBranch" ) ).
             repositoryId( RepositoryId.from( "my-repo" ) ).
+            authInfo( AuthenticationInfo.unAuthenticated() ).
             build();
 
         final NodePath path = new NodePath( "/fisk" );

@@ -20,6 +20,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -61,6 +62,7 @@ class NodeStorageServiceImplTest
 
         context = InternalContext.create().
             repositoryId( RepositoryId.from( "repository-id" ) ).
+            authInfo( AuthenticationInfo.unAuthenticated() ).
             branch( Branch.from( "branch" ) ).
             build();
     }

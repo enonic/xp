@@ -80,7 +80,7 @@ class CompareStatusResolver
 
     private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
     {
-        final NodeVersionMetadata version = nodeStorageService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(),
+        final NodeVersionMetadata version = nodeStorageService.getVersion( nodeBranchEntry.getVersionId(),
                                                                            InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )

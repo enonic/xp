@@ -104,18 +104,21 @@ public class PushNodesCommand
             .collect( Collectors.toList() );
 
         final Set<NodePath> alreadyAdded = new HashSet<>();
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         for ( final NodeBranchEntry branchEntry : list )
         {
             final NodeComparison comparison = allComparisons.get( branchEntry.getNodeId() );
 
-            final AccessControlList nodePermissions =
-                this.nodeStorageService.getNodeVersion( branchEntry.getNodeVersionKey(), internalContext ).getPermissions();
-
-            if ( !NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.PUBLISH, nodePermissions ) )
+            if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
             {
-                builder.addFailed( branchEntry, PushNodesResult.Reason.ACCESS_DENIED );
-                pushListener.nodesPushed( 1 );
-                continue;
+                final AccessControlList nodePermissions =
+                    this.nodeStorageService.getNodePermissions( branchEntry.getNodeVersionKey(), internalContext );
+                if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, nodePermissions ) )
+                {
+                    builder.addFailed( branchEntry, PushNodesResult.Reason.ACCESS_DENIED );
+                    pushListener.nodesPushed( 1 );
+                    continue;
+                }
             }
 
             final CompareStatus compareStatus = comparison.getCompareStatus();

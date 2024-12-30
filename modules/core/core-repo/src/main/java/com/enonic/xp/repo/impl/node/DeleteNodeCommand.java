@@ -1,36 +1,36 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
+import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -64,56 +64,64 @@ public class DeleteNodeCommand
         }
 
         final Context context = ContextAccessor.current();
+        final InternalContext internalContext = InternalContext.from( context );
+        final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final NodeBranchEntry node = nodeId != null
-            ? this.nodeStorageService.getBranchNodeVersion( nodeId, InternalContext.from( context ) )
-            : this.nodeStorageService.getBranchNodeVersion( nodePath, InternalContext.from( context ) );
+            ? this.nodeStorageService.getBranchNodeVersion( nodeId, internalContext )
+            : this.nodeStorageService.getBranchNodeVersion( nodePath, internalContext );
 
         if ( node == null )
         {
+            // Node not found in storage, but potentially still in index. Attempt to fixup.
+            if ( nodeId != null )
+            {
+                this.nodeStorageService.deleteFromIndex( nodeId, internalContext );
+            }
             return NodeBranchEntries.empty();
         }
-        final Context adminContext = ContextBuilder.from( context )
-            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
-            .build();
 
-        refresh( RefreshMode.SEARCH );
-        final SearchResult childrenSearchResult = this.nodeSearchService.query( NodeQuery.create()
-                                                                                    .query( QueryExpr.from( CompareExpr.like(
-                                                                                        FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                        ValueExpr.string( node.getNodePath() + "/*" ) ) ) )
-                                                                                    .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                                    .build(), SingleRepoSearchSource.from( adminContext ) );
-        final NodeIds nodeIds = NodeIds.create().add( node.getNodeId() ).addAll( NodeIds.from( childrenSearchResult.getIds() ) ).build();
+        final NodePath effectiveNodePath = node.getNodePath();
 
-        final boolean allHasPermissions = NodesHasPermissionResolver.create( this ).nodeIds( nodeIds )
-            .permission( Permission.DELETE )
-            .build()
-            .execute();
+        refresh( RefreshMode.STORAGE );
 
-        if ( !allHasPermissions )
+        final NodeBranchEntries childrenBranchEntries = NodeBranchQueryResultFactory.create( this.nodeSearchService.query(
+            NodeBranchQuery.create()
+                .query( QueryExpr.from(
+                    CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( effectiveNodePath + "/*" ) ) ) )
+                .addQueryFilter( ValueFilter.create()
+                                     .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                     .addValue( ValueFactory.newString( internalContext.getBranch().getValue() ) )
+                                     .build() )
+                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, OrderExpr.Direction.DESC ) )
+                .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                .build(), internalContext.getRepositoryId() ) );
+
+        final NodeBranchEntries nodeBranchEntries = NodeBranchEntries.create().addAll( childrenBranchEntries ).add( node ).build();
+
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
         {
-            throw new NodeAccessException( context.getAuthInfo().getUser(), node.getNodePath(), Permission.DELETE );
+            for ( NodeBranchEntry branchEntry : nodeBranchEntries )
+            {
+                final AccessControlList nodePermissions =
+                    this.nodeStorageService.getNodePermissions( branchEntry.getNodeVersionKey(), internalContext );
+
+                if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), Permission.DELETE, nodePermissions ) )
+                {
+                    throw new NodeAccessException( authInfo.getUser(), effectiveNodePath, Permission.DELETE );
+                }
+            }
         }
 
-        final NodeBranchEntries nodeBranchEntries =
-            this.nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
-
-        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
-            .stream()
-            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ).reversed() )
-            .collect( Collectors.toList() );
-
-        for ( final List<NodeBranchEntry> batch : Iterables.partition( list, BATCH_SIZE ) )
+        for ( final List<NodeBranchEntry> batch : Iterables.partition( nodeBranchEntries.getSet(), BATCH_SIZE ) )
         {
-            this.nodeStorageService.delete( batch, InternalContext.from( context ) );
-
-            deleteNodeListener.nodesDeleted( batch.size() );
+            this.nodeStorageService.delete( batch, internalContext );
+            this.deleteNodeListener.nodesDeleted( batch.size() );
         }
 
         refresh( refresh );
 
-        return NodeBranchEntries.from( list );
+        return nodeBranchEntries;
     }
 
     public static Builder create()

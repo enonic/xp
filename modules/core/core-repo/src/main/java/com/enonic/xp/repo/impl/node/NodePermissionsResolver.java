@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -14,26 +15,27 @@ public final class NodePermissionsResolver
         throws NodeAccessException
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final boolean hasPermission = userHasPermission( authInfo, permission, node.getPermissions() );
+        final boolean hasPermission = hasPermission( authInfo.getPrincipals(), permission, node.getPermissions() );
         if ( !hasPermission )
         {
             throw new NodeAccessException( authInfo.getUser(), node.path(), permission );
         }
     }
 
-    public static boolean contextUserHasPermissionOrAdmin( final Permission permission, final AccessControlList nodePermissions )
-    {
-        return userHasPermission( ContextAccessor.current().getAuthInfo(), permission, nodePermissions );
-    }
-
     public static boolean userHasPermission( final AuthenticationInfo authInfo, final Permission permission,
                                              final AccessControlList nodePermissions )
     {
-        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        return hasPermission( authInfo.getPrincipals(), permission, nodePermissions );
+    }
+
+    public static boolean hasPermission( final PrincipalKeys principals, final Permission permission,
+                                         final AccessControlList nodePermissions )
+    {
+        if ( principals.contains( RoleKeys.ADMIN ) )
         {
             return true;
         }
 
-        return nodePermissions.isAllowedFor( authInfo.getPrincipals(), permission );
+        return nodePermissions.isAllowedFor( principals, permission );
     }
 }

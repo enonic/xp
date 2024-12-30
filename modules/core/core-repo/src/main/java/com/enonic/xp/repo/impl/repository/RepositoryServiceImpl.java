@@ -16,19 +16,21 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
+import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -388,12 +390,18 @@ public class RepositoryServiceImpl
     {
         doRefresh();
 
-        final NodeIds nodeIds = NodeIds.from(
-            this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
-                                          SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
-
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( nodeIds, context );
+        final NodeBranchQuery queryAll = NodeBranchQuery.create()
+            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
+                                 .build() )
+            .build();
+
+        final NodeBranchEntries nodeBranchEntries =
+            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( queryAll, context.getRepositoryId() ) );
+
         this.nodeStorageService.delete( nodeBranchEntries.getSet(), context );
 
         doRefresh();
