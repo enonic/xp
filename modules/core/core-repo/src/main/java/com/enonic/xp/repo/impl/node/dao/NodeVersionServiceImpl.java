@@ -122,6 +122,14 @@ public class NodeVersionServiceImpl
             .build();
     }
 
+    @Override
+    public AccessControlList getPermissions( final NodeVersionKey nodeVersionKey, final InternalContext context )
+    {
+        final RepositoryId repositoryId = context.getRepositoryId();
+        return fetchAndDeserializeCached( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, nodeVersionKey.getAccessControlBlobKey(),
+                                       NodeVersionJsonSerializer::toNodeVersionAccessControl, accessControlCache );
+    }
+
     private static PropertyTree toPropertyTree( final List<ImmutableProperty> data )
     {
         final PropertyTree result = new PropertyTree();

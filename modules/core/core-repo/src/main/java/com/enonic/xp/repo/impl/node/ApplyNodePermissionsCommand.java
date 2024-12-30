@@ -114,7 +114,7 @@ public class ApplyNodePermissionsCommand
             }
 
             updatedPersistedNode = new NodeVersionData( persistedNode,
-                                                        nodeStorageService.getVersion( nodeId, persistedNode.getNodeVersionId(),
+                                                        nodeStorageService.getVersion( persistedNode.getNodeVersionId(),
                                                                                        InternalContext.from(
                                                                                            ContextAccessor.current() ) ) );
         }
@@ -194,7 +194,8 @@ public class ApplyNodePermissionsCommand
         final Node persistedNode = nodeStorageService.get( nodeId, targetContext );
 
         if ( persistedNode == null ||
-            !NodePermissionsResolver.contextUserHasPermissionOrAdmin( Permission.WRITE_PERMISSIONS, persistedNode.getPermissions() ) )
+            !NodePermissionsResolver.hasPermission( targetContext.getPrincipalsKeys(), Permission.WRITE_PERMISSIONS,
+                                                        persistedNode.getPermissions() ) )
         {
             listener.notEnoughRights( 1 );
             return null;
