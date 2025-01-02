@@ -32,6 +32,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -111,6 +112,19 @@ public class FilterScriptImplTest
         this.portalRequest.setMethod( HttpMethod.POST );
         execute( "myapplication:/filter/callnext.js", webHandlerChain );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
+    }
+
+    @Test
+    void testRemoveHeader()
+        throws Exception
+    {
+        this.portalRequest.setMethod( HttpMethod.GET );
+        this.portalResponse = PortalResponse.create().header( "pleaseDontFail", "value" ).build();
+        WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
+        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+
+        execute( "myapplication:/filter/removeHeader.js", webHandlerChain );
+        assertThat( this.portalResponse.getHeaders() ).doesNotContainKey( "pleaseDontFail" );
     }
 
     @Test
