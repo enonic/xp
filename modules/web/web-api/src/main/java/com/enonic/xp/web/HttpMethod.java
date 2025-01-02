@@ -6,7 +6,7 @@ public enum HttpMethod
 {
     GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, CONNECT, PATCH, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK;
 
-    private static final EnumSet<HttpMethod> STANDARD_METHODS = EnumSet.of( GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE );
+    private static final EnumSet<HttpMethod> STANDARD_METHODS = EnumSet.of( GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, PATCH );
 
     public static EnumSet<HttpMethod> all()
     {

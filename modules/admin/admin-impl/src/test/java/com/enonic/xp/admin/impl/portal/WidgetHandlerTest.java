@@ -116,7 +116,7 @@ public class WidgetHandlerTest
         final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
         assertNotNull( response );
         assertEquals( HttpStatus.OK, response.getStatus() );
-        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE", response.getHeaders().get( "Allow" ) );
+        assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", response.getHeaders().get( "Allow" ) );
     }
     @Test
     public void testNotValidUrlPattern()
