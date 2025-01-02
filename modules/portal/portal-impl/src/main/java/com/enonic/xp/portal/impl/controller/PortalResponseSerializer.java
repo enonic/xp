@@ -170,7 +170,15 @@ public final class PortalResponseSerializer
 
         for ( final String key : value.getKeys() )
         {
-            builder.header( key, value.getMember( key ).getValue( String.class ) );
+            final ScriptValue headerValue = value.getMember( key );
+            if ( headerValue == null )
+            {
+                builder.removeHeader( key );
+            }
+            else
+            {
+                builder.header( key, headerValue.getValue( String.class ) );
+            }
         }
     }
 
