@@ -41,6 +41,10 @@ public class ChangePasswordHandler
 
     private String normalize( final String value )
     {
+        if ( value == null )
+        {
+            return null;
+        }
         return value.replaceAll( "\\s", "" );
     }
 }
