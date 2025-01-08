@@ -14,6 +14,7 @@ public final class EditableUser
 
     public String login;
 
+    @Deprecated
     public String authenticationHash;
 
     public boolean loginDisabled;
