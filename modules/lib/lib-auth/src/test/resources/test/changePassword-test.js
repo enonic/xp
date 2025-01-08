@@ -6,3 +6,10 @@ exports.changePassword = function () {
         password: ' test-password-   without- spaces  '
     });
 };
+
+exports.clearPassword = function () {
+    auth.changePassword({
+        userKey: 'user:myIdProvider:userId'
+    });
+};
+

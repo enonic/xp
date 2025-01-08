@@ -529,7 +529,6 @@ public final class SecurityServiceImpl
     public User setPassword( final PrincipalKey key, final String password )
     {
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
-        Preconditions.checkArgument( password != null && !password.isEmpty(), "Password cannot be empty" );
 
         return callWithContext( () -> {
 
@@ -545,7 +544,7 @@ public final class SecurityServiceImpl
                 throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
             }
 
-            final String authenticationHash = this.passwordEncoder.encodePassword( password );
+            final String authenticationHash = password != null ? this.passwordEncoder.encodePassword( password ) : null;
 
             final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 

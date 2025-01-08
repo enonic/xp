@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.auth;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.PrincipalKey;
@@ -13,6 +12,8 @@ import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ChangePasswordHandlerTest
     extends ScriptTestSupport
@@ -26,7 +27,7 @@ public class ChangePasswordHandlerTest
         throws Exception
     {
         super.initialize();
-        this.securityService = Mockito.mock( SecurityService.class );
+        this.securityService = mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
 
         this.session = new SessionMock();
@@ -42,7 +43,7 @@ public class ChangePasswordHandlerTest
         this.session.setAttribute( authInfo );
 
         runScript( "/lib/xp/examples/auth/changePassword.js" );
-        Mockito.verify( this.securityService ).setPassword( eq( authInfo.getUser().getKey() ), eq( "new-secret-password" ) );
+        verify( this.securityService ).setPassword( eq( authInfo.getUser().getKey() ), eq( "new-secret-password" ) );
     }
 
     @Test
@@ -50,7 +51,16 @@ public class ChangePasswordHandlerTest
     {
         runFunction( "/test/changePassword-test.js", "changePassword" );
 
-        Mockito.verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myIdProvider:userId" ) ),
+        verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myIdProvider:userId" ) ),
                                                             eq( "test-password-without-spaces" ) );
+    }
+
+    @Test
+    void testClearPassword()
+    {
+        runFunction( "/test/changePassword-test.js", "clearPassword" );
+
+        verify( this.securityService ).setPassword( eq( PrincipalKey.from( "user:myIdProvider:userId" ) ),
+                                                            eq( null ) );
     }
 }
