@@ -252,6 +252,30 @@ export function changePassword(params: ChangePasswordParams): void {
     bean.changePassword();
 }
 
+interface HasUserPasswordHandler {
+    setUserKey(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Checks the user has a password.
+ *
+ * @example-ref examples/auth/hasUserPassword.js
+ *
+ * @param {string} userKey Principal key of the user.
+ *
+ * @returns {boolean} true if the user has a password, false otherwise.
+ */
+export function hasUserPassword(userKey: UserKey): boolean {
+    checkRequiredValue(userKey, 'userKey');
+
+    const bean: HasUserPasswordHandler = __.newBean<HasUserPasswordHandler>('com.enonic.xp.lib.auth.HasUserPasswordHandler');
+    bean.setUserKey(userKey);
+
+    return bean.execute();
+}
+
 interface GetPrincipalHandler {
     setPrincipalKey(value: string): void;
 
