@@ -236,7 +236,7 @@ interface ChangePasswordHandler {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.userKey Key for user to change password.
- * @param {string} [params.password] New password to set. If value is null, the password will be cleared.
+ * @param {string} [params.password] The new password to set. If the value is null, the password will be cleared.
  */
 export function changePassword(params: ChangePasswordParams): void {
     const bean: ChangePasswordHandler = __.newBean<ChangePasswordHandler>('com.enonic.xp.lib.auth.ChangePasswordHandler');
