@@ -1114,6 +1114,30 @@ public class SecurityServiceImplTest
     }
 
     @Test
+    void testClearPassword()
+    {
+        runAsAdmin( () -> {
+            final CreateUserParams params = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "User1" )
+                .password( "fisk" )
+                .build();
+
+            final User user = securityService.createUser( params );
+
+            assertNotNull( user.getAuthenticationHash() );
+
+            securityService.setPassword( user.getKey(), null );
+
+            final User updatedUser = securityService.getUser( user.getKey() ).orElse( null );
+            assertNotNull( updatedUser );
+            assertNull( updatedUser.getAuthenticationHash() );
+        } );
+    }
+
+    @Test
     public void testQuery()
         throws Exception
     {

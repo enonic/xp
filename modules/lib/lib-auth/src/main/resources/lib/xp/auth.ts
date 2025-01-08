@@ -218,36 +218,35 @@ export function generatePassword(): string {
 
 export interface ChangePasswordParams {
     userKey: string;
-    password: string;
+    password?: string | null;
 }
 
 interface ChangePasswordHandler {
     setUserKey(value: string): void;
 
-    setPassword(value: string): void;
+    setPassword(value?: string | null): void;
 
     changePassword(): void;
 }
 
 /**
- * Changes password for specified user.
+ * Changes or clears password for specified user.
  *
  * @example-ref examples/auth/changePassword.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.userKey Key for user to change password.
- * @param {string} params.password New password to set.
+ * @param {string} [params.password] New password to set. If value is null, the password will be cleared.
  */
 export function changePassword(params: ChangePasswordParams): void {
     const bean: ChangePasswordHandler = __.newBean<ChangePasswordHandler>('com.enonic.xp.lib.auth.ChangePasswordHandler');
 
     checkRequired(params, 'userKey');
-    checkRequired(params, 'password');
 
     const {userKey, password} = params ?? {};
 
     bean.setUserKey(userKey);
-    bean.setPassword(password);
+    bean.setPassword(__.nullOrValue(password));
 
     bean.changePassword();
 }

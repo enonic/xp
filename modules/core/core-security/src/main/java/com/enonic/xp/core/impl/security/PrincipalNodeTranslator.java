@@ -232,7 +232,14 @@ abstract class PrincipalNodeTranslator
     {
         data.setString( PrincipalPropertyNames.EMAIL_KEY, user.getEmail() );
         data.setString( PrincipalPropertyNames.LOGIN_KEY, user.getLogin() );
-        data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
+        if ( user.getAuthenticationHash() == null )
+        {
+            data.removeProperties( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY );
+        }
+        else
+        {
+            data.setString( PrincipalPropertyNames.AUTHENTICATION_HASH_KEY, user.getAuthenticationHash() );
+        }
         data.setSet( PrincipalPropertyNames.PROFILE_KEY, user.getProfile().getRoot().copy( data.getTree() ) );
     }
 
