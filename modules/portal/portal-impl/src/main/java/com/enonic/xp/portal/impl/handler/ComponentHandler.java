@@ -20,6 +20,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
@@ -112,7 +113,10 @@ public class ComponentHandler
 
     private PortalResponse doHandle( final PortalRequest portalRequest )
     {
-        final PortalResponse response = rendererDelegate.render( portalRequest.getComponent(), portalRequest );
+        final PortalResponse result = rendererDelegate.render( portalRequest.getComponent(), portalRequest );
+        final boolean isEditMode = portalRequest.getMode() == RenderMode.EDIT;
+        final PortalResponse response = ( isEditMode && result.hasContributions() ) ? addHasContributionsHeader( result ) : result;
+
         return this.postProcessor.processResponseInstructions( portalRequest, response );
     }
 
@@ -225,5 +229,10 @@ public class ComponentHandler
         {
             return null;
         }
+    }
+
+    private PortalResponse addHasContributionsHeader( final PortalResponse source )
+    {
+        return PortalResponse.create( source ).header( "X-Has-Contributions", "true" ).build();
     }
 }
