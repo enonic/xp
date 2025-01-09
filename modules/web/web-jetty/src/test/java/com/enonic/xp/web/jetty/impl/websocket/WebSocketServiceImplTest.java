@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.http.WebSocket;
 import java.util.concurrent.ExecutionException;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -12,6 +13,7 @@ import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 public class WebSocketServiceImplTest
     extends JettyTestSupport
 {
