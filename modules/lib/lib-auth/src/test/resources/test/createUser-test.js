@@ -18,7 +18,8 @@ exports.createUser = function () {
         'disabled': false,
         'email': 'user1@enonic.com',
         'login': 'user1',
-        'idProvider': 'enonic'
+        'idProvider': 'enonic',
+        'hasPassword': false
     };
 
     t.assertJsonEquals(expectedJson, result, 'createUser result not equals');
@@ -40,7 +41,8 @@ exports.createUserNoEmail = function () {
         'modifiedTime': '1970-01-01T00:00:00Z',
         'disabled': false,
         'login': 'user1',
-        'idProvider': 'enonic'
+        'idProvider': 'enonic',
+        'hasPassword': false
     };
 
     t.assertJsonEquals(expectedJson, result, 'createUser result not equals');

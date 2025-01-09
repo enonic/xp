@@ -27,6 +27,7 @@ var expected = {
             'email': 'user1@enonic.com',
             'login': 'user1',
             'idProvider': 'enonic',
+            'hasPassword': false,
             'profile': {
                 'myApp': {
                     'subString': 'subStringValue',

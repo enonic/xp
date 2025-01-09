@@ -492,6 +492,7 @@ export interface User {
     email?: string;
     login: string;
     idProvider: string;
+    hasPassword: boolean;
 }
 
 export interface Group {
