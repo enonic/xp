@@ -40,7 +40,8 @@ var expected = {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     ]
 };
