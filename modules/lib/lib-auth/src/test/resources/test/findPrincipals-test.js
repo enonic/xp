@@ -31,7 +31,8 @@ exports.findPrincipalsDefaultParameters = function () {
                 'disabled': false,
                 'email': 'user1@enonic.com',
                 'login': 'user1',
-                'idProvider': 'enonic'
+                'idProvider': 'enonic',
+                'hasPassword': false
             }
         ]
     };
@@ -61,7 +62,8 @@ exports.findPrincipalsUsers = function () {
                 'disabled': false,
                 'email': 'user1@enonic.com',
                 'login': 'user1',
-                'idProvider': 'enonic'
+                'idProvider': 'enonic',
+                'hasPassword': false
             }
         ]
     };
@@ -143,7 +145,8 @@ exports.findPrincipalsByName = function () {
                 'disabled': false,
                 'email': 'user1@enonic.com',
                 'login': 'user1',
-                'idProvider': 'enonic'
+                'idProvider': 'enonic',
+                'hasPassword': false
             }
         ]
     };
@@ -170,7 +173,8 @@ exports.findPrincipalsBySearchText = function () {
                 'disabled': false,
                 'email': 'user1@enonic.com',
                 'login': 'user1',
-                'idProvider': 'enonic'
+                'idProvider': 'enonic',
+                'hasPassword': false
             }
         ]
     };

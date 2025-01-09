@@ -38,6 +38,7 @@ public final class PrincipalMapper
             gen.value( "email", user.getEmail() );
             gen.value( "login", user.getLogin() );
             gen.value( "idProvider", value.getKey() != null ? value.getKey().getIdProviderKey() : null );
+            gen.value( "hasPassword", user.getAuthenticationHash() != null );
             serializeProfile( gen, user.getProfile() );
         }
         else

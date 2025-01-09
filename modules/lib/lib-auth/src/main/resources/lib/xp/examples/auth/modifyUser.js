@@ -26,7 +26,8 @@ var expected = {
     'disabled': false,
     'email': 'new_email@enonic.com',
     'login': 'user1',
-    'idProvider': 'enonic'
+    'idProvider': 'enonic',
+    'hasPassword': false
 };
 // END
 
