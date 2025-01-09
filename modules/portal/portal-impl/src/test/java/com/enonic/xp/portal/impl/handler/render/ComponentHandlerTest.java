@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.render;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -15,6 +16,8 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -110,8 +114,9 @@ public class ComponentHandlerTest
 
         final PortalResponse portalResponse =
             PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
-
-        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+        final ArgumentCaptor<PortalResponse> portalResponseCaptor = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), portalResponseCaptor.capture() ) )
+            .thenReturn( portalResponse );
 
         setRendererResult( portalResponse );
 
@@ -123,6 +128,7 @@ public class ComponentHandlerTest
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
+        assertNull( portalResponseCaptor.getValue().getHeaders().get( "Has-Contributions" ) );
     }
 
     @Test
@@ -188,6 +194,78 @@ public class ComponentHandlerTest
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
         assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
         assertEquals( "Site for [/site/somepath/content] not found", e.getMessage() );
+    }
+
+    @Test
+    public void testHasContributionsHeaderAddedInEditMode() throws Exception
+    {
+        setupSite();
+        setupContent();
+        setupTemplates();
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().contribution( HtmlTag.HEAD_END, "contribute" ).status( HttpStatus.OK ).build();
+
+        final ArgumentCaptor<PortalResponse> portalResponseCaptor = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), portalResponseCaptor.capture() ) )
+            .thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setMode( RenderMode.EDIT );
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "true", portalResponseCaptor.getValue().getHeaders().get( "X-Has-Contributions" ) );
+    }
+
+    @Test
+    public void testHasContributionsHeaderNotAddedInNonEditMode() throws Exception
+    {
+        setupSite();
+        setupContent();
+        setupTemplates();
+
+        final PortalResponse portalResponse =
+            PortalResponse.create().contribution( HtmlTag.HEAD_END, "contribute" ).status( HttpStatus.OK ).build();
+
+        final ArgumentCaptor<PortalResponse> portalResponseCaptor = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), portalResponseCaptor.capture() ) )
+            .thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( portalResponseCaptor.getValue().getHeaders().get( "X-Has-Contributions" ) );
+    }
+
+    @Test
+    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions() throws Exception
+    {
+        setupSite();
+        setupContent();
+        setupTemplates();
+
+        final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.OK ).build();
+
+        final ArgumentCaptor<PortalResponse> portalResponseCaptor = ArgumentCaptor.forClass( PortalResponse.class );
+        Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), portalResponseCaptor.capture() ) )
+            .thenReturn( portalResponse );
+
+        setRendererResult( portalResponse );
+        this.request.setMode( RenderMode.EDIT );
+        this.request.setEndpointPath( "/_/component/main-region/0" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( portalResponseCaptor.getValue().getHeaders().get( "X-Has-Contributions" ) );
     }
 
     @Test
