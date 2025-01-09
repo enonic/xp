@@ -19,7 +19,8 @@ exports.loginSuccess = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -46,7 +47,8 @@ exports.loginSuccessNoSession = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -88,7 +90,8 @@ exports.loginNoIdProvider = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -114,7 +117,8 @@ exports.loginMultipleIdProvider = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -139,7 +143,8 @@ exports.loginUnspecifiedIdProvider = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -164,7 +169,8 @@ exports.loginWithScopeNONE = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 
@@ -189,7 +195,8 @@ exports.loginWithSkipAuth = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     };
 

@@ -14,7 +14,8 @@ exports.getMembers = function () {
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         },
         {
             'type': 'user',
@@ -24,7 +25,8 @@ exports.getMembers = function () {
             'disabled': false,
             'email': 'user2@enonic.com',
             'login': 'user2',
-            'idProvider': 'enonic'
+            'idProvider': 'enonic',
+            'hasPassword': false
         }
     ];
 

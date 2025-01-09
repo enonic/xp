@@ -23,7 +23,8 @@ exports.modifyUser = function () {
         'disabled': false,
         'email': 'modified_email@enonic.com',
         'login': 'user1',
-        'idProvider': 'enonic'
+        'idProvider': 'enonic',
+        'hasPassword': false
     };
 
     t.assertJsonEquals(expectedJson, result);

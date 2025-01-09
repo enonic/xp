@@ -47,7 +47,8 @@ exports.testChange = function () {
                 'displayName': 'Super User',
                 'disabled': false,
                 'login': 'su',
-                'idProvider': 'system'
+                'idProvider': 'system',
+                'hasPassword': false
             },
             'principals': [
                 'role:system.admin',
