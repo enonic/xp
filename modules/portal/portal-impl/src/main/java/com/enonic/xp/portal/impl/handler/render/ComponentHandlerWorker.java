@@ -13,6 +13,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
@@ -103,7 +104,9 @@ final class ComponentHandlerWorker
             trace.put( "componentPath", component.getPath() );
             trace.put( "type", component.getType().toString() );
         }
-        final PortalResponse response = rendererDelegate.render( component, this.request );
+        final PortalResponse result = rendererDelegate.render( component, this.request );
+        final PortalResponse response = (isEditMode() && result.hasContributions()) ? addHasContributionsHeader( result ) : result;
+
         return this.postProcessor.processResponseInstructions( this.request, response );
     }
 
@@ -157,6 +160,15 @@ final class ComponentHandlerWorker
         {
             return null;
         }
+    }
+
+    private boolean isEditMode()
+    {
+        return request.getMode() == RenderMode.EDIT;
+    }
+
+    private PortalResponse addHasContributionsHeader( final PortalResponse source) {
+        return PortalResponse.create(source).header( "X-Has-Contributions", "true" ).build();
     }
 
 }
