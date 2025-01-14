@@ -32,11 +32,17 @@ public abstract class PostProcessingRenderer<R>
         PortalResponse portalResponse = doRender( component, portalRequest );
         portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
         portalResponse = executeResponseProcessors( portalRequest, portalResponse );
-        portalResponse = this.postProcessor.processResponseContributions( portalRequest, portalResponse );
-        return portalResponse;
+        return isPageContributionsAllowed(component, portalRequest)
+            ? this.postProcessor.processResponseContributions( portalRequest, portalResponse )
+            : portalResponse;
     }
 
     protected abstract PortalResponse doRender( R component, PortalRequest portalRequest );
+
+    protected boolean isPageContributionsAllowed( final R component, final PortalRequest portalRequest )
+    {
+        return true;
+    }
 
     private PortalResponse executeResponseProcessors( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {

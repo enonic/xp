@@ -30,8 +30,20 @@ public final class ControllerMappingRenderer
     }
 
     @Override
-    public PortalResponse doRender( final ControllerMappingDescriptor controllerMappingDescriptor, final PortalRequest portalRequest )
+    public PortalResponse doRender( final ControllerMappingDescriptor descriptor, final PortalRequest portalRequest )
     {
-        return portalRequest.getControllerScript().execute( portalRequest );
+        final PortalResponse portalResponse = portalRequest.getControllerScript().execute( portalRequest );
+        return isServiceMapping( descriptor ) ? PortalResponse.create( portalResponse ).applyFilters( false ).build() : portalResponse;
+    }
+
+    @Override
+    protected boolean isPageContributionsAllowed( final ControllerMappingDescriptor controllerMappingDescriptor, final PortalRequest portalRequest )
+    {
+        return !isServiceMapping( controllerMappingDescriptor );
+    }
+
+    private boolean isServiceMapping( final ControllerMappingDescriptor controllerMappingDescriptor )
+    {
+        return controllerMappingDescriptor.getService() != null;
     }
 }
