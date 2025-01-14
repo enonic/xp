@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -52,11 +53,14 @@ public class PageRendererTest
 
     PortalScriptService portalScriptService;
 
+    PostProcessorImpl postProcessor;
+
     @BeforeEach
     public void before()
     {
 
-        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+        final PostProcessorImpl processorImpl = new PostProcessorImpl();
+        postProcessor = Mockito.spy( processorImpl );
         postProcessor.addInjection( new TestPostProcessInjection() );
         controllerScriptFactory = mock( ControllerScriptFactory.class );
         processorChainResolver = mock( ProcessorChainResolver.class );
@@ -136,6 +140,9 @@ public class PageRendererTest
         final String response =
             "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
         assertEquals( response, portalResponse.getAsString() );
+        Mockito.verify( processorChainResolver, Mockito.times( 1 ) ).resolve( Mockito.any( PortalRequest.class) );
+        Mockito.verify( postProcessor, Mockito.times( 1 ) )
+            .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );
     }
 
     @Test
