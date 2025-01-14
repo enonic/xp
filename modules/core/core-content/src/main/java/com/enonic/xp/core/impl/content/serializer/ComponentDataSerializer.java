@@ -19,7 +19,7 @@ abstract class ComponentDataSerializer<DATA extends Component>
         final PropertySet asData = parent.addSet( COMPONENTS );
 
         asData.setString( TYPE, component.getType().toString() );
-        asData.setString( PATH, component.getPath() != null ? component.getPath().toString() : "/" );
+        asData.setString( PATH, component.getPath().toString() );
 
         applyComponentToData( component, asData );
     }

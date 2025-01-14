@@ -189,6 +189,7 @@ var expectedJson = {
 
 var pageAsFragmentJson = {
     'fragment': {
+        "path": "/",
         'type': 'layout',
         'descriptor': 'layoutDescriptor:name',
         'config': {},
