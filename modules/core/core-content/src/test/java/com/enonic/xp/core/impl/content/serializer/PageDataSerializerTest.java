@@ -10,6 +10,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
@@ -127,6 +128,7 @@ public class PageDataSerializerTest
 
         // verify
         assertEquals( page, parsedPage );
+        assertEquals( parsedPage.getFragment().getPath(), ComponentPath.from( "/" ) );
     }
 
     private Page createPage()
