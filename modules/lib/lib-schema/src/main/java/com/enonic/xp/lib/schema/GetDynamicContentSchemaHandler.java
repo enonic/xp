@@ -4,8 +4,10 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.resource.DynamicContentSchemaType;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -55,7 +57,8 @@ public class GetDynamicContentSchemaHandler
         final GetDynamicContentSchemaParams params =
             GetDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).build();
 
-        return SchemaConverter.convert( dynamicSchemaServiceSupplier.get().getContentSchema( params ) );
+        final DynamicSchemaResult<BaseSchema<?>> contentSchema = dynamicSchemaServiceSupplier.get().getContentSchema( params );
+        return contentSchema != null ? SchemaConverter.convert( contentSchema ) : null;
     }
 
     @Override
