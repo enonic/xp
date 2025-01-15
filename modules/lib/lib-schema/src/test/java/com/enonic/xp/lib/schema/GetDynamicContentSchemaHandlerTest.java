@@ -132,4 +132,11 @@ public class GetDynamicContentSchemaHandlerTest
         runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getInvalidContentSchemaType" );
     }
 
+    @Test
+    public void testNull()
+    {
+        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
+        runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getNullSchema" );
+    }
+
 }
