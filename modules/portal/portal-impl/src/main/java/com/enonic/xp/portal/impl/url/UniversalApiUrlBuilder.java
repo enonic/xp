@@ -10,6 +10,8 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
@@ -45,29 +47,36 @@ final class UniversalApiUrlBuilder
 
         final String requestURI = this.portalRequest.getRawRequest().getRequestURI();
 
-        if ( requestURI.equals( ADMIN_PREFIX ) )
+        try
         {
-            processHome( url );
+            if ( requestURI.equals( ADMIN_PREFIX ) )
+            {
+                processHome( url );
+            }
+            else if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
+            {
+                processSite( url, requestURI, true );
+            }
+            else if ( requestURI.startsWith( TOOL_PREFIX ) )
+            {
+                processTool( url, requestURI );
+            }
+            else if ( requestURI.startsWith( SITE_PREFIX ) )
+            {
+                processSite( url, requestURI, false );
+            }
+            else if ( requestURI.startsWith( WEBAPP_PREFIX ) )
+            {
+                processWebapp( url, requestURI );
+            }
+            else
+            {
+                appendPart( url, "api" );
+            }
         }
-        else if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
+        catch ( IllegalArgumentException e )
         {
-            processSite( url, requestURI, true );
-        }
-        else if ( requestURI.startsWith( TOOL_PREFIX ) )
-        {
-            processTool( url, requestURI );
-        }
-        else if ( requestURI.startsWith( SITE_PREFIX ) )
-        {
-            processSite( url, requestURI, false );
-        }
-        else if ( requestURI.startsWith( WEBAPP_PREFIX ) )
-        {
-            processWebapp( url, requestURI );
-        }
-        else
-        {
-            appendPart( url, "api" );
+            throw new WebException( HttpStatus.NOT_FOUND, "Mount not found", e );
         }
 
         if ( !requestURI.startsWith( API_PREFIX ) )

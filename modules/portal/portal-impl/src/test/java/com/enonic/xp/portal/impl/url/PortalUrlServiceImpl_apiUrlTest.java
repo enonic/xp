@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,6 +68,21 @@ public class PortalUrlServiceImpl_apiUrlTest
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/admin/myapplication/toolname/_/com.enonic.app.myapp:myapi", url );
+    }
+
+    @Test
+    void testCreateUrlMountNotFound()
+    {
+        when( portalRequest.getRawRequest().getRequestURI() ).thenReturn( "/admin/toolname" );
+
+        final ApiUrlParams params = new ApiUrlParams();
+        params.portalRequest( this.portalRequest );
+        params.application( "com.enonic.app.myapp" );
+        params.api( "myapi" );
+
+        WebException ex = assertThrows( WebException.class, () -> this.service.apiUrl( params ) );
+        assertEquals( "Mount not found", ex.getMessage() );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
