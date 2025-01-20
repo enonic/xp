@@ -17,6 +17,7 @@ import com.google.common.net.HttpHeaders;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class NoCacheAdminFilterTest
@@ -57,6 +58,16 @@ class NoCacheAdminFilterTest
         responseWrapper.setHeader( HttpHeaders.CACHE_CONTROL, "public, max-age=3600" );
 
         verify( response ).setHeader( HttpHeaders.CACHE_CONTROL, "private, max-age=3600" );
+    }
+
+    @Test
+    void NoCacheAdminResponseWrapper_setHeader_alreadyPrivate()
+    {
+        HttpServletResponse responseWrapper = new NoCacheAdminFilter.NoCacheAdminResponseWrapper( response );
+
+        responseWrapper.setHeader( HttpHeaders.CACHE_CONTROL, "private, max-age=3600" );
+
+        verifyNoInteractions( response );
     }
 
     @Test
