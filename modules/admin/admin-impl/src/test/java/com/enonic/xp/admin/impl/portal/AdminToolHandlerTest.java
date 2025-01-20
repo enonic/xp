@@ -16,6 +16,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
@@ -24,6 +25,9 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AdminToolHandlerTest
     extends BaseHandlerTest
@@ -47,21 +51,21 @@ public class AdminToolHandlerTest
     public final void setup()
     {
 
-        this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
-        ControllerScript controllerScript = Mockito.mock( ControllerScript.class );
+        this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
+        ControllerScript controllerScript = mock( ControllerScript.class );
 
         this.portalResponse = PortalResponse.create().build();
-        Mockito.when( controllerScript.execute( Mockito.any( PortalRequest.class ) ) ).thenReturn( this.portalResponse );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( this.portalResponse );
 
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        Mockito.when( controllerScriptFactory.fromScript( Mockito.any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+        final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
 
         this.handler = new AdminToolHandler();
         this.handler.setAdminToolDescriptorService( this.adminToolDescriptorService );
         this.handler.setControllerScriptFactory( controllerScriptFactory );
 
-        this.rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( true );
+        this.rawRequest = mock( HttpServletRequest.class );
+        when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( true );
 
         this.portalRequest = new PortalRequest();
         this.portalRequest.setRawRequest( this.rawRequest );
@@ -73,7 +77,7 @@ public class AdminToolHandlerTest
 
         this.webResponse = WebResponse.create().build();
 
-        this.chain = Mockito.mock( WebHandlerChain.class );
+        this.chain = mock( WebHandlerChain.class );
     }
 
     @Test
@@ -87,14 +91,14 @@ public class AdminToolHandlerTest
     public void testWithoutPermissions()
     {
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
-        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
+        when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
         assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
 
     @Test
     public void testWithNoDescriptor()
     {
-        Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( null );
+        when( this.adminToolDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
         assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
     }
@@ -119,11 +123,27 @@ public class AdminToolHandlerTest
         assertEquals( "/admin/webapp/tool", this.portalRequest.getContextPath() );
     }
 
+    @Test
+    void testInvalidAdminToolMount()
+    {
+        this.portalRequest.setBaseUri( "/admin" );
+        this.portalRequest.setRawPath( "/admin/tool" );
+        WebException ex =
+            assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Invalid admin tool mount", ex.getMessage() );
+
+        this.portalRequest.setRawPath( "/admin/tool/" );
+        ex = assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Invalid admin tool mount", ex.getMessage() );
+    }
+
     private void mockDescriptor( DescriptorKey descriptorKey, boolean hasAccess )
     {
-        AdminToolDescriptor descriptor = Mockito.mock( AdminToolDescriptor.class );
-        Mockito.when( descriptor.getKey() ).thenReturn( descriptorKey );
-        Mockito.when( descriptor.isAccessAllowed( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( hasAccess );
-        Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( descriptor );
+        AdminToolDescriptor descriptor = mock( AdminToolDescriptor.class );
+        when( descriptor.getKey() ).thenReturn( descriptorKey );
+        when( descriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( hasAccess );
+        when( this.adminToolDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( descriptor );
     }
 }
