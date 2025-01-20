@@ -137,6 +137,11 @@ public class AdminToolHandlerTest
         ex = assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Invalid admin tool mount", ex.getMessage() );
+
+        this.portalRequest.setRawPath( "/admin/" );
+        ex = assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Invalid admin tool mount", ex.getMessage() );
     }
 
     private void mockDescriptor( DescriptorKey descriptorKey, boolean hasAccess )
