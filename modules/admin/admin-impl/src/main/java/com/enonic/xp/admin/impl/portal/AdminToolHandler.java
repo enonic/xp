@@ -49,7 +49,7 @@ public final class AdminToolHandler
         throws Exception
     {
         final String rawPath = webRequest.getRawPath();
-        if ( !( rawPath.equals( "/admin" ) || rawPath.equals( "/admin/" ) ) && !TOOL_CXT_PATTERN.matcher( rawPath ).find() )
+        if ( !rawPath.equals( "/admin" ) && !TOOL_CXT_PATTERN.matcher( rawPath ).find() )
         {
             throw WebException.notFound( "Invalid admin tool mount" );
         }
