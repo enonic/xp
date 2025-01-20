@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.portal;
 
+import java.util.regex.Pattern;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -12,6 +14,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -22,6 +25,8 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class AdminToolHandler
     extends BaseWebHandler
 {
+    private static final Pattern TOOL_CXT_PATTERN = Pattern.compile( "^/admin/([^/]+)/([^/]+)" );
+
     private AdminToolDescriptorService adminToolDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
@@ -43,6 +48,12 @@ public final class AdminToolHandler
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        final String rawPath = webRequest.getRawPath();
+        if ( !( rawPath.equals( "/admin" ) || rawPath.equals( "/admin/" ) ) && !TOOL_CXT_PATTERN.matcher( rawPath ).find() )
+        {
+            throw WebException.notFound( "Invalid admin tool mount" );
+        }
+
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         PortalRequest portalRequest = (PortalRequest) webRequest;

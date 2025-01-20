@@ -23,8 +23,6 @@ import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
@@ -68,17 +66,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         try
         {
             return doBuild();
-        }
-        catch ( WebException e )
-        {
-            if ( e.getStatus() == HttpStatus.NOT_FOUND )
-            {
-                throw e;
-            }
-            else
-            {
-                return buildErrorUrl( e );
-            }
         }
         catch ( final Exception e )
         {
