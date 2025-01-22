@@ -109,26 +109,26 @@ public class MediaHandlerTest
 
     @Test
     void testInvalidUrl()
-        throws Exception
     {
+        this.request.setBaseUri( "" );
         this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
-        assertNotNull( res );
-        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testAttachment()
+    void testAttachment()
         throws Exception
     {
         setupMedia();
 
+        this.request.setBaseUri( "" );
         this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -138,58 +138,52 @@ public class MediaHandlerTest
     }
 
     @Test
-    public void testAttachmentForEndpointOnAdmin()
-        throws Exception
+    void testAttachmentForEndpointOnAdmin()
     {
         setupMedia();
 
+        this.request.setBaseUri( "/admin" );
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
-        this.request.setRawPath( "/admin/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/admin/app/toolName/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertNull( res.getHeaders().get( "Content-Disposition" ) );
-        assertSame( this.mediaBytes, res.getBody() );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testAttachmentForEndpointOnWebApp()
-        throws Exception
+    void testAttachmentForEndpointOnWebApp()
     {
         setupMedia();
 
+        this.request.setBaseUri( "/webapp/com.enonic.app.mywebapp" );
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/media/attachment/myproject/123456/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertNull( res.getHeaders().get( "Content-Disposition" ) );
-        assertSame( this.mediaBytes, res.getBody() );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testInvalidContextPath()
+    void testInvalidContextPath()
     {
         setupMedia();
 
+        this.request.setBaseUri( "/webapp/com.enonic.app.mywebapp" );
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/webapp/com.enonic.app.mywebapp/path/_/media/attachment/myproject/123456/logo.png" );
 
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Not a valid media url pattern", ex.getMessage() );
     }
 
     @Test
-    public void testAttachmentForEndpointOnSite()
+    void testAttachmentForEndpointOnSite()
         throws Exception
     {
         setupMedia();
 
+        this.request.setBaseUri( "/site" );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setContentPath( ContentPath.from( "/mysite" ) );
@@ -204,7 +198,7 @@ public class MediaHandlerTest
         when( contentService.getByPath( any() ) ).thenReturn( site );
         when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -213,10 +207,11 @@ public class MediaHandlerTest
     }
 
     @Test
-    public void testMediaEndpointDoesNotAllowedIfSiteContextDoesNotMatch()
+    void testMediaEndpointDoesNotAllowedIfSiteContextDoesNotMatch()
     {
         setupMedia();
 
+        this.request.setBaseUri( "/site" );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject1" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setContentPath( ContentPath.from( "/mysite" ) );
@@ -232,29 +227,30 @@ public class MediaHandlerTest
         when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
 
         // mediaService.scope does not specified
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testAttachmentDownload()
+    void testAttachmentDownload()
         throws Exception
     {
         setupMedia();
 
+        this.request.setBaseUri( "" );
         this.request.setRawPath( "/api/media/attachment/myproject/123456/logo.png?q1=v1&q2=v2&download" );
         this.request.getParams().put( "q1", "v1" );
         this.request.getParams().put( "q2", "v2" );
         this.request.getParams().put( "download", "" );
 
-        PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
         assertNotNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
 
-        res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -263,26 +259,28 @@ public class MediaHandlerTest
     }
 
     @Test
-    public void testAttachmentDraftBranchForNotAuthorizedUser()
+    void testAttachmentDraftBranchForNotAuthorizedUser()
     {
+        this.request.setBaseUri( "" );
         this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
-        WebException exception =
-            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+        WebException exception = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, exception.getStatus() );
         assertEquals( "You don't have permission to access this resource", exception.getMessage() );
     }
 
     @Test
-    public void testImage()
+    void testImage()
         throws Exception
     {
         setupContent();
 
+        this.request.setBaseUri( "" );
+        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
 
-        WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -290,7 +288,7 @@ public class MediaHandlerTest
 
         this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
 
-        res = this.handler.handle( this.request, PortalResponse.create().build() );
+        res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
@@ -298,13 +296,15 @@ public class MediaHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
+        this.request.setBaseUri( "" );
+        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,HEAD,OPTIONS", res.getHeaders().get( "Allow" ) );
@@ -313,10 +313,12 @@ public class MediaHandlerTest
     @Test
     void testHandleMethodNotAllowed()
     {
+        this.request.setBaseUri( "" );
         this.request.setMethod( HttpMethod.DELETE );
+        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media/attachment/myproject:draft/123456/logo.png" );
 
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method DELETE not allowed", ex.getMessage() );
     }
@@ -329,23 +331,25 @@ public class MediaHandlerTest
             .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
             .build()
             .runWith( () -> {
+                this.request.setBaseUri( "" );
                 this.request.setEndpointPath( null );
                 this.request.setRawPath( "/api/media/image/project/123456/scale-100-100/image-name.jpg" );
 
-                WebException ex =
-                    assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
+                this.request.setBaseUri( "/site" );
                 this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
                 this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
 
-                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
+                this.request.setBaseUri( "/site" );
                 this.request.setEndpointPath( "/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
                 this.request.setRawPath( "/site/project/branch/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
 
-                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
             } );
     }
@@ -363,30 +367,37 @@ public class MediaHandlerTest
             .runWith( () -> {
                 try
                 {
+                    this.request.setBaseUri( "" );
                     this.request.setEndpointPath( null );
                     this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-                    WebResponse webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    WebResponse webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
+                    this.request.setBaseUri( "" );
                     this.request.setEndpointPath( null );
                     this.request.setRawPath( "/api/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
-                    this.request.setEndpointPath( "/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/_/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
+                    this.request.setBaseUri( "/admin/site/preview" );
                     this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+                    this.request.setRawPath(
+                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
+                    this.request.setBaseUri( "/admin/site/preview" );
+                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    this.request.setRawPath(
+                        "/admin/site/preview/myproject/master/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                    webResponse = this.handler.handle( this.request );
+                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+                    this.request.setBaseUri( "/admin/site/preview" );
                     this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath( "/admin/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
-                    WebException ex =
-                        assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+                    this.request.setRawPath(
+                        "/admin/site/preview/unknown/draft/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+                    WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                     assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
                 }
                 catch ( Exception e )
@@ -403,10 +414,11 @@ public class MediaHandlerTest
         setupContentSvgz();
         when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
+        this.request.setBaseUri( "/admin/site/preview" );
         this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.svgz" );
-        this.request.setRawPath( "/admin/_/media/image/myproject/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/admin/site/preview/myproject/master/_/media/image/myproject/123456/full/image-name.svgz" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
@@ -417,15 +429,16 @@ public class MediaHandlerTest
     }
 
     @Test
-    void gifImage()
+    void testGifImage()
         throws Exception
     {
         setupContentGif();
 
+        this.request.setBaseUri( "/site" );
         this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.gif" );
-        this.request.setRawPath( "/admin/_/media/image/myproject/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/site/myproject/master/sitepath/_/media/image/myproject/123456/full/image-name.gif" );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.GIF, res.getContentType() );
@@ -439,11 +452,12 @@ public class MediaHandlerTest
     {
         setupMedia();
 
+        this.request.setBaseUri( "/admin/site/preview" );
         this.request.setEndpointPath( "/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
         this.request.setRawPath(
             "/admin/site/preview/myproject/master/mysite/_/media/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
-        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build() );
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
