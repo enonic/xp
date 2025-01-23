@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -78,8 +77,6 @@ public class MediaHandler
 
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
-    private static final Predicate<PortalRequest> IS_ALLOWED_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
-
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
@@ -138,7 +135,7 @@ public class MediaHandler
             throw createNotFoundException();
         }
 
-        if ( !IS_ALLOWED_METHOD.test( portalRequest ) )
+        if ( !ALLOWED_METHODS.contains( portalRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", portalRequest.getMethod() ) );
         }
@@ -172,9 +169,6 @@ public class MediaHandler
 
         verifyMediaScope( matcher.group( "context" ), repositoryId, branch, portalRequest );
         verifyAccessByBranch( branch );
-
-        portalRequest.setRepositoryId( repositoryId );
-        portalRequest.setBranch( branch );
 
         return executeInContext( repositoryId, branch, () -> type.equals( "attachment" )
             ? doHandleAttachment( portalRequest, id, fingerprint, restPath )

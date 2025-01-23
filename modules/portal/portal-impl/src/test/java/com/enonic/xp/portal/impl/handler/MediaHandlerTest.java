@@ -28,6 +28,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -379,6 +380,9 @@ public class MediaHandlerTest
                     webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
+                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+
                     this.request.setBaseUri( "/admin/site/preview" );
                     this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
@@ -386,17 +390,24 @@ public class MediaHandlerTest
                     webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
+                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+
                     this.request.setBaseUri( "/admin/site/preview" );
                     this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
-                        "/admin/site/preview/myproject/master/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request );
                     assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+
+                    this.request.setRepositoryId( ProjectName.from( "unknown" ).getRepoId() );
+                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
                     this.request.setBaseUri( "/admin/site/preview" );
                     this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
-                        "/admin/site/preview/unknown/draft/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+                        "/admin/site/preview/myproject/draft/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
                     WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                     assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
                 }
