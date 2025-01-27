@@ -175,6 +175,10 @@ class PortalRequestAdapter
                 result.setBaseUri( WEBAPP_PREFIX + matcher.group( 0 ) );
             }
         }
+        else if ( requestURI.startsWith( "/api/" ) )
+        {
+            result.setBaseUri( "/api" );
+        }
     }
 
     private static String subPath( String requestURI, String prefix )

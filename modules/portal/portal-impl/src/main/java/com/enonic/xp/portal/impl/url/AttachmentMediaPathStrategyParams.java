@@ -1,0 +1,139 @@
+package com.enonic.xp.portal.impl.url;
+
+import com.google.common.collect.Multimap;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.project.ProjectName;
+
+final class AttachmentMediaPathStrategyParams
+{
+    private final Media media;
+
+    private final ProjectName projectName;
+
+    private final Branch branch;
+
+    private final boolean download;
+
+    private final String name;
+
+    private final String label;
+
+    private final Multimap<String, String> queryParams;
+
+    private AttachmentMediaPathStrategyParams( final Builder builder )
+    {
+        this.media = builder.media;
+        this.projectName = builder.projectName;
+        this.branch = builder.branch;
+        this.download = builder.download;
+        this.name = builder.name;
+        this.label = builder.label;
+        this.queryParams = builder.queryParams;
+    }
+
+    public Media getMedia()
+    {
+        return media;
+    }
+
+    public ProjectName getProjectName()
+    {
+        return projectName;
+    }
+
+    public Branch getBranch()
+    {
+        return branch;
+    }
+
+    public boolean isDownload()
+    {
+        return download;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getLabel()
+    {
+        return label;
+    }
+
+    public Multimap<String, String> getQueryParams()
+    {
+        return queryParams;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    static class Builder
+    {
+        private Media media;
+
+        private ProjectName projectName;
+
+        private Branch branch;
+
+        private boolean download;
+
+        private String name;
+
+        private String label;
+
+        private Multimap<String, String> queryParams;
+
+        public Builder setMedia( final Media media )
+        {
+            this.media = media;
+            return this;
+        }
+
+        public Builder setProjectName( final ProjectName projectName )
+        {
+            this.projectName = projectName;
+            return this;
+        }
+
+        public Builder setBranch( final Branch branch )
+        {
+            this.branch = branch;
+            return this;
+        }
+
+        public Builder setDownload( final boolean download )
+        {
+            this.download = download;
+            return this;
+        }
+
+        public Builder setName( final String name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setLabel( final String label )
+        {
+            this.label = label;
+            return this;
+        }
+
+        public Builder setQueryParams( final Multimap<String, String> queryParams )
+        {
+            this.queryParams = queryParams;
+            return this;
+        }
+
+        public AttachmentMediaPathStrategyParams build()
+        {
+            return new AttachmentMediaPathStrategyParams( this );
+        }
+    }
+}
