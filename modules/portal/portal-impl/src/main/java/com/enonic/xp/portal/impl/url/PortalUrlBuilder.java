@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.url;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +37,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     protected ResourceService resourceService;
 
-    protected boolean mustBeRewritten = true;
-
     public final void setParams( final T params )
     {
         this.params = params;
@@ -73,21 +70,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
-    protected String getBaseUrl()
-    {
-        return null;
-    }
-
-    protected String getTargetUriPrefix()
-    {
-        return null;
-    }
-
-    public final void setMustBeRewritten( final boolean mustBeRewritten )
-    {
-        this.mustBeRewritten = mustBeRewritten;
-    }
-
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
@@ -97,29 +79,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        final String rawPath = portalRequest.getRawPath();
-        final boolean isSlashAPI = rawPath.startsWith( "/api/" );
-
-        if ( isSlashAPI && !mustBeRewritten )
-        {
-            return str.toString();
-        }
-
-        final String baseUrl = isSlashAPI ? getBaseUrl() : null;
-        if ( baseUrl != null )
-        {
-            return UrlTypeConstants.SERVER_RELATIVE.equals( this.params.getType() ) ? str.toString() : baseUrl + str;
-        }
-
-        String targetUri = str.toString();
-
-        if ( isSlashAPI )
-        {
-            String targetPrefix = getTargetUriPrefix();
-            targetUri = Objects.requireNonNullElse( targetPrefix, "" ) + ( targetUri.startsWith( "/" ) ? targetUri : "/" + targetUri );
-        }
-
-        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), str.toString() );
 
         if ( rewritingResult.isOutOfScope() )
         {

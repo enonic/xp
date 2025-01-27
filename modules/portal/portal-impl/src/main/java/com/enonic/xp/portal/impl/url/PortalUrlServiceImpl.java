@@ -18,15 +18,18 @@ import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -46,6 +49,8 @@ public final class PortalUrlServiceImpl
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final UrlStrategyFacade urlStrategyFacade;
+
     private volatile boolean legacyImageServiceEnabled;
 
     private volatile boolean legacyAttachmentServiceEnabled;
@@ -57,13 +62,15 @@ public final class PortalUrlServiceImpl
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
-                                 @Reference final RedirectChecksumService redirectChecksumService )
+                                 @Reference final RedirectChecksumService redirectChecksumService,
+                                 @Reference final UrlStrategyFacade urlStrategyFacade )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
         this.macroService = macroService;
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
+        this.urlStrategyFacade = urlStrategyFacade;
     }
 
     @Activate
@@ -105,19 +112,35 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        final ImageUrlBuilder builder = new ImageUrlBuilder();
-        builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
+        if ( this.legacyImageServiceEnabled )
+        {
+            return build( new ImageUrlBuilder(), params );
+        }
+        else
+        {
+            final ImageUrlGeneratorParams generatorParams = params.isOffline() || params.getPortalRequest() == null
+                ? urlStrategyFacade.offlineImageUrlParams( params )
+                : urlStrategyFacade.requestImageUrlParams( params );
 
-        return build( builder, params );
+            return imageUrl( generatorParams );
+        }
     }
 
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        final AttachmentUrlBuilder builder = new AttachmentUrlBuilder();
-        builder.setLegacyAttachmentServiceEnabled( this.legacyAttachmentServiceEnabled );
+        if ( this.legacyAttachmentServiceEnabled )
+        {
+            return build( new AttachmentUrlBuilder(), params );
+        }
+        else
+        {
+            final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || params.getPortalRequest() == null
+                ? urlStrategyFacade.offlineAttachmentUrlParams( params )
+                : urlStrategyFacade.requestAttachmentUrlParams( params );
 
-        return build( builder, params );
+            return attachmentUrl( generatorParams );
+        }
     }
 
     @Override
@@ -156,6 +179,40 @@ public final class PortalUrlServiceImpl
             // TODO resolve baseUrl
             return new SlashApiUrlBuilder( params ).build();
         }
+    }
+
+    @Override
+    public String imageUrl( final ImageUrlGeneratorParams params )
+    {
+        final ImageMediaPathStrategyParams imageMediaPathStrategyParams = ImageMediaPathStrategyParams.create()
+            .setMedia( params.getMedia() )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setScale( params.getScale() )
+            .setBackground( params.getBackground() )
+            .setQuality( params.getQuality() )
+            .setFilter( params.getFilter() )
+            .setFormat( params.getFormat() )
+            .setQueryParams( params.getQueryParams() )
+            .build();
+
+        return runWithAdminRole(
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ) ) );
+    }
+
+    @Override
+    public String attachmentUrl( final AttachmentUrlGeneratorParams params )
+    {
+        final AttachmentMediaPathStrategyParams strategyParams = AttachmentMediaPathStrategyParams.create()
+            .setMedia( params.getMedia() )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setDownload( params.isDownload() )
+            .setQueryParams( params.getQueryParams() )
+            .build();
+
+        return runWithAdminRole(
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ) ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
