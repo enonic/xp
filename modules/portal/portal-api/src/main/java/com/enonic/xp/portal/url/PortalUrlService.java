@@ -24,4 +24,8 @@ public interface PortalUrlService
     String processHtml( ProcessHtmlParams params );
 
     String apiUrl( ApiUrlParams params );
+
+    String imageMediaUrl( ImageMediaUrlParams params );
+
+    String attachmentMediaUrl( AttachmentMediaUrlParams params );
 }

@@ -18,10 +18,12 @@ import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.portal.url.AttachmentMediaUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.portal.url.ImageMediaUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -54,6 +56,8 @@ public final class PortalUrlServiceImpl
 
     private volatile boolean useLegacyIdProviderContextPath;
 
+    private final UrlGeneratorFactory urlGeneratorFactory;
+
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
@@ -64,6 +68,8 @@ public final class PortalUrlServiceImpl
         this.macroService = macroService;
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
+
+        this.urlGeneratorFactory = new UrlGeneratorFactory( contentService );
     }
 
     @Activate
@@ -105,19 +111,61 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        final ImageUrlBuilder builder = new ImageUrlBuilder();
-        builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
+        if ( this.legacyImageServiceEnabled )
+        {
+            final ImageUrlBuilder builder = new ImageUrlBuilder();
+            builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
+            return build( builder, params );
+        }
+        else
+        {
+            final ImageMediaUrlParams imageMediaUrlParams = ImageMediaUrlParams.create()
+                .contentId( params.getId() )
+                .contentPath( params.getPath() )
+                .contextPathType( params.getContextPathType() )
+                .webRequest( params.getPortalRequest() )
+                .urlType( params.getType() )
+                .addQueryParams( params.getParams() )
+                .background( params.getBackground() )
+                .scale( params.getScale() )
+                .filter( params.getFilter() )
+                .quality( params.getQuality() )
+                .format( params.getFormat() )
+                .projectName( null )
+                .branch( null )
+                .build();
 
-        return build( builder, params );
+            return imageMediaUrl( imageMediaUrlParams );
+        }
     }
 
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        final AttachmentUrlBuilder builder = new AttachmentUrlBuilder();
-        builder.setLegacyAttachmentServiceEnabled( this.legacyAttachmentServiceEnabled );
+        if ( this.legacyAttachmentServiceEnabled )
+        {
+            final AttachmentUrlBuilder builder = new AttachmentUrlBuilder();
+            builder.setLegacyAttachmentServiceEnabled( this.legacyAttachmentServiceEnabled );
+            return build( builder, params );
+        }
+        else
+        {
+            final AttachmentMediaUrlParams attachmentMediaUrlParams = AttachmentMediaUrlParams.create()
+                .contentId( params.getId() )
+                .contentPath( params.getPath() )
+                .contextPathType( params.getContextPathType() )
+                .urlType( params.getType() )
+                .webRequest( params.getPortalRequest() )
+                .addQueryParams( params.getParams() )
+                .download( params.isDownload() )
+                .name( params.getName() )
+                .label( params.getLabel() )
+                .projectName( null )
+                .branch( null )
+                .build();
 
-        return build( builder, params );
+            return attachmentMediaUrl( attachmentMediaUrlParams );
+        }
     }
 
     @Override
@@ -156,6 +204,18 @@ public final class PortalUrlServiceImpl
             // TODO resolve baseUrl
             return new SlashApiUrlBuilder( params ).build();
         }
+    }
+
+    @Override
+    public String imageMediaUrl( final ImageMediaUrlParams params )
+    {
+        return runWithAdminRole( () -> urlGeneratorFactory.generateImageMediaUrl( params ) );
+    }
+
+    @Override
+    public String attachmentMediaUrl( final AttachmentMediaUrlParams params )
+    {
+        return runWithAdminRole( () -> urlGeneratorFactory.generateAttachmentMediaUrl( params ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
