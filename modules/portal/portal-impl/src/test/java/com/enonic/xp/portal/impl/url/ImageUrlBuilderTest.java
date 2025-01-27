@@ -75,7 +75,6 @@ public class ImageUrlBuilderTest
         this.imageUrlParams = new ImageUrlParams().portalRequest( portalRequest ).scale( "testScale" );
 
         urlBuilder = new ImageUrlBuilder();
-        urlBuilder.setLegacyImageServiceEnabled( true );
         urlBuilder.setParams( imageUrlParams );
 
         urlBuilder.contentService = contentService;
@@ -201,8 +200,6 @@ public class ImageUrlBuilderTest
 
         imageUrlParams.scale( "block(310,175)" );
 
-        urlBuilder.setLegacyImageServiceEnabled( false );
-
         final String url = urlBuilder.build();
         assertEquals(
             "/site/myproject/draft/mysite/_/media/image/myproject:draft/testID:ec25d6e4126c7064f82aaab8b34693fc/block-310-175/testName",
@@ -227,8 +224,6 @@ public class ImageUrlBuilderTest
         when( contentService.findNearestSiteByPath( ContentPath.from( "/path" ) ) ).thenReturn( null );
 
         imageUrlParams.scale( "block(310,175)" );
-
-        urlBuilder.setLegacyImageServiceEnabled( false );
 
         final String url = urlBuilder.build();
         assertEquals( "/site/myproject/draft/_/media/image/myproject:draft/testID:ec25d6e4126c7064f82aaab8b34693fc/block-310-175/testName",

@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.url;
 
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -26,6 +28,14 @@ public final class ImageUrlParams
     private String format;
 
     private String scale;
+
+    private String projectName;
+
+    private String branch;
+
+    private String baseUrlKey;
+
+    private boolean offline;
 
     public String getId()
     {
@@ -60,6 +70,26 @@ public final class ImageUrlParams
     public String getScale()
     {
         return this.scale;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
+    }
+
+    public String getBaseUrlKey()
+    {
+        return baseUrlKey;
+    }
+
+    public boolean isOffline()
+    {
+        return offline;
     }
 
     public ImageUrlParams id( final String value )
@@ -109,6 +139,30 @@ public final class ImageUrlParams
         return this;
     }
 
+    public ImageUrlParams projectName( final String projectName )
+    {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public ImageUrlParams branch( final String branch )
+    {
+        this.branch = branch;
+        return this;
+    }
+
+    public ImageUrlParams baseUrlKey( final String baseUrlKey )
+    {
+        this.baseUrlKey = baseUrlKey;
+        return this;
+    }
+
+    public ImageUrlParams offline( final Boolean offline )
+    {
+        this.offline = Objects.requireNonNullElse( offline, false );
+        return this;
+    }
+
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -139,9 +193,8 @@ public final class ImageUrlParams
 
     public ImageUrlParams validate()
     {
-        Preconditions.checkState(
-            getPortalRequest().getContent() != null || id != null || path != null,
-            "id, path or content must be set" );
+        Preconditions.checkState( getPortalRequest().getContent() != null || id != null || path != null,
+                                  "id, path or content must be set" );
         return this;
     }
 }

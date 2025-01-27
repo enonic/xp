@@ -103,6 +103,7 @@ exports.imageUrlTest = function () {
         id: '123',
         background: 'ffffff',
         quality: 90,
+        scale: 'block(200,100)',
         filter: 'scale(1,1)',
         params: {
             a: 1,
@@ -111,7 +112,7 @@ exports.imageUrlTest = function () {
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff, scale=block(200,100)}',
         result);
     return true;
 };
@@ -121,6 +122,7 @@ exports.imageUrlTest_unknownProperty = function () {
         id: '123',
         background: 'ffffff',
         quality: 90,
+        scale: 'block(200,100)',
         filter: 'scale(1,1)',
         params: {
             a: 1,
@@ -129,7 +131,7 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff, scale=block(200,100)}',
         result);
     return true;
 };
