@@ -191,6 +191,120 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
     return bean.createUrl(__.toScriptValue(params));
 }
 
+
+export type AttachmentMediaUrlParams = IdXorPath & {
+    name?: string;
+    label?: string;
+    download?: boolean;
+    project?: string;
+    branch?: string;
+    type?: 'server' | 'absolute';
+    params?: object;
+}
+
+export type ImageMediaUrlParams = IdXorPath & {
+    project?: string;
+    branch?: string;
+    quality?: number;
+    background?: string;
+    format?: string;
+    filter?: string;
+    server?: string;
+    params?: object;
+    type?: 'server' | 'absolute';
+    scale:
+        | `block(${number},${number})`
+        | `height(${number})`
+        | `max(${number})`
+        | `square(${number})`
+        | `wide(${number},${number})`
+        | `width(${number})`
+        | 'full';
+}
+
+interface ImageMediaUrlHandler {
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setQueryParams(value?: ScriptValue | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setBackground(value?: string | null): void;
+
+    setQuality(value?: number | null): void;
+
+    setFilter(value?: string | null): void;
+
+    setFormat(value?: string | null): void;
+
+    setScale(value: string): void;
+
+    createUrl(): string;
+}
+
+interface AttachmentMediaUrlHandler {
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setName(value?: string | null): void;
+
+    setLabel(value?: string | null): void;
+
+    setDownload(value?: boolean | null): void;
+
+    setProject(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setParams(value?: ScriptValue | null): void;
+
+    createUrl(): string;
+}
+
+export function mediaUrl(params: ImageMediaUrlParams | AttachmentMediaUrlParams): string {
+    if (params && 'scale' in params) {
+        const bean: ImageMediaUrlHandler = __.newBean<ImageMediaUrlHandler>('com.enonic.xp.lib.portal.url.ImageMediaUrlHandler');
+
+        bean.setId(params.id);
+        bean.setPath(params.path);
+        bean.setUrlType(params.type);
+        bean.setQueryParams(__.toScriptValue(params.params));
+        bean.setProjectName(params.project);
+        bean.setBranch(params.branch);
+        bean.setBackground(params.background);
+        bean.setQuality(params.quality);
+        bean.setFilter(params.filter);
+        bean.setFormat(params.format);
+        bean.setScale(params.scale);
+
+        return bean.createUrl();
+    } else {
+        const bean: AttachmentMediaUrlHandler = __.newBean<AttachmentMediaUrlHandler>(
+            'com.enonic.xp.lib.portal.url.AttachmentMediaUrlHandler');
+
+        bean.setId(params.id);
+        bean.setPath(params.path);
+        bean.setUrlType(params.type);
+        bean.setParams(__.toScriptValue(params.params));
+        bean.setProject(params.project);
+        bean.setBranch(params.branch);
+        bean.setName(params.name);
+        bean.setLabel(params.label);
+        bean.setDownload(params.download);
+
+        return bean.createUrl();
+    }
+}
+
 export type PageUrlParams = IdXorPath & {
     type?: 'server' | 'absolute';
     params?: object;
@@ -443,7 +557,8 @@ interface GetCurrentSiteConfigHandler {
  * @returns {object|null} The site configuration for current application as JSON.
  */
 export function getSiteConfig<Config = Record<string, unknown>>(): Config | null {
-    const bean: GetCurrentSiteConfigHandler = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
+    const bean: GetCurrentSiteConfigHandler = __.newBean<GetCurrentSiteConfigHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
     return __.toNativeObject(bean.execute<Config>());
 }
 
@@ -460,7 +575,8 @@ interface GetCurrentContentHandler {
  * @returns {object|null} The current content as JSON.
  */
 export function getContent<Hit extends Content<unknown> = Content>(): Hit | null {
-    const bean: GetCurrentContentHandler = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
+    const bean: GetCurrentContentHandler = __.newBean<GetCurrentContentHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
     return __.toNativeObject(bean.execute<Hit>());
 }
 
@@ -479,7 +595,8 @@ interface GetCurrentComponentHandler<_Component extends Component = Component> {
 export function getComponent<
     _Component extends Component = Component
 >(): _Component | null {
-    const bean: GetCurrentComponentHandler<_Component> = __.newBean<GetCurrentComponentHandler<_Component>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+    const bean: GetCurrentComponentHandler<_Component> = __.newBean<GetCurrentComponentHandler<_Component>>(
+        'com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -495,7 +612,8 @@ interface GetCurrentIdProviderKeyHandler {
  * @returns {string|null} The current id provider as JSON.
  */
 export function getIdProviderKey(): string | null {
-    const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
+    const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
     return __.toNativeObject(bean.execute());
 }
 
