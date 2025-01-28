@@ -88,7 +88,7 @@ interface EventListenerHelper {
  * @example-ref examples/event/listener.js
  *
  * @param {object} params Listener parameters.
- * @param {string} params.type Event type pattern.
+ * @param {string} params.type Event type pattern. Works like a Java Pattern, with two key differences: `.` is treated as a literal dot, not a wildcard. `*` acts as `.*`, matching any sequence of characters.
  * @param {function} params.callback Callback event listener.
  * @param {boolean} params.localOnly Local events only (default to false).
  */
