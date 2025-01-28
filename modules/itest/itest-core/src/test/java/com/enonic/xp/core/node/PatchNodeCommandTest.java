@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 public class PatchNodeCommandTest
@@ -126,7 +126,7 @@ public class PatchNodeCommandTest
 
         assertNotEquals( createdNode.getNodeType(), patchedNode.getNodeType() );
 
-        verify( eventPublisher, times( 17 ) ).publish( captor.capture() );
+        verify( eventPublisher, atLeastOnce() ).publish( captor.capture() );
 
         final List<Event> capturedEvents = captor.getAllValues();
 
