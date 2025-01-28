@@ -31,6 +31,8 @@ public class NodeEvents
 
     public static final String NODE_UPDATED_EVENT = "node.updated";
 
+    public static final String NODE_PATCHED_EVENT = "node.patched";
+
     public static final String NODE_MOVED_EVENT = "node.moved";
 
     public static final String NODE_RENAMED_EVENT = "node.renamed";
@@ -66,6 +68,11 @@ public class NodeEvents
     public static Event updated( final Node updatedNode )
     {
         return event( NODE_UPDATED_EVENT, updatedNode );
+    }
+
+    public static Event patched( final Node updatedNode )
+    {
+        return event( NODE_PATCHED_EVENT, updatedNode );
     }
 
     public static Event permissionsUpdated( final Node updatedNode )

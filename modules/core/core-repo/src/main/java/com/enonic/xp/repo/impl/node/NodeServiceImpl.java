@@ -64,6 +64,8 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -474,6 +476,25 @@ public class NodeServiceImpl
         this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
 
         return updatedNode;
+    }
+
+    @Override
+    public PatchNodeResult patch( final PatchNodeParams params )
+    {
+        verifyContext();
+        final PatchNodeResult result = PatchNodeCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
+
+        final Node node = result.getResult( ContextAccessor.current().getBranch() );
+
+        this.eventPublisher.publish( NodeEvents.patched( node ) );
+
+        return result;
     }
 
     @Override
