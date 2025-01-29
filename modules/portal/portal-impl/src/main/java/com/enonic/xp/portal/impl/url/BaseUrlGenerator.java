@@ -45,6 +45,20 @@ public abstract class BaseUrlGenerator<T extends UrlParams>
         appendPart( url, baseUrl );
         appendPart( url, rewrittenUri );
         return url.toString();
+
+        // VHOST /site/
+        // source
+        // target
+        // getImageUrl() -> /media/image/1234/5678/90
+
+        // VHOST /api
+
+
+        // baseUrl : http://site.enonic.com/site
+
+        // http://site.enonic.com/site/_/
+
+        // rewrittenUri : /media/image/1234/5678/90
     }
 
     private String resolveBaseUrl( final WebRequest webRequest, final String urlType )
