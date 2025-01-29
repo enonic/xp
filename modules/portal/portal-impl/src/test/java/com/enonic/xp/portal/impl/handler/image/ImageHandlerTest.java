@@ -154,27 +154,24 @@ class ImageHandlerTest
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
-    private void setupContentGif()
+    private void setupImageContent( final String type )
         throws Exception
     {
-        final Attachment attachment = Attachment.create().
-            name( "enonic-logo.svg" ).
-            mimeType( "image/gif" ).
-            label( "source" ).
-            build();
+        final Attachment attachment =
+            Attachment.create().name( "enonic-logo." + type ).mimeType( "image/" + type ).label( "source" ).build();
 
-        final Content content = createContent( "123456", "path/to/image-name.gif", attachment );
+        final Content content = createContent( "123456", "path/to/image-name." + type, attachment );
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
 
         final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
-            thenReturn( imageBytes );
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
 
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
+
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
@@ -385,7 +382,7 @@ class ImageHandlerTest
     void gifImage()
         throws Exception
     {
-        setupContentGif();
+        setupImageContent("gif");
 
         this.request.setEndpointPath( "/_/image/123456/full/image-name.gif" );
 
@@ -396,6 +393,39 @@ class ImageHandlerTest
         assertTrue( res.getBody() instanceof ByteSource );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }
+
+    @Test
+    void webpImage()
+        throws Exception
+    {
+        setupImageContent("webp");
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.webp" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.WEBP, res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
+        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
+    @Test
+    void avifImage()
+        throws Exception
+    {
+        setupImageContent("avif");
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.avif" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.create( "image", "avif" ), res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
+        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
 
     @Test
     void svgImage()

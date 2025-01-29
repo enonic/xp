@@ -21,6 +21,8 @@ public final class ContentTypeFromMimeTypeResolver
         MAP.put( "image/bmp", ContentTypeName.imageMedia() );
         MAP.put( "image/x-bmp", ContentTypeName.imageMedia() );
         MAP.put( "image/x-ms-bmp", ContentTypeName.imageMedia() );
+        MAP.put( "image/avif", ContentTypeName.imageMedia() );
+        MAP.put( "image/webp", ContentTypeName.imageMedia() );
 
         // Audio
         MAP.put( "audio/basic", ContentTypeName.audioMedia() );
