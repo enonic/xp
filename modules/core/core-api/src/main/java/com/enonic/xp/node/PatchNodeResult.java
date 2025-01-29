@@ -68,29 +68,8 @@ public final class PatchNodeResult
             return this;
         }
 
-        private void validate()
-        {
-            final ImmutableList<BranchResult> results = this.results.build();
-
-            if ( !results.isEmpty() )
-            {
-                if ( this.nodeId == null )
-                {
-                    throw new IllegalArgumentException( "Node id cannot be null" );
-                }
-
-                results.forEach( br -> {
-                    if ( br.node() != null && !br.node().id().equals( this.nodeId ) )
-                    {
-                        throw new IllegalArgumentException( "Node id does not match" );
-                    }
-                } );
-            }
-        }
-
         public PatchNodeResult build()
         {
-            validate();
             return new PatchNodeResult( this );
         }
     }
