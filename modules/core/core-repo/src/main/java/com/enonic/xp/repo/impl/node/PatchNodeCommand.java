@@ -17,7 +17,6 @@ import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
@@ -47,11 +46,6 @@ public final class PatchNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public PatchNodeResult execute()
     {
         if ( params.getBranches().contains( this.sourceBranch ) )
@@ -59,12 +53,19 @@ public final class PatchNodeCommand
             throw new IllegalArgumentException( "Branches cannot contain current branch" );
         }
 
-        return doPatchNode( getPersistedNode() );
+        final Node persistedNode = doGetById( params.getId() );
+
+        if ( persistedNode == null )
+        {
+            return PatchNodeResult.create().nodeId( params.getId() ).addResult( this.sourceBranch, null ).build();
+        }
+
+        return doPatchNode( persistedNode );
     }
 
     private PatchNodeResult doPatchNode( final Node node )
     {
-        final PatchNodeResult.Builder result = PatchNodeResult.create();
+        final PatchNodeResult.Builder result = PatchNodeResult.create().nodeId( node.id() );
 
         final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( node.id(),
                                                                                          Streams.concat( params.getBranches().stream(),
@@ -154,28 +155,6 @@ public final class PatchNodeCommand
             .getNodeVersions() : Map.of();
     }
 
-    private Node getPersistedNode()
-    {
-        final Node persistedNode;
-        if ( params.getId() != null )
-        {
-            persistedNode = doGetById( params.getId() );
-            if ( persistedNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot patch node with id '" + params.getId() + "', node not found" );
-            }
-        }
-        else
-        {
-            persistedNode = doGetByPath( params.getPath() );
-            if ( persistedNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot patch node with path '" + params.getPath() + "', node not found" );
-            }
-        }
-        return persistedNode;
-    }
-
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -184,11 +163,6 @@ public final class PatchNodeCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder params( final PatchNodeParams params )

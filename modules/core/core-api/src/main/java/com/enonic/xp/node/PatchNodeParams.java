@@ -12,8 +12,6 @@ public final class PatchNodeParams
 {
     private final NodeId id;
 
-    private final NodePath path;
-
     private final NodeEditor editor;
 
     private final Branches branches;
@@ -22,7 +20,6 @@ public final class PatchNodeParams
     private PatchNodeParams( final Builder builder )
     {
         this.id = builder.id;
-        this.path = builder.path;
         this.editor = builder.editor;
         branches = Branches.from( builder.branches.build() );
 
@@ -36,11 +33,6 @@ public final class PatchNodeParams
     public NodeId getId()
     {
         return id;
-    }
-
-    public NodePath getPath()
-    {
-        return path;
     }
 
     public NodeEditor getEditor()
@@ -60,8 +52,6 @@ public final class PatchNodeParams
 
         private NodeId id;
 
-        private NodePath path;
-
         private NodeEditor editor;
 
 
@@ -72,12 +62,6 @@ public final class PatchNodeParams
         public Builder id( final NodeId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public Builder path( final NodePath path )
-        {
-            this.path = path;
             return this;
         }
 
@@ -101,10 +85,7 @@ public final class PatchNodeParams
 
         private void validate()
         {
-            if ( this.id == null && this.path == null )
-            {
-                throw new NullPointerException( "id and path cannot be both null" );
-            }
+            Preconditions.checkNotNull( this.id, "id cannot be null" );
             Preconditions.checkNotNull( this.editor, "editor cannot be null" );
         }
     }

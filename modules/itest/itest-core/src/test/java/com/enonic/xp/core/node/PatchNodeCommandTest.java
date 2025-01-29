@@ -1,6 +1,7 @@
 package com.enonic.xp.core.node;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.PatchNodeParams;
@@ -72,22 +72,6 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void patch_by_path()
-    {
-        final PropertyTree data = new PropertyTree();
-
-        final Node node = createNode( CreateNodeParams.create().name( "myNode" ).data( data ).parent( NodePath.ROOT ).build() );
-
-        nodeService.patch( PatchNodeParams.create().path( node.path() ).editor( toBeEdited -> {
-            toBeEdited.data.addString( "another", "stuff" );
-        } ).build() );
-
-        final Node patchedNode = getNodeById( node.id() );
-
-        assertTrue( patchedNode.getTimestamp().isAfter( node.getTimestamp() ) );
-    }
-
-    @Test
     void patch_different_node_fields()
     {
         final ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
@@ -130,7 +114,53 @@ public class PatchNodeCommandTest
 
         final List<Event> capturedEvents = captor.getAllValues();
 
-        assertEquals( 5, capturedEvents.stream().filter( event -> NodeEvents.NODE_PATCHED_EVENT.equals( event.getType() ) ).count() );
+        assertEquals( 5, capturedEvents.stream()
+            .filter( event -> NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) &&
+                NodeId.from( ( (List<Map>) event.getData().get( "nodes" ) ).getFirst().get( "id" ) ).equals( createdNode.id() ) )
+            .count() );
+    }
+
+    @Test
+    void events_published_for_all_branches()
+    {
+        final ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
+
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        final Branch branch = ContextAccessor.current().getBranch();
+
+        pushNodes( RepositoryConstants.MASTER_BRANCH, createdNode.id() );
+
+        nodeService.patch( PatchNodeParams.create()
+                               .id( createdNode.id() )
+                               .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                               .editor( toBeEdited -> {
+                                   toBeEdited.data.addString( "another", "stuff" );
+                               } )
+                               .build() );
+
+        verify( eventPublisher, atLeastOnce() ).publish( captor.capture() );
+
+        final List<Event> capturedEvents = captor.getAllValues();
+
+        assertEquals( 1, capturedEvents.stream().filter( event -> {
+            if ( !NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) )
+            {
+                return false;
+            }
+            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) && node.get( "branch" ).equals( branch.getValue() );
+        } ).count() );
+
+        assertEquals( 1, capturedEvents.stream().filter( event -> {
+            if ( !NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) )
+            {
+                return false;
+            }
+            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) &&
+                node.get( "branch" ).equals( RepositoryConstants.MASTER_BRANCH.getValue() );
+        } ).count() );
     }
 
     @Test
@@ -149,6 +179,7 @@ public class PatchNodeCommandTest
                                                               .build() );
 
         assertNotNull( result.getResult( branch ) );
+        assertEquals( createdNode.id(), result.getNodeId() );
         assertNull( result.getResult( RepositoryConstants.MASTER_BRANCH ) );
     }
 
@@ -199,13 +230,30 @@ public class PatchNodeCommandTest
     @Test
     public void patch_not_existing()
     {
-        assertThrows( NodeNotFoundException.class, () -> nodeService.patch( PatchNodeParams.create()
-                                                                                .id( NodeId.from( "non-existing" ) )
-                                                                                .addBranches(
-                                                                                    Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-                                                                                .editor( toBeEdited -> {
-                                                                                    toBeEdited.data.addString( "another", "stuff2" );
-                                                                                } )
-                                                                                .build() ) );
+        final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
+                                                              .id( NodeId.from( "non-existing" ) )
+                                                              .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                                              .editor( toBeEdited -> {
+                                                                  toBeEdited.data.addString( "another", "stuff2" );
+                                                              } )
+                                                              .build() );
+
+        assertEquals( 1, result.getResults().size() );
+        assertNull( result.getResult( ContextAccessor.current().getBranch() ) );
+    }
+
+    @Test
+    public void branches_must_not_contain_current_branch()
+    {
+        assertThrows( IllegalArgumentException.class, () -> nodeService.patch( PatchNodeParams.create()
+                                                                                   .id( NodeId.from( "non-existing" ) )
+                                                                                   .addBranches(
+                                                                                       Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                                                                   .addBranches( Branches.from(
+                                                                                       ContextAccessor.current().getBranch() ) )
+                                                                                   .editor( toBeEdited -> {
+                                                                                       toBeEdited.data.addString( "another", "stuff2" );
+                                                                                   } )
+                                                                                   .build() ) );
     }
 }

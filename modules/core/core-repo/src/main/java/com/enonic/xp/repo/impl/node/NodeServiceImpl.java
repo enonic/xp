@@ -490,9 +490,14 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        final Node node = result.getResult( ContextAccessor.current().getBranch() );
-
-        this.eventPublisher.publish( NodeEvents.patched( node ) );
+        result.getResults().forEach( ( branchResult ) -> {
+            if ( branchResult.node() != null )
+            {
+                ContextBuilder.from( ContextAccessor.current() ).branch( branchResult.branch() ).build().runWith( () -> {
+                    this.eventPublisher.publish( NodeEvents.updated( branchResult.node() ) );
+                } );
+            }
+        } );
 
         return result;
     }
