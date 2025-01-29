@@ -30,6 +30,8 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 {
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
+    private static final MediaType AVIF_MEDIA_TYPE = MediaType.create( "image", "avif" );
+
     protected ContentService contentService;
 
     public ContentId id;
@@ -63,34 +65,32 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final BinaryReference binaryReference = attachment.getBinaryReference();
         final ByteSource binary = getBinary( this.id, binaryReference );
 
-        final MediaType attachmentMimeType = MediaType.parse( attachment.getMimeType() );
-
-        final boolean isSvgz = "svgz".equals( attachment.getExtension() );
-        final boolean isGif = attachmentMimeType.is( MediaType.GIF );
-
         final PortalResponse.Builder portalResponse = PortalResponse.create();
+        final boolean isSvgz = "svgz".equals( attachment.getExtension() );
+
+        final MediaType attachmentMimeType = isSvgz ? SVG_MEDIA_TYPE : MediaType.parse( attachment.getMimeType() );
 
         final MediaType contentType;
-        if ( isSvgz )
+        final ByteSource body;
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is(
+            AVIF_MEDIA_TYPE ) || attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
-            contentType = SVG_MEDIA_TYPE;
-            portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
-        }
-        else if ( isGif )
-        {
-            contentType = MediaType.GIF;
-        }
-        else if ( shouldConvert( content, this.name ) )
-        {
-            contentType = MediaTypes.instance().fromFile( this.name );
+            contentType = attachmentMimeType;
+            body = binary;
         }
         else
         {
-            contentType = attachmentMimeType;
+            contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
+            body = transform( content, binaryReference, binary, contentType );
         }
+
 
         if ( contentType.is( SVG_MEDIA_TYPE ) )
         {
+            if ( isSvgz )
+            {
+                portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
+            }
             if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
             {
                 portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
@@ -119,16 +119,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         if ( download )
         {
             portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( attachment.getName() ) );
-        }
-
-        final ByteSource body;
-        if ( isGif || isSvgz || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
-        {
-            body = binary;
-        }
-        else
-        {
-            body = transform( content, binaryReference, binary, contentType );
         }
 
         addTrace( content );
