@@ -19,6 +19,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.security.acl.Permission;
@@ -95,7 +96,7 @@ public final class PatchNodeCommand
                                                        .build() ), branch, l -> {
             }, internalContext );
 
-            //TODO: refresh ?
+            refresh( RefreshMode.ALL );
 
             return new NodeVersionData( nodeStorageService.get( nodeId, internalContext ), patchedVersionMetadata );
         }
