@@ -15,6 +15,8 @@ public interface NodeService
 
     Node update( UpdateNodeParams params );
 
+    PatchNodeResult patch( PatchNodeParams params );
+
     Node rename( RenameNodeParams params );
 
     PushNodesResult push( NodeIds ids, Branch target );
