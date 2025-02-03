@@ -1,9 +1,0 @@
-{
-  "authenticated": false,
-  "message": null,
-  "principals": [
-    "user:system:anonymous",
-    "role:system.everyone"
-  ],
-  "user": null
-}
