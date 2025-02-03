@@ -9,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.url.PathStrategy;
 import com.enonic.xp.project.ProjectName;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;

@@ -13,14 +13,7 @@ declare global {
     }
 }
 
-import type {
-    ByteSource,
-    Component,
-    Content,
-    NestedRecord,
-    Region,
-    ScriptValue,
-} from '@enonic-types/core';
+import type {ByteSource, Component, Content, Region, ScriptValue,} from '@enonic-types/core';
 
 export type {
     Attachment,
@@ -49,7 +42,7 @@ export interface SiteConfig<Config> {
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
-export type IdXorPath = XOR<{id: string}, {path: string}>;
+export type IdXorPath = XOR<{ id: string }, { path: string }>;
 
 export interface AssetUrlParams {
     path: string;
@@ -96,10 +89,37 @@ export type ImageUrlParams = IdXorPath & {
         | `wide(${number},${number})`
         | `width(${number})`
         | 'full';
+    project?: string;
+    branch?: string;
+    offline?: boolean | undefined;
 };
 
 interface ImageUrlHandler {
-    createUrl(value: object): string;
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setQueryParams(value?: ScriptValue | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setBackground(value?: string | null): void;
+
+    setQuality(value?: number | null): void;
+
+    setFilter(value?: string | null): void;
+
+    setFormat(value?: string | null): void;
+
+    setScale(value: string): void;
+
+    setOffline(value: boolean | undefined): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -122,7 +142,21 @@ interface ImageUrlHandler {
  */
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+
+    bean.setId(params.id);
+    bean.setPath(params.path);
+    bean.setUrlType(params.type);
+    // bean.setQueryParams(__.toScriptValue(params.params));
+    bean.setProjectName(params.project);
+    bean.setBranch(params.branch);
+    bean.setBackground(params.background);
+    bean.setQuality(params.quality);
+    bean.setFilter(params.filter);
+    bean.setFormat(params.format);
+    bean.setScale(params.scale);
+    bean.setOffline(params.offline);
+
+    return bean.createUrl();
 }
 
 export interface ComponentUrlParams {

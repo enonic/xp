@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 

@@ -7,6 +7,8 @@ public final class ImageMediaUrlParams
 
     private final String branch;
 
+    private final String siteKey;
+
     private final String background;
 
     private final Integer quality;
@@ -22,6 +24,7 @@ public final class ImageMediaUrlParams
         super( builder );
         this.projectName = builder.projectName;
         this.branch = builder.branch;
+        this.siteKey = builder.siteKey;
         this.background = builder.background;
         this.quality = builder.quality;
         this.filter = builder.filter;
@@ -37,6 +40,11 @@ public final class ImageMediaUrlParams
     public String getBranch()
     {
         return branch;
+    }
+
+    public String getSiteKey()
+    {
+        return siteKey;
     }
 
     public String getBackground()
@@ -76,6 +84,8 @@ public final class ImageMediaUrlParams
 
         private String branch;
 
+        private String siteKey;
+
         private String background;
 
         private Integer quality;
@@ -97,6 +107,13 @@ public final class ImageMediaUrlParams
             this.branch = branch;
             return this;
         }
+
+        public Builder siteKey( final String siteKey )
+        {
+            this.siteKey = siteKey;
+            return this;
+        }
+
 
         public Builder background( final String background )
         {

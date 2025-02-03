@@ -27,6 +27,12 @@ public final class ImageUrlParams
 
     private String scale;
 
+    private String projectName;
+
+    private String branch;
+
+    private String siteKey;
+
     public String getId()
     {
         return this.id;
@@ -60,6 +66,21 @@ public final class ImageUrlParams
     public String getScale()
     {
         return this.scale;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
+    }
+
+    public String getSiteKey()
+    {
+        return siteKey;
     }
 
     public ImageUrlParams id( final String value )
@@ -109,6 +130,24 @@ public final class ImageUrlParams
         return this;
     }
 
+    public ImageUrlParams projectName( final String projectName )
+    {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public ImageUrlParams branch( final String branch )
+    {
+        this.branch = branch;
+        return this;
+    }
+
+    public ImageUrlParams siteKey( final String siteKey )
+    {
+        this.siteKey = siteKey;
+        return this;
+    }
+
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -139,9 +178,8 @@ public final class ImageUrlParams
 
     public ImageUrlParams validate()
     {
-        Preconditions.checkState(
-            getPortalRequest().getContent() != null || id != null || path != null,
-            "id, path or content must be set" );
+        Preconditions.checkState( getPortalRequest().getContent() != null || id != null || path != null,
+                                  "id, path or content must be set" );
         return this;
     }
 }

@@ -1,30 +1,103 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Set;
+import java.util.Objects;
 
-import com.google.common.collect.Multimap;
-
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.UrlStrategyFacade;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public final class ImageUrlHandler
-    extends AbstractUrlHandler
+    implements ScriptBean
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "id", "path", "scale", "quality", "background", "format", "filter", "contextPath", "type", "params" );
+    private PortalRequest request;
+
+    private PortalUrlService urlService;
+
+    private UrlStrategyFacade urlStrategyFacade;
+
+    private String id;
+
+    private String path;
+
+    private String background;
+
+    private Integer quality;
+
+    private String filter;
+
+    private String format;
+
+    private String scale;
+
+    private boolean offline;
 
     @Override
-    protected String buildUrl( final Multimap<String, String> map )
+    public void initialize( final BeanContext context )
     {
-        final ImageUrlParams params = new ImageUrlParams().
-            setAsMap( map ).
-            portalRequest( request ).
-            validate();
-
-        return this.urlService.imageUrl( params );
+        this.request = context.getBinding( PortalRequest.class ).get();
+        this.urlService = context.getService( PortalUrlService.class ).get();
+        this.urlStrategyFacade = context.getService( UrlStrategyFacade.class ).get();
     }
 
-    @Override
-    protected boolean isValidParam( final String param )
+    public void setId( final String id )
     {
-        return VALID_URL_PROPERTY_KEYS.contains( param );
+        this.id = id;
     }
+
+    public void setPath( final String path )
+    {
+        this.path = path;
+    }
+
+    public void setBackground( final String background )
+    {
+        this.background = background;
+    }
+
+    public void setQuality( final Integer quality )
+    {
+        this.quality = quality;
+    }
+
+    public void setFilter( final String filter )
+    {
+        this.filter = filter;
+    }
+
+    public void setFormat( final String format )
+    {
+        this.format = format;
+    }
+
+    public void setScale( final String scale )
+    {
+        this.scale = scale;
+    }
+
+    public void setOffline( final Boolean offline )
+    {
+        this.offline = Objects.requireNonNullElse( offline, false );
+    }
+
+    public String createUrl()
+    {
+        final ImageUrlParams params = new ImageUrlParams().id( this.id )
+            .path( this.path )
+            .background( this.background )
+            .quality( this.quality )
+            .filter( this.filter )
+            .format( this.format )
+            .scale( this.scale );
+
+        final ImageUrlGeneratorParams generatorParams = this.offline || this.request == null
+            ? this.urlStrategyFacade.offlineImageUrlParams( params )
+            : this.urlStrategyFacade.requestImageUrlParams( params );
+
+        return this.urlService.imageUrl( generatorParams );
+    }
+
 }

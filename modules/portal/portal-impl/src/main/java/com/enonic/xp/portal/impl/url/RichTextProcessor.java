@@ -25,6 +25,7 @@ import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -219,6 +220,7 @@ public class RichTextProcessor
             .filter( getFilter( imageStyle ) )
             .portalRequest( params.getPortalRequest() );
 
+        ImageUrlGeneratorParams p = new ImageUrlGeneratorParams();
         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
         element.setAttribute( getLinkAttribute( element ), imageUrl );

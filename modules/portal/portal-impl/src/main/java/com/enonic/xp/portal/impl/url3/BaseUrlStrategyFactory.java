@@ -1,32 +1,47 @@
 package com.enonic.xp.portal.impl.url3;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.url2.ImageMediaUrlParams;
+import com.enonic.xp.portal.url.BaseUrlStrategy;
+import com.enonic.xp.portal.url.ImageMediaUrlParams;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.web.WebRequest;
 
-public final class BaseUrlStrategyFactory
+@Component(immediate = true, service = BaseUrlStrategyFactory.class)
+public class BaseUrlStrategyFactory
 {
+    private final ContentService contentService;
 
-    private ContentService contentService;
-
-    public static BaseUrlStrategy create( final ImageMediaUrlParams params )
+    @Activate
+    public BaseUrlStrategyFactory( @Reference final ContentService contentService )
     {
-        if ( params.request == null || params.request.getRawPath().startsWith( "/api/" ) )
+        this.contentService = contentService;
+    }
+
+    public BaseUrlStrategy create( final ImageMediaUrlParams params )
+    {
+        final WebRequest webRequest = params.getWebRequest();
+
+        if ( webRequest == null || webRequest.getRawPath().startsWith( "/api/" ) )
         {
-            final ProjectName projectName = ProjectName.from( params.project );
-            final Branch branch = Branch.from( params.branch );
-            final String siteKey = params.siteKey;
+            final ProjectName projectName = ProjectName.from( params.getProjectName() );
+            final Branch branch = Branch.from( params.getBranch() );
+            final String siteKey = params.getSiteKey();
 
-            return new ConfigBaseUrlStrategy( projectName, branch, siteKey );
+            return new OfflineBaseUrlStrategy( contentService, projectName, branch, siteKey );
         }
-
-        if ( params.request instanceof PortalRequest portalRequest )
+        else if ( webRequest instanceof PortalRequest portalRequest )
         {
-            return new RequestBaseUrlStrategy( portalRequest, params.urlType );
+            return new RequestBaseUrlStrategy( portalRequest, params.getUrlType() );
         }
-
-        throw new IllegalArgumentException( "Missing project, branch or siteKey" );
+        else
+        {
+            throw new IllegalArgumentException( "Missing project, branch or siteKey" );
+        }
     }
 }

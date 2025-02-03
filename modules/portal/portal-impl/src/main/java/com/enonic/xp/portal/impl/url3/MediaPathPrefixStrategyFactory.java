@@ -1,32 +1,56 @@
 package com.enonic.xp.portal.impl.url3;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.url2.ImageMediaUrlParams;
+import com.enonic.xp.portal.url.ImageMediaUrlParams;
+import com.enonic.xp.portal.url.PathPrefixStrategy;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.web.WebRequest;
 
+@Component(immediate = true, service = MediaPathPrefixStrategyFactory.class)
 public class MediaPathPrefixStrategyFactory
 {
-    public static PathPrefixStrategy create( final ImageMediaUrlParams params )
-    {
-        final WebRequest request = params.request;
+    private final ContentService contentService;
 
-        if ( request == null || request.getRawPath().startsWith( "/api/" ) )
+    @Activate
+    public MediaPathPrefixStrategyFactory( @Reference final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+    public PathPrefixStrategy create( final ImageMediaUrlParams params )
+    {
+        final WebRequest webRequest = params.getWebRequest();
+
+        if ( webRequest == null )
         {
             return new SlashApiPathPrefixStrategy();
         }
 
-        if ( request instanceof PortalRequest portalRequest )
+        if ( webRequest instanceof PortalRequest portalRequest )
         {
-            return new HarmonizedApiPathPrefixStrategy( portalRequest );
+            return new HarmonizedApiPathPrefixStrategy(
+                HarmonizedApiPathPrefixStrategyParams.create().setPortalRequest( portalRequest ).build() );
         }
 
-        if ( params.project == null || params.branch == null || params.siteKey == null )
+        final String projectName = params.getProjectName();
+        final String branch = params.getBranch();
+        final String siteKey = params.getSiteKey();
+
+        if ( projectName == null || branch == null || siteKey == null )
         {
             throw new IllegalArgumentException( "Missing project, branch or siteKey" );
         }
 
-        return new ContextPathPrefixStrategy( ProjectName.from( params.project ), Branch.from( params.branch ), params.siteKey );
+        return new HarmonizedApiPathPrefixStrategy( HarmonizedApiPathPrefixStrategyParams.create()
+                                                        .setProjectName( ProjectName.from( projectName ) )
+                                                        .setBranch( Branch.from( branch ) )
+                                                        .setContentKey( siteKey )
+                                                        .build() );
     }
 }

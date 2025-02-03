@@ -15,6 +15,9 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.url3.MediaService;
+import com.enonic.xp.portal.impl.url3.UrlGenerator;
+import com.enonic.xp.portal.impl.url3.UrlService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -24,6 +27,7 @@ import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageMediaUrlParams;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -48,6 +52,8 @@ public final class PortalUrlServiceImpl
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final MediaService mediaService;
+
     private volatile boolean legacyImageServiceEnabled;
 
     private volatile boolean legacyAttachmentServiceEnabled;
@@ -56,20 +62,17 @@ public final class PortalUrlServiceImpl
 
     private volatile boolean useLegacyIdProviderContextPath;
 
-    private final UrlGeneratorFactory urlGeneratorFactory;
-
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
-                                 @Reference final RedirectChecksumService redirectChecksumService )
+                                 @Reference final RedirectChecksumService redirectChecksumService, @Reference final MediaService mediaService )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
         this.macroService = macroService;
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
-
-        this.urlGeneratorFactory = new UrlGeneratorFactory( contentService );
+        this.mediaService = mediaService;
     }
 
     @Activate
@@ -133,6 +136,7 @@ public final class PortalUrlServiceImpl
                 .format( params.getFormat() )
                 .projectName( null )
                 .branch( null )
+                .siteKey( null )
                 .build();
 
             return imageMediaUrl( imageMediaUrlParams );
@@ -209,13 +213,21 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageMediaUrl( final ImageMediaUrlParams params )
     {
-        return runWithAdminRole( () -> urlGeneratorFactory.generateImageMediaUrl( params ) );
+        return runWithAdminRole( () -> mediaService.imageMediaUrl( params ) );
     }
 
     @Override
     public String attachmentMediaUrl( final AttachmentMediaUrlParams params )
     {
-        return runWithAdminRole( () -> urlGeneratorFactory.generateAttachmentMediaUrl( params ) );
+        return null;
+//        return runWithAdminRole( () -> mediaService.imageMediaUrl(  params ) );
+    }
+
+    @Override
+    public String imageUrl( final ImageUrlGeneratorParams params )
+    {
+        UrlService urlService = new UrlService();
+        return runWithAdminRole( () -> urlService.imageUrl( params ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

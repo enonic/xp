@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url3;
 
+import com.enonic.xp.portal.url.PathPrefixStrategy;
+import com.enonic.xp.portal.url.PathStrategy;
+
 public class MediaPathStrategy
     implements PathStrategy
 {

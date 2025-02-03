@@ -40,8 +40,7 @@ public class TextRendererTest
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
-        service =
-            new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock() );
+        service = new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock(), null );
         portalRequest.setMode( RenderMode.LIVE );
     }
 
