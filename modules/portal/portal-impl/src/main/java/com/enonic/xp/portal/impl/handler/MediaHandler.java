@@ -125,33 +125,29 @@ public class MediaHandler
     public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
-        final PortalRequest portalRequest =
-            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
-
-        final Matcher matcher =
-            PATTERN.matcher( Objects.requireNonNullElse( portalRequest.getEndpointPath(), portalRequest.getRawPath() ) );
+        final Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
         if ( !matcher.matches() )
         {
             throw createNotFoundException();
         }
 
-        if ( !ALLOWED_METHODS.contains( portalRequest.getMethod() ) )
+        if ( !ALLOWED_METHODS.contains( webRequest.getMethod() ) )
         {
-            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", portalRequest.getMethod() ) );
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
-        if ( portalRequest.getMethod() == HttpMethod.OPTIONS )
+        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
         {
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        if ( !( portalRequest.isSiteBase() || portalRequest.getRawPath().startsWith( "/api/" ) ) )
+        if ( webRequest instanceof PortalRequest portalRequest )
         {
-            throw createNotFoundException();
-        }
+            if ( !portalRequest.isSiteBase() )
+            {
+                throw createNotFoundException();
+            }
 
-        if ( portalRequest.isSiteBase() )
-        {
             final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
             if ( !"/".equals( contentResolverResult.getSiteRelativePath() ) )
             {
@@ -167,32 +163,26 @@ public class MediaHandler
         final String fingerprint = matcher.group( "fingerprint" );
         final String restPath = matcher.group( "restPath" );
 
-        verifyMediaScope( matcher.group( "context" ), repositoryId, branch, portalRequest );
+        verifyMediaScope( matcher.group( "context" ), webRequest, repositoryId, branch );
         verifyAccessByBranch( branch );
 
         return executeInContext( repositoryId, branch, () -> type.equals( "attachment" )
-            ? doHandleAttachment( portalRequest, id, fingerprint, restPath )
-            : doHandleImage( portalRequest, id, fingerprint, restPath ) );
+            ? doHandleAttachment( webRequest, id, fingerprint, restPath )
+            : doHandleImage( webRequest, id, fingerprint, restPath ) );
     }
 
-    private void verifyMediaScope( final String projectContext, final RepositoryId repositoryId, final Branch branch,
-                                   final PortalRequest portalRequest )
+    private void verifyMediaScope( final String projectContext, final WebRequest webRequest, final RepositoryId repositoryId,
+                                   final Branch branch )
     {
         final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
-        if ( mediaServiceScope != null )
+        if ( mediaServiceScope != null &&
+            MEDIA_SCOPE_DELIMITER_PATTERN.splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
         {
-            if ( MEDIA_SCOPE_DELIMITER_PATTERN.splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
-            {
-                throw createNotFoundException();
-            }
+            throw createNotFoundException();
         }
 
-        if ( portalRequest.getRawPath().startsWith( "/api/" ) )
-        {
-            return;
-        }
-
-        if ( !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
+        if ( webRequest instanceof PortalRequest portalRequest &&
+            !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
         {
             throw createNotFoundException();
         }
@@ -219,8 +209,7 @@ public class MediaHandler
         }
     }
 
-    private PortalResponse doHandleImage( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
-                                          final String restPath )
+    private PortalResponse doHandleImage( final WebRequest webRequest, final ContentId id, final String fingerprint, final String restPath )
         throws Exception
     {
         final Matcher matcher = IMAGE_REST_PATH_PATTERN.matcher( restPath );
@@ -241,10 +230,10 @@ public class MediaHandler
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
         }
 
-        return resolveMedia( attachment, media, fingerprint, portalRequest, matcher, false );
+        return resolveMedia( attachment, media, fingerprint, webRequest, matcher, false );
     }
 
-    private PortalResponse doHandleAttachment( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
+    private PortalResponse doHandleAttachment( final WebRequest webRequest, final ContentId id, final String fingerprint,
                                                final String restPath )
         throws Exception
     {
@@ -257,11 +246,11 @@ public class MediaHandler
         final Content content = getContent( id );
         final Attachment attachment = resolveAttachment( content, matcher.group( "name" ) );
 
-        return resolveMedia( attachment, content, fingerprint, portalRequest, matcher, true );
+        return resolveMedia( attachment, content, fingerprint, webRequest, matcher, true );
     }
 
     private PortalResponse resolveMedia( final Attachment attachment, final Content content, final String fingerprint,
-                                         final PortalRequest portalRequest, final Matcher matcher, final boolean isAttachment )
+                                         final WebRequest webRequest, final Matcher matcher, final boolean isAttachment )
         throws Exception
     {
         final BinaryReference binaryReference = attachment.getBinaryReference();
@@ -293,7 +282,7 @@ public class MediaHandler
         else
         {
             final ScaleParams scaleParams = new ScaleParamsParser().parse( matcher.group( "scaleParams" ) );
-            body = transform( (Media) content, binaryReference, binary, contentType, scaleParams, portalRequest );
+            body = transform( (Media) content, binaryReference, binary, contentType, scaleParams, webRequest );
         }
 
         final Trace trace = Tracer.current();
@@ -307,12 +296,12 @@ public class MediaHandler
 
         setContentEncodingHeader( portalResponse, isSvgz );
         setContentSecurityPolicy( portalResponse, contentType );
-        setCacheControlHeader( portalResponse, content, fingerprint, portalRequest, attachment );
+        setCacheControlHeader( portalResponse, content, fingerprint, attachment );
 
         if ( isAttachment )
         {
-            setDispositionHeader( portalResponse, portalRequest, attachment.getName() );
-            new RangeRequestHelper().handleRangeRequest( portalRequest, portalResponse, body, contentType );
+            setDispositionHeader( portalResponse, webRequest, attachment.getName() );
+            new RangeRequestHelper().handleRangeRequest( webRequest, portalResponse, body, contentType );
         }
         else
         {
@@ -348,12 +337,12 @@ public class MediaHandler
     }
 
     private void setCacheControlHeader( final PortalResponse.Builder portalResponse, final Content content, final String fingerprint,
-                                        final PortalRequest portalRequest, final Attachment attachment )
+                                        final Attachment attachment )
     {
         if ( !nullToEmpty( fingerprint ).isBlank() )
         {
             final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() );
+                ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
@@ -382,9 +371,9 @@ public class MediaHandler
         }
     }
 
-    private void setDispositionHeader( final PortalResponse.Builder portalResponse, final PortalRequest portalRequest, final String name )
+    private void setDispositionHeader( final PortalResponse.Builder portalResponse, final WebRequest webRequest, final String name )
     {
-        if ( HandlerHelper.getParameter( portalRequest, "download" ) != null )
+        if ( HandlerHelper.getParameter( webRequest, "download" ) != null )
         {
             portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( name ) );
         }
@@ -431,12 +420,12 @@ public class MediaHandler
     }
 
     private ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                  final MediaType contentType, final ScaleParams scaleParams, final PortalRequest portalRequest )
+                                  final MediaType contentType, final ScaleParams scaleParams, final WebRequest webRequest )
         throws IOException
     {
-        final String qualityParam = HandlerHelper.getParameter( portalRequest, "quality" );
-        final String backgroundParam = HandlerHelper.getParameter( portalRequest, "background" );
-        final String filterParam = HandlerHelper.getParameter( portalRequest, "filter" );
+        final String qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
+        final String backgroundParam = HandlerHelper.getParameter( webRequest, "background" );
+        final String filterParam = HandlerHelper.getParameter( webRequest, "filter" );
 
         final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(), () -> Objects.requireNonNullElse(
             mediaInfoService.getImageOrientation( binary ), ImageOrientation.TopLeft ) );
