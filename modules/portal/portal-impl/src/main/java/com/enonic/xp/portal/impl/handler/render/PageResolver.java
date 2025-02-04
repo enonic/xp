@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -79,16 +79,13 @@ public class PageResolver
                 }
                 else
                 {
-                    controller = errorOrNull( null, mode,
-                                              String.format( "Template [%s] is missing and no default template found for content",
-                                                             page.getTemplate() ) );
-                    effectivePage = page;
+                    throw newWebException( mode, String.format( "Template [%s] is missing and no default template found for content",
+                                                                page.getTemplate() ) );
                 }
             }
             else
             {
-                controller = errorOrNull( null, mode, "Content page has neither template nor descriptor" );
-                effectivePage = page;
+                throw newWebException( mode, "Content page has neither template nor descriptor" );
             }
         }
         else
@@ -103,8 +100,7 @@ public class PageResolver
             }
             else
             {
-                controller = errorOrNull( null, mode, "No default template found for content" );
-                effectivePage = null;
+                throw newWebException( mode, "No default template found for content" );
             }
         }
 
@@ -132,29 +128,22 @@ public class PageResolver
 
     private static DescriptorKey getControllerFromTemplate( final PageTemplate pageTemplate, final RenderMode mode )
     {
-        return errorOrNull( pageTemplate.getController(), mode,
-                            String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
-    }
+        final DescriptorKey controller = pageTemplate.getController();
 
-    private static <T> T errorOrNull( final T object, final RenderMode mode, final String message )
-    {
-        if ( object == null )
+        if ( controller != null )
         {
-            switch ( mode )
-            {
-                case EDIT:
-                    // we can render default empty page in Live-Edit, for selecting controller when page customized
-                    return null;
-                case INLINE:
-                    throw new WebException( HttpStatus.IM_A_TEAPOT, message );
-                default:
-                    throw new WebException( HttpStatus.NOT_FOUND, message );
-            }
+            return controller;
         }
         else
         {
-            return object;
+            throw newWebException( mode, String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
         }
+    }
+
+    private static WebException newWebException( final RenderMode mode, final String message )
+    {
+        throw new WebException( mode == RenderMode.INLINE || mode == RenderMode.EDIT ? HttpStatus.IM_A_TEAPOT : HttpStatus.NOT_FOUND,
+                                message );
     }
 
     private static Page mergePageFromPageTemplate( final PageTemplate pageTemplate, final Page page )
@@ -239,7 +228,7 @@ public class PageResolver
     private Region processExistingPageRegion( final Region existingRegion )
     {
         final Region.Builder builder = Region.create( existingRegion );
-        final ImmutableList<Component> components = existingRegion.getComponents();
+        final List<Component> components = existingRegion.getComponents();
 
         for ( int i = 0; i < components.size(); i++)
         {
