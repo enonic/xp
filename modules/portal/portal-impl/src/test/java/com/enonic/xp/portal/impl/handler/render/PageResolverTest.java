@@ -138,12 +138,9 @@ public class PageResolverTest
 
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertNull( effectivePage.getDescriptor() );
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
+        final WebException webExceptionEdit =
+            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.EDIT, content, site ) );
+        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionEdit.getStatus() );
     }
 
     @Test
@@ -168,12 +165,9 @@ public class PageResolverTest
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
         assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertNull( effectivePage );
-        assertNull( result.getController() );
+        final WebException webExceptionEdit =
+            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.EDIT, content, site ) );
+        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionEdit.getStatus() );
     }
 
     @Test
@@ -196,12 +190,9 @@ public class PageResolverTest
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
         assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertSame( page, effectivePage );
-        assertNull( result.getController() );
+        final WebException webExceptionEdit =
+            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.EDIT, content, site ) );
+        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionEdit.getStatus() );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -408,12 +399,9 @@ public class PageResolverTest
             assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
         assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertSame( content.getPage(), effectivePage );
-        assertNull( result.getController() );
+        final WebException webExceptionEdit =
+            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.EDIT, content, site ) );
+        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionEdit.getStatus() );
     }
 
     @Test
