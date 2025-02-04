@@ -22,7 +22,6 @@ import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
 import static com.enonic.xp.portal.RenderMode.INLINE;
-import static com.enonic.xp.portal.RenderMode.PREVIEW;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.COMPONENT_INSTRUCTION_PREFIX;
 import static com.enonic.xp.portal.impl.postprocess.instruction.ComponentInstruction.FRAGMENT_COMPONENT;
 import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE;
@@ -67,7 +66,7 @@ public final class PageRenderer
 
         final RenderMode mode = portalRequest.getMode();
 
-        if ( ( mode == EDIT || mode == PREVIEW || mode == INLINE ) && portalRequest.getContent().getType().isFragment() )
+        if ( ( mode == INLINE || mode == EDIT ) && portalRequest.getContent().getType().isFragment() )
         {
             return renderDefaultFragmentPage( mode, content );
         }
@@ -126,7 +125,7 @@ public final class PageRenderer
 
         html.close();
 
-        final HttpStatus status = mode == INLINE ? HttpStatus.IM_A_TEAPOT : HttpStatus.SERVICE_UNAVAILABLE;
+        final HttpStatus status = mode == INLINE || mode == EDIT ? HttpStatus.IM_A_TEAPOT : HttpStatus.SERVICE_UNAVAILABLE;
 
         return PortalResponse.create()
             .status( status )

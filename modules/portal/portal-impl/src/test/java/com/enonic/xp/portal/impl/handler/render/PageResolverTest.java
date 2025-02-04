@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -138,12 +139,17 @@ public class PageResolverTest
 
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+                                  "Template [my-template] has no page descriptor" );
 
-        final Page effectivePage = result.getEffectivePage();
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+                                  "Template [my-template] has no page descriptor" );
 
-        assertNull( effectivePage.getDescriptor() );
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Template [my-template] has no page descriptor" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Template [my-template] has no page descriptor" );
     }
 
     @Test
@@ -155,25 +161,17 @@ public class PageResolverTest
 
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( null );
 
-        final WebException webExceptionInLive =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
-        assertEquals( webExceptionInLive.getMessage(), "No default template found for content" );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+                                  "No default template found for content" );
 
-        final WebException webExceptionInInline =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.INLINE, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInInline.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+                                  "No default template found for content" );
 
-        final WebException webExceptionInPreview =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "No default template found for content" );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertNull( effectivePage );
-        assertNull( result.getController() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "No default template found for content" );
     }
 
     @Test
@@ -183,25 +181,17 @@ public class PageResolverTest
         final Page page = Page.create().build();
         final Content content = Content.create().page( page ).parentPath( site.getPath() ).name( "my-content" ).build();
 
-        final WebException webExceptionInLive =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
-        assertEquals( webExceptionInLive.getMessage(), "Content page has neither template nor descriptor" );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+                                  "Content page has neither template nor descriptor" );
 
-        final WebException webExceptionInInline =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.INLINE, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInInline.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+                                  "Content page has neither template nor descriptor" );
 
-        final WebException webExceptionInPreview =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Content page has neither template nor descriptor" );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertSame( page, effectivePage );
-        assertNull( result.getController() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Content page has neither template nor descriptor" );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -395,25 +385,17 @@ public class PageResolverTest
             .type( ContentTypeName.templateFolder() )
             .build();
 
-        final WebException webExceptionInLive =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.LIVE, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInLive.getStatus() );
-        assertEquals( webExceptionInLive.getMessage(), "Template [t-not-exists] is missing and no default template found for content" );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+                                  "Template [t-not-exists] is missing and no default template found for content" );
 
-        final WebException webExceptionInInline =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.INLINE, content, site ) );
-        assertEquals( HttpStatus.IM_A_TEAPOT, webExceptionInInline.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+                                  "Template [t-not-exists] is missing and no default template found for content" );
 
-        final WebException webExceptionInPreview =
-            assertThrows( WebException.class, () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ) );
-        assertEquals( HttpStatus.NOT_FOUND, webExceptionInPreview.getStatus() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Template [t-not-exists] is missing and no default template found for content" );
 
-        final PageResolverResult result = pageResolver.resolve( RenderMode.EDIT, content, site );
-
-        final Page effectivePage = result.getEffectivePage();
-
-        assertSame( content.getPage(), effectivePage );
-        assertNull( result.getController() );
+        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+                                  "Template [t-not-exists] is missing and no default template found for content" );
     }
 
     @Test
@@ -526,7 +508,7 @@ public class PageResolverTest
         assertTrue( buitLayoutComponent.getRegion( "main" ) != null );
     }
 
-    private Site createSite()
+    private static Site createSite()
     {
         return Site.create()
             .id( ContentId.from( "site-id" ) )
@@ -534,5 +516,12 @@ public class PageResolverTest
             .displayName( "My Site" )
             .type( ContentTypeName.from( "portal:site" ) )
             .build();
+    }
+
+    private static void assertThrowsWebException( Executable executable, HttpStatus status, String message )
+    {
+        final WebException webException = assertThrows( WebException.class, executable );
+        assertEquals( status, webException.getStatus() );
+        assertEquals( message, webException.getMessage() );
     }
 }

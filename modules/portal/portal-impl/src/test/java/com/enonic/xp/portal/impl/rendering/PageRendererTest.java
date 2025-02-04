@@ -211,7 +211,7 @@ public class PageRendererTest
         // verify
         final String response = "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
         assertEquals( response, portalResponse.getAsString() );
-        assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
+        assertEquals( HttpStatus.IM_A_TEAPOT, portalResponse.getStatus() );
     }
 
     @Test
@@ -230,7 +230,6 @@ public class PageRendererTest
         // verify
         final String response = "<html><head><title>Chip &amp; Dail</title></head><body data-portal-component-type=\"page\"></body></html>";
         assertEquals( response, portalResponse.getAsString() );
-        assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )
