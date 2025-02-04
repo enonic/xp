@@ -95,7 +95,7 @@ public class ApiDispatcher
                 doHandleLegacyHandler( webResponse, legacyAttachmentServiceEnabled, () -> attachmentHandler.handle( webRequest ) );
             case "image" -> doHandleLegacyHandler( webResponse, legacyImageServiceEnabled, () -> imageHandler.handle( webRequest ) );
             case "service" -> doHandleLegacyHandler( webResponse, legacyHttpServiceEnabled, () -> serviceHandler.handle( webRequest ) );
-            case "media" -> mediaHandler.handle( webRequest, webResponse );
+            case "media" -> mediaHandler.handle( webRequest );
             case "error" -> errorHandler.handle( webRequest );
             case "idprovider" -> identityHandler.handle( webRequest, webResponse );
             case "asset" -> assetHandler.handle( webRequest );

@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,6 +39,8 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
@@ -76,8 +77,6 @@ public class MediaHandler
 
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
-    private static final Predicate<WebRequest> IS_GET_HEAD_OPTIONS_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
-
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
@@ -89,8 +88,6 @@ public class MediaHandler
     private final ImageService imageService;
 
     private final MediaInfoService mediaInfoService;
-
-    private final DefaultContextPathVerifier defaultContextPathVerifier;
 
     private volatile String privateCacheControlHeaderConfig;
 
@@ -109,7 +106,6 @@ public class MediaHandler
         this.contentService = contentService;
         this.imageService = imageService;
         this.mediaInfoService = mediaInfoService;
-        this.defaultContextPathVerifier = new DefaultContextPathVerifier( contentService );
     }
 
     @Activate
@@ -126,16 +122,16 @@ public class MediaHandler
             .collect( Collectors.toList() );
     }
 
-    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
+    public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
         final Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
         if ( !matcher.matches() )
         {
-            return PortalResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
+            throw createNotFoundException();
         }
 
-        if ( !IS_GET_HEAD_OPTIONS_METHOD.test( webRequest ) )
+        if ( !ALLOWED_METHODS.contains( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
@@ -143,6 +139,20 @@ public class MediaHandler
         if ( webRequest.getMethod() == HttpMethod.OPTIONS )
         {
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
+        }
+
+        if ( webRequest instanceof PortalRequest portalRequest )
+        {
+            if ( !portalRequest.isSiteBase() )
+            {
+                throw createNotFoundException();
+            }
+
+            final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
+            if ( !"/".equals( contentResolverResult.getSiteRelativePath() ) )
+            {
+                throw createNotFoundException();
+            }
         }
 
         final RepositoryId repositoryId =
@@ -153,59 +163,29 @@ public class MediaHandler
         final String fingerprint = matcher.group( "fingerprint" );
         final String restPath = matcher.group( "restPath" );
 
-        if ( !defaultContextPathVerifier.verify( webRequest ) )
-        {
-            throw WebException.notFound( "Not a valid media url pattern" );
-        }
-
-        verifyMediaScope( matcher.group( "context" ), repositoryId, branch, webRequest );
-
-        final PortalRequest portalRequest = createPortalRequest( webRequest, repositoryId, branch );
+        verifyMediaScope( matcher.group( "context" ), webRequest, repositoryId, branch );
+        verifyAccessByBranch( branch );
 
         return executeInContext( repositoryId, branch, () -> type.equals( "attachment" )
-            ? doHandleAttachment( portalRequest, id, fingerprint, restPath )
-            : doHandleImage( portalRequest, id, fingerprint, restPath ) );
+            ? doHandleAttachment( webRequest, id, fingerprint, restPath )
+            : doHandleImage( webRequest, id, fingerprint, restPath ) );
     }
 
-    private void verifyMediaScope( final String projectContext, final RepositoryId repositoryId, final Branch branch,
-                                   final WebRequest webRequest )
+    private void verifyMediaScope( final String projectContext, final WebRequest webRequest, final RepositoryId repositoryId,
+                                   final Branch branch )
     {
         final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
-        if ( mediaServiceScope != null )
+        if ( mediaServiceScope != null &&
+            MEDIA_SCOPE_DELIMITER_PATTERN.splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
         {
-            if ( MEDIA_SCOPE_DELIMITER_PATTERN.splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
-            {
-                throw WebException.notFound( "Not a valid media url pattern" );
-            }
-        }
-        else
-        {
-            if ( webRequest instanceof final PortalRequest portalRequest )
-            {
-                if ( portalRequest.isSiteBase() &&
-                    !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
-                {
-                    throw WebException.notFound( "Not a valid media url pattern" );
-                }
-            }
-        }
-    }
-
-    private PortalRequest createPortalRequest( final WebRequest webRequest, final RepositoryId repositoryId, final Branch branch )
-    {
-        if ( ContentConstants.BRANCH_DRAFT.equals( branch ) )
-        {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
-            {
-                throw WebException.forbidden( "You don't have permission to access this resource" );
-            }
+            throw createNotFoundException();
         }
 
-        PortalRequest portalRequest = webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
-        portalRequest.setRepositoryId( repositoryId );
-        portalRequest.setBranch( branch );
-        return portalRequest;
+        if ( webRequest instanceof PortalRequest portalRequest &&
+            !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
+        {
+            throw createNotFoundException();
+        }
     }
 
     private PortalResponse executeInContext( final RepositoryId repositoryId, final Branch branch, final Callable<PortalResponse> callable )
@@ -217,14 +197,25 @@ public class MediaHandler
             .callWith( callable );
     }
 
-    private PortalResponse doHandleImage( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
-                                          final String restPath )
+    private void verifyAccessByBranch( final Branch branch )
+    {
+        if ( ContentConstants.BRANCH_DRAFT.equals( branch ) )
+        {
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
+            {
+                throw WebException.forbidden( "You don't have permission to access this resource" );
+            }
+        }
+    }
+
+    private PortalResponse doHandleImage( final WebRequest webRequest, final ContentId id, final String fingerprint, final String restPath )
         throws Exception
     {
         final Matcher matcher = IMAGE_REST_PATH_PATTERN.matcher( restPath );
         if ( !matcher.matches() )
         {
-            throw WebException.notFound( "Not a valid image url pattern" );
+            throw createNotFoundException();
         }
 
         final Content content = getContent( id );
@@ -239,10 +230,10 @@ public class MediaHandler
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
         }
 
-        return resolveMedia( attachment, media, fingerprint, portalRequest, matcher, false );
+        return resolveMedia( attachment, media, fingerprint, webRequest, matcher, false );
     }
 
-    private PortalResponse doHandleAttachment( final PortalRequest portalRequest, final ContentId id, final String fingerprint,
+    private PortalResponse doHandleAttachment( final WebRequest webRequest, final ContentId id, final String fingerprint,
                                                final String restPath )
         throws Exception
     {
@@ -255,11 +246,11 @@ public class MediaHandler
         final Content content = getContent( id );
         final Attachment attachment = resolveAttachment( content, matcher.group( "name" ) );
 
-        return resolveMedia( attachment, content, fingerprint, portalRequest, matcher, true );
+        return resolveMedia( attachment, content, fingerprint, webRequest, matcher, true );
     }
 
     private PortalResponse resolveMedia( final Attachment attachment, final Content content, final String fingerprint,
-                                         final PortalRequest portalRequest, final Matcher matcher, final boolean isAttachment )
+                                         final WebRequest webRequest, final Matcher matcher, final boolean isAttachment )
         throws Exception
     {
         final BinaryReference binaryReference = attachment.getBinaryReference();
@@ -291,7 +282,7 @@ public class MediaHandler
         else
         {
             final ScaleParams scaleParams = new ScaleParamsParser().parse( matcher.group( "scaleParams" ) );
-            body = transform( (Media) content, binaryReference, binary, contentType, scaleParams, portalRequest );
+            body = transform( (Media) content, binaryReference, binary, contentType, scaleParams, webRequest );
         }
 
         final Trace trace = Tracer.current();
@@ -305,12 +296,12 @@ public class MediaHandler
 
         setContentEncodingHeader( portalResponse, isSvgz );
         setContentSecurityPolicy( portalResponse, contentType );
-        setCacheControlHeader( portalResponse, content, fingerprint, portalRequest, attachment );
+        setCacheControlHeader( portalResponse, content, fingerprint, attachment );
 
         if ( isAttachment )
         {
-            setDispositionHeader( portalResponse, portalRequest, attachment.getName() );
-            new RangeRequestHelper().handleRangeRequest( portalRequest, portalResponse, body, contentType );
+            setDispositionHeader( portalResponse, webRequest, attachment.getName() );
+            new RangeRequestHelper().handleRangeRequest( webRequest, portalResponse, body, contentType );
         }
         else
         {
@@ -346,12 +337,12 @@ public class MediaHandler
     }
 
     private void setCacheControlHeader( final PortalResponse.Builder portalResponse, final Content content, final String fingerprint,
-                                        final PortalRequest portalRequest, final Attachment attachment )
+                                        final Attachment attachment )
     {
         if ( !nullToEmpty( fingerprint ).isBlank() )
         {
             final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() );
+                ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
@@ -380,9 +371,9 @@ public class MediaHandler
         }
     }
 
-    private void setDispositionHeader( final PortalResponse.Builder portalResponse, final PortalRequest portalRequest, final String name )
+    private void setDispositionHeader( final PortalResponse.Builder portalResponse, final WebRequest webRequest, final String name )
     {
-        if ( HandlerHelper.getParameter( portalRequest, "download" ) != null )
+        if ( HandlerHelper.getParameter( webRequest, "download" ) != null )
         {
             portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( name ) );
         }
@@ -429,12 +420,12 @@ public class MediaHandler
     }
 
     private ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                  final MediaType contentType, final ScaleParams scaleParams, final PortalRequest portalRequest )
+                                  final MediaType contentType, final ScaleParams scaleParams, final WebRequest webRequest )
         throws IOException
     {
-        final String qualityParam = HandlerHelper.getParameter( portalRequest, "quality" );
-        final String backgroundParam = HandlerHelper.getParameter( portalRequest, "background" );
-        final String filterParam = HandlerHelper.getParameter( portalRequest, "filter" );
+        final String qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
+        final String backgroundParam = HandlerHelper.getParameter( webRequest, "background" );
+        final String filterParam = HandlerHelper.getParameter( webRequest, "filter" );
 
         final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(), () -> Objects.requireNonNullElse(
             mediaInfoService.getImageOrientation( binary ), ImageOrientation.TopLeft ) );
@@ -469,5 +460,10 @@ public class MediaHandler
         {
             throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
         }
+    }
+
+    private WebException createNotFoundException()
+    {
+        return WebException.notFound( "Not a valid media url pattern" );
     }
 }

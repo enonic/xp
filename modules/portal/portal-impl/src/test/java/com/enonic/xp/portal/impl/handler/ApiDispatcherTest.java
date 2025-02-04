@@ -142,7 +142,7 @@ public class ApiDispatcherTest
         when( webRequest.getRawPath() ).thenReturn( "/api/media/image/project:branch/id:fingerprint/name" );
 
         final WebResponse webResponse = WebResponse.create().build();
-        when( mediaHandler.handle( any( WebRequest.class ), any( WebResponse.class ) ) ).thenReturn( webResponse );
+        when( mediaHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
 
         // test handle
         assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
