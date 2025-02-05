@@ -151,7 +151,8 @@ public class ImageMediaUrlHandler
             .branch( this.branch )
             .build();
 
-        return urlServiceSupplier.get().imageMediaUrl( imageMediaUrlParams );
+        return null;
+//        return urlServiceSupplier.get().imageMediaUrl( imageMediaUrlParams );
     }
 
 }

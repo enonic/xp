@@ -135,6 +135,8 @@ public class AttachmentMediaUrlHandler
             .webRequest( this.requestSupplier.get() )
             .build();
 
-        return this.urlServiceSupplier.get().attachmentMediaUrl( params );
+        return null;
+
+//        return this.urlServiceSupplier.get().attachmentMediaUrl( params );
     }
 }

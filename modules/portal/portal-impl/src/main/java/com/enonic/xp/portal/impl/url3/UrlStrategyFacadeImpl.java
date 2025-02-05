@@ -9,11 +9,11 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.NotFoundException;
@@ -26,9 +26,14 @@ import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PathPrefixStrategy;
 import com.enonic.xp.portal.url.RewritePathStrategy;
 import com.enonic.xp.portal.url.UrlStrategyFacade;
+import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 
 @Component(immediate = true, service = UrlStrategyFacade.class)
 public class UrlStrategyFacadeImpl
@@ -37,55 +42,60 @@ public class UrlStrategyFacadeImpl
 
     private final ContentService contentService;
 
+    private final ProjectService projectService;
+
     @Activate
-    public UrlStrategyFacadeImpl( @Reference final ContentService contentService )
+    public UrlStrategyFacadeImpl( @Reference final ContentService contentService, @Reference final ProjectService projectService )
     {
         this.contentService = contentService;
+        this.projectService = projectService;
     }
 
-    @Override
-    public PathPrefixStrategy requestPathPrefixStrategy( final PortalRequest portalRequest )
+    private String resolveBaseUrl( final SiteConfigs siteConfigs )
     {
-        return new HarmonizedApiPathPrefixStrategy(
-            HarmonizedApiPathPrefixStrategyParams.create().setPortalRequest( portalRequest ).build() );
-    }
-
-    @Override
-    public PathPrefixStrategy contextPathPrefixStrategy( final ProjectName projectName, final Branch branch, final String contentKey )
-    {
-
-        return new HarmonizedApiPathPrefixStrategy( HarmonizedApiPathPrefixStrategyParams.create()
-                                                        .setProjectName( projectName )
-                                                        .setBranch( branch )
-                                                        .setContentKey( contentKey )
-                                                        .build() );
-    }
-
-    @Override
-    public BaseUrlStrategy offlineBaseUrlStrategy( final ProjectName projectName, final Branch branch, final String siteKey )
-    {
-        Context context =
-            ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
-
-        Content content = context.callWith( () -> getContent( siteKey ) );
-
-        if ( !( content instanceof Site site ) )
-        {
-            throw new NotFoundException( String.format( "Site [%s] not find", siteKey ) )
-            {
-            };
-        }
-
-        SiteConfig siteConfig = site.getSiteConfigs().get( ApplicationKey.from( "com.enonic.xp.site" ) );
+        SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "com.enonic.xp.site" ) );
         if ( siteConfig != null )
         {
-            String baseUrl = siteConfig.getConfig().getString( "baseUrl" );
-            return () -> Objects.requireNonNullElse( baseUrl, "/" );
+            return siteConfig.getConfig().getString( "baseUrl" );
         }
-        else
-        {
+        return null;
+    }
+
+    @Override
+    public BaseUrlStrategy offlineBaseUrlStrategy(final ProjectName projectName, final Branch branch, final Content content) {
+        if (content == null) {
             return () -> "/";
         }
+
+        if (content instanceof Site site) {
+            String baseUrl = resolveBaseUrl(site.getSiteConfigs());
+            if (baseUrl != null) {
+                return () -> baseUrl;
+            }
+        }
+
+        Site nearestSite = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .branch( branch )
+            .build()
+            .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
+
+        if (nearestSite != null) {
+            String baseUrl = resolveBaseUrl(nearestSite.getSiteConfigs());
+            if (baseUrl != null) {
+                return () -> baseUrl;
+            }
+        }
+
+        Project project = projectService.get( projectName);
+        if (project != null) {
+            String baseUrl = resolveBaseUrl(project.getSiteConfigs());
+            if (baseUrl != null) {
+                return () -> baseUrl;
+            }
+        }
+
+        return () -> "/";
     }
 
     @Override
@@ -109,46 +119,71 @@ public class UrlStrategyFacadeImpl
     @Override
     public ImageUrlGeneratorParams offlineImageUrlParams( final ImageUrlParams params )
     {
-        final ProjectName mainPathProjectName = params.getProjectName() != null
+        final ProjectName mediaPathProjectName = params.getProjectName() != null
             ? ProjectName.from( params.getProjectName() )
-            : ProjectName.from( ContextAccessor.current().getRepositoryId() );
+            : ProjectName.from( Objects.requireNonNull( ContextAccessor.current().getRepositoryId() ) );
 
-        final Branch mainPathBranch = params.getBranch() != null ? Branch.from( params.getBranch() ) : ContextAccessor.current().getBranch();
+        final Branch mediaPathBranch = params.getBranch() != null
+            ? Branch.from( params.getBranch() )
+            : Objects.requireNonNullElse( ContextAccessor.current().getBranch(), ContentConstants.BRANCH_MASTER );
 
         final ProjectName prefixAndBaseUrlProjectName = ContextAccessor.current().getRepositoryId() != null
             ? ProjectName.from( ContextAccessor.current().getRepositoryId() )
-            : ProjectName.from( params.getProjectName() );
+            : ProjectName.from( Objects.requireNonNull( params.getProjectName() ) );
 
         final Branch prefixAndBaseUrlBranch = ContextAccessor.current().getBranch() != null
             ? ContextAccessor.current().getBranch()
-            : Branch.from( params.getBranch() );
+            : Objects.requireNonNullElse( Branch.from( params.getBranch() ), ContentConstants.BRANCH_MASTER );
 
-        final String siteKey = params.getSiteKey();
+        final String contentKey = params.getContentKey();
 
-        BaseUrlStrategy baseUrlStrategy = offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, siteKey );
+        final Media media = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( mediaPathProjectName.getRepoId() )
+            .branch( mediaPathBranch )
+            .build()
+            .callWith( () -> getMedia( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
 
-        PathPrefixStrategy pathPrefixStrategy = contextPathPrefixStrategy( mainPathProjectName, mainPathBranch, siteKey );
+        final Site site = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( prefixAndBaseUrlProjectName.getRepoId() )
+            .branch( prefixAndBaseUrlBranch )
+            .build()
+            .callWith( () -> contentKey.startsWith( "/" )
+                ? contentService.findNearestSiteByPath( ContentPath.from( contentKey ) )
+                : contentService.getNearestSite( ContentId.from( contentKey ) ) );
 
-        RewritePathStrategy rewritePathStrategy = doNotRewriteStrategy();
+        final BaseUrlStrategy baseUrlStrategy = offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, site );
 
-        Context context =
-            ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( mainPathProjectName.getRepoId() ).branch( mainPathBranch ).build();
+        final PathPrefixStrategy pathPrefixStrategy = contentKey == null ? () -> "/api" : () -> {
+            final StringBuilder prefix = new StringBuilder();
 
-        ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
+            appendPart( prefix, "site" );
+            appendPart( prefix, prefixAndBaseUrlProjectName.toString() );
+            appendPart( prefix, prefixAndBaseUrlBranch.getValue() );
+            if ( site != null )
+            {
+                appendPart( prefix, site.getPath().toString() );
+            }
+            appendPart( prefix, "_" );
+            return prefix.toString();
+        };
+
+        final RewritePathStrategy rewritePathStrategy = doNotRewriteStrategy();
+
+        final ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
 
         generatorParams.baseUrlStrategy = baseUrlStrategy;
         generatorParams.pathPrefixStrategy = pathPrefixStrategy;
         generatorParams.rewritePathStrategy = rewritePathStrategy;
-        generatorParams.mediaProvider =
-            () -> context.callWith( () -> getMedia( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
-        generatorParams.nearestSiteProvider = () -> null; // TODO
+
+        generatorParams.mediaProvider = () -> media;
+
+        generatorParams.projectName = mediaPathProjectName;
+        generatorParams.branch = mediaPathBranch;
         generatorParams.scale = params.getScale();
         generatorParams.format = params.getFormat();
         generatorParams.filter = params.getFilter();
         generatorParams.quality = params.getQuality();
         generatorParams.background = params.getBackground();
-        generatorParams.id = params.getId();
-        generatorParams.path = params.getPath();
 
         return generatorParams;
     }
@@ -158,36 +193,76 @@ public class UrlStrategyFacadeImpl
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        BaseUrlStrategy baseUrlStrategy = requestBaseUrlStrategy( portalRequest, params.getType() );
+        final ProjectName mediaPathProjectName = params.getProjectName() != null
+            ? ProjectName.from( params.getProjectName() )
+            : ProjectName.from( Objects.requireNonNull( portalRequest.getRepositoryId(), "Project must be provided" ) );
 
-        PathPrefixStrategy pathPrefixStrategy = requestPathPrefixStrategy( portalRequest );
+        final Branch mediaPathBranch = params.getBranch() != null
+            ? Branch.from( params.getBranch() )
+            : Objects.requireNonNullElse( portalRequest.getBranch(), ContentConstants.BRANCH_MASTER );
 
-        RewritePathStrategy rewritePathStrategy = requestRewriteStrategy( portalRequest );
+        final ProjectName prefixAndBaseUrlProjectName = portalRequest.getRepositoryId() != null
+            ? ProjectName.from( portalRequest.getRepositoryId() )
+            : ProjectName.from( params.getProjectName() );
 
-        Context context = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( portalRequest.getRepositoryId() )
-            .branch( portalRequest.getBranch() )
-            .build();
+        final Branch prefixAndBaseUrlBranch = portalRequest.getBranch() != null
+            ? portalRequest.getBranch()
+            : Branch.from( Objects.requireNonNullElse( params.getBranch(), ContentConstants.BRANCH_MASTER.getValue() ) );
 
-        ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
+        final Media media = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( mediaPathProjectName.getRepoId() )
+            .branch( mediaPathBranch )
+            .build()
+            .callWith( () -> getMedia( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
+
+        final Site site = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( prefixAndBaseUrlProjectName.getRepoId() )
+            .branch( prefixAndBaseUrlBranch )
+            .build()
+            .callWith( () -> {
+                final ContentResolver contentResolver = new ContentResolver( contentService );
+                return contentResolver.resolve( portalRequest ).getNearestSite();
+            } );
+
+        final BaseUrlStrategy baseUrlStrategy = requestBaseUrlStrategy( portalRequest, params.getType() );
+
+        final PathPrefixStrategy pathPrefixStrategy = () -> {
+            final StringBuilder prefix = new StringBuilder();
+
+            appendPart( prefix, portalRequest.getBaseUri() );
+            if ( portalRequest.isSiteBase() )
+            {
+                appendPart( prefix, "site" );
+                appendPart( prefix, prefixAndBaseUrlProjectName.toString() );
+                appendPart( prefix, prefixAndBaseUrlBranch.getValue() );
+                if ( site != null )
+                {
+                    appendPart( prefix, site.getPath().toString() );
+                }
+            }
+            appendPart( prefix, "_" );
+
+            return prefix.toString();
+        };
+
+        final RewritePathStrategy rewritePathStrategy = requestRewriteStrategy( portalRequest );
+
+        final ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
 
         generatorParams.baseUrlStrategy = baseUrlStrategy;
         generatorParams.pathPrefixStrategy = pathPrefixStrategy;
         generatorParams.rewritePathStrategy = rewritePathStrategy;
-        generatorParams.mediaProvider =
-            () -> context.callWith( () -> getMedia( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
-        generatorParams.nearestSiteProvider = () -> context.callWith( () -> {
-            final ContentResolver contentResolver = new ContentResolver( contentService );
-            return contentResolver.resolve( portalRequest ).getNearestSite();
-        } );
+
+        generatorParams.mediaProvider = () -> media;
+
+        generatorParams.projectName = mediaPathProjectName;
+        generatorParams.branch = mediaPathBranch;
 
         generatorParams.scale = params.getScale();
         generatorParams.format = params.getFormat();
         generatorParams.filter = params.getFilter();
         generatorParams.quality = params.getQuality();
         generatorParams.background = params.getBackground();
-        generatorParams.id = params.getId();
-        generatorParams.path = params.getPath();
 
         return generatorParams;
     }
@@ -210,7 +285,7 @@ public class UrlStrategyFacadeImpl
 
         if ( !( content instanceof Media ) )
         {
-            throw new NotFoundException( "Content [" + contentKey + "] is not a Media" )
+            throw new NotFoundException( String.format( "Content [%s] is not a Media", contentKey ) )
             {
             };
         }

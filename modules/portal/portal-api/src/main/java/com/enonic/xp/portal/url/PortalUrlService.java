@@ -25,9 +25,5 @@ public interface PortalUrlService
 
     String apiUrl( ApiUrlParams params );
 
-    String imageMediaUrl( ImageMediaUrlParams params );
-
-    String attachmentMediaUrl( AttachmentMediaUrlParams params );
-
     String imageUrl( ImageUrlGeneratorParams params );
 }

@@ -25,14 +25,4 @@ public class UrlService
         return UrlGenerator.generateUrl( baseUrlStrategy, mediaPathStrategy, rewritePathStrategy );
     }
 
-    private ImageMediaPathStrategyParams map( final ImageUrlGeneratorParams source )
-    {
-        return ImageMediaPathStrategyParams.create()
-            .setMedia( source.getMedia() )
-            .setProjectName( source.getProjectName() )
-            .setBranch( source.getBranch() )
-            .setScale( source.getScale() )
-            .build();
-    }
-
 }

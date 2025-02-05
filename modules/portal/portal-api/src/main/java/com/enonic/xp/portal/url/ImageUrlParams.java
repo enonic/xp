@@ -31,7 +31,7 @@ public final class ImageUrlParams
 
     private String branch;
 
-    private String siteKey;
+    private String contentKey;
 
     public String getId()
     {
@@ -78,9 +78,9 @@ public final class ImageUrlParams
         return branch;
     }
 
-    public String getSiteKey()
+    public String getContentKey()
     {
-        return siteKey;
+        return contentKey;
     }
 
     public ImageUrlParams id( final String value )
@@ -142,9 +142,9 @@ public final class ImageUrlParams
         return this;
     }
 
-    public ImageUrlParams siteKey( final String siteKey )
+    public ImageUrlParams contentKey( final String contentKey )
     {
-        this.siteKey = siteKey;
+        this.contentKey = contentKey;
         return this;
     }
 
