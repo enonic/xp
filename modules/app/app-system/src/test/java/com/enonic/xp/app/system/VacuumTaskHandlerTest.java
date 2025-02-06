@@ -21,6 +21,7 @@ import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -101,10 +102,9 @@ public class VacuumTaskHandlerTest
         verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertNull( paramsCaptor.getValue().getAgeThreshold() );
-        assertEquals( 3, paramsCaptor.getValue().getTaskNames().size() );
-        assertTrue( paramsCaptor.getValue()
-                        .getTaskNames()
-                        .containsAll( Set.of( "SegmentVacuumTask", "VersionTableVacuumTask", "SnapshotsVacuumTask" ) ) );
+        assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );
+        assertThat( paramsCaptor.getValue()
+                        .getTaskNames()).containsExactlyInAnyOrder( "VersionTableVacuumTask", "SnapshotsVacuumTask" );
         assertNotNull( paramsCaptor.getValue().getVacuumListener() );
     }
 }

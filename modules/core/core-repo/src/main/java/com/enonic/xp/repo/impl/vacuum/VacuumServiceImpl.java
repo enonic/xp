@@ -96,7 +96,8 @@ public class VacuumServiceImpl
 
     private void deleteSnapshotsIfNecessary( final Instant startedAt )
     {
-        if ( tasks.hasTaskByName( "BinaryBlobVacuumTask" ) || tasks.hasTaskByName( "NodeBlobVacuumTask" ) )
+        if ( tasks.hasTaskByName( "SegmentVacuumTask" ) || tasks.hasTaskByName( "BinaryBlobVacuumTask" ) ||
+            tasks.hasTaskByName( "NodeBlobVacuumTask" ) )
         {
             try
             {
