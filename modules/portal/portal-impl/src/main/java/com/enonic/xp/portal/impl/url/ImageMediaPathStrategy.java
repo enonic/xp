@@ -1,0 +1,81 @@
+package com.enonic.xp.portal.impl.url;
+
+import java.util.Objects;
+
+import com.google.common.io.Files;
+
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.url.PathStrategy;
+import com.enonic.xp.project.ProjectName;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+final class ImageMediaPathStrategy
+    implements PathStrategy
+{
+    private final ImageMediaPathStrategyParams params;
+
+    ImageMediaPathStrategy( final ImageMediaPathStrategyParams params )
+    {
+        this.params = Objects.requireNonNull( params );
+    }
+
+    @Override
+    public String generatePath()
+    {
+        final Media media = params.getMedia();
+        final ProjectName project = params.getProjectName();
+        final Branch branch = params.getBranch();
+
+        final String hash = resolveHash( media );
+        final String name = resolveName( media, params.getFormat() );
+        final String scale = resolveScale( params.getScale() );
+
+        final StringBuilder url = new StringBuilder();
+
+        appendPart( url, "media" );
+        appendPart( url, "image" );
+        appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
+        appendPart( url, media.getId() + ( hash != null ? ":" + hash : "" ) );
+        appendPart( url, scale );
+        appendPart( url, name );
+
+        return url.toString();
+    }
+
+    private String resolveHash( final Media media )
+    {
+        final Attachment attachment = media.getMediaAttachment();
+        return attachment.getSha512() != null ? attachment.getSha512().substring( 0, 32 ) : null;
+    }
+
+    private String resolveName( final Content media, final String format )
+    {
+        final String name = media.getName().toString();
+
+        if ( format != null )
+        {
+            final String extension = Files.getFileExtension( name );
+            if ( isNullOrEmpty( extension ) || !format.equals( extension ) )
+            {
+                return name + "." + format;
+            }
+        }
+        return name;
+    }
+
+    private String resolveScale( final String scale )
+    {
+        if ( scale == null )
+        {
+            throw new IllegalArgumentException( "Missing mandatory parameter 'scale' for image URL" );
+        }
+
+        return scale.replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
+    }
+}
