@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
@@ -15,12 +15,12 @@ import com.enonic.xp.project.ProjectName;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-public class ImageMediaPathStrategy
+final class ImageMediaPathStrategy
     implements PathStrategy
 {
     private final ImageMediaPathStrategyParams params;
 
-    public ImageMediaPathStrategy( final ImageMediaPathStrategyParams params )
+    ImageMediaPathStrategy( final ImageMediaPathStrategyParams params )
     {
         this.params = Objects.requireNonNull( params );
     }

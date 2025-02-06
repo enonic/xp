@@ -91,6 +91,7 @@ export type ImageUrlParams = IdXorPath & {
         | 'full';
     project?: string;
     branch?: string;
+    contentKey?: string;
     offline?: boolean | undefined;
 };
 
@@ -119,6 +120,8 @@ interface ImageUrlHandler {
 
     setOffline(value: boolean | undefined): void;
 
+    setContentKey(value?: string | null): void;
+
     createUrl(): string;
 }
 
@@ -136,6 +139,10 @@ interface ImageUrlHandler {
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.projectName] Name of the project.
+ * @param {string} [params.branch] Name of the branch.
+ * @param {string} [params.contentKey] Key of the content.
+ * @param {boolean} [params.offline] Set to true if the URL should be generated without context of the current request.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -147,13 +154,14 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setPath(params.path);
     bean.setUrlType(params.type);
     // bean.setQueryParams(__.toScriptValue(params.params));
-    bean.setProjectName(params.project);
-    bean.setBranch(params.branch);
     bean.setBackground(params.background);
     bean.setQuality(params.quality);
     bean.setFilter(params.filter);
     bean.setFormat(params.format);
     bean.setScale(params.scale);
+    bean.setProjectName(params.project);
+    bean.setBranch(params.branch);
+    bean.setContentKey(params.contentKey);
     bean.setOffline(params.offline);
 
     return bean.createUrl();

@@ -6,25 +6,17 @@ import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.url.ImageUrlParams;
-import com.enonic.xp.repository.RepositoryUtils;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class ImageUrlBuilder
     extends GenericEndpointUrlBuilder<ImageUrlParams>
 {
-    private boolean legacyImageServiceEnabled;
-
     ImageUrlBuilder()
     {
         super( "image" );
@@ -33,81 +25,20 @@ final class ImageUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
-        final boolean isSlashAPI = portalRequest.getRawPath().startsWith( "/api/" );
-        final String projectName = RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() );
-        final Branch branch = this.portalRequest.getBranch();
-
-        if ( isSlashAPI )
-        {
-            params.putAll( this.params.getParams() );
-
-            url.setLength( 0 );
-            appendPart( url, "image" );
-            appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
-        }
-        else
-        {
-            if ( legacyImageServiceEnabled )
-            {
-                super.buildUrl( url, params );
-            }
-            else
-            {
-                params.putAll( this.params.getParams() );
-
-                final ContentResolverResult contentResolverResult =
-                    new com.enonic.xp.portal.impl.ContentResolver( contentService ).resolve( portalRequest );
-
-                if ( contentResolverResult.getNearestSite() != null )
-                {
-                    appendPart( url, projectName );
-                    appendPart( url, branch.getValue() );
-                    appendPart( url, contentResolverResult.getNearestSite().getPath().toString() );
-                }
-                else
-                {
-                    url.setLength( 0 );
-                    appendPart( url, "site" );
-                    appendPart( url, projectName );
-                    appendPart( url, branch.getValue() );
-                }
-
-                appendPart( url, "_" );
-                appendPart( url, "media" );
-                appendPart( url, "image" );
-                appendPart( url, branch == ContentConstants.BRANCH_DRAFT ? projectName + ":" + branch.getValue() : projectName );
-            }
-        }
+        super.buildUrl( url, params );
 
         final Media media = resolveMedia();
         final String hash = resolveHash( media );
         final String name = resolveName( media );
         final String scale = resolveScale();
 
-        appendPart( url, media.getId() + ( hash != null ? ":" + hash : "" ) );
+        appendPart( url, media.getId() + ":" + hash );
         appendPart( url, scale );
         appendPart( url, name );
 
         addParamIfNeeded( params, "quality", this.params.getQuality() );
         addParamIfNeeded( params, "background", this.params.getBackground() );
         addParamIfNeeded( params, "filter", this.params.getFilter() );
-    }
-
-    @Override
-    protected String getBaseUrl()
-    {
-        return VirtualHostContextHelper.getMediaServiceBaseUrl();
-    }
-
-    @Override
-    protected String getTargetUriPrefix()
-    {
-        return "/api/media";
-    }
-
-    public void setLegacyImageServiceEnabled( final boolean legacyImageServiceEnabled )
-    {
-        this.legacyImageServiceEnabled = legacyImageServiceEnabled;
     }
 
     private void addParamIfNeeded( final Multimap<String, String> params, final String name, final Object value )
@@ -137,23 +68,15 @@ final class ImageUrlBuilder
 
     private String resolveHash( final Media media )
     {
-        if ( legacyImageServiceEnabled )
-        {
-            String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
-            return Hashing.sha1()
-                .newHasher()
-                .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
-                .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
-                .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
-                .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
-                .hash()
-                .toString();
-        }
-        else
-        {
-            final Attachment attachment = media.getMediaAttachment();
-            return attachment.getSha512() != null ? attachment.getSha512().substring( 0, 32 ) : null;
-        }
+        String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
+        return Hashing.sha1()
+            .newHasher()
+            .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
+            .hash()
+            .toString();
     }
 
     private String resolveName( final Content media )

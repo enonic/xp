@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
 
-public class ImageUrlGeneratorParams
+final class ImageMediaPathStrategyParams
 {
     private final Media media;
 
@@ -14,25 +14,16 @@ public class ImageUrlGeneratorParams
 
     private final Branch branch;
 
-    private final String background;
-
-    private final Integer quality;
-
-    private final String filter;
+    private final String scale;
 
     private final String format;
 
-    private final String scale;
-
-    private ImageUrlGeneratorParams( final Builder builder )
+    public ImageMediaPathStrategyParams( final Builder builder )
     {
         this.media = Objects.requireNonNull( builder.media );
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.scale = Objects.requireNonNull( builder.scale );
-        this.background = builder.background;
-        this.quality = builder.quality;
-        this.filter = builder.filter;
         this.format = builder.format;
     }
 
@@ -51,19 +42,9 @@ public class ImageUrlGeneratorParams
         return branch;
     }
 
-    public String getBackground()
+    public String getScale()
     {
-        return background;
-    }
-
-    public Integer getQuality()
-    {
-        return quality;
-    }
-
-    public String getFilter()
-    {
-        return filter;
+        return scale;
     }
 
     public String getFormat()
@@ -71,9 +52,9 @@ public class ImageUrlGeneratorParams
         return format;
     }
 
-    public String getScale()
+    public static Builder create()
     {
-        return scale;
+        return new Builder();
     }
 
     public static class Builder
@@ -84,15 +65,9 @@ public class ImageUrlGeneratorParams
 
         private Branch branch;
 
-        private String background;
-
-        private Integer quality;
-
-        private String filter;
+        private String scale;
 
         private String format;
-
-        private String scale;
 
         public Builder setMedia( final Media media )
         {
@@ -112,21 +87,9 @@ public class ImageUrlGeneratorParams
             return this;
         }
 
-        public Builder setBackground( final String background )
+        public Builder setScale( final String scale )
         {
-            this.background = background;
-            return this;
-        }
-
-        public Builder setQuality( final Integer quality )
-        {
-            this.quality = quality;
-            return this;
-        }
-
-        public Builder setFilter( final String filter )
-        {
-            this.filter = filter;
+            this.scale = scale;
             return this;
         }
 
@@ -136,15 +99,9 @@ public class ImageUrlGeneratorParams
             return this;
         }
 
-        public Builder setScale( final String scale )
+        public ImageMediaPathStrategyParams build()
         {
-            this.scale = scale;
-            return this;
-        }
-
-        public ImageUrlGeneratorParams build()
-        {
-            return new ImageUrlGeneratorParams( this );
+            return new ImageMediaPathStrategyParams( this );
         }
     }
 }

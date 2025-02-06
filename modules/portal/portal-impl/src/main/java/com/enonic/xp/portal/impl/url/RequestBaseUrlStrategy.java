@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 

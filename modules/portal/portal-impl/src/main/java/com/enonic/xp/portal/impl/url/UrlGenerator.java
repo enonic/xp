@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.PathStrategy;
@@ -15,11 +15,9 @@ public class UrlGenerator
         final String path = rewritePathStrategy.rewritePath( pathStrategy.generatePath() );
 
         final StringBuilder url = new StringBuilder();
-
-        appendPart( url, baseUrl );
         appendPart( url, path );
 
-        return url.toString();
+        return baseUrl + url;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
@@ -51,47 +51,41 @@ public class UrlStrategyFacadeImpl
         this.projectService = projectService;
     }
 
-    private String resolveBaseUrl( final SiteConfigs siteConfigs )
-    {
-        SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "com.enonic.xp.site" ) );
-        if ( siteConfig != null )
-        {
-            return siteConfig.getConfig().getString( "baseUrl" );
-        }
-        return null;
-    }
-
     @Override
-    public BaseUrlStrategy offlineBaseUrlStrategy(final ProjectName projectName, final Branch branch, final Content content) {
-        if (content == null) {
+    public BaseUrlStrategy offlineBaseUrlStrategy( final ProjectName projectName, final Branch branch, final Content content )
+    {
+        if ( content == null )
+        {
             return () -> "/";
         }
 
-        if (content instanceof Site site) {
-            String baseUrl = resolveBaseUrl(site.getSiteConfigs());
-            if (baseUrl != null) {
-                return () -> baseUrl;
-            }
+        Site site;
+        if ( !( content instanceof Site ) )
+        {
+            site = ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( projectName.getRepoId() )
+                .branch( branch )
+                .build()
+                .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
+        }
+        else
+        {
+            site = (Site) content;
         }
 
-        Site nearestSite = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( projectName.getRepoId() )
-            .branch( branch )
-            .build()
-            .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
-
-        if (nearestSite != null) {
-            String baseUrl = resolveBaseUrl(nearestSite.getSiteConfigs());
-            if (baseUrl != null) {
-                return () -> baseUrl;
-            }
+        String baseUrl = resolveBaseUrl( site.getSiteConfigs() );
+        if ( baseUrl != null )
+        {
+            return () -> baseUrl;
         }
 
-        Project project = projectService.get( projectName);
-        if (project != null) {
-            String baseUrl = resolveBaseUrl(project.getSiteConfigs());
-            if (baseUrl != null) {
-                return () -> baseUrl;
+        Project project = projectService.get( projectName );
+        if ( project != null )
+        {
+            String projectBaseUrl = resolveBaseUrl( project.getSiteConfigs() );
+            if ( projectBaseUrl != null )
+            {
+                return () -> projectBaseUrl;
             }
         }
 
@@ -143,17 +137,18 @@ public class UrlStrategyFacadeImpl
             .build()
             .callWith( () -> getMedia( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
 
-        final Site site = ContextBuilder.copyOf( ContextAccessor.current() )
+        final Site site = contentKey != null ? ContextBuilder.copyOf( ContextAccessor.current() )
             .repositoryId( prefixAndBaseUrlProjectName.getRepoId() )
             .branch( prefixAndBaseUrlBranch )
             .build()
             .callWith( () -> contentKey.startsWith( "/" )
                 ? contentService.findNearestSiteByPath( ContentPath.from( contentKey ) )
-                : contentService.getNearestSite( ContentId.from( contentKey ) ) );
+                : contentService.getNearestSite( ContentId.from( contentKey ) ) ) : null;
 
-        final BaseUrlStrategy baseUrlStrategy = offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, site );
+        final BaseUrlStrategy baseUrlStrategy =
+            offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, site != null ? site : media );
 
-        final PathPrefixStrategy pathPrefixStrategy = contentKey == null ? () -> "/api" : () -> {
+        final PathPrefixStrategy pathPrefixStrategy = contentKey == null ? new SlashApiPathPrefixStrategy() : () -> {
             final StringBuilder prefix = new StringBuilder();
 
             appendPart( prefix, "site" );
@@ -169,23 +164,19 @@ public class UrlStrategyFacadeImpl
 
         final RewritePathStrategy rewritePathStrategy = doNotRewriteStrategy();
 
-        final ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
-
-        generatorParams.baseUrlStrategy = baseUrlStrategy;
-        generatorParams.pathPrefixStrategy = pathPrefixStrategy;
-        generatorParams.rewritePathStrategy = rewritePathStrategy;
-
-        generatorParams.mediaProvider = () -> media;
-
-        generatorParams.projectName = mediaPathProjectName;
-        generatorParams.branch = mediaPathBranch;
-        generatorParams.scale = params.getScale();
-        generatorParams.format = params.getFormat();
-        generatorParams.filter = params.getFilter();
-        generatorParams.quality = params.getQuality();
-        generatorParams.background = params.getBackground();
-
-        return generatorParams;
+        return ImageUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setPathPrefixStrategy( pathPrefixStrategy )
+            .setRewritePathStrategy( rewritePathStrategy )
+            .setMedia( media )
+            .setProjectName( mediaPathProjectName )
+            .setBranch( mediaPathBranch )
+            .setScale( params.getScale() )
+            .setFormat( params.getFormat() )
+            .setFilter( params.getFilter() )
+            .setQuality( params.getQuality() )
+            .setBackground( params.getBackground() )
+            .build();
     }
 
     @Override
@@ -232,7 +223,6 @@ public class UrlStrategyFacadeImpl
             appendPart( prefix, portalRequest.getBaseUri() );
             if ( portalRequest.isSiteBase() )
             {
-                appendPart( prefix, "site" );
                 appendPart( prefix, prefixAndBaseUrlProjectName.toString() );
                 appendPart( prefix, prefixAndBaseUrlBranch.getValue() );
                 if ( site != null )
@@ -247,24 +237,29 @@ public class UrlStrategyFacadeImpl
 
         final RewritePathStrategy rewritePathStrategy = requestRewriteStrategy( portalRequest );
 
-        final ImageUrlGeneratorParams generatorParams = new ImageUrlGeneratorParams();
+        return ImageUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setPathPrefixStrategy( pathPrefixStrategy )
+            .setRewritePathStrategy( rewritePathStrategy )
+            .setMedia( media )
+            .setProjectName( mediaPathProjectName )
+            .setBranch( mediaPathBranch )
+            .setScale( params.getScale() )
+            .setFormat( params.getFormat() )
+            .setFilter( params.getFilter() )
+            .setQuality( params.getQuality() )
+            .setBackground( params.getBackground() )
+            .build();
+    }
 
-        generatorParams.baseUrlStrategy = baseUrlStrategy;
-        generatorParams.pathPrefixStrategy = pathPrefixStrategy;
-        generatorParams.rewritePathStrategy = rewritePathStrategy;
-
-        generatorParams.mediaProvider = () -> media;
-
-        generatorParams.projectName = mediaPathProjectName;
-        generatorParams.branch = mediaPathBranch;
-
-        generatorParams.scale = params.getScale();
-        generatorParams.format = params.getFormat();
-        generatorParams.filter = params.getFilter();
-        generatorParams.quality = params.getQuality();
-        generatorParams.background = params.getBackground();
-
-        return generatorParams;
+    private String resolveBaseUrl( final SiteConfigs siteConfigs )
+    {
+        SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "com.enonic.xp.site" ) );
+        if ( siteConfig != null )
+        {
+            return siteConfig.getConfig().getString( "baseUrl" );
+        }
+        return null;
     }
 
     private Content getContent( final String contentKey )

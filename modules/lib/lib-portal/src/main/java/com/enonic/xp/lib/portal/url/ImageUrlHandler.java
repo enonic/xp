@@ -33,6 +33,12 @@ public final class ImageUrlHandler
 
     private String scale;
 
+    private String projectName;
+
+    private String branch;
+
+    private String contentKey;
+
     private boolean offline;
 
     @Override
@@ -78,6 +84,21 @@ public final class ImageUrlHandler
         this.scale = scale;
     }
 
+    public void setProjectName( final String projectName )
+    {
+        this.projectName = projectName;
+    }
+
+    public void setBranch( final String branch )
+    {
+        this.branch = branch;
+    }
+
+    public void setContentKey( final String contentKey )
+    {
+        this.contentKey = contentKey;
+    }
+
     public void setOffline( final Boolean offline )
     {
         this.offline = Objects.requireNonNullElse( offline, false );
@@ -91,7 +112,10 @@ public final class ImageUrlHandler
             .quality( this.quality )
             .filter( this.filter )
             .format( this.format )
-            .scale( this.scale );
+            .scale( this.scale )
+            .projectName( this.projectName )
+            .branch( this.branch )
+            .contentKey( this.contentKey );
 
         final ImageUrlGeneratorParams generatorParams = this.offline || this.request == null
             ? this.urlStrategyFacade.offlineImageUrlParams( params )

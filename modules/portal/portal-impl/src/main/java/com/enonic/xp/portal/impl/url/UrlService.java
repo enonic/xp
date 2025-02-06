@@ -1,22 +1,23 @@
-package com.enonic.xp.portal.impl.url3;
+package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.portal.url.BaseUrlStrategy;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PathPrefixStrategy;
 import com.enonic.xp.portal.url.RewritePathStrategy;
 
 public class UrlService
 {
-    public String imageUrl( com.enonic.xp.portal.url.ImageUrlGeneratorParams params )
+    public String imageUrl( ImageUrlGeneratorParams params )
     {
-        final BaseUrlStrategy baseUrlStrategy = params.baseUrlStrategy;
-        final PathPrefixStrategy pathPrefixStrategy = params.pathPrefixStrategy;
-        final RewritePathStrategy rewritePathStrategy = params.rewritePathStrategy;
+        final BaseUrlStrategy baseUrlStrategy = params.getBaseUrlStrategy();
+        final PathPrefixStrategy pathPrefixStrategy = params.getPathPrefixStrategy();
+        final RewritePathStrategy rewritePathStrategy = params.getRewritePathStrategy();
 
         final ImageMediaPathStrategyParams imageMediaPathStrategyParams = ImageMediaPathStrategyParams.create()
-            .setMedia( params.mediaProvider.get() )
-            .setProjectName( params.projectName )
-            .setBranch( params.branch )
-            .setScale( params.scale )
+            .setMedia( params.getMedia() )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setScale( params.getScale() )
             .build();
 
         final MediaPathStrategy mediaPathStrategy =

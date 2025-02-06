@@ -13,15 +13,11 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.portal.impl.url3.UrlService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
-import com.enonic.xp.portal.url.AttachmentMediaUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
@@ -117,15 +113,11 @@ public final class PortalUrlServiceImpl
     {
         if ( this.legacyImageServiceEnabled )
         {
-            final ImageUrlBuilder builder = new ImageUrlBuilder();
-            builder.setLegacyImageServiceEnabled( this.legacyImageServiceEnabled );
-            return build( builder, params );
+            return build( new ImageUrlBuilder(), params );
         }
         else
         {
-            final PortalRequest portalRequest = PortalRequestAccessor.get();
-
-            final ImageUrlGeneratorParams generatorParams = portalRequest == null
+            final ImageUrlGeneratorParams generatorParams = params.getPortalRequest() == null
                 ? urlStrategyFacade.offlineImageUrlParams( params )
                 : urlStrategyFacade.requestImageUrlParams( params );
 
@@ -138,9 +130,7 @@ public final class PortalUrlServiceImpl
     {
         if ( this.legacyAttachmentServiceEnabled )
         {
-            final AttachmentUrlBuilder builder = new AttachmentUrlBuilder();
-            builder.setLegacyAttachmentServiceEnabled( this.legacyAttachmentServiceEnabled );
-            return build( builder, params );
+            return build( new AttachmentUrlBuilder(), params );
         }
         else
         {

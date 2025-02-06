@@ -15,6 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.UrlStrategyFacade;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
@@ -70,9 +71,13 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
+        ProjectService projectService = mock( ProjectService.class );
+
+        UrlStrategyFacade urlStrategyFacade = new UrlStrategyFacadeImpl( this.contentService, projectService );
+
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, mock( UrlStrategyFacade.class ) );
+                                      this.redirectChecksumService, urlStrategyFacade );
 
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
