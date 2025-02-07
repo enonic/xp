@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.macro;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +30,8 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MacroProcessorScriptTest
 {
@@ -50,29 +53,30 @@ public class MacroProcessorScriptTest
             document( "<h1>document</h1>" ).
             build();
 
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        final BundleContext bundleContext = mock( BundleContext.class );
 
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        final Bundle bundle = mock( Bundle.class );
+        when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
-        final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
+        final Application application = mock( Application.class );
+        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        when( application.isStarted() ).thenReturn( true );
 
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
+        final ApplicationService applicationService = mock( ApplicationService.class );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+        this.resourceService = mock( ResourceService.class );
+        when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 MacroProcessorScriptTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
+        final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
 
         final ScriptRuntimeFactory runtimeFactory =
             ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
@@ -82,7 +86,7 @@ public class MacroProcessorScriptTest
 
         this.factory = new MacroProcessorFactoryImpl( scriptService );
 
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
         ServletRequestHolder.setRequest( req );
     }
 

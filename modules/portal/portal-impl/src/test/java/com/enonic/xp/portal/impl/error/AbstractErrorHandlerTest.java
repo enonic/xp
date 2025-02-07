@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.error;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,8 @@ import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
+
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractErrorHandlerTest
 {
@@ -54,19 +57,20 @@ public abstract class AbstractErrorHandlerTest
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        when( application.isStarted() ).thenReturn( true );
+        when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         this.resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+        when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 AbstractErrorHandlerTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );

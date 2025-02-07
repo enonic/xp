@@ -7,9 +7,9 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
-import com.enonic.xp.script.graal.standard.GraalScriptRuntimeFactory;
 import com.enonic.xp.script.graal.util.GraalJavascriptHelperFactory;
 import com.enonic.xp.script.graal.value.GraalScriptValueFactory;
+import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
@@ -24,7 +24,7 @@ public class GraalJsScriptFixturesFacade
     public ScriptRuntimeFactory scriptRuntimeFactory( final ApplicationService applicationService, final ResourceService resourceService,
                                                       final ScriptAsyncService scriptAsyncService )
     {
-        return new GraalScriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+        return new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
     }
 
     public ScriptValueFactory<?> scriptValueFactory()

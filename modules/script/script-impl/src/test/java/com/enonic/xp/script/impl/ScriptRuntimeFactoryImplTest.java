@@ -1,4 +1,4 @@
-package com.enonic.xp.script.impl.standard;
+package com.enonic.xp.script.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
+import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 import static org.mockito.ArgumentMatchers.any;

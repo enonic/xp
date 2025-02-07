@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.task.script;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,7 @@ class NamedTaskFactoryImplTest
 
         final Bundle bundle = mock( Bundle.class );
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
         final Application application = mock( Application.class );
         when( application.getBundle() ).thenReturn( bundle );

@@ -1,6 +1,7 @@
 package com.enonic.xp.script.impl;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -16,7 +17,6 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
-import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -49,6 +49,7 @@ public abstract class AbstractScriptTest
 
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        Mockito.when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
