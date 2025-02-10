@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.filter;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 public class FilterScriptImplTest
 {
@@ -62,19 +64,20 @@ public class FilterScriptImplTest
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        when( application.isStarted() ).thenReturn( true );
+        when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         this.resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+        when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl = FilterScriptImplTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
@@ -107,7 +110,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         this.portalRequest.setMethod( HttpMethod.POST );
         execute( "myapplication:/filter/callnext.js", webHandlerChain );
@@ -121,7 +124,7 @@ public class FilterScriptImplTest
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalResponse = PortalResponse.create().header( "pleaseDontFail", "value" ).build();
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         execute( "myapplication:/filter/removeHeader.js", webHandlerChain );
         assertThat( this.portalResponse.getHeaders() ).doesNotContainKey( "pleaseDontFail" );
@@ -132,7 +135,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         this.portalRequest.setMethod( HttpMethod.POST );
         try
@@ -151,7 +154,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         this.portalRequest.setMethod( HttpMethod.POST );
         final ResourceProblemException e =
@@ -166,7 +169,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         this.portalRequest.setMethod( HttpMethod.POST );
         try
@@ -186,7 +189,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( ResourceProblemException.class );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( ResourceProblemException.class );
 
         Assertions.assertThrows( ResourceProblemException.class, () -> execute( "myapplication:/filter/callnext.js", webHandlerChain ) );
 
@@ -198,7 +201,7 @@ public class FilterScriptImplTest
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
-        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( Exception.class );
+        when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( Exception.class );
 
         final ResourceProblemException exception = Assertions.assertThrows( ResourceProblemException.class,
                                                                             () -> execute( "myapplication:/filter/callnext.js",

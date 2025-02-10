@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.idprovider;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +43,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 public class IdProviderControllerServiceImplTest
 {
@@ -53,7 +55,7 @@ public class IdProviderControllerServiceImplTest
     {
         //Mocks the IdProviderDescriptorService
         final IdProviderDescriptorService idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
-        Mockito.when( idProviderDescriptorService.getDescriptor( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
+        when( idProviderDescriptorService.getDescriptor( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
             IdProviderDescriptor.create().key( ApplicationKey.from( "myapplication" ) ).build() );
 
         //Mocks the SecurityService
@@ -63,11 +65,11 @@ public class IdProviderControllerServiceImplTest
             IdProviderConfig.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();
         final IdProvider idProvider = IdProvider.create().idProviderConfig( idProviderConfig ).build();
 
-        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myemptyidprovider" ) ) ).thenReturn( emptyIdProvider );
-        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myidprovider" ) ) ).thenReturn( idProvider );
+        when( securityService.getIdProvider( IdProviderKey.from( "myemptyidprovider" ) ) ).thenReturn( emptyIdProvider );
+        when( securityService.getIdProvider( IdProviderKey.from( "myidprovider" ) ) ).thenReturn( idProvider );
 
-        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyIdProvider );
-        Mockito.when( securityService.getIdProvider( IdProviderKey.from( "myuserstore" ) ) ).thenReturn( idProvider );
+        when( securityService.getIdProvider( IdProviderKey.from( "myemptyuserstore" ) ) ).thenReturn( emptyIdProvider );
+        when( securityService.getIdProvider( IdProviderKey.from( "myuserstore" ) ) ).thenReturn( idProvider );
 
         //Mocks the PortalScriptService
         final PortalScriptService portalScriptService = setupPortalScriptService();
@@ -89,20 +91,22 @@ public class IdProviderControllerServiceImplTest
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getBundleContext() ).thenReturn( bundleContext );
+        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
 
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        when( application.getBundle() ).thenReturn( bundle );
+
+        when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        when( application.isStarted() ).thenReturn( true );
+        when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "defaultapplication" ) ) ).thenReturn( application );
-        Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "defaultapplication" ) ) ).thenReturn( application );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         ResourceService resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+        when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 AbstractControllerTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
@@ -196,9 +200,9 @@ public class IdProviderControllerServiceImplTest
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.from( "myuserstore" ) );
-        Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
-        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.from( "myuserstore" ) );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
@@ -215,13 +219,13 @@ public class IdProviderControllerServiceImplTest
     private HttpServletRequest createHttpServletRequest()
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( httpServletRequest.getMethod() ).thenReturn( "GET" );
-        Mockito.when( httpServletRequest.getScheme() ).thenReturn( "http" );
-        Mockito.when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
-        Mockito.when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
-        Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin" );
-        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/admin" );
-        Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
+        when( httpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( httpServletRequest.getScheme() ).thenReturn( "http" );
+        when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
+        when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
+        when( httpServletRequest.getRequestURI() ).thenReturn( "/admin" );
+        when( httpServletRequest.getPathInfo() ).thenReturn( "/admin" );
+        when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         return httpServletRequest;
     }
 }
