@@ -17,7 +17,6 @@ public class ControllerScriptImpl_requestTest
 {
     @Test
     public void testSimple()
-        throws Exception
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setPort( 80 );
@@ -25,12 +24,11 @@ public class ControllerScriptImpl_requestTest
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertJson( "simple", getResponseAsString() );
+        assertBodyJson( "simple.json" );
     }
 
     @Test
     public void testAll()
-        throws Exception
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
@@ -49,7 +47,7 @@ public class ControllerScriptImpl_requestTest
         execute( "myapplication:/controller/request.js" );
 
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertJson( "all", getResponseAsString() );
+        assertBodyJson( "all.json" );
     }
 
     @Test

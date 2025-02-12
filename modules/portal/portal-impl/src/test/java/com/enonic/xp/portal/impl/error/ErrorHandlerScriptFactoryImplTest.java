@@ -16,7 +16,7 @@ public class ErrorHandlerScriptFactoryImplTest
     {
         execute( "myapplication:/error/error.js", HttpStatus.INTERNAL_SERVER_ERROR );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, this.portalResponse.getStatus() );
-        assertEquals( "Generic error...", this.portalResponse.getAsString() );
+        assertEquals( "Generic error...", this.portalResponse.getBody() );
         assertEquals( "text/plain", this.portalResponse.getContentType().toString() );
     }
 
@@ -25,7 +25,7 @@ public class ErrorHandlerScriptFactoryImplTest
     {
         execute( "myapplication:/error/error.js", HttpStatus.NOT_FOUND );
         assertEquals( HttpStatus.NOT_FOUND, this.portalResponse.getStatus() );
-        assertEquals( "Something was not found", this.portalResponse.getAsString() );
+        assertEquals( "Something was not found", this.portalResponse.getBody() );
         assertEquals( "text/plain", this.portalResponse.getContentType().toString() );
     }
 

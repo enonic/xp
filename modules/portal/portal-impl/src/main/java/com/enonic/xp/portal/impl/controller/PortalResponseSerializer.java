@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.Cookie;
 
@@ -23,11 +24,9 @@ public final class PortalResponseSerializer
 
     private boolean defaultPostProcess;
 
-    private HttpStatus forceStatus;
+    private MediaType defaultContentType = MediaType.HTML_UTF_8;
 
     private Boolean forceApplyFilters;
-
-    private Object overrideBody;
 
     public PortalResponseSerializer( final ScriptValue value )
     {
@@ -37,7 +36,7 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
     {
         this.value = value;
-        this.defaultStatus = defaultStatus == null ? HttpStatus.OK : defaultStatus;
+        this.defaultStatus = Objects.requireNonNull( defaultStatus );
         this.defaultPostProcess = true;
     }
 
@@ -47,21 +46,9 @@ public final class PortalResponseSerializer
         return this;
     }
 
-    public PortalResponseSerializer status( final HttpStatus value )
-    {
-        this.forceStatus = value;
-        return this;
-    }
-
     public PortalResponseSerializer applyFilters( final boolean value )
     {
         this.forceApplyFilters = value;
-        return this;
-    }
-
-    public PortalResponseSerializer body( final Object value )
-    {
-        this.overrideBody = value;
         return this;
     }
 
@@ -76,8 +63,8 @@ public final class PortalResponseSerializer
         }
 
         populateStatus( builder, value.getMember( "status" ) );
-        populateContentType( builder, value.getMember( "contentType" ) );
         populateBody( builder, value.getMember( "body" ) );
+        populateContentType( builder, value.getMember( "contentType" ) );
         populateHeaders( builder, value.getMember( "headers" ) );
         populateContributions( builder, value.getMember( "pageContributions" ) );
         populateCookies( builder, value.getMember( "cookies" ) );
@@ -86,10 +73,6 @@ public final class PortalResponseSerializer
         populatePostProcess( builder, value.getMember( "postProcess" ) );
         populateWebSocket( builder, value.getMember( "webSocket" ) );
 
-        if ( this.forceStatus != null )
-        {
-            builder.status( this.forceStatus );
-        }
         if ( this.forceApplyFilters != null )
         {
             builder.applyFilters( this.forceApplyFilters );
@@ -100,25 +83,25 @@ public final class PortalResponseSerializer
 
     private void populatePostProcess( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        final Boolean postProcess = ( value != null ) ? value.getValue( Boolean.class ) : null;
+        final Boolean postProcess = value != null ? value.getValue( Boolean.class ) : null;
         builder.postProcess( postProcess != null ? postProcess : defaultPostProcess );
     }
 
     private void populateStatus( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        final Integer status = ( value != null ) ? value.getValue( Integer.class ) : null;
+        final Integer status = value != null ? value.getValue( Integer.class ) : null;
         builder.status( status != null ? HttpStatus.from( status ) : defaultStatus );
     }
 
     private void populateContentType( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        final String type = ( value != null ) ? value.getValue( String.class ) : null;
-        builder.contentType( type != null ? MediaType.parse( type ) : MediaType.HTML_UTF_8 );
+        final String type = value != null ? value.getValue( String.class ) : null;
+        builder.contentType( type != null ? MediaType.parse( type ) : defaultContentType );
     }
 
     private void setRedirect( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        final String redirect = ( value != null ) ? value.getValue( String.class ) : null;
+        final String redirect = value != null ? value.getValue( String.class ) : null;
         if ( redirect == null )
         {
             return;
@@ -130,13 +113,7 @@ public final class PortalResponseSerializer
 
     private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )
     {
-        if ( this.overrideBody != null )
-        {
-            builder.body( this.overrideBody );
-            return;
-        }
-
-        if ( ( value == null ) || value.isFunction() )
+        if ( value == null || value.isFunction() )
         {
             return;
         }
@@ -144,12 +121,14 @@ public final class PortalResponseSerializer
         if ( value.isArray() )
         {
             builder.body( value.getList() );
+            defaultContentType = MediaType.JSON_UTF_8;
             return;
         }
 
         if ( value.isObject() )
         {
             builder.body( value.getMap() );
+            defaultContentType = MediaType.JSON_UTF_8;
             return;
         }
 

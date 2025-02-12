@@ -56,7 +56,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getBody() );
     }
 
     @Test
@@ -70,7 +70,7 @@ public class TextRendererTest
         // exercise
         portalResponse = renderer.render( textComponent, portalRequest );
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\"></section>", portalResponse.getBody() );
     }
 
     @Test
@@ -85,7 +85,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getBody() );
     }
 
     @Test
@@ -100,7 +100,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getBody() );
     }
 
 
@@ -116,7 +116,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getBody() );
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertFalse( portalResponse.getAsString().contains( "figcaption" ) );
+        assertFalse( ((String) portalResponse.getBody()).contains( "figcaption" ) );
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getAsString() );
+        assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getBody() );
     }
 
     private static class MockMacroService

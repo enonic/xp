@@ -129,8 +129,8 @@ final class PostProcessEvaluator
 
                 this.portalResponse = newPortalResponse.build();
             }
-            final String resultBody = instructionResponse.getAsString();
-            return resultBody == null ? null : new HtmlBlockParser().parse( resultBody );
+            final Object resultBody = instructionResponse.getBody();
+            return resultBody instanceof String ? new HtmlBlockParser().parse( (String) resultBody ) : null;
         }
         return null;
     }
