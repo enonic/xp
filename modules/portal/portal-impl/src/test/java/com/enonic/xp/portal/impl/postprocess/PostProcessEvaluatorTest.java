@@ -33,7 +33,7 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = Collections.emptyList();
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource1.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult1.html" ), (String) result.getBody() );
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = Collections.emptyList();
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource2.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), (String) result.getBody() );
     }
 
     @Test
@@ -100,7 +100,7 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = Collections.emptyList();
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource4.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult4.html" ), (String) result.getBody() );
     }
 
     @Test
@@ -139,7 +139,7 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = Collections.emptyList();
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource5.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult5.html" ), (String) result.getBody() );
     }
 
     @Test
@@ -168,7 +168,7 @@ public class PostProcessEvaluatorTest
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource2.html" ) ).build();
         evaluator.evaluateInstructions();
         final PortalResponse result = evaluator.evaluateContributions();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult2.html" ), (String) result.getBody() );
     }
 
     @Test
@@ -199,7 +199,7 @@ public class PostProcessEvaluatorTest
         evaluator.instructions = List.of( uppercaseInstruction, expandInstruction );
         evaluator.portalResponse = PortalResponse.create().body( readResource( "postProcessEvalSource3.html" ) ).build();
         final PortalResponse result = evaluator.evaluate();
-        assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), result.getAsString() );
+        assertEqualsTrimmed( readResource( "postProcessEvalResult3.html" ), (String) result.getBody() );
     }
 
     @Test

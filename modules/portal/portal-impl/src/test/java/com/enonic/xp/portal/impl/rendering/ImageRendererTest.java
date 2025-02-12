@@ -50,7 +50,7 @@ public class ImageRendererTest
         PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
-        assertEquals( "", portalResponse.getAsString() );
+        assertEquals( "", portalResponse.getBody() );
         assertEquals( HttpStatus.NOT_FOUND, portalResponse.getStatus() );
     }
 
@@ -88,7 +88,7 @@ public class ImageRendererTest
         PortalResponse portalResponse = renderer.render( imageComponent, portalRequest );
 
         // verify
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 
 
@@ -105,7 +105,7 @@ public class ImageRendererTest
 
         // verify
         String result = "<figure data-portal-component-type=\"image\"></figure>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( result, portalResponse.getBody() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
     }
 
@@ -129,7 +129,7 @@ public class ImageRendererTest
 
         // verify
         String result = "<figure data-portal-component-type=\"image\"></figure>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( result, portalResponse.getBody() );
         assertEquals( HttpStatus.NOT_FOUND, portalResponse.getStatus() );
     }
 
@@ -156,7 +156,7 @@ public class ImageRendererTest
         // verify
         String result =
             "<div data-portal-component-type=\"image\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">Image could not be found</span></div>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( result, portalResponse.getBody() );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
     }
 
@@ -173,7 +173,7 @@ public class ImageRendererTest
         renderer = new ImageRenderer(this.service, contentService );
 
         PortalResponse response = renderer.render( imageComponent, portalRequest );
-        assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getAsString() );
+        assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getBody() );
         assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
     }
 }

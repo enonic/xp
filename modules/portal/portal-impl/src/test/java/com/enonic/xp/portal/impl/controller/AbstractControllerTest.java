@@ -1,7 +1,11 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,6 +17,7 @@ import org.osgi.framework.BundleContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -38,8 +43,7 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractControllerTest
 {
     private static final ObjectMapper MAPPER = new ObjectMapper().
-        enable( SerializationFeature.INDENT_OUTPUT ).
-        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
+        enable( SerializationFeature.INDENT_OUTPUT );
 
     protected PostProcessorImpl postProcessor;
 
@@ -105,21 +109,41 @@ public abstract class AbstractControllerTest
 
     protected final String getResponseAsString()
     {
-        return portalResponse.getAsString();
+        final Object body = this.portalResponse.getBody();
+        if ( body instanceof Map || body instanceof List )
+        {
+            try
+            {
+                return MAPPER.writeValueAsString( body );
+            }
+            catch ( final Exception e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        return ( body != null ) ? body.toString() : null;
     }
 
-    protected final void assertJson( final String name, final String actual )
-        throws Exception
+    protected final void assertBodyJson( final String name )
     {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
+        assertEquals( MediaType.JSON_UTF_8, this.portalResponse.getContentType() );
+        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name;
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = MAPPER.readTree( url );
-        final JsonNode actualJson = MAPPER.readTree( actual );
-
-        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
-        final String actualStr = MAPPER.writeValueAsString( actualJson );
+        final String expectedStr;
+        final String actualStr;
+        try
+        {
+            final JsonNode expectedJson = MAPPER.readTree( url );
+            JsonNode actualJson = MAPPER.readTree( getResponseAsString() );
+            expectedStr = MAPPER.writeValueAsString( expectedJson );
+            actualStr = MAPPER.writeValueAsString( actualJson );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
 
         assertEquals( expectedStr, actualStr );
     }

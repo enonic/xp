@@ -5,8 +5,6 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -21,7 +19,6 @@ import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
 public final class ResponseProcessorExecutor
@@ -39,9 +36,7 @@ public final class ResponseProcessorExecutor
 
     public PortalResponse execute( final ResponseProcessorDescriptor filter, final PortalRequest request, final PortalResponse response )
     {
-        final String filterName = filter.getName();
-        final String filterJsPath = "/site/processors/" + filterName + ".js";
-        final ResourceKey script = ResourceKey.from( filter.getApplication(), filterJsPath );
+        final ResourceKey script = ResourceKey.from( filter.getApplication(), "/site/processors/" + filter.getName() + ".js" );
         final ScriptExports filterExports;
         try
         {
@@ -58,17 +53,17 @@ public final class ResponseProcessorExecutor
         {
             throw new RenderException(
                 MessageFormat.format( "Missing exported function [{0}] in response filter [{1}]", RESPONSE_PROCESSOR_METHOD,
-                                      filterJsPath ) );
+                                      filterExports.getScript() ) );
         }
 
         final ApplicationKey previousApp = request.getApplicationKey();
-        // set application of the filter in the current context PortalRequest
-        request.setApplicationKey( filter.getApplication() );
+        request.setApplicationKey( script.getApplicationKey() );
 
         PortalRequestAccessor.set( request );
         try
         {
-            return Tracer.trace( "controllerScript", () -> executeFilter( filterExports, request, response ) );
+            return Tracer.trace( "responseProcessorScript", trace -> trace.put( "script", filterExports.getScript().toString() ),
+                                 () -> executeFilter( filterExports, request, response ) );
         }
         finally
         {
@@ -79,41 +74,10 @@ public final class ResponseProcessorExecutor
 
     private PortalResponse executeFilter( final ScriptExports filterExports, final PortalRequest request, final PortalResponse response )
     {
-
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 
         final ScriptValue result = filterExports.executeMethod( RESPONSE_PROCESSOR_METHOD, requestMapper, responseMapper );
-        final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
-
-        if ( unmodifiedByteSourceBody( response, result ) )
-        {
-            portalResponseSerializer.body( response.getBody() );
-        }
-
-        addTraceInfo( Tracer.current(), filterExports );
-
-        return portalResponseSerializer.serialize();
-    }
-
-    private void addTraceInfo( final Trace trace, final ScriptExports scriptExports )
-    {
-        if ( trace != null )
-        {
-            trace.put( "script", scriptExports.getScript().toString() );
-        }
-    }
-
-    private boolean unmodifiedByteSourceBody( final PortalResponse response, final ScriptValue scriptResult )
-    {
-        final boolean isByteSourceBody = response.getBody() instanceof ByteSource;
-        if ( !isByteSourceBody || scriptResult == null )
-        {
-            return false;
-        }
-
-        final ScriptValue scriptBody = scriptResult.getMember( "body" );
-        final String body = scriptBody != null && scriptBody.getValue() != null ? scriptBody.getValue().toString() : null;
-        return response.getBody().toString().equals( body );
+        return new PortalResponseSerializer( result ).serialize();
     }
 }

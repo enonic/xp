@@ -51,7 +51,7 @@ public class PartRendererTest
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );
 
-        return portalResponse.getAsString();
+        return (String) portalResponse.getBody();
     }
 
     @BeforeEach
@@ -135,7 +135,7 @@ public class PartRendererTest
         // verify
         String result =
             "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\"></span></div>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( result, portalResponse.getBody() );
     }
 
     @Test
@@ -174,7 +174,7 @@ public class PartRendererTest
 
         // verify
         String expected = "<h1 data-portal-component-type=\"part\" class=\"important\">My component</h1>";
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 
     @Test
@@ -210,7 +210,7 @@ public class PartRendererTest
         // verify
         String expected =
             "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 
     @Test
@@ -245,6 +245,6 @@ public class PartRendererTest
 
         // verify
         String expected = "<div data-portal-component-type=\"part\"></div>";
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 }

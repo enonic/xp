@@ -97,7 +97,7 @@ public class PageRendererTest
         // verify
         final String response =
             "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
     }
 
     @Test
@@ -139,7 +139,7 @@ public class PageRendererTest
         // verify
         final String response =
             "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
         Mockito.verify( processorChainResolver, Mockito.times( 1 ) ).resolve( Mockito.any( PortalRequest.class) );
         Mockito.verify( postProcessor, Mockito.times( 1 ) )
             .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );
@@ -158,7 +158,7 @@ public class PageRendererTest
 
         // verify
         final String response = "<html><head><title>My Content</title></head><body></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
     }
 
     @Test
@@ -175,7 +175,7 @@ public class PageRendererTest
         // verify
         final String response =
             "<!DOCTYPE html><html><head><title>My Content</title></head><body data-portal-component-type=\"page\"><!--#COMPONENT fragment--></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
     }
 
     @Test
@@ -192,7 +192,7 @@ public class PageRendererTest
 
         // verify
         final String response = "<html><head><title>My Content</title></head><body></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
         assertEquals( HttpStatus.SERVICE_UNAVAILABLE, portalResponse.getStatus() );
     }
 
@@ -210,7 +210,7 @@ public class PageRendererTest
 
         // verify
         final String response = "<html><head><title>My Content</title></head><body data-portal-component-type=\"page\"></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
         assertEquals( HttpStatus.IM_A_TEAPOT, portalResponse.getStatus() );
     }
 
@@ -229,7 +229,7 @@ public class PageRendererTest
 
         // verify
         final String response = "<html><head><title>Chip &amp; Dail</title></head><body data-portal-component-type=\"page\"></body></html>";
-        assertEquals( response, portalResponse.getAsString() );
+        assertEquals( response, portalResponse.getBody() );
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )

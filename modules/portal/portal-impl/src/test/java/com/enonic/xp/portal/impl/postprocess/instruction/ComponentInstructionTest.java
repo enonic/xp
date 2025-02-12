@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.postprocess.instruction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -69,8 +68,7 @@ public class ComponentInstructionTest
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
 
-        final String outputHtml = instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ).getAsString();
-        assertEquals( "<b>part content</b>", outputHtml );
+        assertEquals( "<b>part content</b>", instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ).getBody() );
     }
 
     @Test
@@ -147,8 +145,7 @@ public class ComponentInstructionTest
         final Content content = createFragmentPage( "content-id", "content-name", layoutComponent );
         portalRequest.setContent( content );
 
-        final String outputHtml = instruction.evaluate( portalRequest, "COMPONENT r1/0" ).getAsString();
-        assertEquals( "render result", outputHtml );
+        assertEquals( "render result", instruction.evaluate( portalRequest, "COMPONENT r1/0" ).getBody() );
     }
 
     @Test
@@ -166,8 +163,7 @@ public class ComponentInstructionTest
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
 
-        final String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" ).getAsString();
-        assertEquals( "<b>part content</b>", outputHtml );
+        assertEquals( "<b>part content</b>", instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" ).getBody() );
     }
 
     @Test
@@ -184,8 +180,7 @@ public class ComponentInstructionTest
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
 
-        final String outputHtml = instruction.evaluate( portalRequest, "COMPONENT fragment" ).getAsString();
-        assertEquals( "<b>part content</b>", outputHtml );
+        assertEquals( "<b>part content</b>", instruction.evaluate( portalRequest, "COMPONENT fragment" ).getBody() );
     }
 
     @Test
@@ -209,8 +204,7 @@ public class ComponentInstructionTest
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
 
-        final String outputHtml = instruction.evaluate( portalRequest, "COMPONENT fragment" ).getAsString();
-        assertEquals( "<b>part content</b>", outputHtml );
+        assertEquals( "<b>part content</b>", instruction.evaluate( portalRequest, "COMPONENT fragment" ).getBody() );
     }
 
     @Test

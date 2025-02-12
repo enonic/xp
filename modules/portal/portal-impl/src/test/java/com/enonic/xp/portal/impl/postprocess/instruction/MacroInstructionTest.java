@@ -71,9 +71,7 @@ public class MacroInstructionTest
             ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        String outputHtml =
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
-        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody() );
     }
 
     @Test
@@ -152,7 +150,7 @@ public class MacroInstructionTest
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+            (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
         assertEquals( "mymacro: param1=value1, body=body", outputHtml );
     }
 
@@ -167,7 +165,7 @@ public class MacroInstructionTest
         when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
 
         String outputHtml =
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getAsString();
+            (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
         assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
     }
 
@@ -189,9 +187,7 @@ public class MacroInstructionTest
             ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        String outputHtml =
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getAsString();
-        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
     }
 
     @Test
@@ -206,9 +202,8 @@ public class MacroInstructionTest
             ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        String outputHtml = macroInstruction.evaluate( portalRequest,
-                                                       "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" ).getAsString();
-        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest,
+                                                                                      "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" ).getBody() );
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName )
