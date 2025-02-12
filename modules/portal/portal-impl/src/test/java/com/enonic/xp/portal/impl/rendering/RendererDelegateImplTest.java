@@ -85,7 +85,7 @@ public class RendererDelegateImplTest
         final PortalResponse renderResponse = factory.render( createEmptyFragmentComponent(), portalRequest );
 
         // verify
-        assertEquals( renderResponse.getAsString(), "<div data-portal-component-type=\"fragment\"></div>" );
+        assertEquals( renderResponse.getBody(), "<div data-portal-component-type=\"fragment\"></div>" );
     }
 
     @Test
@@ -102,7 +102,7 @@ public class RendererDelegateImplTest
         final PortalResponse renderResponse = factory.render( createFragmentComponent( contentId ), portalRequest );
 
         // verify
-        assertTrue( renderResponse.getAsString().contains( "Fragment content could not be found" ) );
+        assertTrue( ((String) renderResponse.getBody()).contains( "Fragment content could not be found" ) );
     }
 
     @Test
@@ -117,7 +117,7 @@ public class RendererDelegateImplTest
 
         final PortalResponse renderResponse = factory.render( createFragmentComponent( contentId ), portalRequest );
 
-        assertTrue( renderResponse.getAsString().contains( "Fragment content could not be found" ) );
+        assertTrue( ((String) renderResponse.getBody()).contains( "Fragment content could not be found" ) );
     }
 
     @Test
@@ -132,7 +132,7 @@ public class RendererDelegateImplTest
 
         final PortalResponse renderResponse = factory.render( createFragmentComponent( contentId ), portalRequest );
 
-        assertTrue( renderResponse.getAsString().isEmpty() );
+        assertTrue( ((String) renderResponse.getBody()).isEmpty() );
     }
 
     @Test
@@ -149,7 +149,7 @@ public class RendererDelegateImplTest
 
         final PortalResponse response = factory.render( createFragmentComponent( contentId ), portalRequest );
 
-        assertEquals( "LayoutRendered", response.getAsString() );
+        assertEquals( "LayoutRendered", response.getBody() );
     }
 
     @Test
@@ -169,7 +169,7 @@ public class RendererDelegateImplTest
 
         final PortalResponse response = factory.render( createFragmentComponent( contentId ), portalRequest );
 
-        assertEquals( "LayoutRendered", response.getAsString() );
+        assertEquals( "LayoutRendered", response.getBody() );
     }
 
     private LayoutDescriptor createLayoutDescriptor( final DescriptorKey descriptorKey )
@@ -189,7 +189,7 @@ public class RendererDelegateImplTest
         final PortalResponse fragmentResponse = PortalResponse.create().body( textComponentValue ).build();
         final PortalResponse renderResponse = renderFragmentComponent( fragmentResponse, RenderMode.EDIT );
 
-        assertEquals( textComponentValue, renderResponse.getAsString() );
+        assertEquals( textComponentValue, renderResponse.getBody() );
     }
 
     @Test
@@ -200,7 +200,7 @@ public class RendererDelegateImplTest
             PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( textComponentValue ).build();
         final PortalResponse renderResponse = renderFragmentComponent( fragmentResponse, RenderMode.EDIT );
 
-        assertEquals( "<div data-portal-component-type=\"fragment\">" + textComponentValue + "</div>", renderResponse.getAsString() );
+        assertEquals( "<div data-portal-component-type=\"fragment\">" + textComponentValue + "</div>", renderResponse.getBody() );
     }
 
     @Test
@@ -211,7 +211,7 @@ public class RendererDelegateImplTest
             PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( textComponentValue ).build();
         final PortalResponse renderResponse = renderFragmentComponent( fragmentResponse, RenderMode.PREVIEW );
 
-        assertEquals( textComponentValue, renderResponse.getAsString() );
+        assertEquals( textComponentValue, renderResponse.getBody() );
     }
 
     @Test
@@ -221,7 +221,7 @@ public class RendererDelegateImplTest
         final PortalResponse fragmentResponse = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( errorText ).build();
         final PortalResponse renderResponse = renderFragmentComponent( fragmentResponse, RenderMode.EDIT );
 
-        assertTrue( renderResponse.getAsString().contains( "<span class=\"data-portal-placeholder-error\">" + errorText + "</span>" ) );
+        assertTrue( ((String) renderResponse.getBody()).contains( "<span class=\"data-portal-placeholder-error\">" + errorText + "</span>" ) );
     }
 
     private PortalResponse renderFragmentComponent( final PortalResponse fragmentRenderResult, final RenderMode renderMode )

@@ -74,6 +74,7 @@ public class WebResponse
         return this.headers;
     }
 
+    @Deprecated
     public String getAsString()
     {
         if ( this.body instanceof Map )

@@ -53,7 +53,7 @@ public class LayoutRendererTest
         // exercise
         portalResponse = renderer.render( layoutComponent, portalRequest );
 
-        return portalResponse.getAsString();
+        return (String) portalResponse.getBody();
     }
 
     @BeforeEach
@@ -145,7 +145,7 @@ public class LayoutRendererTest
         // verify
         String result =
             "<div data-portal-component-type=\"layout\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\"></span></div>";
-        assertEquals( result, portalResponse.getAsString() );
+        assertEquals( result, portalResponse.getBody() );
     }
 
     @Test
@@ -190,7 +190,7 @@ public class LayoutRendererTest
         // verify
         String expected =
             "<div data-portal-component-type=\"layout\" class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>";
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 
     @Test
@@ -229,6 +229,6 @@ public class LayoutRendererTest
 
         // verify
         String expected = "<div data-portal-component-type=\"layout\"></div>";
-        assertEquals( expected, portalResponse.getAsString() );
+        assertEquals( expected, portalResponse.getBody() );
     }
 }

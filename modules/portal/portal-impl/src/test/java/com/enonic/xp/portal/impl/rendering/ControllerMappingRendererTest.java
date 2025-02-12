@@ -70,7 +70,7 @@ public class ControllerMappingRendererTest
         final PortalResponse portalResponse = renderer.render( mappingDescriptor, portalRequest );
 
         // verify
-        assertEquals( getComponentHtml(), portalResponse.getAsString() );
+        assertEquals( getComponentHtml(), portalResponse.getBody() );
         Mockito.verify( processorChainResolver, Mockito.times( 0 ) ).resolve( Mockito.any( PortalRequest.class) );
         Mockito.verify( postProcessor, Mockito.times( 0 ) )
             .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );
@@ -88,7 +88,7 @@ public class ControllerMappingRendererTest
         final PortalResponse portalResponse = renderer.render( mappingDescriptor, portalRequest );
 
         // verify
-        assertEquals( getComponentHtml(), portalResponse.getAsString() );
+        assertEquals( getComponentHtml(), portalResponse.getBody() );
         Mockito.verify( processorChainResolver, Mockito.times( 1 ) ).resolve( Mockito.any( PortalRequest.class) );
         Mockito.verify( postProcessor, Mockito.times( 1 ) )
             .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );

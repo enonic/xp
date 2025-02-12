@@ -18,7 +18,6 @@ public final class ResponseSerializationServiceImpl
     public void serialize( final WebRequest webRequest, final WebResponse webResponse, final HttpServletResponse response )
         throws IOException
     {
-        final ResponseSerializer responseSerializer = new ResponseSerializer( webRequest, webResponse );
-        responseSerializer.serialize( response );
+        new ResponseSerializer( webRequest, webResponse ).serialize( response );
     }
 }
