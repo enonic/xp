@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -267,6 +268,7 @@ public class FindNodesWithVersionDifferenceCommandTest
         {
             if ( counter == 0 )
             {
+
                 assertEquals( "dddd", nodeId.toString() );
             }
             else if ( counter == 1 )
@@ -350,8 +352,7 @@ public class FindNodesWithVersionDifferenceCommandTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            build().
-            execute();
+            build().execute().getResult( ContextAccessor.current().getBranch() );
     }
 
     private PushNodesResult doPushNode( final Branch target, final Node createdNode )

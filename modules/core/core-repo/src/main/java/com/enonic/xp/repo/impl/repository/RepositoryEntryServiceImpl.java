@@ -181,8 +181,7 @@ public class RepositoryEntryServiceImpl
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
             binaryService( this.binaryService ).
-            build().
-            execute() );
+            build().execute().getResult( ContextAccessor.current().getBranch() ) );
 
         eventPublisher.publish( NodeEvents.updated( updatedNode ) );
 

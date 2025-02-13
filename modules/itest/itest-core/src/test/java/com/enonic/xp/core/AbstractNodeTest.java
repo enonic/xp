@@ -345,8 +345,7 @@ public abstract class AbstractNodeTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            build().
-            execute();
+            build().execute().getResult( ContextAccessor.current().getBranch() );
     }
 
     protected Node createNode( final NodePath parent, final String name )
