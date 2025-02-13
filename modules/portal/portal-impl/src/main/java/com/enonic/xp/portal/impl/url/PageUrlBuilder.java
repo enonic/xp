@@ -13,25 +13,16 @@ final class PageUrlBuilder
     {
         super.buildUrl( url, params );
 
-//        if ( this.portalRequest.getRawPath().startsWith( "/api/" ) )
-//        {
-//            url.setLength( 0 );
-//            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-//            appendPart( url, this.portalRequest.getBranch().toString() );
-//            setMustBeRewritten( false );
-//        }
-
         final ContentPath resolved = resolvePath();
         appendPart( url, resolved.toString() );
     }
 
     private ContentPath resolvePath()
     {
-        return new ContentPathResolver().
-            portalRequest( this.portalRequest ).
-            contentService( this.contentService ).
-            id( this.params.getId() ).
-            path( this.params.getPath() ).
-            resolve();
+        return new ContentPathResolver().portalRequest( this.portalRequest )
+            .contentService( this.contentService )
+            .id( this.params.getId() )
+            .path( this.params.getPath() )
+            .resolve();
     }
 }

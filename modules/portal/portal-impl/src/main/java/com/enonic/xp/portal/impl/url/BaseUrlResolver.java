@@ -1,18 +1,22 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.net.URI;
 import java.util.Objects;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.url.BaseUrlStrategy;
-import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
-final class OfflineBaseUrlStrategy
-    implements BaseUrlStrategy
+final class BaseUrlResolver
 {
     private final ProjectName projectName;
 
@@ -20,60 +24,67 @@ final class OfflineBaseUrlStrategy
 
     private final Content content;
 
-    private final String urlType;
-
     private final ContentService contentService;
 
     private final ProjectService projectService;
 
-    OfflineBaseUrlStrategy( final Builder builder )
+    private BaseUrlResolver( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.projectService = Objects.requireNonNull( builder.projectService );
+
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.content = builder.content;
+        this.content = Objects.requireNonNull( builder.content );
     }
 
-    @Override
-    public String generateBaseUrl()
+    public String resolve()
     {
-        if ( content == null )
+        Site site = null;
+        if ( content.isSite() )
         {
-            return "/api";
+            site = (Site) content;
+        }
+        else if ( !content.getPath().isRoot() )
+        {
+            site = ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( projectName.getRepoId() )
+                .branch( branch )
+                .build()
+                .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
         }
 
-        final String baseUrl = BaseUrlResolver.create()
-            .contentService( contentService )
-            .projectService( projectService )
-            .projectName( projectName )
-            .branch( branch )
-            .content( content )
-            .build()
-            .resolve();
-
-        if ( baseUrl != null )
+        if ( site != null )
         {
-            return normalizeBaseUrl( baseUrl );
+            String siteBaseUrl = resolveBaseUrl( site.getSiteConfigs() );
+            if ( siteBaseUrl != null )
+            {
+                return siteBaseUrl;
+            }
         }
 
-        return "/api";
+        Project project = projectService.get( projectName );
+        if ( project != null )
+        {
+            return resolveBaseUrl( project.getSiteConfigs() );
+        }
+
+        return null;
+    }
+
+    private String resolveBaseUrl( final SiteConfigs siteConfigs )
+    {
+        final SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "com.enonic.xp.site" ) );
+        if ( siteConfig != null )
+        {
+            return siteConfig.getConfig().getString( "baseUrl" );
+        }
+        return null;
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private String normalizeBaseUrl( final String baseUrl )
-    {
-        final String path = UrlTypeConstants.SERVER_RELATIVE.equals( urlType ) ? URI.create( baseUrl ).getPath() : baseUrl;
-        if ( path.endsWith( "/" ) )
-        {
-            return path.substring( 0, path.length() - 1 ) + "/_/";
-        }
-        return path + "/_/";
     }
 
     static class Builder
@@ -87,8 +98,6 @@ final class OfflineBaseUrlStrategy
         private Branch branch;
 
         private Content content;
-
-        private String urlType;
 
         public Builder contentService( final ContentService contentService )
         {
@@ -120,15 +129,9 @@ final class OfflineBaseUrlStrategy
             return this;
         }
 
-        public Builder urlType( final String urlType )
+        public BaseUrlResolver build()
         {
-            this.urlType = urlType;
-            return this;
-        }
-
-        public OfflineBaseUrlStrategy build()
-        {
-            return new OfflineBaseUrlStrategy( this );
+            return new BaseUrlResolver( this );
         }
     }
 }
