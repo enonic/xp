@@ -36,7 +36,6 @@ final class FilterScriptImpl
     public PortalResponse execute( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
         PortalRequestAccessor.set( request );
-
         try
         {
             return Tracer.trace( "filterScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),

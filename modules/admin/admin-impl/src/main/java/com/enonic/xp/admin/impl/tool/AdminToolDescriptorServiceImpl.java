@@ -13,11 +13,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.xml.XmlException;
 
@@ -77,18 +78,18 @@ public final class AdminToolDescriptorServiceImpl
     @Override
     public String getHomeToolUri()
     {
-        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_TOOLS_URI_PREFIX );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        return portalRequest == null
+            ? ADMIN_TOOLS_URI_PREFIX
+            : ServletRequestUrlHelper.createUri( portalRequest.getRawRequest(), ADMIN_TOOLS_URI_PREFIX );
     }
 
     @Override
-    public String generateAdminToolUri( String application, String adminTool )
+    public String generateAdminToolUri( final String application, final String adminTool )
     {
-        String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application;
-        if ( adminTool != null )
-        {
-            uri += "/" + adminTool;
-        }
-        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), uri );
+        final String uri = ADMIN_TOOLS_URI_PREFIX + "/" + application + ( adminTool != null ? "/" + adminTool : "" );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        return portalRequest == null ? uri : ServletRequestUrlHelper.createUri( portalRequest.getRawRequest(), uri );
     }
 
     private ResourceProcessor<DescriptorKey, String> createIconProcessor( final DescriptorKey key )

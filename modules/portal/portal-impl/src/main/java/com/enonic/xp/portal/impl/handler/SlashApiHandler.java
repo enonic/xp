@@ -322,10 +322,6 @@ public class SlashApiHandler
         {
             return handleError( portalRequest, e );
         }
-        finally
-        {
-            PortalRequestAccessor.remove();
-        }
     }
 
     private void verifyAccessToApi( final ApiDescriptor apiDescriptor )
@@ -392,11 +388,6 @@ public class SlashApiHandler
     private ControllerScript getScript( final DescriptorKey descriptorKey )
     {
         final ResourceKey script = ApiDescriptor.toResourceKey( descriptorKey, "js" );
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "script", script.getPath() );
-        }
         return this.controllerScriptFactory.fromScript( script );
     }
 

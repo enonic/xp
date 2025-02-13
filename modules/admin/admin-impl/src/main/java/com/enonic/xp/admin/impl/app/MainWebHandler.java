@@ -24,8 +24,7 @@ public final class MainWebHandler
     @Override
     protected boolean canHandle( final WebRequest req )
     {
-        final String path = req.getRawPath();
-        return path.isEmpty() || path.equals( "/" );
+        return req.getRawPath().equals( "/" );
     }
 
     @Override

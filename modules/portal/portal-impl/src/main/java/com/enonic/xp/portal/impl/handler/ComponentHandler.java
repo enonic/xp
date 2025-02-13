@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -45,10 +44,6 @@ import com.enonic.xp.web.WebResponse;
 @Component(service = ComponentHandler.class)
 public class ComponentHandler
 {
-    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
-
-    private static final Predicate<WebRequest> IS_SITE_BASE = req -> req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
-
     private final RendererDelegate rendererDelegate;
 
     private final PageTemplateService pageTemplateService;
@@ -78,12 +73,12 @@ public class ComponentHandler
     public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
-        if ( !IS_SITE_BASE.test( webRequest ) )
+        if ( !( webRequest instanceof PortalRequest && ( (PortalRequest) webRequest ).isSiteBase() ) )
         {
             throw WebException.notFound( "Not a valid request" );
         }
 
-        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        if ( !HttpMethod.standard().contains( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
@@ -95,9 +90,7 @@ public class ComponentHandler
 
         WebHandlerHelper.checkAdminAccess( webRequest );
 
-        final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findRestPath( webRequest, "component" ) );
-
-        final PortalRequest portalRequest = createPortalRequest( webRequest, componentPath );
+        final PortalRequest portalRequest = updatePortalRequest( webRequest );
 
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
@@ -120,10 +113,9 @@ public class ComponentHandler
         return this.postProcessor.processResponseInstructions( portalRequest, response );
     }
 
-    private PortalRequest createPortalRequest( final WebRequest webRequest, final ComponentPath componentPath )
+    private PortalRequest updatePortalRequest( final WebRequest webRequest )
     {
-        final PortalRequest portalRequest =
-            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+        final PortalRequest portalRequest = (PortalRequest) webRequest;
 
         final ContentResolver contentResolver = new ContentResolver( contentService );
         final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
@@ -135,6 +127,7 @@ public class ComponentHandler
         final PageResolverResult resolvedPage = pageResolver.resolve( portalRequest.getMode(), content, site );
 
         com.enonic.xp.region.Component component = null;
+        final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findRestPath( portalRequest, "component" ) );
 
         if ( content.getType().isFragment() )
         {

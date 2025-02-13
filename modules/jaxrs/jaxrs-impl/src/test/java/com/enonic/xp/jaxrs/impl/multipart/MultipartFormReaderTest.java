@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -30,10 +29,11 @@ public class MultipartFormReaderTest
     public void setup()
     {
         this.request = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( this.request );
 
         this.service = Mockito.mock( MultipartService.class );
+
         this.reader = new MultipartFormReader( this.service );
+        this.reader.setHttpServletRequest(  this.request);
     }
 
     @Test

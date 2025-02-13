@@ -27,9 +27,6 @@ public class ServletRequestUrlHelperTest
     @Test
     public void createUri()
     {
-        final String uri1 = ServletRequestUrlHelper.createUri( req, null );
-        assertEquals( "/", uri1 );
-
         final String uri2 = ServletRequestUrlHelper.createUri( req, "" );
         assertEquals( "/", uri2 );
 

@@ -124,11 +124,6 @@ public final class WebAppHandler
     private ControllerScript getScript( final ApplicationKey applicationKey )
     {
         final ResourceKey script = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "script", script.getPath() );
-        }
         return this.controllerScriptFactory.fromScript( script );
     }
 

@@ -9,6 +9,7 @@ public final class ServletRequestHolder
 {
     private static final ThreadLocal<HttpServletRequest> CURRENT_REQUEST = new ThreadLocal<>();
 
+    @Deprecated
     public static HttpServletRequest getRequest()
     {
         return CURRENT_REQUEST.get();

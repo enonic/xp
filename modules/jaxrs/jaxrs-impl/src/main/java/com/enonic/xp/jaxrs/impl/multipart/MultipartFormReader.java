@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -15,7 +16,6 @@ import javax.ws.rs.ext.Provider;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Provider
 @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -24,9 +24,17 @@ public final class MultipartFormReader
 {
     private final MultipartService multipartService;
 
+    private HttpServletRequest request;
+
     public MultipartFormReader( final MultipartService multipartService )
     {
         this.multipartService = multipartService;
+    }
+
+    @Context
+    public void setHttpServletRequest( final HttpServletRequest request )
+    {
+        this.request = request;
     }
 
     @Override
@@ -41,7 +49,6 @@ public final class MultipartFormReader
                                    final InputStream entityStream )
         throws IOException, WebApplicationException
     {
-        final HttpServletRequest req = ServletRequestHolder.getRequest();
-        return this.multipartService.parse( req );
+        return this.multipartService.parse( request );
     }
 }
