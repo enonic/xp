@@ -25,6 +25,7 @@ import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -33,6 +34,7 @@ import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.style.StyleDescriptorService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
@@ -59,6 +61,8 @@ public final class PortalUrlServiceImpl
 
     private volatile boolean useLegacyIdProviderContextPath;
 
+    private volatile boolean useLegacyPageContextPath;
+
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
@@ -81,6 +85,7 @@ public final class PortalUrlServiceImpl
         this.legacyAttachmentServiceEnabled = config.legacy_attachmentService_enabled();
         this.useLegacyAssetContextPath = config.asset_legacyContextPath();
         this.useLegacyIdProviderContextPath = config.idprovider_legacyContextPath();
+        this.useLegacyPageContextPath = config.page_legacyContextPath();
     }
 
     @Override
@@ -100,7 +105,18 @@ public final class PortalUrlServiceImpl
     @Override
     public String pageUrl( final PageUrlParams params )
     {
-        return build( new PageUrlBuilder(), params );
+        if ( this.useLegacyPageContextPath )
+        {
+            return build( new PageUrlBuilder(), params );
+        }
+        else
+        {
+            final PageUrlGeneratorParams generatorParams = params.isOffline() || params.getPortalRequest() == null
+                ? urlStrategyFacade.offlinePageUrlParams( params )
+                : urlStrategyFacade.requestPageUrlParams( params );
+
+            return pageUrl( generatorParams );
+        }
     }
 
     @Override
@@ -213,6 +229,12 @@ public final class PortalUrlServiceImpl
 
         return runWithAdminRole(
             () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ) ) );
+    }
+
+    @Override
+    public String pageUrl( final PageUrlGeneratorParams params )
+    {
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "" ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

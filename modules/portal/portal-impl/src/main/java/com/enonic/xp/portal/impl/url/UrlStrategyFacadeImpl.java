@@ -22,6 +22,8 @@ import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PageUrlGeneratorParams;
+import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -48,8 +50,8 @@ public class UrlStrategyFacadeImpl
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName prefixAndBaseUrlProjectName = offlinePrefixAndBaseUrlProjectName( params.getProjectName() );
-        final Branch prefixAndBaseUrlBranch = offlinePrefixAndBaseUrlBranch( params.getBranch() );
+        final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
+        final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
         final Media media = resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
@@ -103,8 +105,8 @@ public class UrlStrategyFacadeImpl
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName prefixAndBaseUrlProjectName = offlinePrefixAndBaseUrlProjectName( params.getProjectName() );
-        final Branch prefixAndBaseUrlBranch = offlinePrefixAndBaseUrlBranch( params.getBranch() );
+        final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
+        final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
         final String baseUriKey = params.getBaseUrlKey();
 
@@ -152,6 +154,40 @@ public class UrlStrategyFacadeImpl
             .build();
     }
 
+    @Override
+    public PageUrlGeneratorParams offlinePageUrlParams( final PageUrlParams params )
+    {
+        final Content content = getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) );
+
+        final ProjectName projectName = offlineBaseUrlProjectName( params.getProjectName() );
+        final Branch branch = offlineBaseUrlBranch( params.getBranch() );
+
+        final BaseUrlStrategy baseUrlStrategy = OfflinePageBaseUrlStrategy.create()
+            .contentService( contentService )
+            .projectService( projectService )
+            .projectName( projectName )
+            .branch( branch )
+            .content( content )
+            .urlType( params.getType() )
+            .build();
+
+        return new PageUrlGeneratorParams( baseUrlStrategy );
+    }
+
+    @Override
+    public PageUrlGeneratorParams requestPageUrlParams( final PageUrlParams params )
+    {
+        final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create()
+            .setPortalRequest( params.getPortalRequest() )
+            .setUrlType( params.getType() )
+            .setId( params.getId() )
+            .setPath( params.getPath() )
+            .setContentService( contentService )
+            .build();
+
+        return new PageUrlGeneratorParams( baseUrlStrategy );
+    }
+
     private Media resolveMedia( final ProjectName projectName, final Branch branch, final String id, final String path )
     {
         return ContextBuilder.copyOf( ContextAccessor.current() )
@@ -187,7 +223,11 @@ public class UrlStrategyFacadeImpl
 
     private BaseUrlStrategy requestBaseUrlStrategy( final PortalRequest portalRequest, final String urlType )
     {
-        return RequestBaseUrlStrategy.create().contentService( contentService ).portalRequest( portalRequest ).urlType( urlType ).build();
+        return RequestBaseUrlStrategy.create()
+            .setContentService( contentService )
+            .setPortalRequest( portalRequest )
+            .setUrlType( urlType )
+            .build();
     }
 
     private ProjectName offlineProjectName( final String projectName )
@@ -204,7 +244,7 @@ public class UrlStrategyFacadeImpl
             : ProjectName.from( Objects.requireNonNull( portalRequest.getRepositoryId(), "Project must be provided" ) );
     }
 
-    private ProjectName offlinePrefixAndBaseUrlProjectName( final String projectName )
+    private ProjectName offlineBaseUrlProjectName( final String projectName )
     {
         return ContextAccessor.current().getRepositoryId() != null
             ? ProjectName.from( ContextAccessor.current().getRepositoryId() )
@@ -225,7 +265,7 @@ public class UrlStrategyFacadeImpl
             : Objects.requireNonNullElse( portalRequest.getBranch(), ContentConstants.BRANCH_MASTER );
     }
 
-    private Branch offlinePrefixAndBaseUrlBranch( final String branch )
+    private Branch offlineBaseUrlBranch( final String branch )
     {
         return ContextAccessor.current().getBranch() != null
             ? ContextAccessor.current().getBranch()

@@ -12,4 +12,8 @@ public interface UrlStrategyFacade
     AttachmentUrlGeneratorParams offlineAttachmentUrlParams( AttachmentUrlParams params );
 
     AttachmentUrlGeneratorParams requestAttachmentUrlParams( AttachmentUrlParams params );
+
+    PageUrlGeneratorParams offlinePageUrlParams( PageUrlParams params );
+
+    PageUrlGeneratorParams requestPageUrlParams( PageUrlParams params );
 }

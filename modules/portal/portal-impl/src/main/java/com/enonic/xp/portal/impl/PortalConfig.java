@@ -23,4 +23,6 @@ public @interface PortalConfig
     boolean legacy_imageService_enabled() default true;
 
     boolean legacy_httpService_enabled() default true;
+
+    boolean page_legacyContextPath() default false;
 }
