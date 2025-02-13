@@ -468,7 +468,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_path() {
+    void delete_tree_by_path()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -485,7 +486,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_id() {
+    void delete_tree_by_id()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -502,44 +504,33 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_root_path_fail() {
+    void delete_root_path_fail()
+    {
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
     }
 
     @Test
-    void delete_root_id_fail() {
+    void delete_root_id_fail()
+    {
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
     }
 
     @Test
     void nodes_has_children()
     {
-        final Node parentNode1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-1" ).
-            build() );
+        final Node parentNode1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
 
-        final Node parentNode2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-2" ).
-            build() );
+        final Node parentNode2 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
 
-        final Node parentNode3 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-3" ).
-            build() );
+        final Node parentNode3 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-3" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode1.path() ).
-            name( "my-child-node-1" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode1.path() ).name( "my-child-node-1" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode2.path() ).
-            name( "my-child-node-2" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode2.path() ).name( "my-child-node-2" ).build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
