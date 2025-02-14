@@ -38,7 +38,7 @@ final class BaseUrlResolver
         this.content = Objects.requireNonNull( builder.content );
     }
 
-    public String resolve()
+    public BaseUrlResult resolve()
     {
         Site site = null;
         if ( content.isSite() )
@@ -54,22 +54,28 @@ final class BaseUrlResolver
                 .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
         }
 
+        final BaseUrlResult.Builder builder = BaseUrlResult.create();
+
         if ( site != null )
         {
             String siteBaseUrl = resolveBaseUrl( site.getSiteConfigs() );
             if ( siteBaseUrl != null )
             {
-                return siteBaseUrl;
+                builder.setNearestSite( site );
+                builder.setBaseUrl( siteBaseUrl );
+
+                return builder.build();
             }
         }
 
         Project project = projectService.get( projectName );
         if ( project != null )
         {
-            return resolveBaseUrl( project.getSiteConfigs() );
+            builder.setBaseUrl( resolveBaseUrl( project.getSiteConfigs() ) );
+            return builder.build();
         }
 
-        return null;
+        return builder.build();
     }
 
     private String resolveBaseUrl( final SiteConfigs siteConfigs )

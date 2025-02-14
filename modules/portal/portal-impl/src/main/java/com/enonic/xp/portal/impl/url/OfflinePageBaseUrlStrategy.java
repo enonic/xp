@@ -6,8 +6,6 @@ import java.util.Objects;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -42,7 +40,7 @@ final class OfflinePageBaseUrlStrategy
     @Override
     public String generateBaseUrl()
     {
-        final String baseUrl = BaseUrlResolver.create()
+        final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
             .projectService( projectService )
             .projectName( projectName )
@@ -51,17 +49,13 @@ final class OfflinePageBaseUrlStrategy
             .build()
             .resolve();
 
-        final String normalizedBaseUrl = normalizeBaseUrl( Objects.requireNonNullElse( baseUrl, "/api" ) );
+        final String normalizedBaseUrl = normalizeBaseUrl( Objects.requireNonNullElse( baseUrlResult.getBaseUrl(), "/api" ) );
 
-        final Site nearestSite = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( projectName.getRepoId() )
-            .branch( branch )
-            .build()
-            .callWith( () -> contentService.getNearestSite( content.getId() ) );
+        final Site nearestSite = baseUrlResult.getNearestSite();
 
         if ( nearestSite != null )
         {
-            return normalizedBaseUrl + content.getPath().toString().replace( nearestSite.getPath().toString(), "" );
+            return normalizedBaseUrl + content.getPath().toString().substring( nearestSite.getPath().toString().length() );
         }
 
         return normalizedBaseUrl + content.getPath();

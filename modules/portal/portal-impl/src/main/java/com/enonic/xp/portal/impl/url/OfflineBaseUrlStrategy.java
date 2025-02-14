@@ -44,7 +44,7 @@ final class OfflineBaseUrlStrategy
             return "/api";
         }
 
-        final String baseUrl = BaseUrlResolver.create()
+        final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
             .projectService( projectService )
             .projectName( projectName )
@@ -53,6 +53,7 @@ final class OfflineBaseUrlStrategy
             .build()
             .resolve();
 
+        final String baseUrl = baseUrlResult.getBaseUrl();
         if ( baseUrl != null )
         {
             return normalizeBaseUrl( baseUrl );
