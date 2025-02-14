@@ -5,12 +5,12 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
 @PublicApi
-public class SuperEditableSite
-    extends SuperEditableContent
+public class ModifiableSite
+    extends ModifiableContent
 {
     public EditableFieldPolicyWrapper<SiteConfigs> siteConfigs;
 
-    public SuperEditableSite( final Site source )
+    public ModifiableSite( final Site source )
     {
         super( source );
         this.siteConfigs = new EditableFieldPolicyWrapper<>( source.getSiteConfigs() );

@@ -14,7 +14,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
-public class SuperEditableContent
+public class ModifiableContent
 {
     public final Content source;
 
@@ -56,7 +56,7 @@ public class SuperEditableContent
 
     public EditableFieldPolicyWrapper<Attachments> attachments;
 
-    public SuperEditableContent( final Content source )
+    public ModifiableContent( final Content source )
     {
         this.source = source;
         this.displayName = new EditableFieldPolicyWrapper<>( source.getDisplayName() );
@@ -101,16 +101,16 @@ public class SuperEditableContent
             .workflowInfo( workflowInfo.produce() )
             .manualOrderValue( manualOrderValue.produce() )
             .setInherit( inherit.produce() )
-            .variantOf( variantOf.produce() ).
+            .variantOf( variantOf.produce() )
 
             // differs from "update"
-                modifier( modifier.produce() )
+            .modifier( modifier.produce() )
             .modifiedTime( modifiedTime.produce() )
             .attachments( attachments.produce() )
             .build();
     }
 
-    public enum EditableFieldPolicy
+    private enum EditableFieldPolicy
     {
         KEEP, REPLACE, REMOVE
     }
@@ -121,7 +121,7 @@ public class SuperEditableContent
 
         private EditableFieldPolicy policy;
 
-        private Function<T, T> handler = Function.identity();
+        private Function<T, T> modifier = Function.identity();
 
         EditableFieldPolicyWrapper( T value )
         {
@@ -129,16 +129,16 @@ public class SuperEditableContent
             this.policy = EditableFieldPolicy.KEEP;
         }
 
-        public EditableFieldPolicyWrapper<T> setHandler( Function<T, T> handler )
+        public EditableFieldPolicyWrapper<T> setModifier( Function<T, T> modifier )
         {
-            this.handler = handler;
+            this.modifier = modifier;
             this.policy = EditableFieldPolicy.REPLACE;
             return this;
         }
 
         public EditableFieldPolicyWrapper<T> setValue( T value )
         {
-            this.handler = ( v ) -> value;
+            this.modifier = ( v ) -> value;
             this.policy = EditableFieldPolicy.REPLACE;
             return this;
         }
@@ -153,7 +153,7 @@ public class SuperEditableContent
             return switch ( policy )
             {
                 case KEEP -> originalValue;
-                case REPLACE -> handler.apply( originalValue );
+                case REPLACE -> modifier.apply( originalValue );
                 case REMOVE -> null;
             };
         }
