@@ -47,6 +47,7 @@ final class PageRequestBaseUrlStrategy
             appendPart( uriBuilder, portalRequest.getBranch().getValue() );
         }
 
+        // Maybe we should find a content by path or id and then use content.getPath() instead of that
         final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
             .repositoryId( portalRequest.getRepositoryId() )
             .branch( portalRequest.getBranch() )
