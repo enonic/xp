@@ -40,8 +40,10 @@ public class EditableContent
 
     public Instant createdTime;
 
+    @Deprecated
     public PrincipalKey modifier;
 
+    @Deprecated
     public Instant modifiedTime;
 
     public ContentPublishInfo publishInfo;

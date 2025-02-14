@@ -20,6 +20,7 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -34,12 +35,13 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
@@ -152,8 +154,7 @@ final class UpdateContentCommand
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
             .contentValidators( this.contentValidators )
-            .contentTypeService( this.contentTypeService )
-            .validationErrorsBuilder( validationErrorsBuilder ).build().execute();
+            .contentTypeService( this.contentTypeService ).validationErrorsBuilder( validationErrorsBuilder ).build().execute();
 
         if ( params.isRequireValid() )
         {
@@ -171,28 +172,26 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent )
             .valid( !validationErrors.hasErrors() )
             .validationErrors( validationErrors )
-            .modifiedTime( Instant.now() )
+            .modifiedTime( Instant.now() ).attachments( attachments ).modifier( getCurrentUser().getKey() )
             .build();
 
-        final UpdateNodeParams updateNodeParams =
-            UpdateNodeParamsFactory.create()
-                .editedContent( editedContent )
-                .createAttachments( params.getCreateAttachments() )
-            .attachments( attachments )
-            .modifier( getCurrentUser().getKey() )
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
+            .editedContent( editedContent )
+            .createAttachments( params.getCreateAttachments() )
+            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
-                .xDataService( this.xDataService )
-                .pageDescriptorService( this.pageDescriptorService )
-                .partDescriptorService( this.partDescriptorService )
-                .layoutDescriptorService( this.layoutDescriptorService )
-                .contentDataSerializer( this.translator.getContentDataSerializer() )
-                .siteService( this.siteService )
-                .build()
-                .produce();
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.translator.getContentDataSerializer() )
+            .siteService( this.siteService )
+            .build()
+            .produce();
 
-        final Node editedNode = this.nodeService.update( updateNodeParams );
+        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
 
-        return translator.fromNode( editedNode, true );
+        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
@@ -206,8 +205,8 @@ final class UpdateContentCommand
         if ( !params.isClearAttachments() )
         {
             originalAttachments.stream().forEach( a -> attachments.put( a.getBinaryReference(), a ) );
+            params.getRemoveAttachments().stream().forEach( attachments::remove );
         }
-        params.getRemoveAttachments().stream().forEach( attachments::remove );
 
         // added attachments with same BinaryReference will replace existing ones
         for ( final CreateAttachment createAttachment : params.getCreateAttachments() )
@@ -259,14 +258,13 @@ final class UpdateContentCommand
                     .createAttachments( params.getCreateAttachments() )
                     .originalContent( originalContent )
                     .editedContent( editedContent )
-                    .modifier( getCurrentUser() )
+//                    .modifier( getCurrentUser() )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
 
                 if ( result != null )
                 {
-                    editedContent =  editContent( result.getEditor(), editedContent );
-                    this.params.createAttachments( result.getCreateAttachments() );
+                    editedContent = editContent( result.getEditor(), editedContent );
                 }
             }
         }

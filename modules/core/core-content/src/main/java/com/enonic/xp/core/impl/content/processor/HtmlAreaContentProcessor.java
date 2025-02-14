@@ -12,7 +12,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -121,11 +120,7 @@ public class HtmlAreaContentProcessor
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        final CreateAttachments createAttachments = params.getCreateAttachments();
-
-        final ContentEditor editor;
-
-        editor = editable -> {
+        final ContentEditor editor = editable -> {
             final ContentIds.Builder processedIds = ContentIds.create();
 
             final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( editable.source.getType() ) );
@@ -142,7 +137,7 @@ public class HtmlAreaContentProcessor
             editable.processedReferences = processedIds;
         };
 
-        return new ProcessUpdateResult( createAttachments, editor );
+        return new ProcessUpdateResult( editor );
     }
 
     private void processSiteConfigData( final SiteConfigs siteConfigs, final ContentIds.Builder processedIds )

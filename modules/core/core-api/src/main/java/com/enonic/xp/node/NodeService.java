@@ -13,9 +13,10 @@ public interface NodeService
 {
     Node create( CreateNodeParams params );
 
+    @Deprecated
     Node update( UpdateNodeParams params );
 
-    PatchNodeResult patch( PatchNodeParams params );
+    ModifyNodeResult modify( UpdateNodeParams params );
 
     Node rename( RenameNodeParams params );
 
