@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -12,14 +13,14 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 
-final class OfflinePageBaseUrlStrategy
+final class PageOfflineBaseUrlStrategy
     implements BaseUrlStrategy
 {
     private final ProjectName projectName;
 
     private final Branch branch;
 
-    private final Content content;
+    private final Supplier<Content> contentSupplier;
 
     private final String urlType;
 
@@ -27,19 +28,21 @@ final class OfflinePageBaseUrlStrategy
 
     private final ProjectService projectService;
 
-    private OfflinePageBaseUrlStrategy( final Builder builder )
+    private PageOfflineBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.projectService = Objects.requireNonNull( builder.projectService );
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.content = Objects.requireNonNull( builder.content );
+        this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
     }
 
     @Override
     public String generateBaseUrl()
     {
+        final Content content = contentSupplier.get();
+
         final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
             .projectService( projectService )
@@ -49,13 +52,14 @@ final class OfflinePageBaseUrlStrategy
             .build()
             .resolve();
 
-        final String normalizedBaseUrl = normalizeBaseUrl( Objects.requireNonNullElse( baseUrlResult.getBaseUrl(), "/api" ) );
+        final String baseUrl = Objects.requireNonNullElseGet( baseUrlResult.getBaseUrl(), () -> "/site/" + projectName + "/" + branch );
+        final String normalizedBaseUrl = normalizeBaseUrl( baseUrl );
 
         final Site nearestSite = baseUrlResult.getNearestSite();
 
         if ( nearestSite != null )
         {
-            return normalizedBaseUrl + content.getPath().toString().substring( nearestSite.getPath().toString().length() );
+            return normalizedBaseUrl + content.toString().substring( nearestSite.getPath().toString().length() );
         }
 
         return normalizedBaseUrl + content.getPath();
@@ -86,7 +90,7 @@ final class OfflinePageBaseUrlStrategy
 
         private Branch branch;
 
-        private Content content;
+        private Supplier<Content> contentSupplier;
 
         private String urlType;
 
@@ -114,9 +118,9 @@ final class OfflinePageBaseUrlStrategy
             return this;
         }
 
-        public Builder content( final Content content )
+        public Builder content( final Supplier<Content> contentSupplier )
         {
-            this.content = content;
+            this.contentSupplier = contentSupplier;
             return this;
         }
 
@@ -126,9 +130,9 @@ final class OfflinePageBaseUrlStrategy
             return this;
         }
 
-        public OfflinePageBaseUrlStrategy build()
+        public PageOfflineBaseUrlStrategy build()
         {
-            return new OfflinePageBaseUrlStrategy( this );
+            return new PageOfflineBaseUrlStrategy( this );
         }
     }
 }

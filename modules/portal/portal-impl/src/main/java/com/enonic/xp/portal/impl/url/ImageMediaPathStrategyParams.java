@@ -1,7 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
@@ -10,7 +14,7 @@ import com.enonic.xp.project.ProjectName;
 
 final class ImageMediaPathStrategyParams
 {
-    private final Media media;
+    private final Supplier<Media> mediaSupplier;
 
     private final ProjectName projectName;
 
@@ -30,7 +34,7 @@ final class ImageMediaPathStrategyParams
 
     private ImageMediaPathStrategyParams( final Builder builder )
     {
-        this.media = Objects.requireNonNull( builder.media );
+        this.mediaSupplier = Objects.requireNonNull( builder.mediaSupplier );
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.scale = Objects.requireNonNull( builder.scale );
@@ -41,9 +45,9 @@ final class ImageMediaPathStrategyParams
         this.queryParams = builder.queryParams;
     }
 
-    public Media getMedia()
+    public Supplier<Media> getMedia()
     {
-        return media;
+        return mediaSupplier;
     }
 
     public ProjectName getProjectName()
@@ -93,7 +97,7 @@ final class ImageMediaPathStrategyParams
 
     static class Builder
     {
-        private Media media;
+        private Supplier<Media> mediaSupplier;
 
         private ProjectName projectName;
 
@@ -109,11 +113,11 @@ final class ImageMediaPathStrategyParams
 
         private String filter;
 
-        private Multimap<String, String> queryParams;
+        private final Multimap<String, String> queryParams = HashMultimap.create();
 
-        public Builder setMedia( final Media media )
+        public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
-            this.media = media;
+            this.mediaSupplier = mediaSupplier;
             return this;
         }
 
@@ -159,9 +163,9 @@ final class ImageMediaPathStrategyParams
             return this;
         }
 
-        public Builder setQueryParams( final Multimap<String, String> queryParams )
+        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
         {
-            this.queryParams = queryParams;
+            queryParams.forEach( this.queryParams::putAll );
             return this;
         }
 

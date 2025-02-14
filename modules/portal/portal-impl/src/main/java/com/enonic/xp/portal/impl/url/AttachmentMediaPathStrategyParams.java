@@ -1,5 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
@@ -8,7 +13,7 @@ import com.enonic.xp.project.ProjectName;
 
 final class AttachmentMediaPathStrategyParams
 {
-    private final Media media;
+    private final Supplier<Media> mediaSupplier;
 
     private final ProjectName projectName;
 
@@ -24,7 +29,7 @@ final class AttachmentMediaPathStrategyParams
 
     private AttachmentMediaPathStrategyParams( final Builder builder )
     {
-        this.media = builder.media;
+        this.mediaSupplier = builder.mediaSupplier;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.download = builder.download;
@@ -33,9 +38,9 @@ final class AttachmentMediaPathStrategyParams
         this.queryParams = builder.queryParams;
     }
 
-    public Media getMedia()
+    public Supplier<Media> getMediaSupplier()
     {
-        return media;
+        return mediaSupplier;
     }
 
     public ProjectName getProjectName()
@@ -75,7 +80,7 @@ final class AttachmentMediaPathStrategyParams
 
     static class Builder
     {
-        private Media media;
+        private Supplier<Media> mediaSupplier;
 
         private ProjectName projectName;
 
@@ -87,11 +92,11 @@ final class AttachmentMediaPathStrategyParams
 
         private String label;
 
-        private Multimap<String, String> queryParams;
+        private final Multimap<String, String> queryParams = HashMultimap.create();
 
-        public Builder setMedia( final Media media )
+        public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
-            this.media = media;
+            this.mediaSupplier = mediaSupplier;
             return this;
         }
 
@@ -125,9 +130,9 @@ final class AttachmentMediaPathStrategyParams
             return this;
         }
 
-        public Builder setQueryParams( final Multimap<String, String> queryParams )
+        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
         {
-            this.queryParams = queryParams;
+            queryParams.forEach( this.queryParams::putAll );
             return this;
         }
 
