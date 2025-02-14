@@ -50,6 +50,11 @@ final class UrlGenerator
             return "";
         }
 
+        if ( path.startsWith( "?" ) )
+        {
+            return path;
+        }
+
         return !path.startsWith( "/" ) ? "/" + path : path;
     }
 

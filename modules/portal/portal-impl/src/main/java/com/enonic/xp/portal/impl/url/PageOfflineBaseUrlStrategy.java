@@ -59,7 +59,7 @@ final class PageOfflineBaseUrlStrategy
 
         if ( nearestSite != null )
         {
-            return normalizedBaseUrl + content.toString().substring( nearestSite.getPath().toString().length() );
+            return normalizedBaseUrl + content.getPath().toString().substring( nearestSite.getPath().toString().length() );
         }
 
         return normalizedBaseUrl + content.getPath();

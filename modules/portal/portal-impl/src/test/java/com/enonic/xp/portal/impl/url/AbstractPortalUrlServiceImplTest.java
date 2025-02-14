@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.project.ProjectService;
@@ -31,6 +32,8 @@ public abstract class AbstractPortalUrlServiceImplTest
     protected PortalUrlServiceImpl service;
 
     protected ContentService contentService;
+
+    protected ProjectService projectService;
 
     protected ApplicationService applicationService;
 
@@ -61,6 +64,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest.setRawRequest( req );
 
         this.contentService = mock( ContentService.class );
+        this.projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
@@ -69,8 +73,6 @@ public abstract class AbstractPortalUrlServiceImplTest
         when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
-
-        ProjectService projectService = mock( ProjectService.class );
 
         UrlGeneratorParamsAdapter urlStrategyFacade = new UrlGeneratorParamsAdapter( this.contentService, projectService );
 
@@ -83,6 +85,8 @@ public abstract class AbstractPortalUrlServiceImplTest
         when( portalConfig.legacy_attachmentService_enabled() ).thenReturn( true );
         when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
         when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
+
+        PortalRequestAccessor.set( this.portalRequest );
 
         this.service.activate( portalConfig );
     }
