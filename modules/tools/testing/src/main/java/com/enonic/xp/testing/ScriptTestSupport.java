@@ -104,6 +104,7 @@ public abstract class ScriptTestSupport
         {
             ( (Closeable) executor ).close();
         }
+        PortalRequestAccessor.remove();
     }
 
     protected void initialize()

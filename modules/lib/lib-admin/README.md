@@ -30,7 +30,7 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 `example.ts`
 
 ```ts
-const {getBaseUri, getAssetsUri, getHomeToolUrl, HomeToolUrlType} = require('/lib/xp/admin');
+const {getBaseUri, getHomeToolUrl, HomeToolUrlType} = require('/lib/xp/admin');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be
@@ -57,7 +57,7 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {getBaseUri, getAssetsUri, getHomeToolUrl, HomeToolUrlType} from '/lib/xp/admin';
+import {getBaseUri, getHomeToolUrl, HomeToolUrlType} from '/lib/xp/admin';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.

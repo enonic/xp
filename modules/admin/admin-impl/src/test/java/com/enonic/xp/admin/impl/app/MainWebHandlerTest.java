@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.app;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +11,8 @@ import com.enonic.xp.web.WebResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MainWebHandlerTest
 {
@@ -25,26 +29,28 @@ public class MainWebHandlerTest
         throws Exception
     {
         final WebRequest request = new WebRequest();
-
-        request.setRawPath( "/other" );
-        assertFalse( this.handler.canHandle( request ) );
+        final HttpServletRequest httpServletRequest = mock( HttpServletRequest.class );
 
         request.setRawPath( "/" );
+        request.setRawRequest( httpServletRequest );
+        when( httpServletRequest.getRequestURI() ).thenReturn( "/" );
         assertTrue( this.handler.canHandle( request ) );
 
-        final WebResponse response1 = this.handler.doHandle( request, null, null );
-        assertRedirect( response1 );
+        final WebResponse response = this.handler.doHandle( request, null, null );
+        assertEquals( 307, response.getStatus().value() );
+        assertEquals( "/admin", response.getHeaders().get( "Location" ) );
+
+    }
+
+    @Test
+    void cannotHandle()
+    {
+        final WebRequest request = new WebRequest();
 
         request.setRawPath( "/admin" );
         assertFalse( this.handler.canHandle( request ) );
 
-        final WebResponse response2 = this.handler.doHandle( request, null, null );
-        assertRedirect( response2 );
-    }
-
-    private void assertRedirect( final WebResponse res )
-    {
-        assertEquals( 307, res.getStatus().value() );
-        assertEquals( "/admin", res.getHeaders().get( "Location" ) );
+        request.setRawPath( "/other" );
+        assertFalse( this.handler.canHandle( request ) );
     }
 }

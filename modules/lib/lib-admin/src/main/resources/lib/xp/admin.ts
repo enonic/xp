@@ -59,6 +59,8 @@ export function getBaseUri(): string {
 }
 
 /**
+ * @deprecated
+ *
  * Returns the admin assets uri.
  *
  * @returns {string} Assets uri.
@@ -95,6 +97,8 @@ export function getPhrases(): string {
 }
 
 /**
+ * @deprecated
+ *
  * Returns the URL for launcher panel.
  *
  * @returns {string} URL.

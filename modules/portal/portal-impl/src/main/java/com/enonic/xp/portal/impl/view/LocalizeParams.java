@@ -21,17 +21,22 @@ class LocalizeParams
 
     private Locale locale;
 
-    private String application;
+    private ApplicationKey application;
 
     private Object[] params;
 
     private static final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
 
-    private final PortalRequest request;
-
     LocalizeParams( final PortalRequest request )
     {
-        this.request = request;
+        if ( request != null )
+        {
+            if ( request.getSite() != null && request.getSite().getLanguage() != null )
+            {
+                this.locale = request.getSite().getLanguage();
+            }
+            this.application = request.getApplicationKey();
+        }
     }
 
     private void key( final String key )
@@ -41,30 +46,16 @@ class LocalizeParams
 
     public ApplicationKey getApplicationKey()
     {
-        if ( this.application != null )
-        {
-            return ApplicationKey.from( this.application );
-        }
-        if ( this.request == null )
-        {
-            throw new IllegalArgumentException( "Expected application parameter for localize function" );
-        }
-        return this.request.getApplicationKey();
+        return this.application;
     }
 
-    private void locale( final String locale )
+    private void locale( final String value )
     {
-        this.locale = isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
-    }
-
-    private Locale resolveLocale()
-    {
-        if ( request.getSite() != null && request.getSite().getLanguage() != null )
+        final String locale = Strings.emptyToNull( value );
+        if ( locale != null )
         {
-            return request.getSite().getLanguage();
+            this.locale = Locale.forLanguageTag( value );
         }
-
-        return null;
     }
 
     private void values( final Collection<String> values )
@@ -104,11 +95,13 @@ class LocalizeParams
         this.params = Arrays.asList( argumentList.split( "," ) ).toArray();
     }
 
-
-    public LocalizeParams application( final String value )
+    private void application( final String value )
     {
-        this.application = Strings.emptyToNull( value );
-        return this;
+        final String application = Strings.emptyToNull( value );
+        if ( application != null )
+        {
+            this.application = ApplicationKey.from( application );
+        }
     }
 
     public LocalizeParams setAsMap( final Multimap<String, String> map )

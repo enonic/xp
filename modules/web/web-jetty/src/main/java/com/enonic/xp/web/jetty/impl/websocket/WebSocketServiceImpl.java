@@ -102,11 +102,10 @@ public final class WebSocketServiceImpl
 
     private WebSocketCreator newCreator( final EndpointFactory factory )
     {
-        final ServerEndpointConfig.Builder builder = newEndpointConfigBuilder();
-        builder.configurator( newConfigurator( factory ) );
-        builder.subprotocols( factory.getSubProtocols() );
-
-        final ServerEndpointConfig config = builder.build();
+        final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
+            .configurator( newConfigurator( factory ) )
+            .subprotocols( factory.getSubProtocols() )
+            .build();
         final SimpleServerEndpointMetadata meta = new SimpleServerEndpointMetadata( Endpoint.class, config );
 
         final WebSocketExtensionFactory ext = new WebSocketExtensionFactory( this.serverFactory );
@@ -149,10 +148,5 @@ public final class WebSocketServiceImpl
                 return endpointClass.cast( factory.newEndpoint() );
             }
         };
-    }
-
-    private ServerEndpointConfig.Builder newEndpointConfigBuilder()
-    {
-        return ServerEndpointConfig.Builder.create( Endpoint.class, "/" );
     }
 }

@@ -29,7 +29,6 @@ final class ControllerScriptImpl
     public PortalResponse execute( final PortalRequest portalRequest )
     {
         PortalRequestAccessor.set( portalRequest );
-
         try
         {
             return Tracer.trace( "controllerScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),

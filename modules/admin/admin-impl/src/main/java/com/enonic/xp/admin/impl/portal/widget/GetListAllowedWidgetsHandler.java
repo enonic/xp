@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -23,7 +21,6 @@ import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
@@ -35,7 +32,6 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -74,16 +70,19 @@ public class GetListAllowedWidgetsHandler
         final List<ObjectNode> result = new ArrayList<>();
         if ( widgetDescriptors.isNotEmpty() )
         {
+            final PortalRequest portalRequest = (PortalRequest) webRequest;
             final String widgetApiBaseUrl = portalUrlService.apiUrl(
-                new ApiUrlParams().portalRequest( (PortalRequest) webRequest ).application( "admin" ).api( "widget" ) );
-
-            widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, widgetApiBaseUrl ) ) );
+                new ApiUrlParams().portalRequest( portalRequest ).application( "admin" ).api( "widget" ) );
+            final List<Locale> preferredLocales = Collections.list( portalRequest.getRawRequest().getLocales() );
+            widgetDescriptors.forEach(
+                widgetDescriptor -> result.add( convertToJson( widgetDescriptor, widgetApiBaseUrl, preferredLocales ) ) );
         }
 
         return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( result ).build();
     }
 
-    private ObjectNode convertToJson( final WidgetDescriptor widgetDescriptor, final String widgetApiBaseUrl )
+    private ObjectNode convertToJson( final WidgetDescriptor widgetDescriptor, final String widgetApiBaseUrl,
+                                      final List<Locale> preferredLocales )
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
@@ -96,8 +95,9 @@ public class GetListAllowedWidgetsHandler
 
         if ( !isNullOrEmpty( widgetDescriptor.getDisplayNameI18nKey() ) || !isNullOrEmpty( widgetDescriptor.getDescriptionI18nKey() ) )
         {
-            final MessageBundle bundle =
-                localeService.getBundle( widgetDescriptor.getApplicationKey(), getLocale( widgetDescriptor.getApplicationKey() ) );
+            final MessageBundle bundle = localeService.getBundle( widgetDescriptor.getApplicationKey(),
+                                                                  localeService.getSupportedLocale( preferredLocales,
+                                                                                                    widgetDescriptor.getApplicationKey() ) );
 
             addLocalizedJson( json, bundle, "displayName", widgetDescriptor.getDisplayNameI18nKey(), widgetDescriptor.getDisplayName() );
             addLocalizedJson( json, bundle, "description", widgetDescriptor.getDescriptionI18nKey(), widgetDescriptor.getDescription() );
@@ -145,12 +145,6 @@ public class GetListAllowedWidgetsHandler
             LOG.error( "Error on localization of message with key [{}].", key, e );
             return bundle.getMessage( key );
         }
-    }
-
-    private Locale getLocale( final ApplicationKey applicationKey )
-    {
-        final HttpServletRequest req = ServletRequestHolder.getRequest();
-        return localeService.getSupportedLocale( Collections.list( req.getLocales() ), applicationKey );
     }
 
     private String resolveIconUrl( final WidgetDescriptor widgetDescriptor, final String widgetBaseUrl )

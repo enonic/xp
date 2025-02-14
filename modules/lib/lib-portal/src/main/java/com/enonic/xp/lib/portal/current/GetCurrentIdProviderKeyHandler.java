@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.current;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -17,7 +15,7 @@ public final class GetCurrentIdProviderKeyHandler
 
     public String execute()
     {
-        final IdProviderKey idProviderKey = retrieveIdProviderKey( request.getRawRequest() );
+        final IdProviderKey idProviderKey = retrieveIdProviderKey();
         if ( idProviderKey != null )
         {
             return idProviderKey.toString();
@@ -25,15 +23,15 @@ public final class GetCurrentIdProviderKeyHandler
         return null;
     }
 
-    private IdProviderKey retrieveIdProviderKey( final HttpServletRequest req )
+    private IdProviderKey retrieveIdProviderKey()
     {
         final IdProvider idProvider = this.request.getIdProvider();
         if ( idProvider != null )
         {
             return idProvider.getKey();
         }
-        
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )
         {
             return virtualHost.getDefaultIdProviderKey();

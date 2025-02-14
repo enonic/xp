@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.macro;
 
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
@@ -24,9 +23,7 @@ public final class MacroProcessorScript
     @Override
     public PortalResponse process( final MacroContext macroContext )
     {
-        final PortalRequest portalRequest = macroContext.getRequest();
-        PortalRequestAccessor.set( portalRequest );
-
+        PortalRequestAccessor.set( macroContext.getRequest() );
         try
         {
             return doProcess( macroContext );

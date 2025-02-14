@@ -9,39 +9,34 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class AdminLibHelper
     implements ScriptBean
 {
     private static final String ADMIN_APP_NAME = "com.enonic.xp.app.main";
 
-    private static final String ADMIN_URI_PREFIX = "/admin";
-
-    private static final String ADMIN_ASSETS_URI_PREFIX = "/admin/assets/";
-
-    private final String version;
-
     private Supplier<AdminToolDescriptorService> adminToolDescriptorService;
+
+    private Supplier<PortalRequest> requestSupplier;
 
     public AdminLibHelper()
     {
-        this.version = generateVersion();
     }
 
     public String getBaseUri()
     {
-        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_URI_PREFIX );
+        return this.adminToolDescriptorService.get().getHomeToolUri();
     }
 
+    @Deprecated
     public String getAssetsUri()
     {
-        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_ASSETS_URI_PREFIX + this.version );
+        return "/";
     }
 
     public String getHomeToolUri()
@@ -59,6 +54,7 @@ public final class AdminLibHelper
         return ADMIN_APP_NAME;
     }
 
+    @Deprecated
     public String getLauncherToolUrl()
     {
         return generateAdminToolUri( ADMIN_APP_NAME, "launcher" );
@@ -66,14 +62,14 @@ public final class AdminLibHelper
 
     public String getLocale()
     {
-        final HttpServletRequest req = ServletRequestHolder.getRequest();
+        final HttpServletRequest req = requestSupplier.get().getRawRequest();
         final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
         return locale.getLanguage().toLowerCase();
     }
 
     public List<String> getLocales()
     {
-        final HttpServletRequest req = ServletRequestHolder.getRequest();
+        final HttpServletRequest req = requestSupplier.get().getRawRequest();
         final List<Locale> locales;
         if ( req != null )
         {
@@ -95,19 +91,6 @@ public final class AdminLibHelper
         }
     }
 
-    private static String generateVersion()
-    {
-        final VersionInfo version = VersionInfo.get();
-        if ( version.isSnapshot() )
-        {
-            return Long.toString( System.currentTimeMillis() );
-        }
-        else
-        {
-            return version.getVersion();
-        }
-    }
-
     public String getInstallation()
     {
         return ServerInfo.get().getName();
@@ -115,13 +98,13 @@ public final class AdminLibHelper
 
     public String getVersion()
     {
-        final VersionInfo version = VersionInfo.get();
-        return version.getVersion();
+        return VersionInfo.get().getVersion();
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
         this.adminToolDescriptorService = context.getService( AdminToolDescriptorService.class );
+        this.requestSupplier = context.getBinding( PortalRequest.class );
     }
 }

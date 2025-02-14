@@ -34,7 +34,7 @@ final class JaxRsServlet
     public void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        req.setAttribute( "error.handled", true );
+        req.setAttribute( "error.handled", Boolean.TRUE );
 
         try
         {

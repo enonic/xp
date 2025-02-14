@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +70,7 @@ public class ImageUrlBuilderTest
         portalRequest.setBaseUri( "/site" );
         portalRequest.setRawPath( "/site" );
         portalRequest.setContent( media );
+        portalRequest.setRawRequest( mock( HttpServletRequest.class ) );
 
         this.imageUrlParams = new ImageUrlParams().portalRequest( portalRequest ).scale( "testScale" );
 

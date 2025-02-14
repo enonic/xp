@@ -29,23 +29,7 @@ public final class ServletRequestUrlHelper
 
     public static String createUri( final HttpServletRequest req, final String path )
     {
-        final StringBuilder str = new StringBuilder();
-
-        if ( !isNullOrEmpty( path ) )
-        {
-            if ( !path.startsWith( "/" ) )
-            {
-                str.append( "/" );
-            }
-
-            str.append( path );
-        }
-        else
-        {
-            str.append( "/" );
-        }
-
-        return rewriteUri( req, str.toString() ).getRewrittenUri();
+        return rewriteUri( req, path.startsWith( "/" ) ? path : "/" + path ).getRewrittenUri();
     }
 
     @Deprecated
@@ -110,7 +94,7 @@ public final class ServletRequestUrlHelper
 
     public static String getPath( final HttpServletRequest req )
     {
-        return createUri( req, req.getRequestURI() );
+        return rewriteUri( req, req.getRequestURI() ).getRewrittenUri();
     }
 
     @Deprecated
@@ -158,7 +142,7 @@ public final class ServletRequestUrlHelper
         StringBuilder fullUrl = new StringBuilder( getServerUrl( req ) );
 
         //Appends the path part
-        fullUrl.append( getPath( req ) );
+        fullUrl.append( rewriteUri( req, req.getRequestURI() ).getRewrittenUri() );
 
         //Appends the query string part
         final String queryString = req.getQueryString();
@@ -186,16 +170,11 @@ public final class ServletRequestUrlHelper
 
     public static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
     {
-        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create().rewrittenUri( uri );
-        if ( req == null )
-        {
-            return resultBuilder.build();
-        }
-
+        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create();
         final VirtualHost vhost = VirtualHostHelper.getVirtualHost( req );
         if ( vhost == null )
         {
-            return resultBuilder.build();
+            return resultBuilder.rewrittenUri( uri ).build();
         }
 
         final String targetPath = vhost.getTarget();
