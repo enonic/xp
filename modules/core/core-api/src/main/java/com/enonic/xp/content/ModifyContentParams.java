@@ -14,20 +14,16 @@ public final class ModifyContentParams
 {
     private final ContentId id;
 
-    private final ContentSuperEditor editor;
+    private final ContentModifier modifier;
 
     private final CreateAttachments createAttachments;
-//
-//    private BinaryReferences removeAttachments = BinaryReferences.empty();
-//
-//    private boolean clearAttachments;
 
     private final Branches branches;
 
     private ModifyContentParams( final Builder builder )
     {
         this.id = builder.id;
-        this.editor = builder.editor;
+        this.modifier = builder.modifier;
         this.createAttachments = builder.createAttachments;
         this.branches = Branches.from( builder.branches.build() );
     }
@@ -47,9 +43,9 @@ public final class ModifyContentParams
         return createAttachments;
     }
 
-    public ContentSuperEditor getEditor()
+    public ContentModifier getModifier()
     {
-        return editor;
+        return modifier;
     }
 
     public Branches getBranches()
@@ -63,7 +59,7 @@ public final class ModifyContentParams
 
         private ContentId id;
 
-        private ContentSuperEditor editor;
+        private ContentModifier modifier;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
@@ -77,9 +73,9 @@ public final class ModifyContentParams
             return this;
         }
 
-        public Builder editor( final ContentSuperEditor editor )
+        public Builder modifier( final ContentModifier modifier )
         {
-            this.editor = editor;
+            this.modifier = modifier;
             return this;
         }
 

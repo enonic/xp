@@ -18,8 +18,6 @@ public class ProcessUpdateParams
 
     private final Content editedContent;
 
-//    private final User modifier;
-
     private ProcessUpdateParams( final Builder builder )
     {
         this.createAttachments = builder.createAttachments;
@@ -27,7 +25,6 @@ public class ProcessUpdateParams
         mediaInfo = builder.mediaInfo;
         originalContent = builder.originalContent;
         editedContent = builder.editedContent;
-//        modifier = builder.modifier;
     }
 
     public static Builder create()
@@ -55,16 +52,10 @@ public class ProcessUpdateParams
         return originalContent;
     }
 
-    //    @Deprecated
     public Content getEditedContent()
     {
         return editedContent;
     }
-
-//    public EditableContent getEditableContent()
-//    {
-//        return editableContent;
-//    }
 
     @Deprecated
     public User getModifier()
@@ -112,13 +103,6 @@ public class ProcessUpdateParams
             return this;
         }
 
-//        public Builder editableContent( final EditableContent editableContent )
-//        {
-//            this.editableContent = editableContent;
-//            return this;
-//        }
-
-        //        @Deprecated
         public Builder editedContent( final Content editedContent )
         {
             this.editedContent = editedContent;
@@ -128,7 +112,6 @@ public class ProcessUpdateParams
         @Deprecated
         public Builder modifier( final User modifier )
         {
-//            this.modifier = modifier;
             return this;
         }
 
