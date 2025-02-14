@@ -8,7 +8,6 @@ public final class ProcessUpdateResult
 {
     final ContentEditor editor;
 
-    @Deprecated
     final CreateAttachments createAttachments;
 
     @Deprecated

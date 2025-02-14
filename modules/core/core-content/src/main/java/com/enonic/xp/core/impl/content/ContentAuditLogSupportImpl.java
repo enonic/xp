@@ -506,9 +506,9 @@ public class ContentAuditLogSupportImpl
     }
 
     @Override
-    public void patch( final ModifyContentParams params, final ModifyContentResult result )
+    public void modify( final ModifyContentParams params, final ModifyContentResult result )
     {
-
+        // TODO: Implement
     }
 
     @Override

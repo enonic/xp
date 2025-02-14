@@ -258,7 +258,6 @@ final class UpdateContentCommand
                     .createAttachments( params.getCreateAttachments() )
                     .originalContent( originalContent )
                     .editedContent( editedContent )
-//                    .modifier( getCurrentUser() )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
 

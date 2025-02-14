@@ -14,7 +14,7 @@ public class UpdateNodeParams
 {
     private final NodeId id;
 
-    private final NodePath path; // TODO: it's not usable for Modify. Split?
+    private final NodePath path;
 
     private final NodeEditor editor;
 

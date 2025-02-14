@@ -28,7 +28,7 @@ public class ContentServiceImplTest_modify
 
         final Content content = this.contentService.create( createContentParams );
 
-        final ModifyContentParams patchContentParams = ModifyContentParams.create().contentId( content.getId() ).editor( edit -> {
+        final ModifyContentParams patchContentParams = ModifyContentParams.create().contentId( content.getId() ).modifier( edit -> {
             edit.displayName.setValue( "new display name" );
         } ).build();
 

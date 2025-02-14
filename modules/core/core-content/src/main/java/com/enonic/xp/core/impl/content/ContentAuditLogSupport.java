@@ -42,7 +42,7 @@ interface ContentAuditLogSupport
 
     void update( UpdateMediaParams params, Content content );
 
-    void patch( ModifyContentParams params, ModifyContentResult result );
+    void modify( ModifyContentParams params, ModifyContentResult result );
 
     void delete( DeleteContentParams params, DeleteContentsResult contents );
 

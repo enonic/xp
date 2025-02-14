@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentSuperEditor;
+import com.enonic.xp.content.ContentModifier;
+import com.enonic.xp.content.ModifiableContent;
+import com.enonic.xp.content.ModifiableSite;
 import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.ModifyContentResult;
-import com.enonic.xp.content.SuperEditableContent;
-import com.enonic.xp.content.SuperEditableSite;
 import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.site.Site;
@@ -32,14 +32,19 @@ public class ModifyContentCommand
         return create().params( params );
     }
 
-    public ModifyContentResult execute()
+    ModifyContentResult execute()
+    {
+        validateCreateAttachments( params.getCreateAttachments() );
+        return doExecute();
+    }
+
+    private ModifyContentResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        Content editedContent = superEditContent( params.getEditor(), contentBeforeChange );
+        Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
-            .editedContent( editedContent )
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().editedContent( modifiedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
@@ -62,15 +67,15 @@ public class ModifyContentCommand
         return builder.build();
     }
 
-    private Content superEditContent( final ContentSuperEditor editor, final Content original )
+    private Content modifyContent( final ContentModifier modifier, final Content original )
     {
-        final SuperEditableContent editableContent =
-            original.isSite() ? new SuperEditableSite( (Site) original ) : new SuperEditableContent( original );
-        if ( editor != null )
+        final ModifiableContent modifiableContent =
+            original.isSite() ? new ModifiableSite( (Site) original ) : new ModifiableContent( original );
+        if ( modifier != null )
         {
-            editor.edit( editableContent );
+            modifier.modify( modifiableContent );
         }
-        return editableContent.build();
+        return modifiableContent.build();
     }
 
     public static final class Builder

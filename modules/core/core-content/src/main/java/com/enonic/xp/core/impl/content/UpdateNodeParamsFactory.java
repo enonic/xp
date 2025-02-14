@@ -27,11 +27,7 @@ public class UpdateNodeParamsFactory
 {
     private final Content editedContent;
 
-//    private final PrincipalKey modifier;
-
     private final CreateAttachments createAttachments;
-
-//    private final Attachments attachments;
 
     private final ContentTypeService contentTypeService;
 
@@ -52,9 +48,7 @@ public class UpdateNodeParamsFactory
     public UpdateNodeParamsFactory( final Builder builder )
     {
         this.editedContent = builder.editedContent;
-//        this.modifier = builder.modifier;
         this.createAttachments = builder.createAttachments;
-//        this.attachments = builder.attachments;
         this.contentTypeService = builder.contentTypeService;
         this.xDataService = builder.xDataService;
         this.pageDescriptorService = builder.pageDescriptorService;
@@ -69,10 +63,11 @@ public class UpdateNodeParamsFactory
     {
         final NodeEditor nodeEditor = toNodeEditor();
 
-        final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
-            id( NodeId.from( editedContent.getId() ) ).
-            editor( nodeEditor ).addBranches( branches ).
-            refresh( RefreshMode.ALL );
+        final UpdateNodeParams.Builder builder = UpdateNodeParams.create()
+            .id( NodeId.from( editedContent.getId() ) )
+            .editor( nodeEditor )
+            .addBranches( branches )
+            .refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
         {
@@ -115,11 +110,7 @@ public class UpdateNodeParamsFactory
     {
         private Content editedContent;
 
-//        private PrincipalKey modifier;
-
         private CreateAttachments createAttachments = CreateAttachments.empty();
-
-//        private Attachments attachments;
 
         private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
@@ -143,23 +134,11 @@ public class UpdateNodeParamsFactory
             return this;
         }
 
-//        Builder modifier( final PrincipalKey modifier )
-//        {
-//            this.modifier = modifier;
-//            return this;
-//        }
-
         Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
             return this;
         }
-
-//        Builder attachments( final Attachments attachments )
-//        {
-//            this.attachments = attachments;
-//            return this;
-//        }
 
         Builder branches( final Branches branches )
         {

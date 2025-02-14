@@ -380,11 +380,11 @@ public class ContentServiceImpl
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).  // ???
-                build()
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
             .execute();
 
-        contentAuditLogSupport.patch( params, result );
+        contentAuditLogSupport.modify( params, result );
 
         return result;
     }
