@@ -11,8 +11,9 @@ import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.site.Site;
 
-final class OfflineBaseUrlStrategy
+final class PageOfflineBaseUrlStrategy
     implements BaseUrlStrategy
 {
     private final ProjectName projectName;
@@ -27,25 +28,20 @@ final class OfflineBaseUrlStrategy
 
     private final ProjectService projectService;
 
-    OfflineBaseUrlStrategy( final Builder builder )
+    private PageOfflineBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.projectService = Objects.requireNonNull( builder.projectService );
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.contentSupplier = builder.contentSupplier;
+        this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
     }
 
     @Override
     public String generateBaseUrl()
     {
         final Content content = contentSupplier.get();
-
-        if ( content == null )
-        {
-            return "/api";
-        }
 
         final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
@@ -56,18 +52,17 @@ final class OfflineBaseUrlStrategy
             .build()
             .resolve();
 
-        final String baseUrl = baseUrlResult.getBaseUrl();
-        if ( baseUrl != null )
+        final String baseUrl = Objects.requireNonNullElseGet( baseUrlResult.getBaseUrl(), () -> "/site/" + projectName + "/" + branch );
+        final String normalizedBaseUrl = normalizeBaseUrl( baseUrl );
+
+        final Site nearestSite = baseUrlResult.getNearestSite();
+
+        if ( nearestSite != null )
         {
-            return normalizeBaseUrl( baseUrl );
+            return normalizedBaseUrl + content.getPath().toString().substring( nearestSite.getPath().toString().length() );
         }
 
-        return "/api";
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        return normalizedBaseUrl + content.getPath();
     }
 
     private String normalizeBaseUrl( final String baseUrl )
@@ -75,9 +70,14 @@ final class OfflineBaseUrlStrategy
         final String path = UrlTypeConstants.SERVER_RELATIVE.equals( urlType ) ? URI.create( baseUrl ).getPath() : baseUrl;
         if ( path.endsWith( "/" ) )
         {
-            return path.substring( 0, path.length() - 1 ) + "/_/";
+            return path.substring( 0, path.length() - 1 );
         }
-        return path + "/_/";
+        return path;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
     }
 
     static class Builder
@@ -130,9 +130,9 @@ final class OfflineBaseUrlStrategy
             return this;
         }
 
-        public OfflineBaseUrlStrategy build()
+        public PageOfflineBaseUrlStrategy build()
         {
-            return new OfflineBaseUrlStrategy( this );
+            return new PageOfflineBaseUrlStrategy( this );
         }
     }
 }
