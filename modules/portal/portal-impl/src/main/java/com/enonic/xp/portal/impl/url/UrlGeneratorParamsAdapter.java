@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -17,6 +18,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
@@ -24,14 +26,12 @@ import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
-import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 
-@Component(immediate = true, service = UrlStrategyFacade.class)
-public class UrlStrategyFacadeImpl
-    implements UrlStrategyFacade
+@Component(immediate = true, service = UrlGeneratorParamsAdapter.class)
+public class UrlGeneratorParamsAdapter
 {
 
     private final ContentService contentService;
@@ -39,32 +39,35 @@ public class UrlStrategyFacadeImpl
     private final ProjectService projectService;
 
     @Activate
-    public UrlStrategyFacadeImpl( @Reference final ContentService contentService, @Reference final ProjectService projectService )
+    public UrlGeneratorParamsAdapter( @Reference final ContentService contentService, @Reference final ProjectService projectService )
     {
         this.contentService = contentService;
         this.projectService = projectService;
     }
 
-    @Override
     public ImageUrlGeneratorParams offlineImageUrlParams( final ImageUrlParams params )
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
-        final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
+        final ProjectName baseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
+        final Branch baseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
-        final Media media = resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
+        final Supplier<Media> mediaSupplier = () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
-        final String baseUriKey = params.getBaseUrlKey();
+        final Supplier<Content> baseUrlContentSupplier = () -> {
+            final String baseUriKey = params.getBaseUrlKey();
 
-        final Site site = baseUriKey != null ? offlineNearestSite( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUriKey ) : null;
+            final Site site = baseUriKey != null ? offlineNearestSite( baseUrlProjectName, baseUrlBranch, params.getBaseUrlKey() ) : null;
+
+            return site != null ? site : mediaSupplier.get();
+        };
 
         final BaseUrlStrategy baseUrlStrategy =
-            offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, site != null ? site : media, params.getType() );
+            offlineBaseUrlStrategy( baseUrlProjectName, baseUrlBranch, baseUrlContentSupplier, params.getType() );
 
         return ImageUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
-            .setMedia( media )
+            .setMedia( mediaSupplier )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
             .setScale( params.getScale() )
@@ -76,19 +79,17 @@ public class UrlStrategyFacadeImpl
             .build();
     }
 
-    @Override
     public ImageUrlGeneratorParams requestImageUrlParams( final ImageUrlParams params )
     {
-        final PortalRequest portalRequest = params.getPortalRequest();
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
         final ProjectName mediaPathProjectName = requestProjectName( params.getProjectName(), portalRequest );
         final Branch mediaPathBranch = requestBranch( params.getBranch(), portalRequest );
-        final Media media = resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
         final BaseUrlStrategy baseUrlStrategy = requestBaseUrlStrategy( portalRequest, params.getType() );
 
         return ImageUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
-            .setMedia( media )
+            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() ) )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
             .setScale( params.getScale() )
@@ -100,7 +101,6 @@ public class UrlStrategyFacadeImpl
             .build();
     }
 
-    @Override
     public AttachmentUrlGeneratorParams offlineAttachmentUrlParams( final AttachmentUrlParams params )
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
@@ -108,20 +108,23 @@ public class UrlStrategyFacadeImpl
         final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
         final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
-        final String baseUriKey = params.getBaseUrlKey();
+        final Supplier<Media> mediaSupplier = () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
-        final Media media = resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
-
-        final Site site = baseUriKey != null ? offlineNearestSite( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUriKey ) : null;
+        final Supplier<Content> baseUrlContentSupplier = () -> {
+            final String baseUriKey = params.getBaseUrlKey();
+            final Site site =
+                baseUriKey != null ? offlineNearestSite( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUriKey ) : null;
+            return site != null ? site : mediaSupplier.get();
+        };
 
         final BaseUrlStrategy baseUrlStrategy =
-            offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, site != null ? site : media, params.getType() );
+            offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUrlContentSupplier, params.getType() );
 
         return AttachmentUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
-            .setMedia( media )
+            .setMedia( mediaSupplier )
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )
@@ -129,16 +132,13 @@ public class UrlStrategyFacadeImpl
             .build();
     }
 
-    @Override
     public AttachmentUrlGeneratorParams requestAttachmentUrlParams( final AttachmentUrlParams params )
     {
-        final PortalRequest portalRequest = params.getPortalRequest();
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
 
         final ProjectName mediaPathProjectName = requestProjectName( params.getProjectName(), portalRequest );
 
         final Branch mediaPathBranch = requestBranch( params.getBranch(), portalRequest );
-
-        final Media media = resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
         final BaseUrlStrategy baseUrlStrategy = requestBaseUrlStrategy( portalRequest, params.getType() );
 
@@ -146,7 +146,7 @@ public class UrlStrategyFacadeImpl
             .setBaseUrlStrategy( baseUrlStrategy )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
-            .setMedia( media )
+            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() ) )
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )
@@ -154,38 +154,43 @@ public class UrlStrategyFacadeImpl
             .build();
     }
 
-    @Override
     public PageUrlGeneratorParams offlinePageUrlParams( final PageUrlParams params )
     {
-        final Content content = getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) );
-
         final ProjectName projectName = offlineBaseUrlProjectName( params.getProjectName() );
         final Branch branch = offlineBaseUrlBranch( params.getBranch() );
 
-        final BaseUrlStrategy baseUrlStrategy = OfflinePageBaseUrlStrategy.create()
+        final BaseUrlStrategy baseUrlStrategy = PageOfflineBaseUrlStrategy.create()
             .contentService( contentService )
             .projectService( projectService )
             .projectName( projectName )
             .branch( branch )
-            .content( content )
+            .content( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) )
             .urlType( params.getType() )
             .build();
 
-        return new PageUrlGeneratorParams( baseUrlStrategy );
+        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
+        if ( params.getParams() != null )
+        {
+            builder.addQueryParams( params.getParams().asMap() );
+        }
+        return builder.build();
     }
 
-    @Override
     public PageUrlGeneratorParams requestPageUrlParams( final PageUrlParams params )
     {
         final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create()
-            .setPortalRequest( params.getPortalRequest() )
             .setUrlType( params.getType() )
             .setId( params.getId() )
             .setPath( params.getPath() )
             .setContentService( contentService )
             .build();
 
-        return new PageUrlGeneratorParams( baseUrlStrategy );
+        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
+        if ( params.getParams() != null )
+        {
+            builder.addQueryParams( params.getParams().asMap() );
+        }
+        return builder.build();
     }
 
     private Media resolveMedia( final ProjectName projectName, final Branch branch, final String id, final String path )
@@ -208,15 +213,15 @@ public class UrlStrategyFacadeImpl
                 : contentService.getNearestSite( ContentId.from( contentKey ) ) );
     }
 
-    private BaseUrlStrategy offlineBaseUrlStrategy( final ProjectName projectName, final Branch branch, final Content content,
-                                                    final String urlType )
+    private BaseUrlStrategy offlineBaseUrlStrategy( final ProjectName projectName, final Branch branch,
+                                                    final Supplier<Content> contentSupplier, final String urlType )
     {
         return OfflineBaseUrlStrategy.create()
             .contentService( contentService )
             .projectService( projectService )
             .projectName( projectName )
             .branch( branch )
-            .content( content )
+            .content( contentSupplier )
             .urlType( urlType )
             .build();
     }

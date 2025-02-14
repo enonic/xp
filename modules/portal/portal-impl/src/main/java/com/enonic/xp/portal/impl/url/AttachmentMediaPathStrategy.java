@@ -28,7 +28,7 @@ final class AttachmentMediaPathStrategy
     @Override
     public String generatePath()
     {
-        final Media media = params.getMedia();
+        final Media media = params.getMediaSupplier().get();
         final ProjectName project = params.getProjectName();
         final Branch branch = params.getBranch();
 
@@ -38,7 +38,7 @@ final class AttachmentMediaPathStrategy
         appendPart( url, "attachment" );
         appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
 
-        final Attachment attachment = resolveAttachment();
+        final Attachment attachment = resolveAttachment( media );
         final String hash = resolveHash( attachment );
 
         appendPart( url, media.getId().toString() + ( hash != null ? ":" + hash : "" ) );
@@ -65,9 +65,9 @@ final class AttachmentMediaPathStrategy
         return queryParams;
     }
 
-    private Attachment resolveAttachment()
+    private Attachment resolveAttachment( final Media media )
     {
-        final Attachments attachments = params.getMedia().getAttachments();
+        final Attachments attachments = media.getAttachments();
 
         final String attachmentNameOrLabel =
             Objects.requireNonNullElseGet( params.getName(), () -> Objects.requireNonNullElse( params.getLabel(), "source" ) );
@@ -84,8 +84,7 @@ final class AttachmentMediaPathStrategy
         }
 
         throw new IllegalArgumentException(
-            String.format( "Could not find attachment with name/label [%s] on content [%s]", attachmentNameOrLabel,
-                           params.getMedia().getId() ) );
+            String.format( "Could not find attachment with name/label [%s] on content [%s]", attachmentNameOrLabel, media.getId() ) );
     }
 
     private String resolveHash( final Attachment attachment )

@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -30,7 +31,7 @@ final class PageRequestBaseUrlStrategy
     private PageRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
-        this.portalRequest = Objects.requireNonNull( builder.portalRequest );
+        this.portalRequest = Objects.requireNonNull( PortalRequestAccessor.get() );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.id = builder.id;
         this.path = builder.path;
@@ -47,7 +48,6 @@ final class PageRequestBaseUrlStrategy
             appendPart( uriBuilder, portalRequest.getBranch().getValue() );
         }
 
-        // Maybe we should find a content by path or id and then use content.getPath() instead of that
         final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
             .repositoryId( portalRequest.getRepositoryId() )
             .branch( portalRequest.getBranch() )
@@ -72,8 +72,6 @@ final class PageRequestBaseUrlStrategy
     {
         private ContentService contentService;
 
-        private PortalRequest portalRequest;
-
         private String id;
 
         private String path;
@@ -83,12 +81,6 @@ final class PageRequestBaseUrlStrategy
         public Builder setContentService( final ContentService contentService )
         {
             this.contentService = contentService;
-            return this;
-        }
-
-        public Builder setPortalRequest( final PortalRequest portalRequest )
-        {
-            this.portalRequest = portalRequest;
             return this;
         }
 

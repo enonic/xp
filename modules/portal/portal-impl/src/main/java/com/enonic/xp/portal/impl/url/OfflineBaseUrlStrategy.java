@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -18,7 +19,7 @@ final class OfflineBaseUrlStrategy
 
     private final Branch branch;
 
-    private final Content content;
+    private final Supplier<Content> contentSupplier;
 
     private final String urlType;
 
@@ -33,12 +34,14 @@ final class OfflineBaseUrlStrategy
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.content = builder.content;
+        this.contentSupplier = builder.contentSupplier;
     }
 
     @Override
     public String generateBaseUrl()
     {
+        final Content content = contentSupplier.get();
+
         if ( content == null )
         {
             return "/api";
@@ -87,7 +90,7 @@ final class OfflineBaseUrlStrategy
 
         private Branch branch;
 
-        private Content content;
+        private Supplier<Content> contentSupplier;
 
         private String urlType;
 
@@ -115,9 +118,9 @@ final class OfflineBaseUrlStrategy
             return this;
         }
 
-        public Builder content( final Content content )
+        public Builder content( final Supplier<Content> contentSupplier )
         {
-            this.content = content;
+            this.contentSupplier = contentSupplier;
             return this;
         }
 

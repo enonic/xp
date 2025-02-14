@@ -14,7 +14,6 @@ import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -73,7 +72,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         ProjectService projectService = mock( ProjectService.class );
 
-        UrlStrategyFacade urlStrategyFacade = new UrlStrategyFacadeImpl( this.contentService, projectService );
+        UrlGeneratorParamsAdapter urlStrategyFacade = new UrlGeneratorParamsAdapter( this.contentService, projectService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,

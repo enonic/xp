@@ -32,7 +32,7 @@ final class ImageMediaPathStrategy
     @Override
     public String generatePath()
     {
-        final Media media = params.getMedia();
+        final Media media = params.getMedia().get();
         final ProjectName project = params.getProjectName();
         final Branch branch = params.getBranch();
 
