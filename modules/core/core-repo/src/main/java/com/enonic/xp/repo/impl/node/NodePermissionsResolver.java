@@ -14,6 +14,11 @@ public final class NodePermissionsResolver
     public static void requireContextUserPermissionOrAdmin( final Permission permission, final Node node )
         throws NodeAccessException
     {
+        if ( node == null )
+        {
+            throw new IllegalArgumentException( "Node cannot be null" );
+        }
+
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final boolean hasPermission = hasPermission( authInfo.getPrincipals(), permission, node.getPermissions() );
         if ( !hasPermission )

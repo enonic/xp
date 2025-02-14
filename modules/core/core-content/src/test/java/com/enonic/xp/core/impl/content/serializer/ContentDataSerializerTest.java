@@ -88,6 +88,9 @@ public class ContentDataSerializerTest
             .name( "myContent" )
             .parentPath( ContentPath.ROOT )
             .creator( PrincipalKey.ofAnonymous() )
+            .modifier( PrincipalKey.ofAnonymous() )
+            .attachments( Attachments.from(
+                Attachment.create().label( binaryLabel ).size( 11 ).mimeType( binaryMimeType ).name( binaryName ).build() ) )
             .validationErrors( ValidationErrors.create()
                                    .add( ValidationError.attachmentError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_CODE" ),
                                                                           BinaryReference.from( "prevFile" ) )
@@ -95,8 +98,7 @@ public class ContentDataSerializerTest
                                              .build() )
                                    .build() )
             .build();
-        final PropertyTree data = contentDataSerializer.toUpdateNodeData( content, PrincipalKey.ofAnonymous(), Attachments.from(
-            Attachment.create().label( binaryLabel ).size( 11 ).mimeType( binaryMimeType ).name( binaryName ).build() ) );
+        final PropertyTree data = contentDataSerializer.toNodeData( content );
 
         final PropertySet attachmentData = data.getSet( ContentPropertyNames.ATTACHMENT );
         assertNotNull( attachmentData );
@@ -124,12 +126,13 @@ public class ContentDataSerializerTest
                       .build() )
             .build();
 
-        final PropertyTree data = contentDataSerializer.toUpdateNodeData( Content.create()
-                                                                              .name( "myContent" )
-                                                                              .parentPath( ContentPath.ROOT )
-                                                                              .creator( PrincipalKey.ofAnonymous() )
-                                                                              .validationErrors( validationErrors )
-                                                                              .build(), PrincipalKey.ofAnonymous(), Attachments.empty() );
+        final PropertyTree data = contentDataSerializer.toNodeData( Content.create()
+                                                                        .name( "myContent" )
+                                                                        .parentPath( ContentPath.ROOT )
+                                                                        .creator( PrincipalKey.ofAnonymous() )
+                                                                        .modifier( PrincipalKey.ofAnonymous() )
+                                                                        .validationErrors( validationErrors )
+                                                                        .build() );
 
         final Iterable<PropertySet> validationErrorsData = data.getSets( "validationErrors" );
         assertThat( validationErrorsData ).hasSize( 3 )
@@ -185,19 +188,17 @@ public class ContentDataSerializerTest
         mixinData.setString( "myKey1", "myValue1" );
         mixinData.setString( "myKey2", "myValue2" );
 
-        final PropertyTree updatedProperties = contentDataSerializer.toUpdateNodeData( Content.create()
-                                                                                           .name( "myContent" )
-                                                                                           .parentPath( ContentPath.ROOT )
-                                                                                           .creator( PrincipalKey.ofAnonymous() )
-                                                                                           .extraDatas( ExtraDatas.create()
-                                                                                                            .add( new ExtraData(
-                                                                                                                XDataName.from(
-                                                                                                                    ApplicationKey.SYSTEM,
-                                                                                                                    "myMixin" ),
-                                                                                                                mixinData ) )
-                                                                                                            .build() )
-                                                                                           .build(), PrincipalKey.ofAnonymous(),
-                                                                                       Attachments.empty() );
+        final PropertyTree updatedProperties = contentDataSerializer.toNodeData( Content.create()
+                                                                                     .name( "myContent" )
+                                                                                     .parentPath( ContentPath.ROOT )
+                                                                                     .creator( PrincipalKey.ofAnonymous() )
+                                                                                     .extraDatas( ExtraDatas.create()
+                                                                                                      .add( new ExtraData( XDataName.from(
+                                                                                                          ApplicationKey.SYSTEM,
+                                                                                                          "myMixin" ), mixinData ) )
+                                                                                                      .build() )
+                                                                                     .modifier( PrincipalKey.ofAnonymous() )
+                                                                                     .build() );
 
         final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.EXTRA_DATA );
         assertNotNull( extraData );
@@ -243,12 +244,13 @@ public class ContentDataSerializerTest
         final PropertyTree propertyTree = new PropertyTree();
         propertyTree.setString( "myData", "myValue" );
 
-        final PropertyTree data = contentDataSerializer.toUpdateNodeData( Content.create()
-                                                                              .name( "myContent" )
-                                                                              .parentPath( ContentPath.ROOT )
-                                                                              .creator( PrincipalKey.ofAnonymous() )
-                                                                              .data( propertyTree )
-                                                                              .build(), PrincipalKey.ofAnonymous(), Attachments.empty() );
+        final PropertyTree data = contentDataSerializer.toNodeData( Content.create()
+                                                                        .name( "myContent" )
+                                                                        .parentPath( ContentPath.ROOT )
+                                                                        .creator( PrincipalKey.ofAnonymous() )
+                                                                        .modifier( PrincipalKey.ofAnonymous() )
+                                                                        .data( propertyTree )
+                                                                        .build() );
 
         final PropertySet contentData = data.getSet( "data" );
         assertNotNull( contentData );
@@ -301,12 +303,13 @@ public class ContentDataSerializerTest
         final PropertyTree propertyTree = new PropertyTree();
         propertyTree.setString( "myData", "myValue" );
 
-        final PropertyTree data = contentDataSerializer.toUpdateNodeData( Content.create()
-                                                                              .name( "myContent" )
-                                                                              .parentPath( ContentPath.ROOT )
-                                                                              .creator( PrincipalKey.ofAnonymous() )
-                                                                              .data( propertyTree )
-                                                                              .build(), PrincipalKey.ofAnonymous(), Attachments.empty() );
+        final PropertyTree data = contentDataSerializer.toNodeData( Content.create()
+                                                                        .name( "myContent" )
+                                                                        .parentPath( ContentPath.ROOT )
+                                                                        .creator( PrincipalKey.ofAnonymous() )
+                                                                        .data( propertyTree )
+                                                                        .modifier( PrincipalKey.ofAnonymous() )
+                                                                        .build() );
 
         final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
         assertEquals( WorkflowState.READY.toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
