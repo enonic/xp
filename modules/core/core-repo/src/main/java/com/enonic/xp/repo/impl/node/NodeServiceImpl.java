@@ -65,8 +65,6 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
-import com.enonic.xp.node.PatchNodeParams;
-import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -495,30 +493,6 @@ public class NodeServiceImpl
         final ModifyNodeResult result = UpdateNodeCommand.create()
             .params( params )
             .indexServiceInternal( this.indexServiceInternal ).binaryService( this.binaryService )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        result.getResults().forEach( ( branchResult ) -> {
-            if ( branchResult.node() != null )
-            {
-                ContextBuilder.from( ContextAccessor.current() ).branch( branchResult.branch() ).build().runWith( () -> {
-                    this.eventPublisher.publish( NodeEvents.updated( branchResult.node() ) );
-                } );
-            }
-        } );
-
-        return result;
-    }
-
-    @Override
-    public PatchNodeResult patch( final PatchNodeParams params )
-    {
-        verifyContext();
-        final PatchNodeResult result = PatchNodeCommand.create()
-            .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
