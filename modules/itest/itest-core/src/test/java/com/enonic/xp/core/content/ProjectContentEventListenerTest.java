@@ -800,6 +800,7 @@ public class ProjectContentEventListenerTest
 
     }
 
+
     @Test
     public void testRenamed()
         throws InterruptedException

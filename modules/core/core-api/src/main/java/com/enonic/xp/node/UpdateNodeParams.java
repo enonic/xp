@@ -1,9 +1,12 @@
 package com.enonic.xp.node;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
@@ -11,15 +14,15 @@ public class UpdateNodeParams
 {
     private final NodeId id;
 
-    private final NodePath path;
+    private final NodePath path; // TODO: it's not usable for Modify. Split?
 
     private final NodeEditor editor;
 
     private final BinaryAttachments binaryAttachments;
 
-    private final boolean dryRun;
-
     private final RefreshMode refresh;
+
+    private final Branches branches;
 
     private UpdateNodeParams( final Builder builder )
     {
@@ -27,8 +30,8 @@ public class UpdateNodeParams
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
-        this.dryRun = builder.dryRun;
         this.refresh = builder.refresh;
+        branches = Branches.from( builder.branches.build() );
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -56,14 +59,20 @@ public class UpdateNodeParams
         return editor;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public RefreshMode getRefresh()
     {
         return refresh;
+    }
+
+    public Branches getBranches()
+    {
+        return branches;
     }
 
     public static final class Builder
@@ -76,9 +85,10 @@ public class UpdateNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private boolean dryRun;
-
         private RefreshMode refresh;
+
+        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
+
 
         private Builder()
         {
@@ -118,15 +128,21 @@ public class UpdateNodeParams
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
             return this;
         }
 
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;
+            return this;
+        }
+
+        public Builder addBranches( final Branches branches )
+        {
+            this.branches.addAll( branches );
             return this;
         }
 

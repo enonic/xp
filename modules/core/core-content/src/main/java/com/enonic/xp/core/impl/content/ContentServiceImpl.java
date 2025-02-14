@@ -76,6 +76,8 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -359,6 +361,32 @@ public class ContentServiceImpl
         contentAuditLogSupport.update( params, content );
 
         return content;
+    }
+
+    @Override
+    public ModifyContentResult modify( final ModifyContentParams params )
+    {
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
+        final ModifyContentResult result = ModifyContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).  // ???
+                build()
+            .execute();
+
+        contentAuditLogSupport.patch( params, result );
+
+        return result;
     }
 
     @Override

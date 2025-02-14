@@ -141,8 +141,12 @@ public class ImportNodeCommand
             .refresh( RefreshMode.ALL )
             .build();
 
-        final Node updatedNode =
-            UpdateNodeCommand.create( this ).params( updateNodeParams ).binaryService( binaryService ).build().execute();
+        final Node updatedNode = UpdateNodeCommand.create( this )
+            .params( updateNodeParams )
+            .binaryService( binaryService )
+            .build()
+            .execute()
+            .getResult( ContextAccessor.current().getBranch() );
 
         if ( this.importPermissions )
         {

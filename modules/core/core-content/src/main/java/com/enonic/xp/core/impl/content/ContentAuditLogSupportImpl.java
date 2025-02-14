@@ -31,6 +31,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -501,6 +503,12 @@ public class ContentAuditLogSupportImpl
         resultSet.addLong( "size", (long) result.getMovedChildren() );
 
         log( "system.content.reorderChildren", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void patch( final ModifyContentParams params, final ModifyContentResult result )
+    {
+
     }
 
     @Override
