@@ -10,7 +10,6 @@ import com.google.common.base.Splitter;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
@@ -21,7 +20,6 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
-import com.enonic.xp.region.Region;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
@@ -55,9 +53,7 @@ public final class ComponentInstruction
     public PortalResponse evaluate( final PortalRequest portalRequest, final String instruction )
     {
         final String componentPath = getComponentPathFromInstruction( instruction );
-        final PortalResponse portalResponse = componentPath == null ? null : renderComponent( portalRequest, componentPath );
-
-        return portalResponse;
+        return componentPath == null ? null : renderComponent( portalRequest, componentPath );
     }
 
     private String getComponentPathFromInstruction( final String instruction )
@@ -85,22 +81,23 @@ public final class ComponentInstruction
 
     private Component resolveComponent( final PortalRequest portalRequest, final String componentSelector )
     {
-        if ( FRAGMENT_COMPONENT.equalsIgnoreCase( componentSelector ) )
-        {
-            return getPageFragment( portalRequest );
-        }
-
         if ( componentSelector.startsWith( APPLICATION_COMPONENT_PREFIX ) )
         {
-            return resolveComponentFromModule( componentSelector, portalRequest.getApplicationKey() );
+            return resolveComponentFromModule( componentSelector.substring( APPLICATION_COMPONENT_PREFIX.length() ),
+                                               portalRequest.getApplicationKey() );
         }
-
-        return resolveComponent( portalRequest, ComponentPath.from( componentSelector ) );
+        else if ( FRAGMENT_COMPONENT.equalsIgnoreCase( componentSelector ) )
+        {
+            return getPageFragment( portalRequest.getContent() );
+        }
+        else
+        {
+            return resolveComponent( portalRequest.getContent(), ComponentPath.from( componentSelector ) );
+        }
     }
 
-    private Component resolveComponentFromModule( final String componentSelector, final ApplicationKey currentApplication )
+    private Component resolveComponentFromModule( final String name, final ApplicationKey currentApplication )
     {
-        final String name = componentSelector.substring( APPLICATION_COMPONENT_PREFIX.length() );
         return currentApplication == null ? null : componentService.getByKey( DescriptorKey.from( currentApplication, name ) );
     }
 
@@ -117,10 +114,8 @@ public final class ComponentInstruction
         return Tracer.trace( trace, () -> rendererDelegate.render( component, portalRequest ) );
     }
 
-    private Component resolveComponent( final PortalRequest portalRequest, final ComponentPath path )
+    private Component resolveComponent( final Content content, final ComponentPath path )
     {
-        final Content content = portalRequest.getContent();
-
         if ( content == null )
         {
             return null;
@@ -162,10 +157,8 @@ public final class ComponentInstruction
         return component;
     }
 
-    private Component getPageFragment( final PortalRequest portalRequest )
+    private Component getPageFragment( final Content content )
     {
-        final Content content = portalRequest.getContent();
-
         if ( content == null || content.getPage() == null )
         {
             return null;

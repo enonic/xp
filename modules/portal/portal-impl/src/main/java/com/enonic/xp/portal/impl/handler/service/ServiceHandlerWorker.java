@@ -95,7 +95,7 @@ final class ServiceHandlerWorker
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig );
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, applicationKey );
             webSocketContext.apply( webSocketEndpoint );
         }
 
@@ -119,9 +119,8 @@ final class ServiceHandlerWorker
         return null;
     }
 
-    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ApplicationKey app )
     {
-        final ApplicationKey app = this.request.getApplicationKey();
         final Trace trace = Tracer.current();
         if ( trace != null && app != null && !trace.containsKey( "app" ) )
         {

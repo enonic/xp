@@ -89,16 +89,7 @@ public final class MacroInstruction
 
         // execute macro
         final MacroContext context = createContext( macroInstruction, macroDescriptor, portalRequest );
-        final ApplicationKey previousAppKey = portalRequest.getApplicationKey();
-        try
-        {
-            portalRequest.setApplicationKey( macroDescriptor.getKey().getApplicationKey() );
-            return macroProcessor.process( context );
-        }
-        finally
-        {
-            portalRequest.setApplicationKey( previousAppKey );
-        }
+        return macroProcessor.process( context );
     }
 
     private MacroDescriptor resolveMacroDescriptor( final SiteConfigs siteConfigs, final String macroName )

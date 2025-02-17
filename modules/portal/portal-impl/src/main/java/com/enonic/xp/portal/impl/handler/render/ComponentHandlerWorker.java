@@ -56,13 +56,15 @@ final class ComponentHandlerWorker
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
         final Content content = resolvedContent.getContentOrElseThrow();
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
-        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+        final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
+
+        Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( request.getMode() );
         Component component = null;
 
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final Component fragmentComponent = resolvedPage.getEffectivePage().getFragment();
+            final Component fragmentComponent = effectivePage.getFragment();
 
             if ( this.componentPath.isEmpty() )
             {
@@ -74,15 +76,10 @@ final class ComponentHandlerWorker
             }
         }
 
-        final Page effectivePage;
         if ( component == null )
         {
-            effectivePage = inlineFragments( resolvedPage.getEffectivePage(), this.componentPath );
+            effectivePage = inlineFragments( effectivePage, this.componentPath );
             component = effectivePage.getRegions().getComponent( this.componentPath );
-        }
-        else
-        {
-            effectivePage = resolvedPage.getEffectivePage();
         }
 
         if ( component == null )

@@ -58,7 +58,7 @@ final class MappingHandlerWorker
         if ( webSocketContext != null && webSocketConfig != null )
         {
             final WebSocketEndpoint webSocketEndpoint =
-                newWebSocketEndpoint( webSocketConfig, this::getScript, request.getApplicationKey() );
+                newWebSocketEndpoint( webSocketConfig, this::getScript, mappingDescriptor.getController().getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
         return portalResponse;

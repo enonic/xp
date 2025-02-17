@@ -8,7 +8,7 @@ import com.enonic.xp.web.WebRequest;
 
 public abstract class PortalHandlerWorker<T extends WebRequest>
 {
-    protected T request;
+    protected final T request;
 
     public PortalHandlerWorker( final T request )
     {

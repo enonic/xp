@@ -44,6 +44,8 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -116,7 +118,7 @@ public class PageResolverTest
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
         // exercise
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
         // verify
@@ -139,16 +141,16 @@ public class PageResolverTest
 
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
                                   "Template [my-template] has no page descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ), HttpStatus.NOT_FOUND,
                                   "Template [my-template] has no page descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.INLINE ), HttpStatus.IM_A_TEAPOT,
                                   "Template [my-template] has no page descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.EDIT ), HttpStatus.IM_A_TEAPOT,
                                   "Template [my-template] has no page descriptor" );
     }
 
@@ -161,16 +163,16 @@ public class PageResolverTest
 
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( null );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
                                   "No default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ), HttpStatus.NOT_FOUND,
                                   "No default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.INLINE ), HttpStatus.IM_A_TEAPOT,
                                   "No default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.EDIT ), HttpStatus.IM_A_TEAPOT,
                                   "No default template found for content" );
     }
 
@@ -181,16 +183,16 @@ public class PageResolverTest
         final Page page = Page.create().build();
         final Content content = Content.create().page( page ).parentPath( site.getPath() ).name( "my-content" ).build();
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
                                   "Content page has neither template nor descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ), HttpStatus.NOT_FOUND,
                                   "Content page has neither template nor descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.INLINE ), HttpStatus.IM_A_TEAPOT,
                                   "Content page has neither template nor descriptor" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.EDIT ), HttpStatus.IM_A_TEAPOT,
                                   "Content page has neither template nor descriptor" );
 
         verifyNoInteractions( pageTemplateService );
@@ -225,7 +227,7 @@ public class PageResolverTest
         when( pageTemplateService.getByKey( template.getKey() ) ).thenReturn( template );
 
         // exercise
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve(  content, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
         // verify
@@ -261,7 +263,7 @@ public class PageResolverTest
         when( pageTemplateService.getByKey( template.getKey() ) ).thenReturn( template );
 
         // exercise
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
         final Page effectivePage = result.getEffectivePage();
 
         // verify
@@ -284,7 +286,7 @@ public class PageResolverTest
             .type( ContentTypeName.templateFolder() )
             .build();
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
 
@@ -327,13 +329,13 @@ public class PageResolverTest
 
         when( pageDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( pageDescriptor );
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
 
         assertNotSame( page, effectivePage );
         assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
-        assertEquals( Iterators.size( effectivePage.getRegions().iterator() ),  3 );
+        assertEquals( 3, Iterators.size( effectivePage.getRegions().iterator() ) );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -364,7 +366,7 @@ public class PageResolverTest
         when( pageTemplateService.getByKey( PageTemplateKey.from( "t-not-exists" ) ) ).thenThrow( ContentNotFoundException.class );
         when( pageTemplateService.getDefault( notNull() ) ).thenReturn( template );
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
 
@@ -385,16 +387,16 @@ public class PageResolverTest
             .type( ContentTypeName.templateFolder() )
             .build();
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.LIVE, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
                                   "Template [t-not-exists] is missing and no default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.PREVIEW, content, site ), HttpStatus.NOT_FOUND,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ), HttpStatus.NOT_FOUND,
                                   "Template [t-not-exists] is missing and no default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.INLINE, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.INLINE ), HttpStatus.IM_A_TEAPOT,
                                   "Template [t-not-exists] is missing and no default template found for content" );
 
-        assertThrowsWebException( () -> pageResolver.resolve( RenderMode.EDIT, content, site ), HttpStatus.IM_A_TEAPOT,
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow(RenderMode.EDIT), HttpStatus.IM_A_TEAPOT,
                                   "Template [t-not-exists] is missing and no default template found for content" );
     }
 
@@ -414,7 +416,7 @@ public class PageResolverTest
             .canRender( ContentTypeNames.from( ContentTypeName.folder() ) )
             .build();
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, template, site );
+        PageResolverResult result = pageResolver.resolve( template, site.getPath() );
 
         final Page effectivePage = result.getEffectivePage();
 
@@ -437,7 +439,7 @@ public class PageResolverTest
             .type( ContentTypeName.templateFolder() )
             .build();
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
         final Page effectivePage = result.getEffectivePage();
 
         assertSame( page, effectivePage );
@@ -460,7 +462,7 @@ public class PageResolverTest
             .type( ContentTypeName.templateFolder() )
             .build();
 
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
         final Page effectivePage = result.getEffectivePage();
 
         assertNotSame( page, effectivePage );
@@ -494,7 +496,7 @@ public class PageResolverTest
             .build();
 
         when( layoutDescriptorService.getByKey( key ) ).thenReturn( layoutDescriptor );
-        PageResolverResult result = pageResolver.resolve( RenderMode.LIVE, content, site );
+        PageResolverResult result = pageResolver.resolve( content, site.getPath() );
         final Page effectivePage = result.getEffectivePage();
 
         verify( layoutDescriptorService, times( 1 ) ).getByKey( any( DescriptorKey.class ) );
@@ -502,10 +504,10 @@ public class PageResolverTest
         assertNull( result.getController() );
 
         final Component builtComponent = effectivePage.getFragment();
-        assertTrue( builtComponent instanceof LayoutComponent );
+        assertInstanceOf( LayoutComponent.class, builtComponent );
         final LayoutComponent buitLayoutComponent = (LayoutComponent) builtComponent;
         assertTrue( buitLayoutComponent.hasRegions() );
-        assertTrue( buitLayoutComponent.getRegion( "main" ) != null );
+        assertNotNull( buitLayoutComponent.getRegion( "main" ) );
     }
 
     private static Site createSite()

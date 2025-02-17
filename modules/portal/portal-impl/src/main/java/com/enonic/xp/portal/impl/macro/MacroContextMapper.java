@@ -25,10 +25,7 @@ public final class MacroContextMapper
         MapperHelper.serializeMultimap( "params", gen, macroContext.getParameters().asMap() );
         final PortalRequest request = macroContext.getRequest();
         gen.map( "request" );
-        if ( request != null )
-        {
-            new PortalRequestMapper( request ).serialize( gen );
-        }
+        new PortalRequestMapper( request ).serialize( gen );
         gen.end();
         gen.value( "document", macroContext.getDocument() );
     }
