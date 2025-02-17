@@ -115,7 +115,7 @@ public class ModifiableContent
         KEEP, REPLACE, REMOVE
     }
 
-    public static class EditableFieldPolicyWrapper<T>
+    public static class ModifiableField<T>
     {
         public T originalValue;
 
