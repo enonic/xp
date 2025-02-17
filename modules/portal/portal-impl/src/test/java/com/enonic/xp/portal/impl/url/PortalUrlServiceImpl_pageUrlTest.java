@@ -115,8 +115,12 @@ public class PortalUrlServiceImpl_pageUrlTest
     @Test
     void createUrlOfflineWithoutBaseUrl()
     {
-        final PageUrlParams params =
-            new PageUrlParams().path( "/mycontent" ).param( "a", 3 ).offline( true ).projectName( "myproject" ).branch( "draft" );
+        final PageUrlParams params = new PageUrlParams().portalRequest( null )
+            .path( "/mycontent" )
+            .param( "a", 3 )
+            .offline( true )
+            .projectName( "myproject" )
+            .branch( "draft" );
 
         when( this.contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( ContentFixtures.newContent() );
 
@@ -127,7 +131,8 @@ public class PortalUrlServiceImpl_pageUrlTest
     @Test
     void createUrlOfflineWithBaseUrl()
     {
-        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
+        final PageUrlParams params = new PageUrlParams().portalRequest( null )
+            .type( UrlTypeConstants.ABSOLUTE )
             .path( "/mycontent" )
             .param( "a", 3 )
             .offline( true )
@@ -159,7 +164,8 @@ public class PortalUrlServiceImpl_pageUrlTest
     @Test
     void createUrlOfflineWithBaseUrlOnProject()
     {
-        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
+        final PageUrlParams params = new PageUrlParams().portalRequest( null )
+            .type( UrlTypeConstants.ABSOLUTE )
             .path( "/mycontent" )
             .param( "a", 3 )
             .offline( true )

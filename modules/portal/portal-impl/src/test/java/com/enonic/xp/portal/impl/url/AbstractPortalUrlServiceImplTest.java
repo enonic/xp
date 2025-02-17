@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.app.Application;
@@ -74,7 +75,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
-        UrlGeneratorParamsAdapter urlStrategyFacade = new UrlGeneratorParamsAdapter( this.contentService, projectService );
+        UrlGeneratorParamsAdapter urlStrategyFacade = new UrlGeneratorParamsAdapter( this.contentService, this.projectService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
@@ -89,5 +90,11 @@ public abstract class AbstractPortalUrlServiceImplTest
         PortalRequestAccessor.set( this.portalRequest );
 
         this.service.activate( portalConfig );
+    }
+
+    @AfterEach
+    public void destroy()
+    {
+        PortalRequestAccessor.remove();
     }
 }
