@@ -28,4 +28,6 @@ public interface PortalUrlService
     String imageUrl( ImageUrlGeneratorParams params );
 
     String attachmentUrl( AttachmentUrlGeneratorParams params );
+
+    String pageUrl( PageUrlGeneratorParams params );
 }

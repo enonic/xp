@@ -3,6 +3,7 @@ package com.enonic.xp.portal.url;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -17,7 +18,7 @@ public final class ImageUrlGeneratorParams
 {
     private final BaseUrlStrategy baseUrlStrategy;
 
-    private final Media media;
+    private final Supplier<Media> mediaSupplier;
 
     private final ProjectName projectName;
 
@@ -38,7 +39,7 @@ public final class ImageUrlGeneratorParams
     private ImageUrlGeneratorParams( final Builder builder )
     {
         this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
-        this.media = Objects.requireNonNull( builder.media );
+        this.mediaSupplier = Objects.requireNonNull( builder.mediaSupplier );
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.scale = Objects.requireNonNull( builder.scale );
@@ -54,9 +55,9 @@ public final class ImageUrlGeneratorParams
         return baseUrlStrategy;
     }
 
-    public Media getMedia()
+    public Supplier<Media> getMedia()
     {
-        return media;
+        return mediaSupplier;
     }
 
     public ProjectName getProjectName()
@@ -94,9 +95,9 @@ public final class ImageUrlGeneratorParams
         return scale;
     }
 
-    public Multimap<String, String> getQueryParams()
+    public Map<String, Collection<String>> getQueryParams()
     {
-        return queryParams;
+        return queryParams.asMap();
     }
 
     public static Builder create()
@@ -108,7 +109,7 @@ public final class ImageUrlGeneratorParams
     {
         private BaseUrlStrategy baseUrlStrategy;
 
-        private Media media;
+        private Supplier<Media> mediaSupplier;
 
         private ProjectName projectName;
 
@@ -132,9 +133,9 @@ public final class ImageUrlGeneratorParams
             return this;
         }
 
-        public Builder setMedia( final Media media )
+        public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
-            this.media = media;
+            this.mediaSupplier = mediaSupplier;
             return this;
         }
 
