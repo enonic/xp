@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.collect.Iterators;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -126,7 +127,7 @@ public class PageResolverTest
         assertEquals( regionsA, effectivePage.getRegions() );
         assertNull( effectivePage.getDescriptor() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
     }
 
     @Test
@@ -235,8 +236,34 @@ public class PageResolverTest
         assertEquals( configB, effectivePage.getConfig() );
         assertEquals( template.getKey(), effectivePage.getTemplate() );
         assertNull( effectivePage.getDescriptor() );
-        assertEquals( descriptor, result.getController() );
+        assertEquals( descriptor.getApplicationKey(), result.getApplicationKey() );
         assertEquals( defaultPageDescriptor, result.getPageDescriptor() );
+    }
+
+    @Test
+    public void content_with_PageTemplate_that_has_no_controller()
+    {
+        final Site site = createSite();
+
+        final PageTemplate template = PageTemplate.newPageTemplate()
+            .key( PageTemplateKey.from( "t-1" ) )
+            .parentPath( site.getPath() )
+            .name( "my-template" )
+            .page( Page.create().config( configA ).regions( regionsA ).build() )
+            .canRender( ContentTypeNames.from( ContentTypeName.templateFolder() ) )
+            .build();
+
+        final Content content = Content.create()
+            .parentPath( site.getPath() )
+            .name( "my-content" )
+            .type( ContentTypeName.templateFolder() )
+            .page( Page.create().template( template.getKey() ).config( configB ).build() )
+            .build();
+
+        when( pageTemplateService.getByKey( template.getKey() ) ).thenReturn( template );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
+                                  "Template [my-template] has no page descriptor" );
     }
 
     @Test
@@ -291,7 +318,7 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertSame( page, effectivePage );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -334,7 +361,7 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertNotSame( page, effectivePage );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
         assertEquals( 3, Iterators.size( effectivePage.getRegions().iterator() ) );
 
         verifyNoInteractions( pageTemplateService );
@@ -371,7 +398,7 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
     }
 
     @Test
@@ -421,7 +448,29 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertSame( page, effectivePage );
-        assertEquals( DescriptorKey.from( "myapp:my-descriptor" ), result.getController() );
+        assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
+
+        verifyNoInteractions( pageTemplateService );
+    }
+
+    @Test
+    public void content_is_PageTemplate_withNoController()
+    {
+        final Site site = createSite();
+
+        final Page page =
+            Page.create().config( configA ).regions( regionsA ).build();
+
+        PageTemplate template = PageTemplate.newPageTemplate()
+            .key( PageTemplateKey.from( "t-1" ) )
+            .parentPath( site.getPath() )
+            .name( "my-template" )
+            .page( page )
+            .canRender( ContentTypeNames.from( ContentTypeName.folder() ) )
+            .build();
+
+        assertThrowsWebException( () -> pageResolver.resolve( template, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.LIVE ), HttpStatus.NOT_FOUND,
+                                  "Template [my-template] has no page descriptor" );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -443,7 +492,7 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertSame( page, effectivePage );
-        assertNull( result.getController() );
+        assertNull( result.getApplicationKey() );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -466,7 +515,7 @@ public class PageResolverTest
         final Page effectivePage = result.getEffectivePage();
 
         assertNotSame( page, effectivePage );
-        assertNull( result.getController() );
+        assertNull( result.getApplicationKey() );
 
         verifyNoInteractions( pageTemplateService );
     }
@@ -501,13 +550,21 @@ public class PageResolverTest
 
         verify( layoutDescriptorService, times( 1 ) ).getByKey( any( DescriptorKey.class ) );
         assertNotSame( page, effectivePage );
-        assertNull( result.getController() );
+        assertNull( result.getApplicationKey() );
 
         final Component builtComponent = effectivePage.getFragment();
         assertInstanceOf( LayoutComponent.class, builtComponent );
         final LayoutComponent buitLayoutComponent = (LayoutComponent) builtComponent;
         assertTrue( buitLayoutComponent.hasRegions() );
         assertNotNull( buitLayoutComponent.getRegion( "main" ) );
+    }
+
+    @Test
+    void contentIsShortcut()
+    {
+        final PageResolverResult result =
+            pageResolver.resolve( Content.create().path( "/shortcut" ).type( ContentTypeName.shortcut() ).build(), ContentPath.ROOT );
+        assertNull( result.getEffectivePage() );
     }
 
     private static Site createSite()

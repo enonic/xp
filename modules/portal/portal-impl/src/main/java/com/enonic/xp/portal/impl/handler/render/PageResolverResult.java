@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.RenderMode;
@@ -12,24 +11,24 @@ public final class PageResolverResult
 {
     private final Page effectivePage;
 
-    private final DescriptorKey controller;
+    private final ApplicationKey applicationKey;
 
     private final PageDescriptor pageDescriptor;
 
     private final String error;
 
-    private PageResolverResult( final Page effectivePage, final DescriptorKey controller, final PageDescriptor pageDescriptor,
+    private PageResolverResult( final Page effectivePage, final ApplicationKey applicationKey, final PageDescriptor pageDescriptor,
                                 final String error )
     {
         this.effectivePage = effectivePage;
-        this.controller = controller;
+        this.applicationKey = applicationKey;
         this.pageDescriptor = pageDescriptor;
         this.error = error;
     }
 
-    public PageResolverResult( final Page effectivePage, final DescriptorKey controller, final PageDescriptor pageDescriptor )
+    public PageResolverResult( final Page effectivePage, final ApplicationKey applicationKey, final PageDescriptor pageDescriptor )
     {
-        this( effectivePage, controller, pageDescriptor, null );
+        this( effectivePage, applicationKey, pageDescriptor, null );
     }
 
     public Page getEffectivePage()
@@ -37,14 +36,9 @@ public final class PageResolverResult
         return effectivePage;
     }
 
-    public DescriptorKey getController()
-    {
-        return controller;
-    }
-
     public ApplicationKey getApplicationKey()
     {
-        return this.pageDescriptor == null ? null : pageDescriptor.getApplicationKey();
+        return this.applicationKey;
     }
 
     public PageDescriptor getPageDescriptor()

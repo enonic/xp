@@ -66,8 +66,8 @@ final class PageHandlerWorker
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
-        this.request.setApplicationKey( resolvedPage.getApplicationKey() );
         this.request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+        this.request.setApplicationKey( resolvedPage.getApplicationKey() );
 
         final Trace trace = Tracer.current();
         if ( trace != null )

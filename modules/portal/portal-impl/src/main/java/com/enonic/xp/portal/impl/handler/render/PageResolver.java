@@ -41,8 +41,6 @@ public class PageResolver
 
     public PageResolverResult resolve( final Content content, final ContentPath sitePath )
     {
-        final Page page = content.getPage();
-
         if ( content instanceof PageTemplate )
         {
             final PageTemplate pageTemplate = (PageTemplate) content;
@@ -51,7 +49,13 @@ public class PageResolver
                 ? noPageInTemplateResult( pageTemplate )
                 : buildPageWithRegionsFromController( pageTemplate.getPage(), controller );
         }
-        else if ( page != null )
+        else if ( content.getType().isShortcut() )
+        {
+            return PageResolverResult.errorResult( "Shortcut" );
+        }
+
+        final Page page = content.getPage();
+        if ( page != null )
         {
             if ( page.getFragment() != null )
             {
@@ -151,32 +155,24 @@ public class PageResolver
         }
     }
 
-    private Page buildPageFromFragment( final Page effectivePage )
+    private Page buildPageFromFragment( final Page page )
     {
-        final Component fragmentComponent = effectivePage.getFragment();
+        final Component fragmentComponent = page.getFragment();
 
         if ( fragmentComponent instanceof LayoutComponent )
         {
-            final Page.Builder pageBuilder = Page.create( effectivePage );
-            pageBuilder.fragment( processLayoutComponent( (LayoutComponent) fragmentComponent ) );
-            return pageBuilder.build();
+            return Page.create( page ).fragment( processLayoutComponent( (LayoutComponent) fragmentComponent ) ).build();
         }
 
-        return effectivePage;
+        return page;
     }
 
-    private PageResolverResult buildPageWithRegionsFromController( final Page effectivePage, final DescriptorKey controller )
+    private PageResolverResult buildPageWithRegionsFromController( final Page page, final DescriptorKey controller )
     {
         final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( controller );
-
-        if ( pageDescriptor == null || pageDescriptor.getModifiedTime() == null )
-        {
-            return new PageResolverResult( effectivePage, controller, pageDescriptor );
-        }
-
-        final Page resultingPage = buildPageWithRegions( effectivePage, pageDescriptor );
-
-        return new PageResolverResult( resultingPage, controller, pageDescriptor );
+        final Page resultingPage =
+            pageDescriptor == null || pageDescriptor.getModifiedTime() == null ? page : buildPageWithRegions( page, pageDescriptor );
+        return new PageResolverResult( resultingPage, controller.getApplicationKey(), pageDescriptor );
     }
 
     private Page buildPageWithRegions( final Page sourcePage, final PageDescriptor pageDescriptor )
