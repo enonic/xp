@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.time.Instant;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,24 +12,16 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -45,7 +38,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -64,9 +56,9 @@ public class MediaHandlerTest
 
     private ContentService contentService;
 
-    private ImageService imageService;
-
-    private MediaInfoService mediaInfoService;
+//    private ImageService imageService;
+//
+//    private MediaInfoService mediaInfoService;
 
     private ByteSource mediaBytes;
 
@@ -74,10 +66,10 @@ public class MediaHandlerTest
     final void setup()
     {
         this.contentService = mock( ContentService.class );
-        this.imageService = mock( ImageService.class );
-        this.mediaInfoService = mock( MediaInfoService.class );
+//        this.imageService = mock( ImageService.class );
+//        this.mediaInfoService = mock( MediaInfoService.class );
 
-        this.handler = new MediaHandler( this.contentService, imageService, mediaInfoService );
+        this.handler = new MediaHandler( this.contentService );
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request = new PortalRequest();
@@ -86,6 +78,14 @@ public class MediaHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/" ) );
+
+        PortalRequestAccessor.set( this.request );
+    }
+
+    @AfterEach
+    public void destroy()
+    {
+        PortalRequestAccessor.remove();
     }
 
     private void setupMedia()
@@ -277,32 +277,32 @@ public class MediaHandlerTest
         assertEquals( "You don't have permission to access this resource", exception.getMessage() );
     }
 
-    @Test
-    void testImage()
-        throws Exception
-    {
-        setupContent();
-
-        WebRequest request = new WebRequest();
-
-        request.setMethod( HttpMethod.GET );
-        request.setEndpointPath( null );
-        request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-
-        WebResponse res = this.handler.handle( request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertInstanceOf( ByteSource.class, res.getBody() );
-
-        this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-
-        res = this.handler.handle( request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
-        assertInstanceOf( ByteSource.class, res.getBody() );
-    }
+//    @Test
+//    void testImage()
+//        throws Exception
+//    {
+//        setupContent();
+//
+//        WebRequest request = new WebRequest();
+//
+//        request.setMethod( HttpMethod.GET );
+//        request.setEndpointPath( null );
+//        request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+//
+//        WebResponse res = this.handler.handle( request );
+//        assertNotNull( res );
+//        assertEquals( HttpStatus.OK, res.getStatus() );
+//        assertEquals( MediaType.PNG, res.getContentType() );
+//        assertInstanceOf( ByteSource.class, res.getBody() );
+//
+//        this.request.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+//
+//        res = this.handler.handle( request );
+//        assertNotNull( res );
+//        assertEquals( HttpStatus.OK, res.getStatus() );
+//        assertEquals( MediaType.PNG, res.getContentType() );
+//        assertInstanceOf( ByteSource.class, res.getBody() );
+//    }
 
     @Test
     void testOptions()
@@ -332,151 +332,151 @@ public class MediaHandlerTest
         assertEquals( "Method DELETE not allowed", ex.getMessage() );
     }
 
-    @Test
-    void testMediaScopeWithWrongContext()
-    {
-        ContextBuilder.copyOf( ContextAccessor.current() )
-            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "project1, project1:draft, project2" )
-            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
-            .build()
-            .runWith( () -> {
-                // Slash API should be non PortalRequest
-                this.request.setBaseUri( "" );
-                this.request.setEndpointPath( null );
-                this.request.setRawPath( "/api/media/image/project/123456/scale-100-100/image-name.jpg" );
+//    @Test
+//    void testMediaScopeWithWrongContext()
+//    {
+//        ContextBuilder.copyOf( ContextAccessor.current() )
+//            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "project1, project1:draft, project2" )
+//            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
+//            .build()
+//            .runWith( () -> {
+//                // Slash API should be non PortalRequest
+//                this.request.setBaseUri( "" );
+//                this.request.setEndpointPath( null );
+//                this.request.setRawPath( "/api/media/image/project/123456/scale-100-100/image-name.jpg" );
+//
+//                WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+//                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+//
+//                this.request.setBaseUri( "/site" );
+//                this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+//                this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+//
+//                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+//                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+//
+//                this.request.setBaseUri( "/site" );
+//                this.request.setEndpointPath( "/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
+//                this.request.setRawPath( "/site/project/branch/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
+//
+//                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+//                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+//            } );
+//    }
 
-                WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+//    @Test
+//    void testMediaScope()
+//        throws Exception
+//    {
+//        setupContent();
+//
+//        ContextBuilder.copyOf( ContextAccessor.current() )
+//            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "myproject, myproject:draft, myproject2:draft" )
+//            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
+//            .build()
+//            .runWith( () -> {
+//                try
+//                {
+//                    WebRequest webRequest = new WebRequest();
+//
+//                    webRequest.setMethod( HttpMethod.GET );
+//                    webRequest.setEndpointPath( null );
+//                    webRequest.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
+//
+//                    WebResponse webResponse = this.handler.handle( webRequest );
+//                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+//
+//                    webRequest.setRawPath( "/api/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    webResponse = this.handler.handle( webRequest );
+//                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+//
+//                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+//                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+//
+//                    this.request.setBaseUri( "/admin/site/preview" );
+//                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    this.request.setRawPath(
+//                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    webResponse = this.handler.handle( this.request );
+//                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+//
+//                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+//                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+//
+//                    this.request.setBaseUri( "/admin/site/preview" );
+//                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    this.request.setRawPath(
+//                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    webResponse = this.handler.handle( this.request );
+//                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+//
+//
+//                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+//                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+//
+//                    this.request.setBaseUri( "/admin/site/preview" );
+//                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
+//                    this.request.setRawPath(
+//                        "/admin/site/preview/myproject/draft/_/media/image/myproject2:draft/123456/scale-100-100/image-name.jpg" );
+//                    webResponse = this.handler.handle( this.request );
+//                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
+//
+//
+//                    this.request.setRepositoryId( ProjectName.from( "unknown" ).getRepoId() );
+//                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+//
+//                    this.request.setBaseUri( "/admin/site/preview" );
+//                    this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+//                    this.request.setRawPath(
+//                        "/admin/site/preview/myproject/draft/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
+//                    WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+//                    assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+//                }
+//                catch ( Exception e )
+//                {
+//                    throw new RuntimeException( e );
+//                }
+//            } );
+//    }
 
-                this.request.setBaseUri( "/site" );
-                this.request.setEndpointPath( "/_/media/image/project/123456/scale-100-100/image-name.jpg" );
-                this.request.setRawPath( "/site/project/branch/_/media/image/project/123456/scale-100-100/image-name.jpg" );
+//    @Test
+//    void svgzImage()
+//        throws Exception
+//    {
+//        setupContentSvgz();
+//        when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
+//
+//        this.request.setBaseUri( "/admin/site/preview" );
+//        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.svgz" );
+//        this.request.setRawPath( "/admin/site/preview/myproject/master/_/media/image/myproject/123456/full/image-name.svgz" );
+//
+//        final WebResponse res = this.handler.handle( this.request );
+//        assertNotNull( res );
+//        assertEquals( HttpStatus.OK, res.getStatus() );
+//        assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
+//        assertInstanceOf( ByteSource.class, res.getBody() );
+//        assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
+//        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
+//                      res.getHeaders().get( "Content-Security-Policy" ) );
+//    }
 
-                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-
-                this.request.setBaseUri( "/site" );
-                this.request.setEndpointPath( "/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
-                this.request.setRawPath( "/site/project/branch/_/media/image/project2:draft/123456/scale-100-100/image-name.jpg" );
-
-                ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-                assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-            } );
-    }
-
-    @Test
-    void testMediaScope()
-        throws Exception
-    {
-        setupContent();
-
-        ContextBuilder.copyOf( ContextAccessor.current() )
-            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "myproject, myproject:draft, myproject2:draft" )
-            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
-            .build()
-            .runWith( () -> {
-                try
-                {
-                    WebRequest webRequest = new WebRequest();
-
-                    webRequest.setMethod( HttpMethod.GET );
-                    webRequest.setEndpointPath( null );
-                    webRequest.setRawPath( "/api/media/image/myproject/123456/scale-100-100/image-name.jpg" );
-
-                    WebResponse webResponse = this.handler.handle( webRequest );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
-                    webRequest.setRawPath( "/api/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( webRequest );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
-                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
-                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
-
-                    this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath(
-                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
-                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
-                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
-
-                    this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath(
-                        "/admin/site/preview/myproject/draft/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
-
-                    this.request.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
-                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
-
-                    this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media/image/myproject:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath(
-                        "/admin/site/preview/myproject/draft/_/media/image/myproject2:draft/123456/scale-100-100/image-name.jpg" );
-                    webResponse = this.handler.handle( this.request );
-                    assertEquals( HttpStatus.OK, webResponse.getStatus() );
-
-
-                    this.request.setRepositoryId( ProjectName.from( "unknown" ).getRepoId() );
-                    this.request.setBranch( ContentConstants.BRANCH_DRAFT );
-
-                    this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
-                    this.request.setRawPath(
-                        "/admin/site/preview/myproject/draft/_/media/image/unknown:draft/123456/scale-100-100/image-name.jpg" );
-                    WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-                    assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-                }
-                catch ( Exception e )
-                {
-                    throw new RuntimeException( e );
-                }
-            } );
-    }
-
-    @Test
-    void svgzImage()
-        throws Exception
-    {
-        setupContentSvgz();
-        when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
-
-        this.request.setBaseUri( "/admin/site/preview" );
-        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.svgz" );
-        this.request.setRawPath( "/admin/site/preview/myproject/master/_/media/image/myproject/123456/full/image-name.svgz" );
-
-        final WebResponse res = this.handler.handle( this.request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
-        assertInstanceOf( ByteSource.class, res.getBody() );
-        assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
-        assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
-                      res.getHeaders().get( "Content-Security-Policy" ) );
-    }
-
-    @Test
-    void testGifImage()
-        throws Exception
-    {
-        setupContentGif();
-
-        this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.gif" );
-        this.request.setRawPath( "/site/myproject/master/sitepath/_/media/image/myproject/123456/full/image-name.gif" );
-
-        final WebResponse res = this.handler.handle( this.request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.GIF, res.getContentType() );
-        assertInstanceOf( ByteSource.class, res.getBody() );
-        assertNull( res.getHeaders().get( "Content-Encoding" ) );
-    }
+//    @Test
+//    void testGifImage()
+//        throws Exception
+//    {
+//        setupContentGif();
+//
+//        this.request.setBaseUri( "/site" );
+//        this.request.setEndpointPath( "/_/media/image/myproject/123456/full/image-name.gif" );
+//        this.request.setRawPath( "/site/myproject/master/sitepath/_/media/image/myproject/123456/full/image-name.gif" );
+//
+//        final WebResponse res = this.handler.handle( this.request );
+//        assertNotNull( res );
+//        assertEquals( HttpStatus.OK, res.getStatus() );
+//        assertEquals( MediaType.GIF, res.getContentType() );
+//        assertInstanceOf( ByteSource.class, res.getBody() );
+//        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+//    }
 
     @Test
     void testAttachmentUnderAdminSite()
@@ -497,49 +497,49 @@ public class MediaHandlerTest
         assertSame( this.mediaBytes, res.getBody() );
     }
 
-    private void setupContentSvgz()
-        throws Exception
-    {
-        final Attachment attachment = Attachment.create()
-            .name( "enonic-logo.svgz" )
-            .mimeType( "image/svg+xml" )
-            .label( "source" )
-            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
-            .build();
+//    private void setupContentSvgz()
+//        throws Exception
+//    {
+//        final Attachment attachment = Attachment.create()
+//            .name( "enonic-logo.svgz" )
+//            .mimeType( "image/svg+xml" )
+//            .label( "source" )
+//            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+//            .build();
+//
+//        final Content content = createContent( "123456", "path/to/image-name.svgz", attachment );
+//
+//        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+//        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+//
+//        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+//
+//        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+//
+//        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+//    }
 
-        final Content content = createContent( "123456", "path/to/image-name.svgz", attachment );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
-
-        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
-    }
-
-    private void setupContentGif()
-        throws Exception
-    {
-        final Attachment attachment = Attachment.create()
-            .name( "enonic-logo.svg" )
-            .mimeType( "image/gif" )
-            .label( "source" )
-            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
-            .build();
-
-        final Content content = createContent( "123456", "path/to/image-name.gif", attachment );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
-
-        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
-    }
+//    private void setupContentGif()
+//        throws Exception
+//    {
+//        final Attachment attachment = Attachment.create()
+//            .name( "enonic-logo.svg" )
+//            .mimeType( "image/gif" )
+//            .label( "source" )
+//            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+//            .build();
+//
+//        final Content content = createContent( "123456", "path/to/image-name.gif", attachment );
+//
+//        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+//        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+//
+//        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+//
+//        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+//
+//        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+//    }
 
     private Media createMedia( final String id, final String contentPath, final Attachment... attachments )
     {
@@ -563,48 +563,48 @@ public class MediaHandlerTest
             .build();
     }
 
-    private void setupContent()
-        throws Exception
-    {
-        final Attachment attachment = Attachment.create()
-            .name( "enonic-logo.png" )
-            .mimeType( "image/png" )
-            .label( "source" )
-            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
-            .build();
+//    private void setupContent()
+//        throws Exception
+//    {
+//        final Attachment attachment = Attachment.create()
+//            .name( "enonic-logo.png" )
+//            .mimeType( "image/png" )
+//            .label( "source" )
+//            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
+//            .build();
+//
+//        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
+//
+//        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+//        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+//
+//        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+//
+//        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+//
+//        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+//    }
 
-        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
-        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
-
-        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
-    }
-
-    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( "media", attachments[0].getName() );
-
-        return Media.create()
-            .id( ContentId.from( id ) )
-            .path( contentPath )
-            .createdTime( Instant.now() )
-            .type( ContentTypeName.imageMedia() )
-            .permissions( AccessControlList.create()
-                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-                              .build() )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifiedTime( Instant.now() )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .data( data )
-            .attachments( Attachments.from( attachments ) )
-            .build();
-    }
+//    private Content createContent( final String id, final String contentPath, final Attachment... attachments )
+//    {
+//        final PropertyTree data = new PropertyTree();
+//        data.addString( "media", attachments[0].getName() );
+//
+//        return Media.create()
+//            .id( ContentId.from( id ) )
+//            .path( contentPath )
+//            .createdTime( Instant.now() )
+//            .type( ContentTypeName.imageMedia() )
+//            .permissions( AccessControlList.create()
+//                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+//                              .build() )
+//            .owner( PrincipalKey.from( "user:myStore:me" ) )
+//            .displayName( "My Content" )
+//            .modifiedTime( Instant.now() )
+//            .modifier( PrincipalKey.from( "user:system:admin" ) )
+//            .data( data )
+//            .attachments( Attachments.from( attachments ) )
+//            .build();
+//    }
 
 }
