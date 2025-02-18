@@ -199,9 +199,9 @@ public final class PortalUrlServiceImpl
 
         final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
 
-        queryParamsStrategy.ensureQueryParamNotNullThenPut( "quality", Objects.toString( params.getQuality(), null ) );
-        queryParamsStrategy.ensureQueryParamNotNullThenPut( "background", params.getBackground() );
-        queryParamsStrategy.ensureQueryParamNotNullThenPut( "filter", params.getFilter() );
+        queryParamsStrategy.putNotNull( "quality", Objects.toString( params.getQuality(), null ) );
+        queryParamsStrategy.putNotNull( "background", params.getBackground() );
+        queryParamsStrategy.putNotNull( "filter", params.getFilter() );
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
         return runWithAdminRole(
@@ -222,7 +222,7 @@ public final class PortalUrlServiceImpl
         final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
         if ( strategyParams.isDownload() )
         {
-            queryParamsStrategy.putQueryParam( "download", null );
+            queryParamsStrategy.put( "download", null );
         }
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 

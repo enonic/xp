@@ -21,12 +21,12 @@ final class DefaultQueryParamsStrategy
         return path.toString();
     }
 
-    public void putQueryParam( final String key, final String value )
+    public void put( final String key, final String value )
     {
         this.queryParams.put( key, value );
     }
 
-    public void ensureQueryParamNotNullThenPut( final String key, final String value )
+    public void putNotNull( final String key, final String value )
     {
         if ( value != null )
         {

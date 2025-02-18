@@ -13,6 +13,7 @@ import com.enonic.xp.portal.url.BaseUrlStrategy;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.urlEncode;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class UrlGenerator
 {
@@ -55,13 +56,9 @@ final class UrlGenerator
         return !path.startsWith( "/" ) ? "/" + path : path;
     }
 
-    private static String normalizeQueryParams( final String params )
+    private static String normalizeQueryParams( final String value )
     {
-        if ( isNullOrEmpty( params ) )
-        {
-            return "";
-        }
-        return params;
+        return nullToEmpty( value );
     }
 
     private static String buildErrorUrl( final String baseUrl, final Exception e )
