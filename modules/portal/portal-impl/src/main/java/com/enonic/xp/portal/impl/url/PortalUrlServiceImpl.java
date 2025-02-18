@@ -13,6 +13,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
@@ -25,11 +26,11 @@ import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
-import com.enonic.xp.portal.url.UrlStrategyFacade;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -49,7 +50,7 @@ public final class PortalUrlServiceImpl
 
     private final RedirectChecksumService redirectChecksumService;
 
-    private final UrlStrategyFacade urlStrategyFacade;
+    private final UrlGeneratorParamsAdapter urlStrategyFacade;
 
     private volatile boolean legacyImageServiceEnabled;
 
@@ -63,7 +64,7 @@ public final class PortalUrlServiceImpl
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
                                  @Reference final RedirectChecksumService redirectChecksumService,
-                                 @Reference final UrlStrategyFacade urlStrategyFacade )
+                                 @Reference final UrlGeneratorParamsAdapter urlStrategyFacade )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
@@ -100,7 +101,11 @@ public final class PortalUrlServiceImpl
     @Override
     public String pageUrl( final PageUrlParams params )
     {
-        return build( new PageUrlBuilder(), params );
+        final PageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
+            ? urlStrategyFacade.offlinePageUrlParams( params )
+            : urlStrategyFacade.requestPageUrlParams( params );
+
+        return pageUrl( generatorParams );
     }
 
     @Override
@@ -118,7 +123,7 @@ public final class PortalUrlServiceImpl
         }
         else
         {
-            final ImageUrlGeneratorParams generatorParams = params.isOffline() || params.getPortalRequest() == null
+            final ImageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
                 ? urlStrategyFacade.offlineImageUrlParams( params )
                 : urlStrategyFacade.requestImageUrlParams( params );
 
@@ -135,7 +140,7 @@ public final class PortalUrlServiceImpl
         }
         else
         {
-            final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || params.getPortalRequest() == null
+            final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
                 ? urlStrategyFacade.offlineAttachmentUrlParams( params )
                 : urlStrategyFacade.requestAttachmentUrlParams( params );
 
@@ -189,30 +194,50 @@ public final class PortalUrlServiceImpl
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
             .setScale( params.getScale() )
-            .setBackground( params.getBackground() )
-            .setQuality( params.getQuality() )
-            .setFilter( params.getFilter() )
             .setFormat( params.getFormat() )
-            .setQueryParams( params.getQueryParams() )
             .build();
 
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+
+        queryParamsStrategy.putNotNull( "quality", Objects.toString( params.getQuality(), null ) );
+        queryParamsStrategy.putNotNull( "background", params.getBackground() );
+        queryParamsStrategy.putNotNull( "filter", params.getFilter() );
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
         return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ) ) );
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ),
+                                            queryParamsStrategy ) );
     }
 
     @Override
     public String attachmentUrl( final AttachmentUrlGeneratorParams params )
     {
         final AttachmentMediaPathStrategyParams strategyParams = AttachmentMediaPathStrategyParams.create()
-            .setMedia( params.getMedia() )
+            .setMedia( params.getMediaSupplier() )
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
             .setDownload( params.isDownload() )
-            .setQueryParams( params.getQueryParams() )
             .build();
 
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        if ( strategyParams.isDownload() )
+        {
+            queryParamsStrategy.put( "download", null );
+        }
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
         return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ) ) );
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ),
+                                            queryParamsStrategy ) );
+    }
+
+    @Override
+    public String pageUrl( final PageUrlGeneratorParams params )
+    {
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "", queryParamsStrategy ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
