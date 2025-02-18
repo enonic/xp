@@ -1,11 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.function.Supplier;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
@@ -25,8 +20,6 @@ final class AttachmentMediaPathStrategyParams
 
     private final String label;
 
-    private final Multimap<String, String> queryParams;
-
     private AttachmentMediaPathStrategyParams( final Builder builder )
     {
         this.mediaSupplier = builder.mediaSupplier;
@@ -35,7 +28,6 @@ final class AttachmentMediaPathStrategyParams
         this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;
-        this.queryParams = builder.queryParams;
     }
 
     public Supplier<Media> getMediaSupplier()
@@ -68,11 +60,6 @@ final class AttachmentMediaPathStrategyParams
         return label;
     }
 
-    public Multimap<String, String> getQueryParams()
-    {
-        return queryParams;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -91,8 +78,6 @@ final class AttachmentMediaPathStrategyParams
         private String name;
 
         private String label;
-
-        private final Multimap<String, String> queryParams = HashMultimap.create();
 
         public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
@@ -127,12 +112,6 @@ final class AttachmentMediaPathStrategyParams
         public Builder setLabel( final String label )
         {
             this.label = label;
-            return this;
-        }
-
-        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
-        {
-            queryParams.forEach( this.queryParams::putAll );
             return this;
         }
 

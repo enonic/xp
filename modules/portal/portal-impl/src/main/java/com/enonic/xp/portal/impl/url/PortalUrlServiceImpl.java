@@ -194,15 +194,19 @@ public final class PortalUrlServiceImpl
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
             .setScale( params.getScale() )
-            .setBackground( params.getBackground() )
-            .setQuality( params.getQuality() )
-            .setFilter( params.getFilter() )
             .setFormat( params.getFormat() )
-            .addQueryParams( params.getQueryParams() )
             .build();
 
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+
+        queryParamsStrategy.ensureQueryParamNotNullThenPut( "quality", Objects.toString( params.getQuality(), null ) );
+        queryParamsStrategy.ensureQueryParamNotNullThenPut( "background", params.getBackground() );
+        queryParamsStrategy.ensureQueryParamNotNullThenPut( "filter", params.getFilter() );
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
         return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ) ) );
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ),
+                                            queryParamsStrategy ) );
     }
 
     @Override
@@ -213,17 +217,27 @@ public final class PortalUrlServiceImpl
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
             .setDownload( params.isDownload() )
-            .addQueryParams( params.getQueryParams() )
             .build();
 
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        if ( strategyParams.isDownload() )
+        {
+            queryParamsStrategy.putQueryParam( "download", null );
+        }
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
         return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ) ) );
+            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ),
+                                            queryParamsStrategy ) );
     }
 
     @Override
     public String pageUrl( final PageUrlGeneratorParams params )
     {
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new PagePathStrategy( params ) ) );
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "", queryParamsStrategy ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

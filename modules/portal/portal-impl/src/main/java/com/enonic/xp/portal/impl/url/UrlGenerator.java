@@ -18,14 +18,16 @@ final class UrlGenerator
 {
     private static final Logger LOG = LoggerFactory.getLogger( UrlGenerator.class );
 
-    public static String generateUrl( final BaseUrlStrategy baseUrlStrategy, final PathStrategy pathStrategy )
+    public static String generateUrl( final BaseUrlStrategy baseUrlStrategy, final PathStrategy pathStrategy,
+                                      final QueryParamsStrategy queryParamsStrategy )
     {
         String baseUrl = null;
         try
         {
             baseUrl = removeTrailingSlash( baseUrlStrategy.generateBaseUrl() );
-            final String path = normalizePath( pathStrategy.generatePath() );
-            return baseUrl + path;
+            String path = normalizePath( pathStrategy.generatePath() );
+            String queryParams = normalizeQueryParams( queryParamsStrategy.generateQueryParams() );
+            return baseUrl + path + queryParams;
         }
         catch ( Exception e )
         {
@@ -50,12 +52,16 @@ final class UrlGenerator
             return "";
         }
 
-        if ( path.startsWith( "?" ) )
-        {
-            return path;
-        }
-
         return !path.startsWith( "/" ) ? "/" + path : path;
+    }
+
+    private static String normalizeQueryParams( final String params )
+    {
+        if ( isNullOrEmpty( params ) )
+        {
+            return "";
+        }
+        return params;
     }
 
     private static String buildErrorUrl( final String baseUrl, final Exception e )

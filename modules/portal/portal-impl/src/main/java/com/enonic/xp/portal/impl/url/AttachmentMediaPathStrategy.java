@@ -2,9 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
@@ -12,7 +9,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendParams;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 
 final class AttachmentMediaPathStrategy
@@ -44,25 +40,7 @@ final class AttachmentMediaPathStrategy
         appendPart( url, media.getId().toString() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, attachment.getName() );
 
-        final Multimap<String, String> queryParams = resolveQueryParams();
-        appendParams( url, queryParams.entries() );
-
         return url.toString();
-    }
-
-    private Multimap<String, String> resolveQueryParams()
-    {
-        final Multimap<String, String> queryParams = LinkedListMultimap.create();
-        if ( this.params.isDownload() )
-        {
-            queryParams.put( "download", null );
-        }
-        if ( params.getQueryParams() != null )
-        {
-            queryParams.putAll( params.getQueryParams() );
-        }
-
-        return queryParams;
     }
 
     private Attachment resolveAttachment( final Media media )
