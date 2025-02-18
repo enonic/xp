@@ -154,7 +154,10 @@ final class UpdateContentCommand
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
             .contentValidators( this.contentValidators )
-            .contentTypeService( this.contentTypeService ).validationErrorsBuilder( validationErrorsBuilder ).build().execute();
+            .contentTypeService( this.contentTypeService )
+            .validationErrorsBuilder( validationErrorsBuilder )
+            .build()
+            .execute();
 
         if ( params.isRequireValid() )
         {

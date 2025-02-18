@@ -18,69 +18,73 @@ public class ModifiableContent
 {
     public final Content source;
 
-    public EditableFieldPolicyWrapper<String> displayName;
+    public ModifiableField<String> displayName;
 
-    public EditableFieldPolicyWrapper<PropertyTree> data;
+    public ModifiableField<PropertyTree> data;
 
-    public EditableFieldPolicyWrapper<ExtraDatas> extraDatas;
+    public ModifiableField<ExtraDatas> extraDatas;
 
-    public EditableFieldPolicyWrapper<Page> page;
+    public ModifiableField<Page> page;
 
-    public EditableFieldPolicyWrapper<Boolean> valid;
+    public ModifiableField<Boolean> valid;
 
-    public EditableFieldPolicyWrapper<Thumbnail> thumbnail;
+    public ModifiableField<Thumbnail> thumbnail;
 
-    public EditableFieldPolicyWrapper<PrincipalKey> owner;
+    public ModifiableField<PrincipalKey> owner;
 
-    public EditableFieldPolicyWrapper<Locale> language;
+    public ModifiableField<Locale> language;
 
-    public EditableFieldPolicyWrapper<PrincipalKey> creator;
+    public ModifiableField<PrincipalKey> creator;
 
-    public EditableFieldPolicyWrapper<Instant> createdTime;
+    public ModifiableField<Instant> createdTime;
 
-    public EditableFieldPolicyWrapper<PrincipalKey> modifier;
+    public ModifiableField<PrincipalKey> modifier;
 
-    public EditableFieldPolicyWrapper<Instant> modifiedTime;
+    public ModifiableField<Instant> modifiedTime;
 
-    public EditableFieldPolicyWrapper<ContentPublishInfo> publishInfo;
+    public ModifiableField<ContentPublishInfo> publishInfo;
 
-    public EditableFieldPolicyWrapper<ContentIds.Builder> processedReferences;
+    public ModifiableField<ContentIds.Builder> processedReferences;
 
-    public EditableFieldPolicyWrapper<WorkflowInfo> workflowInfo;
+    public ModifiableField<WorkflowInfo> workflowInfo;
 
-    public EditableFieldPolicyWrapper<Long> manualOrderValue;
+    public ModifiableField<Long> manualOrderValue;
 
-    public EditableFieldPolicyWrapper<EnumSet<ContentInheritType>> inherit;
+    public ModifiableField<EnumSet<ContentInheritType>> inherit;
 
-    public EditableFieldPolicyWrapper<ContentId> variantOf;
+    public ModifiableField<ContentId> variantOf;
 
-    public EditableFieldPolicyWrapper<Attachments> attachments;
+    public ModifiableField<Attachments> attachments;
+
+    public ModifiableField<ValidationErrors> validationErrors;
 
     public ModifiableContent( final Content source )
     {
         this.source = source;
-        this.displayName = new EditableFieldPolicyWrapper<>( source.getDisplayName() );
-        this.data = new EditableFieldPolicyWrapper<>( source.getData().copy() );
-        this.extraDatas = new EditableFieldPolicyWrapper<>( source.getAllExtraData().copy() );
-        this.page = new EditableFieldPolicyWrapper<>( source.getPage() != null ? source.getPage().copy() : null );
-        this.valid = new EditableFieldPolicyWrapper<>( source.isValid() );
-        this.thumbnail = new EditableFieldPolicyWrapper<>( source.getThumbnail() );
-        this.owner = new EditableFieldPolicyWrapper<>( source.getOwner() );
-        this.language = new EditableFieldPolicyWrapper<>( source.getLanguage() );
-        this.creator = new EditableFieldPolicyWrapper<>( source.getCreator() );
-        this.createdTime = new EditableFieldPolicyWrapper<>( source.getCreatedTime() );
-        this.publishInfo = new EditableFieldPolicyWrapper<>( source.getPublishInfo() );
-        this.processedReferences = new EditableFieldPolicyWrapper<>( ContentIds.create().addAll( source.getProcessedReferences() ) );
-        this.workflowInfo = new EditableFieldPolicyWrapper<>( source.getWorkflowInfo() );
-        this.manualOrderValue = new EditableFieldPolicyWrapper<>( source.getManualOrderValue() );
-        this.inherit = new EditableFieldPolicyWrapper<>(
+        this.displayName = new ModifiableField<>( source.getDisplayName() );
+        this.data = new ModifiableField<>( source.getData().copy() );
+        this.extraDatas = new ModifiableField<>( source.getAllExtraData().copy() );
+        this.page = new ModifiableField<>( source.getPage() != null ? source.getPage().copy() : null );
+        this.valid = new ModifiableField<>( source.isValid() );
+        this.thumbnail = new ModifiableField<>( source.getThumbnail() );
+        this.owner = new ModifiableField<>( source.getOwner() );
+        this.language = new ModifiableField<>( source.getLanguage() );
+        this.creator = new ModifiableField<>( source.getCreator() );
+        this.createdTime = new ModifiableField<>( source.getCreatedTime() );
+        this.publishInfo = new ModifiableField<>( source.getPublishInfo() );
+        this.processedReferences = new ModifiableField<>( ContentIds.create().addAll( source.getProcessedReferences() ) );
+        this.workflowInfo = new ModifiableField<>( source.getWorkflowInfo() );
+        this.manualOrderValue = new ModifiableField<>( source.getManualOrderValue() );
+        this.inherit = new ModifiableField<>(
             source.getInherit().isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( source.getInherit() ) );
-        this.variantOf = new EditableFieldPolicyWrapper<>( source.getVariantOf() );
+        this.variantOf = new ModifiableField<>( source.getVariantOf() );
 
         // differs from "update"
-        this.modifier = new EditableFieldPolicyWrapper<>( source.getModifier() );
-        this.modifiedTime = new EditableFieldPolicyWrapper<>( source.getModifiedTime() );
-        this.attachments = new EditableFieldPolicyWrapper<>( source.getAttachments() );
+        this.modifier = new ModifiableField<>( source.getModifier() );
+        this.modifiedTime = new ModifiableField<>( source.getModifiedTime() );
+        this.attachments = new ModifiableField<>( source.getAttachments() );
+
+        this.validationErrors = new ModifiableField<>( source.getValidationErrors() );
     }
 
     public Content build()
@@ -106,7 +110,7 @@ public class ModifiableContent
             // differs from "update"
             .modifier( modifier.produce() )
             .modifiedTime( modifiedTime.produce() )
-            .attachments( attachments.produce() )
+            .attachments( attachments.produce() ).validationErrors( validationErrors.produce() )
             .build();
     }
 
@@ -115,30 +119,30 @@ public class ModifiableContent
         KEEP, REPLACE, REMOVE
     }
 
-    public static class ModifiableField<T>
+    public class ModifiableField<T>
     {
         public T originalValue;
 
         private EditableFieldPolicy policy;
 
-        private Function<T, T> modifier = Function.identity();
+        private Function<ModifiableContent, T> modifier;
 
-        EditableFieldPolicyWrapper( T value )
+        ModifiableField( T value )
         {
             this.originalValue = value;
             this.policy = EditableFieldPolicy.KEEP;
         }
 
-        public EditableFieldPolicyWrapper<T> setModifier( Function<T, T> modifier )
+        public ModifiableField<T> setModifier( Function<ModifiableContent, T> modifier )
         {
             this.modifier = modifier;
             this.policy = EditableFieldPolicy.REPLACE;
             return this;
         }
 
-        public EditableFieldPolicyWrapper<T> setValue( T value )
+        public ModifiableField<T> setValue( T value )
         {
-            this.modifier = ( v ) -> value;
+            this.modifier = ( content ) -> value;
             this.policy = EditableFieldPolicy.REPLACE;
             return this;
         }
@@ -153,7 +157,7 @@ public class ModifiableContent
             return switch ( policy )
             {
                 case KEEP -> originalValue;
-                case REPLACE -> modifier.apply( originalValue );
+                case REPLACE -> modifier.apply( ModifiableContent.this );
                 case REMOVE -> null;
             };
         }
