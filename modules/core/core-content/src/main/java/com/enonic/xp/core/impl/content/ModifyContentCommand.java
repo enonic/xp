@@ -4,12 +4,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentModifier;
 import com.enonic.xp.content.ModifiableContent;
-import com.enonic.xp.content.ModifiableSite;
 import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.site.Site;
 
 public class ModifyContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -69,12 +67,13 @@ public class ModifyContentCommand
 
     private Content modifyContent( final ContentModifier modifier, final Content original )
     {
-        final ModifiableContent modifiableContent =
-            original.isSite() ? new ModifiableSite( (Site) original ) : new ModifiableContent( original );
+        final ModifiableContent modifiableContent = new ModifiableContent( original );
+
         if ( modifier != null )
         {
             modifier.modify( modifiableContent );
         }
+
         return modifiableContent.build();
     }
 

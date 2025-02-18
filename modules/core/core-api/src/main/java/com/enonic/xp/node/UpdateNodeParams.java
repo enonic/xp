@@ -131,7 +131,7 @@ public class UpdateNodeParams
         @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder refresh( final RefreshMode refresh )

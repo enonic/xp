@@ -9,13 +9,16 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.Node;
@@ -23,9 +26,15 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -52,15 +61,6 @@ public class ModifyNodeCommandTest
         final PropertyTree data = new PropertyTree();
 
         final Node node = createNode( CreateNodeParams.create().name( "myNode" ).data( data ).parent( NodePath.ROOT ).build() );
-
-        try
-        {
-            Thread.sleep( 2 );
-        }
-        catch ( InterruptedException e )
-        {
-            e.printStackTrace();
-        }
 
         nodeService.modify( UpdateNodeParams.create()
                                 .id( node.id() )
@@ -249,5 +249,54 @@ public class ModifyNodeCommandTest
                                                                                      toBeEdited.data.addString( "another", "stuff2" );
                                                                                  } )
                                                                                  .build() ) );
+    }
+
+    @Test
+    public void modify_by_user_without_permissions()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        pushNodes( RepositoryConstants.MASTER_BRANCH, createdNode.id() );
+
+        nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                          .nodeId( createdNode.id() )
+                                          .addPermissions( AccessControlList.create()
+                                                               .add( AccessControlEntry.create()
+                                                                         .allowAll()
+                                                                         .principal( User.ANONYMOUS.getKey() )
+                                                                         .build() )
+                                                               .build() )
+                                          .build() );
+
+        nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                          .nodeId( createdNode.id() )
+                                          .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                          .addPermissions( AccessControlList.create()
+                                                               .add( AccessControlEntry.create()
+                                                                         .allow( Permission.READ )
+                                                                         .principal( User.ANONYMOUS.getKey() )
+                                                                         .build() )
+                                                               .build() )
+                                          .build() );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final Branch branch = ContextAccessor.current().getBranch();
+
+        final Context userContext =
+            ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().user( User.ANONYMOUS ).build() ).build();
+
+        final ModifyNodeResult result = userContext.callWith( () -> nodeService.modify( UpdateNodeParams.create()
+                                                                                            .id( createdNode.id() )
+                                                                                            .addBranches( Branches.from( branch,
+                                                                                                                         RepositoryConstants.MASTER_BRANCH ) )
+                                                                                            .editor( toBeEdited -> {
+                                                                                                toBeEdited.data.addString( "another",
+                                                                                                                           "stuff2" );
+                                                                                            } )
+                                                                                            .build() ) );
+
+        assertEquals( "stuff2", result.getResult( branch ).data().getString( "another" ) );
+        assertNull( result.getResult( RepositoryConstants.MASTER_BRANCH ) );
     }
 }
