@@ -6,8 +6,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
 import com.google.common.base.Splitter;
 import com.google.common.net.UrlEscapers;
+
+import com.enonic.xp.portal.impl.exception.OutOfScopeException;
+import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.UriRewritingResult;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -119,5 +127,37 @@ public final class UrlBuilderHelper
     public static String urlEncode( final String value )
     {
         return UrlEscapers.urlFormParameterEscaper().escape( value );
+    }
+
+    public static String rewriteUri( final HttpServletRequest request, final String urlType, final String uri )
+    {
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( request, uri );
+
+        if ( rewritingResult.isOutOfScope() )
+        {
+            throw new OutOfScopeException( "URI out of scope" );
+        }
+
+        final String rewrittenUri = rewritingResult.getRewrittenUri();
+
+        if ( UrlTypeConstants.ABSOLUTE.equals( urlType ) )
+        {
+            return ServletRequestUrlHelper.getServerUrl( request ) + rewrittenUri;
+        }
+        else if ( UrlTypeConstants.WEBSOCKET.equals( urlType ) )
+        {
+            return ServletRequestUrlHelper.getServerUrl( new HttpServletRequestWrapper( request )
+            {
+                @Override
+                public String getScheme()
+                {
+                    return isSecure() ? "wss" : "ws";
+                }
+            } ) + rewrittenUri;
+        }
+        else
+        {
+            return rewrittenUri;
+        }
     }
 }

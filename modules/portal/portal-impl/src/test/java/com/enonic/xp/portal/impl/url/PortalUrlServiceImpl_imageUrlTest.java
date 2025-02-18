@@ -207,45 +207,50 @@ public class PortalUrlServiceImpl_imageUrlTest
     @Test
     public void createImageUrlForMasterBranch()
     {
-        ContextAccessor.current().getLocalScope().setAttribute( RepositoryId.from( "com.enonic.cms.myproject1" ) );
-        ContextAccessor.current().getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
+        ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject1" ) )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .callWith( () -> {
+                final ImageUrlParams params = new ImageUrlParams().format( "png" )
+                    .projectName( "myproject2" )
+                    .branch( "master" )
+                    .baseUrlKey( "siteId" )
+                    .id( "123456" )
+                    .scale( "max(300)" );
 
-        final ImageUrlParams params = new ImageUrlParams().format( "png" )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .baseUrlKey( "siteId" )
-            .id( "123456" )
-            .scale( "max(300)" );
+                final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+                when( portalConfig.legacy_imageService_enabled() ).thenReturn( false );
+                this.service.activate( portalConfig );
 
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( false );
-        this.service.activate( portalConfig );
+                final PropertyTree config = new PropertyTree();
+                config.addString( "baseUrl", "https://cdn.company.com" );
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
+                SiteConfigs siteConfigs = SiteConfigs.create()
+                    .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
+                    .build();
 
-        SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
-            .build();
+                final Site site = mock( Site.class );
+                when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+                when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+                when( site.getPermissions() ).thenReturn(
+                    AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+                when( contentService.getNearestSite( eq( ContentId.from( "siteId" ) ) ) ).thenReturn( site );
 
-        when( contentService.getNearestSite( eq( ContentId.from( "siteId" ) ) ) ).thenReturn( site );
+                final Media media = mock( Media.class );
+                when( media.getId() ).thenReturn( ContentId.from( "123456" ) );
+                when( media.getName() ).thenReturn( ContentName.from( "mycontent.png" ) );
+                when( media.getMediaAttachment() ).thenReturn( ContentFixtures.newMedia().getMediaAttachment() );
+                when( contentService.getById( eq( ContentId.from( "123456" ) ) ) ).thenReturn( media );
 
-        final Media media = mock( Media.class );
-        when( media.getId() ).thenReturn( ContentId.from( "123456" ) );
-        when( media.getName() ).thenReturn( ContentName.from( "mycontent.png" ) );
-        when( media.getMediaAttachment() ).thenReturn( ContentFixtures.newMedia().getMediaAttachment() );
-        when( contentService.getById( eq( ContentId.from( "123456" ) ) ) ).thenReturn( media );
+                final String url = this.service.imageUrl( params );
+                assertEquals(
+                    "https://cdn.company.com/site/myproject1/draft/mysite/_/media/image/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/max-300/mycontent.png",
+                    url );
 
-        final String url = this.service.imageUrl( params );
-        assertEquals(
-            "https://cdn.company.com/site/myproject1/draft/mysite/_/media/image/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/max-300/mycontent.png",
-            url );
+                return null;
+            } );
     }
 
     @Test
