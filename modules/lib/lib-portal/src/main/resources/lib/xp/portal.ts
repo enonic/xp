@@ -283,10 +283,27 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
 export type PageUrlParams = IdXorPath & {
     type?: 'server' | 'absolute';
     params?: object;
+    project?: string;
+    branch?: string;
+    offline?: boolean;
 };
 
 interface PageUrlHandler {
-    createUrl(value: object): string;
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setQueryParams(value?: ScriptValue | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setOffline(value: boolean): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -298,13 +315,25 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.projectName] Project of the context.
+ * @param {string} [params.branch] Branch of the project for context.
+ * @param {boolean} [params.offline=false] Set to true if the URL should be generated without context of the current request.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
  */
 export function pageUrl(params: PageUrlParams): string {
     const bean: PageUrlHandler = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setUrlType(params.type || 'server');
+    bean.setQueryParams(__.toScriptValue(params.params));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setOffline(params.offline || false);
+
+    return bean.createUrl();
 }
 
 export interface ServiceUrlParams {

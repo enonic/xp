@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.google.common.collect.Multimap;
+import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
@@ -8,7 +8,7 @@ import com.enonic.xp.project.ProjectName;
 
 final class AttachmentMediaPathStrategyParams
 {
-    private final Media media;
+    private final Supplier<Media> mediaSupplier;
 
     private final ProjectName projectName;
 
@@ -20,22 +20,19 @@ final class AttachmentMediaPathStrategyParams
 
     private final String label;
 
-    private final Multimap<String, String> queryParams;
-
     private AttachmentMediaPathStrategyParams( final Builder builder )
     {
-        this.media = builder.media;
+        this.mediaSupplier = builder.mediaSupplier;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;
-        this.queryParams = builder.queryParams;
     }
 
-    public Media getMedia()
+    public Supplier<Media> getMediaSupplier()
     {
-        return media;
+        return mediaSupplier;
     }
 
     public ProjectName getProjectName()
@@ -63,11 +60,6 @@ final class AttachmentMediaPathStrategyParams
         return label;
     }
 
-    public Multimap<String, String> getQueryParams()
-    {
-        return queryParams;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -75,7 +67,7 @@ final class AttachmentMediaPathStrategyParams
 
     static class Builder
     {
-        private Media media;
+        private Supplier<Media> mediaSupplier;
 
         private ProjectName projectName;
 
@@ -87,11 +79,9 @@ final class AttachmentMediaPathStrategyParams
 
         private String label;
 
-        private Multimap<String, String> queryParams;
-
-        public Builder setMedia( final Media media )
+        public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
-            this.media = media;
+            this.mediaSupplier = mediaSupplier;
             return this;
         }
 
@@ -122,12 +112,6 @@ final class AttachmentMediaPathStrategyParams
         public Builder setLabel( final String label )
         {
             this.label = label;
-            return this;
-        }
-
-        public Builder setQueryParams( final Multimap<String, String> queryParams )
-        {
-            this.queryParams = queryParams;
             return this;
         }
 
