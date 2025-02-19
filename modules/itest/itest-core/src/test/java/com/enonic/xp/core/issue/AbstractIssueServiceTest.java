@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
@@ -88,7 +89,7 @@ public abstract class AbstractIssueServiceTest
             build();
 
         initialContext = ContextAccessor.current();
-        ContextAccessor.INSTANCE.set( ctx );
+        ContextAccessorSupport.getInstance().set( ctx );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -147,7 +148,7 @@ public abstract class AbstractIssueServiceTest
     @AfterEach
     void tearDownAbstractIssueServiceTest()
     {
-        ContextAccessor.INSTANCE.set( initialContext );
+        ContextAccessorSupport.getInstance().set( initialContext );
         executorService.shutdownNow();
     }
 

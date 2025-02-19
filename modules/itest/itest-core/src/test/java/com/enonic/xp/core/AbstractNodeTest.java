@@ -16,12 +16,14 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
@@ -217,9 +219,9 @@ public abstract class AbstractNodeTest
         eventPublisher = mock( EventPublisher.class );
 
         initialContext = ContextAccessor.current();
-        ContextAccessor.INSTANCE.set( ctxDefault() );
+        ContextAccessorSupport.getInstance().set( ctxDefault() );
 
-        System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
+        HomeDirSupport.set( temporaryFolder.toFile().toPath() );
 
         this.binaryService = new BinaryServiceImpl( BLOB_STORE );
 
@@ -266,7 +268,7 @@ public abstract class AbstractNodeTest
     @AfterEach
     void tearDownAbstractNodeTest()
     {
-        ContextAccessor.INSTANCE.set( initialContext );
+        ContextAccessorSupport.getInstance().set( initialContext );
     }
 
     protected void bootstrap()

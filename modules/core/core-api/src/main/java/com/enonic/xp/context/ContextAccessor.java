@@ -5,12 +5,10 @@ import com.enonic.xp.content.ContentConstants;
 
 @PublicApi
 public final class ContextAccessor
-    extends ThreadLocal<Context>
 {
-    public static final ContextAccessor INSTANCE = new ContextAccessor();
+    static final ThreadLocal<Context> INSTANCE = ThreadLocal.withInitial( ContextAccessor::initialValue );
 
-    @Override
-    protected Context initialValue()
+    private static Context initialValue()
     {
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );

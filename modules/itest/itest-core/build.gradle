@@ -13,6 +13,7 @@ dependencies {
 
     testImplementation libs.hazelcast.hazelcast
 
+    testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
     testImplementation( testFixtures( project( ":core:core-security" ) ) )
     testImplementation( testFixtures( project( ":core:core-task" ) ) )

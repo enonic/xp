@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
@@ -67,7 +68,7 @@ public abstract class JaxRsResourceTestSupport
 
         mockCurrentContextHttpRequest();
 
-        ContextAccessor.INSTANCE.remove();
+        ContextAccessorSupport.getInstance().remove();
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
