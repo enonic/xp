@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -58,14 +59,15 @@ final class PageHandlerWorker
 
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
 
-        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+        final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
 
-        final Content effectiveContent = Content.create( content ).page( resolvedPage.getEffectivePage() ).build();
+        final Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( request.getMode() );
+        final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
-        this.request.setApplicationKey( resolvedPage.getApplicationKey() );
         this.request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+        this.request.setApplicationKey( resolvedPage.getApplicationKey() );
 
         final Trace trace = Tracer.current();
         if ( trace != null )

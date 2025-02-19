@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -147,11 +148,18 @@ class MappingHandlerHelper
             }
             else
             {
-                final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
-                final Content effectiveContent = Content.create( content ).page( resolvedPage.getEffectivePage() ).build();
-                request.setContent( effectiveContent );
-                request.setApplicationKey( resolvedPage.getApplicationKey() );
-                request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+                final PageResolverResult resolvedPage = pageResolver.resolve( content, site != null ? site.getPath() : ContentPath.ROOT );
+                final Page effectivePage = resolvedPage.getEffectivePage();
+                if ( effectivePage != null )
+                {
+                    final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
+                    request.setContent( effectiveContent );
+                    request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+                }
+                else
+                {
+                    request.setContent( content );
+                }
             }
 
             request.setSite( site );
@@ -164,11 +172,15 @@ class MappingHandlerHelper
             {
                 return handleController( request, mapping );
             }
-
-            return handleFilter( request, webResponse, webHandlerChain, mapping );
+            else
+            {
+                return handleFilter( request, webResponse, webHandlerChain, mapping );
+            }
         }
-
-        return webHandlerChain.handle( request, webResponse );
+        else
+        {
+            return webHandlerChain.handle( request, webResponse );
+        }
     }
 
     private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )

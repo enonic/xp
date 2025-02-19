@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.rendering;
 import com.google.common.base.Function;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -76,12 +75,9 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
         // render
         final Component previousComponent = portalRequest.getComponent();
-        final ApplicationKey previousApplication = portalRequest.getApplicationKey();
-
+        portalRequest.setComponent( component );
         try
         {
-            portalRequest.setComponent( component );
-            portalRequest.setApplicationKey( descriptor.getKey().getApplicationKey() );
             final PortalResponse portalResponse = controllerScript.execute( portalRequest );
 
             final RenderMode renderMode = portalRequest.getMode();
@@ -100,14 +96,11 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
                 }
             }
 
-            final PortalResponse injectedResponse =
-                LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
-            return injectedResponse;
+            return LIVE_EDIT_ATTRIBUTE_INJECTION.injectLiveEditAttribute( portalResponse, component.getType() );
         }
         finally
         {
             portalRequest.setComponent( previousComponent );
-            portalRequest.setApplicationKey( previousApplication );
         }
     }
 

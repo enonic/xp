@@ -9,7 +9,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -56,13 +55,15 @@ final class ComponentHandlerWorker
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
         final Content content = resolvedContent.getContentOrElseThrow();
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
-        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+        final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
+
+        Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( request.getMode() );
         Component component = null;
 
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final Component fragmentComponent = resolvedPage.getEffectivePage().getFragment();
+            final Component fragmentComponent = effectivePage.getFragment();
 
             if ( this.componentPath.isEmpty() )
             {
@@ -74,15 +75,10 @@ final class ComponentHandlerWorker
             }
         }
 
-        final Page effectivePage;
         if ( component == null )
         {
-            effectivePage = inlineFragments( resolvedPage.getEffectivePage(), this.componentPath );
+            effectivePage = inlineFragments( effectivePage, this.componentPath );
             component = effectivePage.getRegions().getComponent( this.componentPath );
-        }
-        else
-        {
-            effectivePage = resolvedPage.getEffectivePage();
         }
 
         if ( component == null )
@@ -91,12 +87,11 @@ final class ComponentHandlerWorker
         }
 
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
-        final DescriptorKey controller = resolvedPage.getController();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
         this.request.setComponent( component );
-        this.request.setApplicationKey( controller != null ? controller.getApplicationKey() : null );
+        this.request.setApplicationKey( resolvedPage.getApplicationKey() );
 
         final Trace trace = Tracer.current();
         if ( trace != null )

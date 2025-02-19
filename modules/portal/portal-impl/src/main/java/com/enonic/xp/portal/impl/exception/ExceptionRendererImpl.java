@@ -230,19 +230,7 @@ public final class ExceptionRendererImpl
         }
 
         final ErrorHandlerScript errorHandlerScript = this.errorHandlerScriptFactory.errorScript( script );
-
-        final PortalRequest request = portalError.getRequest();
-        final ApplicationKey previousApp = request.getApplicationKey();
-        // set application of the error handler in the current context PortalRequest
-        try
-        {
-            request.setApplicationKey( appKey );
-            return errorHandlerScript.execute( portalError, handlerMethod );
-        }
-        finally
-        {
-            request.setApplicationKey( previousApp );
-        }
+        return errorHandlerScript.execute( portalError, handlerMethod );
     }
 
     private ResourceKey getScript( final ApplicationKey applicationKey, final String scriptPath )

@@ -14,6 +14,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.macro.MacroContext;
@@ -43,6 +44,7 @@ public class MacroProcessorScriptTest
         throws Exception
     {
         this.macroContext = MacroContext.create().
+            request( new PortalRequest() ).
             name( "macroName" ).
             body( "body" ).
             param( "firstParam", "firstParamValue" ).
@@ -97,7 +99,7 @@ public class MacroProcessorScriptTest
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
-            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{},\"document\":\"<h1>document</h1>\"}",
+            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{\"port\":0,\"mode\":\"live\",\"webSocket\":false,\"repositoryId\":\"com.enonic.cms.default\",\"branch\":\"draft\",\"params\":{},\"headers\":{},\"cookies\":{}},\"document\":\"<h1>document</h1>\"}",
             response.getBody() );
         assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
         assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );
