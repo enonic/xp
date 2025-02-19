@@ -341,7 +341,7 @@ public class MappingHandlerTest
         assertEquals( DescriptorKey.from( "module:landing-page" ), this.request.getPageDescriptor().getKey() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
-        assertEquals( "/site/default/draft/site", this.request.getContextPath() );
+        assertEquals( "/site/myproject/draft/site", this.request.getContextPath() );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping, boolean withPage )
