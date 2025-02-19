@@ -97,6 +97,9 @@ public class AttachmentHandler
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
         worker.contentSecurityPolicy = this.contentSecurityPolicy;
         worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
+        worker.legacyMode = true;
+        worker.branch = ( (PortalRequest) webRequest ).getBranch();
+
         return worker.execute();
     }
 }

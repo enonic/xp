@@ -14,6 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
@@ -121,6 +122,18 @@ public final class HandlerHelper
             trace.put( "status", webResponse.getStatus().value() );
             trace.put( "type", webResponse.getContentType().toString() );
             trace.put( "size", getSize( webResponse ) );
+        }
+    }
+
+    public static ProjectName resolveProjectName( final String value )
+    {
+        try
+        {
+            return ProjectName.from( value );
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Project [%s] not found", value ) );
         }
     }
 

@@ -133,8 +133,7 @@ public class MediaHandler
             }
         }
 
-        final RepositoryId repositoryId =
-            HandlerHelper.resolveRepositoryId( ProjectConstants.PROJECT_REPO_ID_PREFIX + matcher.group( "project" ) );
+        final RepositoryId repositoryId = HandlerHelper.resolveProjectName( matcher.group( "project" ) ).getRepoId();
         final Branch branch = HandlerHelper.resolveBranch( Objects.requireNonNullElse( matcher.group( "branch" ), "master" ) );
         final ContentId id = ContentId.from( matcher.group( "id" ) );
         final String fingerprint = matcher.group( "fingerprint" );

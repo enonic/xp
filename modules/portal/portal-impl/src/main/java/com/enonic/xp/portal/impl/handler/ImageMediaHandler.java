@@ -1,12 +1,9 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -14,52 +11,29 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
-import com.google.common.net.HttpHeaders;
-import com.google.common.net.MediaType;
-
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.image.ScaleParamsParser;
-import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
+import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
-import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=media", "apiKey=image",
@@ -67,18 +41,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class ImageMediaHandler
     implements UniversalApiHandler
 {
-    private static final Pattern PATTERN = Pattern.compile(
-        "^/(_|api)/media:image/(?<context>(?<project>[^/:]+)(?::(?<branch>draft))?)/(?<id>[^/:]+)(?::(?<fingerprint>[^/]+))?/(?<restPath>.*)$" );
-
-    private static final Pattern IMAGE_REST_PATH_PATTERN = Pattern.compile( "^(?<scaleParams>[^/]+)/(?<name>[^/]+)$" );
+    private static final String API_HANDLER_KEY = "/media:image/";
 
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
-
-    private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
-
-    private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
-
-    private static final int DEFAULT_QUALITY = 85;
 
     private final ContentService contentService;
 
@@ -122,29 +87,54 @@ public class ImageMediaHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final Matcher matcher = PATTERN.matcher( Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() ) );
-        if ( !matcher.matches() )
-        {
-            throw createNotFoundException();
-        }
+        final PortalRequest portalRequest = (PortalRequest) webRequest;
 
-        if ( !ALLOWED_METHODS.contains( webRequest.getMethod() ) )
-        {
-            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
-        }
+        final String path = Objects.requireNonNullElse( portalRequest.getEndpointPath(), portalRequest.getRawPath() );
+        final PathParser pathParser = new PathParser( path );
+        final PathMetadata pathMetadata = pathParser.parse();
 
-        if ( webRequest.getMethod() == HttpMethod.OPTIONS )
+        if ( portalRequest.getMethod() == HttpMethod.OPTIONS )
         {
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        if ( webRequest instanceof PortalRequest portalRequest )
-        {
-            if ( !portalRequest.isSiteBase() )
-            {
-                throw createNotFoundException();
-            }
+        checkArguments( portalRequest, pathMetadata );
 
+        return ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( pathMetadata.repositoryId )
+            .branch( pathMetadata.branch )
+            .build()
+            .callWith( () -> {
+                final ImageHandlerWorker worker =
+                    new ImageHandlerWorker( portalRequest, this.contentService, this.imageService, this.mediaInfoService );
+
+                worker.id = pathMetadata.contentId;
+                worker.fingerprint = pathMetadata.fingerprint;
+                worker.scaleParams = new ScaleParamsParser().parse( pathMetadata.scaleParams );
+                worker.name = pathMetadata.name;
+                worker.filterParam = HandlerHelper.getParameter( portalRequest, "filter" );
+                worker.qualityParam = HandlerHelper.getParameter( portalRequest, "quality" );
+                worker.backgroundParam = HandlerHelper.getParameter( portalRequest, "background" );
+                worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
+                worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
+                worker.contentSecurityPolicy = this.contentSecurityPolicy;
+                worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
+                worker.legacyMode = false;
+                worker.branch = pathMetadata.branch;
+
+                return worker.execute();
+            } );
+    }
+
+    private void checkArguments( final PortalRequest portalRequest, final PathMetadata pathMetadata )
+    {
+        if ( !ALLOWED_METHODS.contains( portalRequest.getMethod() ) )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", portalRequest.getMethod() ) );
+        }
+
+        if ( portalRequest.getEndpointPath() != null && portalRequest.isSiteBase() )
+        {
             final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
             if ( !"/".equals( contentResolverResult.getSiteRelativePath() ) )
             {
@@ -152,274 +142,103 @@ public class ImageMediaHandler
             }
         }
 
-        final RepositoryId repositoryId =
-            HandlerHelper.resolveRepositoryId( ProjectConstants.PROJECT_REPO_ID_PREFIX + matcher.group( "project" ) );
-        final Branch branch = HandlerHelper.resolveBranch( Objects.requireNonNullElse( matcher.group( "branch" ), "master" ) );
-        final ContentId id = ContentId.from( matcher.group( "id" ) );
-        final String fingerprint = matcher.group( "fingerprint" );
-        final String restPath = matcher.group( "restPath" );
-
-        verifyMediaScope( matcher.group( "context" ), webRequest, repositoryId, branch );
-        verifyAccessByBranch( branch );
-
-        return ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( repositoryId )
-            .branch( branch )
-            .build()
-            .callWith( () -> doHandleImage( webRequest, id, fingerprint, restPath ) );
-    }
-
-    private void verifyMediaScope( final String projectContext, final WebRequest webRequest, final RepositoryId repositoryId,
-                                   final Branch branch )
-    {
         final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
         if ( mediaServiceScope != null &&
-            Pattern.compile( "," ).splitAsStream( mediaServiceScope ).map( String::trim ).noneMatch( projectContext::equals ) )
+            Arrays.stream( mediaServiceScope.split( ",", -1 ) ).map( String::trim ).noneMatch( pathMetadata.context::equals ) )
         {
             throw createNotFoundException();
         }
 
-        if ( webRequest instanceof PortalRequest portalRequest &&
-            !( repositoryId.equals( portalRequest.getRepositoryId() ) && branch.equals( portalRequest.getBranch() ) ) )
-        {
-            throw createNotFoundException();
-        }
+        // TODO Should we check this the same way as it is done in SiteHandler?
+//        if ( ContentConstants.BRANCH_DRAFT.equals( pathMetadata.branch ) )
+//        {
+//            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+//            if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
+//            {
+//                throw WebException.forbidden( "You don't have permission to access this resource" );
+//            }
+//        }
     }
 
-    private void verifyAccessByBranch( final Branch branch )
-    {
-        if ( ContentConstants.BRANCH_DRAFT.equals( branch ) )
-        {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
-            {
-                throw WebException.forbidden( "You don't have permission to access this resource" );
-            }
-        }
-    }
-
-    private PortalResponse doHandleImage( final WebRequest webRequest, final ContentId id, final String fingerprint, final String restPath )
-        throws Exception
-    {
-        final Matcher matcher = IMAGE_REST_PATH_PATTERN.matcher( restPath );
-        if ( !matcher.matches() )
-        {
-            throw createNotFoundException();
-        }
-
-        final Content content = getContent( id );
-        if ( !( content instanceof final Media media ) || !media.isImage() )
-        {
-            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
-        }
-
-        final Attachment attachment = media.getMediaAttachment();
-        if ( attachment == null )
-        {
-            throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
-        }
-
-        return resolveMedia( attachment, media, fingerprint, webRequest, matcher );
-    }
-
-    private Content getContent( final ContentId contentId )
-    {
-        try
-        {
-            return this.contentService.getById( contentId );
-        }
-        catch ( final Exception e )
-        {
-            if ( this.contentService.contentExists( contentId ) )
-            {
-                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentId ) );
-            }
-            else
-            {
-                throw WebException.notFound( String.format( "Content with id [%s] not found", contentId.toString() ) );
-            }
-        }
-    }
-
-    private PortalResponse resolveMedia( final Attachment attachment, final Content content, final String fingerprint,
-                                         final WebRequest webRequest, final Matcher matcher )
-        throws Exception
-    {
-        final BinaryReference binaryReference = attachment.getBinaryReference();
-        final ByteSource binary = getBinary( content.getId(), binaryReference );
-        final MediaType attachmentMimeType = MediaType.parse( attachment.getMimeType() );
-        final boolean isSvgz = "svgz".equals( attachment.getExtension() );
-        final boolean isGif = attachmentMimeType.is( MediaType.GIF );
-        final String name = matcher.group( "name" );
-
-        final MediaType contentType;
-        if ( !content.getName().toString().equals( name ) )
-        {
-            if ( !content.getName().toString().equals( Files.getNameWithoutExtension( name ) ) )
-            {
-                throw WebException.notFound( String.format( "Image [%s] not found for content [%s]", name, content.getId() ) );
-            }
-            contentType = MediaTypes.instance().fromFile( name );
-        }
-        else
-        {
-            contentType = resolveContentType( isSvgz, isGif, attachmentMimeType );
-        }
-
-        final ByteSource body;
-        if ( isGif || isSvgz || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
-        {
-            body = binary;
-        }
-        else
-        {
-            final ScaleParams scaleParams = new ScaleParamsParser().parse( matcher.group( "scaleParams" ) );
-            body = transform( (Media) content, binaryReference, binary, contentType, scaleParams, webRequest );
-        }
-
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", content.getPath() );
-            trace.put( "type", "image" );
-        }
-
-        final PortalResponse.Builder portalResponse = PortalResponse.create();
-
-        setContentEncodingHeader( portalResponse, isSvgz );
-        setContentSecurityPolicy( portalResponse, contentType );
-        setCacheControlHeader( portalResponse, content, fingerprint );
-        portalResponse.contentType( contentType );
-        portalResponse.body( body );
-
-        return portalResponse.build();
-    }
-
-    private MediaType resolveContentType( final boolean isSvgz, final boolean isGif, final MediaType attachmentMimeType )
-    {
-        if ( isSvgz )
-        {
-            return SVG_MEDIA_TYPE;
-        }
-        else if ( isGif )
-        {
-            return MediaType.GIF;
-        }
-        else
-        {
-            return attachmentMimeType;
-        }
-    }
-
-    private void setContentEncodingHeader( final PortalResponse.Builder portalResponse, final boolean isSvgz )
-    {
-        if ( isSvgz )
-        {
-            portalResponse.header( HttpHeaders.CONTENT_ENCODING, "gzip" );
-        }
-    }
-
-    private void setCacheControlHeader( final PortalResponse.Builder portalResponse, final Content content, final String fingerprint )
-    {
-        if ( nullToEmpty( fingerprint ).isBlank() )
-        {
-            return;
-        }
-
-        final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-            ContentConstants.BRANCH_MASTER.equals( ContextAccessor.current().getBranch() );
-        final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
-
-        if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
-            Objects.equals( fingerprint, MediaHashResolver.resolveImageHash( (Media) content ) ) )
-        {
-            portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
-        }
-    }
-
-
-
-    private void setContentSecurityPolicy( final PortalResponse.Builder portalResponse, final MediaType contentType )
-    {
-        if ( contentType.is( SVG_MEDIA_TYPE ) )
-        {
-            if ( !nullToEmpty( contentSecurityPolicySvg ).isBlank() )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
-            }
-        }
-        else
-        {
-            if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
-            }
-        }
-    }
-
-    private void setDispositionHeader( final PortalResponse.Builder portalResponse, final WebRequest webRequest, final String name )
-    {
-        if ( HandlerHelper.getParameter( webRequest, "download" ) != null )
-        {
-            portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( name ) );
-        }
-    }
-
-    private ByteSource getBinary( final ContentId id, final BinaryReference binaryReference )
-    {
-        final ByteSource binary = this.contentService.getBinary( id, binaryReference );
-        if ( binary == null )
-        {
-            throw WebException.notFound( String.format( "Binary [%s] not found for [%s]", binaryReference, id ) );
-        }
-        return binary;
-    }
-
-    private ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                  final MediaType contentType, final ScaleParams scaleParams, final WebRequest webRequest )
-        throws IOException
-    {
-        final String qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
-        final String backgroundParam = HandlerHelper.getParameter( webRequest, "background" );
-        final String filterParam = HandlerHelper.getParameter( webRequest, "filter" );
-
-        final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(), () -> Objects.requireNonNullElse(
-            mediaInfoService.getImageOrientation( binary ), ImageOrientation.TopLeft ) );
-
-        final int imageQuality = nullToEmpty( qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( qualityParam );
-
-        final int backgroundColor = nullToEmpty( backgroundParam ).isEmpty()
-            ? DEFAULT_BACKGROUND
-            : Integer.parseInt( backgroundParam.startsWith( "0x" ) ? backgroundParam.substring( 2 ) : backgroundParam, 16 );
-        try
-        {
-            final ReadImageParams readImageParams = ReadImageParams.newImageParams()
-                .contentId( content.getId() )
-                .binaryReference( binaryReference )
-                .cropping( content.getCropping() )
-                .focalPoint( content.getFocalPoint() )
-                .orientation( imageOrientation )
-                .scaleParams( scaleParams )
-                .filterParam( filterParam )
-                .backgroundColor( backgroundColor )
-                .quality( imageQuality )
-                .mimeType( contentType.toString() )
-                .build();
-
-            return this.imageService.readImage( readImageParams );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw new WebException( HttpStatus.BAD_REQUEST, "Invalid parameters", e );
-        }
-        catch ( ThrottlingException e )
-        {
-            throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
-        }
-    }
-
-    private WebException createNotFoundException()
+    private static WebException createNotFoundException()
     {
         return WebException.notFound( "Not a valid media url pattern" );
+    }
+
+    private static final class PathMetadata
+    {
+        String context;
+
+        RepositoryId repositoryId;
+
+        Branch branch;
+
+        ContentId contentId;
+
+        String fingerprint;
+
+        String scaleParams;
+
+        String name;
+    }
+
+    private static final class PathParser
+    {
+        static final int CONTEXT_INDEX = 0;
+
+        static final int CONTEXT_PROJECT_INDEX = 0;
+
+        static final int CONTEXT_BRANCH_INDEX = 1;
+
+        static final int IDENTIFIER_INDEX = 1;
+
+        static final int IDENTIFIER_CONTENT_ID_INDEX = 0;
+
+        static final int IDENTIFIER_FINGERPRINT_INDEX = 1;
+
+        static final int SCALE_INDEX = 2;
+
+        static final int NAME_INDEX = 3;
+
+        private final String[] pathVariables;
+
+        PathParser( final String path )
+        {
+            int pos = Objects.requireNonNull( path ).indexOf( API_HANDLER_KEY );
+            if ( pos == -1 )
+            {
+                throw createNotFoundException();
+            }
+
+            // Limit is 5 to handle the case when the path ends with a slash, but we must have exactly 4 path variables to resolve the media
+            String[] pathVariables = path.substring( pos + API_HANDLER_KEY.length() ).split( "/", 5 );
+
+            if ( pathVariables.length < 4 )
+            {
+                throw createNotFoundException();
+            }
+
+            this.pathVariables = pathVariables;
+        }
+
+        PathMetadata parse()
+        {
+            final PathMetadata metadata = new PathMetadata();
+
+            metadata.context = pathVariables[CONTEXT_INDEX];
+
+            String[] contextParts = metadata.context.split( ":", 2 );
+            metadata.repositoryId = HandlerHelper.resolveProjectName( contextParts[CONTEXT_PROJECT_INDEX] ).getRepoId();
+            metadata.branch = HandlerHelper.resolveBranch( contextParts.length > 1 ? contextParts[CONTEXT_BRANCH_INDEX] : "master" );
+
+            String[] identifierPathVariable = pathVariables[IDENTIFIER_INDEX].split( ":", 2 );
+            metadata.contentId = ContentId.from( identifierPathVariable[IDENTIFIER_CONTENT_ID_INDEX] );
+            metadata.fingerprint = identifierPathVariable.length > 1 ? identifierPathVariable[IDENTIFIER_FINGERPRINT_INDEX] : null;
+
+            metadata.scaleParams = pathVariables[SCALE_INDEX];
+            metadata.name = pathVariables[NAME_INDEX];
+
+            return metadata;
+        }
     }
 }

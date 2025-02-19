@@ -8,6 +8,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -50,6 +51,10 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
     public String contentSecurityPolicySvg;
 
+    public boolean legacyMode;
+
+    public Branch branch;
+
     public AbstractAttachmentHandlerWorker( final PortalRequest request, final ContentService contentService )
     {
         super( request );
@@ -72,8 +77,8 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is(
-            AVIF_MEDIA_TYPE ) || attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( AVIF_MEDIA_TYPE ) ||
+            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
             contentType = attachmentMimeType;
             body = binary;
@@ -83,7 +88,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
             contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
             body = transform( content, binaryReference, binary, contentType );
         }
-
 
         if ( contentType.is( SVG_MEDIA_TYPE ) )
         {
@@ -107,7 +111,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
             final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+                ContentConstants.BRANCH_MASTER.equals( branch );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() && this.fingerprint.equals( resolveHash( content, binaryReference ) ) )

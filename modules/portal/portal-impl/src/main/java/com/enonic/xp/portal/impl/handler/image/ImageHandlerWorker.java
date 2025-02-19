@@ -21,6 +21,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -130,15 +131,22 @@ public final class ImageHandlerWorker
     @Override
     protected String resolveHash( final Media content, final BinaryReference binaryReference )
     {
-        final String binaryKey = super.resolveHash( content, binaryReference );
-        return Hashing.sha1()
-            .newHasher()
-            .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getFocalPoint() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getCropping() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getOrientation() ), StandardCharsets.UTF_8 )
-            .hash()
-            .toString();
+        if ( legacyMode )
+        {
+            final String binaryKey = super.resolveHash( content, binaryReference );
+            return Hashing.sha1()
+                .newHasher()
+                .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
+                .putString( String.valueOf( content.getFocalPoint() ), StandardCharsets.UTF_8 )
+                .putString( String.valueOf( content.getCropping() ), StandardCharsets.UTF_8 )
+                .putString( String.valueOf( content.getOrientation() ), StandardCharsets.UTF_8 )
+                .hash()
+                .toString();
+        }
+        else
+        {
+            return MediaHashResolver.resolveImageHash( content );
+        }
     }
 
     @Override
