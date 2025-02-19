@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -26,16 +27,19 @@ final class IdProviderControllerScriptImpl
     }
 
     @Override
-    public PortalResponse execute( final String functionName, final PortalRequest portalRequest )
+    public PortalResponse execute( final String functionName, final PortalRequest request )
     {
-        PortalRequestAccessor.set( portalRequest );
+        final ApplicationKey previousApp = request.getApplicationKey();
+        request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
+        PortalRequestAccessor.set( request );
         try
         {
-            return doExecute( functionName, portalRequest );
+            return doExecute( functionName, request );
         }
         finally
         {
             PortalRequestAccessor.remove();
+            request.setApplicationKey( previousApp );
         }
     }
 

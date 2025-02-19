@@ -97,14 +97,15 @@ public final class WebAppHandler
     private PortalResponse executeController( final PortalRequest req )
         throws Exception
     {
-        final ControllerScript script = getScript( req.getApplicationKey() );
+        final ApplicationKey applicationKey = req.getApplicationKey();
+        final ControllerScript script = getScript( applicationKey );
         final PortalResponse res = script.execute( req );
 
         final WebSocketConfig webSocketConfig = res.getWebSocket();
         final WebSocketContext webSocketContext = req.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, req.getApplicationKey() );
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, applicationKey );
             webSocketContext.apply( webSocketEndpoint );
         }
 

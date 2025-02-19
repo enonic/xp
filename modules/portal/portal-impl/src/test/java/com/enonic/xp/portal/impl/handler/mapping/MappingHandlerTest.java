@@ -14,8 +14,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
@@ -34,6 +36,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -59,6 +62,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -195,7 +199,7 @@ public class MappingHandlerTest
         final ControllerMappingDescriptor mapping =
             ControllerMappingDescriptor.create().controller( controller ).pattern( "/nomatch" ).build();
 
-        setupContentAndSite( mapping );
+        setupContentAndSite( mapping, false );
 
         final WebHandlerChain chain = mock( WebHandlerChain.class );
         final PortalResponse response = PortalResponse.create().build();
@@ -217,7 +221,7 @@ public class MappingHandlerTest
         final ControllerMappingDescriptor mapping =
             ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).build();
 
-        setupContentAndSite( mapping );
+        setupContentAndSite( mapping, false );
 
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
@@ -294,7 +298,6 @@ public class MappingHandlerTest
         assertEquals( "Site body", response.getBody() );
 
         verify( rendererDelegate, Mockito.times( 1 ) ).render( isA( ControllerMappingDescriptor.class ), same( request ) );
-
     }
 
     @Test
@@ -304,7 +307,7 @@ public class MappingHandlerTest
         final ResourceKey filter = ResourceKey.from( "demo:/services/test" );
         final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().filter( filter ).pattern( ".*/content" ).build();
 
-        setupContentAndSite( mapping );
+        setupContentAndSite( mapping, false );
 
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
@@ -312,15 +315,38 @@ public class MappingHandlerTest
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
 
-        assertNotNull( this.request.getApplicationKey() );
+        assertEquals( ApplicationKey.from( "demo" ), this.request.getApplicationKey() );
+        assertNull( this.request.getPageDescriptor() );
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
         assertEquals( "/site/myproject/draft/site", this.request.getContextPath() );
     }
 
-    private void setupContentAndSite( final ControllerMappingDescriptor mapping )
+    @Test
+    void executeFilter_withPage()
+        throws Exception
     {
-        final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", true );
+        final ResourceKey filter = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().filter( filter ).pattern( ".*/content" ).build();
+
+        setupContentAndSite( mapping, true );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        assertEquals( ApplicationKey.from( "demo" ), this.request.getApplicationKey() );
+        assertEquals( DescriptorKey.from( "module:landing-page" ), this.request.getPageDescriptor().getKey() );
+        assertNotNull( this.request.getSite() );
+        assertNotNull( this.request.getContent() );
+        assertEquals( "/site/default/draft/site", this.request.getContextPath() );
+    }
+
+    private void setupContentAndSite( final ControllerMappingDescriptor mapping, boolean withPage )
+    {
+        final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", withPage );
         final Site site = createSite( "id", "site", "myapplication:contenttypename", "myapplication" );
 
         final ContentPath path = ContentPath.from( "site/somesite/content" ).asAbsolute();
@@ -330,7 +356,10 @@ public class MappingHandlerTest
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        when( this.pageTemplateService.getByKey( any( PageTemplateKey.class ) ) ).thenReturn( createPageTemplate() );
+        final PageTemplate pageTemplate = createPageTemplate();
+
+        when( this.pageTemplateService.getByKey( any( PageTemplateKey.class ) ) ).thenReturn( pageTemplate );
+        when( pageDescriptorService.getByKey( pageTemplate.getController() ) ).thenReturn( createPageDescriptor() );
 
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping );
         final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
@@ -440,13 +469,23 @@ public class MappingHandlerTest
 
     private PageTemplate createPageTemplate()
     {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "otherapp:my-template-controller" );
         final PageTemplate.Builder pageTemplate = PageTemplate.newPageTemplate()
             .key( PageTemplateKey.from( "my-page-tempalte" ) )
-            .controller( DescriptorKey.from( "my-template-controller" ) )
+            .controller( descriptorKey )
             .id( ContentId.from( "pageTemplateId" ) )
             .path( ContentPath.from( "site/somesite/template" ) )
             .type( ContentTypeName.pageTemplate() );
-
         return pageTemplate.build();
+    }
+
+    private static PageDescriptor createPageDescriptor()
+    {
+        return PageDescriptor.create()
+            .displayName( "Landing page" )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .key( DescriptorKey.from( "module:landing-page" ) )
+            .build();
     }
 }

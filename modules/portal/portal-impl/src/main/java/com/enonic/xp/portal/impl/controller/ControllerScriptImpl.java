@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -26,17 +27,20 @@ final class ControllerScriptImpl
     }
 
     @Override
-    public PortalResponse execute( final PortalRequest portalRequest )
+    public PortalResponse execute( final PortalRequest request )
     {
-        PortalRequestAccessor.set( portalRequest );
+        final ApplicationKey previousApp = request.getApplicationKey();
+        request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
+        PortalRequestAccessor.set( request );
         try
         {
             return Tracer.trace( "controllerScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),
-                                 () -> doExecute( portalRequest ) );
+                                 () -> doExecute( request ) );
         }
         finally
         {
             PortalRequestAccessor.remove();
+            request.setApplicationKey( previousApp );
         }
     }
 

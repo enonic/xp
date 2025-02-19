@@ -32,7 +32,6 @@ public final class PortalRequestSerializer
         req.setContentPath( sourceRequest.getContentPath() );
         req.setContent( sourceRequest.getContent() );
         req.setSite( sourceRequest.getSite() );
-        req.setPageTemplate( sourceRequest.getPageTemplate() );
         req.setComponent( sourceRequest.getComponent() );
         req.setApplicationKey( sourceRequest.getApplicationKey() );
         req.setPageDescriptor( sourceRequest.getPageDescriptor() );

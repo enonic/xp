@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.macro;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
@@ -23,7 +25,10 @@ public final class MacroProcessorScript
     @Override
     public PortalResponse process( final MacroContext macroContext )
     {
-        PortalRequestAccessor.set( macroContext.getRequest() );
+        final PortalRequest portalRequest = macroContext.getRequest();
+        final ApplicationKey previousAppKey = portalRequest.getApplicationKey();
+        portalRequest.setApplicationKey( scriptExports.getScript().getApplicationKey() );
+        PortalRequestAccessor.set( portalRequest );
         try
         {
             return doProcess( macroContext );
@@ -31,6 +36,7 @@ public final class MacroProcessorScript
         finally
         {
             PortalRequestAccessor.remove();
+            portalRequest.setApplicationKey( previousAppKey );
         }
     }
 

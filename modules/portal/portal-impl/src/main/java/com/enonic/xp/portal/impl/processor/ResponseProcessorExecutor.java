@@ -58,7 +58,6 @@ public final class ResponseProcessorExecutor
 
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( script.getApplicationKey() );
-
         PortalRequestAccessor.set( request );
         try
         {

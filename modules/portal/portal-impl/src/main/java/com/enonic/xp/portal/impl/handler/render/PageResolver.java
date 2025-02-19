@@ -14,7 +14,6 @@ import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -23,9 +22,6 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.Site;
-import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 
 public class PageResolver
 {
@@ -43,73 +39,79 @@ public class PageResolver
         this.layoutDescriptorService = layoutDescriptorService;
     }
 
-    public PageResolverResult resolve( final RenderMode mode, final Content content, final Site site )
+    public PageResolverResult resolve( final Content content, final ContentPath sitePath )
     {
-        final Page page = content.getPage();
-        final PageTemplate pageTemplate;
-        final DescriptorKey controller;
-        final Page effectivePage;
-
         if ( content instanceof PageTemplate )
         {
-            pageTemplate = (PageTemplate) content;
-            controller = getControllerFromTemplate( pageTemplate, mode );
-            effectivePage = pageTemplate.getPage();
+            final PageTemplate pageTemplate = (PageTemplate) content;
+            final DescriptorKey controller = pageTemplate.getController();
+            return controller == null
+                ? noPageInTemplateResult( pageTemplate )
+                : buildPageWithRegionsFromController( pageTemplate.getPage(), controller );
         }
-        else if ( page != null )
+        else if ( content.getType().isShortcut() )
+        {
+            return PageResolverResult.errorResult( "Shortcut" );
+        }
+
+        final Page page = content.getPage();
+        if ( page != null )
         {
             if ( page.getFragment() != null )
             {
-                controller = null;
-                effectivePage = buildPageFromFragment( page );
+                return new PageResolverResult( buildPageFromFragment( page ), null, null );
             }
-            else if ( page.getDescriptor() != null )
+
+            if ( page.getDescriptor() != null )
             {
-                controller = page.getDescriptor();
-                effectivePage = page;
+                final DescriptorKey controller = page.getDescriptor();
+                return buildPageWithRegionsFromController( page, controller );
             }
-            else if ( page.getTemplate() != null )
+
+            if ( page.getTemplate() != null )
             {
-                pageTemplate = getPageTemplateOrFindDefault( page.getTemplate(), content.getType(), site.getPath() );
+                final PageTemplate pageTemplate = getPageTemplateOrFindDefault( page.getTemplate(), content.getType(), sitePath );
 
                 if ( pageTemplate != null )
                 {
-                    controller = getControllerFromTemplate( pageTemplate, mode );
-                    effectivePage = mergePageFromPageTemplate( pageTemplate, page );
+                    final DescriptorKey controller = pageTemplate.getController();
+                    return controller == null
+                        ? noPageInTemplateResult( pageTemplate )
+                        : buildPageWithRegionsFromController( mergePageFromPageTemplate( pageTemplate, page ), controller );
                 }
                 else
                 {
-                    throw newWebException( mode, String.format( "Template [%s] is missing and no default template found for content",
-                                                                page.getTemplate() ) );
+                    return PageResolverResult.errorResult(
+                        String.format( "Template [%s] is missing and no default template found for content", page.getTemplate() ) );
                 }
             }
             else
             {
-                throw newWebException( mode, "Content page has neither template nor descriptor" );
+                return PageResolverResult.errorResult( "Content page has neither template nor descriptor" );
             }
         }
         else
         {
-            pageTemplate = this.pageTemplateService.getDefault(
-                GetDefaultPageTemplateParams.create().sitePath( site.getPath() ).contentType( content.getType() ).build() );
+            final PageTemplate pageTemplate = this.pageTemplateService.getDefault(
+                GetDefaultPageTemplateParams.create().sitePath( sitePath ).contentType( content.getType() ).build() );
 
             if ( pageTemplate != null )
             {
-                controller = getControllerFromTemplate( pageTemplate, mode );
-                effectivePage = mergePageFromPageTemplate( pageTemplate, null );
+                final DescriptorKey controller = pageTemplate.getController();
+                return controller == null
+                    ? noPageInTemplateResult( pageTemplate )
+                    : buildPageWithRegionsFromController( mergePageFromPageTemplate( pageTemplate, null ), controller );
             }
             else
             {
-                throw newWebException( mode, "No default template found for content" );
+                return PageResolverResult.errorResult( "No default template found for content" );
             }
         }
+    }
 
-        if ( controller == null )
-        {
-            return new PageResolverResult( effectivePage, null, null );
-        }
-
-        return buildPageWithRegionsFromController( effectivePage, controller );
+    private static PageResolverResult noPageInTemplateResult( final PageTemplate pageTemplate )
+    {
+        return PageResolverResult.errorResult( String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
     }
 
     private PageTemplate getPageTemplateOrFindDefault( final PageTemplateKey pageTemplate, final ContentTypeName contentType,
@@ -124,26 +126,6 @@ public class PageResolver
             return this.pageTemplateService.getDefault(
                 GetDefaultPageTemplateParams.create().sitePath( sitePath ).contentType( contentType ).build() );
         }
-    }
-
-    private static DescriptorKey getControllerFromTemplate( final PageTemplate pageTemplate, final RenderMode mode )
-    {
-        final DescriptorKey controller = pageTemplate.getController();
-
-        if ( controller != null )
-        {
-            return controller;
-        }
-        else
-        {
-            throw newWebException( mode, String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
-        }
-    }
-
-    private static WebException newWebException( final RenderMode mode, final String message )
-    {
-        throw new WebException( mode == RenderMode.INLINE || mode == RenderMode.EDIT ? HttpStatus.IM_A_TEAPOT : HttpStatus.NOT_FOUND,
-                                message );
     }
 
     private static Page mergePageFromPageTemplate( final PageTemplate pageTemplate, final Page page )
@@ -173,32 +155,24 @@ public class PageResolver
         }
     }
 
-    private Page buildPageFromFragment( final Page effectivePage )
+    private Page buildPageFromFragment( final Page page )
     {
-        final Component fragmentComponent = effectivePage.getFragment();
+        final Component fragmentComponent = page.getFragment();
 
         if ( fragmentComponent instanceof LayoutComponent )
         {
-            final Page.Builder pageBuilder = Page.create( effectivePage );
-            pageBuilder.fragment( processLayoutComponent( (LayoutComponent) fragmentComponent ) );
-            return pageBuilder.build();
+            return Page.create( page ).fragment( processLayoutComponent( (LayoutComponent) fragmentComponent ) ).build();
         }
 
-        return effectivePage;
+        return page;
     }
 
-    private PageResolverResult buildPageWithRegionsFromController( final Page effectivePage, final DescriptorKey controller )
+    private PageResolverResult buildPageWithRegionsFromController( final Page page, final DescriptorKey controller )
     {
         final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( controller );
-
-        if ( pageDescriptor == null || pageDescriptor.getModifiedTime() == null )
-        {
-            return new PageResolverResult( effectivePage, controller, pageDescriptor );
-        }
-
-        final Page resultingPage = buildPageWithRegions( effectivePage, pageDescriptor );
-
-        return new PageResolverResult( resultingPage, controller, pageDescriptor );
+        final Page resultingPage =
+            pageDescriptor == null || pageDescriptor.getModifiedTime() == null ? page : buildPageWithRegions( page, pageDescriptor );
+        return new PageResolverResult( resultingPage, controller.getApplicationKey(), pageDescriptor );
     }
 
     private Page buildPageWithRegions( final Page sourcePage, final PageDescriptor pageDescriptor )
@@ -230,7 +204,7 @@ public class PageResolver
         final Region.Builder builder = Region.create( existingRegion );
         final List<Component> components = existingRegion.getComponents();
 
-        for ( int i = 0; i < components.size(); i++)
+        for ( int i = 0; i < components.size(); i++ )
         {
             builder.set( i, processComponent( components.get( i ) ) );
         }
@@ -270,7 +244,7 @@ public class PageResolver
 
         if ( layoutDescriptor.getRegions() != null )
         {
-                layoutDescriptor.getRegions().forEach( region -> {
+            layoutDescriptor.getRegions().forEach( region -> {
                 final Region existingRegion = existingLayout.getRegion( region.getName() );
                 final Region regionToAdd = existingRegion == null ? Region.create().name( region.getName() ).build() : existingRegion;
                 regionsBuilder.add( regionToAdd );

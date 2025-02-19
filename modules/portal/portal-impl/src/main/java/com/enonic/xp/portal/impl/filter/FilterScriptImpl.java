@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
@@ -35,6 +36,8 @@ final class FilterScriptImpl
     @Override
     public PortalResponse execute( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
+        final ApplicationKey previousApp = request.getApplicationKey();
+        request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
         PortalRequestAccessor.set( request );
         try
         {
@@ -54,6 +57,7 @@ final class FilterScriptImpl
         finally
         {
             PortalRequestAccessor.remove();
+            request.setApplicationKey( previousApp );
         }
     }
 

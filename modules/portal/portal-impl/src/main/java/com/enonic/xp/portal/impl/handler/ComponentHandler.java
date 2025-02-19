@@ -13,7 +13,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
@@ -124,15 +123,15 @@ public class ComponentHandler
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
 
         final PageResolver pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
-        final PageResolverResult resolvedPage = pageResolver.resolve( portalRequest.getMode(), content, site );
-
+        final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
+        Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( portalRequest.getMode() );
         com.enonic.xp.region.Component component = null;
         final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findRestPath( portalRequest, "component" ) );
 
         if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            final com.enonic.xp.region.Component fragmentComponent = resolvedPage.getEffectivePage().getFragment();
+            final com.enonic.xp.region.Component fragmentComponent = effectivePage.getFragment();
 
             if ( componentPath.isEmpty() )
             {
@@ -144,15 +143,10 @@ public class ComponentHandler
             }
         }
 
-        final Page effectivePage;
         if ( component == null )
         {
-            effectivePage = inlineFragments( resolvedPage.getEffectivePage(), componentPath );
+            effectivePage = inlineFragments( effectivePage, componentPath );
             component = effectivePage.getRegions().getComponent( componentPath );
-        }
-        else
-        {
-            effectivePage = resolvedPage.getEffectivePage();
         }
 
         if ( component == null )
@@ -161,12 +155,11 @@ public class ComponentHandler
         }
 
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
-        final DescriptorKey controller = resolvedPage.getController();
 
         portalRequest.setSite( site );
         portalRequest.setContent( effectiveContent );
         portalRequest.setComponent( component );
-        portalRequest.setApplicationKey( controller != null ? controller.getApplicationKey() : null );
+        portalRequest.setApplicationKey( resolvedPage.getApplicationKey() );
 
         return portalRequest;
     }

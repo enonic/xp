@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.error;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
@@ -26,6 +28,9 @@ final class ErrorHandlerScriptImpl
             return null;
         }
 
+        final PortalRequest request = portalError.getRequest();
+        final ApplicationKey previousApp = request.getApplicationKey();
+        request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
         PortalRequestAccessor.set( portalError.getRequest() );
         try
         {
@@ -35,6 +40,7 @@ final class ErrorHandlerScriptImpl
         finally
         {
             PortalRequestAccessor.remove();
+            request.setApplicationKey( previousApp );
         }
     }
 
