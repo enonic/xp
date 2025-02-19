@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.Node;
@@ -162,55 +161,45 @@ class VersionTableVacuumTaskTest
     @Test
     void testDeleteOnTransientRepository()
     {
-        final Context oldContext = ContextAccessor.current();
+        final RepositoryId repositoryId = RepositoryId.from( "com.test.transient" + System.currentTimeMillis() );
+        final Context context = ContextBuilder.create()
+            .branch( ContentConstants.BRANCH_MASTER )
+            .repositoryId( repositoryId )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.ADMIN )
+                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                           .build() )
+            .build();
 
-        try
-        {
-            final RepositoryId repositoryId = RepositoryId.from( "com.test.transient" + System.currentTimeMillis() );
-            final Context context = ContextBuilder.create()
-                .branch( ContentConstants.BRANCH_MASTER )
-                .repositoryId( repositoryId )
-                .authInfo( AuthenticationInfo.create()
-                               .principals( RoleKeys.ADMIN )
-                               .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
-                               .build() )
-                .build();
+        context.callWith( () -> {
+            createTransientRepo( repositoryId );
 
-            ContextAccessor.INSTANCE.set( context );
+            Instant initTime = Instant.now();
+            Clock clock = Clock.fixed( initTime, ZoneId.systemDefault() );
 
-            context.callWith( () -> {
-                createTransientRepo( repositoryId );
+            this.task.setClock( clock );
 
-                Instant initTime = Instant.now();
-                Clock clock = Clock.fixed( initTime, ZoneId.systemDefault() );
+            final Node node1 = createNode( NodePath.ROOT, "node1" );
+            updateNode( node1.id(), 1 );
 
-                this.task.setClock( clock );
+            refresh();
+            assertVersions( node1.id(), 2 );
 
-                final Node node1 = createNode( NodePath.ROOT, "node1" );
-                updateNode( node1.id(), 1 );
+            Instant newTime = initTime.plus( 3, ChronoUnit.MINUTES );
+            this.task.setClock( Clock.fixed( newTime, ZoneId.systemDefault() ) );
 
-                refresh();
-                assertVersions( node1.id(), 2 );
+            final VacuumTaskResult result =
+                NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() ) );
 
-                Instant newTime = initTime.plus( 3, ChronoUnit.MINUTES );
-                this.task.setClock( Clock.fixed( newTime, ZoneId.systemDefault() ) );
+            refresh();
 
-                final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() ) );
+            assertEquals( 3, result.getProcessed() );
+            assertEquals( 1, result.getDeleted() );
 
-                refresh();
+            assertVersions( node1.id(), 1 );
 
-                assertEquals( 3, result.getProcessed() );
-                assertEquals( 1, result.getDeleted() );
-
-                assertVersions( node1.id(), 1 );
-
-                return null;
-            } );
-        }
-        finally
-        {
-            ContextAccessor.INSTANCE.set( oldContext );
-        }
+            return null;
+        } );
     }
 
     private void createTransientRepo( final RepositoryId repositoryId )

@@ -47,6 +47,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
@@ -215,7 +216,7 @@ public abstract class AbstractContentServiceTest
         executorService = Executors.newSingleThreadExecutor();
 
         initialContext = ContextAccessor.current();
-        ContextAccessor.INSTANCE.set( ctxDraft() );
+        ContextAccessorSupport.getInstance().set( ctxDraft() );
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( BLOB_STORE );
 
@@ -346,7 +347,7 @@ public abstract class AbstractContentServiceTest
     {
         projectService.delete( testprojectName );
 
-        ContextAccessor.INSTANCE.set( initialContext );
+        ContextAccessorSupport.getInstance().set( initialContext );
 
         executorService.shutdownNow();
     }
