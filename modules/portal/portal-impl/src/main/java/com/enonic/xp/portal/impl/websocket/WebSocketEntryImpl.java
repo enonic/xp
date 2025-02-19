@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.websocket;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,13 +10,14 @@ import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
-
-import static com.enonic.xp.web.websocket.WebSocketEventType.MESSAGE;
 
 final class WebSocketEntryImpl
     extends Endpoint
@@ -29,7 +29,9 @@ final class WebSocketEntryImpl
 
     private final Set<String> groups = ConcurrentHashMap.newKeySet();
 
-    private Session session;
+    private volatile Session session;
+
+    private final Context contextCopy;
 
     private final String traceParentId;
 
@@ -39,13 +41,12 @@ final class WebSocketEntryImpl
     {
         this.endpoint = endpoint;
         this.registry = registry;
+        this.contextCopy = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            Map<String, Object> wsData = new HashMap<>();
-            wsData.put( "protocols", endpoint.getConfig().getSubProtocols() );
-            trace.put( "websocket", wsData );
+            trace.put( "websocket", Map.of( "protocols", endpoint.getConfig().getSubProtocols() ) );
             traceParentId = trace.getId();
             traceApp = (String) trace.get( "app" );
         }
@@ -97,7 +98,7 @@ final class WebSocketEntryImpl
     @Override
     public void onMessage( final String message )
     {
-        this.onEvent( newEvent( MESSAGE, session ).message( message ).build() );
+        this.onEvent( newEvent( WebSocketEventType.MESSAGE, session ).message( message ).build() );
     }
 
     @Override
@@ -150,20 +151,23 @@ final class WebSocketEntryImpl
 
     private void onEvent( final WebSocketEvent event )
     {
-        final Trace trace = Tracer.newTrace( "websocket" );
-        if ( trace == null || traceApp == null )
-        {
-            this.endpoint.onEvent( event );
-        }
-        else
-        {
-            trace.put( "message", event.getMessage() );
-            trace.put( "type", event.getType() == MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
-            trace.put( "sessionid", event.getSession().getId() );
-            trace.put( "parentId", traceParentId );
-            trace.put( "app", traceApp );
+        ContextBuilder.copyOf( contextCopy ).build().runWith( () -> {
+            final Trace trace = Tracer.newTrace( "websocket" );
+            if ( trace == null || traceApp == null )
+            {
+                this.endpoint.onEvent( event );
+            }
+            else
+            {
+                trace.put( "message", event.getMessage() );
+                trace.put( "type",
+                           event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
+                trace.put( "sessionid", event.getSession().getId() );
+                trace.put( "parentId", traceParentId );
+                trace.put( "app", traceApp );
 
-            Tracer.trace( trace, () -> this.endpoint.onEvent( event ) );
-        }
+                Tracer.trace( trace, () -> this.endpoint.onEvent( event ) );
+            }
+        } );
     }
 }
