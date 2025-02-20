@@ -9,8 +9,6 @@ import com.enonic.xp.node.NodePath;
 
 public class NodeImportResultJson
 {
-    private boolean dryRun;
-
     private final List<String> addedNodes = new ArrayList<>();
 
     private final List<String> updateNodes = new ArrayList<>();
@@ -22,8 +20,6 @@ public class NodeImportResultJson
     public static NodeImportResultJson from( final NodeImportResult result )
     {
         final NodeImportResultJson json = new NodeImportResultJson();
-
-        json.dryRun = result.isDryRun();
 
         for ( final NodePath nodePath : result.getAddedNodes() )
         {
@@ -46,9 +42,10 @@ public class NodeImportResultJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     @SuppressWarnings("UnusedDeclaration")

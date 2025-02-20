@@ -6,7 +6,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeImportResultTest
 {
@@ -15,7 +14,7 @@ public class NodeImportResultTest
     {
         NodeImportResult.Builder builder = NodeImportResult.create();
 
-        builder.dryRun( true ).addBinary( "path", BinaryReference.from( "binary ref" ) ).added( NodePath.ROOT ).updated(
+        builder.addBinary( "path", BinaryReference.from( "binary ref" ) ).added( NodePath.ROOT ).updated(
             NodePath.ROOT ).addError( new ImportNodeException( "exception" ) ).addError( "ome more error",
                                                                                          new ImportNodeException( "exception",
                                                                                                                   new Exception() ) ).addError(
@@ -23,7 +22,6 @@ public class NodeImportResultTest
 
         NodeImportResult result = builder.build();
 
-        assertTrue( result.isDryRun() );
         assertEquals( 1, result.getImportedBinaries().size() );
         assertEquals( 1, result.getAddedNodes().getSize() );
         assertEquals( 1, result.getUpdateNodes().getSize() );
@@ -35,15 +33,14 @@ public class NodeImportResultTest
     {
         NodeImportResult.Builder builder = NodeImportResult.create();
 
-        builder.dryRun( true ).addBinary( "path", BinaryReference.from( "binary ref" ) ).added( NodePath.ROOT ).updated(
+        builder.addBinary( "path", BinaryReference.from( "binary ref" ) ).added( NodePath.ROOT ).updated(
             NodePath.ROOT ).addError( new Exception() );
 
         NodeImportResult result = builder.build();
 
         String expected = "";
         expected += "NodeImportResult{";
-        expected += "dryRun=true, ";
-        expected += "addedNodes=[/], ";
+        expected += " addedNodes=[/], ";
         expected += "updateNodes=[/], ";
         expected += "importErrors=[ImportError{exception=java.lang.Exception, message='null'}], ";
         expected += "importedBinaries=[path [binary ref]]";

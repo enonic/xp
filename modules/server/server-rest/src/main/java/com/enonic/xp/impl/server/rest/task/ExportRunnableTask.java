@@ -28,8 +28,6 @@ public class ExportRunnableTask
 
     private final boolean exportWithIds;
 
-    private final boolean dryRun;
-
     private final boolean includeVersions;
 
     private final ExportService exportService;
@@ -43,7 +41,6 @@ public class ExportRunnableTask
         this.exportName = builder.exportName;
         this.includeVersions = builder.includeVersions;
         this.exportWithIds = builder.exportWithIds;
-        this.dryRun = builder.dryRun;
 
         this.exportService = builder.exportService;
     }
@@ -60,7 +57,6 @@ public class ExportRunnableTask
             ExportNodesParams.create()
                 .sourceNodePath( nodePath )
                 .exportName( exportName )
-                .dryRun( dryRun )
                 .includeNodeIds( exportWithIds )
                 .includeVersions( includeVersions )
                 .nodeExportListener( new ExportListenerImpl( progressReporter ) )
@@ -85,8 +81,6 @@ public class ExportRunnableTask
         private String exportName;
 
         private boolean exportWithIds;
-
-        private boolean dryRun;
 
         private boolean includeVersions;
 
@@ -122,10 +116,10 @@ public class ExportRunnableTask
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder includeVersions( final boolean includeVersions )

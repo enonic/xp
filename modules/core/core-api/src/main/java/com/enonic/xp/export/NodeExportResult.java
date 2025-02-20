@@ -14,8 +14,6 @@ import com.enonic.xp.util.BinaryReference;
 @PublicApi
 public class NodeExportResult
 {
-    private final boolean dryRun;
-
     private final NodePaths exportedNodes;
 
     private final List<ExportError> exportErrors;
@@ -24,15 +22,15 @@ public class NodeExportResult
 
     private NodeExportResult( final Builder builder )
     {
-        dryRun = builder.dryRun;
         exportedNodes = NodePaths.from( builder.nodePaths );
         exportErrors = builder.exportErrors;
         exportedBinaries = builder.exportedBinaries;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public NodePaths getExportedNodes()
@@ -63,9 +61,7 @@ public class NodeExportResult
     @Override
     public String toString()
     {
-        return "NodeExportResult{" +
-            "dryRun=" + dryRun +
-            ", exportedNodes=" + exportedNodes +
+        return "NodeExportResult{" + " exportedNodes=" + exportedNodes +
             ", exportErrors=" + Arrays.toString( exportErrors.toArray() ) +
             ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +
             '}';
@@ -73,8 +69,6 @@ public class NodeExportResult
 
     public static final class Builder
     {
-        private boolean dryRun;
-
         private final List<ExportError> exportErrors = new ArrayList<>();
 
         private final List<String> exportedBinaries = new ArrayList<>();
@@ -86,10 +80,10 @@ public class NodeExportResult
         {
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "Dry run is not supported" );
         }
 
         public Builder addBinary( final NodePath nodePath, final BinaryReference binaryReference )

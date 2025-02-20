@@ -11,15 +11,12 @@ public class ExportNodesRequestJson
 
     private final boolean exportWithIds;
 
-    private final boolean dryRun;
-
     private final boolean includeVersions;
 
     public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
                                    @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("exportWithIds") final Boolean exportWithIds, //
-                                   @JsonProperty("includeVersions") final Boolean includeVersions, //
-                                   @JsonProperty("dryRun") final Boolean dryRun )
+                                   @JsonProperty("includeVersions") final Boolean includeVersions )
     {
         Preconditions.checkNotNull( sourceRepoPath, "sourceRepoPath not given" );
         Preconditions.checkNotNull( exportName, "exportName not given" );
@@ -27,7 +24,6 @@ public class ExportNodesRequestJson
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;
         this.exportWithIds = exportWithIds != null ? exportWithIds : true;
-        this.dryRun = dryRun != null ? dryRun : false;
         this.includeVersions = includeVersions != null ? includeVersions : false;
     }
 
@@ -46,9 +42,10 @@ public class ExportNodesRequestJson
         return exportWithIds;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public boolean isIncludeVersions()

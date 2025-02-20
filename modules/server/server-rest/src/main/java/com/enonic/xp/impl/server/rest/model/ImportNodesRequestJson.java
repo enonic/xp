@@ -12,8 +12,6 @@ public class ImportNodesRequestJson
 
     private final String exportName;
 
-    private final boolean dryRun;
-
     private final boolean importWithIds;
 
     private final boolean importWithPermissions;
@@ -27,7 +25,6 @@ public class ImportNodesRequestJson
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
                                    @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
-                                   @JsonProperty("dryRun") final Boolean dryRun, //
                                    @JsonProperty("xslSource") final String xslSource, //
                                    @JsonProperty("xslParams") final Map<String, Object> xslParams )
 
@@ -38,7 +35,6 @@ public class ImportNodesRequestJson
 
         this.targetRepoPath = RepoPath.from( targetRepoPath );
         this.exportName = exportName;
-        this.dryRun = dryRun != null ? dryRun : false;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
         this.xslSource = xslSource;
@@ -55,9 +51,10 @@ public class ImportNodesRequestJson
         return exportName;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public boolean isImportWithIds()

@@ -101,7 +101,6 @@ class LoadRunnableTaskTest
         final NodeImportResult importResult = NodeImportResult.create()
             .added( new NodePath( "/path/to/node1" ) )
             .updated( new NodePath( "/path/to/node2" ) )
-            .dryRun( true )
             .build();
 
         final PropertyTree repoData = new PropertyTree();

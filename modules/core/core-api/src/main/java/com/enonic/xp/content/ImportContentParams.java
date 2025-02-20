@@ -23,8 +23,6 @@ public class ImportContentParams
 
     private final ProjectName originProject;
 
-    private final boolean dryRun;
-
     private final boolean importPermissions;
 
     private final boolean importPermissionsOnCreate;
@@ -36,7 +34,6 @@ public class ImportContentParams
         targetPath = builder.targetPath;
         insertManualStrategy = builder.insertManualStrategy;
         inherit = builder.inherit;
-        dryRun = builder.dryRun;
         importPermissions = builder.importPermissions;
         importPermissionsOnCreate = builder.importPermissionsOnCreate;
         originProject = builder.originProject;
@@ -77,9 +74,10 @@ public class ImportContentParams
         return originProject;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public boolean isImportPermissions()
@@ -105,8 +103,6 @@ public class ImportContentParams
         private EnumSet<ContentInheritType> inherit;
 
         private ProjectName originProject;
-
-        private boolean dryRun;
 
         private boolean importPermissions;
 
@@ -153,10 +149,10 @@ public class ImportContentParams
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )
