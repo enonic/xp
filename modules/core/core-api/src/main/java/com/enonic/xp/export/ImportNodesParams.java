@@ -15,8 +15,6 @@ public class ImportNodesParams
 {
     private final NodePath targetNodePath;
 
-    private final boolean dryRun;
-
     private final VirtualFile source;
 
     private final String exportName;
@@ -35,7 +33,6 @@ public class ImportNodesParams
     {
         this.targetNodePath = builder.targetNodePath;
         this.source = builder.source;
-        this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
         this.xslt = builder.xslt;
@@ -54,9 +51,10 @@ public class ImportNodesParams
         return targetNodePath;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public VirtualFile getSource()
@@ -102,8 +100,6 @@ public class ImportNodesParams
 
         private String exportName;
 
-        private boolean dryRun;
-
         private boolean importNodeIds;
 
         private boolean importPermissions;
@@ -126,10 +122,10 @@ public class ImportNodesParams
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder source( final VirtualFile source )

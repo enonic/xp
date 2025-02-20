@@ -40,7 +40,6 @@ final class ImportContentCommand
         final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
             .binaryAttachments( params.getBinaryAttachments() )
             .insertManualStrategy( params.getInsertManualStrategy() )
-            .dryRun( params.isDryRun() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
             .refresh( RefreshMode.ALL )

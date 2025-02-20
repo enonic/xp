@@ -57,8 +57,6 @@ public final class NodeImporter
 
     private final ExportReader exportReader = new ExportReader();
 
-    private final boolean dryRun;
-
     private final NodeImportResult.Builder result = NodeImportResult.create();
 
     private final boolean importNodeIds;
@@ -76,7 +74,6 @@ public final class NodeImporter
         this.nodeService = builder.nodeService;
         this.exportRoot = builder.exportRoot;
         this.importRoot = builder.importRoot;
-        this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
         this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getByteSource(), builder.xsltParams ) : null;
@@ -90,8 +87,6 @@ public final class NodeImporter
 
     public NodeImportResult execute()
     {
-        this.result.dryRun( this.dryRun );
-
         if ( nodeImportListener != null )
         {
             nodeImportListener.nodeResolved( exportReader.getNodeFileCount( exportRoot ) );
@@ -281,7 +276,6 @@ public final class NodeImporter
             .importNode( importNode )
             .binaryAttachments( binaryAttachments )
             .insertManualStrategy( processNodeSettings.getInsertManualStrategy() )
-            .dryRun( this.dryRun )
             .importPermissions( this.importPermissions )
             .importPermissionsOnCreate( this.importPermissions )
             .build();
@@ -401,8 +395,6 @@ public final class NodeImporter
 
         private VirtualFile exportRoot;
 
-        private boolean dryRun = false;
-
         private boolean importNodeIds = true;
 
         private boolean importPermissions = true;
@@ -435,10 +427,10 @@ public final class NodeImporter
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importNodeIds( final boolean importNodeIds )

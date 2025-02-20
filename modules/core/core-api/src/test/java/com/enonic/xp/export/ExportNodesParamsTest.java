@@ -17,7 +17,6 @@ public class ExportNodesParamsTest
         builder.dryRun( true ).includeNodeIds( true ).sourceNodePath( NodePath.ROOT ).exportName( "target" );
         ExportNodesParams result = builder.build();
 
-        assertTrue( result.isDryRun() );
         assertTrue( result.isIncludeNodeIds() );
         assertTrue( result.getSourceNodePath().isRoot() );
         assertEquals( "target", result.getExportName() );

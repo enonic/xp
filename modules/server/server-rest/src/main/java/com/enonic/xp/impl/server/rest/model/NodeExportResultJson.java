@@ -14,8 +14,6 @@ public class NodeExportResultJson
 {
     private int total;
 
-    private boolean dryRun;
-
     private List<String> exportedNodes;
 
     private List<String> exportErrors;
@@ -27,7 +25,6 @@ public class NodeExportResultJson
         final NodeExportResultJson nodeExportResultJson = new NodeExportResultJson();
 
         nodeExportResultJson.total = result.getExportedNodes().getSize();
-        nodeExportResultJson.dryRun = result.isDryRun();
         nodeExportResultJson.exportedNodes = exportedNodes( result.getExportedNodes() );
         nodeExportResultJson.exportErrors = exportErrors( result.getExportErrors() );
         nodeExportResultJson.exportedBinaries = result.getExportedBinaries();
@@ -61,7 +58,7 @@ public class NodeExportResultJson
     @SuppressWarnings("UnusedDeclaration")
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     @SuppressWarnings("UnusedDeclaration")

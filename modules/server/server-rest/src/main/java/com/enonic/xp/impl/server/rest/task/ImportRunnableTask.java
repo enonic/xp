@@ -30,8 +30,6 @@ public class ImportRunnableTask
 
     private final String exportName;
 
-    private final boolean dryRun;
-
     private final boolean importWithIds;
 
     private final boolean importWithPermissions;
@@ -48,7 +46,6 @@ public class ImportRunnableTask
         this.branch = builder.branch;
         this.nodePath = builder.nodePath;
         this.exportName = builder.exportName;
-        this.dryRun = builder.dryRun;
         this.importWithIds = builder.importWithIds;
         this.importWithPermissions = builder.importWithPermissions;
         this.xslSource = builder.xslSource;
@@ -69,7 +66,6 @@ public class ImportRunnableTask
             final ImportNodesParams.Builder builder = ImportNodesParams.create()
                 .exportName( exportName )
                 .targetNodePath( nodePath )
-                .dryRun( dryRun )
                 .includeNodeIds( importWithIds )
                 .includePermissions( importWithPermissions )
                 .xsltFileName( emptyToNull( xslSource ) )
@@ -99,8 +95,6 @@ public class ImportRunnableTask
         private NodePath nodePath;
 
         private String exportName;
-
-        private boolean dryRun;
 
         private boolean importWithIds;
 
@@ -136,10 +130,10 @@ public class ImportRunnableTask
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importWithIds( boolean importWithIds )
