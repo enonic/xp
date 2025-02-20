@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -12,10 +13,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.security.acl.AccessControlList;
 
 
 final class ApplyContentPermissionsCommand
@@ -36,12 +39,23 @@ final class ApplyContentPermissionsCommand
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
+        AccessControlList permissions = params.getPermissions();
+
+        if ( params.getPermissions().isEmpty() && params.getAddPermissions().isEmpty() && params.getRemovePermissions().isEmpty() )
+        {
+            permissions = Optional.of( nodeService.getById( nodeId ) )
+                .map( Node::getPermissions )
+                .orElseThrow( () -> new IllegalArgumentException( "permissions is not set and node not found" ) );
+        }
+
         final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
             .nodeId( nodeId )
-            .permissions( params.getPermissions() )
-            .addPermissions( params.getAddPermissions() ).removePermissions( params.getRemovePermissions() ).scope( params.getScope() )
+            .permissions( permissions )
+            .addPermissions( params.getAddPermissions() )
+            .removePermissions( params.getRemovePermissions() )
+            .scope( params.getScope() )
             .applyPermissionsListener( params.getListener() )
-            .addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );
+            .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 

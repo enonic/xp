@@ -40,6 +40,9 @@ public final class ApplyNodePermissionsParams
 
         Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
                                      "Permissions cannot be set together with addPermissions or removePermissions" );
+
+        Preconditions.checkArgument( !permissions.isEmpty() || !addPermissions.isEmpty() || !removePermissions.isEmpty(),
+                                     "At least one of permissions, addPermissions or removePermissions must be set" );
     }
 
     public static Builder create()
