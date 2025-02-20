@@ -6,12 +6,12 @@ dependencies {
     implementation( libs.owaspsanitizer ) {
         exclude group: 'com.google.guava'
     }
-    compileOnly( libs.guava ) {
+    compileOnly( libs.guava.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
 
     testFixturesImplementation libs.mockito.core
-    testImplementation libs.guava
+    testImplementation libs.guava.guava
 }
 
 jar {

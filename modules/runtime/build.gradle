@@ -53,7 +53,8 @@ addBundle( libs.jboss.logging, 6 )
 addBundle( libs.bcprov.jdk18on, 6 )
 
 // Library dependencies
-addBundle( libs.guava, 8 )
+addBundle( libs.guava.guava, 8 )
+addBundle( libs.guava.failureaccess, 8 )
 addBundle( libs.commons.lang3, 8 )
 addBundle( libs.commons.io, 8 )
 addBundle( libs.commons.compress, 8 )
@@ -75,8 +76,8 @@ addBundle( libs.hazelcast.hazelcast, 8 )
 addBundle( libs.hazelcast.client, 8 )
 addBundle( libs.hazelcast.kubernetes, 8 )
 addBundle( libs.jparsec, 8 )
-addBundle( project( ':repack:repack-elasticsearch' ), 8 )
 
+addBundle( project( ':repack:repack-elasticsearch' ), 9 )
 addBundle( project( ':core:core-internal' ), 9 )
 
 // API bundles
@@ -169,7 +170,9 @@ def getOrCreateBundleConfig( level )
         config = configurations.create( name )
         config.transitive = false
         config.description = "Bundles for run-level $level"
-
+        config.attributes {
+           attribute( Attribute.of("org.gradle.jvm.environment", String), "standard-jvm" )
+        }
         bundleCopySpecs += project.copySpec {
             from config
             into levelStr

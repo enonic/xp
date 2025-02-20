@@ -144,7 +144,6 @@ class ExceptionRendererImplTest
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
         assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
         assertEquals( MediaType.JSON_UTF_8, res.getContentType() );
-        MediaType.create( "", "" );
 
         final String body = res.getBody().toString();
         assertEquals( "{\"status\":400,\"message\":\"Custom message (java.lang.RuntimeException)\"}", body );

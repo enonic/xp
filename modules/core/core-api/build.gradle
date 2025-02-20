@@ -1,5 +1,5 @@
 dependencies {
-    api ( libs.guava ) {
+    api ( libs.guava.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
     api libs.jackson.databind
