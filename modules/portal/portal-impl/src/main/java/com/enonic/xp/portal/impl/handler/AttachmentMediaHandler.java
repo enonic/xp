@@ -10,32 +10,22 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ScaleParamsParser;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.impl.PortalConfig;
-import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
+import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(service = UniversalApiHandler.class, property = {"applicationKey=media", "apiKey=image", "displayName=Image Media API",
+@Component(service = UniversalApiHandler.class, property = {"applicationKey=media", "apiKey=attachment", "displayName=Attachment Media API",
     "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
-public class ImageMediaHandler
+public class AttachmentMediaHandler
     extends MediaHandlerBase
 {
-    private final ImageService imageService;
-
-    private final MediaInfoService mediaInfoService;
-
     @Activate
-    public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ImageService imageService,
-                              @Reference final MediaInfoService mediaInfoService )
+    public AttachmentMediaHandler( @Reference final ContentService contentService )
     {
         super( contentService );
-        this.imageService = imageService;
-        this.mediaInfoService = mediaInfoService;
     }
 
     @Activate
@@ -49,8 +39,8 @@ public class ImageMediaHandler
     public WebResponse handle( final WebRequest webRequest )
     {
         final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
-        final ImagePathParser pathParser = new ImagePathParser( path );
-        final ImagePathMetadata pathMetadata = pathParser.parse();
+        final AttachmentPathParser pathParser = new AttachmentPathParser( path );
+        final PathMetadata pathMetadata = pathParser.parse();
 
         if ( webRequest.getMethod() == HttpMethod.OPTIONS )
         {
@@ -64,16 +54,12 @@ public class ImageMediaHandler
             .branch( pathMetadata.branch )
             .build()
             .callWith( () -> {
-                final ImageHandlerWorker worker =
-                    new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.mediaInfoService );
+                final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( webRequest, this.contentService );
 
+                worker.download = HandlerHelper.getParameter( webRequest, "download" ) != null;
                 worker.id = pathMetadata.contentId;
                 worker.fingerprint = pathMetadata.fingerprint;
-                worker.scaleParams = new ScaleParamsParser().parse( pathMetadata.scaleParams );
                 worker.name = pathMetadata.name;
-                worker.filterParam = HandlerHelper.getParameter( webRequest, "filter" );
-                worker.qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
-                worker.backgroundParam = HandlerHelper.getParameter( webRequest, "background" );
                 worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
                 worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
                 worker.contentSecurityPolicy = this.contentSecurityPolicy;
@@ -84,44 +70,36 @@ public class ImageMediaHandler
             } );
     }
 
-    private static final class ImagePathMetadata
-        extends MediaHandlerBase.PathMetadata
+
+    private static final class AttachmentPathParser
+        extends PathParser<PathMetadata>
     {
-        String scaleParams;
-    }
+        // Attachment path is: "{project[:draft]}/{id[:fingerprint]}/{name}"
 
-    private static final class ImagePathParser
-        extends MediaHandlerBase.PathParser<ImagePathMetadata>
-    {
-        // Image path is: "{project[:draft]}/{id[:fingerprint]}/{scaleFn}/{name}"
+        static final String FRAMED_API_HANDLER_KEY = "/media:attachment/";
 
-        static final String FRAMED_API_HANDLER_KEY = "/media:image/";
+        static final int NAME_INDEX = 2;
 
-        static final int PATH_VARIABLES_LIMIT = 5;
+        static final int PATH_VARIABLES_LIMIT = 4;
 
-        static final int SCALE_INDEX = 2;
-
-        static final int NAME_INDEX = 3;
-
-        ImagePathParser( final String path )
+        AttachmentPathParser( final String path )
         {
             super( path, FRAMED_API_HANDLER_KEY, PATH_VARIABLES_LIMIT );
         }
 
-        ImagePathMetadata parse()
+        PathMetadata parse()
         {
-            final ImagePathMetadata metadata = doParse();
+            final PathMetadata metadata = doParse();
 
-            metadata.scaleParams = pathVariables[SCALE_INDEX];
             metadata.name = pathVariables[NAME_INDEX];
 
             return metadata;
         }
 
         @Override
-        ImagePathMetadata createMetadata()
+        PathMetadata createMetadata()
         {
-            return new ImagePathMetadata();
+            return new PathMetadata();
         }
     }
 }

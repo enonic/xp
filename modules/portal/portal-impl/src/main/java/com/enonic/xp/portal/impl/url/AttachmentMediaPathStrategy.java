@@ -7,6 +7,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.project.ProjectName;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
@@ -35,7 +36,7 @@ final class AttachmentMediaPathStrategy
         appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
 
         final Attachment attachment = resolveAttachment( media );
-        final String hash = resolveHash( attachment );
+        final String hash = MediaHashResolver.resolveAttachmentHash( attachment );
 
         appendPart( url, media.getId().toString() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, attachment.getName() );
@@ -63,10 +64,5 @@ final class AttachmentMediaPathStrategy
 
         throw new IllegalArgumentException(
             String.format( "Could not find attachment with name/label [%s] on content [%s]", attachmentNameOrLabel, media.getId() ) );
-    }
-
-    private String resolveHash( final Attachment attachment )
-    {
-        return attachment.getSha512() != null ? attachment.getSha512().substring( 0, 32 ) : null;
     }
 }

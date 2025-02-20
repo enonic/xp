@@ -88,7 +88,7 @@ public class AttachmentHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest, this.contentService );
+        final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( webRequest, this.contentService );
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );
         worker.fingerprint = matcher.group( 3 );

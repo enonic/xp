@@ -9,18 +9,11 @@ import com.enonic.xp.content.Media;
 
 public final class MediaHashResolver
 {
-    public static String resolveImageHash( final Media media )
+    public static String resolveImageHash( final Media media, final String hash )
     {
-        final Attachment attachment = media.getMediaAttachment();
-
-        if ( attachment.getSha512() == null )
-        {
-            return null;
-        }
-
         return Hashing.sha1()
             .newHasher()
-            .putString( attachment.getSha512().substring( 0, 32 ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( hash ), StandardCharsets.UTF_8 )
             .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
             .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
             .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
@@ -28,9 +21,20 @@ public final class MediaHashResolver
             .toString();
     }
 
-    public static String resolveAttachmentHash( final Media media )
+    public static String resolveImageHash( final Media media )
     {
         final Attachment attachment = media.getMediaAttachment();
-        return attachment.getSha512() != null ? attachment.getSha512().substring( 0, 32 ) : null;
+
+        if ( attachment == null || attachment.getSha512() == null )
+        {
+            return null;
+        }
+
+        return resolveImageHash( media, resolveAttachmentHash( attachment ) );
+    }
+
+    public static String resolveAttachmentHash( final Attachment attachment )
+    {
+        return attachment == null || attachment.getSha512() == null ? null : attachment.getSha512().substring( 0, 32 );
     }
 }
