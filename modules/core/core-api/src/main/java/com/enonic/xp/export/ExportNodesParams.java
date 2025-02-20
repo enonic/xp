@@ -17,8 +17,6 @@ public class ExportNodesParams
 
     private final NodePath sourceNodePath;
 
-    private final boolean dryRun;
-
     private final boolean includeNodeIds;
 
     private final boolean includeVersions;
@@ -38,7 +36,6 @@ public class ExportNodesParams
         this.targetDirectory = builder.targetDirectory;
         this.exportName = builder.exportName;
         this.sourceNodePath = builder.sourceNodePath;
-        this.dryRun = builder.dryRun;
         this.includeNodeIds = builder.includeNodeIds;
         this.includeVersions = builder.includeVersions;
         this.nodeExportListener = builder.nodeExportListener;
@@ -84,9 +81,10 @@ public class ExportNodesParams
         return nodeExportListener;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public static final class Builder
@@ -98,8 +96,6 @@ public class ExportNodesParams
         private String targetDirectory;
 
         private NodePath sourceNodePath;
-
-        private boolean dryRun = false;
 
         private boolean includeNodeIds = true;
 
@@ -136,10 +132,10 @@ public class ExportNodesParams
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "Dry run is not supported" );
         }
 
         public Builder includeNodeIds( final boolean includeNodeIds )

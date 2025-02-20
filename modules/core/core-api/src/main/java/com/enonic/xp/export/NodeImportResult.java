@@ -16,8 +16,6 @@ public class NodeImportResult
 
     public final NodePaths updateNodes;
 
-    private final boolean dryRun;
-
     private List<ImportError> importErrors;
 
     private List<String> importedBinaries;
@@ -28,7 +26,6 @@ public class NodeImportResult
         this.updateNodes = builder.updatedNodes.build();
         this.importErrors = builder.importErrors;
         this.importedBinaries = builder.importedBinaries;
-        this.dryRun = builder.dryRun;
     }
 
     public static Builder create()
@@ -74,15 +71,16 @@ public class NodeImportResult
         return updateNodes;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     @Override
     public String toString()
     {
-        return "NodeImportResult{" + "dryRun=" + dryRun + ", addedNodes=" + addedNodes + ", updateNodes=" + updateNodes +
+        return "NodeImportResult{ addedNodes=" + addedNodes + ", updateNodes=" + updateNodes +
             ", importErrors=" + Arrays.toString( importErrors.toArray() ) + ", importedBinaries=" +
             Arrays.toString( importedBinaries.toArray() ) + '}';
     }
@@ -96,8 +94,6 @@ public class NodeImportResult
         private final List<String> importedBinaries = new ArrayList<>();
 
         private final List<ImportError> importErrors = new ArrayList<>();
-
-        private boolean dryRun = false;
 
         private Builder()
         {
@@ -133,10 +129,10 @@ public class NodeImportResult
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public NodeImportResult build()
