@@ -55,7 +55,6 @@ include 'core:core-shared'
 
 include 'server:server-config'
 include 'server:server-deploy'
-include 'server:server-shell'
 include 'server:server-status'
 include 'server:server-udc'
 include 'server:server-rest'
