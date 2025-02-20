@@ -9,8 +9,6 @@ dependencies {
 
     // The following libraries are not really API. Remove in future versions of XP.
     api libs.slf4j.api
-    api libs.commons.lang
-    api libs.commons.io
     compileOnlyApi libs.osgi.service.componentannotations
     api libs.osgi.service.component
 

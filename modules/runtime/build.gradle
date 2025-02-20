@@ -54,7 +54,6 @@ addBundle( libs.bcprov.jdk18on, 6 )
 
 // Library dependencies
 addBundle( libs.guava, 8 )
-addBundle( libs.commons.lang, 8 )
 addBundle( libs.commons.lang3, 8 )
 addBundle( libs.commons.io, 8 )
 addBundle( libs.commons.compress, 8 )
