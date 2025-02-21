@@ -22,7 +22,7 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
-import com.enonic.xp.repo.impl.config.RepoConfigurationImpl;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
@@ -109,7 +109,7 @@ public abstract class AbstractIssueServiceTest
 
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfigurationImpl( Map.of() ) );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
         issueService = new IssueServiceImpl();
 

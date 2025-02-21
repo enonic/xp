@@ -20,7 +20,6 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
-import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
@@ -51,7 +50,7 @@ public class NodeVersionServiceImpl
     public NodeVersionServiceImpl( @Reference final BlobStore blobStore, @Reference final RepoConfiguration repoConfiguration )
     {
         this.blobStore = blobStore;
-        final long cacheCapacity = MemoryLimitParser.maxHeap().parse( repoConfiguration.cacheCapacity() );
+        final long cacheCapacity = repoConfiguration.cacheCapacity();
 
         final long nodeCacheCapacity = (long) ( cacheCapacity * 0.98D );
         final long otherCachesCapacity = (long) ( cacheCapacity * 0.01D );

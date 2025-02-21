@@ -30,15 +30,13 @@ import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
 {
-    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private final NodePath sourceNodePath;
 
     private final NodeService nodeService;
 
     private final ExportWriter exportWriter;
-
-    private final Path rootDirectory;
 
     private final Path targetDirectory;
 
@@ -61,7 +59,6 @@ public class NodeExporter
         this.sourceNodePath = builder.sourceNodePath;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
-        this.rootDirectory = builder.rootDirectory;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = builder.xpVersion;
         this.dryRun = builder.dryRun;
@@ -267,7 +264,7 @@ public class NodeExporter
     {
         if ( xpVersion != null )
         {
-            final Path exportPropertiesPath = this.rootDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
+            final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
 
             if ( !dryRun )
             {
@@ -327,8 +324,6 @@ public class NodeExporter
 
         private ExportWriter exportWriter;
 
-        private Path rootDirectory;
-
         private Path targetDirectory;
 
         private String xpVersion;
@@ -348,12 +343,6 @@ public class NodeExporter
         public Builder sourceNodePath( NodePath exportRootNode )
         {
             this.sourceNodePath = exportRootNode;
-            return this;
-        }
-
-        public Builder rootDirectory( Path rootDirectory )
-        {
-            this.rootDirectory = rootDirectory;
             return this;
         }
 

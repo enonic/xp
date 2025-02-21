@@ -5,15 +5,16 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
 
-@Component(service = {ExportConfiguration.class}, configurationPid = "com.enonic.xp.export")
-public class ExportConfiguration
+@Component(service = ExportConfigurationDynamic.class, configurationPid = "com.enonic.xp.export")
+public class ExportConfigurationDynamic
 {
-    private Configuration config;
+    private volatile Configuration config;
 
     public Path getExportsDir()
     {
@@ -21,10 +22,10 @@ public class ExportConfiguration
     }
 
     @Activate
+    @Modified
     public void activate( final Map<String, String> map )
     {
-        this.config = ConfigBuilder.create().load( getClass(), "default.properties" ).addAll( map ).build();
-
-        this.config = new ConfigInterpolator().interpolate( this.config );
+        this.config =
+            new ConfigInterpolator().interpolate( ConfigBuilder.create().load( getClass(), "default.properties" ).addAll( map ).build() );
     }
 }

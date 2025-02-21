@@ -4,6 +4,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
@@ -66,6 +67,7 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.DumpServiceImpl;
 import com.enonic.xp.repo.impl.dump.FileUtils;
@@ -116,8 +118,11 @@ public class DumpServiceImplTest
     public void setUp()
         throws Exception
     {
-        this.dumpService = new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService , this.repositoryEntryService, this.nodeRepositoryService, this.storageService );
-        this.dumpService.setBasePath( temporaryFolder );
+        final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
+        repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
+        this.dumpService =
+            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
+                                 this.storageService, repoConfiguration );
     }
 
     @Test

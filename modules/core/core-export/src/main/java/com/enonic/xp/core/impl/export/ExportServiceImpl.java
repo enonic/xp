@@ -27,31 +27,26 @@ public class ExportServiceImpl
 
     private final NodeService nodeService;
 
-    private final Path exportsDir;
+    private final ExportConfigurationDynamic exportConfiguration;
 
     @Activate
-    public ExportServiceImpl( @Reference final ExportConfiguration exportConfiguration,
+    public ExportServiceImpl( @Reference final ExportConfigurationDynamic exportConfiguration,
                               @Reference final NodeService nodeService )
     {
         this.xpVersion = VersionInfo.get().getVersion();
-        this.exportsDir = exportConfiguration.getExportsDir();
         this.nodeService = nodeService;
+        this.exportConfiguration = exportConfiguration;
     }
 
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
-        final Path targetDirectory = Optional.ofNullable( params.getTargetDirectory() )
-            .map( Path::of )
-            .orElseGet( () -> exportsDir.resolve( params.getExportName() ) );
-
-        final Path rootDirectory = Optional.ofNullable( params.getRootDirectory() ).map( Path::of ).orElse( targetDirectory );
+        final Path targetDirectory = exportConfiguration.getExportsDir().resolve( params.getExportName() );
 
         return NodeExporter.create()
             .sourceNodePath( params.getSourceNodePath() )
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
-            .rootDirectory( rootDirectory )
             .targetDirectory( targetDirectory )
             .xpVersion( xpVersion )
             .dryRun( params.isDryRun() )
@@ -65,8 +60,8 @@ public class ExportServiceImpl
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        VirtualFile source =
-            Optional.ofNullable( params.getSource() ).orElseGet( () -> VirtualFiles.from( exportsDir.resolve( params.getExportName() ) ) );
+        VirtualFile source = Optional.ofNullable( params.getSource() )
+            .orElseGet( () -> VirtualFiles.from( exportConfiguration.getExportsDir().resolve( params.getExportName() ) ) );
 
         return NodeImporter.create()
             .nodeService( this.nodeService )

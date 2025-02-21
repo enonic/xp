@@ -8,10 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
@@ -22,8 +20,6 @@ import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
 import com.enonic.xp.impl.server.rest.task.VacuumCommand;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -36,15 +32,15 @@ import com.enonic.xp.task.TaskService;
 public final class SystemResource
     implements JaxRsComponent
 {
-    private ExportService exportService;
+    private final DumpService dumpService;
 
-    private RepositoryService repositoryService;
+    private final TaskService taskService;
 
-    private NodeRepositoryService nodeRepositoryService;
-
-    private DumpService dumpService;
-
-    private TaskService taskService;
+    public SystemResource( final DumpService dumpService, final TaskService taskService )
+    {
+        this.dumpService = dumpService;
+        this.taskService = taskService;
+    }
 
     @POST
     @Path("dump")
@@ -73,9 +69,6 @@ public final class SystemResource
             .archive( params.isArchive() )
             .taskService( taskService )
             .dumpService( dumpService )
-            .exportService( exportService )
-            .nodeRepositoryService( nodeRepositoryService )
-            .repositoryService( repositoryService )
             .build();
         final TaskId taskId = taskService.submitLocalTask(
             SubmitLocalTaskParams.create().runnableTask( task ).name( "load" ).description( "Load " + params.getName() ).build() );
@@ -106,41 +99,4 @@ public final class SystemResource
             SubmitLocalTaskParams.create().runnableTask( task ).description( "Upgrade dump " + params.getName() ).build() );
         return new TaskResultJson( taskId );
     }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setExportService( final ExportService exportService )
-    {
-        this.exportService = exportService;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setDumpService( final DumpService dumpService )
-    {
-        this.dumpService = dumpService;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setTaskService( final TaskService taskService )
-    {
-        this.taskService = taskService;
-    }
-
-
 }
