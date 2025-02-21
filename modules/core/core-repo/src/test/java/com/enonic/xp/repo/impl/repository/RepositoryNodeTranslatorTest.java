@@ -35,16 +35,16 @@ public class RepositoryNodeTranslatorTest
             settings( RepositorySettings.create().
                 indexDefinitions( IndexDefinitions.create().
                     add( IndexType.VERSION, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping ) ).
-                        settings( IndexSettings.from( indexSettings ) ).
+                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
+                        settings( IndexSettings.from( indexSettings.toMap() ) ).
                         build() ).
                     add( IndexType.BRANCH, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping ) ).
-                        settings( IndexSettings.from( indexSettings ) ).
+                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
+                        settings( IndexSettings.from( indexSettings.toMap() ) ).
                         build() ).
                     add( IndexType.COMMIT, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping ) ).
-                        settings( IndexSettings.from( indexSettings ) ).
+                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
+                        settings( IndexSettings.from( indexSettings.toMap() ) ).
                         build() ).
                     build() ).
                 build() ).

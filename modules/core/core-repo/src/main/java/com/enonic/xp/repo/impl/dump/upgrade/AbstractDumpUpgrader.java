@@ -13,8 +13,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.util.Version;

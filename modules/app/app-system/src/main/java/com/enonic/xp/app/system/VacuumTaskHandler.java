@@ -7,7 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.app.system.listener.VacuumListenerImpl;
-import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.ProgressReporter;

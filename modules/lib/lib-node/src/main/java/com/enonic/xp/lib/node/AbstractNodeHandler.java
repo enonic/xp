@@ -95,6 +95,5 @@ public abstract class AbstractNodeHandler
             nodeService = val;
             return (B) this;
         }
-
     }
 }

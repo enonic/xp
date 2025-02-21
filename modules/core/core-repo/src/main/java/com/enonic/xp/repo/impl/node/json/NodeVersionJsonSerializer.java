@@ -6,9 +6,9 @@ import java.io.InputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.security.acl.AccessControlList;
 

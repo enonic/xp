@@ -36,7 +36,10 @@ public class NodeHandler
     @SuppressWarnings("unused")
     public Object create( final ScriptValue params )
     {
-        return execute( CreateNodeHandler.create().nodeService( this.nodeService ).params( params ).build() );
+        return execute( CreateNodeHandler.create()
+                            .nodeService( this.nodeService )
+                            .params( params )
+                            .build() );
     }
 
     @SuppressWarnings("unused")
@@ -64,7 +67,10 @@ public class NodeHandler
     @SuppressWarnings("unused")
     public Object delete( final String[] keys )
     {
-        return execute( DeleteNodeHandler.create().nodeService( this.nodeService ).keys( NodeKeys.from( keys ) ).build() );
+        return execute( DeleteNodeHandler.create()
+                            .nodeService( this.nodeService )
+                            .keys( NodeKeys.from( keys ) )
+                            .build() );
     }
 
     @SuppressWarnings("unused")

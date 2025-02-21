@@ -20,13 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.LocalScope;
-import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -59,11 +59,10 @@ public abstract class JaxRsResourceTestSupport
         throws Exception
     {
         this.multipartService = Mockito.mock( MultipartService.class );
-        final MultipartFormReader reader = new MultipartFormReader( multipartService );
 
         this.dispatcher = MockDispatcherFactory.createDispatcher();
-        this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
-        this.dispatcher.getProviderFactory().register( reader );
+        this.dispatcher.getProviderFactory().register( new JacksonJsonProvider( MAPPER ) );
+        this.dispatcher.getProviderFactory().register( new MultipartFormReader( multipartService ) );
         this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
         mockCurrentContextHttpRequest();

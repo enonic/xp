@@ -1,11 +1,10 @@
-package com.enonic.xp.json;
+package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -19,11 +18,6 @@ import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.inputtype.InputTypes;
 
 
-/**
- * @deprecated As of release 6.9
- */
-@PublicApi
-@Deprecated(since = "6.9")
 public final class JsonToPropertyTreeTranslator
 {
     private final Form form;

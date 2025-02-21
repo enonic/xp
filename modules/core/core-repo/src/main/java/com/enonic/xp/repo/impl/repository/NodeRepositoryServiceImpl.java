@@ -1,17 +1,12 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
@@ -23,7 +18,6 @@ import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.util.JsonHelper;
 
 @Component
 public class NodeRepositoryServiceImpl
@@ -93,7 +87,7 @@ public class NodeRepositoryServiceImpl
         final IndexSettings indexSettings = params.getRepositorySettings().getIndexSettings( indexType );
         if ( indexSettings != null )
         {
-            return new IndexSettings( JsonHelper.merge( defaultSettings.getNode(), indexSettings.getNode() ) );
+            return defaultSettings.merge( indexSettings );
         }
 
         return defaultSettings;
@@ -109,13 +103,9 @@ public class NodeRepositoryServiceImpl
 
         try
         {
-            final String numberOfReplicasString = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
-                .getNode()
-                .get( "index.number_of_replicas" )
-                .textValue();
-            final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
-            final ObjectNode indexNodeObject = (ObjectNode) defaultSettings.getNode().get( "index" );
-            indexNodeObject.put( "number_of_replicas", numberOfReplicas );
+            final Object numberOfReplicas = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
+                .getData().get( "index.number_of_replicas" );
+            return defaultSettings.merge( IndexSettings.from( Map.of( "index", Map.of( "number_of_replicas", numberOfReplicas ) ) ) );
         }
         catch ( Exception e )
         {
@@ -129,18 +119,10 @@ public class NodeRepositoryServiceImpl
     private static Map.Entry<IndexType, IndexMapping> mergeWithDefaultMapping( final RepositorySettings repositorySettings,
                                                                                final RepositoryId repositoryId, final IndexType indexType )
     {
-        return Map.entry( indexType, mergeMappings( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, indexType ),
-                                                    repositorySettings.getIndexMappings( indexType ) ) );
-    }
+        final IndexMapping defaultMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, indexType );
+        final IndexMapping settingsMapping = repositorySettings.getIndexMappings( indexType );
 
-    private static IndexMapping mergeMappings( IndexMapping... indexMappings )
-    {
-        JsonNode intermediate = JsonHelper.from( Map.of() );
-
-        Arrays.stream( indexMappings )
-            .filter( Objects::nonNull )
-            .forEach( indexMapping -> JsonHelper.merge( intermediate, indexMapping.getNode() ) );
-        return new IndexMapping( intermediate );
+        return Map.entry( indexType, settingsMapping != null ? defaultMapping.merge( settingsMapping ) : defaultMapping );
     }
 
     private static String[] resolveIndexNames( final RepositoryId repositoryId )

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

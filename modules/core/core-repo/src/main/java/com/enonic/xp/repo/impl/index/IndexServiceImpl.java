@@ -27,7 +27,6 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.util.JsonHelper;
 
 @Component
 public class IndexServiceImpl
@@ -189,7 +188,7 @@ public class IndexServiceImpl
 
             if ( indexSettings != null )
             {
-                return new IndexSettings( JsonHelper.merge( defaultIndexSettings.getNode(), indexSettings.getNode() ) );
+                return defaultIndexSettings.merge( indexSettings );
             }
         }
 
@@ -207,7 +206,7 @@ public class IndexServiceImpl
 
             if ( indexMapping != null )
             {
-                return new IndexMapping( JsonHelper.merge( defaultIndexMapping.getNode(), indexMapping.getNode() ) );
+                return defaultIndexMapping.merge( indexMapping );
             }
         }
 

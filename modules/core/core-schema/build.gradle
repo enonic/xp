@@ -1,5 +1,6 @@
 dependencies {
     implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':core:core-api' )
     testImplementation( testFixtures( project(":core:core-app") ) )

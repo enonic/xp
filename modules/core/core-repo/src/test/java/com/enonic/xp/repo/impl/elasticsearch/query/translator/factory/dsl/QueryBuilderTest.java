@@ -13,11 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.util.JsonHelper;
+import com.enonic.xp.core.internal.json.JsonHelper;
 
 public abstract class QueryBuilderTest
 {
