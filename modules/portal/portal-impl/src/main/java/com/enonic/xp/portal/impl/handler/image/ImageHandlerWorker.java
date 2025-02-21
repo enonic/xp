@@ -18,7 +18,10 @@ import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -124,6 +127,20 @@ public final class ImageHandlerWorker
     }
 
     @Override
+    protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
+    {
+        if ( legacyMode )
+        {
+            final String hash = this.contentService.getBinaryKey( content.getId(), binaryReference );
+            return MediaHashResolver.resolveLegacyImageHash( content, hash );
+        }
+        else
+        {
+            return MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) );
+        }
+    }
+
+    @Override
     protected Media castToMedia( final Content content )
     {
         final Media media = super.castToMedia( content );
@@ -132,5 +149,18 @@ public final class ImageHandlerWorker
             return media;
         }
         throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
+    }
+
+    @Override
+    protected void addTrace( final Media media )
+    {
+        {
+            final Trace trace = Tracer.current();
+            if ( trace != null )
+            {
+                trace.put( "contentPath", media.getPath() );
+                trace.put( "type", "image" );
+            }
+        }
     }
 }

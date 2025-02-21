@@ -15,12 +15,9 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.WebException;
@@ -141,19 +138,7 @@ public abstract class AbstractAttachmentHandlerWorker
         return binary;
     }
 
-    private String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
-    {
-        if ( legacyMode )
-        {
-            final String hash = this.contentService.getBinaryKey( content.getId(), binaryReference );
-            return content.isImage() ? MediaHashResolver.resolveImageHash( content, hash ) : hash;
-        }
-        else
-        {
-            final String hash = MediaHashResolver.resolveAttachmentHash( attachment );
-            return content.isImage() ? MediaHashResolver.resolveImageHash( content, hash ) : hash;
-        }
-    }
+    protected abstract String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference );
 
     protected Attachment resolveAttachment( final Content content, final String name )
     {
@@ -187,15 +172,7 @@ public abstract class AbstractAttachmentHandlerWorker
         throw WebException.notFound( String.format( "Content with id [%s] is not a Media", content.getId() ) );
     }
 
-    protected void addTrace( final Media media )
-    {
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", media.getPath() );
-            trace.put( "type", media.isImage() ? "image" : "attachment" );
-        }
-    }
+    protected abstract void addTrace( final Media media );
 
     private Content getContent( final ContentId contentId )
     {

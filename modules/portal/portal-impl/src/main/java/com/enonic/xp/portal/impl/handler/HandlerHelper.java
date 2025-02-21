@@ -15,7 +15,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
@@ -134,18 +133,6 @@ public final class HandlerHelper
         catch ( Exception e )
         {
             throw WebException.notFound( String.format( "Project [%s] not found", value ) );
-        }
-    }
-
-    public static RepositoryId resolveRepositoryId( final String value )
-    {
-        try
-        {
-            return RepositoryId.from( value );
-        }
-        catch ( Exception e )
-        {
-            throw WebException.notFound( String.format( "Repository [%s] not found", value ) );
         }
     }
 

@@ -67,7 +67,7 @@ final class ImageUrlBuilder
     private String resolveHash( final Media media )
     {
         String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
-        return MediaHashResolver.resolveImageHash( media, binaryKey );
+        return MediaHashResolver.resolveLegacyImageHash( media, binaryKey );
     }
 
     private String resolveName( final Content media )
