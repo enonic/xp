@@ -39,8 +39,6 @@ public class ApiDispatcherTest
 
     private ErrorHandler errorHandler;
 
-    private MediaHandler mediaHandler;
-
     @BeforeEach
     public void setup()
     {
@@ -52,10 +50,9 @@ public class ApiDispatcherTest
         imageHandler = mock( ImageHandler.class );
         attachmentHandler = mock( AttachmentHandler.class );
         errorHandler = mock( ErrorHandler.class );
-        mediaHandler = mock( MediaHandler.class );
 
         this.handler = new ApiDispatcher( slashApiHandler, componentHandler, assetHandler, serviceHandler, identityHandler, imageHandler,
-                                          attachmentHandler, errorHandler, mediaHandler );
+                                          attachmentHandler, errorHandler );
 
         PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
@@ -132,21 +129,21 @@ public class ApiDispatcherTest
         assertEquals( "Invalid API path: /site/project/branch/path", ex.getMessage() );
     }
 
-    @Test
-    public void testHandleMedia()
-        throws Exception
-    {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/media/image/project:branch/id:fingerprint/name" );
-
-        final WebResponse webResponse = WebResponse.create().build();
-        when( mediaHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
-
-        // test handle
-        assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
-    }
+//    @Test
+//    public void testHandleMedia()
+//        throws Exception
+//    {
+//        final WebRequest webRequest = mock( WebRequest.class );
+//        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+//        when( webRequest.getEndpointPath() ).thenReturn( null );
+//        when( webRequest.getRawPath() ).thenReturn( "/api/media/image/project:branch/id:fingerprint/name" );
+//
+//        final WebResponse webResponse = WebResponse.create().build();
+//        when( mediaHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
+//
+//        // test handle
+//        assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
+//    }
 
     @Test
     public void testHandleImage()

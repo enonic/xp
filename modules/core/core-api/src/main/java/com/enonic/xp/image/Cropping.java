@@ -10,6 +10,8 @@ import com.enonic.xp.util.DoubleHelper;
 public final class Cropping
 {
 
+    public static final Cropping DEFAULT = Cropping.create().build();
+
     private final double top;
 
     private final double left;

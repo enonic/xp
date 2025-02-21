@@ -1,33 +1,43 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
-import com.enonic.xp.content.Content;
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.web.WebRequest;
 
 public final class AttachmentHandlerWorker
-    extends AbstractAttachmentHandlerWorker<Content>
+    extends AbstractAttachmentHandlerWorker
 {
-    public AttachmentHandlerWorker( final PortalRequest request, final ContentService contentService )
+    public AttachmentHandlerWorker( final WebRequest request, final ContentService contentService )
     {
         super( request, contentService );
     }
 
     @Override
-    protected Content cast( final Content content )
+    protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
-        return content;
+        if ( legacyMode )
+        {
+            return contentService.getBinaryKey( content.getId(), binaryReference );
+        }
+        else
+        {
+            return MediaHashResolver.resolveAttachmentHash( attachment );
+        }
     }
 
     @Override
-    protected void addTrace( final Content content )
+    protected void addTrace( final Media media )
     {
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "contentPath", content.getPath() );
+            trace.put( "contentPath", media.getPath() );
             trace.put( "type", "attachment" );
         }
     }

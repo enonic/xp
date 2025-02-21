@@ -1,16 +1,14 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.project.ProjectName;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
@@ -33,39 +31,19 @@ final class ImageMediaPathStrategy
         final ProjectName project = params.getProjectName();
         final Branch branch = params.getBranch();
 
-        final String hash = resolveHash( media );
+        final String hash = MediaHashResolver.resolveImageHash( media );
         final String scale = resolveScale( params.getScale() );
         final String name = resolveName( media, params.getFormat() );
 
         final StringBuilder url = new StringBuilder();
 
-        appendPart( url, "media" );
-        appendPart( url, "image" );
+        appendPart( url, "media:image" );
         appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
         appendPart( url, media.getId() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, scale );
         appendPart( url, name );
 
         return url.toString();
-    }
-
-    private String resolveHash( final Media media )
-    {
-        final Attachment attachment = media.getMediaAttachment();
-
-        if ( attachment.getSha512() == null )
-        {
-            return null;
-        }
-
-        return Hashing.sha1()
-            .newHasher()
-            .putString( attachment.getSha512().substring( 0, 32 ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
-            .hash()
-            .toString();
     }
 
     private String resolveName( final Content media, final String format )

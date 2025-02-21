@@ -11,7 +11,7 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -112,14 +112,14 @@ public class HandlerHelperTest
     @Test
     public void testInvalidProjectName()
     {
-        final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveRepositoryId( "#!@$" ) );
+        final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveProjectName( "#!@$" ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
     public void testProjectName()
     {
-        assertEquals( RepositoryId.from( "name" ), HandlerHelper.resolveRepositoryId( "name" ) );
+        assertEquals( ProjectName.from( "name" ), HandlerHelper.resolveProjectName( "name" ) );
     }
 
     @Test
