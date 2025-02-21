@@ -89,9 +89,8 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
-                                                                                    .permissions( AccessControlList.create()
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .removePermissions( AccessControlList.create()
                                                                                                       .add( AccessControlEntry.create()
                                                                                                                 .allowAll()
                                                                                                                 .principal(
@@ -127,14 +126,16 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.CHILDREN )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .permissions( AccessControlList.create()
                                                                                                       .add( AccessControlEntry.create()
                                                                                                                 .allowAll()
                                                                                                                 .principal(
-                                                                                                                    PrincipalKey.from(
-                                                                                                                        "user:my-provider:my-user" ) )
+
+                                                                                                                    ContextAccessor.current()
+                                                                                                                        .getAuthInfo()
+                                                                                                                        .getUser()
+                                                                                                                        .getKey() )
                                                                                                                 .build() )
                                                                                                       .build() )
                                                                                     .build() );
@@ -168,16 +169,15 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
-                                                                                    .permissions( AccessControlList.create()
-                                                                                                      .add( AccessControlEntry.create()
-                                                                                                                .allowAll()
-                                                                                                                .principal(
-                                                                                                                    PrincipalKey.from(
-                                                                                                                        "user:my-provider:my-user" ) )
-                                                                                                                .build() )
-                                                                                                      .build() )
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .addPermissions( AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .allowAll()
+                                                                                                                   .principal(
+                                                                                                                       PrincipalKey.from(
+                                                                                                                           "user:my-provider:my-user" ) )
+                                                                                                                   .build() )
+                                                                                                         .build() )
                                                                                     .build() );
 
         assertEquals( 2, result.getResults().size() );
@@ -208,16 +208,15 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( childNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
-                                                                                    .permissions( AccessControlList.create()
-                                                                                                      .add( AccessControlEntry.create()
-                                                                                                                .allowAll()
-                                                                                                                .principal(
-                                                                                                                    PrincipalKey.from(
-                                                                                                                        "user:my-provider:my-user" ) )
-                                                                                                                .build() )
-                                                                                                      .build() )
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .addPermissions( AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .allowAll()
+                                                                                                                   .principal(
+                                                                                                                       PrincipalKey.from(
+                                                                                                                           "user:my-provider:my-user" ) )
+                                                                                                                   .build() )
+                                                                                                         .build() )
                                                                                     .build() );
 
         assertEquals( 2, result.getResults().size() );
@@ -246,14 +245,14 @@ public class ApplyNodePermissionsCommandTest
             .callWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                .nodeId( createdNode.id() )
                                                                .scope( ApplyPermissionsScope.TREE )
-                                                               .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
-                                                               .permissions( AccessControlList.create()
-                                                                                 .add( AccessControlEntry.create()
-                                                                                           .allowAll()
-                                                                                           .principal( PrincipalKey.from(
-                                                                                               "user:my-provider:my-user" ) )
-                                                                                           .build() )
-                                                                                 .build() )
+                                                               .addBranches( Branches.from( WS_OTHER, WS_DEFAULT ) )
+                                                               .addPermissions( AccessControlList.create()
+                                                                                    .add( AccessControlEntry.create()
+                                                                                              .allowAll()
+                                                                                              .principal( PrincipalKey.from(
+                                                                                                  "user:my-provider:my-user" ) )
+                                                                                              .build() )
+                                                                                    .build() )
                                                                .build() ) );
 
         assertEquals( 2, result.getResults().size() );
@@ -270,17 +269,17 @@ public class ApplyNodePermissionsCommandTest
     {
         assertThrows( NodeNotFoundException.class, () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                            .nodeId( NodeId.from( "id12" ) )
-                                                                                           .addBranches( Branches.from(
-                                                                                               ContentConstants.BRANCH_MASTER ) )
-                                                                                           .permissions( AccessControlList.create()
-                                                                                                             .add(
-                                                                                                                 AccessControlEntry.create()
-                                                                                                                     .allowAll()
-                                                                                                                     .principal(
-                                                                                                                         PrincipalKey.from(
-                                                                                                                             "user:my-provider:my-user" ) )
-                                                                                                                     .build() )
-                                                                                                             .build() )
+                                                                                           .addBranches(
+                                                                                               Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                           .addPermissions( AccessControlList.create()
+                                                                                                                .add(
+                                                                                                                    AccessControlEntry.create()
+                                                                                                                        .allowAll()
+                                                                                                                        .principal(
+                                                                                                                            PrincipalKey.from(
+                                                                                                                                "user:my-provider:my-user" ) )
+                                                                                                                        .build() )
+                                                                                                                .build() )
                                                                                            .build() ) );
     }
 
@@ -337,8 +336,7 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allowAll()
@@ -391,8 +389,7 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allow( MODIFY )
@@ -426,8 +423,8 @@ public class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches(
-                                                                                        Branches.from( ContentConstants.BRANCH_MASTER ) )
+                                                                                    .addBranches( Branches.from(
+                                                                                        ContextAccessor.current().getBranch() ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allowAll()
@@ -491,7 +488,9 @@ public class ApplyNodePermissionsCommandTest
         refresh();
 
         final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create()
-            .nodeId( topNode.id() ).permissions( topNode.getPermissions() ).scope( ApplyPermissionsScope.TREE )
+            .nodeId( topNode.id() )
+            .permissions( topNode.getPermissions() )
+            .scope( ApplyPermissionsScope.TREE )
             .applyPermissionsListener( mock( ApplyPermissionsListener.class ) )
             .build();
 
