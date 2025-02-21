@@ -35,7 +35,7 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.config.RepoConfigurationImpl;
+import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -51,12 +51,12 @@ class NodeVersionServiceImplTest
 {
     private static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
 
-    private NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfigurationImpl( Map.of() ) );
+    private NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
 
     @BeforeEach
     void setUp()
     {
-        this.nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfigurationImpl( Map.of() ) );
+        this.nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
     }
 
     @Test

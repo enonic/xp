@@ -34,7 +34,6 @@ import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
@@ -42,6 +41,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
+import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
@@ -97,12 +97,12 @@ public class DumpServiceImpl
 
     private final String xpVersion;
 
-    private Path basePath = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
+    private final RepoConfigurationDynamic repoConfiguration;
 
     @Activate
     public DumpServiceImpl( @Reference EventPublisher eventPublisher, @Reference BlobStore blobStore, @Reference NodeService nodeService,
                             @Reference RepositoryEntryService repositoryEntryService, @Reference NodeRepositoryService nodeRepositoryService,
-                            @Reference NodeStorageService nodeStorageService )
+                            @Reference NodeStorageService nodeStorageService, @Reference RepoConfigurationDynamic repoConfiguration )
     {
         this.xpVersion = VersionInfo.get().getVersion();
         this.blobStore = blobStore;
@@ -111,6 +111,7 @@ public class DumpServiceImpl
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeStorageService = nodeStorageService;
         this.eventPublisher = eventPublisher;
+        this.repoConfiguration = repoConfiguration;
     }
 
     @Override
@@ -121,27 +122,27 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can upgrade dumps" );
         }
 
-        ensureBasePath();
-
         final String dumpName = params.getDumpName();
         if ( nullToEmpty( dumpName ).isBlank() )
         {
             throw new RepoDumpException( "dump name cannot be empty" );
         }
 
-        return doUpgrade( params );
+        final Path basePath = ensureBasePath();
+
+        return doUpgrade( basePath, params );
     }
 
-    private DumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    private DumpUpgradeResult doUpgrade( final Path basePath, final SystemDumpUpgradeParams params )
     {
         final DumpUpgradeResult.Builder result = DumpUpgradeResult.create();
 
         final String dumpName = params.getDumpName();
-        Version modelVersion = getDumpModelVersion( dumpName );
+        Version modelVersion = Objects.requireNonNullElse( getDumpMeta( basePath, dumpName ).getModelVersion(), Version.emptyVersion );
         result.initialVersion( modelVersion );
         if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
         {
-            final List<DumpUpgrader> dumpUpgraders = createDumpUpgraders();
+            final List<DumpUpgrader> dumpUpgraders = createDumpUpgraders( basePath );
 
             if ( params.getUpgradeListener() != null )
             {
@@ -161,7 +162,7 @@ public class DumpServiceImpl
                     LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
                     final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpName );
                     modelVersion = targetModelVersion;
-                    updateDumpModelVersion( dumpName, modelVersion );
+                    updateDumpModelVersion( basePath, dumpName, modelVersion );
                     LOG.info( "Finished upgrade step [{}]: processed: {}, errors: {}, warnings: {}", dumpUpgrader.getName(),
                               stepResult.getProcessed(), stepResult.getErrors(), stepResult.getWarnings() );
                     result.stepResult( stepResult );
@@ -177,7 +178,7 @@ public class DumpServiceImpl
         return result.build();
     }
 
-    private List<DumpUpgrader> createDumpUpgraders()
+    private List<DumpUpgrader> createDumpUpgraders(final Path basePath)
     {
         return List.of( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
                         new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
@@ -185,19 +186,14 @@ public class DumpServiceImpl
                         new HtmlAreaDumpUpgrader( basePath ) );
     }
 
-    private Version getDumpModelVersion( final String dumpName )
+    private void updateDumpModelVersion( final Path basePath, final String dumpName, final Version modelVersion )
     {
-        return Objects.requireNonNullElse( getDumpMeta( dumpName ).getModelVersion(), Version.emptyVersion );
-    }
-
-    private void updateDumpModelVersion( final String dumpName, final Version modelVersion )
-    {
-        final DumpMeta dumpMeta = getDumpMeta( dumpName );
+        final DumpMeta dumpMeta = getDumpMeta( basePath, dumpName );
         final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).
             modelVersion( modelVersion ).
             build();
 
-        final FileDumpWriter fileDumpWriter = FileDumpWriter.create( basePath, dumpName, blobStore );
+        final FileDumpWriter fileDumpWriter = FileDumpWriter.create( ensureBasePath(), dumpName, blobStore );
         try (fileDumpWriter)
         {
             fileDumpWriter.writeDumpMetaData( updatedDumpMeta );
@@ -208,7 +204,7 @@ public class DumpServiceImpl
         }
     }
 
-    private DumpMeta getDumpMeta( final String dumpName )
+    private DumpMeta getDumpMeta( final Path basePath, final String dumpName )
     {
         final DumpReader dumpReader = FileDumpReader.create( null, basePath, dumpName );
         return dumpReader.getDumpMeta();
@@ -222,7 +218,7 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        ensureBasePath();
+        final Path basePath = ensureBasePath();
 
         final DumpWriter writer = params.isArchive()
             ? ZipDumpWriter.create( basePath, params.getDumpName(), blobStore )
@@ -289,7 +285,7 @@ public class DumpServiceImpl
             throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
-        ensureBasePath();
+        final Path basePath = ensureBasePath();
 
         final SystemLoadResult.Builder results = SystemLoadResult.create();
 
@@ -299,7 +295,7 @@ public class DumpServiceImpl
 
         try (dumpReader)
         {
-            verifyOrUpdateDumpVersion( params, dumpReader );
+            verifyOrUpdateDumpVersion( basePath, params, dumpReader );
 
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
@@ -385,7 +381,7 @@ public class DumpServiceImpl
         return results.build();
     }
 
-    void verifyOrUpdateDumpVersion( final SystemLoadParams params, final DumpReader dumpReader )
+    void verifyOrUpdateDumpVersion( final Path basePath, final SystemLoadParams params, final DumpReader dumpReader )
     {
         final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
 
@@ -401,7 +397,7 @@ public class DumpServiceImpl
                 final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
                     dumpName( params.getDumpName() ).
                     build();
-                doUpgrade( dumpUpgradeParams );
+                doUpgrade( basePath, dumpUpgradeParams );
             }
             else
             {
@@ -483,20 +479,15 @@ public class DumpServiceImpl
             execute() );
     }
 
-    private void ensureBasePath()
+    private Path ensureBasePath()
     {
         try
         {
-            Files.createDirectories( basePath );
+            return Files.createDirectories( repoConfiguration.getDumpsDir() );
         }
         catch ( IOException e )
         {
             throw new RepoDumpException( "Cannot create dump directory", e );
         }
-    }
-
-    public void setBasePath( final Path basePath )
-    {
-        this.basePath = basePath;
     }
 }
