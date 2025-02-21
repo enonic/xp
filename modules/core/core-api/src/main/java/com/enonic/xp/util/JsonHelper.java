@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.xp.core.internal.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.ObjectMapperHelper;
 
 public class JsonHelper
 {
@@ -70,6 +70,11 @@ public class JsonHelper
     public static JsonNode from( final Map<String, Object> settings )
     {
         return MAPPER.valueToTree( settings );
+    }
+
+    public static Map<String, Object> toMap( final JsonNode node )
+    {
+        return MAPPER.convertValue( node, Map.class );
     }
 
     public static JsonNode from( final String json )

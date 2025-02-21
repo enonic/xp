@@ -34,11 +34,18 @@ public class IndexSettings
         return new IndexSettings( JsonHelper.from( settings ) );
     }
 
+    @Deprecated
     public IndexSettings( final JsonNode resourceNode )
     {
         this.jsonNode = resourceNode;
     }
 
+    public PropertyTree getData()
+    {
+        return PropertyTree.fromMap( JsonHelper.toMap( jsonNode ) );
+    }
+
+    @Deprecated
     public JsonNode getNode()
     {
         return jsonNode;

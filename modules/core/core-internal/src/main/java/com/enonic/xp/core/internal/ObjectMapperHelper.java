@@ -1,4 +1,4 @@
-package com.enonic.xp.json;
+package com.enonic.xp.core.internal;
 
 import java.text.SimpleDateFormat;
 

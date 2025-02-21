@@ -1,7 +1,9 @@
 dependencies {
     api libs.osgi.core
+    api libs.jackson.databind
     compileOnlyApi libs.osgi.service.componentannotations
     implementation libs.jsoup
+    implementation libs.jackson.datatype.jsr310
 
     implementation( libs.owaspsanitizer ) {
         exclude group: 'com.google.guava'

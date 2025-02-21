@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -325,7 +327,7 @@ public final class PropertySet
      * If the property with values exists and is not a type of valueType given, an exception will be thrown.
      * Difference with setProperty is that this method does not set the property value.
      *
-     * @param name property name
+     * @param name      property name
      * @param valueType expected value type
      */
     public void ensureProperty( final String name, final ValueType valueType )
@@ -675,9 +677,7 @@ public final class PropertySet
 
     public Property[] addStrings( final String name, final Collection<String> values )
     {
-        return values.stream().
-            map( ( value ) -> addProperty( name, ValueFactory.newString( value ) ) ).
-            toArray( Property[]::new );
+        return values.stream().map( ( value ) -> addProperty( name, ValueFactory.newString( value ) ) ).toArray( Property[]::new );
     }
 
     // setting xml
@@ -1436,4 +1436,68 @@ public final class PropertySet
         return e.toString();
     }
 
+    static PropertySet fromMap( Map<String, ?> map )
+    {
+        PropertySet propertySet = new PropertySet();
+        for ( Map.Entry<String, ?> entry : map.entrySet() )
+        {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if ( value instanceof Map )
+            {
+                propertySet.setSet( key, fromMap( (Map<String, ?>) value ) );
+            }
+            else if ( value instanceof List )
+            {
+                serializeList( (List<?>) value, key, propertySet );
+            }
+            else
+            {
+                propertySet.addString( key, value.toString() );
+            }
+        }
+        return propertySet;
+    }
+
+    static void serializeList( List<?> list, String key, PropertySet propertySet ) {
+        for ( Object item : list )
+        {
+            if ( item instanceof Map )
+            {
+                propertySet.setSet( key, fromMap( (Map<String, ?>) item ) );
+            }
+            else if ( item instanceof List )
+            {
+                serializeList( (List<?>) item, key, propertySet );
+            }
+            else
+            {
+                propertySet.addString( key, item.toString() );
+            }
+        }
+    }
+
+    private static Value toValue( final Object value )
+    {
+        return switch ( value )
+        {
+            case String s -> ValueFactory.newString( s );
+            case Integer i -> ValueFactory.newLong( i.longValue() );
+            case Float v -> ValueFactory.newDouble( v.doubleValue() );
+            case Double v -> ValueFactory.newDouble( v );
+            case Boolean b -> ValueFactory.newBoolean( b );
+            case Long l -> ValueFactory.newLong( l );
+            case Instant instant -> ValueFactory.newDateTime( instant );
+            case Date date -> ValueFactory.newDateTime( date.toInstant() );
+            case LocalTime localTime -> ValueFactory.newLocalTime( localTime );
+            case LocalDateTime localDateTime -> ValueFactory.newLocalDateTime( localDateTime );
+            case LocalDate localDate -> ValueFactory.newLocalDate( localDate );
+            case GeoPoint geoPoint -> ValueFactory.newGeoPoint( geoPoint );
+            case Reference reference -> ValueFactory.newReference( reference );
+            case BinaryReference binaryReference -> ValueFactory.newBinaryReference( binaryReference );
+            case Link link -> ValueFactory.newLink( link );
+            case null -> ValueFactory.newString( null );
+            default -> ValueFactory.newString( value.toString() );
+        };
+    }
 }

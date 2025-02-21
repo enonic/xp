@@ -1,6 +1,7 @@
 package com.enonic.xp.repository;
 
 import java.net.URL;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -28,11 +29,23 @@ public class IndexMapping
         return new IndexMapping( JsonHelper.from( string ) );
     }
 
+    public static IndexMapping from( final Map<String, Object> map )
+    {
+        return new IndexMapping( JsonHelper.from( map ) );
+    }
+
+    @Deprecated
     public IndexMapping( final JsonNode resourceNode )
     {
         this.jsonNode = resourceNode;
     }
 
+    public PropertyTree getData()
+    {
+        return PropertyTree.fromMap( JsonHelper.toMap( jsonNode ) );
+    }
+
+    @Deprecated
     public JsonNode getNode()
     {
         return jsonNode;

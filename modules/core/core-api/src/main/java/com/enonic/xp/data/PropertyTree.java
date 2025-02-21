@@ -51,6 +51,12 @@ public final class PropertyTree
         return root.toMap();
     }
 
+    public static PropertyTree fromMap( Map<String, ?> map )
+    {
+        final PropertySet propertySet = PropertySet.fromMap( map );
+        return new PropertyTree( propertySet );
+    }
+
     @Override
     public boolean equals( final Object o )
     {

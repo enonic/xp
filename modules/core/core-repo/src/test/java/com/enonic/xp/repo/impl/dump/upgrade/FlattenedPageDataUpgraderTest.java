@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDataUpgrader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

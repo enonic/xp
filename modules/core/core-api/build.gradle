@@ -14,11 +14,11 @@ dependencies {
 
     implementation project( ':core:core-internal' )
 
-    implementation libs.jackson.datatype.jsr310
     implementation libs.jparsec
 
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
+    testFixturesImplementation project( ':core:core-internal' )
 
     testImplementation project( ':core:core-internal' )
 }

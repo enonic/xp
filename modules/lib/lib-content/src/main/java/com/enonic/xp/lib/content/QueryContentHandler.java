@@ -11,8 +11,8 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -26,7 +26,6 @@ import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.util.JsonHelper;
 
 @SuppressWarnings("unused")
 public final class QueryContentHandler
@@ -94,14 +93,14 @@ public final class QueryContentHandler
         else if ( sort.isObject() )
         {
 
-            return List.of( DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( sort.getMap() ) ) ) );
+            return List.of( DslOrderExpr.from( PropertyTree.fromMap( sort.getMap() ) ) );
 
         }
         else if ( sort.isArray() )
         {
             return sort.getArray()
                 .stream()
-                .map( expr -> DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( expr.getMap() ) ) ) )
+                .map( expr -> DslOrderExpr.from( PropertyTree.fromMap( expr.getMap() ) ) )
                 .collect( Collectors.toList() );
         }
 
@@ -120,7 +119,7 @@ public final class QueryContentHandler
         }
         else if ( query.isObject() )
         {
-            return DslExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( query.getMap() ) ) );
+            return DslExpr.from( PropertyTree.fromMap( query.getMap() ) );
         }
 
         throw new IllegalArgumentException( "query must be a String or JSON object" );
