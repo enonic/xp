@@ -138,7 +138,7 @@ public abstract class AbstractAttachmentHandlerWorker
         return binary;
     }
 
-    protected abstract String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference );
+    protected abstract String resolveHash( Media content, Attachment attachment, BinaryReference binaryReference );
 
     protected Attachment resolveAttachment( final Content content, final String name )
     {
@@ -172,7 +172,7 @@ public abstract class AbstractAttachmentHandlerWorker
         throw WebException.notFound( String.format( "Content with id [%s] is not a Media", content.getId() ) );
     }
 
-    protected abstract void addTrace( final Media media );
+    protected abstract void addTrace( Media media );
 
     private Content getContent( final ContentId contentId )
     {

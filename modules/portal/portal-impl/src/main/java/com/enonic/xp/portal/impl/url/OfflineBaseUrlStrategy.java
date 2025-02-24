@@ -34,7 +34,7 @@ final class OfflineBaseUrlStrategy
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.contentSupplier = builder.contentSupplier;
+        this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
     }
 
     @Override
