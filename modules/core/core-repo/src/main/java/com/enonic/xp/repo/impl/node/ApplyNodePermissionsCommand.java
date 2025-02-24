@@ -78,7 +78,7 @@ public class ApplyNodePermissionsCommand
     {
         refresh( RefreshMode.SEARCH );
 
-        doApplyPermissions( params.getNodeId(), params.getPermissions() );
+        doApplyPermissions( params.getNodeId() );
 
         refresh( RefreshMode.ALL );
 
@@ -90,7 +90,7 @@ public class ApplyNodePermissionsCommand
         return result;
     }
 
-    private void doApplyPermissions( final NodeId nodeId, final AccessControlList permissions )
+    private void doApplyPermissions( final NodeId nodeId )
     {
         final Node persistedNode =
             ContextBuilder.from( ContextAccessor.current() ).branch( branches.first() ).build().callWith( () -> doGetById( nodeId ) );
@@ -100,13 +100,13 @@ public class ApplyNodePermissionsCommand
             throw new NodeNotFoundException( "Node not found: " + nodeId );
         }
 
-        if ( ApplyPermissionsScope.CHILDREN == params.getScope() && params.getNodeId().equals( nodeId ) )
+        if ( ApplyPermissionsScope.SUBTREE == params.getScope() && params.getNodeId().equals( nodeId ) )
         {
-            doApplyOnChildren( permissions, persistedNode.path() );
+            doApplyOnChildren( params.getPermissions(), persistedNode.path() );
         }
         else
         {
-            doApplyOnNode( nodeId, permissions );
+            doApplyOnNode( nodeId, params.getPermissions() );
         }
     }
 
@@ -227,10 +227,13 @@ public class ApplyNodePermissionsCommand
     private AccessControlList compileNewPermissions( final AccessControlList persistedPermissions, final AccessControlList permissions,
                                                      final AccessControlList addPermissions, final AccessControlList removePermissions )
     {
-
         if ( !permissions.isEmpty() )
         {
             return permissions;
+        }
+        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
+        {
+            return AccessControlList.empty();
         }
 
         final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );

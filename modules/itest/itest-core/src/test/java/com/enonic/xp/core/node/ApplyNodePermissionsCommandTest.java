@@ -91,13 +91,14 @@ public class ApplyNodePermissionsCommandTest
                                                                                     .scope( ApplyPermissionsScope.TREE )
                                                                                     .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .removePermissions( AccessControlList.create()
-                                                                                                      .add( AccessControlEntry.create()
-                                                                                                                .allowAll()
-                                                                                                                .principal(
-                                                                                                                    PrincipalKey.from(
-                                                                                                                        "user:my-provider:my-user" ) )
-                                                                                                                .build() )
-                                                                                                      .build() )
+                                                                                                            .add(
+                                                                                                                AccessControlEntry.create()
+                                                                                                                    .allowAll()
+                                                                                                                    .principal(
+                                                                                                                        PrincipalKey.from(
+                                                                                                                            "user:my-provider:my-user" ) )
+                                                                                                                    .build() )
+                                                                                                            .build() )
                                                                                     .build() );
 
         assertEquals( 3, result.getResults().size() );
@@ -125,7 +126,7 @@ public class ApplyNodePermissionsCommandTest
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
-                                                                                    .scope( ApplyPermissionsScope.CHILDREN )
+                                                                                    .scope( ApplyPermissionsScope.SUBTREE )
                                                                                     .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .permissions( AccessControlList.create()
                                                                                                       .add( AccessControlEntry.create()
@@ -442,6 +443,26 @@ public class ApplyNodePermissionsCommandTest
         assertEquals( 1, result.getResults().size() );
         assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().contains( principal ) );
 
+    }
+
+    @Test
+    void set_empty_permissions()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        refresh();
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .scope( ApplyPermissionsScope.TREE )
+                                                                                    .addBranches( Branches.from(
+                                                                                        ContextAccessor.current().getBranch() ) )
+                                                                                    .permissions( AccessControlList.empty() )
+                                                                                    .build() );
+
+        assertEquals( 1, result.getResults().size() );
+        assertTrue( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isEmpty() );
     }
 
     private void applyPermissionsWithOverwrite()
