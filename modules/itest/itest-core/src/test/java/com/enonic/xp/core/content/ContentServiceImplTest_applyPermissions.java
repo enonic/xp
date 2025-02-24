@@ -66,8 +66,11 @@ public class ContentServiceImplTest_applyPermissions
 
         final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
 
-        final ApplyContentPermissionsParams applyParams =
-            ApplyContentPermissionsParams.create().contentId( content.getId() ).applyContentPermissionsListener( listener ).build();
+        final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
+            .contentId( content.getId() )
+            .applyContentPermissionsListener( listener )
+            .addPermissions( content.getPermissions() )
+            .build();
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
