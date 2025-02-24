@@ -17,7 +17,7 @@ junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", ver
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.19" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.19.1" }
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 
