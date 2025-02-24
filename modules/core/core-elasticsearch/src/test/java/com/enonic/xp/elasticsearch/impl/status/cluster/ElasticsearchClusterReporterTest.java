@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public class ElasticsearchClusterReporterTest
     extends JsonStatusReporterTest
 {
-    private final ElasticsearchClusterReporter clusterReporter = new ElasticsearchClusterReporter();
+    private ElasticsearchClusterReporter clusterReporter;
 
     private ClusterState clusterState;
 
@@ -77,8 +77,7 @@ public class ElasticsearchClusterReporterTest
         clusterStateProvider.setClusterAdminClient( clusterAdminClient );
         clusterStateProvider.setClusterService( clusterService );
 
-        clusterReporter.setClusterHealthProvider( clusterHealthProvider );
-        clusterReporter.setClusterStateProvider( clusterStateProvider );
+        clusterReporter = new ElasticsearchClusterReporter(clusterStateProvider, clusterHealthProvider);
     }
 
     @Test

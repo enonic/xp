@@ -14,8 +14,7 @@ public class WebDispatcherReporterTest
         dispatcher.add( new TestWebHandler() );
         dispatcher.add( new TestWebHandler() );
 
-        final WebDispatcherReporter reporter = new WebDispatcherReporter();
-        reporter.setWebDispatcher( dispatcher );
+        final WebDispatcherReporter reporter = new WebDispatcherReporter( dispatcher );
 
         assertEquals( "http.webHandler", reporter.getName() );
         assertNotNull( reporter.getReport() );

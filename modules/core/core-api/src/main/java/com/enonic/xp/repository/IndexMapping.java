@@ -6,8 +6,8 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.core.internal.json.JsonHelper;
+import com.enonic.xp.data.PropertyTree;
 
 @PublicApi
 public class IndexMapping
@@ -17,7 +17,7 @@ public class IndexMapping
     @Deprecated
     public IndexMapping( final JsonNode resourceNode )
     {
-        this.jsonNode = resourceNode;
+        this.jsonNode = resourceNode.deepCopy();
     }
 
     private IndexMapping( final JsonNode resourceNode, boolean ignore )

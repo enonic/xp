@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;

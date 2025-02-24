@@ -11,13 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public abstract class JsonStatusReporterTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper().
+    private static final ObjectMapper MAPPER = JsonMapper.builder().
         disable( SerializationFeature.FAIL_ON_EMPTY_BEANS ).
         enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY ).
-        setSerializationInclusion( JsonInclude.Include.ALWAYS );
+        serializationInclusion( JsonInclude.Include.ALWAYS ).build();
 
     private static final ObjectReader OBJECT_READER = MAPPER.reader();
 

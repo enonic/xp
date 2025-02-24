@@ -49,8 +49,7 @@ public class ClusterManagerReporterTest
         throws Exception
     {
 
-        final ClusterManagerReporter reporter = new ClusterManagerReporter();
-        reporter.setClusterManager( this.clusterManager );
+        final ClusterManagerReporter reporter = new ClusterManagerReporter(this.clusterManager );
 
         final JsonNode result = reporter.getReport();
 

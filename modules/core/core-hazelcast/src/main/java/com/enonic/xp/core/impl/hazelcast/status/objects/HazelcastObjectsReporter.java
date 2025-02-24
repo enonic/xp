@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.hazelcast.status.objects;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.DistributedObjectUtil;
 import com.hazelcast.core.HazelcastInstance;
@@ -21,12 +25,11 @@ import com.hazelcast.cp.lock.FencedLock;
 import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public class HazelcastObjectsReporter
-    extends JsonStatusReporter
+    implements StatusReporter
 {
     private static final Logger LOG = LoggerFactory.getLogger( HazelcastObjectsReporter.class );
 
@@ -45,7 +48,19 @@ public class HazelcastObjectsReporter
     }
 
     @Override
-    public JsonNode getReport()
+    public MediaType getMediaType()
+    {
+        return MediaType.JSON_UTF_8;
+    }
+
+    @Override
+    public void report( final OutputStream outputStream )
+        throws IOException
+    {
+        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    JsonNode getReport()
     {
         final Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
         final HazelcastObjectsReport.Builder builder = HazelcastObjectsReport.create();

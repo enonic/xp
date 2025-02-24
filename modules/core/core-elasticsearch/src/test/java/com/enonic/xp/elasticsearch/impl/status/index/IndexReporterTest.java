@@ -44,8 +44,7 @@ public class IndexReporterTest
         final IndexReportProvider indexReportProvider = new IndexReportProvider();
         indexReportProvider.setAdminClient( adminClient );
 
-        indexReporter = new IndexReporter();
-        indexReporter.setIndexReportProvider( indexReportProvider );
+        indexReporter = new IndexReporter( indexReportProvider );
     }
 
     @Test
