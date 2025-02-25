@@ -336,10 +336,9 @@ public final class ImageContentProcessor
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        final CreateAttachments createAttachments = params.getCreateAttachments();
         final MediaInfo mediaInfo = params.getMediaInfo();
 
-        final CreateAttachment sourceAttachment = createAttachments == null ? null : createAttachments.first();
+        final CreateAttachment sourceAttachment = params.getCreateAttachments() == null ? null : params.getCreateAttachments().first();
 
         final ContentEditor editor;
         if ( mediaInfo != null )
@@ -370,7 +369,7 @@ public final class ImageContentProcessor
 
             };
         }
-        return new ProcessUpdateResult( createAttachments, editor );
+        return new ProcessUpdateResult( editor );
 
     }
 

@@ -44,8 +44,6 @@ public class NodeExporter
 
     private final String xpVersion;
 
-    private final boolean dryRun;
-
     private final boolean exportNodeIds;
 
     private final boolean exportVersions;
@@ -64,7 +62,6 @@ public class NodeExporter
         this.rootDirectory = builder.rootDirectory;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = builder.xpVersion;
-        this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
         this.exportVersions = builder.exportVersions;
         this.nodeExportListener = builder.nodeExportListener;
@@ -72,8 +69,6 @@ public class NodeExporter
 
     public NodeExportResult execute()
     {
-        this.result.dryRun( this.dryRun );
-
         nodeService.refresh( RefreshMode.ALL );
 
         final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
@@ -179,11 +174,8 @@ public class NodeExporter
         serializer.node( relativeNode );
         final String serializedNode = serializer.serialize();
 
-        if ( !dryRun )
-        {
-            final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
-            exportWriter.writeElement( nodeXmlPath, serializedNode );
-        }
+        final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
+        exportWriter.writeElement( nodeXmlPath, serializedNode );
 
         exportNodeBinaries( relativeNode, baseFolder );
     }
@@ -230,12 +222,8 @@ public class NodeExporter
             final BinaryReference reference = attachedBinary.getBinaryReference();
             final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), relativeNode.getNodeVersionId(), reference );
 
-            if ( !dryRun )
-            {
-                this.exportWriter.writeSource( nodeDataFolder.
-                    resolve( NodeExportPathResolver.BINARY_FOLDER ).
-                    resolve( reference.toString() ), byteSource );
-            }
+            this.exportWriter.writeSource( nodeDataFolder.resolve( NodeExportPathResolver.BINARY_FOLDER ).resolve( reference.toString() ),
+                                           byteSource );
 
             result.addBinary( relativeNode.path(), reference );
         }
@@ -257,10 +245,7 @@ public class NodeExporter
 
         final Path nodeOrderListPath = resolveNodeDataFolder( parent ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
 
-        if ( !dryRun )
-        {
-            exportWriter.writeElement( nodeOrderListPath, builder.toString() );
-        }
+        exportWriter.writeElement( nodeOrderListPath, builder.toString() );
     }
 
     private void writeExportProperties()
@@ -269,10 +254,7 @@ public class NodeExporter
         {
             final Path exportPropertiesPath = this.rootDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
 
-            if ( !dryRun )
-            {
-                exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
-            }
+            exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
         }
     }
 
@@ -333,8 +315,6 @@ public class NodeExporter
 
         private String xpVersion;
 
-        private boolean dryRun = false;
-
         private boolean exportNodeIds = true;
 
         private boolean exportVersions = false;
@@ -381,10 +361,10 @@ public class NodeExporter
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder exportNodeIds( final boolean exportNodeIds )

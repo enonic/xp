@@ -18,7 +18,7 @@ public class ImportNodesParamsTest
     {
         ImportNodesParams.Builder builder = ImportNodesParams.create();
 
-        builder.dryRun( true ).
+        builder.
             includeNodeIds( true ).
             includePermissions( true ).
             targetNodePath( NodePath.ROOT ).
@@ -29,7 +29,6 @@ public class ImportNodesParamsTest
 
         ImportNodesParams result = builder.build();
 
-        assertTrue( result.isDryRun() );
         assertTrue( result.isImportNodeids() );
         assertTrue( result.isImportPermissions() );
         assertTrue( result.getTargetNodePath().isRoot() );

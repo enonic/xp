@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -217,8 +218,7 @@ public class CompareNodeCommandTest
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            build().
-            execute();
+            build().execute().getResult( ContextAccessor.current().getBranch() );
     }
 
     private PushNodesResult doPushNode( final Branch branch, final Node createdNode )
