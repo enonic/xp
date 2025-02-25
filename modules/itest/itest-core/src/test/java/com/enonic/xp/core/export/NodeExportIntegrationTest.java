@@ -348,12 +348,11 @@ public class NodeExportIntegrationTest
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             xpVersion( "X.Y.Z-SNAPSHOT" ).
-            rootDirectory( this.temporaryFolder.resolve( "myRoot" ) ).
             targetDirectory( this.temporaryFolder.resolve( "myRoot" ).resolve( "myExport" ) ).
             build().
             execute();
 
-        assertFileExists( "myRoot/export.properties" );
+        assertFileExists( "myRoot/myExport/export.properties" );
     }
 
     @Test

@@ -1,13 +1,8 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import javax.ws.rs.core.MediaType;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
@@ -30,20 +25,9 @@ import static org.mockito.Mockito.when;
 class SystemResourceTest
     extends JaxRsResourceTestSupport
 {
-    @TempDir
-    public Path temporaryFolder;
-
     private TaskService taskService;
 
     private SystemResource resource;
-
-    @BeforeEach
-    void setup()
-        throws Exception
-    {
-        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
-        System.setProperty( "xp.home", homeDir.toString() );
-    }
 
     @Test
     void dump()
@@ -114,8 +98,8 @@ class SystemResourceTest
     {
         this.taskService = mock( TaskService.class );
 
-        resource = new SystemResource();
-        resource.setTaskService( taskService );
+        resource = new SystemResource(null, taskService);
+
         return resource;
     }
 }
