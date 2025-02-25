@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.SingleValueMetricAggregation;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

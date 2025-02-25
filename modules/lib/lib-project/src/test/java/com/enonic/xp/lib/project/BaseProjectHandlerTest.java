@@ -17,7 +17,6 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
-import com.enonic.xp.lib.common.ObjectToValueMapper;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
@@ -126,14 +125,7 @@ public abstract class BaseProjectHandlerTest
         when( this.propertyTreeMarshallerService.marshal( isA( Map.class ) ) ).thenAnswer( mock -> {
 
             final Map<String, ?> map = (Map<String, ?>) mock.getArguments()[0];
-            final PropertyTree tree = new PropertyTree();
-
-            for ( String key : map.keySet() )
-            {
-                tree.addProperty( key, ObjectToValueMapper.map( map.get( key ) ) );
-            }
-
-            return tree;
+            return PropertyTree.fromMap( map );
         } );
     }
 

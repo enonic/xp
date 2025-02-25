@@ -34,9 +34,9 @@ import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.sortvalues.SortValuesProperty;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest

@@ -1,4 +1,4 @@
-package com.enonic.xp.status;
+package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,8 +7,9 @@ import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
-@Deprecated
-public abstract class JsonStatusReporter
+import com.enonic.xp.status.StatusReporter;
+
+abstract class JsonStatusReporter
     implements StatusReporter
 {
     @Override

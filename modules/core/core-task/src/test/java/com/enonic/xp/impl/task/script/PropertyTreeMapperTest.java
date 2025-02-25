@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

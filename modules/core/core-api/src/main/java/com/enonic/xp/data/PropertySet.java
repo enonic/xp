@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -1436,13 +1435,6 @@ public final class PropertySet
         return e.toString();
     }
 
-    static PropertySet fromMap( Map<String, ?> map )
-    {
-        PropertySet propertySet = new PropertySet();
-        translate( map, propertySet );
-        return propertySet;
-    }
-
     static void translate( final Map<String, ?> json, final PropertySet into )
     {
         for ( Map.Entry<String, ?> field : json.entrySet() )
@@ -1453,9 +1445,9 @@ public final class PropertySet
 
     private static void addValue( final PropertySet parent, final String key, final Object value )
     {
-        if ( value instanceof List )
+        if ( value instanceof Collection )
         {
-            for ( final Object objNode : (List<?>) value )
+            for ( final Object objNode : (Collection<?>) value )
             {
                 addValue( parent, key, objNode );
             }
@@ -1484,6 +1476,7 @@ public final class PropertySet
             case Double v -> ValueFactory.newDouble( v );
             case Boolean b -> ValueFactory.newBoolean( b );
             case Long l -> ValueFactory.newLong( l );
+            case Byte b -> ValueFactory.newLong( b.longValue() );
             case Instant instant -> ValueFactory.newDateTime( instant );
             case Date date -> ValueFactory.newDateTime( date.toInstant() );
             case LocalTime localTime -> ValueFactory.newLocalTime( localTime );

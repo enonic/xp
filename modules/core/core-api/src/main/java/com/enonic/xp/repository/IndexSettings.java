@@ -48,14 +48,6 @@ public class IndexSettings
         return new IndexSettings( JsonHelper.from( settings ), false );
     }
 
-    public IndexSettings merge( final IndexSettings with )
-    {
-        final JsonNode newJsonNode = this.jsonNode.deepCopy();
-        JsonHelper.merge( newJsonNode, with.jsonNode );
-
-        return new IndexSettings( newJsonNode, false );
-    }
-
     public Map<String, Object> getData()
     {
         return JsonHelper.toMap( jsonNode );
@@ -67,9 +59,9 @@ public class IndexSettings
         return jsonNode;
     }
 
+    @Deprecated
     public String getAsString()
     {
         return this.jsonNode.toString();
     }
-
 }

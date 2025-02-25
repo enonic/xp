@@ -1,9 +1,5 @@
 package com.enonic.xp.server.impl.status;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -15,13 +11,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class OsgiServiceReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     private BundleContext context;
 
@@ -38,19 +33,6 @@ public final class OsgiServiceReporter
     }
 
     @Override
-    public MediaType getMediaType()
-    {
-        return MediaType.JSON_UTF_8;
-    }
-
-    @Override
-    public void report( final OutputStream outputStream )
-        throws IOException
-    {
-        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
-    }
-
-
     public JsonNode getReport()
     {
         final ServiceReference[] list = getServices();

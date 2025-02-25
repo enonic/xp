@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 public class ResolveSyncWorkResultMapperTest
     extends BaseMapperTest

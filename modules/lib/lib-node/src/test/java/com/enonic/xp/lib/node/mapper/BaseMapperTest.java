@@ -11,7 +11,7 @@ import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

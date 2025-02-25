@@ -59,16 +59,9 @@ public class IndexMapping
         return jsonNode;
     }
 
+    @Deprecated
     public String getAsString()
     {
         return this.jsonNode.toString();
-    }
-
-    public IndexMapping merge( final IndexMapping with )
-    {
-        final JsonNode newJsonNode = this.jsonNode.deepCopy();
-        JsonHelper.merge( newJsonNode, with.jsonNode );
-
-        return new IndexMapping( newJsonNode, false );
     }
 }

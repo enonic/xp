@@ -117,7 +117,7 @@ public class IndexServiceInternalImpl
             {
                 createIndexRequest.mapping(
                     mappingEntry.getKey().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : mappingEntry.getKey().getName(),
-                    mappingEntry.getValue().getAsString() );
+                    mappingEntry.getValue().getData() );
             }
         }
 

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

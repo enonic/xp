@@ -55,7 +55,7 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
         outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    final JsonNode getReport()
+    JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
         for ( final ResourceDefinition<?> def : this.list.snapshot() )

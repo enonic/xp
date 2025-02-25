@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.net.URL;
 
+import com.enonic.xp.core.internal.json.JsonHelper;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexResourceType;
 import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.core.internal.json.JsonHelper;
 
 public class DefaultIndexResourceProvider
     implements IndexResourceProvider
@@ -21,13 +20,13 @@ public class DefaultIndexResourceProvider
     }
 
     @Override
-    public IndexMapping getMapping( final RepositoryId repositoryId, final IndexType indexType )
+    public IndexMapping getMapping( final IndexType indexType )
     {
         return IndexMapping.from( JsonHelper.toMap( JsonHelper.from( getResource( indexType, IndexResourceType.MAPPING ) ) ) );
     }
 
     @Override
-    public IndexSettings getSettings( final RepositoryId repositoryId, final IndexType indexType )
+    public IndexSettings getSettings( final IndexType indexType )
     {
 
         return IndexSettings.from( JsonHelper.toMap( JsonHelper.from( getResource( indexType, IndexResourceType.SETTINGS ) ) ) );

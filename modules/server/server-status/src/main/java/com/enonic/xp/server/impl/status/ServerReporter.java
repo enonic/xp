@@ -1,15 +1,10 @@
 package com.enonic.xp.server.impl.status;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-
 import org.osgi.service.component.annotations.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.net.MediaType;
 
 import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.RunMode;
@@ -19,7 +14,7 @@ import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class ServerReporter
-    implements StatusReporter
+    extends JsonStatusReporter
 {
     ServerInfo serverInfo;
 
@@ -28,7 +23,6 @@ public final class ServerReporter
         this.serverInfo = ServerInfo.get();
     }
 
-
     @Override
     public String getName()
     {
@@ -36,19 +30,7 @@ public final class ServerReporter
     }
 
     @Override
-    public MediaType getMediaType()
-    {
-        return MediaType.JSON_UTF_8;
-    }
-
-    @Override
-    public void report( final OutputStream outputStream )
-        throws IOException
-    {
-        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
-    }
-
-    JsonNode getReport()
+    public JsonNode getReport()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", VersionInfo.get().getVersion() );

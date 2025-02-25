@@ -53,7 +53,9 @@ public final class PropertyTree
 
     public static PropertyTree fromMap( Map<String, ?> map )
     {
-        return new PropertyTree( PropertySet.fromMap( map ) );
+        final PropertyTree into = new PropertyTree();
+        PropertySet.translate( map, into.root );
+        return into;
     }
 
     @Override

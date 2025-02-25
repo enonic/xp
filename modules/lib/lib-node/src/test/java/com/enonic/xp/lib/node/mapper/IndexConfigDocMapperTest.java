@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 public class IndexConfigDocMapperTest
     extends BaseMapperTest

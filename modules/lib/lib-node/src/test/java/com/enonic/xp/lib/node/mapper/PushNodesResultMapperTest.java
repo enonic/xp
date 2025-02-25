@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 public class PushNodesResultMapperTest
     extends BaseMapperTest

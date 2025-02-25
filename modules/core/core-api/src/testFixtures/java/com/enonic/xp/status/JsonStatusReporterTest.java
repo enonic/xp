@@ -4,21 +4,16 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 
 public abstract class JsonStatusReporterTest
 {
-    private static final ObjectMapper MAPPER = JsonMapper.builder().
-        disable( SerializationFeature.FAIL_ON_EMPTY_BEANS ).
-        enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY ).
-        serializationInclusion( JsonInclude.Include.ALWAYS ).build();
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private static final ObjectReader OBJECT_READER = MAPPER.reader();
 
