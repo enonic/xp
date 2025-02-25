@@ -82,12 +82,7 @@ public class ApplyNodePermissionsCommand
 
         refresh( RefreshMode.ALL );
 
-        final ApplyNodePermissionsResult result = results.build();
-        if ( result.getResults().isEmpty() )
-        {
-            throw new NodeNotFoundException( "Node not found: " + params.getNodeId() );
-        }
-        return result;
+        return results.build();
     }
 
     private void doApplyPermissions( final NodeId nodeId )
