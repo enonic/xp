@@ -4,14 +4,13 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.google.common.collect.Streams;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyPermissionsListener;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -22,7 +21,9 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntry;
@@ -46,17 +47,21 @@ public class ApplyNodePermissionsCommand
 
     private final ApplyNodePermissionsResult.Builder results;
 
-    private final Branch sourceBranch;
-
     private final ApplyPermissionsListener listener;
+
+    private final Map<NodeVersionId, NodeVersionMetadata> appliedVersions; // old version id -> new version metadata
+
+    private final Branches branches;
 
     private ApplyNodePermissionsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.results = ApplyNodePermissionsResult.create();
-        this.sourceBranch = ContextAccessor.current().getBranch();
-        listener = params.getListener() != null ? params.getListener() : new EmptyApplyPermissionsListener();
+        this.appliedVersions = new HashMap<>();
+        this.listener = params.getListener() != null ? params.getListener() : new EmptyApplyPermissionsListener();
+        this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
+
     }
 
     public static Builder create()
@@ -71,109 +76,84 @@ public class ApplyNodePermissionsCommand
 
     public ApplyNodePermissionsResult execute()
     {
-        if ( params.getBranches().contains( this.sourceBranch ) )
-        {
-            throw new IllegalArgumentException( "Branches cannot contain current branch" );
-        }
-
-        final Node persistedNode = doGetById( params.getNodeId() );
-
-        if ( persistedNode == null )
-        {
-            throw new NodeNotFoundException(
-                String.format( "Node with id [%s] not found in branch [%s]", params.getNodeId(), sourceBranch ) );
-        }
-
-        AccessControlList permissions = params.getPermissions();
-
-        if ( params.getPermissions().isEmpty() && params.getAddPermissions().isEmpty() && params.getRemovePermissions().isEmpty() )
-        {
-            permissions = persistedNode.getPermissions();
-        }
-
         refresh( RefreshMode.SEARCH );
 
-        doApplyPermissions( params.getNodeId(), permissions );
+        doApplyPermissions( params.getNodeId() );
 
         refresh( RefreshMode.ALL );
 
         return results.build();
     }
 
-    private void doApplyPermissions( final NodeId nodeId, final AccessControlList permissions )
+    private void doApplyPermissions( final NodeId nodeId )
     {
-        NodeVersionData updatedPersistedNode;
+        final Node persistedNode =
+            ContextBuilder.from( ContextAccessor.current() ).branch( branches.first() ).build().callWith( () -> doGetById( nodeId ) );
 
-        if ( ApplyPermissionsScope.CHILDREN == params.getScope() && params.getNodeId().equals( nodeId ) )
+        if ( persistedNode == null )
         {
-            final Node persistedNode = doGetById( nodeId );
+            throw new NodeNotFoundException( "Node not found: " + nodeId );
+        }
 
-            if ( persistedNode == null )
-            {
-                return;
-            }
-
-            updatedPersistedNode = new NodeVersionData( persistedNode,
-                                                        nodeStorageService.getVersion( persistedNode.getNodeVersionId(),
-                                                                                       InternalContext.from(
-                                                                                           ContextAccessor.current() ) ) );
+        if ( ApplyPermissionsScope.SUBTREE == params.getScope() && params.getNodeId().equals( nodeId ) )
+        {
+            doApplyOnChildren( params.getPermissions(), persistedNode.path() );
         }
         else
         {
-            updatedPersistedNode = doApplyOnNode( nodeId, permissions );
+            doApplyOnNode( nodeId, params.getPermissions() );
         }
-
-        if ( updatedPersistedNode == null )
-        {
-            return;
-        }
-
-        doApplyOnChildren( permissions, updatedPersistedNode );
     }
 
-    private NodeVersionData doApplyOnNode( final NodeId nodeId, final AccessControlList permissions )
+    private void doApplyOnNode( final NodeId nodeId, final AccessControlList permissions )
     {
-        final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId );
+        final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId, branches );
 
-        final NodeVersionData updatedOriginNode = updatePermissionsInBranch( nodeId, null, permissions, this.sourceBranch );
+        doApplyOnNode( nodeId, permissions, Branches.from( branches.first() ), activeVersionMap, true );
 
-        if ( updatedOriginNode == null )
-        {
-            results.addResult( nodeId, this.sourceBranch, null );
-            return null;
-        }
+        final Branches otherBranches = activeVersionMap.keySet()
+            .stream()
+            .filter( targetBranch -> !targetBranch.equals( branches.first() ) )
+            .collect( Branches.collecting() );
 
-        results.addResult( nodeId, this.sourceBranch, updatedOriginNode.node() );
+        otherBranches.forEach( targetBranch -> doApplyOnNode( nodeId, permissions, otherBranches, activeVersionMap, false ) );
+    }
 
-        activeVersionMap.keySet().forEach( targetBranch -> {
-            if ( targetBranch.equals( this.sourceBranch ) )
+    private void doApplyOnNode( final NodeId nodeId, final AccessControlList permissions, final Branches branches,
+                                final Map<Branch, NodeVersionMetadata> activeVersionMap, final boolean recursive )
+    {
+
+        branches.forEach( branch -> {
+            final NodeVersionData updatedSourceNode = updatePermissionsInBranch( nodeId, appliedVersions.get(
+                                                                                     Optional.ofNullable( activeVersionMap.get( branch ) ).map( NodeVersionMetadata::getNodeVersionId ).orElse( null ) ),
+                                                                                 permissions, branch );
+
+            if ( updatedSourceNode != null )
             {
-                return;
+                appliedVersions.put( activeVersionMap.get( branch ).getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
             }
 
-            final boolean isEqualToOrigin =
-                activeVersionMap.get( targetBranch ).getNodeVersionId().equals( activeVersionMap.get( sourceBranch ).getNodeVersionId() );
+            results.addResult( nodeId, branch, updatedSourceNode != null ? updatedSourceNode.node() : null );
 
-            final NodeVersionData updatedTargetNode =
-                updatePermissionsInBranch( nodeId, isEqualToOrigin ? updatedOriginNode.nodeVersionMetadata() : null, permissions,
-                                           targetBranch );
-            ;
-            results.addResult( nodeId, targetBranch, isEqualToOrigin
-                ? updatedOriginNode.node()
-                : updatedTargetNode != null ? updatedTargetNode.node() : null );
-
+            if ( recursive )
+            {
+                if ( updatedSourceNode != null && updatedSourceNode.node() != null )
+                {
+                    doApplyOnChildren( permissions, updatedSourceNode.node().path() );
+                }
+            }
         } );
-        return updatedOriginNode;
     }
 
-    private void doApplyOnChildren( final AccessControlList permissions, final NodeVersionData updatedOriginNode )
+    private void doApplyOnChildren( final AccessControlList permissions, final NodePath parentPath )
     {
-        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
-                NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( updatedOriginNode.node().path() ).build(),
-                SingleRepoSearchSource.from( ContextBuilder.from( ContextAccessor.current() ).branch( this.sourceBranch ).build() ) )
-                                                      .getIds() );
+        final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).branch( branches.first() ).build();
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( ContextAccessor.current() ) );
+        final NodeIds childrenIds = NodeIds.from(
+            this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( parentPath ).build(),
+                                          SingleRepoSearchSource.from( sourceBranchContext ) ).getIds() );
+
+        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( sourceBranchContext ) );
 
         for ( Node child : children )
         {
@@ -182,7 +162,7 @@ public class ApplyNodePermissionsCommand
 
             final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
 
-            doApplyPermissions( child.id(), childPermissions );
+            doApplyOnNode( child.id(), childPermissions );
         }
     }
 
@@ -195,7 +175,7 @@ public class ApplyNodePermissionsCommand
 
         if ( persistedNode == null ||
             !NodePermissionsResolver.hasPermission( targetContext.getPrincipalsKeys(), Permission.WRITE_PERMISSIONS,
-                                                        persistedNode.getPermissions() ) )
+                                                    persistedNode.getPermissions() ) )
         {
             listener.notEnoughRights( 1 );
             return null;
@@ -215,7 +195,9 @@ public class ApplyNodePermissionsCommand
                                                                              .build() )
                                                        .build() ), branch, l -> {
             }, InternalContext.from( ContextAccessor.current() ) );
-            return null;
+
+            return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(), targetContext ),
+                                        updatedVersionMetadata );
         }
         else
         {
@@ -231,23 +213,22 @@ public class ApplyNodePermissionsCommand
         return result;
     }
 
-    private Map<Branch, NodeVersionMetadata> getActiveNodeVersions( final NodeId nodeId )
+    private Map<Branch, NodeVersionMetadata> getActiveNodeVersions( final NodeId nodeId, final Branches branches )
     {
-        return params.getBranches() != null ? GetActiveNodeVersionsCommand.create( this )
-            .nodeId( nodeId )
-            .branches( Streams.concat( params.getBranches().stream(), Stream.of( this.sourceBranch ) ).collect( Branches.collecting() ) )
-            .build()
-            .execute()
-            .getNodeVersions() : Map.of();
+
+        return GetActiveNodeVersionsCommand.create( this ).nodeId( nodeId ).branches( branches ).build().execute().getNodeVersions();
     }
 
     private AccessControlList compileNewPermissions( final AccessControlList persistedPermissions, final AccessControlList permissions,
                                                      final AccessControlList addPermissions, final AccessControlList removePermissions )
     {
-
         if ( !permissions.isEmpty() )
         {
             return permissions;
+        }
+        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
+        {
+            return AccessControlList.empty();
         }
 
         final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );
@@ -282,8 +263,10 @@ public class ApplyNodePermissionsCommand
                 else
                 {
                     newPermissions.put( entryToRemove.getPrincipal(), AccessControlEntry.create()
-                        .principal( entryToRemove.getPrincipal() ).allow( currentACE.allowedPermissions()
-                                    .stream().filter( permission -> !entryToRemove.allowedPermissions().contains( permission ) )
+                        .principal( entryToRemove.getPrincipal() )
+                        .allow( currentACE.allowedPermissions()
+                                    .stream()
+                                    .filter( permission -> !entryToRemove.allowedPermissions().contains( permission ) )
                                     .collect( Collectors.toList() ) )
                         .build() );
                 }

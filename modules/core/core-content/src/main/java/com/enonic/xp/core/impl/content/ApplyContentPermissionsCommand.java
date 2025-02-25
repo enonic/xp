@@ -37,11 +37,12 @@ final class ApplyContentPermissionsCommand
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
         final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
-            .nodeId( nodeId )
-            .permissions( params.getPermissions() )
-            .addPermissions( params.getAddPermissions() ).removePermissions( params.getRemovePermissions() ).scope( params.getScope() )
+            .nodeId( nodeId ).permissions( params.getPermissions() )
+            .addPermissions( params.getAddPermissions() )
+            .removePermissions( params.getRemovePermissions() )
+            .scope( params.getScope() )
             .applyPermissionsListener( params.getListener() )
-            .addBranches( Branches.from( ContentConstants.BRANCH_MASTER ) );
+            .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 

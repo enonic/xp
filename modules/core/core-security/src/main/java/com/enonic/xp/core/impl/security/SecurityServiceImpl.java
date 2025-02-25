@@ -29,7 +29,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -986,10 +985,6 @@ public final class SecurityServiceImpl
                                         .permissions( groupsNodePermissions )
                                         .build() );
 
-                final ApplyNodePermissionsParams applyPermissions =
-                    ApplyNodePermissionsParams.create().nodeId( rootNode.id() ).scope( ApplyPermissionsScope.SINGLE ).build();
-                nodeService.applyPermissions( applyPermissions );
-
                 return idProviderNode;
             } );
 
@@ -1058,10 +1053,6 @@ public final class SecurityServiceImpl
                 setNodePermissions( idProviderNode.id(), idProviderNodePermissions );
                 setNodePermissions( usersNode.id(), usersNodePermissions );
                 setNodePermissions( groupsNode.id(), groupsNodePermissions );
-
-                final ApplyNodePermissionsParams applyPermissions =
-                    ApplyNodePermissionsParams.create().nodeId( idProviderNode.id() ).scope( ApplyPermissionsScope.SINGLE ).build();
-                nodeService.applyPermissions( applyPermissions );
             }
 
             securityAuditLogSupport.updateIdProvider( UpdateIdProviderParams.create( idProviderToUpdate ).build() );
