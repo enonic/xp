@@ -109,7 +109,7 @@ public class BranchServiceImpl
         {
             storageDao.delete( DeleteRequests.create()
                                    .ids( entries.stream()
-                                             .map( entry -> BranchDocumentId.asString( entry.getNodeId(), branch ) )
+                                             .map( entry -> BranchDocumentId.asRoutableId( entry.getNodeId(), branch ) )
                                              .collect( Collectors.toList() ) )
                                    .settings( createStorageSettings( repositoryId ) )
                                    .build() );

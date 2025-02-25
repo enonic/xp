@@ -43,7 +43,7 @@ public class IndexMapping
         return new IndexMapping( JsonHelper.from( string ), false );
     }
 
-    public static IndexMapping from( final Map<String, Object> data )
+    public static IndexMapping from( final Map<String, ?> data )
     {
         return new IndexMapping( JsonHelper.from( data ), false );
     }

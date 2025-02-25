@@ -43,7 +43,7 @@ public class IndexSettings
         return new IndexSettings( JsonHelper.from( string ), false );
     }
 
-    public static IndexSettings from( final Map<String, Object> settings )
+    public static IndexSettings from( final Map<String, ?> settings )
     {
         return new IndexSettings( JsonHelper.from( settings ), false );
     }

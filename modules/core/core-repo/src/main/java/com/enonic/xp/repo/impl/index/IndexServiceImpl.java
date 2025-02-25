@@ -131,7 +131,7 @@ public class IndexServiceImpl
     @Override
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
+        return IndexSettings.from( this.indexServiceInternal.getIndexSettings( repositoryId, indexType ) );
     }
 
     @Override
@@ -167,8 +167,10 @@ public class IndexServiceImpl
 
         indexServiceInternal.deleteIndices( searchIndexName );
 
-        final IndexSettings indexSettings = getSearchIndexSettings( repositorySettings );
-        final IndexMapping indexMapping = getSearchIndexMapping( repositorySettings );
+        final IndexSettings indexSettings = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( IndexType.SEARCH ),
+                                                                       repositorySettings.getIndexSettings( IndexType.SEARCH ) );
+        final IndexMapping indexMapping = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ),
+                                                                     repositorySettings.getIndexMappings( IndexType.SEARCH ) );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create()
                                               .indexName( searchIndexName )
@@ -177,18 +179,6 @@ public class IndexServiceImpl
                                               .build() );
 
         indexServiceInternal.waitForYellowStatus( searchIndexName );
-    }
-
-    private IndexSettings getSearchIndexSettings( final RepositorySettings repositorySettings )
-    {
-        return IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( IndexType.SEARCH ),
-                                          repositorySettings.getIndexSettings( IndexType.SEARCH ) );
-    }
-
-    private IndexMapping getSearchIndexMapping( final RepositorySettings repositorySettings )
-    {
-        return IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ),
-                                          repositorySettings.getIndexMappings( IndexType.SEARCH ) );
     }
 
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )

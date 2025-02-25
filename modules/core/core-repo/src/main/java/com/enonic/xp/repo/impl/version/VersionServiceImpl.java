@@ -14,6 +14,7 @@ import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
+import com.enonic.xp.repo.impl.storage.RoutableId;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -50,7 +51,7 @@ public class VersionServiceImpl
     public void delete( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         storageDao.delete( DeleteRequests.create()
-                               .ids( List.of( nodeVersionId.toString() ) )
+                               .ids( List.of( new RoutableId( nodeVersionId.toString() ) ) )
                                .settings( createStorageSettings( context.getRepositoryId() ) )
                                .build() );
     }

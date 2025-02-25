@@ -38,6 +38,7 @@ import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
+import com.enonic.xp.repo.impl.storage.RoutableId;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.IndexException;
@@ -124,7 +125,7 @@ public class StorageDaoImpl
     {
         final StorageSource settings = requests.getSettings();
 
-        for ( final String id : requests.getIds() )
+        for ( final RoutableId id : requests.getIds() )
         {
             try
             {
@@ -133,8 +134,8 @@ public class StorageDaoImpl
                         setIndex( settings.getStorageName().getName() ).
                         setType( settings.getStorageType().getName() ).
                         setRefresh( requests.isForceRefresh() ).
-                        setId( id ).
-                        setRouting( id ).
+                        setId( id.id ).
+                        setRouting( id.routing ).
                         request();
 
                 this.client.delete( request ).actionGet( requests.getTimeout(), TimeUnit.SECONDS );

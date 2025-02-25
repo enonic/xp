@@ -110,7 +110,7 @@ public class IndexServiceInternalImpl
         LOG.info( "creating index {}", indexName );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
-        createIndexRequest.settings( indexSettings.getAsString() );
+        createIndexRequest.settings( indexSettings.getData() );
         if ( request.getMappings() != null )
         {
             for ( Map.Entry<IndexType, IndexMapping> mappingEntry : request.getMappings().entrySet() )
@@ -156,7 +156,7 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
+    public Map<String, String> getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
         if ( repositoryId == null || indexType == null )
         {
@@ -173,7 +173,7 @@ public class IndexServiceInternalImpl
             .actionGet( GET_SETTINGS_TIMEOUT )
             .getIndexToSettings();
 
-        return IndexSettings.from( (Map) settingsMap.get( indexName ).getAsMap() );
+        return settingsMap.get( indexName ).getAsMap();
     }
 
     @Override

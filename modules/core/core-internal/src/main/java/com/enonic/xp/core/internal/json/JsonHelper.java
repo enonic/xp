@@ -12,12 +12,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public final class JsonHelper
 {
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
+        enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );
+
     private JsonHelper()
     {
     }
-
-    private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
-        enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );
 
     public static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
     {
@@ -57,7 +57,7 @@ public final class JsonHelper
         }
     }
 
-    public static JsonNode from( final Map<String, Object> settings )
+    public static JsonNode from( final Map<String, ?> settings )
     {
         return MAPPER.valueToTree( settings );
     }

@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -98,11 +97,11 @@ public class NodeRepositoryServiceImpl
     {
         try
         {
-            final Object numberOfReplicas = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
-                .getData().get( "index.number_of_replicas" );
-            final Map<String, Object> newSettingsData = new HashMap<>( defaultSettings.getData() );
-            newSettingsData.put( "index", Map.of( "number_of_replicas", numberOfReplicas ) );
-            return IndexSettings.from( newSettingsData );
+            final String numberOfReplicas = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
+                .get( "index.number_of_replicas" );
+
+            return IndexSettingsMerger.merge( defaultSettings,
+                                       IndexSettings.from( Map.of( "index", Map.of( "number_of_replicas", numberOfReplicas ) ) ) );
         }
         catch ( Exception e )
         {
