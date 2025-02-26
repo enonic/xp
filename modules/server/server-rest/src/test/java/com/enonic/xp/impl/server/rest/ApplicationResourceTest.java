@@ -139,7 +139,7 @@ public class ApplicationResourceTest
             entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Illegal protocol: ftp\"}", jsonString );
+        assertEquals( "{\"failure\":\"Illegal protocol: ftp\"}", jsonString );
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ApplicationResourceTest
             entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to process application from http://enonic.net\"}",
+        assertEquals( "{\"failure\":\"Failed to process application from http://enonic.net\"}",
                       jsonString );
     }
 
@@ -169,7 +169,7 @@ public class ApplicationResourceTest
             entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to upload application from invalid url\"}", jsonString );
+        assertEquals( "{\"failure\":\"Failed to upload application from invalid url\"}", jsonString );
     }
 
     @Test

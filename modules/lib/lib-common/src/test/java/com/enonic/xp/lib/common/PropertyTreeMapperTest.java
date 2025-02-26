@@ -1,29 +1,16 @@
 package com.enonic.xp.lib.common;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.testing.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.helper.JsonAssert;
 import com.enonic.xp.util.GeoPoint;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PropertyTreeMapperTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper().
-        enable( SerializationFeature.INDENT_OUTPUT ).
-        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-
     @Test
     public void numbers()
         throws Exception
@@ -110,23 +97,7 @@ public class PropertyTreeMapperTest
     }
 
     private void serializeAndAssert( final String name, final PropertyTree value )
-        throws Exception
     {
-        final String resource = name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = MAPPER.readTree( url );
-
-        final JsonMapGenerator generator = new JsonMapGenerator();
-        new PropertyTreeMapper( value ).serialize( generator );
-        final JsonNode actualJson = (JsonNode) generator.getRoot();
-
-        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
-        final String actualStr = MAPPER.writeValueAsString( actualJson );
-
-        assertEquals( expectedStr, actualStr );
+        JsonAssert.assertMapper( getClass(), name + ".json", new PropertyTreeMapper( value ) );
     }
-
-
 }

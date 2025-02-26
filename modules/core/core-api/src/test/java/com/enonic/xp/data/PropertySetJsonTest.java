@@ -27,7 +27,7 @@ public class PropertySetJsonTest
         tree.addString( "myProp", "a" );
         tree.addString( "myProp", "b" );
         tree.addString( "myProp", "c" );
-        PropertyArrayJson propertyArrayJson = PropertyArrayJson.toJson( tree.getRoot().getPropertyArray( "myProp" ) );
+        PropertyArrayJson propertyArrayJson = PropertyTreeJson.propertyArrayToJson( tree.getRoot().getPropertyArray( "myProp" ) );
 
         // serialize from object
         String expectedSerialization = jsonTestHelper.objectToString( propertyArrayJson );
@@ -53,7 +53,7 @@ public class PropertySetJsonTest
         dataSet.setDouble( "Double", 1.1 );
         dataSet.setLocalDate( "DateMidnight", LocalDate.of( 2012, 12, 12 ) );
         dataSet.setXml( "Xml", "<div></div>" );
-        PropertyArrayJson dataSetJson = PropertyArrayJson.toJson( tree.getRoot().getPropertyArray( "mySet" ) );
+        PropertyArrayJson dataSetJson = PropertyTreeJson.propertyArrayToJson( tree.getRoot().getPropertyArray( "mySet" ) );
 
         // serialize from object
         String expectedSerialization = jsonTestHelper.objectToString( dataSetJson );

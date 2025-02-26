@@ -318,7 +318,7 @@ public final class PropertySet
     /**
      * WARNING: This method may be removed at any time. It is not recommended to use it in new code.
      * This method is only used to simulate the behavior of PropertySet Serialisation.
-     * See {@link com.enonic.xp.data.PropertyArrayJson#fromJson}
+     * See {@link com.enonic.xp.data.PropertyTreeJson#fromJson}
      * <br>
      * <br>
      * Ensures that the property with the given name has type of valueType given.

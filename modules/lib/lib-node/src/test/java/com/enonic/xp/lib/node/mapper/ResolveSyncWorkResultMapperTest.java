@@ -3,12 +3,14 @@ package com.enonic.xp.lib.node.mapper;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.testing.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.helper.JsonAssert;
 
 public class ResolveSyncWorkResultMapperTest
-    extends BaseMapperTest
 {
     @Test
     public void full()
@@ -20,9 +22,14 @@ public class ResolveSyncWorkResultMapperTest
             add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.NEWER ) ).
             build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new ResolveSyncWorkResultMapper( result ).serialize( jsonGenerator );
+        JsonAssert.assertMapper( getClass(), "resolveSyncWork/full.json", new ResolveSyncWorkResultMapper( result ) );
+    }
 
-        assertJson( "resolveSyncWork/full.json", jsonGenerator );
+    static NodeBranchEntry createEntry( final String a )
+    {
+        return NodeBranchEntry.create().
+            nodeId( NodeId.from( a ) ).
+            nodePath( new NodePath( "/" + a ) ).
+            build();
     }
 }

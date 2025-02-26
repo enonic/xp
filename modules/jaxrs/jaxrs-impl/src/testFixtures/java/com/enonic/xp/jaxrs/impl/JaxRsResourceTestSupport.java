@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.resteasy.core.ResteasyContext;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -144,37 +143,8 @@ public abstract class JaxRsResourceTestSupport
         }
     }
 
-    protected final void assertArrayEquals( Object[] a1, Object[] a2 )
-    {
-        Assertions.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
-    }
-
-
-    protected final String arrayToString( Object[] a )
-    {
-        final StringBuilder result = new StringBuilder( "[" );
-
-        for ( int i = 0; i < a.length; i++ )
-        {
-            result.append( i ).append( ": " ).append( a[i] );
-            if ( i < a.length - 1 )
-            {
-                result.append( ", " );
-            }
-        }
-
-        result.append( "]" );
-
-        return result.toString();
-    }
-
     protected final RestRequestBuilder request()
     {
         return new RestRequestBuilder( this.dispatcher ).path( this.basePath );
-    }
-
-    protected void setHttpRequest( final HttpServletRequest request )
-    {
-        ResteasyContext.getContextDataMap().put( HttpServletRequest.class, request );
     }
 }

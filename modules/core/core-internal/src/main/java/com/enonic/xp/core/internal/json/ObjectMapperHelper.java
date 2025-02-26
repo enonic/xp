@@ -17,13 +17,12 @@ public final class ObjectMapperHelper
 
     public static ObjectMapper create()
     {
-        final JsonMapper.Builder mapper = JsonMapper.builder();
-        mapper.defaultDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) );
-        mapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
-        mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.serializationInclusion( JsonInclude.Include.ALWAYS );
-        mapper.addModule( new JavaTimeModule() );
-        return mapper.build();
+        return JsonMapper.builder()
+            .defaultDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) )
+            .disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS )
+            .disable( SerializationFeature.FAIL_ON_EMPTY_BEANS )
+            .enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY )
+            .serializationInclusion( JsonInclude.Include.NON_NULL )
+            .addModule( new JavaTimeModule() ).build();
     }
 }
