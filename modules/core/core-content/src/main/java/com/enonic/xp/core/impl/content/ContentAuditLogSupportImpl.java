@@ -225,7 +225,6 @@ public class ContentAuditLogSupportImpl
         paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
         addCreateAttachments( paramsSet, params.getCreateAttachments() );
 
-        //add result to resultSet
         result.getResults().forEach( ( branchResult ) -> {
             final Branch branch = branchResult.branch();
             final Content content = branchResult.content();
