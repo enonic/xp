@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -52,8 +53,8 @@ public class FlattenedPageDataUpgraderTest
         final JsonNode oldPageComponents = loadJson( oldJsonFile );
         final JsonNode newPageComponents = loadJson( newJsonFile );
 
-        final PropertyTree oldData = new JsonToPropertyTreeTranslator().translate( oldPageComponents );
-        final PropertyTree newData = new JsonToPropertyTreeTranslator().translate( newPageComponents );
+        final PropertyTree oldData = PropertyTree.fromMap( MAPPER.convertValue( oldPageComponents, Map.class ) );
+        final PropertyTree newData = PropertyTree.fromMap( MAPPER.convertValue( newPageComponents, Map.class ) );
 
         final HashMap<String, String> templateControllerMap = new HashMap<>();
         templateControllerMap.put( "templateId", "com.enonic.app.features:main" );

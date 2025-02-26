@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,7 @@ public class FlattenedPageIndexUpgraderTest
     {
         final JsonNode pageComponents = loadJson( dataFile );
 
-        final PropertyTree data = new JsonToPropertyTreeTranslator().translate( pageComponents );
+        final PropertyTree data = PropertyTree.fromMap( MAPPER.convertValue( pageComponents, Map.class ) );
 
         final List<PropertySet> components = Lists.newArrayList( data.getSets( "components" ) );
 
