@@ -10,9 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -30,6 +27,8 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
@@ -41,12 +40,10 @@ import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -56,8 +53,6 @@ import com.enonic.xp.util.BinaryReference;
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
-
     private final UpdateContentParams params;
 
     private final MediaInfo mediaInfo;
@@ -175,26 +170,75 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent )
             .valid( !validationErrors.hasErrors() )
             .validationErrors( validationErrors )
-            .modifiedTime( Instant.now() ).attachments( attachments ).modifier( getCurrentUser().getKey() )
+            .modifiedTime( Instant.now() )
+            .attachments( attachments )
+            .modifier( getCurrentUser().getKey() )
             .build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
-            .editedContent( editedContent )
-            .createAttachments( params.getCreateAttachments() )
-            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+//        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
+//            .editedContent( editedContent )
+//            .createAttachments( params.getCreateAttachments() )
+//            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+//            .contentTypeService( this.contentTypeService )
+//            .xDataService( this.xDataService )
+//            .pageDescriptorService( this.pageDescriptorService )
+//            .partDescriptorService( this.partDescriptorService )
+//            .layoutDescriptorService( this.layoutDescriptorService )
+//            .contentDataSerializer( this.translator.getContentDataSerializer() )
+//            .siteService( this.siteService )
+//            .build()
+//            .produce();
+
+        final Content editedContentFinal = editedContent;
+
+        final ModifyContentResult result = ModifyContentCommand.create()
+            .params( ModifyContentParams.create()
+                         .modifier( ( edit -> {
+                             edit.displayName.setValue( editedContentFinal.getDisplayName() );
+                             edit.data.setValue( editedContentFinal.getData() );
+                             edit.extraDatas.setValue( editedContentFinal.getAllExtraData() );
+                             edit.page.setValue( editedContentFinal.getPage() );
+                             edit.valid.setValue( editedContentFinal.isValid() );
+                             edit.thumbnail.setValue( editedContentFinal.getThumbnail() );
+                             edit.owner.setValue( editedContentFinal.getOwner() );
+                             edit.language.setValue( editedContentFinal.getLanguage() );
+                             edit.creator.setValue( editedContentFinal.getCreator() );
+                             edit.createdTime.setValue( editedContentFinal.getCreatedTime() );
+                             edit.publishInfo.setValue( editedContentFinal.getPublishInfo() );
+                             edit.processedReferences.setValue( editedContentFinal.getProcessedReferences() );
+                             edit.workflowInfo.setValue( editedContentFinal.getWorkflowInfo() );
+                             edit.manualOrderValue.setValue( editedContentFinal.getManualOrderValue() );
+                             edit.inherit.setValue( editedContentFinal.getInherit() );
+                             edit.variantOf.setValue( editedContentFinal.getVariantOf() );
+                             edit.modifier.setValue( editedContentFinal.getModifier() );
+                             edit.modifiedTime.setValue( editedContentFinal.getModifiedTime() );
+                             edit.attachments.setValue( editedContentFinal.getAttachments() );
+                             edit.validationErrors.setValue( editedContentFinal.getValidationErrors() );
+                         } ) )
+                         .contentId( params.getContentId() )
+                         .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+                         .createAttachments( params.getCreateAttachments() )
+                         .build() )
+            .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
             .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
-            .siteService( this.siteService )
+            .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
             .build()
-            .produce();
+            .execute();
 
-        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
+//        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
 
-        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
+        return result.getResult( ContextAccessor.current().getBranch() );
+
+//        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
