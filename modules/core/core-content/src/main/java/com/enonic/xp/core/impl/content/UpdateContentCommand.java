@@ -10,9 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -27,9 +24,12 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentModifier;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
@@ -41,12 +41,10 @@ import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -56,8 +54,6 @@ import com.enonic.xp.util.BinaryReference;
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
-
     private final UpdateContentParams params;
 
     private final MediaInfo mediaInfo;
@@ -92,6 +88,32 @@ final class UpdateContentCommand
         {
             throw new ContentAccessException( e );
         }
+    }
+
+    private static ContentModifier getContentModifier( final Content editedContent )
+    {
+        return edit -> {
+            edit.displayName.setValue( editedContent.getDisplayName() );
+            edit.data.setValue( editedContent.getData() );
+            edit.extraDatas.setValue( editedContent.getAllExtraData() );
+            edit.page.setValue( editedContent.getPage() );
+            edit.valid.setValue( editedContent.isValid() );
+            edit.thumbnail.setValue( editedContent.getThumbnail() );
+            edit.owner.setValue( editedContent.getOwner() );
+            edit.language.setValue( editedContent.getLanguage() );
+            edit.creator.setValue( editedContent.getCreator() );
+            edit.createdTime.setValue( editedContent.getCreatedTime() );
+            edit.publishInfo.setValue( editedContent.getPublishInfo() );
+            edit.processedReferences.setValue( editedContent.getProcessedReferences() );
+            edit.workflowInfo.setValue( editedContent.getWorkflowInfo() );
+            edit.manualOrderValue.setValue( editedContent.getManualOrderValue() );
+            edit.inherit.setValue( editedContent.getInherit() );
+            edit.variantOf.setValue( editedContent.getVariantOf() );
+            edit.modifier.setValue( editedContent.getModifier() );
+            edit.modifiedTime.setValue( editedContent.getModifiedTime() );
+            edit.attachments.setValue( editedContent.getAttachments() );
+            edit.validationErrors.setValue( editedContent.getValidationErrors() );
+        };
     }
 
     private Content doExecute()
@@ -175,26 +197,33 @@ final class UpdateContentCommand
         editedContent = Content.create( editedContent )
             .valid( !validationErrors.hasErrors() )
             .validationErrors( validationErrors )
-            .modifiedTime( Instant.now() ).attachments( attachments ).modifier( getCurrentUser().getKey() )
+            .modifiedTime( Instant.now() )
+            .attachments( attachments )
+            .modifier( getCurrentUser().getKey() )
             .build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
-            .editedContent( editedContent )
-            .createAttachments( params.getCreateAttachments() )
-            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+        final ModifyContentResult result = ModifyContentCommand.create()
+            .params( ModifyContentParams.create().modifier( getContentModifier( editedContent ) )
+                         .contentId( params.getContentId() )
+                         .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+                         .createAttachments( params.getCreateAttachments() )
+                         .build() )
+            .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
             .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
-            .siteService( this.siteService )
+            .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
             .build()
-            .produce();
+            .execute();
 
-        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
-
-        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
+        return result.getResult( ContextAccessor.current().getBranch() );
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )

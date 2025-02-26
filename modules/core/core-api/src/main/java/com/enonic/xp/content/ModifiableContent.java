@@ -4,6 +4,7 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -44,13 +45,13 @@ public class ModifiableContent
 
     public ModifiableField<ContentPublishInfo> publishInfo;
 
-    public ModifiableField<ContentIds.Builder> processedReferences;
+    public ModifiableField<ContentIds> processedReferences;
 
     public ModifiableField<WorkflowInfo> workflowInfo;
 
     public ModifiableField<Long> manualOrderValue;
 
-    public ModifiableField<EnumSet<ContentInheritType>> inherit;
+    public ModifiableField<Set<ContentInheritType>> inherit;
 
     public ModifiableField<ContentId> variantOf;
 
@@ -72,7 +73,7 @@ public class ModifiableContent
         this.creator = new ModifiableField<>( source.getCreator() );
         this.createdTime = new ModifiableField<>( source.getCreatedTime() );
         this.publishInfo = new ModifiableField<>( source.getPublishInfo() );
-        this.processedReferences = new ModifiableField<>( ContentIds.create().addAll( source.getProcessedReferences() ) );
+        this.processedReferences = new ModifiableField<>( source.getProcessedReferences() );
         this.workflowInfo = new ModifiableField<>( source.getWorkflowInfo() );
         this.manualOrderValue = new ModifiableField<>( source.getManualOrderValue() );
         this.inherit = new ModifiableField<>(
@@ -100,8 +101,7 @@ public class ModifiableContent
             .language( language.produce() )
             .creator( creator.produce() )
             .createdTime( createdTime.produce() )
-            .publishInfo( publishInfo.produce() )
-            .processedReferences( processedReferences.produce().build() )
+            .publishInfo( publishInfo.produce() ).processedReferences( processedReferences.produce() )
             .workflowInfo( workflowInfo.produce() )
             .manualOrderValue( manualOrderValue.produce() )
             .setInherit( inherit.produce() )
