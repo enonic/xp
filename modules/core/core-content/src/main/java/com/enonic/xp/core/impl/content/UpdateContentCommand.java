@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentModifier;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
@@ -87,6 +88,32 @@ final class UpdateContentCommand
         {
             throw new ContentAccessException( e );
         }
+    }
+
+    private static ContentModifier getContentModifier( final Content editedContent )
+    {
+        return edit -> {
+            edit.displayName.setValue( editedContent.getDisplayName() );
+            edit.data.setValue( editedContent.getData() );
+            edit.extraDatas.setValue( editedContent.getAllExtraData() );
+            edit.page.setValue( editedContent.getPage() );
+            edit.valid.setValue( editedContent.isValid() );
+            edit.thumbnail.setValue( editedContent.getThumbnail() );
+            edit.owner.setValue( editedContent.getOwner() );
+            edit.language.setValue( editedContent.getLanguage() );
+            edit.creator.setValue( editedContent.getCreator() );
+            edit.createdTime.setValue( editedContent.getCreatedTime() );
+            edit.publishInfo.setValue( editedContent.getPublishInfo() );
+            edit.processedReferences.setValue( editedContent.getProcessedReferences() );
+            edit.workflowInfo.setValue( editedContent.getWorkflowInfo() );
+            edit.manualOrderValue.setValue( editedContent.getManualOrderValue() );
+            edit.inherit.setValue( editedContent.getInherit() );
+            edit.variantOf.setValue( editedContent.getVariantOf() );
+            edit.modifier.setValue( editedContent.getModifier() );
+            edit.modifiedTime.setValue( editedContent.getModifiedTime() );
+            edit.attachments.setValue( editedContent.getAttachments() );
+            edit.validationErrors.setValue( editedContent.getValidationErrors() );
+        };
     }
 
     private Content doExecute()
@@ -175,46 +202,8 @@ final class UpdateContentCommand
             .modifier( getCurrentUser().getKey() )
             .build();
 
-//        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
-//            .editedContent( editedContent )
-//            .createAttachments( params.getCreateAttachments() )
-//            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
-//            .contentTypeService( this.contentTypeService )
-//            .xDataService( this.xDataService )
-//            .pageDescriptorService( this.pageDescriptorService )
-//            .partDescriptorService( this.partDescriptorService )
-//            .layoutDescriptorService( this.layoutDescriptorService )
-//            .contentDataSerializer( this.translator.getContentDataSerializer() )
-//            .siteService( this.siteService )
-//            .build()
-//            .produce();
-
-        final Content editedContentFinal = editedContent;
-
         final ModifyContentResult result = ModifyContentCommand.create()
-            .params( ModifyContentParams.create()
-                         .modifier( ( edit -> {
-                             edit.displayName.setValue( editedContentFinal.getDisplayName() );
-                             edit.data.setValue( editedContentFinal.getData() );
-                             edit.extraDatas.setValue( editedContentFinal.getAllExtraData() );
-                             edit.page.setValue( editedContentFinal.getPage() );
-                             edit.valid.setValue( editedContentFinal.isValid() );
-                             edit.thumbnail.setValue( editedContentFinal.getThumbnail() );
-                             edit.owner.setValue( editedContentFinal.getOwner() );
-                             edit.language.setValue( editedContentFinal.getLanguage() );
-                             edit.creator.setValue( editedContentFinal.getCreator() );
-                             edit.createdTime.setValue( editedContentFinal.getCreatedTime() );
-                             edit.publishInfo.setValue( editedContentFinal.getPublishInfo() );
-                             edit.processedReferences.setValue( editedContentFinal.getProcessedReferences() );
-                             edit.workflowInfo.setValue( editedContentFinal.getWorkflowInfo() );
-                             edit.manualOrderValue.setValue( editedContentFinal.getManualOrderValue() );
-                             edit.inherit.setValue( editedContentFinal.getInherit() );
-                             edit.variantOf.setValue( editedContentFinal.getVariantOf() );
-                             edit.modifier.setValue( editedContentFinal.getModifier() );
-                             edit.modifiedTime.setValue( editedContentFinal.getModifiedTime() );
-                             edit.attachments.setValue( editedContentFinal.getAttachments() );
-                             edit.validationErrors.setValue( editedContentFinal.getValidationErrors() );
-                         } ) )
+            .params( ModifyContentParams.create().modifier( getContentModifier( editedContent ) )
                          .contentId( params.getContentId() )
                          .branches( Branches.from( ContextAccessor.current().getBranch() ) )
                          .createAttachments( params.getCreateAttachments() )
@@ -234,11 +223,7 @@ final class UpdateContentCommand
             .build()
             .execute();
 
-//        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
-
         return result.getResult( ContextAccessor.current().getBranch() );
-
-//        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
