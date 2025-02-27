@@ -41,7 +41,7 @@ final class BaseUrlResolver
     public BaseUrlResult resolve()
     {
         Site site = null;
-        if ( content.isSite() )
+        if ( content instanceof Site )
         {
             site = (Site) content;
         }
