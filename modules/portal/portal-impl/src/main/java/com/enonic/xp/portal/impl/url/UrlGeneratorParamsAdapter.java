@@ -89,7 +89,9 @@ public class UrlGeneratorParamsAdapter
 
         return ImageUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
-            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() ) )
+            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(),
+                                           Objects.requireNonNullElseGet( params.getPath(),
+                                                                          () -> portalRequest.getContentPath().toString() ) ) )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
             .setScale( params.getScale() )
@@ -146,7 +148,9 @@ public class UrlGeneratorParamsAdapter
             .setBaseUrlStrategy( baseUrlStrategy )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
-            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() ) )
+            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(),
+                                           Objects.requireNonNullElseGet( params.getPath(),
+                                                                          () -> portalRequest.getContentPath().toString() ) ) )
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )

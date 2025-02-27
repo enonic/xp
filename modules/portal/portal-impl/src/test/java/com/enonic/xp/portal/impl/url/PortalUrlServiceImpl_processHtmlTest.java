@@ -201,7 +201,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
         assertThat( processedHtml ).matches(
-            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
+            "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
     }
 
     @Test
