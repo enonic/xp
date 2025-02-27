@@ -1,10 +1,8 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -19,14 +17,15 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -49,7 +48,7 @@ public final class ImageHandlerWorker
 
     public ScaleParams scaleParams;
 
-    public ImageHandlerWorker( final PortalRequest request, final ContentService contentService, final ImageService imageService,
+    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService,
                                final MediaInfoService mediaInfoService )
     {
         super( request, contentService );
@@ -85,6 +84,22 @@ public final class ImageHandlerWorker
     {
         portalResponse.contentType( contentType );
         portalResponse.body( body );
+    }
+
+    @Override
+    protected Media cast( final Content content )
+    {
+        if ( !( content instanceof final Media media ) )
+        {
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
+        }
+
+        if ( !media.isImage() )
+        {
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
+        }
+
+        return media;
     }
 
     @Override
@@ -128,44 +143,29 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected String resolveHash( final Media content, final BinaryReference binaryReference )
+    protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
-        final String binaryKey = super.resolveHash( content, binaryReference );
-        return Hashing.sha1()
-            .newHasher()
-            .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getFocalPoint() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getCropping() ), StandardCharsets.UTF_8 )
-            .putString( String.valueOf( content.getOrientation() ), StandardCharsets.UTF_8 )
-            .hash()
-            .toString();
+        if ( legacyMode )
+        {
+            final String hash = this.contentService.getBinaryKey( content.getId(), binaryReference );
+            return MediaHashResolver.resolveLegacyImageHash( content, hash );
+        }
+        else
+        {
+            return MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) );
+        }
     }
 
     @Override
-    protected Media cast( final Content content )
+    protected void addTrace( final Media media )
     {
-        if ( !( content instanceof Media ) )
         {
-            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
-        }
-
-        final Media media = (Media) content;
-        if ( !media.isImage() )
-        {
-            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
-        }
-
-        return media;
-    }
-
-    @Override
-    protected void addTrace( final Media content )
-    {
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", content.getPath() );
-            trace.put( "type", "image" );
+            final Trace trace = Tracer.current();
+            if ( trace != null )
+            {
+                trace.put( "contentPath", media.getPath() );
+                trace.put( "type", "image" );
+            }
         }
     }
 }

@@ -40,8 +40,6 @@ public class ApiDispatcher
 
     private final ErrorHandler errorHandler;
 
-    private final MediaHandler mediaHandler;
-
     private volatile boolean legacyImageServiceEnabled;
 
     private volatile boolean legacyAttachmentServiceEnabled;
@@ -52,8 +50,7 @@ public class ApiDispatcher
     public ApiDispatcher( @Reference final SlashApiHandler apiHandler, @Reference final ComponentHandler componentHandler,
                           @Reference final AssetHandler assetHandler, @Reference final ServiceHandler serviceHandler,
                           @Reference final IdentityHandler identityHandler, @Reference final ImageHandler imageHandler,
-                          @Reference final AttachmentHandler attachmentHandler, @Reference final ErrorHandler errorHandler,
-                          @Reference final MediaHandler mediaHandler )
+                          @Reference final AttachmentHandler attachmentHandler, @Reference final ErrorHandler errorHandler )
     {
         super( 1 );
 
@@ -65,7 +62,6 @@ public class ApiDispatcher
         this.imageHandler = imageHandler;
         this.attachmentHandler = attachmentHandler;
         this.errorHandler = errorHandler;
-        this.mediaHandler = mediaHandler;
     }
 
     @Activate
@@ -95,7 +91,6 @@ public class ApiDispatcher
                 doHandleLegacyHandler( webResponse, legacyAttachmentServiceEnabled, () -> attachmentHandler.handle( webRequest ) );
             case "image" -> doHandleLegacyHandler( webResponse, legacyImageServiceEnabled, () -> imageHandler.handle( webRequest ) );
             case "service" -> doHandleLegacyHandler( webResponse, legacyHttpServiceEnabled, () -> serviceHandler.handle( webRequest ) );
-            case "media" -> mediaHandler.handle( webRequest );
             case "error" -> errorHandler.handle( webRequest );
             case "idprovider" -> identityHandler.handle( webRequest, webResponse );
             case "asset" -> assetHandler.handle( webRequest );
