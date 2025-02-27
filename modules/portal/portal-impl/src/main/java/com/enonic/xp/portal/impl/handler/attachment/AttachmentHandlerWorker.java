@@ -38,12 +38,12 @@ public final class AttachmentHandlerWorker
     }
 
     @Override
-    protected void addTrace( final Content media )
+    protected void addTrace( final Content content )
     {
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "contentPath", media.getPath() );
+            trace.put( "contentPath", content.getPath() );
             trace.put( "type", "attachment" );
         }
     }

@@ -164,7 +164,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
     protected abstract T cast( Content content );
 
-    protected abstract void addTrace( T media );
+    protected abstract void addTrace( T content );
 
     private Content getContent( final ContentId contentId )
     {
