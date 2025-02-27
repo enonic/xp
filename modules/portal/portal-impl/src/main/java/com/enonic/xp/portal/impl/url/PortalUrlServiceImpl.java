@@ -17,6 +17,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
@@ -35,6 +36,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -197,16 +200,18 @@ public final class PortalUrlServiceImpl
             .setFormat( params.getFormat() )
             .build();
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final ApiUrlGeneratorParams apiUrlParams = ApiUrlGeneratorParams.create()
+            .setBaseUrlStrategy( params.getBaseUrlStrategy() )
+            .setApplication( "media" )
+            .setApi( "image" )
+            .setPath( () -> new ImageMediaPathStrategy( imageMediaPathStrategyParams ).generatePath() )
+            .putNotNullQueryParam( "quality", Objects.toString( params.getQuality(), null ) )
+            .putNotNullQueryParam( "background", params.getBackground() )
+            .putNotNullQueryParam( "filter", params.getFilter() )
+            .putQueryParams( params.getQueryParams() )
+            .build();
 
-        queryParamsStrategy.putNotNull( "quality", Objects.toString( params.getQuality(), null ) );
-        queryParamsStrategy.putNotNull( "background", params.getBackground() );
-        queryParamsStrategy.putNotNull( "filter", params.getFilter() );
-        params.getQueryParams().forEach( queryParamsStrategy::putAll );
-
-        return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ),
-                                            queryParamsStrategy ) );
+        return apiUrl( apiUrlParams );
     }
 
     @Override
@@ -238,6 +243,22 @@ public final class PortalUrlServiceImpl
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
         return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "", queryParamsStrategy ) );
+    }
+
+    @Override
+    public String apiUrl( final ApiUrlGeneratorParams params )
+    {
+        final PathStrategy pathStrategy = () -> {
+            final StringBuilder url = new StringBuilder();
+            appendPart( url, params.getApplication() + ":" + params.getApi() );
+            appendPart( url, params.getPath().get() );
+            return url.toString();
+        };
+
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), pathStrategy, queryParamsStrategy ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

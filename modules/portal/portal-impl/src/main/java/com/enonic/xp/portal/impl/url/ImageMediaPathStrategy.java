@@ -37,7 +37,7 @@ final class ImageMediaPathStrategy
 
         final StringBuilder url = new StringBuilder();
 
-        appendPart( url, "media:image" );
+//        appendPart( url, "media:image" );
         appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
         appendPart( url, media.getId() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, scale );
