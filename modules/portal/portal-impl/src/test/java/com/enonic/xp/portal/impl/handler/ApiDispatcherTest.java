@@ -69,7 +69,7 @@ public class ApiDispatcherTest
 
         // test media
         when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/media/image/project:branch/id:fingerprint/name" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/media:image/project:branch/id:fingerprint/name" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
         // test image
@@ -109,12 +109,12 @@ public class ApiDispatcherTest
 
         // test slashApi
         when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
         // test handle as endpoint
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp/api-key" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp/api-key" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp:api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp:api-key" );
         assertTrue( this.handler.canHandle( webRequest ) );
     }
 
@@ -128,22 +128,6 @@ public class ApiDispatcherTest
         IllegalStateException ex = assertThrows( IllegalStateException.class, () -> this.handler.doHandle( webRequest, null, null ) );
         assertEquals( "Invalid API path: /site/project/branch/path", ex.getMessage() );
     }
-
-//    @Test
-//    public void testHandleMedia()
-//        throws Exception
-//    {
-//        final WebRequest webRequest = mock( WebRequest.class );
-//        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-//        when( webRequest.getEndpointPath() ).thenReturn( null );
-//        when( webRequest.getRawPath() ).thenReturn( "/api/media/image/project:branch/id:fingerprint/name" );
-//
-//        final WebResponse webResponse = WebResponse.create().build();
-//        when( mediaHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
-//
-//        // test handle
-//        assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
-//    }
 
     @Test
     public void testHandleImage()
@@ -270,7 +254,7 @@ public class ApiDispatcherTest
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
         when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp/api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -279,8 +263,8 @@ public class ApiDispatcherTest
         assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
 
         // test handle as endpoint
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp/api-key" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp/api-key" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp:api-key" );
+        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp:api-key" );
 
         // test handle
         assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
