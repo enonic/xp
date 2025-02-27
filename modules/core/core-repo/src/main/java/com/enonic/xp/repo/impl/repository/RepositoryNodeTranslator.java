@@ -126,17 +126,13 @@ public class RepositoryNodeTranslator
                     final IndexMapping indexMapping = indexDefinition.getMapping();
                     if ( indexMapping != null )
                     {
-                        PropertySet indexMappingPropertySet = data.newSet();
-                        JsonToPropertyTreeTranslator.translate( indexMapping.getNode(), indexMappingPropertySet );
-                        indexConfigPropertySet.setSet( MAPPING_KEY, indexMappingPropertySet );
+                        indexConfigPropertySet.setSet( MAPPING_KEY, PropertyTree.fromMap( indexMapping.getData() ).getRoot().copy( data ) );
                     }
 
                     final IndexSettings indexSettings = indexDefinition.getSettings();
                     if ( indexSettings != null )
                     {
-                        PropertySet indexMappingPropertySet = data.newSet();
-                        JsonToPropertyTreeTranslator.translate( indexSettings.getNode(), indexMappingPropertySet );
-                        indexConfigPropertySet.setSet( SETTINGS_KEY, indexMappingPropertySet );
+                        indexConfigPropertySet.setSet( SETTINGS_KEY, PropertyTree.fromMap( indexSettings.getData() ).getRoot().copy( data ) );
                     }
                 }
             }
@@ -185,10 +181,10 @@ public class RepositoryNodeTranslator
                     final IndexDefinition.Builder indexConfig = IndexDefinition.create();
 
                     final PropertySet mappingSet = indexConfigSet.getSet( MAPPING_KEY );
-                    indexConfig.mapping( mappingSet == null ? null : IndexMapping.from( mappingSet.toTree() ) );
+                    indexConfig.mapping( mappingSet == null ? null : IndexMapping.from( mappingSet.toTree().toMap() ) );
 
                     final PropertySet settingsSet = indexConfigSet.getSet( SETTINGS_KEY );
-                    indexConfig.settings( settingsSet == null ? null : IndexSettings.from( settingsSet.toTree() ) );
+                    indexConfig.settings( settingsSet == null ? null : IndexSettings.from( settingsSet.toTree().toMap() ) );
 
                     indexConfigs.add( indexType, indexConfig.build() );
                 }

@@ -2,23 +2,23 @@ dependencies {
     api ( libs.guava.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
-    api libs.jackson.databind
     api libs.osgi.core
     api libs.jakarta.mail
     api libs.metrics.core
 
     // The following libraries are not really API. Remove in future versions of XP.
+    api libs.jackson.databind
     api libs.slf4j.api
     compileOnlyApi libs.osgi.service.componentannotations
     api libs.osgi.service.component
 
     implementation project( ':core:core-internal' )
 
-    implementation libs.jackson.datatype.jsr310
     implementation libs.jparsec
 
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
+    testFixturesImplementation project( ':core:core-internal' )
 
     testImplementation project( ':core:core-internal' )
 }

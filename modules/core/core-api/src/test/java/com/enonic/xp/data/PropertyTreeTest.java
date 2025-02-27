@@ -6,8 +6,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,12 +19,15 @@ import com.google.common.collect.ImmutableList;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.support.SerializableUtils;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.withPrecision;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -815,6 +821,65 @@ public class PropertyTreeTest
     }
 
 
+    @Test
+    public void fromMap()
+    {
+        final HashMap<String, Object> map = new HashMap<>();
+        map.put( "myString", "a" );
+        map.put( "myDoable", 1.1 );
+        map.put("myFloat", 1.1f);
+        map.put( "myInt", 1 );
+        map.put( "myLong", 1L );
+        map.put( "myByte", (byte) 1 );
+        map.put( "myShort", (short) 1 );
+        map.put( "myBoolean", true );
+        map.put( "myNull", null );
+        map.put( "myList", List.of( "a", "b" ) );
+        map.put( "myMap", Map.of( "a", "b" ) );
+        map.put( "myMapMap", Map.of( "a", Map.of("k", "v") ) );
+        map.put( "mySet", Set.of( "a", "b" ) );
+        map.put( "myEmptyList", List.of() );
+        map.put( "myEmptyMap", Map.of() );
+        map.put( "myGeoPoint", GeoPoint.from( "0,1" ));
+        map.put( "myInstant", Instant.parse( "2018-01-01T00:00:00Z" ) );
+        map.put( "myDate", Date.from( Instant.parse( "2018-01-01T00:00:00Z" ) ) );
+        map.put( "myLocalDate", LocalDate.parse( "2018-01-01" ) );
+        map.put( "myLocalDateTime", LocalDate.parse( "2018-01-01" ).atStartOfDay() );
+        map.put( "myLocalTime", LocalDate.parse( "2018-01-01" ).atStartOfDay().toLocalTime() );
+        map.put( "myReference", Reference.from( "nodeId" ) );
+        map.put( "myBinaryReference", BinaryReference.from( "binaryReference" ) );
+        map.put( "myLink", Link.from( "/link" ) );
+        map.put( "myObject", NodeId.from( "becomeString") );
+
+        final PropertyTree result = PropertyTree.fromMap( map );
+
+        assertEquals( "a", result.getString( "myString" ) );
+        assertEquals( 1.1D, result.getDouble( "myDoable" ) );
+        assertThat( result.getDouble( "myFloat" ) ).isEqualTo(1.1, withPrecision(0.001));
+        assertEquals( 1L, result.getLong( "myInt" ) );
+        assertEquals( 1L, result.getLong( "myLong" ) );
+        assertEquals( 1L, result.getLong( "myByte" ) );
+        assertEquals( 1L, result.getLong( "myShort" ) );
+        assertTrue( result.getBoolean( "myBoolean" ) );
+        assertNull( result.getString( "myNull" ) );
+        assertEquals( "a", result.getString( "myList[0]" ) );
+        assertEquals( "b", result.getString( "myList[1]" ) );
+        assertEquals( "b", result.getString( "myMap.a" ) );
+        assertEquals( "v", result.getString( "myMapMap.a.k" ) );
+        assertThat( result.getStrings( "mySet" ) ).containsExactlyInAnyOrder( "a", "b" );
+        assertThat( result.getStrings( "myEmptyList" ) ).isEmpty();
+        assertThat( result.getSet( "myEmptyMap" ).getProperties() ).isEmpty();
+        assertEquals( GeoPoint.from( "0,1" ), result.getGeoPoint( "myGeoPoint" ) );
+        assertEquals( Instant.parse( "2018-01-01T00:00:00Z" ), result.getInstant( "myInstant" ) );
+        assertEquals( Instant.parse( "2018-01-01T00:00:00Z" ) , result.getInstant( "myDate" ) );
+        assertEquals( LocalDate.parse( "2018-01-01" ), result.getLocalDate( "myLocalDate" ) );
+        assertEquals( LocalDate.parse( "2018-01-01" ).atStartOfDay(), result.getLocalDateTime( "myLocalDateTime" ) );
+        assertEquals( LocalDate.parse( "2018-01-01" ).atStartOfDay().toLocalTime(), result.getLocalTime( "myLocalTime" ) );
+        assertEquals( Reference.from( "nodeId" ), result.getReference( "myReference" ) );
+        assertEquals( BinaryReference.from( "binaryReference" ), result.getBinaryReference( "myBinaryReference" ) );
+        assertEquals( Link.from( "/link" ), result.getLink( "myLink" ) );
+        assertEquals( "becomeString", result.getString( "myObject" ) );
+    }
 
 }
 

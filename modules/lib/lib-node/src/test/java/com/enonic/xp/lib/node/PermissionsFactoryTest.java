@@ -4,16 +4,13 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.util.JsonHelper;
+import com.enonic.xp.core.internal.json.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -110,9 +107,7 @@ public class PermissionsFactoryTest
 
     private AccessControlList create( final String json )
     {
-        final JsonNode node = JsonHelper.from( json );
-
-        final PropertyTree properties = JsonToPropertyTreeTranslator.translate( node );
+        final PropertyTree properties = PropertyTree.fromMap( JsonHelper.toMap( JsonHelper.from( json ) ) );
 
         return new PermissionsFactory( properties.getRoot().getSets( "_permissions" ) ).create();
     }

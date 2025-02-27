@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.data.PropertyPath;
@@ -15,10 +14,10 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
-import com.enonic.xp.util.JsonHelper;
+import com.enonic.xp.core.internal.json.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -107,9 +106,7 @@ public class IndexConfigFactoryTest
 
     private IndexConfigDocument create( final String json )
     {
-        final JsonNode node = JsonHelper.from( json );
-
-        final PropertyTree properties = JsonToPropertyTreeTranslator.translate( node );
+        final PropertyTree properties = PropertyTree.fromMap( JsonHelper.toMap( JsonHelper.from( json ) ) );
 
         return new IndexConfigFactory( properties.getRoot() ).create();
     }
@@ -133,7 +130,7 @@ public class IndexConfigFactoryTest
                 "                        \"indexValueProcessors\": []\n" + "                    }\n" + "                }\n" +
                 "            ]\n" + "        }" );
 
-        assertTrue( indexConfigDoc instanceof PatternIndexConfigDocument );
+        assertInstanceOf( PatternIndexConfigDocument.class, indexConfigDoc );
         return (PatternIndexConfigDocument) indexConfigDoc;
     }
 

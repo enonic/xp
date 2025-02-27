@@ -10,7 +10,6 @@ import com.enonic.xp.server.BuildInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)

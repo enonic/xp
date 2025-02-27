@@ -88,7 +88,7 @@ public class IndexDataServiceImpl
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
-            ids( nodeIds.stream().map( NodeId::toString ).collect( Collectors.toList() ) ).
+            ids( nodeIds.stream().map( NodeId::toString ).map( RoutableId::new ).collect( Collectors.toList() ) ).
             build() );
     }
 

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -317,7 +318,7 @@ public final class PropertySet
     /**
      * WARNING: This method may be removed at any time. It is not recommended to use it in new code.
      * This method is only used to simulate the behavior of PropertySet Serialisation.
-     * See {@link com.enonic.xp.data.PropertyArrayJson#fromJson}
+     * See {@link com.enonic.xp.data.PropertyTreeJson#fromJson}
      * <br>
      * <br>
      * Ensures that the property with the given name has type of valueType given.
@@ -325,7 +326,7 @@ public final class PropertySet
      * If the property with values exists and is not a type of valueType given, an exception will be thrown.
      * Difference with setProperty is that this method does not set the property value.
      *
-     * @param name property name
+     * @param name      property name
      * @param valueType expected value type
      */
     public void ensureProperty( final String name, final ValueType valueType )
@@ -675,9 +676,7 @@ public final class PropertySet
 
     public Property[] addStrings( final String name, final Collection<String> values )
     {
-        return values.stream().
-            map( ( value ) -> addProperty( name, ValueFactory.newString( value ) ) ).
-            toArray( Property[]::new );
+        return values.stream().map( ( value ) -> addProperty( name, ValueFactory.newString( value ) ) ).toArray( Property[]::new );
     }
 
     // setting xml
@@ -1436,4 +1435,60 @@ public final class PropertySet
         return e.toString();
     }
 
+    static void translate( final Map<String, ?> json, final PropertySet into )
+    {
+        for ( Map.Entry<String, ?> field : json.entrySet() )
+        {
+            addValue( into, field.getKey(), field.getValue() );
+        }
+    }
+
+    private static void addValue( final PropertySet parent, final String key, final Object value )
+    {
+        if ( value instanceof Collection )
+        {
+            for ( final Object objNode : (Collection<?>) value )
+            {
+                addValue( parent, key, objNode );
+            }
+        }
+        else if ( value instanceof Map )
+        {
+            final PropertySet parentSet = parent.addSet( key );
+            for ( final Map.Entry<String, ?> next : ( (Map<String, ?>) value ).entrySet() )
+            {
+                addValue( parentSet, next.getKey(), next.getValue() );
+            }
+        }
+        else
+        {
+            parent.addProperty( key, resolveCoreValue( value ) );
+        }
+    }
+
+    private static Value resolveCoreValue( final Object value )
+    {
+        return switch ( value )
+        {
+            case String s -> ValueFactory.newString( s );
+            case Integer i -> ValueFactory.newLong( i.longValue() );
+            case Float v -> ValueFactory.newDouble( v.doubleValue() );
+            case Double v -> ValueFactory.newDouble( v );
+            case Boolean b -> ValueFactory.newBoolean( b );
+            case Long l -> ValueFactory.newLong( l );
+            case Byte b -> ValueFactory.newLong( b.longValue() );
+            case Short s -> ValueFactory.newLong( s.longValue() );
+            case Instant instant -> ValueFactory.newDateTime( instant );
+            case Date date -> ValueFactory.newDateTime( date.toInstant() );
+            case LocalTime localTime -> ValueFactory.newLocalTime( localTime );
+            case LocalDateTime localDateTime -> ValueFactory.newLocalDateTime( localDateTime );
+            case LocalDate localDate -> ValueFactory.newLocalDate( localDate );
+            case GeoPoint geoPoint -> ValueFactory.newGeoPoint( geoPoint );
+            case Reference reference -> ValueFactory.newReference( reference );
+            case BinaryReference binaryReference -> ValueFactory.newBinaryReference( binaryReference );
+            case Link link -> ValueFactory.newLink( link );
+            case null -> ValueFactory.newString( null );
+            default -> ValueFactory.newString( value.toString() );
+        };
+    }
 }

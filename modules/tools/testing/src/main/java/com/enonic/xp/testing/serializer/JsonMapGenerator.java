@@ -1,4 +1,4 @@
-package com.enonic.xp.script.serializer;
+package com.enonic.xp.testing.serializer;
 
 import java.util.function.Function;
 
@@ -14,7 +14,8 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-@Deprecated
+import com.enonic.xp.script.serializer.MapGeneratorBase;
+
 public final class JsonMapGenerator
     extends MapGeneratorBase
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -12,14 +15,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
-import com.enonic.xp.status.JsonStatusReporter;
+import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
 public abstract class ResourceStatusReporter<T extends ResourceDefinition>
-    extends JsonStatusReporter
+    implements StatusReporter
 {
     private final String name;
 
@@ -39,7 +43,19 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
     }
 
     @Override
-    public final JsonNode getReport()
+    public MediaType getMediaType()
+    {
+        return MediaType.JSON_UTF_8;
+    }
+
+    @Override
+    public void report( final OutputStream outputStream )
+        throws IOException
+    {
+        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    private JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
         for ( final ResourceDefinition<?> def : this.list.snapshot() )

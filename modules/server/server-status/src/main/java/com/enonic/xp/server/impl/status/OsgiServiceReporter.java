@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
@@ -21,16 +20,16 @@ public final class OsgiServiceReporter
 {
     private BundleContext context;
 
+    @Activate
+    public OsgiServiceReporter( final BundleContext context )
+    {
+        this.context = context;
+    }
+
     @Override
     public String getName()
     {
         return "osgi.service";
-    }
-
-    @Activate
-    public void activate( final BundleContext context )
-    {
-        this.context = context;
     }
 
     @Override

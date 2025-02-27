@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -14,13 +15,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.ServiceReference;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FilterStatusReporterTest
-    extends JsonStatusReporterTest
+class FilterStatusReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @Test
     public void testReport()
         throws Exception
@@ -39,9 +44,20 @@ public class FilterStatusReporterTest
         reporter.addFilter( filter2, serviceReference2 );
 
         assertEquals( "http.filter", reporter.getName() );
-        assertEquals( parseJson( readFromFile( "filter_status_report.json" ) ), reporter.getReport() );
+        assertJson( "filter_status_report.json", reporter );
     }
 
+    private void assertJson( final String fileName, final StatusReporter reporter )
+        throws Exception
+    {
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
+
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
+    }
 
     @WebFilter
     private static final class MyFilter

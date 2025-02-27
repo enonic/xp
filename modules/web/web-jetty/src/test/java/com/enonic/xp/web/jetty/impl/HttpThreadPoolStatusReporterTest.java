@@ -1,18 +1,24 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.io.ByteArrayOutputStream;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HttpThreadPoolStatusReporterTest
-    extends JsonStatusReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @Test
     public void getName()
         throws Exception
@@ -31,7 +37,19 @@ public class HttpThreadPoolStatusReporterTest
 
         when( server.getThreadPool() ).thenReturn( new ThreadPoolImpl( 8, 2, false ) );
         final HttpThreadPoolStatusReporter reporter = new HttpThreadPoolStatusReporter( server );
-        assertEquals( parseJson( readFromFile( "http_thread_pool_report.json" ) ), reporter.getReport() );
+        assertJson( "http_thread_pool_report.json" , reporter );
+    }
+
+    private void assertJson( final String fileName, final StatusReporter reporter )
+        throws Exception
+    {
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
+
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 
     private static class ThreadPoolImpl

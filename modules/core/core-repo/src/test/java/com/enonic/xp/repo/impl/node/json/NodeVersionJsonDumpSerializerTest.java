@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharSource;
 
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
@@ -18,7 +19,6 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;

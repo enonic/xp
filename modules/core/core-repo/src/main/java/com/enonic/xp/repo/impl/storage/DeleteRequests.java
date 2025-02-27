@@ -6,7 +6,7 @@ import com.enonic.xp.repo.impl.StorageSource;
 
 public class DeleteRequests
 {
-    private final List<String> ids;
+    private final List<RoutableId> ids;
 
     private final StorageSource settings;
 
@@ -27,7 +27,7 @@ public class DeleteRequests
         return new Builder();
     }
 
-    public List<String> getIds()
+    public List<RoutableId> getIds()
     {
         return ids;
     }
@@ -55,7 +55,7 @@ public class DeleteRequests
 
         private int timeout = 5;
 
-        private List<String> ids;
+        private List<RoutableId> ids;
 
         private Builder()
         {
@@ -84,7 +84,7 @@ public class DeleteRequests
             return new DeleteRequests( this );
         }
 
-        public Builder ids( final List<String> val )
+        public Builder ids( final List<RoutableId> val )
         {
             ids = val;
             return this;

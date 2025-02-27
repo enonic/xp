@@ -1,0 +1,7 @@
+[ {
+  "order" : 0,
+  "class" : "com.enonic.xp.web.impl.handler.TestWebHandler"
+}, {
+  "order" : 0,
+  "class" : "com.enonic.xp.web.impl.handler.TestWebHandler"
+} ]

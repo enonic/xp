@@ -13,7 +13,6 @@ public final class ComponentName
     {
         if ( value == null )
         {
-            System.out.println( "ComponentName.value is null" );
             throw new NullPointerException( "ContentName value cannot be null" );
         }
         this.value = value;

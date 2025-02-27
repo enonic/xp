@@ -8,10 +8,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.schema.mixin.MixinService;
 
 @Component(immediate = true)

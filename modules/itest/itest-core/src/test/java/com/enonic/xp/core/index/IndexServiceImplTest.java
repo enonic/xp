@@ -286,7 +286,7 @@ public class IndexServiceImplTest
     {
         final IndexSettings indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 
-        assertNull( indexSettings.getNode().get( "index.invalid_path" ) );
+        assertNull( indexSettings.getData().get( "index.invalid_path" ) );
     }
 
     @Test
@@ -300,7 +300,7 @@ public class IndexServiceImplTest
 
         final IndexSettings indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 
-        assertEquals( "\"2\"", indexSettings.getNode().get( "index.number_of_replicas" ).toString() );
+        assertEquals( "2", indexSettings.getData().get( "index.number_of_replicas" ) );
     }
 
 }

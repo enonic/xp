@@ -3,14 +3,12 @@ package com.enonic.xp.support;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,18 +37,6 @@ public class JsonTestHelper
         return stringToJson( resourceTestHelper.loadTestFile( fileName ) );
     }
 
-    public String jsonToString( final JsonNode value )
-    {
-        try
-        {
-            return OBJECT_WRITER.writeValueAsString( value );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
     public String objectToString( final Object value )
     {
         try
@@ -75,14 +61,23 @@ public class JsonTestHelper
         }
     }
 
-
     public JsonNode stringToJson( final String jsonString )
     {
         try
         {
-            final JsonFactory factory = MAPPER.getFactory();
-            final JsonParser parser = factory.createParser( jsonString );
-            return parser.readValueAsTree();
+            return MAPPER.readTree( jsonString );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    public JsonNode bytesToJson( final byte[] jsonBytes )
+    {
+        try
+        {
+            return MAPPER.readTree( jsonBytes );
         }
         catch ( IOException e )
         {
@@ -92,6 +87,6 @@ public class JsonTestHelper
 
     public void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
     {
-        assertEquals( jsonToString( expectedJson ), jsonToString( actualJson ) );
+        assertEquals( objectToString( expectedJson ), objectToString( actualJson ) );
     }
 }

@@ -1,12 +1,13 @@
 package com.enonic.xp.cluster.impl.report;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
@@ -23,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClusterManagerReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     private ClusterManager clusterManager;
 
     @BeforeEach
@@ -48,15 +51,15 @@ public class ClusterManagerReporterTest
     public void report()
         throws Exception
     {
+        final ClusterManagerReporter reporter = new ClusterManagerReporter(this.clusterManager );
 
-        final ClusterManagerReporter reporter = new ClusterManagerReporter();
-        reporter.setClusterManager( this.clusterManager );
-
-        final JsonNode result = reporter.getReport();
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
 
         assertEquals( "cluster.manager", reporter.getName() );
-
-        assertJson( "report.json", result );
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "report.json" ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 
     private Cluster createCluster( final ClusterId cluster1Id )
@@ -69,12 +72,5 @@ public class ClusterManagerReporterTest
                 add( ClusterNode.from( "node2" ) ).
                 build() ).
             build();
-    }
-
-    private void assertJson( final String fileName, final JsonNode json )
-    {
-        final JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
-        final JsonNode jsonFromFile = jsonTestHelper.loadTestJson( fileName );
-        jsonTestHelper.assertJsonEquals( jsonFromFile, json );
     }
 }

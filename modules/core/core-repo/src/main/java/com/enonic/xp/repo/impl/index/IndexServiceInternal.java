@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
@@ -23,7 +22,7 @@ public interface IndexServiceInternal
 
     boolean waitForYellowStatus( String... indexNames );
 
-    IndexSettings getIndexSettings( RepositoryId repositoryId, IndexType indexType );
+    Map<String, String> getIndexSettings( RepositoryId repositoryId, IndexType indexType );
 
     Map<String, Object> getIndexMapping( RepositoryId repositoryId, Branch branch, IndexType indexType );
 

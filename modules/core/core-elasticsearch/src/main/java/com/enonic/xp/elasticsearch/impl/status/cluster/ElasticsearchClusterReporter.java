@@ -1,20 +1,33 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class ElasticsearchClusterReporter
-    extends JsonStatusReporter
+    implements StatusReporter
 {
-    private ClusterStateProvider clusterStateProvider;
+    private final ClusterStateProvider clusterStateProvider;
 
-    private ClusterHealthProvider clusterHealthProvider;
+    private final ClusterHealthProvider clusterHealthProvider;
+
+    @Activate
+    public ElasticsearchClusterReporter( @Reference final ClusterStateProvider clusterStateProvider,
+                                         @Reference final ClusterHealthProvider clusterHealthProvider )
+    {
+        this.clusterStateProvider = clusterStateProvider;
+        this.clusterHealthProvider = clusterHealthProvider;
+    }
 
     @Override
     public String getName()
@@ -23,7 +36,19 @@ public final class ElasticsearchClusterReporter
     }
 
     @Override
-    public JsonNode getReport()
+    public MediaType getMediaType()
+    {
+        return MediaType.JSON_UTF_8;
+    }
+
+    @Override
+    public void report( final OutputStream outputStream )
+        throws IOException
+    {
+        outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    private JsonNode getReport()
     {
         final ElasticsearchClusterReport elasticsearchClusterReport = ElasticsearchClusterReport.create().
             clusterState( clusterStateProvider.getInfo() ).
@@ -31,19 +56,5 @@ public final class ElasticsearchClusterReporter
             build();
 
         return elasticsearchClusterReport.toJson();
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setClusterStateProvider( final ClusterStateProvider clusterStateProvider )
-    {
-        this.clusterStateProvider = clusterStateProvider;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setClusterHealthProvider( final ClusterHealthProvider clusterHealthProvider )
-    {
-        this.clusterHealthProvider = clusterHealthProvider;
     }
 }

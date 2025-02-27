@@ -2,12 +2,13 @@ package com.enonic.xp.lib.node.mapper;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.testing.helper.JsonAssert;
 
 public class PushNodesResultMapperTest
-    extends BaseMapperTest
 {
     @Test
     public void single_successful()
@@ -15,10 +16,7 @@ public class PushNodesResultMapperTest
     {
         final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/single_successful.json", jsonGenerator );
+        JsonAssert.assertMapper( getClass(), "nodeResult/single_successful.json", new PushNodesResultMapper( result ) );
     }
 
     @Test
@@ -29,10 +27,7 @@ public class PushNodesResultMapperTest
             addFailed( createEntry( "a" ), PushNodesResult.Reason.ACCESS_DENIED ).
             build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/single_failed.json", jsonGenerator );
+        JsonAssert.assertMapper( getClass(), "nodeResult/single_failed.json", new PushNodesResultMapper( result ) );
     }
 
     @Test
@@ -48,10 +43,14 @@ public class PushNodesResultMapperTest
             .addFailed( createEntry( "f" ), PushNodesResult.Reason.PARENT_NOT_FOUND )
             .build();
 
-        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
-        new PushNodesResultMapper( result ).serialize( jsonGenerator );
-
-        assertJson( "nodeResult/full.json", jsonGenerator );
+        JsonAssert.assertMapper( getClass(), "nodeResult/full.json", new PushNodesResultMapper( result ) );
     }
 
+    static NodeBranchEntry createEntry( final String a )
+    {
+        return NodeBranchEntry.create().
+            nodeId( NodeId.from( a ) ).
+            nodePath( new NodePath( "/" + a ) ).
+            build();
+    }
 }

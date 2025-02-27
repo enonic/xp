@@ -3,7 +3,7 @@ package com.enonic.xp.impl.server.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 
 public final class ModelToStringHelper
 {

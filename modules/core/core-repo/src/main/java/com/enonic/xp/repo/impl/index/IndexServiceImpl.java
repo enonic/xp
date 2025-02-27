@@ -25,9 +25,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.util.JsonHelper;
+import com.enonic.xp.repository.RepositorySettings;
 
 @Component
 public class IndexServiceImpl
@@ -132,7 +131,7 @@ public class IndexServiceImpl
     @Override
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
+        return IndexSettings.from( this.indexServiceInternal.getIndexSettings( repositoryId, indexType ) );
     }
 
     @Override
@@ -164,10 +163,14 @@ public class IndexServiceImpl
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
+        final RepositorySettings repositorySettings = repositoryEntryService.getRepositoryEntry( repositoryId ).getSettings();
+
         indexServiceInternal.deleteIndices( searchIndexName );
 
-        final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
-        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
+        final IndexSettings indexSettings = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( IndexType.SEARCH ),
+                                                                       repositorySettings.getIndexSettings( IndexType.SEARCH ) );
+        final IndexMapping indexMapping = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ),
+                                                                     repositorySettings.getIndexMappings( IndexType.SEARCH ) );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create()
                                               .indexName( searchIndexName )
@@ -176,42 +179,6 @@ public class IndexServiceImpl
                                               .build() );
 
         indexServiceInternal.waitForYellowStatus( searchIndexName );
-    }
-
-    private IndexSettings getSearchIndexSettings( final RepositoryId repositoryId )
-    {
-        final IndexSettings defaultIndexSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( repositoryId, IndexType.SEARCH );
-
-        final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
-        if ( repositoryEntry != null )
-        {
-            final IndexSettings indexSettings = repositoryEntry.getSettings().getIndexSettings( IndexType.SEARCH );
-
-            if ( indexSettings != null )
-            {
-                return new IndexSettings( JsonHelper.merge( defaultIndexSettings.getNode(), indexSettings.getNode() ) );
-            }
-        }
-
-        return defaultIndexSettings;
-    }
-
-    private IndexMapping getSearchIndexMapping( final RepositoryId repositoryId )
-    {
-        final IndexMapping defaultIndexMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, IndexType.SEARCH );
-
-        final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
-        if ( repositoryEntry != null )
-        {
-            final IndexMapping indexMapping = repositoryEntry.getSettings().getIndexMappings( IndexType.SEARCH );
-
-            if ( indexMapping != null )
-            {
-                return new IndexMapping( JsonHelper.merge( defaultIndexMapping.getNode(), indexMapping.getNode() ) );
-            }
-        }
-
-        return defaultIndexMapping;
     }
 
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )

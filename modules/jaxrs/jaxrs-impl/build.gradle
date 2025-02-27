@@ -4,6 +4,7 @@ dependencies {
     implementation ( libs.resteasy ) {
         exclude group: 'org.jboss.spec.javax.ws.rs'
     }
+    implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
     testFixturesImplementation ( libs.resteasy ) {
@@ -12,7 +13,9 @@ dependencies {
     testFixturesImplementation libs.jetty.client
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
+    testFixturesImplementation libs.jackson.jaxrs.jsonprovider
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
+    testFixturesImplementation project( ':core:core-internal' )
 
     testImplementation( testFixtures( project(":web:web-jetty") ) )
 }

@@ -10,11 +10,11 @@ import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.suggester.Suggestions;
 import com.enonic.xp.suggester.TermSuggestion;
 import com.enonic.xp.suggester.TermSuggestionEntry;
 import com.enonic.xp.suggester.TermSuggestionOption;
+import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

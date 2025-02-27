@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,11 +66,6 @@ public class ScriptEventListenerImplTest
 
         assertNotNull( this.event );
         assertTrue( this.event instanceof MapSerializable );
-
-        final MapSerializable serializable = (MapSerializable) this.event;
-        final JsonMapGenerator generator = new JsonMapGenerator();
-
-        serializable.serialize( generator );
     }
 
     @Test

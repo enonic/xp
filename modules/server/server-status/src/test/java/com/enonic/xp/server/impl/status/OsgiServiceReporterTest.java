@@ -28,9 +28,7 @@ public class OsgiServiceReporterTest
         final BundleContext context = Mockito.mock( BundleContext.class );
         Mockito.when( context.getAllServiceReferences( null, null ) ).thenReturn( new ServiceReference[]{ref1, ref2} );
 
-        final OsgiServiceReporter reporter = new OsgiServiceReporter();
-        reporter.activate( context );
-        return reporter;
+        return new OsgiServiceReporter( context );
     }
 
     private ServiceReference newServiceReference( final Bundle bundle, final long id, final String... ifaces )

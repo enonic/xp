@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.resteasy.core.ResteasyContext;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -20,13 +19,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.LocalScope;
-import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
-import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -59,11 +58,10 @@ public abstract class JaxRsResourceTestSupport
         throws Exception
     {
         this.multipartService = Mockito.mock( MultipartService.class );
-        final MultipartFormReader reader = new MultipartFormReader( multipartService );
 
         this.dispatcher = MockDispatcherFactory.createDispatcher();
-        this.dispatcher.getProviderFactory().register( JsonObjectProvider.class );
-        this.dispatcher.getProviderFactory().register( reader );
+        this.dispatcher.getProviderFactory().register( new JacksonJsonProvider( MAPPER ) );
+        this.dispatcher.getProviderFactory().register( new MultipartFormReader( multipartService ) );
         this.dispatcher.getRegistry().addSingletonResource( getResourceInstance() );
 
         mockCurrentContextHttpRequest();
@@ -145,37 +143,8 @@ public abstract class JaxRsResourceTestSupport
         }
     }
 
-    protected final void assertArrayEquals( Object[] a1, Object[] a2 )
-    {
-        Assertions.assertEquals( arrayToString( a1 ), arrayToString( a2 ) );
-    }
-
-
-    protected final String arrayToString( Object[] a )
-    {
-        final StringBuilder result = new StringBuilder( "[" );
-
-        for ( int i = 0; i < a.length; i++ )
-        {
-            result.append( i ).append( ": " ).append( a[i] );
-            if ( i < a.length - 1 )
-            {
-                result.append( ", " );
-            }
-        }
-
-        result.append( "]" );
-
-        return result.toString();
-    }
-
     protected final RestRequestBuilder request()
     {
         return new RestRequestBuilder( this.dispatcher ).path( this.basePath );
-    }
-
-    protected void setHttpRequest( final HttpServletRequest request )
-    {
-        ResteasyContext.getContextDataMap().put( HttpServletRequest.class, request );
     }
 }
