@@ -1,7 +1,7 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.Version;
@@ -20,18 +20,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class ElasticsearchClusterReporterTest
-    extends JsonStatusReporterTest
 {
-    private ElasticsearchClusterReporter clusterReporter;
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
+    private ElasticsearchClusterReporter reporter;
 
     private ClusterState clusterState;
 
@@ -77,14 +76,14 @@ public class ElasticsearchClusterReporterTest
         clusterStateProvider.setClusterAdminClient( clusterAdminClient );
         clusterStateProvider.setClusterService( clusterService );
 
-        clusterReporter = new ElasticsearchClusterReporter(clusterStateProvider, clusterHealthProvider);
+        reporter = new ElasticsearchClusterReporter( clusterStateProvider, clusterHealthProvider);
     }
 
     @Test
     public void assertName()
         throws Exception
     {
-        assertEquals( "cluster.elasticsearch", clusterReporter.getName() );
+        assertEquals( "cluster.elasticsearch", reporter.getName() );
     }
 
     @Test
@@ -103,7 +102,7 @@ public class ElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_with_one_node.json", clusterReporter.getReport() );
+        assertJson( "cluster_with_one_node.json" );
     }
 
     @Test
@@ -112,7 +111,7 @@ public class ElasticsearchClusterReporterTest
     {
         Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
 
-        assertJson( "cluster_state_exception.json", clusterReporter.getReport() );
+        assertJson( "cluster_state_exception.json" );
     }
 
     @Test
@@ -133,51 +132,19 @@ public class ElasticsearchClusterReporterTest
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
         Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
-        assertJson( "cluster_health_info_exception.json", clusterReporter.getReport() );
+
+        assertJson( "cluster_health_info_exception.json" );
     }
 
-    @Test
-    public void cluster_with_two_nodes()
+    private void assertJson( final String fileName )
         throws Exception
     {
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "nodeName1", "nodeId1", "hostName1", "hostAddress1", new LocalTransportAddress( "10.10.10.1" ),
-                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
 
-        final DiscoveryNode node2 =
-            new DiscoveryNode( "nodeName2", "nodeId2", "hostName2", "hostAddress2", new LocalTransportAddress( "10.10.10.2" ),
-                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
 
-        final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( node1 ).
-            put( node2 ).
-            localNodeId( node1.getId() ).
-            masterNodeId( node2.getId() ).
-            build();
-
-        Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
-
-        final JsonNode expectedReport = parseJson( readFromFile( "cluster_with_two_nodes.json" ) );
-        final JsonNode report = clusterReporter.getReport();
-        assertEquals( expectedReport.get( "name" ), report.get( "name" ) );
-        assertEquals( expectedReport.get( "localNode" ), report.get( "localNode" ) );
-        assertEquals( expectedReport.get( "state" ), report.get( "state" ) );
-
-        final ArrayNode expectedMembers = (ArrayNode) expectedReport.get( "members" );
-        final ArrayNode members = (ArrayNode) report.get( "members" );
-        assertIterableEquals( List.of( members.get( 0 ), members.get( 1 ) ), expectedMembers );
-    }
-
-
-    private void assertJson( final String fileName, final JsonNode actualNode )
-        throws Exception
-    {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
-
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualNode );
-
-        assertEquals( expectedStr, actualStr );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 }

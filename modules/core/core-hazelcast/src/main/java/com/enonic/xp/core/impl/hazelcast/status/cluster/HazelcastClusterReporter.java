@@ -48,7 +48,7 @@ public class HazelcastClusterReporter
         outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
 
         final Cluster cluster = hazelcastInstance.getCluster();

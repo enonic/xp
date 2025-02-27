@@ -48,7 +48,7 @@ public class HttpThreadPoolStatusReporter
         return "http.threadpool";
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "threads", this.threadPool.getThreads() );

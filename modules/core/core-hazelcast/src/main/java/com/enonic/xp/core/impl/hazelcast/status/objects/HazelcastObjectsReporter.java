@@ -60,7 +60,7 @@ public class HazelcastObjectsReporter
         outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         final Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects();
         final HazelcastObjectsReport.Builder builder = HazelcastObjectsReport.create();

@@ -48,7 +48,7 @@ public final class WebDispatcherReporter
         return "http.webHandler";
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
         for ( final WebHandler handler : this.webDispatcher )

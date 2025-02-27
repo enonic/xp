@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.hazelcast.status.cluster;
 
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 import com.hazelcast.cluster.ClusterState;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
@@ -18,7 +19,8 @@ import com.hazelcast.nio.Address;
 import com.hazelcast.version.MemberVersion;
 import com.hazelcast.version.Version;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.lenient;
@@ -27,8 +29,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HazelcastClusterReporterTest
-    extends JsonStatusReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @Mock
     HazelcastInstance hazelcastInstance;
 
@@ -70,17 +73,18 @@ class HazelcastClusterReporterTest
         when( cluster.getMembers() ).thenReturn(
             new LinkedHashSet<>( List.of( member1, member2 ) ) ); //hazelcast always returns master first
 
-        assertJson( "hazelcast_cluster.json", hazelcastClusterReporter.getReport() );
+        assertJson( "hazelcast_cluster.json", hazelcastClusterReporter );
     }
 
-    private void assertJson( final String fileName, final JsonNode actualJson )
+    private void assertJson( final String fileName, StatusReporter reporter )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
 
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualJson );
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
 
-        assertEquals( expectedStr, actualStr );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 }

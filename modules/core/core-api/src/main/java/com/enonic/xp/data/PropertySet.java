@@ -1477,6 +1477,7 @@ public final class PropertySet
             case Boolean b -> ValueFactory.newBoolean( b );
             case Long l -> ValueFactory.newLong( l );
             case Byte b -> ValueFactory.newLong( b.longValue() );
+            case Short s -> ValueFactory.newLong( s.longValue() );
             case Instant instant -> ValueFactory.newDateTime( instant );
             case Date date -> ValueFactory.newDateTime( date.toInstant() );
             case LocalTime localTime -> ValueFactory.newLocalTime( localTime );

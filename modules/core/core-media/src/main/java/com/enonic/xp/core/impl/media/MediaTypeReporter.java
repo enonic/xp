@@ -38,7 +38,7 @@ public final class MediaTypeReporter
         outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         for ( final Map.Entry<String, MediaType> type : MediaTypes.instance().asMap().entrySet() )

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.hazelcast.status.objects;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.IMap;
@@ -24,7 +25,8 @@ import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 import com.hazelcast.scheduledexecutor.ScheduledTaskStatistics;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.lenient;
@@ -33,8 +35,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HazelcastObjectsReporterTest
-    extends JsonStatusReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @Mock
     HazelcastInstance hazelcastInstance;
 
@@ -100,17 +103,18 @@ class HazelcastObjectsReporterTest
         when( hazelcastInstance.getDistributedObjects() ).thenReturn(
             List.of( map, queue, scheduledExecutorService, executorService, topic, lock ) );
 
-        assertJson( "hazelcast_objects.json", hazelcastClusterReporter.getReport() );
+        assertJson( "hazelcast_objects.json", hazelcastClusterReporter );
     }
 
-    private void assertJson( final String fileName, final JsonNode actualJson )
+    private void assertJson( final String fileName, StatusReporter reporter )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
 
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualJson );
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
 
-        assertEquals( expectedStr, actualStr );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 }

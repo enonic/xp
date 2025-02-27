@@ -45,7 +45,7 @@ public class IndexReporter
         return "index";
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         return indexReportProvider.getInfo().
             toJson();

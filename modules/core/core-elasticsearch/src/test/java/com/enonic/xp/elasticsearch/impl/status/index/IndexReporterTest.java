@@ -1,5 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import org.elasticsearch.action.ActionListener;
@@ -19,23 +20,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.JsonStatusReporterTest;
+import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexReporterTest
-    extends JsonStatusReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     private ClusterAdminClient clusterAdminClient;
 
-    private IndexReporter indexReporter;
+    private IndexReporter reporter;
 
     @BeforeEach
     public void setUp()
     {
-
         clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
 
         final AdminClient adminClient = Mockito.mock( AdminClient.class );
@@ -44,7 +45,7 @@ public class IndexReporterTest
         final IndexReportProvider indexReportProvider = new IndexReportProvider();
         indexReportProvider.setAdminClient( adminClient );
 
-        indexReporter = new IndexReporter( indexReportProvider );
+        reporter = new IndexReporter( indexReportProvider );
     }
 
     @Test
@@ -88,9 +89,8 @@ public class IndexReporterTest
         } ).when( clusterAdminClient ).
             execute( Mockito.any(), Mockito.any(), Mockito.any() );
 
-        assertEquals( "index", indexReporter.getName() );
-        final JsonNode report = indexReporter.getReport();
-        assertEquals( parseJson( readFromFile( "index_report.json" ) ), report );
+        assertEquals( "index", reporter.getName() );
+        assertJson( "index_report.json" );
     }
 
     @Test
@@ -100,8 +100,20 @@ public class IndexReporterTest
         Mockito.doAnswer( invocation -> null ).
             when( clusterAdminClient ).
             state( Mockito.any(), Mockito.any() );
-        assertEquals( "index", indexReporter.getName() );
-        final JsonNode report = indexReporter.getReport();
-        assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
+        assertEquals( "index", reporter.getName() );
+        assertJson( "index_report_failed.json" );
     }
+
+    private void assertJson( final String fileName )
+        throws Exception
+    {
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
+
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
+    }
+
 }

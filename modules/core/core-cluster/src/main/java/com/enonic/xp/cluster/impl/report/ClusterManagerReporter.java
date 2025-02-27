@@ -46,7 +46,7 @@ public class ClusterManagerReporter
         return "cluster.manager";
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         return ClusterManagerReport.create().
             clusters( clusterManager.getClusters() ).

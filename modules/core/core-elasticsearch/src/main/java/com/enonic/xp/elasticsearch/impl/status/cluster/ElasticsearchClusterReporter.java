@@ -48,7 +48,7 @@ public final class ElasticsearchClusterReporter
         outputStream.write( getReport().toString().getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    JsonNode getReport()
+    private JsonNode getReport()
     {
         final ElasticsearchClusterReport elasticsearchClusterReport = ElasticsearchClusterReport.create().
             clusterState( clusterStateProvider.getInfo() ).

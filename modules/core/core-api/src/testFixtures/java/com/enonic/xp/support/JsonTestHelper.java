@@ -37,18 +37,6 @@ public class JsonTestHelper
         return stringToJson( resourceTestHelper.loadTestFile( fileName ) );
     }
 
-    public String jsonToString( final JsonNode value )
-    {
-        try
-        {
-            return OBJECT_WRITER.writeValueAsString( value );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
     public String objectToString( final Object value )
     {
         try
@@ -85,8 +73,20 @@ public class JsonTestHelper
         }
     }
 
+    public JsonNode bytesToJson( final byte[] jsonBytes )
+    {
+        try
+        {
+            return MAPPER.readTree( jsonBytes );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
     public void assertJsonEquals( final JsonNode expectedJson, final JsonNode actualJson )
     {
-        assertEquals( jsonToString( expectedJson ), jsonToString( actualJson ) );
+        assertEquals( objectToString( expectedJson ), objectToString( actualJson ) );
     }
 }

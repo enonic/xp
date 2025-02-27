@@ -1,14 +1,23 @@
 package com.enonic.xp.web.impl.handler;
 
+import java.io.ByteArrayOutputStream;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.google.common.net.MediaType;
 
-public class WebDispatcherReporterTest
+import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.support.JsonTestHelper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class WebDispatcherReporterTest
 {
+    JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+
     @Test
-    public void testReport()
+    void report()
+        throws Exception
     {
         final WebDispatcherImpl dispatcher = new WebDispatcherImpl();
         dispatcher.add( new TestWebHandler() );
@@ -17,6 +26,18 @@ public class WebDispatcherReporterTest
         final WebDispatcherReporter reporter = new WebDispatcherReporter( dispatcher );
 
         assertEquals( "http.webHandler", reporter.getName() );
-        assertNotNull( reporter.getReport() );
+        assertJson( "report.json", reporter );
+    }
+
+    private void assertJson( final String fileName, final StatusReporter reporter )
+        throws Exception
+    {
+        assertEquals( MediaType.JSON_UTF_8, reporter.getMediaType() );
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        reporter.report( outputStream );
+
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( fileName ),
+                                         jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 }
