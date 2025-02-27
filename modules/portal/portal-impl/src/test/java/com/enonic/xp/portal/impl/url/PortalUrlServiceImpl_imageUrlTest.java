@@ -226,7 +226,6 @@ public class PortalUrlServiceImpl_imageUrlTest
         // Request
         // Webapp based request
         // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-        // Throw exception when finding nearest site
 
         portalRequest.setBaseUri( "/webapp/myapp" );
         portalRequest.setRawPath( "/webapp/myapp/path" );
@@ -442,7 +441,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     private Media mockMedia( String id, String name )
     {
         final Attachment attachment =
-            Attachment.create().name( "picture.png" ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
 
         final Media media = mock( Media.class );
 

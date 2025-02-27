@@ -24,7 +24,7 @@ final class AttachmentUrlBuilder
         final Attachment attachment = resolveAttachment( content );
         final String hash = resolveHash( content, attachment );
 
-        appendPart( url, content.getId().toString() + ":" + hash );
+        appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
         appendPart( url, attachment.getName() );
     }
 

@@ -1,14 +1,12 @@
 package com.enonic.xp.portal.impl.url;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.ContentFixtures;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -16,7 +14,6 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_legacyImageUrlTest
@@ -25,10 +22,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent() );
 
         final ImageUrlParams params = new ImageUrlParams().portalRequest( this.portalRequest ).scale( "max(300)" ).validate();
@@ -41,10 +34,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withoutContentPath()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent() );
 
         final ImageUrlParams params = new ImageUrlParams().portalRequest( this.portalRequest )
@@ -59,10 +48,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withFormat()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent() );
 
         final ImageUrlParams params =
@@ -76,10 +61,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_allOptions()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent() );
 
         final ImageUrlParams params = new ImageUrlParams().quality( 90 )
@@ -98,10 +79,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withId()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         createContent();
 
         final ImageUrlParams params =
@@ -114,10 +91,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withPath()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         createContent();
 
         final ImageUrlParams params =
@@ -130,10 +103,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withId_notFound()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         createContentNotFound();
 
         final ImageUrlParams params =
@@ -146,10 +115,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withNonMediaContent()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent( "non-media", false ) );
 
         final ImageUrlParams params =
@@ -161,10 +126,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_absolute()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent() );
 
         final ImageUrlParams params =
@@ -183,10 +144,6 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     @Test
     public void createUrl_withSpacesInName()
     {
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        this.service.activate( portalConfig );
-
         this.portalRequest.setContent( createContent( "name with spaces(and-others).png", true ) );
 
         final ImageUrlParams params =
@@ -214,15 +171,15 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
                 media = Media.create( media ).name( name ).build();
             }
             content = media;
-            Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) )
+            when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) )
                 .thenReturn( "binaryHash" );
         }
         else
         {
             content = ContentFixtures.newContent();
         }
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         return content;
     }
@@ -230,13 +187,13 @@ public class PortalUrlServiceImpl_legacyImageUrlTest
     private Content createContentNotFound()
     {
         final Content content = ContentFixtures.newContent();
-        Mockito.when( this.contentService.getByPath( content.getPath() ) )
+        when( this.contentService.getByPath( content.getPath() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentPath( content.getPath() )
                             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
                             .branch( ContentConstants.BRANCH_DRAFT )
                             .build() );
-        Mockito.when( this.contentService.getById( content.getId() ) )
+        when( this.contentService.getById( content.getId() ) )
             .thenThrow( ContentNotFoundException.create()
                             .contentId( content.getId() )
                             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
