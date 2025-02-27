@@ -13,7 +13,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
@@ -26,7 +25,7 @@ import com.enonic.xp.web.WebRequest;
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public abstract class AbstractAttachmentHandlerWorker
+public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 {
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
@@ -65,8 +64,8 @@ public abstract class AbstractAttachmentHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        final Media media = castToMedia( getContent( this.id ) );
-        final Attachment attachment = resolveAttachment( media, this.name );
+        final T content = cast( getContent( this.id ) );
+        final Attachment attachment = resolveAttachment( content, this.name );
         final BinaryReference binaryReference = attachment.getBinaryReference();
         final ByteSource binary = getBinary( this.id, binaryReference );
 
@@ -84,8 +83,8 @@ public abstract class AbstractAttachmentHandlerWorker
         }
         else
         {
-            contentType = shouldConvert( media, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
-            body = transform( media, binaryReference, binary, contentType );
+            contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
+            body = transform( content, binaryReference, binary, contentType );
         }
 
         final PortalResponse.Builder portalResponse = PortalResponse.create();
@@ -108,12 +107,12 @@ public abstract class AbstractAttachmentHandlerWorker
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
-            final boolean isPublic = media.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
+            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
                 ContentConstants.BRANCH_MASTER.equals( branch );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
-                this.fingerprint.equals( resolveHash( media, attachment, binaryReference ) ) )
+                this.fingerprint.equals( resolveHash( content, attachment, binaryReference ) ) )
             {
                 portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
             }
@@ -124,21 +123,21 @@ public abstract class AbstractAttachmentHandlerWorker
             portalResponse.header( HttpHeaders.CONTENT_DISPOSITION, contentDispositionAttachment( attachment.getName() ) );
         }
 
-        addTrace( media );
+        addTrace( content );
 
         writeResponseContent( portalResponse, contentType, body );
 
         return portalResponse.build();
     }
 
-    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
+    protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,
                                     final MediaType contentType )
         throws IOException
     {
         return binary;
     }
 
-    protected abstract String resolveHash( Media content, Attachment attachment, BinaryReference binaryReference );
+    protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );
 
     protected Attachment resolveAttachment( final Content content, final String name )
     {
@@ -163,16 +162,9 @@ public abstract class AbstractAttachmentHandlerWorker
         new RangeRequestHelper().handleRangeRequest( request, portalResponse, body, contentType );
     }
 
-    protected Media castToMedia( final Content content )
-    {
-        if ( content instanceof Media )
-        {
-            return (Media) content;
-        }
-        throw WebException.notFound( String.format( "Content with id [%s] is not a Media", content.getId() ) );
-    }
+    protected abstract T cast( Content content );
 
-    protected abstract void addTrace( Media media );
+    protected abstract void addTrace( T media );
 
     private Content getContent( final ContentId contentId )
     {

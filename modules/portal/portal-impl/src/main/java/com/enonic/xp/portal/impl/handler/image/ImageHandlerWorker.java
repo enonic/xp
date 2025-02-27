@@ -30,7 +30,7 @@ import com.enonic.xp.web.WebRequest;
 import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ImageHandlerWorker
-    extends AbstractAttachmentHandlerWorker
+    extends AbstractAttachmentHandlerWorker<Media>
 {
     private static final int DEFAULT_BACKGROUND = 0xFFFFFF;
 
@@ -87,6 +87,22 @@ public final class ImageHandlerWorker
     }
 
     @Override
+    protected Media cast( final Content content )
+    {
+        if ( !( content instanceof final Media media ) )
+        {
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
+        }
+
+        if ( !media.isImage() )
+        {
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
+        }
+
+        return media;
+    }
+
+    @Override
     protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
                                     final MediaType contentType )
         throws IOException
@@ -138,17 +154,6 @@ public final class ImageHandlerWorker
         {
             return MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) );
         }
-    }
-
-    @Override
-    protected Media castToMedia( final Content content )
-    {
-        final Media media = super.castToMedia( content );
-        if ( media.isImage() )
-        {
-            return media;
-        }
-        throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
     }
 
     @Override

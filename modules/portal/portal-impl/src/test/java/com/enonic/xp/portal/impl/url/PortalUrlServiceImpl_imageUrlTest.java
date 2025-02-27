@@ -438,10 +438,41 @@ public class PortalUrlServiceImpl_imageUrlTest
         assertEquals( "/api/media:image/myproject2/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
     }
 
-    private Media mockMedia( String id, String name )
+    @Test
+    public void createImageUrlUseCase12()
     {
-        final Attachment attachment =
-            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        // Offline
+        // Generate imageUrl for offline mode, for baseUrl `project` and `branch` are used from the Context
+        // `project` and `branch` are provided in the params and used for media path
+        // Nearest site is not found
+        // baseUrl not found on project level
+        // fallback to /api
+        // attachmentHash is null
+
+        final ImageUrlParams params = new ImageUrlParams().offline( true )
+            .type( UrlTypeConstants.SERVER_RELATIVE )
+            .projectName( "myproject2" )
+            .branch( "master" )
+            .id( "123456" )
+            .scale( "max(300)" );
+
+        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
+
+        final Media media = mockMedia( "123456", "mycontent.png", null );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> this.service.imageUrl( params ) );
+
+        assertEquals( "/api/media:image/myproject2/123456/max-300/mycontent.png", url );
+    }
+
+    private Media mockMedia( String id, String name, String attachmentHash )
+    {
+        final Attachment attachment = Attachment.create().name( name ).mimeType( "image/png" ).sha512( attachmentHash ).build();
 
         final Media media = mock( Media.class );
 
@@ -453,5 +484,10 @@ public class PortalUrlServiceImpl_imageUrlTest
         when( media.getMediaAttachment() ).thenReturn( attachment );
 
         return media;
+    }
+
+    private Media mockMedia( String id, String name )
+    {
+        return mockMedia( id, name, "ec25d6e4126c7064f82aaab8b34693fc" );
     }
 }
