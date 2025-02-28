@@ -39,8 +39,7 @@ public class ModifyContentCommand
     private ModifyContentResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
-
-        Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
+        final Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().editedContent( modifiedContent )
             .createAttachments( params.getCreateAttachments() )

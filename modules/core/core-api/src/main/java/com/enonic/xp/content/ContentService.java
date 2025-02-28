@@ -137,6 +137,7 @@ public interface ContentService
 
     boolean contentExists( ContentPath contentPath );
 
+    @Deprecated
     Content reprocess( ContentId contentId );
 
     Content getByIdAndVersionId( ContentId contentId, ContentVersionId versionId );

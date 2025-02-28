@@ -28,8 +28,7 @@ import com.enonic.xp.content.ContentModifier;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
+import com.enonic.xp.content.ModifiableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
@@ -41,10 +40,12 @@ import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -90,77 +91,102 @@ final class UpdateContentCommand
         }
     }
 
-    private static ContentModifier getContentModifier( final Content editedContent )
-    {
-        return edit -> {
-            edit.displayName.setValue( editedContent.getDisplayName() );
-            edit.data.setValue( editedContent.getData() );
-            edit.extraDatas.setValue( editedContent.getAllExtraData() );
-            edit.page.setValue( editedContent.getPage() );
-            edit.valid.setValue( editedContent.isValid() );
-            edit.thumbnail.setValue( editedContent.getThumbnail() );
-            edit.owner.setValue( editedContent.getOwner() );
-            edit.language.setValue( editedContent.getLanguage() );
-            edit.creator.setValue( editedContent.getCreator() );
-            edit.createdTime.setValue( editedContent.getCreatedTime() );
-            edit.publishInfo.setValue( editedContent.getPublishInfo() );
-            edit.processedReferences.setValue( editedContent.getProcessedReferences() );
-            edit.workflowInfo.setValue( editedContent.getWorkflowInfo() );
-            edit.manualOrderValue.setValue( editedContent.getManualOrderValue() );
-            edit.inherit.setValue( editedContent.getInherit() );
-            edit.variantOf.setValue( editedContent.getVariantOf() );
-            edit.modifier.setValue( editedContent.getModifier() );
-            edit.modifiedTime.setValue( editedContent.getModifiedTime() );
-            edit.attachments.setValue( editedContent.getAttachments() );
-            edit.validationErrors.setValue( editedContent.getValidationErrors() );
-        };
-    }
-
     private Content doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        Content editedContent = editContent( params.getEditor(), contentBeforeChange );
+        Content editedContent;
 
-        boolean commitBeforeChange = false;
-
-        if ( params.stopInherit() )
-        {
-            final Set<ContentInheritType> currentInherit = editedContent.getInherit();
-
-            if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
-            {
-                final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-
-                if ( currentInherit.contains( ContentInheritType.CONTENT ) )
-                {
-                    commitBeforeChange = true;
-                    newInherit.remove( ContentInheritType.CONTENT );
-                }
-
-                newInherit.remove( ContentInheritType.NAME );
-                editedContent = Content.create( editedContent ).setInherit( newInherit ).build();
-            }
-        }
-
+        editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( contentBeforeChange, editedContent );
 
-        final Attachments attachmentsBeforeChange = contentBeforeChange.getAttachments();
-        final Attachments attachments = mergeExistingAndUpdatedAttachments( attachmentsBeforeChange );
-
-        if ( contentBeforeChange.equals( editedContent ) && attachmentsBeforeChange.equals( attachments ) )
+        if ( contentBeforeChange.equals( editedContent ) && contentBeforeChange.getAttachments().equals( editedContent.getAttachments() ) )
         {
             return contentBeforeChange;
         }
 
-        validateBlockingChecks( editedContent );
+        editedContent = editContentMetadata( getContentModifier(), editedContent );
 
+        validate( editedContent );
+
+        if ( isStoppingInheritContent( editedContent.getInherit() ) )
+        {
+            nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
+                                NodeIds.from( NodeId.from( params.getContentId() ) ) );
+        }
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
+            .editedContent( editedContent )
+            .createAttachments( params.getCreateAttachments() )
+            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .contentTypeService( this.contentTypeService )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.translator.getContentDataSerializer() )
+            .siteService( this.siteService )
+            .build()
+            .produce();
+
+        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
+
+        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
+
+    }
+
+    private Content editContentMetadata( ContentModifier contentModifier, Content content )
+    {
+        final ModifiableContent modifiableContent = new ModifiableContent( content );
+
+        contentModifier.modify( modifiableContent );
+
+        return modifiableContent.build();
+    }
+
+    private ContentModifier getContentModifier()
+    {
+        return edit -> {
+            edit.inherit.setModifier( c -> stopInherit( c.inherit.originalValue ) );
+
+            edit.modifier.setValue( getCurrentUser().getKey() );
+            edit.modifiedTime.setValue( Instant.now() );
+
+            edit.attachments.setModifier( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
+            edit.validationErrors.setModifier( c -> validateContent( c.source ) );
+            edit.valid.setModifier( c -> !c.validationErrors.getProducedValue().hasErrors() );
+        };
+    }
+
+    private boolean isStoppingInheritContent( final Set<ContentInheritType> currentInherit )
+    {
+        return params.stopInherit() && currentInherit.contains( ContentInheritType.CONTENT );
+    }
+
+    private Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit )
+    {
+        if ( params.stopInherit() )
+        {
+            if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
+            {
+                final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+
+                newInherit.remove( ContentInheritType.CONTENT );
+                newInherit.remove( ContentInheritType.NAME );
+
+                return newInherit;
+            }
+        }
+        return currentInherit;
+    }
+
+    private ValidationErrors validateContent( final Content editedContent )
+    {
         final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
 
-        if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null )
+        if ( !params.isClearAttachments() && editedContent.getValidationErrors() != null )
         {
-            contentBeforeChange.getValidationErrors()
-                .stream()
+            editedContent.getValidationErrors().stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
                 .map( validationError -> (AttachmentValidationError) validationError )
                 .filter( validationError -> !params.getRemoveAttachments().contains( validationError.getAttachment() ) )
@@ -181,49 +207,7 @@ final class UpdateContentCommand
             .build()
             .execute();
 
-        if ( params.isRequireValid() )
-        {
-            validationErrors.stream().findFirst().ifPresent( validationError -> {
-                throw new ContentDataValidationException( validationError.getMessage() );
-            } );
-        }
-
-        if ( commitBeforeChange )
-        {
-            nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
-                                NodeIds.from( NodeId.from( params.getContentId() ) ) );
-        }
-
-        editedContent = Content.create( editedContent )
-            .valid( !validationErrors.hasErrors() )
-            .validationErrors( validationErrors )
-            .modifiedTime( Instant.now() )
-            .attachments( attachments )
-            .modifier( getCurrentUser().getKey() )
-            .build();
-
-        final ModifyContentResult result = ModifyContentCommand.create()
-            .params( ModifyContentParams.create().modifier( getContentModifier( editedContent ) )
-                         .contentId( params.getContentId() )
-                         .branches( Branches.from( ContextAccessor.current().getBranch() ) )
-                         .createAttachments( params.getCreateAttachments() )
-                         .build() )
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .contentProcessors( this.contentProcessors )
-            .contentValidators( this.contentValidators )
-            .pageDescriptorService( this.pageDescriptorService )
-            .partDescriptorService( this.partDescriptorService )
-            .layoutDescriptorService( this.layoutDescriptorService )
-            .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
-            .build()
-            .execute();
-
-        return result.getResult( ContextAccessor.current().getBranch() );
+        return validationErrors;
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
@@ -275,7 +259,6 @@ final class UpdateContentCommand
         }
     }
 
-
     private Content processContent( final Content originalContent, Content editedContent )
     {
         final ContentType contentType = getContentType( editedContent.getType() );
@@ -299,7 +282,6 @@ final class UpdateContentCommand
                 }
             }
         }
-
         return editedContent;
     }
 
@@ -313,8 +295,15 @@ final class UpdateContentCommand
         return editableContent.build();
     }
 
-    private void validateBlockingChecks( final Content editedContent )
+    private void validate( final Content editedContent )
     {
+        if ( params.isRequireValid() )
+        {
+            editedContent.getValidationErrors().stream().findFirst().ifPresent( validationError -> {
+                throw new ContentDataValidationException( validationError.getMessage() );
+            } );
+        }
+
         validatePropertyTree( editedContent );
         ContentPublishInfoPreconditions.check( editedContent.getPublishInfo() );
 
@@ -326,11 +315,10 @@ final class UpdateContentCommand
 
     private void validateImageMediaProperties( final Content editedContent )
     {
-        if ( !( editedContent instanceof Media ) )
+        if ( !( editedContent instanceof final Media mediaContent ) )
         {
             return;
         }
-        final Media mediaContent = (Media) editedContent;
 
         try
         {
@@ -402,7 +390,7 @@ final class UpdateContentCommand
             Preconditions.checkNotNull( params );
         }
 
-        public UpdateContentCommand build()
+        UpdateContentCommand build()
         {
             validate();
             return new UpdateContentCommand( this );
