@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -19,6 +20,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
+import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
@@ -29,6 +32,10 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 @Component(immediate = true, service = UrlGeneratorParamsAdapter.class)
 public class UrlGeneratorParamsAdapter
@@ -195,6 +202,59 @@ public class UrlGeneratorParamsAdapter
             builder.addQueryParams( params.getParams().asMap() );
         }
         return builder.build();
+    }
+
+    private String resolveApiApplication( final String application, final ApplicationKey applicationFromRequest )
+    {
+        String result = application;
+        if ( application == null && applicationFromRequest != null )
+        {
+            result = applicationFromRequest.toString();
+        }
+        if ( result == null )
+        {
+            throw new IllegalArgumentException( "Application must be provided" );
+        }
+        return result;
+    }
+
+    public ApiUrlGeneratorParams requestApiUrlParams( final ApiUrlParams params )
+    {
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        final String application = resolveApiApplication( params.getApplication(), portalRequest.getApplicationKey() );
+
+        final BaseUrlStrategy baseUrlStrategy = ApiRequestBaseUrlStrategy.create()
+            .setContentService( contentService )
+            .setPortalRequest( portalRequest )
+            .setUrlType( params.getType() )
+            .build();
+
+        return ApiUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setApplication( application )
+            .setApi( params.getApi() )
+            .setPath( () -> {
+                final StringBuilder path = new StringBuilder();
+
+                appendSubPath( path, params.getPath() );
+                appendPathSegments( path, params.getPathSegments() );
+
+                return path.toString();
+            } )
+            .addQueryParams( params.getQueryParams() )
+            .build();
+    }
+
+    public ApiUrlGeneratorParams offlineApiUrlParams( final ApiUrlParams params )
+    {
+        return ApiUrlGeneratorParams.create()
+            .setBaseUrlStrategy( () -> "/api" )
+            .setApplication( params.getApplication() )
+            .setApi( params.getApi() )
+            .setPath( params::getPath )
+            .addQueryParams( params.getQueryParams() )
+            .build();
     }
 
     private Media resolveMedia( final ProjectName projectName, final Branch branch, final String id, final String path )

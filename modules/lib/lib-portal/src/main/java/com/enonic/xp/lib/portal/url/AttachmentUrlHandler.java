@@ -1,9 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -104,30 +102,9 @@ public final class AttachmentUrlHandler
         this.download = Objects.requireNonNullElse( download, false );
     }
 
-    public void setQueryParams( final ScriptValue params )
+    public void addQueryParams( final ScriptValue params )
     {
-        if ( params == null )
-        {
-            return;
-        }
-
-        this.queryParams = HashMultimap.create();
-
-        for ( final Map.Entry<String, Object> param : params.getMap().entrySet() )
-        {
-            final Object value = param.getValue();
-            if ( value instanceof Iterable values )
-            {
-                for ( final Object v : values )
-                {
-                    queryParams.put( param.getKey(), v.toString() );
-                }
-            }
-            else
-            {
-                queryParams.put( param.getKey(), value.toString() );
-            }
-        }
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }
 
     public String createUrl()

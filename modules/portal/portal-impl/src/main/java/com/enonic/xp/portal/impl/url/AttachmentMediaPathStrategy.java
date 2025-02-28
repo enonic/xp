@@ -31,7 +31,6 @@ final class AttachmentMediaPathStrategy
 
         final StringBuilder url = new StringBuilder();
 
-        appendPart( url, "media:attachment" );
         appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
 
         final Attachment attachment = resolveAttachment( media );

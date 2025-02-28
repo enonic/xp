@@ -14,8 +14,6 @@ final class AttachmentMediaPathStrategyParams
 
     private final Branch branch;
 
-    private final boolean download;
-
     private final String name;
 
     private final String label;
@@ -25,7 +23,6 @@ final class AttachmentMediaPathStrategyParams
         this.mediaSupplier = builder.mediaSupplier;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
-        this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;
     }
@@ -43,11 +40,6 @@ final class AttachmentMediaPathStrategyParams
     public Branch getBranch()
     {
         return branch;
-    }
-
-    public boolean isDownload()
-    {
-        return download;
     }
 
     public String getName()
@@ -73,8 +65,6 @@ final class AttachmentMediaPathStrategyParams
 
         private Branch branch;
 
-        private boolean download;
-
         private String name;
 
         private String label;
@@ -94,12 +84,6 @@ final class AttachmentMediaPathStrategyParams
         public Builder setBranch( final Branch branch )
         {
             this.branch = branch;
-            return this;
-        }
-
-        public Builder setDownload( final boolean download )
-        {
-            this.download = download;
             return this;
         }
 
