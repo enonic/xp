@@ -60,7 +60,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setApplicationKey( applicationKey );
         this.portalRequest.setBaseUri( "/site" );
-        this.portalRequest.setRawPath( "/site" );
+        this.portalRequest.setRawPath( "/site/myproject/draft/context/path" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
         this.portalRequest.setRawRequest( req );
 

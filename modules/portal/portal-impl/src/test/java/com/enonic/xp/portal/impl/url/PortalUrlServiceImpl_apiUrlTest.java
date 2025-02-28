@@ -26,17 +26,15 @@ public class PortalUrlServiceImpl_apiUrlTest
         when( site.getPath() ).thenReturn( contentPath );
         when( contentService.findNearestSiteByPath( eq( contentPath ) ) ).thenReturn( site );
 
-        when( portalRequest.getRawRequest().getRequestURI() ).thenReturn( "/site/project/draft/sitePath" );
-
         final ApiUrlParams params = new ApiUrlParams();
-        params.portalRequest( this.portalRequest );
+
         params.application( "com.enonic.app.myapp" );
         params.api( "myapi" );
         params.param( "k1", "v1" );
         params.param( "k2", "v2" );
 
         final String url = this.service.apiUrl( params );
-        assertEquals( "/site/project/draft/sitePath/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", url );
+        assertEquals( "/site/myproject/draft/sitePath/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", url );
     }
 
     @Test
@@ -124,10 +122,10 @@ public class PortalUrlServiceImpl_apiUrlTest
     @Test
     void testCreateUrlWebapp()
     {
-        when( portalRequest.getRawRequest().getRequestURI() ).thenReturn( "/webapp/com.enonic.app.mywebapp" );
+        when( portalRequest.getBaseUri() ).thenReturn( "/webapp/com.enonic.app.mywebapp" );
+//        when( portalRequest.getRawRequest().getRequestURI() ).thenReturn( "/webapp/com.enonic.app.mywebapp" );
 
         final ApiUrlParams params = new ApiUrlParams();
-        params.portalRequest( this.portalRequest );
         params.application( "com.enonic.app.myapp" );
         params.api( "myapi" );
 

@@ -100,22 +100,13 @@ public final class ApiUrlGeneratorParams
             return this;
         }
 
-        public Builder putNotNullQueryParam( final String key, final String value )
-        {
-            if ( value != null )
-            {
-                this.queryParams.put( key, value );
-            }
-            return this;
-        }
-
-        public Builder putQueryParam( final String key, final String value )
+        public Builder addQueryParam( final String key, final String value )
         {
             this.queryParams.put( key, value );
             return this;
         }
 
-        public Builder putQueryParams( final Map<String, Collection<String>> queryParams )
+        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
         {
             queryParams.forEach( this.queryParams::putAll );
             return this;
