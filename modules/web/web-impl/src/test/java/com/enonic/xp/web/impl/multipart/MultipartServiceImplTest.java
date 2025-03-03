@@ -2,8 +2,8 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

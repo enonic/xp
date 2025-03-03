@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;

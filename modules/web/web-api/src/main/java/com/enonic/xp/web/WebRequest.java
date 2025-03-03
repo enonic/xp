@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProvider;

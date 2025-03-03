@@ -3,11 +3,11 @@ package com.enonic.xp.jaxrs.impl;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.ServletContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

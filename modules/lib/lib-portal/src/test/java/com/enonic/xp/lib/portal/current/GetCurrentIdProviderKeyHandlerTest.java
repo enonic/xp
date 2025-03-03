@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.portal.current;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.security.IdProvider;

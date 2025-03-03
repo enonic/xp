@@ -2,10 +2,10 @@ package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.ws.rs.WebApplicationException;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;

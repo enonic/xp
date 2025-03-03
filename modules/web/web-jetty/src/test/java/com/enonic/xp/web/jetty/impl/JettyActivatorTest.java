@@ -2,7 +2,7 @@ package com.enonic.xp.web.jetty.impl;
 
 import java.util.Collections;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.BeforeEach;

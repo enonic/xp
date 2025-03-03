@@ -7,14 +7,14 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.StreamSupport;
 
-import javax.ws.rs.core.MediaType;
-
 import org.eclipse.jetty.client.util.BytesContentProvider;
 import org.eclipse.jetty.client.util.MultiPartContentProvider;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.spi.UnhandledException;
+
+import jakarta.ws.rs.core.MediaType;
 
 public final class RestRequestBuilder
 {

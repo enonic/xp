@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

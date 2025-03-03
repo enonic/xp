@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.websocket;
 
 import java.util.List;
 
-import javax.websocket.Endpoint;
+import jakarta.websocket.Endpoint;
 
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;

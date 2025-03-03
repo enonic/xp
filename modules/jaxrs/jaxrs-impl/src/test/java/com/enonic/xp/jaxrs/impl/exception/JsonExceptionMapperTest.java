@@ -2,13 +2,13 @@ package com.enonic.xp.jaxrs.impl.exception;
 
 import java.io.IOException;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
 import com.enonic.xp.content.PushContentException;
 import com.enonic.xp.resource.ResourceKey;

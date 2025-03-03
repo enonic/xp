@@ -3,14 +3,14 @@ package com.enonic.xp.portal.impl.filter;
 import java.net.URL;
 import java.util.Hashtable;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

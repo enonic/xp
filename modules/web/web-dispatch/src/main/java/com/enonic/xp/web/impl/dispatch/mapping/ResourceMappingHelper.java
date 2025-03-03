@@ -2,11 +2,11 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.dispatch.FilterMapping;

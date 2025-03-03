@@ -2,16 +2,16 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.net.URI;
 
-import javax.servlet.ServletContext;
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.DeploymentException;
-import javax.websocket.Endpoint;
-import javax.websocket.server.ServerEndpointConfig;
-
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.ServletContext;
+import jakarta.websocket.ClientEndpointConfig;
+import jakarta.websocket.DeploymentException;
+import jakarta.websocket.Endpoint;
+import jakarta.websocket.server.ServerEndpointConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

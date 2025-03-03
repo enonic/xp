@@ -6,11 +6,11 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import com.enonic.xp.web.dispatch.ResourceMapping;
 

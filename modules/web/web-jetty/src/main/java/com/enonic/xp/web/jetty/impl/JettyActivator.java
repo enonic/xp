@@ -3,7 +3,7 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Dictionary;
 import java.util.List;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;

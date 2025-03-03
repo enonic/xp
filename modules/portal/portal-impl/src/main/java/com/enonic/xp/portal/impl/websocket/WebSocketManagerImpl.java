@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.websocket;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.web.websocket.WebSocketContext;

@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;

@@ -1,9 +1,9 @@
 package com.enonic.xp.impl.server.rest;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;

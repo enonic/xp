@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +14,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
+
+import jakarta.ws.rs.GET;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;

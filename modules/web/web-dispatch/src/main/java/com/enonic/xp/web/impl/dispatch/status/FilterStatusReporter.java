@@ -1,13 +1,13 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
 
-import javax.servlet.Filter;
-
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import jakarta.servlet.Filter;
 
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.FilterMapping;

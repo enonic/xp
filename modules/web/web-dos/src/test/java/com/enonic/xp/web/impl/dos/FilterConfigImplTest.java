@@ -3,8 +3,8 @@ package com.enonic.xp.web.impl.dos;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

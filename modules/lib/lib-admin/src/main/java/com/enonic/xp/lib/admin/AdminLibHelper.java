@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.portal.PortalRequest;

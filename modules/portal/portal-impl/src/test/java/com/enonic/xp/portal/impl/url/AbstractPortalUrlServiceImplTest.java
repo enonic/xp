@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

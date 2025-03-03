@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpMethod;

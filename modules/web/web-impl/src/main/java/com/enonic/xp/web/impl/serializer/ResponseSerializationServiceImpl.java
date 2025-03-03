@@ -2,7 +2,7 @@ package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 

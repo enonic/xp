@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;

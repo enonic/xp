@@ -3,10 +3,10 @@ package com.enonic.xp.impl.server.rest;
 import java.time.Duration;
 import java.time.Instant;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;

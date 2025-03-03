@@ -2,10 +2,10 @@ package com.enonic.xp.web.impl.dispatch.status;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.servlet.Servlet;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

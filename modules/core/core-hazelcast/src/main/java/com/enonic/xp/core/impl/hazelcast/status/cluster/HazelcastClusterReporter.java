@@ -11,9 +11,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
-import com.hazelcast.core.Cluster;
+import com.hazelcast.cluster.Cluster;
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
 
 import com.enonic.xp.status.StatusReporter;
 
@@ -65,7 +65,7 @@ public class HazelcastClusterReporter
                 address( member.getAddress().getHost() ).
                 port( member.getAddress().getPort() ).
                 version( member.getVersion().toString() ).
-                uuid( member.getUuid() ).liteMember( member.isLiteMember() ).build() );
+                uuid( member.getUuid().toString() ).liteMember( member.isLiteMember() ).build() );
         }
 
         return builder.build().toJson();

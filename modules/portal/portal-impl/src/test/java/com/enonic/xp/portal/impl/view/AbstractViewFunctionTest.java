@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.view;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;

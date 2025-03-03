@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.servlet.http.Cookie;
-
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;

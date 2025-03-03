@@ -1,7 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 

@@ -5,12 +5,12 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.DeploymentException;
-import javax.websocket.Endpoint;
-import javax.websocket.Extension;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpointConfig;
+import jakarta.websocket.ClientEndpointConfig;
+import jakarta.websocket.DeploymentException;
+import jakarta.websocket.Endpoint;
+import jakarta.websocket.Extension;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.ServerEndpointConfig;
 
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;

@@ -1,6 +1,6 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import javax.servlet.MultipartConfigElement;
+import jakarta.servlet.MultipartConfigElement;
 
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.jupiter.api.Test;

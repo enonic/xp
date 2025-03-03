@@ -4,8 +4,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +12,8 @@ import org.osgi.framework.BundleContext;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

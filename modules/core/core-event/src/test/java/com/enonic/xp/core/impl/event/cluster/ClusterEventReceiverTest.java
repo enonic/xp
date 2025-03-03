@@ -7,10 +7,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.Message;
+import com.hazelcast.topic.ITopic;
+import com.hazelcast.topic.Message;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;

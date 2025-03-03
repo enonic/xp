@@ -2,16 +2,16 @@ package com.enonic.xp.web.jetty.impl;
 
 import java.util.EnumSet;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.http.HttpServlet;
-
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServlet;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 

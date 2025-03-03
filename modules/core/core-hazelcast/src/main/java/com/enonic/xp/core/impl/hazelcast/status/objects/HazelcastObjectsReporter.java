@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Activate;
@@ -14,16 +15,16 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
+import com.hazelcast.collection.IQueue;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.DistributedObjectUtil;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
-import com.hazelcast.core.ITopic;
 import com.hazelcast.cp.lock.FencedLock;
+import com.hazelcast.map.IMap;
 import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
+import com.hazelcast.topic.ITopic;
 
 import com.enonic.xp.status.StatusReporter;
 
@@ -94,7 +95,7 @@ public class HazelcastObjectsReporter
                         if ( handler != null ) // null handler means that task is already disposed
                         {
                             final String taskName = handler.getTaskName();
-                            final String memberUuid = key.getUuid();
+                            final UUID memberUuid = key.getUuid();
                             long totalRuns = -1;
                             long delaySeconds = -1;
                             Boolean isDone = null;
@@ -111,7 +112,7 @@ public class HazelcastObjectsReporter
                                 LOG.debug( "Cannot get info for task {}", taskName );
                             }
 
-                            sbuilder.task( new ScheduledTaskReport( memberUuid, taskName, totalRuns, delaySeconds, isDone, isCancelled ) );
+                            sbuilder.task( new ScheduledTaskReport( memberUuid.toString(), taskName, totalRuns, delaySeconds, isDone, isCancelled ) );
                         }
                     } );
                 } );

@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import javax.servlet.http.Cookie;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.websocket.WebSocketConfig;

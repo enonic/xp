@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.Filter;
-import javax.servlet.Servlet;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.Servlet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 

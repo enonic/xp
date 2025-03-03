@@ -3,8 +3,8 @@ package com.enonic.xp.web.jetty.impl.configurator;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.servlet.SessionCookieConfig;
-import javax.servlet.SessionTrackingMode;
+import jakarta.servlet.SessionCookieConfig;
+import jakarta.servlet.SessionTrackingMode;
 
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.session.SessionHandler;

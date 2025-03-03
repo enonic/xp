@@ -73,7 +73,6 @@ addBundle( libs.metrics.annotation, 8)
 
 addBundle( libs.metrics.jetty9, 8 )
 addBundle( libs.hazelcast.hazelcast, 8 )
-addBundle( libs.hazelcast.client, 8 )
 addBundle( libs.hazelcast.kubernetes, 8 )
 addBundle( libs.jparsec, 8 )
 
