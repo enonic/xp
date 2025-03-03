@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.event.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.Session;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.websocket.Session;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.portal.websocket.WebSocketManager;

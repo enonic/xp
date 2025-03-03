@@ -3,7 +3,7 @@ package com.enonic.xp.impl.shared;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 
 import com.enonic.xp.shared.SharedMap;
 

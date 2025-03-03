@@ -51,7 +51,7 @@ public final class WebDispatcherReporter
     private JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        for ( final WebHandler handler : this.webDispatcher )
+        for ( final WebHandler handler : this.webDispatcher.list() )
         {
             final ObjectNode node = json.addObject();
             node.put( "order", handler.getOrder() );

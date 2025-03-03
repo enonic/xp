@@ -2,8 +2,8 @@ package com.enonic.xp.web.websocket;
 
 import java.util.Map;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.Session;
 
 public final class WebSocketEvent
 {

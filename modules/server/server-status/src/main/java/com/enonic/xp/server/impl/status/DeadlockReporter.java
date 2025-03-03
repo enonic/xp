@@ -2,12 +2,13 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.codahale.metrics.jvm.ThreadDeadlockDetector;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
@@ -32,8 +33,29 @@ public final class DeadlockReporter
     public void report( final OutputStream outputStream )
         throws IOException
     {
-        final Set<String> deadlocks = new ThreadDeadlockDetector().getDeadlockedThreads();
-        final String text = deadlocks.isEmpty() ? "No deadlocks detected!" : String.join( "\n\n", deadlocks );
-        outputStream.write( text.getBytes( StandardCharsets.UTF_8 ) );
+        getDeadlockedThreads(outputStream);
+    }
+
+    public static void getDeadlockedThreads( final OutputStream outputStream )
+        throws IOException
+    {
+        final ThreadMXBean threads = ManagementFactory.getThreadMXBean();
+
+        final long[] ids = threads.findDeadlockedThreads();
+        if ( ids == null )
+        {
+            outputStream.write( "No deadlocks detected!".getBytes( StandardCharsets.UTF_8 ) );
+            return;
+        }
+
+        for ( ThreadInfo info : threads.getThreadInfo( ids, 100 ) )
+        {
+            outputStream.write( String.format( "%s locked on %s (owned by %s):\n", info.getThreadName(), info.getLockName(), info.getLockOwnerName()).getBytes( StandardCharsets.UTF_8 ) );
+            for ( StackTraceElement element : info.getStackTrace() )
+            {
+                outputStream.write( ( "\t at " + element + "\n" ).getBytes( StandardCharsets.UTF_8 ) );
+            }
+            outputStream.write( "\n\n".getBytes( StandardCharsets.UTF_8 ) );
+        }
     }
 }

@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -21,6 +22,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -43,6 +45,8 @@ public abstract class AbstractPortalUrlServiceImplTest
     protected StyleDescriptorService styleDescriptorService;
 
     protected RedirectChecksumService redirectChecksumService;
+
+    protected VirtualHost virtualHost;
 
     HttpServletRequest req;
 
@@ -86,6 +90,11 @@ public abstract class AbstractPortalUrlServiceImplTest
         when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
 
         PortalRequestAccessor.set( this.portalRequest );
+
+        this.virtualHost = Mockito.mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
 
         this.service.activate( portalConfig );
     }

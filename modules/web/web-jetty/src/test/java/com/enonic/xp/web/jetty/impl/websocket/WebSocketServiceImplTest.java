@@ -2,6 +2,7 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.net.URI;
 import java.net.http.WebSocket;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Disabled;
@@ -27,23 +28,15 @@ public class WebSocketServiceImplTest
     {
         this.endpoint = new TestEndpoint();
 
-        this.server.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR} );
+        this.server.setVirtualHosts( List.of(DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR) );
 
-        this.service = new WebSocketServiceImpl( config, this.server.getHandler().getServletContext() );
-        this.service.activate();
+        this.service = new WebSocketServiceImpl();
 
         TestWebSocketServlet servlet = new TestWebSocketServlet();
         servlet.service = this.service;
         servlet.endpoint = this.endpoint;
 
         addServlet( servlet, "/ws" );
-    }
-
-    @Override
-    protected void destroy()
-        throws Exception
-    {
-        this.service.deactivate();
     }
 
     private WebSocket newWebSocketRequest( final WebSocket.Listener listener )

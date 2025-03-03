@@ -3,11 +3,11 @@ package com.enonic.xp.impl.server.rest;
 import java.time.Instant;
 import java.util.Arrays;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.node.DeleteSnapshotParams;

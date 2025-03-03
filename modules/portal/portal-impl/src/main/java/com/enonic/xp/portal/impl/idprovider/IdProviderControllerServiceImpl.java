@@ -4,10 +4,10 @@ package com.enonic.xp.portal.impl.idprovider;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
@@ -48,6 +48,7 @@ class PortalRequestAdapter
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
         result.setContentType( req.getContentType() );
+        result.getLocales().addAll( Collections.list( req.getLocales() ) );
 
         setParameters( req, result );
         setHeaders( req, result );

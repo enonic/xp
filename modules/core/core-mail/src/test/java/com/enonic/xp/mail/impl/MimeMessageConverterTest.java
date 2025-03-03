@@ -7,17 +7,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMultipart;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharStreams;
+
+import jakarta.mail.BodyPart;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMultipart;
 
 import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.SendMailParams;

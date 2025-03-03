@@ -3,12 +3,12 @@ package com.enonic.xp.impl.server.rest;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
+
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;

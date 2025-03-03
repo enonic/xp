@@ -1,13 +1,16 @@
 package com.enonic.xp.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProvider;
@@ -23,6 +26,8 @@ public class WebRequest
     private final Map<String, String> headers;
 
     private final Map<String, String> cookies;
+
+    private final List<Locale> locales;
 
     private String scheme;
 
@@ -55,6 +60,7 @@ public class WebRequest
         this.params = LinkedListMultimap.create();
         this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.cookies = new HashMap<>();
+        this.locales = new ArrayList<>();
     }
 
     public WebRequest( final WebRequest webRequest )
@@ -76,6 +82,7 @@ public class WebRequest
         this.rawRequest = webRequest.rawRequest;
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
+        this.locales = webRequest.locales;
     }
 
     public HttpMethod getMethod()
@@ -176,6 +183,11 @@ public class WebRequest
     public void setIdProvider( final IdProvider idProvider )
     {
         this.idProvider = idProvider;
+    }
+
+    public List<Locale> getLocales()
+    {
+        return locales;
     }
 
     public Map<String, String> getCookies()

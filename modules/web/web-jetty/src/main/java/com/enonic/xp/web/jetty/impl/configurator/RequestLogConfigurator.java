@@ -1,8 +1,9 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import java.io.File;
+import java.util.Objects;
 
-import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.CustomRequestLog;
+import org.eclipse.jetty.server.RequestLogWriter;
 import org.eclipse.jetty.server.Server;
 
 import com.enonic.xp.home.HomeDir;
@@ -18,24 +19,20 @@ public final class RequestLogConfigurator
             return;
         }
 
-        final NCSARequestLog log = new NCSARequestLog();
-        log.setAppend( this.config.log_append() );
-        log.setExtended( this.config.log_extended() );
-        log.setLogTimeZone( this.config.log_timeZone() );
-        log.setRetainDays( this.config.log_retainDays() );
+        final String fileName = Objects.requireNonNullElseGet( this.config.log_file(), () -> HomeDir.get()
+            .toPath()
+            .resolve( "logs" )
+            .resolve( "jetty-yyyy_mm_dd.request.log" )
+            .toAbsolutePath()
+            .toString() );
 
-        final String fileName = this.config.log_file();
-        if ( fileName != null )
-        {
-            log.setFilename( fileName );
-        }
-        else
-        {
-            final String pattern = "jetty-yyyy_mm_dd.request.log";
-            final File logDir = new File( HomeDir.get().toFile(), "logs" );
-            log.setFilename( new File( logDir, pattern ).getAbsolutePath() );
-        }
+        final RequestLogWriter requestLogWriter = new RequestLogWriter( fileName );
+        requestLogWriter.setAppend( this.config.log_append() );
+        requestLogWriter.setTimeZone( this.config.log_timeZone() );
+        requestLogWriter.setRetainDays( this.config.log_retainDays() );
 
-        this.object.setRequestLog( log );
+        final String format = this.config.log_extended() ? CustomRequestLog.EXTENDED_NCSA_FORMAT : CustomRequestLog.NCSA_FORMAT;
+
+        this.object.setRequestLog( new CustomRequestLog( requestLogWriter, format ) );
     }
 }

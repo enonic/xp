@@ -1,6 +1,6 @@
 package com.enonic.xp.portal;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.annotation.PublicApi;
 

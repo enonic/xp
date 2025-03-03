@@ -1,7 +1,7 @@
 package com.enonic.xp.mail;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 
 /**
  * Validate that the email address conforms to the syntax rules of RFC 822.

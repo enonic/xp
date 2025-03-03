@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

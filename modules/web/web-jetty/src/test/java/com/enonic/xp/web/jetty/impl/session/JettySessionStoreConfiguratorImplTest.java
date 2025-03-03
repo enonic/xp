@@ -1,9 +1,9 @@
 package com.enonic.xp.web.jetty.impl.session;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.SessionIdManager;
-import org.eclipse.jetty.server.session.SessionCacheFactory;
-import org.eclipse.jetty.server.session.SessionDataStoreFactory;
+import org.eclipse.jetty.session.SessionCacheFactory;
+import org.eclipse.jetty.session.SessionDataStoreFactory;
+import org.eclipse.jetty.session.SessionIdManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 
@@ -38,7 +39,7 @@ class JettySessionStoreConfiguratorImplTest
         verify( server ).addBean( same( sessionCacheFactory ) );
 
         final ArgumentCaptor<SessionIdManager> captor = ArgumentCaptor.forClass( SessionIdManager.class );
-        verify( server ).setSessionIdManager( captor.capture() );
+        verify( server ).addBean( captor.capture(), eq( true ) );
 
         assertEquals( "", captor.getValue().getWorkerName() );
     }

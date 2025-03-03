@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -36,6 +36,11 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     {
         this.context = Objects.requireNonNull( context );
         this.list.snapshot().forEach( r -> r.init( this.context ) );
+    }
+
+    public List<T> list()
+    {
+        return this.list.snapshot();
     }
 
     @Override

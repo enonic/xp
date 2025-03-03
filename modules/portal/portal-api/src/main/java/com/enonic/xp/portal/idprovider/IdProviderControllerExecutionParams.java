@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.idprovider;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.base.Preconditions;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.IdProviderKey;

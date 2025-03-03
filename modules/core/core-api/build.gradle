@@ -1,10 +1,9 @@
 dependencies {
-    api ( libs.guava.guava ) {
+    api( libs.guava.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
     api libs.osgi.core
     api libs.jakarta.mail
-    api libs.metrics.core
 
     // The following libraries are not really API. Remove in future versions of XP.
     api libs.jackson.databind
@@ -24,6 +23,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Api',
-         'Export-Package': '!com.enonic.xp.core.internal.*,com.enonic.xp.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Api',
+             'Export-Package': '!com.enonic.xp.core.internal.*,com.enonic.xp.*' )
+    }
 }

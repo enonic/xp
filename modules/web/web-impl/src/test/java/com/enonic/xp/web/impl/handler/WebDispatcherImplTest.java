@@ -1,8 +1,6 @@
 package com.enonic.xp.web.impl.handler;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +23,7 @@ class WebDispatcherImplTest
         TestWebHandler webHandler1 = new TestWebHandler( 1 );
         dispatcher.add( webHandler1 );
 
-        List<WebHandler> list = StreamSupport.stream( dispatcher.spliterator(), false ).collect( Collectors.toList() );
+        List<WebHandler> list = dispatcher.list();
         assertSame( webHandlerMin, list.get( 0 ) );
         assertSame( webHandler0, list.get( 1 ) );
         assertSame( webHandler1, list.get( 2 ) );
@@ -41,7 +39,7 @@ class WebDispatcherImplTest
         TestWebHandler webHandlerAlso0 = new TestWebHandler( 0 );
         dispatcher.add( webHandlerAlso0 );
 
-        List<WebHandler> list = StreamSupport.stream( dispatcher.spliterator(), false ).collect( Collectors.toList() );
+        List<WebHandler> list = dispatcher.list();
         assertSame( webHandler0, list.get( 0 ) );
         assertSame( webHandlerAlso0, list.get( 1 ) );
     }

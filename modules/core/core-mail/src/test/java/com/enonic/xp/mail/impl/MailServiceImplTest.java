@@ -2,13 +2,13 @@ package com.enonic.xp.mail.impl;
 
 import java.util.List;
 
-import javax.mail.Message;
-import javax.mail.internet.MimeMessage;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import jakarta.mail.Message;
+import jakarta.mail.internet.MimeMessage;
 
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailMessage;

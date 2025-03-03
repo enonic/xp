@@ -2,7 +2,7 @@ package com.enonic.xp.jaxrs.impl;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 public final class MockRestResponse
 {

@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.app;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;

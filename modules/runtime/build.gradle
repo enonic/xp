@@ -30,9 +30,6 @@ addBundle( libs.jakarta.mail, 4 )
 addBundle( libs.jakarta.annotation, 4 )
 addBundle( libs.jakarta.validation, 4 )
 
-addBundle( libs.jakarta.xml.bind, 4 )
-addBundle( libs.jakarta.jaxb.osgi, 4 )
-
 // Core bundles
 addBundle( libs.osgi.service.component, 5 )
 addBundle( libs.osgi.service.cm, 5 )
@@ -55,6 +52,7 @@ addBundle( libs.bcprov.jdk18on, 6 )
 // Library dependencies
 addBundle( libs.guava.guava, 8 )
 addBundle( libs.guava.failureaccess, 8 )
+addBundle( "com.google.code.findbugs:jsr305:3.0.2", 8 )
 addBundle( libs.commons.lang3, 8 )
 addBundle( libs.commons.io, 8 )
 addBundle( libs.commons.compress, 8 )
@@ -62,19 +60,18 @@ addBundle( libs.jackson.core, 8 )
 addBundle( libs.jackson.annotations, 8 )
 addBundle( libs.jackson.databind, 8 )
 addBundle( libs.jackson.datatype.jsr310, 8 )
-addBundle( libs.jackson.jaxrs.base, 8 )
-addBundle( libs.jackson.jaxrs.jsonprovider, 8 )
-addBundle( libs.tika.core, 8 )
-addBundle( libs.tika.bundlestandard, 8 )
-addBundle( libs.metrics.core, 8 )
-addBundle( libs.metrics.json, 8 )
-addBundle( libs.metrics.jvm, 8 )
-addBundle( libs.metrics.annotation, 8)
+addBundle( libs.jackson.jakarta.base, 8 )
+addBundle( libs.jackson.jakarta.jsonprovider, 8 )
+repackTikaBundle( libs.tika.core, 8 )
+repackTikaBundle( libs.tika.bundlestandard, 8 )
 
-addBundle( libs.metrics.jetty9, 8 )
+// addBundle( libs.metrics.core, 8 )
+// addBundle( libs.metrics.json, 8 )
+// addBundle( libs.metrics.jvm, 8 )
+// addBundle( libs.metrics.annotation, 8)
+// addBundle( libs.metrics.jetty12, 8 )
+
 addBundle( libs.hazelcast.hazelcast, 8 )
-addBundle( libs.hazelcast.client, 8 )
-addBundle( libs.hazelcast.kubernetes, 8 )
 addBundle( libs.jparsec, 8 )
 
 addBundle( project( ':repack:repack-elasticsearch' ), 9 )
@@ -113,7 +110,10 @@ addBundle( project( ':core:core-audit' ), 22 )
 addBundle( project( ':core:core-project' ), 22 )
 addBundle( project( ':core:core-scheduler' ), 22 )
 addBundle( project( ':core:core-shared' ), 22 )
-addBundle( project( ':core:core-cluster' ), 23 )
+addBundle( project( ':core:core-cluster' ), 22 )
+
+// BlobStore providers
+addBundle( project( ':blobstore:blobstore-file' ), 23 )
 
 // Server bundles
 addBundle( project( ':server:server-config' ), 12 )
@@ -122,9 +122,6 @@ addBundle( project( ':server:server-status' ), 17 )
 addBundle( project( ':server:server-udc' ), 17 )
 addBundle( project( ':server:server-rest' ), 30 )
 addBundle( project( ':server:server-trace' ), 17 )
-
-// Script app
-addBundle( project( ':script:script-impl' ), 24 )
 
 // Web app
 addBundle( project( ':web:web-jetty' ), 26 )
@@ -135,49 +132,92 @@ addBundle( project( ':web:web-dispatch' ), 26 )
 addBundle( project( ':web:web-session' ), 26 )
 addBundle( project( ':web:web-header' ), 26 )
 
-// JaxRs app
+addBundle( project( ':script:script-impl' ), 28 )
+addBundle( project( ':portal:portal-impl' ), 28 )
 addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
-
-// Portal app
-addBundle( project( ':portal:portal-impl' ), 30 )
 
 // Admin app
 addBundle( project( ':admin:admin-event' ), 30 )
 addBundle( project( ':admin:admin-impl' ), 30 )
 
-// BlobStore providers
-addBundle( project( ':blobstore:blobstore-file' ), 22 )
-
 // Applications
 addBundle( project( ':app:app-system' ), 32 )
 
-def addBundle( dep, level )
-{
-    def config = getOrCreateBundleConfig( level )
-    dependencies.add( config.name, dep )
+def repackTikaBundle( depProvider, level ) {
+    def levelStr = "$level".padLeft( 2, '0' )
+
+    def dep = depProvider.get()
+
+    def modifiedJarConfig = configurations.create("modifiedBundle@${dep.name}") {
+        transitive = false
+    }
+
+    dependencies.add( modifiedJarConfig.name, depProvider )
+
+    def modifyManifestTask = tasks.register("modifiedBundleManifest@${dep.name}", Jar) {
+
+        archiveFileName = "${dep.name}-${dep.version}-repack.jar"
+        destinationDirectory = layout.buildDirectory.dir( "tmp/modified-bundles" )
+
+        def artifact = modifiedJarConfig.resolve().first()
+
+        java.util.jar.JarFile jar = new java.util.jar.JarFile( artifact )
+        java.util.jar.Manifest originalManifest = jar.manifest
+
+
+        def modifiedImportPackage = originalManifest.getMainAttributes().getValue( "Import-Package" ).split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+            ( it.startsWithAny( "com.github.javaparser", "net.sf.saxon.str", "org.apache.xerces", "org.apache.commons.logging", "org.apache.logging.log4j", "org.apache.pdfbox", "picocli" ) ) && !it.contains( ";resolution:=" ) ? it +
+                ";resolution:=optional" : it
+        }.join( ',' )
+
+        from {
+            zipTree(artifact)
+        }
+
+        with copySpec {
+            exclude "META-INF/MANIFEST.MF"
+        }
+
+        manifest {
+            attributes originalManifest.mainAttributes.collectEntries { key, value ->
+                if (key.toString() == "Import-Package") {
+                    ["Import-Package": modifiedImportPackage]
+                } else {
+                    [(key.toString()): value.toString()]
+                }
+            }
+        }
+    }
+
+    ext.bundleCopySpecs += project.copySpec {
+        from modifyManifestTask
+        into levelStr
+    }
 }
 
-def getOrCreateBundleConfig( level )
+def addBundle( dep, level )
 {
     def levelStr = "$level".padLeft( 2, '0' )
-    def name = "bundle@$levelStr"
+    def configName = "bundle@$levelStr"
 
-    def config = configurations.findByName( name )
+    def config = configurations.findByName( configName )
 
     if ( config == null )
     {
-        config = configurations.create( name )
-        config.transitive = false
-        config.description = "Bundles for run-level $level"
-        config.attributes {
-           attribute( Attribute.of("org.gradle.jvm.environment", String), "standard-jvm" )
+        config = configurations.create( configName ) {
+            transitive = false
+            description = "Bundles for run-level $level"
+            attributes {
+                attribute( Attribute.of("org.gradle.jvm.environment", String), "standard-jvm" )
+            }
         }
-        bundleCopySpecs += project.copySpec {
+        ext.bundleCopySpecs += project.copySpec {
             from config
             into levelStr
         }
     }
-    return config
+    dependencies.add( configName, dep )
 }
 
 distributions {
@@ -210,7 +250,7 @@ distributions {
 tasks.distTar.enabled = false
 
 installDist {
-    destinationDir = file( "$buildDir/install" )
+    into( layout.buildDirectory.dir( "install" ) )
 }
 
 build.dependsOn installDist

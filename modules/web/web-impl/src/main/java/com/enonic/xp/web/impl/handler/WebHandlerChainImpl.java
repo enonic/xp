@@ -16,7 +16,7 @@ final class WebHandlerChainImpl
 
     WebHandlerChainImpl( final List<WebHandler> handlers )
     {
-        this.webHandlerIterator = List.copyOf( handlers ).iterator();
+        this.webHandlerIterator = handlers.iterator();
     }
 
     @Override
