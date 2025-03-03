@@ -99,13 +99,15 @@ final class UpdateContentCommand
 
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( contentBeforeChange, editedContent );
+        editedContent = editContentMetadata( getPreModifier(), editedContent );
+
 
         if ( contentBeforeChange.equals( editedContent ) && contentBeforeChange.getAttachments().equals( editedContent.getAttachments() ) )
         {
             return contentBeforeChange;
         }
 
-        editedContent = editContentMetadata( getContentModifier(), editedContent );
+        editedContent = editContentMetadata( getPostModifier(), editedContent );
 
         validate( editedContent );
 
@@ -144,15 +146,20 @@ final class UpdateContentCommand
         return modifiableContent.build();
     }
 
-    private ContentModifier getContentModifier()
+    private ContentModifier getPreModifier()
     {
         return edit -> {
             edit.inherit.setModifier( c -> stopInherit( c.inherit.originalValue ) );
+            edit.attachments.setModifier( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
+        };
+    }
 
+    private ContentModifier getPostModifier()
+    {
+        return edit -> {
             edit.modifier.setValue( getCurrentUser().getKey() );
             edit.modifiedTime.setValue( Instant.now() );
 
-            edit.attachments.setModifier( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
             edit.validationErrors.setModifier( c -> validateContent( c.source ) );
             edit.valid.setModifier( c -> !c.validationErrors.getProducedValue().hasErrors() );
         };
