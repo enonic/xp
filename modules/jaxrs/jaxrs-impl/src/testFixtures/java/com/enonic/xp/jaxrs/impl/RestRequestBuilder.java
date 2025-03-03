@@ -1,20 +1,16 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.StreamSupport;
 
-import javax.ws.rs.core.MediaType;
-
-import org.eclipse.jetty.client.util.BytesContentProvider;
-import org.eclipse.jetty.client.util.MultiPartContentProvider;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.spi.UnhandledException;
+
+import jakarta.ws.rs.core.MediaType;
 
 public final class RestRequestBuilder
 {
@@ -74,20 +70,6 @@ public final class RestRequestBuilder
     {
         this.entity = data;
         this.entityType = type.toString();
-        return this;
-    }
-
-    public RestRequestBuilder multipart( final String name, final String fileName, final byte[] data, final MediaType type )
-        throws Exception
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        MultiPartContentProvider multiPart = new MultiPartContentProvider();
-        multiPart.addFilePart( name, fileName, new BytesContentProvider( data ), null );
-        multiPart.close();
-        StreamSupport.stream( multiPart.spliterator(), false ).forEachOrdered( bb -> out.writeBytes( bb.array() ) );
-
-        this.entity = out.toByteArray();
-        this.entityType = multiPart.getContentType();
         return this;
     }
 

@@ -26,7 +26,7 @@
       "name": "scheduledExecutorService",
       "tasks": [
         {
-          "member": "member-uuid",
+          "member": "2792e6b2-a8e4-45f7-ad89-eaaa40353c39",
           "taskName": "some-task",
           "totalRuns": 3,
           "delaySeconds": 123,

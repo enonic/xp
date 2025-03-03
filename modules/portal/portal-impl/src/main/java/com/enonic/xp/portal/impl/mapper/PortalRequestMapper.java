@@ -1,7 +1,9 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -56,6 +58,7 @@ public final class PortalRequestMapper
         gen.value( "headers", this.request.getHeaders() );
         gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
         gen.value( "cookies", this.request.getCookies() );
+        gen.value( "locales", this.request.getLocales().stream().map( Locale::toLanguageTag ).collect( Collectors.toList() ) );
     }
 
     private void serializeBody( final MapGenerator gen )

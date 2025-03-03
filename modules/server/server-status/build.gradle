@@ -1,5 +1,6 @@
 dependencies {
     implementation project( ':web:web-api' )
+    implementation project( ':core:core-internal' )
     implementation libs.metrics.jvm
     implementation libs.metrics.json
 
@@ -7,5 +8,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Server - Status' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Server - Status' )
+    }
 }

@@ -6,12 +6,8 @@ dependencies {
     implementation libs.jetty.servlets
     implementation libs.jetty.jmx
     implementation libs.jetty.websocket.server
-    implementation libs.jetty.websocket.servlet
-    implementation ( libs.jetty.websocket.serverimpl) {
-        exclude group: 'javax.annotation'
-    }
     implementation libs.jakarta.annotation
-    implementation libs.metrics.jetty9
+    implementation libs.metrics.jetty12
 
     testFixturesApi( project(":web:web-api") )
     testFixturesImplementation libs.junit.jupiter.api
@@ -23,12 +19,13 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
-         'Export-Package': 'org.eclipse.jetty.*, javax.servlet.*;-split-package:=merge-first, javax.websocket.*;-split-package:=merge-first',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
+         'Export-Package': 'org.eclipse.jetty.*, jakarta.servlet.*;-split-package:=merge-first, jakarta.websocket.*;-split-package:=merge-first',
          'Import-Package': 'com.enonic.xp.security.auth;resolution:=optional,' +
              'com.enonic.xp.security;resolution:=optional,' +
              'com.enonic.xp.data;resolution:=optional,' +
              'com.enonic.xp.support;resolution:=optional,' +
-             '*;resolution:=optional',
-         'X-Jetty-Version': libs.jetty.server.get().version )
+             '*;resolution:=optional' )
+    }
 }

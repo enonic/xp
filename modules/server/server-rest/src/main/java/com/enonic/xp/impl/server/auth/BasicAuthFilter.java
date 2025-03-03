@@ -3,17 +3,17 @@ package com.enonic.xp.impl.server.auth;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.HttpHeaders;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;

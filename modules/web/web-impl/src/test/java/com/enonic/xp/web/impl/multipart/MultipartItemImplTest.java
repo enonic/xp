@@ -2,7 +2,7 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.io.ByteArrayInputStream;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

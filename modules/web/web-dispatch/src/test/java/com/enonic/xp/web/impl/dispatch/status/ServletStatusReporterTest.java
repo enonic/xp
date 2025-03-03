@@ -1,23 +1,26 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
 import java.io.ByteArrayOutputStream;
-
-import javax.servlet.Servlet;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.ServiceReference;
 
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinitionFactory;
+import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ServletStatusReporterTest
 {
@@ -30,15 +33,11 @@ public class ServletStatusReporterTest
         final Servlet servlet1 = new MyServlet1();
         final Servlet servlet2 = new MyServlet2();
 
-        final ServiceReference<Servlet> serviceReference1 = Mockito.mock( ServiceReference.class );
-        final ServiceReference<Servlet> serviceReference2 = Mockito.mock( ServiceReference.class );
-
-        Mockito.when( serviceReference1.getProperty( "connector" ) ).thenReturn( "a" );
-        Mockito.when( serviceReference2.getProperty( "connector" ) ).thenReturn( new String[]{"a", "b"} );
-
-        final ServletStatusReporter reporter = new ServletStatusReporter();
-        reporter.addServlet( servlet1, serviceReference1 );
-        reporter.addServlet( servlet2, serviceReference2 );
+        final ServletPipeline servletPipeline = mock( ServletPipeline.class );
+        when( servletPipeline.list() ).thenReturn( List.of( ResourceDefinitionFactory.create( servlet1, List.of( "a" ) ),
+                                                            ResourceDefinitionFactory.create( servlet2,
+                                                                                                                List.of( "a", "b" ) ) ) );
+        final ServletStatusReporter reporter = new ServletStatusReporter( servletPipeline );
 
         assertEquals( "http.servlet", reporter.getName() );
         assertJson( "servlet_status_report.json", reporter );

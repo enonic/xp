@@ -4,10 +4,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.event.cluster;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,10 +9,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.Message;
+import com.hazelcast.topic.ITopic;
+import com.hazelcast.topic.Message;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
@@ -86,11 +88,12 @@ class ClusterEventReceiverTest
     {
         final ClusterEventReceiver clusterEventReceiver = new ClusterEventReceiver( hazelcastInstance, eventPublisher );
 
-        when( topic.addMessageListener( notNull() ) ).thenReturn( "registrationId" );
+        final UUID uuid = UUID.randomUUID();
+        when( topic.addMessageListener( notNull() ) ).thenReturn( uuid );
 
         clusterEventReceiver.activate();
 
         clusterEventReceiver.deactivate();
-        verify( topic ).removeMessageListener( "registrationId" );
+        verify( topic ).removeMessageListener( uuid );
     }
 }

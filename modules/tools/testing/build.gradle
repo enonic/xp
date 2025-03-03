@@ -7,6 +7,7 @@ dependencies {
     implementation libs.junit.jupiter.api
     implementation libs.mockito.core
     implementation libs.slf4j.simple
-
+    implementation(libs.tika.bundlestandard)
+    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.26.3'
     testRuntimeOnly libs.junit.jupiter.vintage
 }

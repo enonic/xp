@@ -3,5 +3,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Audit' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Audit' )
+    }
 }

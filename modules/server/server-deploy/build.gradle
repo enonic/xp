@@ -8,5 +8,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Server - Deploy' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Server - Deploy' )
+    }
 }

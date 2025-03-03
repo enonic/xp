@@ -5,5 +5,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Event' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Event' )
+    }
 }

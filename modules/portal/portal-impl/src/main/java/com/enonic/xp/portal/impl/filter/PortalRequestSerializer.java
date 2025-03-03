@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.filter;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
@@ -55,6 +56,7 @@ public final class PortalRequestSerializer
         populateHeaders( req, value.getMember( "headers" ) );
         populateCookies( req, value.getMember( "cookies" ) );
         populateParams( req, value.getMember( "params" ) );
+        populateLocales( req, value.getMember( "locales" ) );
 
         return req;
     }
@@ -233,5 +235,15 @@ public final class PortalRequestSerializer
                 req.getParams().replaceValues( key, List.of( paramValue.getValue( String.class ) ) );
             }
         }
+    }
+
+    private void populateLocales( final PortalRequest req, final ScriptValue value )
+    {
+        if ( value == null || !value.isArray() )
+        {
+            return;
+        }
+
+        req.getLocales().addAll( value.getArray( String.class ).stream().map( Locale::forLanguageTag ).toList() );
     }
 }

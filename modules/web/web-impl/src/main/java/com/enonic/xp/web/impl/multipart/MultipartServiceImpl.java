@@ -2,8 +2,8 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.util.Collections;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 import org.osgi.service.component.annotations.Component;
 

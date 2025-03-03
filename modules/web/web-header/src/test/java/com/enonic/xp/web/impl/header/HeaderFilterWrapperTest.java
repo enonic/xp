@@ -1,14 +1,15 @@
 package com.enonic.xp.web.impl.header;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -31,7 +32,9 @@ class HeaderFilterWrapperTest
         final HeaderFilterWrapper instance = new HeaderFilterWrapper( headerFilterConfig );
 
         instance.init( mock( FilterConfig.class ) );
-        instance.doHandle( mock( HttpServletRequest.class ), httpServletResponse, mock( FilterChain.class ) );
+        final HttpServletRequest requestMock = mock( HttpServletRequest.class );
+        when( requestMock.getServletContext() ).thenReturn( mock( ServletContext.class ) );
+        instance.doHandle( requestMock, httpServletResponse, mock( FilterChain.class ) );
         instance.destroy();
 
         verify( httpServletResponse ).setHeader( "X-Content-Type-Options", "nosniff" );
