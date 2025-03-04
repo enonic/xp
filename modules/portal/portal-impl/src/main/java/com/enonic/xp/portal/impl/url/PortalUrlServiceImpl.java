@@ -38,7 +38,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendAndEncodePathParts;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -176,9 +178,7 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-
-        final ApiUrlGeneratorParams generatorParams = params.isOffline() || portalRequest == null
+        final ApiUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
             ? urlStrategyFacade.offlineApiUrlParams( params )
             : urlStrategyFacade.requestApiUrlParams( params );
 
@@ -263,7 +263,10 @@ public final class PortalUrlServiceImpl
         final PathStrategy pathStrategy = () -> {
             final StringBuilder url = new StringBuilder();
             appendPart( url, params.getApplication() + ":" + params.getApi() );
-            appendPart( url, params.getPath().get() );
+            if ( params.getPath() != null )
+            {
+                appendSubPath( url, params.getPath().get() );
+            }
             return url.toString();
         };
 

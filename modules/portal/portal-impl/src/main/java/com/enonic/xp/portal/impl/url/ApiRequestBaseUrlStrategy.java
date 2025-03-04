@@ -8,10 +8,8 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
-
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.rewriteUri;
 
 final class ApiRequestBaseUrlStrategy
     implements BaseUrlStrategy
@@ -40,40 +38,41 @@ final class ApiRequestBaseUrlStrategy
 
         if ( baseUri.equals( "/admin" ) )
         {
-            appendPart( url, "admin" );
-            appendPart( url, "com.enonic.xp.app.main" );
-            appendPart( url, "home" );
+            url.append( "/admin/com.enonic.xp.app.main/home" );
         }
         else if ( portalRequest.isSiteBase() )
         {
-            appendPart( url, baseUri );
-            appendPart( url, portalRequest.getRepositoryId().toString() );
-            appendPart( url, portalRequest.getBranch().toString() );
+            url.append( baseUri )
+                .append( "/" )
+                .append( ProjectName.from( portalRequest.getRepositoryId() ) )
+                .append( "/" )
+                .append( portalRequest.getBranch() );
+
             final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
             final Site site = contentResolverResult.getNearestSite();
             if ( site != null )
             {
-                appendPart( url, site.getPath().toString() );
+                UrlBuilderHelper.appendAndEncodePathParts( url, site.getPath().toString() );
             }
         }
         else if ( baseUri.startsWith( "/admin/" ) || baseUri.startsWith( "/webapp/" ) )
         {
-            appendPart( url, baseUri );
+            url.append( baseUri );
         }
         else
         {
-            appendPart( url, "/api" );
+            url.append( "/api" );
             isSlashApi = true;
         }
 
         if ( !isSlashApi )
         {
-            appendPart( url, "_" );
+            UrlBuilderHelper.appendPart( url, "_" );
         }
 
         final String baseUrl = url.toString();
 
-        return rewriteUri( portalRequest.getRawRequest(), urlType, baseUrl );
+        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, baseUrl );
     }
 
     public static Builder create()

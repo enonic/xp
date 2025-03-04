@@ -30,7 +30,7 @@ public final class ApiUrlGeneratorParams
         this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
         this.application = Objects.requireNonNull( builder.application );
         this.api = Objects.requireNonNull( builder.api );
-        this.pathSupplier = Objects.requireNonNull( builder.pathSupplier );
+        this.pathSupplier = builder.pathSupplier;
         this.queryParams = builder.queryParams;
     }
 

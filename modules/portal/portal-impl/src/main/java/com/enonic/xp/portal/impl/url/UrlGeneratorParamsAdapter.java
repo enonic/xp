@@ -33,7 +33,6 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
@@ -234,27 +233,41 @@ public class UrlGeneratorParamsAdapter
             .setBaseUrlStrategy( baseUrlStrategy )
             .setApplication( application )
             .setApi( params.getApi() )
-            .setPath( () -> {
-                final StringBuilder path = new StringBuilder();
-
-                appendSubPath( path, params.getPath() );
-                appendPathSegments( path, params.getPathSegments() );
-
-                return path.toString();
-            } )
+            .setPath( () -> resolveApiPath( params ) )
             .addQueryParams( params.getQueryParams() )
             .build();
     }
 
     public ApiUrlGeneratorParams offlineApiUrlParams( final ApiUrlParams params )
     {
+        BaseUrlStrategy baseUrlStrategy = () -> "/api";
+
+        if ( params.getBaseUrlKey() != null )
+        {
+            final ProjectName projectName = offlineBaseUrlProjectName( params.getProjectName() );
+            final Branch branch = offlineBaseUrlBranch( params.getBranch() );
+            final Supplier<Content> baseUrlContentSupplier = () -> offlineNearestSite( projectName, branch, params.getBaseUrlKey() );
+
+            baseUrlStrategy = offlineBaseUrlStrategy( projectName, branch, baseUrlContentSupplier, params.getType() );
+        }
+
         return ApiUrlGeneratorParams.create()
-            .setBaseUrlStrategy( () -> "/api" )
-            .setApplication( params.getApplication() )
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setApplication( Objects.requireNonNull( params.getApplication(), "Application must be provided" ) )
             .setApi( params.getApi() )
-            .setPath( params::getPath )
+            .setPath( () -> resolveApiPath( params ) )
             .addQueryParams( params.getQueryParams() )
             .build();
+    }
+
+    private String resolveApiPath( final ApiUrlParams params )
+    {
+        final StringBuilder path = new StringBuilder();
+
+        appendSubPath( path, params.getPath() );
+        appendPathSegments( path, params.getPathSegments() );
+
+        return path.toString();
     }
 
     private Media resolveMedia( final ProjectName projectName, final Branch branch, final String id, final String path )

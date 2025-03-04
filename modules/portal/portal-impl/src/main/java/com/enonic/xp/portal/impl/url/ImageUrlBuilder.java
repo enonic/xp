@@ -30,9 +30,9 @@ final class ImageUrlBuilder
         final String name = resolveName( media );
         final String scale = resolveScale();
 
-        appendPart( url, media.getId() + ":" + hash );
-        appendPart( url, scale );
-        appendPart( url, name );
+        UrlBuilderHelper.appendPart( url, media.getId() + ":" + hash );
+        UrlBuilderHelper.appendPart( url, scale );
+        UrlBuilderHelper.appendAndEncodePathParts( url, name );
 
         addParamIfNeeded( params, "quality", this.params.getQuality() );
         addParamIfNeeded( params, "background", this.params.getBackground() );

@@ -14,9 +14,6 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.rewriteUri;
-
 final class RequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
@@ -36,7 +33,7 @@ final class RequestBaseUrlStrategy
     @Override
     public String generateBaseUrl()
     {
-        return rewriteUri( portalRequest.getRawRequest(), urlType, generateUri() );
+        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, generateUri() );
     }
 
     private String generateUri()
@@ -45,12 +42,12 @@ final class RequestBaseUrlStrategy
 
         if ( portalRequest.isSiteBase() )
         {
-            appendPart( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
-            appendPart( uriBuilder, portalRequest.getBranch().getValue() );
-            appendPart( uriBuilder, resolveSitePath().toString() );
+            UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
+            UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
+            UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, resolveSitePath().toString() );
         }
 
-        appendPart( uriBuilder, "_" );
+        UrlBuilderHelper.appendPart( uriBuilder, "_" );
 
         return uriBuilder.toString();
     }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -45,6 +46,10 @@ public final class ApiUrlParams
         this.branch = builder.branch;
         this.baseUrlKey = builder.baseUrlKey;
         this.queryParams = builder.queryParams;
+        if ( this.path != null && this.pathSegments != null )
+        {
+            throw new IllegalArgumentException( "Both path and pathSegments cannot be set" );
+        }
     }
 
     public String getType()
@@ -194,5 +199,19 @@ public final class ApiUrlParams
         {
             return new ApiUrlParams( this );
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
+        helper.omitNullValues();
+        helper.add( "type", this.type );
+        helper.add( "params", this.queryParams );
+        helper.add( "api", this.api );
+        helper.add( "application", this.application );
+        helper.add( "path", this.path );
+        helper.add( "pathSegments", this.pathSegments );
+        return helper.toString();
     }
 }
