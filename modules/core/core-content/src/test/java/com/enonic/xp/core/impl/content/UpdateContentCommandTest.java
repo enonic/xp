@@ -55,25 +55,23 @@ public class UpdateContentCommandTest
 
         ContentId contentId = ContentId.from( "mycontent" );
 
-        UpdateContentParams params = new UpdateContentParams().
-            contentId( contentId ).
-            editor( edit -> {
-            } );
+        UpdateContentParams params = new UpdateContentParams().contentId( contentId ).editor( edit -> {
+        } );
 
-        UpdateContentCommand command = UpdateContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfo( this.mediaInfo ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            build();
+        UpdateContentCommand command = UpdateContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .mediaInfo( this.mediaInfo )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
-        assertThrows(ContentNotFoundException.class, () -> command.execute());
+        assertThrows( ContentNotFoundException.class, () -> command.execute() );
     }
 
 
@@ -87,20 +85,18 @@ public class UpdateContentCommandTest
 
         Content existingContent = createContent( existingContentData );
 
-        UpdateContentParams params = new UpdateContentParams().
-            contentId( existingContent.getId() ).
-            editor( edit -> {
-            } );
+        UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> {
+        } );
 
-        UpdateContentCommand command = UpdateContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfo( this.mediaInfo ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            build();
+        UpdateContentCommand command = UpdateContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .mediaInfo( this.mediaInfo )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .build();
 
         final Node mockNode = Node.create().build();
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );

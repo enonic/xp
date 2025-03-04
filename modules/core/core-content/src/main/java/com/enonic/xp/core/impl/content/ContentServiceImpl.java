@@ -87,7 +87,6 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -1168,27 +1167,7 @@ public class ContentServiceImpl
     @Override
     public Content reprocess( final ContentId contentId )
     {
-        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
-
-        final Content content = ReprocessContentCommand.create( ReprocessContentParams.create().contentId( contentId ).build() ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            build().
-            execute();
-
-        contentAuditLogSupport.reprocess( content );
-
-        return content;
+        throw new UnsupportedOperationException( "reprocess is no longer supported" );
     }
 
     @Override

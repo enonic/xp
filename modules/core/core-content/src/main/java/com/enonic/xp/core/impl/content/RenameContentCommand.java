@@ -93,7 +93,6 @@ final class RenameContentCommand
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
             .contentId( content.getId() )
-            .modifier( content.getModifier() )
             .stopInherit( false )
             .editor( edit -> edit.valid = !content.isValid() );
 
