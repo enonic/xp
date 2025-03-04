@@ -7,7 +7,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
@@ -36,7 +38,8 @@ public final class SystemResource
 
     private final TaskService taskService;
 
-    public SystemResource( final DumpService dumpService, final TaskService taskService )
+    @Activate
+    public SystemResource( @Reference final DumpService dumpService, @Reference final TaskService taskService )
     {
         this.dumpService = dumpService;
         this.taskService = taskService;
