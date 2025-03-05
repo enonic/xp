@@ -252,6 +252,11 @@ public class SlashApiHandler
 
     private boolean verifyRequestMountedOnSites( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
+        if ( "media".equals( descriptorKey.getApplicationKey().toString() ) )
+        {
+            return true;
+        }
+
         final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
         final Site site = contentResolverResult.getNearestSite();
