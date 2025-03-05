@@ -3,11 +3,11 @@ package com.enonic.xp.web.jetty.impl.configurator;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
+import org.eclipse.jetty.http.HttpCookie;
+
 import jakarta.servlet.SessionCookieConfig;
 import jakarta.servlet.SessionTrackingMode;
-
-import org.eclipse.jetty.http.HttpCookie;
-import org.eclipse.jetty.server.session.SessionHandler;
 
 import static com.google.common.base.Strings.nullToEmpty;
 

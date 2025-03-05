@@ -1,9 +1,9 @@
 package com.enonic.xp.web.jetty.impl.session;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.SessionIdManager;
-import org.eclipse.jetty.server.session.SessionCacheFactory;
-import org.eclipse.jetty.server.session.SessionDataStoreFactory;
+import org.eclipse.jetty.session.SessionCacheFactory;
+import org.eclipse.jetty.session.SessionDataStoreFactory;
+import org.eclipse.jetty.session.SessionIdManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

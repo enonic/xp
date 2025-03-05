@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.jetty.hazelcast.session.SessionDataSerializer;
-import org.eclipse.jetty.server.session.SessionData;
+import org.eclipse.jetty.session.SessionData;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

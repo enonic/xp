@@ -3,7 +3,7 @@ package com.enonic.xp.web.jetty.impl.configurator;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.http.HttpCookie;
-import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.session.SessionHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

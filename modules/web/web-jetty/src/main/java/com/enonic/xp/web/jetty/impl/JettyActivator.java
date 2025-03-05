@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -151,13 +151,13 @@ public final class JettyActivator
 
     private ServletContextHandler initServletContextHandler( final DispatchServlet servlet )
     {
-        final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        final ServletContextHandler context = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
         final SessionHandler sessionHandler = context.getSessionHandler();
 
         final ServletHolder holder = new ServletHolder( servlet );
         holder.setAsyncSupported( true );
         context.addServlet( holder, "/*" );
-        context.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + servlet.getConnector()} );
+        context.setVirtualHosts( List.of(DispatchConstants.VIRTUAL_HOST_PREFIX + servlet.getConnector()) );
 
         new SessionConfigurator().configure( config, sessionHandler );
         new GZipConfigurator().configure( config, context );
