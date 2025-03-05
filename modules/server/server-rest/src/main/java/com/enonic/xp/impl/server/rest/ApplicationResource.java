@@ -5,8 +5,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -14,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

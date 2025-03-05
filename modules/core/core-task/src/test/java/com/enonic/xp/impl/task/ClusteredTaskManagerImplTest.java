@@ -18,10 +18,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 
+import com.hazelcast.cluster.Member;
+import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.MemberSelector;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.DescribedTask;

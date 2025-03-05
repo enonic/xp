@@ -9,8 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
 
 import com.enonic.xp.core.internal.Dictionaries;
 

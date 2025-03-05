@@ -3,13 +3,11 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Dictionary;
 import java.util.List;
 
-import jakarta.servlet.ServletContext;
-
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -21,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
+
+import jakarta.servlet.ServletContext;
 
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.server.RunMode;

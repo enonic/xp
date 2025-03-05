@@ -1,12 +1,12 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import jakarta.servlet.MultipartConfigElement;
-
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.StandardSystemProperty;
+
+import jakarta.servlet.MultipartConfigElement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

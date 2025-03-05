@@ -16,10 +16,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.hazelcast.cluster.Member;
+import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.MemberSelector;
 import com.hazelcast.util.ExceptionUtil;
 
 import com.enonic.xp.app.ApplicationKey;

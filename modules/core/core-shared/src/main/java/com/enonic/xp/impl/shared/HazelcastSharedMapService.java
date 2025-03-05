@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.propertytypes.ServiceRanking;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 
 import com.enonic.xp.shared.SharedMapService;
 
