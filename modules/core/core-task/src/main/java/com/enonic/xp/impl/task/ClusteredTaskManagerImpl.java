@@ -152,7 +152,7 @@ public final class ClusteredTaskManagerImpl
         }
     }
 
-    private static class TaskMemberSelector
+    private class TaskMemberSelector
         implements MemberSelector
     {
         final DescribedTask task;
@@ -165,11 +165,12 @@ public final class ClusteredTaskManagerImpl
         @Override
         public boolean select( final Member member )
         {
-            return Boolean.TRUE.toString().equals( member.getAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
+            final Map<String, String> attributes = memberAttributesApplier.getAttributesReplicatedMap().get( member.getUuid() );
+            return Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
                 ( !SYSTEM_APPLICATION_KEY.equals( task.getApplicationKey() ) ||
-                    Boolean.TRUE.toString().equals( member.getAttribute( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) ) &&
+                    Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) ) &&
                 Boolean.TRUE.toString()
-                    .equals( member.getAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
+                    .equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
         }
     }
 }

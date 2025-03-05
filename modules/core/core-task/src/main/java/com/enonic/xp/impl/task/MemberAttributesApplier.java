@@ -1,12 +1,17 @@
 package com.enonic.xp.impl.task;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 
 import com.enonic.xp.app.ApplicationBundleUtils;
 
@@ -19,32 +24,48 @@ class MemberAttributesApplier
 
     static final String TASKS_ENABLED_ATTRIBUTE_PREFIX = TASKS_ENABLED_ATTRIBUTE_KEY + "-";
 
-    private final IMap<String, Object> localMember;
+    public static final String MAP_NAME = "com.enonic.xp.impl.task";
+
+    private final ReplicatedMap<UUID, Map<String, String>> attributesReplicatedMap;
+
+    private final ConcurrentMap<String, String> attributes = new ConcurrentHashMap<>();
+
+    private final UUID uuid;
 
     MemberAttributesApplier( final BundleContext context, final HazelcastInstance hazelcastInstance )
     {
+
         super( context, Bundle.ACTIVE, null );
-        this.localMember = hazelcastInstance.getMap("com.enonic.xp.impl.task");
+        uuid = hazelcastInstance.getLocalEndpoint().getUuid();
+        this.attributesReplicatedMap = hazelcastInstance.getReplicatedMap( MAP_NAME );
+    }
+
+    public ReplicatedMap<UUID, Map<String, String>> getAttributesReplicatedMap()
+    {
+        return attributesReplicatedMap;
     }
 
     public void activate( final TaskConfig config )
     {
-        localMember.set( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ) );
-        localMember.set( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) );
+        attributes.put( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ) );
+        attributes.put( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) );
+        attributesReplicatedMap.put( uuid, attributes );
         super.open();
     }
 
     public void deactivate()
     {
         super.close();
-        localMember.remove( TASKS_ENABLED_ATTRIBUTE_KEY );
-        localMember.remove( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY );
+        attributes.remove( TASKS_ENABLED_ATTRIBUTE_KEY );
+        attributes.remove( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY );
+        attributesReplicatedMap.put( uuid, attributes );
     }
 
     public void modify( final TaskConfig config )
     {
-        localMember.set( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ) );
-        localMember.set( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) );
+        attributes.put( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ) );
+        attributes.put( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) );
+        attributesReplicatedMap.put( uuid, attributes );
     }
 
     @Override
@@ -52,7 +73,8 @@ class MemberAttributesApplier
     {
         if ( ApplicationBundleUtils.isApplication( bundle ) )
         {
-            localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName(), true );
+            attributes.put( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName(), String.valueOf( true ) );
+            attributesReplicatedMap.put( uuid, attributes );
             return true;
         }
 
@@ -62,6 +84,7 @@ class MemberAttributesApplier
     @Override
     public void removedBundle( final Bundle bundle, final BundleEvent event, final Boolean object )
     {
-        localMember.removeAttribute( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName() );
+        attributes.remove( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName() );
+        attributesReplicatedMap.put( uuid, attributes );
     }
 }
