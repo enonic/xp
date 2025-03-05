@@ -38,21 +38,20 @@ final class IdentityUrlBuilder
             url.setLength( 0 );
 
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
-            appendPart( url, virtualHost.getTarget() );
-            appendPart( url, "_" );
-            appendPart( url, this.endpointType );
+            UrlBuilderHelper.appendSubPath( url, virtualHost.getTarget() );
+            UrlBuilderHelper.appendSubPath( url, "/_/idprovider" );
         }
 
         if ( this.params.getIdProviderKey() == null )
         {
             throw new IllegalArgumentException( "Could not find id provider" );
         }
-        appendPart( url, this.params.getIdProviderKey().toString() );
+        UrlBuilderHelper.appendPart( url, this.params.getIdProviderKey().toString() );
 
         final String idProviderFunction = this.params.getIdProviderFunction();
         if ( idProviderFunction != null )
         {
-            appendPart( url, idProviderFunction );
+            UrlBuilderHelper.appendPart( url, idProviderFunction );
         }
 
         final String redirectionUrl = this.params.getRedirectionUrl();

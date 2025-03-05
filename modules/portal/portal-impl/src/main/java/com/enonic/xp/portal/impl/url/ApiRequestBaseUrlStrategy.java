@@ -2,19 +2,16 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 
-final class RequestBaseUrlStrategy
+final class ApiRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
     private final ContentService contentService;
@@ -23,7 +20,7 @@ final class RequestBaseUrlStrategy
 
     private final String urlType;
 
-    private RequestBaseUrlStrategy( final Builder builder )
+    private ApiRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.portalRequest = Objects.requireNonNull( builder.portalRequest );
@@ -33,38 +30,49 @@ final class RequestBaseUrlStrategy
     @Override
     public String generateBaseUrl()
     {
-        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, generateUri() );
-    }
+        final StringBuilder url = new StringBuilder();
 
-    private String generateUri()
-    {
-        final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
+        final String baseUri = portalRequest.getBaseUri();
 
-        if ( portalRequest.isSiteBase() )
+        boolean isSlashApi = false;
+
+        if ( baseUri.equals( "/admin" ) )
         {
-            UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
-            UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
-            UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, resolveSitePath().toString() );
+            url.append( "/admin/com.enonic.xp.app.main/home" );
+        }
+        else if ( portalRequest.isSiteBase() )
+        {
+            url.append( baseUri )
+                .append( "/" )
+                .append( ProjectName.from( portalRequest.getRepositoryId() ) )
+                .append( "/" )
+                .append( portalRequest.getBranch() );
+
+            final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
+            final Site site = contentResolverResult.getNearestSite();
+            if ( site != null )
+            {
+                UrlBuilderHelper.appendAndEncodePathParts( url, site.getPath().toString() );
+            }
+        }
+        else if ( baseUri.startsWith( "/admin/" ) || baseUri.startsWith( "/webapp/" ) )
+        {
+            url.append( baseUri );
+        }
+        else
+        {
+            url.append( "/api" );
+            isSlashApi = true;
         }
 
-        UrlBuilderHelper.appendPart( uriBuilder, "_" );
+        if ( !isSlashApi )
+        {
+            UrlBuilderHelper.appendPart( url, "_" );
+        }
 
-        return uriBuilder.toString();
-    }
+        final String baseUrl = url.toString();
 
-    private ContentPath resolveSitePath()
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( portalRequest.getRepositoryId() )
-            .branch( portalRequest.getBranch() )
-            .build();
-
-        Site nearestSite = context.callWith( () -> {
-            final ContentResolver contentResolver = new ContentResolver( contentService );
-            return contentResolver.resolve( portalRequest ).getNearestSite();
-        } );
-
-        return nearestSite != null ? nearestSite.getPath() : ContentPath.ROOT;
+        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, baseUrl );
     }
 
     public static Builder create()
@@ -98,9 +106,9 @@ final class RequestBaseUrlStrategy
             return this;
         }
 
-        public RequestBaseUrlStrategy build()
+        public ApiRequestBaseUrlStrategy build()
         {
-            return new RequestBaseUrlStrategy( this );
+            return new ApiRequestBaseUrlStrategy( this );
         }
     }
 }
