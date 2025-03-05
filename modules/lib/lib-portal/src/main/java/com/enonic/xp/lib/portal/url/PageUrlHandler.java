@@ -1,11 +1,9 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -30,7 +28,7 @@ public final class PageUrlHandler
 
     private boolean offline;
 
-    private Multimap<String, String> queryParams;
+    private Map<String, Collection<String>> queryParams;
 
     public void setId( final String id )
     {
@@ -64,28 +62,7 @@ public final class PageUrlHandler
 
     public void setQueryParams( final ScriptValue params )
     {
-        if ( params == null )
-        {
-            return;
-        }
-
-        this.queryParams = HashMultimap.create();
-
-        for ( final Map.Entry<String, Object> param : params.getMap().entrySet() )
-        {
-            final Object value = param.getValue();
-            if ( value instanceof Iterable values )
-            {
-                for ( final Object v : values )
-                {
-                    queryParams.put( param.getKey(), v.toString() );
-                }
-            }
-            else
-            {
-                queryParams.put( param.getKey(), value.toString() );
-            }
-        }
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }
 
     public String createUrl()
@@ -99,7 +76,7 @@ public final class PageUrlHandler
 
         if ( this.queryParams != null )
         {
-            this.queryParams.forEach( params::param );
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
         }
 
         return urlServiceSupplier.get().pageUrl( params );

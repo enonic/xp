@@ -12,6 +12,6 @@ final class GenerateUrlBuilder
     {
         super.buildUrl( url, params );
         url.setLength( 0 );
-        appendPart( url, this.params.getPath() );
+        UrlBuilderHelper.appendAndEncodePathParts( url, this.params.getPath() );
     }
 }

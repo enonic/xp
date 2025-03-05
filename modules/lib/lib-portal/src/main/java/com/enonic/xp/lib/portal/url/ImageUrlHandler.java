@@ -1,10 +1,8 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -44,7 +42,7 @@ public final class ImageUrlHandler
 
     private boolean offline;
 
-    private Multimap<String, String> queryParams;
+    private Map<String, Collection<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -113,30 +111,9 @@ public final class ImageUrlHandler
         this.offline = Objects.requireNonNullElse( offline, false );
     }
 
-    public void setQueryParams( final ScriptValue params )
+    public void addQueryParams( final ScriptValue params )
     {
-        if ( params == null )
-        {
-            return;
-        }
-
-        this.queryParams = HashMultimap.create();
-
-        for ( final Map.Entry<String, Object> param : params.getMap().entrySet() )
-        {
-            final Object value = param.getValue();
-            if ( value instanceof Iterable values )
-            {
-                for ( final Object v : values )
-                {
-                    queryParams.put( param.getKey(), v.toString() );
-                }
-            }
-            else
-            {
-                queryParams.put( param.getKey(), value.toString() );
-            }
-        }
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }
 
     public String createUrl()
@@ -157,7 +134,7 @@ public final class ImageUrlHandler
 
         if ( this.queryParams != null )
         {
-            this.queryParams.forEach( params::param );
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
         }
 
         return this.urlService.imageUrl( params );
