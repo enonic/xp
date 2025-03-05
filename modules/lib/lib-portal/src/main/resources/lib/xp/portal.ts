@@ -787,7 +787,7 @@ export function apiUrl(urlParams: ApiUrlParams): string {
     const {
         application,
         api,
-        type = 'server',
+        type,
         path,
         params,
         project,

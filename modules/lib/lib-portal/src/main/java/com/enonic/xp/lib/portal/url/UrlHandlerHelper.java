@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.script.ScriptValue;
 
@@ -13,14 +13,14 @@ final class UrlHandlerHelper
     {
     }
 
-    public static Multimap<String, String> resolveQueryParams( final ScriptValue params )
+    public static Map<String, Collection<String>> resolveQueryParams( final ScriptValue params )
     {
         if ( params == null )
         {
             return null;
         }
 
-        final Multimap<String, String> result = HashMultimap.create();
+        final Map<String, Collection<String>> result = new LinkedHashMap<>();
 
         for ( final Map.Entry<String, Object> param : params.getMap().entrySet() )
         {
@@ -29,12 +29,12 @@ final class UrlHandlerHelper
             {
                 for ( final Object v : values )
                 {
-                    result.put( param.getKey(), v.toString() );
+                    result.computeIfAbsent( param.getKey(), k -> new ArrayList<>() ).add( v.toString() );
                 }
             }
             else
             {
-                result.put( param.getKey(), value.toString() );
+                result.computeIfAbsent( param.getKey(), k -> new ArrayList<>() ).add( value.toString() );
             }
         }
 

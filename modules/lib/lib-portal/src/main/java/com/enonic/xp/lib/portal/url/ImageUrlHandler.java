@@ -1,8 +1,8 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
-
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -42,7 +42,7 @@ public final class ImageUrlHandler
 
     private boolean offline;
 
-    private Multimap<String, String> queryParams;
+    private Map<String, Collection<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )

@@ -21,6 +21,8 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -89,12 +91,13 @@ public class PortalUrlServiceImpl_apiUrlTest
         final ApiUrlParams params = ApiUrlParams.create()
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
-            .addQueryParam( "k1", "v1" )
+            .addQueryParam( "k1", "v10" )
+            .addQueryParam( "k1", "v11" )
             .addQueryParam( "k2", "v2" )
             .build();
 
         final String url = this.service.apiUrl( params );
-        assertEquals( "/site/myproject/draft/sitePath/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", url );
+        assertEquals( "/site/myproject/draft/sitePath/_/com.enonic.app.myapp:myapi?k1=v10&k1=v11&k2=v2", url );
     }
 
     @Test
@@ -187,6 +190,41 @@ public class PortalUrlServiceImpl_apiUrlTest
         when( site.getSiteConfigs() ).thenReturn( siteConfigs );
 
         when( contentService.getNearestSite( eq( ContentId.from( "contentId" ) ) ) ).thenReturn( site );
+
+        assertEquals( "https://cdn.company.com/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testCreateUrlOfflineWithBaseUrlKeyBaseUrlFromProject()
+    {
+        final ApiUrlParams params = ApiUrlParams.create()
+            .setType( UrlTypeConstants.ABSOLUTE )
+            .setOffline( true )
+            .setApplication( "com.enonic.app.myapp" )
+            .setApi( "myapi" )
+            .setBaseUrlKey( "contentId" )
+            .setProjectName( "myproject" )
+            .setBranch( "master" )
+            .addQueryParam( "k1", "v1" )
+            .addQueryParam( "k2", "v2" )
+            .build();
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", "https://cdn.company.com" );
+
+        SiteConfigs siteConfigs = SiteConfigs.create()
+            .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
+            .build();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        when( contentService.getNearestSite( eq( ContentId.from( "contentId" ) ) ) ).thenReturn( site );
+
+        final Project project = mock( Project.class );
+        when( project.getSiteConfigs() ).thenReturn( siteConfigs );
+        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
 
         assertEquals( "https://cdn.company.com/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", this.service.apiUrl( params ) );
     }

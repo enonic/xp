@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
-
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -34,7 +34,7 @@ public final class ApiUrlHandler
 
     private List<String> pathSegments;
 
-    private Multimap<String, String> queryParams;
+    private Map<String, Collection<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -57,7 +57,7 @@ public final class ApiUrlHandler
 
         if ( queryParams != null )
         {
-            builder.addQueryParams( this.queryParams.asMap() );
+            builder.addQueryParams( this.queryParams );
         }
 
         final ApiUrlParams params = builder.build();

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
@@ -13,7 +12,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
@@ -38,7 +36,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendAndEncodePathParts;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
