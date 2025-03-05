@@ -785,6 +785,23 @@ public class SlashApiHandlerTest
         assertEquals( 1, wsUniversalApiHandler.getCounter() );
     }
 
+    @Test
+    void testMediaImplicitMountedOnSite()
+        throws Exception
+    {
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        request.setEndpointPath( "/_/media:image" );
+        request.setRawPath( "/site/repo/branch/path/_/media:image/id/scale/name" );
+
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
     private static final class MyUniversalApiHandler
         implements UniversalApiHandler
     {
