@@ -22,8 +22,6 @@ import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.ApiUrlParams;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -41,8 +39,6 @@ public class GetListAllowedWidgetsHandlerTest
 {
     private WidgetDescriptorService widgetDescriptorService;
 
-    private PortalUrlService portalUrlService;
-
     private LocaleService localeService;
 
     private WidgetIconResolver widgetIconResolver;
@@ -53,11 +49,10 @@ public class GetListAllowedWidgetsHandlerTest
     void setUp()
     {
         widgetDescriptorService = mock( WidgetDescriptorService.class );
-        portalUrlService = mock( PortalUrlService.class );
         localeService = mock( LocaleService.class );
         widgetIconResolver = mock( WidgetIconResolver.class );
 
-        instance = new GetListAllowedWidgetsHandler( widgetDescriptorService, portalUrlService, localeService, widgetIconResolver );
+        instance = new GetListAllowedWidgetsHandler( widgetDescriptorService, localeService, widgetIconResolver );
     }
 
     @Test
@@ -84,7 +79,6 @@ public class GetListAllowedWidgetsHandlerTest
             .build();
 
         when( widgetDescriptorService.getByInterfaces( anyString() ) ).thenReturn( Descriptors.from( widgetDescriptor ) );
-        when( portalUrlService.apiUrl( any( ApiUrlParams.class ) ) ).thenReturn( "baseApiUrl" );
         when( localeService.getSupportedLocale( anyList(), any( ApplicationKey.class ) ) ).thenReturn( Locale.ENGLISH );
 
         when( widgetIconResolver.resolve( eq( widgetDescriptor ) ) ).thenReturn( widgetDescriptor.getIcon() );
@@ -95,7 +89,6 @@ public class GetListAllowedWidgetsHandlerTest
 
         HttpServletRequest httpServletRequest = mock( HttpServletRequest.class );
         when( httpServletRequest.getLocales() ).thenReturn( Collections.enumeration( List.of( Locale.ENGLISH ) ) );
-
 
         final WebResponse response;
         when( webRequest.getRawRequest() ).thenReturn( httpServletRequest );
@@ -118,8 +111,8 @@ public class GetListAllowedWidgetsHandlerTest
 
         final ObjectNode objectNode = body.get( 0 );
         assertEquals( "myapp:mywidget", objectNode.get( "key" ).asText() );
-        assertEquals( "baseApiUrl?icon&app=myapp&widget=mywidget&v=d41d8cd98f00b204e9800998ecf8427e", objectNode.get( "iconUrl" ).asText() );
-        assertEquals( "baseApiUrl/myapp/mywidget", objectNode.get( "url" ).asText() );
+        assertEquals( "?icon&app=myapp&widget=mywidget&v=d41d8cd98f00b204e9800998ecf8427e", objectNode.get( "iconUrl" ).asText() );
+        assertEquals( "myapp/mywidget", objectNode.get( "url" ).asText() );
         assertEquals( "localizedDescription", objectNode.get( "description" ).asText() );
         assertEquals( "myInterface", objectNode.get( "interfaces" ).get( 0 ).asText() );
         assertEquals( "v", objectNode.get( "config" ).get( "k" ).asText() );

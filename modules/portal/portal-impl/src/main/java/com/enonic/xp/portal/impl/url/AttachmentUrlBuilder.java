@@ -15,17 +15,16 @@ final class AttachmentUrlBuilder
     {
         super.buildUrl( url, params );
 
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, "attachment" );
-        appendPart( url, this.params.isDownload() ? "download" : "inline" );
+        UrlBuilderHelper.appendSubPath( url, this.portalRequest.getContentPath().toString() );
+        UrlBuilderHelper.appendSubPath( url, "/_/attachment" );
+        UrlBuilderHelper.appendSubPath( url, this.params.isDownload() ? "download" : "inline" );
 
         final Content content = resolveContent();
         final Attachment attachment = resolveAttachment( content );
         final String hash = resolveHash( content, attachment );
 
-        appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
-        appendPart( url, attachment.getName() );
+        UrlBuilderHelper.appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
+        UrlBuilderHelper.appendPart( url, attachment.getName() );
     }
 
     private Content resolveContent()

@@ -104,7 +104,7 @@ interface ImageUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    addQueryParams(value?: ScriptValue | null): void;
 
     setProjectName(value?: string | null): void;
 
@@ -157,7 +157,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
     bean.setUrlType(params.type || 'server');
-    bean.setQueryParams(__.toScriptValue(params.params));
+    bean.addQueryParams(__.toScriptValue(params.params));
     bean.setBackground(__.nullOrValue(params.background));
     bean.setQuality(__.nullOrValue(params.quality));
     bean.setFilter(__.nullOrValue(params.filter));
@@ -223,7 +223,7 @@ interface AttachmentUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    addQueryParams(value?: ScriptValue | null): void;
 
     setName(value?: string | null): void;
 
@@ -275,7 +275,7 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
     bean.setBaseUrlKey(__.nullOrValue(params.baseUrlKey));
     bean.setOffline(params.offline || false);
     bean.setDownload(params.download || false);
-    bean.setQueryParams(__.toScriptValue(params.params));
+    bean.addQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
 }
@@ -736,12 +736,32 @@ export interface ApiUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     path?: string | string[];
+    offline?: boolean;
+    project?: string;
+    branch?: string;
+    baseUrlKey?: string;
 }
 
 interface ApiUrlHandler {
-    setPath(value: string | ScriptValue): void;
+    setApplication(value?: string | null): void;
 
-    createUrl(value: object): string;
+    setApi(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setPath(value?: string | ScriptValue): void;
+
+    addQueryParams(value?: ScriptValue | null): void;
+
+    setOffline(value: boolean): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setBaseUrlKey(value?: string | null): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -750,26 +770,45 @@ interface ApiUrlHandler {
  * @example-ref examples/portal/apiUrl.js
  *
  * @param {object} urlParams Input parameters as JSON.
- * @param {string} urlParams.application Application to reference to the API.
- * @param {string} [urlParams.api] Name of the API
+ * @param {string} [urlParams.application] Application to reference to the API. For offline mode, this parameter is required,
+ * otherwise if value is not set, the application from PortalRequest is used.
+ * @param {string} urlParams.api Name of the API
  * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [urlParams.params] Custom parameters to append to the URL.
+ * @param {string} [urlParams.project] Name of the project.
+ * @param {string} [urlParams.branch] Name of the branch.
+ * @param {string} [urlParams.baseUrlKey] Key of the content.
+ * @param {boolean} [urlParams.offline=false] Set to true if the URL should be generated without context of the current request.
  *
  * @returns {string} The generated URL.
  */
 export function apiUrl(urlParams: ApiUrlParams): string {
-    checkRequired(urlParams, 'application');
+    checkRequired(urlParams, 'api');
 
     const {
         application,
         api,
-        type = 'server',
+        type,
         path,
         params,
+        project,
+        branch,
+        baseUrlKey,
+        offline = false,
     } = urlParams ?? {};
 
     const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
+
+    bean.setUrlType(__.nullOrValue(type));
+    bean.setApplication(__.nullOrValue(application));
+    bean.setApi(api);
+    bean.addQueryParams(__.toScriptValue(params));
+    bean.setProjectName(__.nullOrValue(project));
+    bean.setBranch(__.nullOrValue(branch));
+    bean.setBaseUrlKey(__.nullOrValue(baseUrlKey));
+    bean.setOffline(offline);
+
     if (path) {
         if (Array.isArray(path)) {
             bean.setPath(__.toScriptValue(path));
@@ -778,10 +817,5 @@ export function apiUrl(urlParams: ApiUrlParams): string {
         }
     }
 
-    return bean.createUrl(__.toScriptValue({
-        application,
-        api,
-        type,
-        params,
-    }));
+    return bean.createUrl();
 }

@@ -41,9 +41,8 @@ final class AssetUrlBuilder
             url.setLength( 0 );
 
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
-            appendPart( url, virtualHost.getTarget() );
-            appendPart( url, "_" );
-            appendPart( url, this.endpointType );
+            UrlBuilderHelper.appendSubPath( url, virtualHost.getTarget() );
+            UrlBuilderHelper.appendSubPath( url, "/_/" + this.endpointType );
         }
 
         final ApplicationKey applicationKey =
@@ -58,8 +57,8 @@ final class AssetUrlBuilder
         final String fingerprint =
             RunMode.get() == RunMode.DEV ? String.valueOf( stableTime() ) : HexCoder.toHex( resource.getTimestamp() );
 
-        appendPart( url, applicationKey + ":" + fingerprint );
-        appendPart( url, this.params.getPath() );
+        UrlBuilderHelper.appendPart( url, applicationKey + ":" + fingerprint );
+        UrlBuilderHelper.appendAndEncodePathParts( url, this.params.getPath() );
     }
 
     private static long stableTime()

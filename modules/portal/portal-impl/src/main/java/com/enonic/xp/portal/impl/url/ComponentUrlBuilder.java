@@ -13,7 +13,7 @@ final class ComponentUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, resolvePath().toString() );
+        UrlBuilderHelper.appendSubPath( url, resolvePath().toString() );
 
         final String component = resolveComponent();
         if ( component == null )
@@ -21,9 +21,9 @@ final class ComponentUrlBuilder
             return;
         }
 
-        appendPart( url, "_" );
-        appendPart( url, "component" );
-        appendPart( url, component );
+        UrlBuilderHelper.appendPart( url, "_" );
+        UrlBuilderHelper.appendPart( url, "component" );
+        UrlBuilderHelper.appendAndEncodePathParts( url, component );
     }
 
     private ContentPath resolvePath()

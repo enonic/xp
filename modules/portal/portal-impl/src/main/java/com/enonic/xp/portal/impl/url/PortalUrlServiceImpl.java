@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
@@ -17,6 +16,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
+import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
@@ -35,6 +35,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -172,18 +175,11 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        Objects.requireNonNull( params, "\"params\" is required" );
-        Objects.requireNonNull( params.getApi(), "\"api\" is required" );
-        if ( params.getPortalRequest() != null )
-        {
-            return build( new UniversalApiUrlBuilder(), params );
-        }
-        else
-        {
-            Objects.requireNonNull( params.getApplication(), "\"application\" is required" );
-            // TODO resolve baseUrl
-            return new SlashApiUrlBuilder( params ).build();
-        }
+        final ApiUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
+            ? urlStrategyFacade.offlineApiUrlParams( params )
+            : urlStrategyFacade.requestApiUrlParams( params );
+
+        return apiUrl( generatorParams );
     }
 
     @Override
@@ -197,16 +193,30 @@ public final class PortalUrlServiceImpl
             .setFormat( params.getFormat() )
             .build();
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
+            .setBaseUrlStrategy( params.getBaseUrlStrategy() )
+            .setApplication( "media" )
+            .setApi( "image" )
+            .setPath( () -> new ImageMediaPathStrategy( imageMediaPathStrategyParams ).generatePath() );
 
-        queryParamsStrategy.putNotNull( "quality", Objects.toString( params.getQuality(), null ) );
-        queryParamsStrategy.putNotNull( "background", params.getBackground() );
-        queryParamsStrategy.putNotNull( "filter", params.getFilter() );
-        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+        if ( params.getQuality() != null )
+        {
+            builder.addQueryParam( "quality", params.getQuality().toString() );
+        }
+        if ( params.getBackground() != null )
+        {
+            builder.addQueryParam( "background", params.getBackground() );
+        }
+        if ( params.getFilter() != null )
+        {
+            builder.addQueryParam( "filter", params.getFilter() );
+        }
 
-        return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new ImageMediaPathStrategy( imageMediaPathStrategyParams ),
-                                            queryParamsStrategy ) );
+        builder.addQueryParams( params.getQueryParams() );
+
+        final ApiUrlGeneratorParams apiUrlParams = builder.build();
+
+        return apiUrl( apiUrlParams );
     }
 
     @Override
@@ -216,19 +226,23 @@ public final class PortalUrlServiceImpl
             .setMedia( params.getMediaSupplier() )
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
-            .setDownload( params.isDownload() )
             .build();
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
-        if ( strategyParams.isDownload() )
-        {
-            queryParamsStrategy.put( "download", null );
-        }
-        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
+            .setBaseUrlStrategy( params.getBaseUrlStrategy() )
+            .setApplication( "media" )
+            .setApi( "attachment" )
+            .setPath( () -> new AttachmentMediaPathStrategy( strategyParams ).generatePath() )
+            .addQueryParams( params.getQueryParams() );
 
-        return runWithAdminRole(
-            () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), new AttachmentMediaPathStrategy( strategyParams ),
-                                            queryParamsStrategy ) );
+        if ( params.isDownload() )
+        {
+            builder.addQueryParam( "download", null );
+        }
+
+        final ApiUrlGeneratorParams apiUrlParams = builder.build();
+
+        return apiUrl( apiUrlParams );
     }
 
     @Override
@@ -238,6 +252,25 @@ public final class PortalUrlServiceImpl
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
         return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "", queryParamsStrategy ) );
+    }
+
+    @Override
+    public String apiUrl( final ApiUrlGeneratorParams params )
+    {
+        final PathStrategy pathStrategy = () -> {
+            final StringBuilder url = new StringBuilder();
+            appendPart( url, params.getApplication() + ":" + params.getApi() );
+            if ( params.getPath() != null )
+            {
+                appendSubPath( url, params.getPath().get() );
+            }
+            return url.toString();
+        };
+
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), pathStrategy, queryParamsStrategy ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

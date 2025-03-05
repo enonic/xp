@@ -25,7 +25,7 @@ final class ServiceUrlBuilder
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, getApplication().toString() );
-        appendPart( url, this.params.getService() );
+        UrlBuilderHelper.appendPart( url, getApplication().toString() );
+        UrlBuilderHelper.appendPart( url, this.params.getService() );
     }
 }

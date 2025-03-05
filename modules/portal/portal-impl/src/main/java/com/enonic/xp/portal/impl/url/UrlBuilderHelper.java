@@ -32,8 +32,8 @@ public final class UrlBuilderHelper
             return;
         }
 
-        final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
-        final String normalized = normalizePath( urlPart );
+        final boolean endsWithSlash = !str.isEmpty() && str.charAt( str.length() - 1 ) == '/';
+        final String normalized = urlEncodePathSegment( urlPart );
 
         if ( !endsWithSlash )
         {
@@ -43,14 +43,14 @@ public final class UrlBuilderHelper
         str.append( normalized );
     }
 
-    public static void appendPartWithoutNormalization( final StringBuilder str, final String urlPart )
+    public static void appendPartWithoutEncode( final StringBuilder str, final String urlPart )
     {
         if ( isNullOrEmpty( urlPart ) )
         {
             return;
         }
 
-        final boolean endsWithSlash = ( str.length() > 0 ) && ( str.charAt( str.length() - 1 ) == '/' );
+        final boolean endsWithSlash = !str.isEmpty() && str.charAt( str.length() - 1 ) == '/';
 
         if ( !endsWithSlash && !urlPart.startsWith( "/" ) )
         {
@@ -75,22 +75,32 @@ public final class UrlBuilderHelper
 
     public static void appendSubPath( final StringBuilder url, final String subPath )
     {
-        if ( !isNullOrEmpty( subPath ) )
-        {
-            appendPartWithoutNormalization( url, subPath );
-        }
+        appendPartWithoutEncode( url, subPath );
     }
 
-    public static String normalizePath( final String value )
+    public static void appendAndEncodePathParts( final StringBuilder str, final String value )
     {
-        if ( !value.contains( "/" ) )
+        if ( isNullOrEmpty( value ) )
         {
-            return urlEncodePathSegment( value );
+            return;
         }
 
-        return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false )
-            .map( UrlBuilderHelper::urlEncodePathSegment )
-            .collect( Collectors.joining( "/" ) );
+        final boolean endsWithSlash = !str.isEmpty() && str.charAt( str.length() - 1 ) == '/';
+        if ( !endsWithSlash )
+        {
+            str.append( "/" );
+        }
+
+        if ( !value.contains( "/" ) )
+        {
+            str.append( urlEncodePathSegment( value ) );
+        }
+        else
+        {
+            str.append( StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false )
+                            .map( UrlBuilderHelper::urlEncodePathSegment )
+                            .collect( Collectors.joining( "/" ) ) );
+        }
     }
 
     private static String urlEncodePathSegment( final String value )

@@ -12,9 +12,6 @@ import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.rewriteUri;
-
 final class PageRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
@@ -44,8 +41,8 @@ final class PageRequestBaseUrlStrategy
 
         if ( portalRequest.isSiteBase() )
         {
-            appendPart( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
-            appendPart( uriBuilder, portalRequest.getBranch().getValue() );
+            UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
+            UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
         }
 
         final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
@@ -58,9 +55,9 @@ final class PageRequestBaseUrlStrategy
                 .path( path )
                 .resolve() );
 
-        appendPart( uriBuilder, contentPath.toString() );
+        UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, contentPath.toString() );
 
-        return rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
+        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
     }
 
     public static Builder create()

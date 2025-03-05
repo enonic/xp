@@ -57,12 +57,18 @@ final class PageOfflineBaseUrlStrategy
 
         final Site nearestSite = baseUrlResult.getNearestSite();
 
+        final StringBuilder result = new StringBuilder( normalizedBaseUrl );
+        UrlBuilderHelper.appendAndEncodePathParts( result, resolvePath( content.getPath().toString(), nearestSite ) );
+        return result.toString();
+    }
+
+    private String resolvePath( final String contentPath, final Site nearestSite )
+    {
         if ( nearestSite != null )
         {
-            return normalizedBaseUrl + content.getPath().toString().substring( nearestSite.getPath().toString().length() );
+            return contentPath.substring( nearestSite.getPath().toString().length() );
         }
-
-        return normalizedBaseUrl + content.getPath();
+        return contentPath;
     }
 
     private String normalizeBaseUrl( final String baseUrl )

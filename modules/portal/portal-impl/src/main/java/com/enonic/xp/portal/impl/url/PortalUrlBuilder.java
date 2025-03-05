@@ -43,21 +43,6 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         this.portalRequest = this.params.getPortalRequest();
     }
 
-    protected final void appendPart( final StringBuilder str, final String urlPart )
-    {
-        UrlBuilderHelper.appendPart( str, urlPart );
-    }
-
-    private void appendParams( final StringBuilder str, final Collection<Map.Entry<String, String>> params )
-    {
-        UrlBuilderHelper.appendParams( str, params );
-    }
-
-    String normalizePath( final String value )
-    {
-        return UrlBuilderHelper.normalizePath( value );
-    }
-
     public final String build()
     {
         try
@@ -73,11 +58,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     private String doBuild()
     {
         final StringBuilder str = new StringBuilder();
-        appendPart( str, this.portalRequest.getBaseUri() );
+        UrlBuilderHelper.appendSubPath( str, this.portalRequest.getBaseUri() );
 
         final Multimap<String, String> params = LinkedListMultimap.create();
         buildUrl( str, params );
-        appendParams( str, params.entries() );
+        UrlBuilderHelper.appendParams( str, params.entries() );
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), str.toString() );
 
@@ -121,8 +106,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( this.portalRequest.isSiteBase() )
         {
-            appendPart( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-            appendPart( url, this.portalRequest.getBranch().toString() );
+            UrlBuilderHelper.appendSubPath( url, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            UrlBuilderHelper.appendSubPath( url, this.portalRequest.getBranch().toString() );
         }
     }
 
@@ -158,18 +143,16 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected final String buildErrorUrl( final int code, final String message )
     {
         final StringBuilder str = new StringBuilder();
-        appendPart( str, this.portalRequest.getBaseUri() );
+        UrlBuilderHelper.appendSubPath( str, this.portalRequest.getBaseUri() );
 
         if ( this.portalRequest.isSiteBase() )
         {
-            appendPart( str, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
-            appendPart( str, this.portalRequest.getBranch().toString() );
-            appendPart( str, this.portalRequest.getContentPath().toString() );
+            UrlBuilderHelper.appendSubPath( str, RepositoryUtils.getContentRepoName( this.portalRequest.getRepositoryId() ) );
+            UrlBuilderHelper.appendSubPath( str, this.portalRequest.getBranch().toString() );
+            UrlBuilderHelper.appendSubPath( str, this.portalRequest.getContentPath().toString() );
         }
 
-        appendPart( str, "_" );
-        appendPart( str, "error" );
-        appendPart( str, String.valueOf( code ) );
+        UrlBuilderHelper.appendSubPath( str, "/_/error/" + code );
 
         final Multimap<String, String> params = LinkedListMultimap.create();
 
@@ -178,7 +161,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
             params.put( "message", message );
         }
 
-        appendParams( str, params.entries() );
+        UrlBuilderHelper.appendParams( str, params.entries() );
         final String uri = str.toString();
         return ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), uri ).getRewrittenUri();
     }
