@@ -134,7 +134,7 @@ public final class ImageUrlHandler
 
         if ( this.queryParams != null )
         {
-            this.queryParams.forEach( params::param );
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
         }
 
         return this.urlService.imageUrl( params );
