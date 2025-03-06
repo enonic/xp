@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.net.URI;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -26,11 +27,13 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
@@ -57,21 +60,12 @@ public class UrlGeneratorParamsAdapter
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName baseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
-        final Branch baseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
-        final Supplier<Media> mediaSupplier = () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
-
-        final Supplier<Content> baseUrlContentSupplier = () -> {
-            final String baseUriKey = params.getBaseUrlKey();
-
-            final Site site = baseUriKey != null ? offlineNearestSite( baseUrlProjectName, baseUrlBranch, params.getBaseUrlKey() ) : null;
-
-            return site != null ? site : mediaSupplier.get();
-        };
+        final Supplier<Media> mediaSupplier =
+            Suppliers.memoize( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() ) );
 
         final BaseUrlStrategy baseUrlStrategy =
-            offlineBaseUrlStrategy( baseUrlProjectName, baseUrlBranch, baseUrlContentSupplier, params.getType() );
+            resolveBaseUrlStrategy( params.getBaseUrl(), params.getBaseUrlParams(), mediaSupplier, params.getType() );
 
         return ImageUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
@@ -115,8 +109,6 @@ public class UrlGeneratorParamsAdapter
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
-        final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
         final Supplier<Content> contentSupplier = Suppliers.memoize( () -> ContextBuilder.copyOf( ContextAccessor.current() )
             .repositoryId( mediaPathProjectName.getRepoId() )
@@ -124,15 +116,8 @@ public class UrlGeneratorParamsAdapter
             .build()
             .callWith( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) ) );
 
-        final Supplier<Content> baseUrlContentSupplier = () -> {
-            final String baseUriKey = params.getBaseUrlKey();
-            final Site site =
-                baseUriKey != null ? offlineNearestSite( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUriKey ) : null;
-            return site != null ? site : contentSupplier.get();
-        };
-
         final BaseUrlStrategy baseUrlStrategy =
-            offlineBaseUrlStrategy( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUrlContentSupplier, params.getType() );
+            resolveBaseUrlStrategy( params.getBaseUrl(), params.getBaseUrlParams(), contentSupplier, params.getType() );
 
         return AttachmentUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
@@ -180,17 +165,42 @@ public class UrlGeneratorParamsAdapter
 
     public PageUrlGeneratorParams offlinePageUrlParams( final PageUrlParams params )
     {
-        final ProjectName projectName = offlineBaseUrlProjectName( params.getProjectName() );
-        final Branch branch = offlineBaseUrlBranch( params.getBranch() );
+        final Supplier<Content> contentSupplier = () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) );
 
-        final BaseUrlStrategy baseUrlStrategy = PageOfflineBaseUrlStrategy.create()
-            .contentService( contentService )
-            .projectService( projectService )
-            .projectName( projectName )
-            .branch( branch )
-            .content( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) )
-            .urlType( params.getType() )
-            .build();
+        final BaseUrlStrategy baseUrlStrategy;
+        if ( params.getBaseUrl() != null )
+        {
+            final ProjectName projectName = offlineProjectName( params.getProjectName() );
+            final Branch branch = offlineBranch( params.getBranch() );
+
+            baseUrlStrategy = PageCustomBaseUrlStrategy.create()
+                .setContentService( contentService )
+                .setProjectName( projectName )
+                .setBranch( branch )
+                .setUrlType( params.getType() )
+                .setContentSupplier( contentSupplier )
+                .setBaseUrl( params.getBaseUrl() )
+                .build();
+        }
+        else if ( params.getBaseUrlParams() != null )
+        {
+            final BaseUrlParams baseUrlParams = params.getBaseUrlParams();
+            final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
+            final Branch branch = offlineBranch( baseUrlParams.getBranch() );
+
+            baseUrlStrategy = PageOfflineBaseUrlStrategy.create()
+                .contentService( contentService )
+                .projectService( projectService )
+                .projectName( projectName )
+                .branch( branch )
+                .content( contentSupplier )
+                .urlType( params.getType() )
+                .build();
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Either baseUrl or baseUrlParams must be provided" );
+        }
 
         final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
         if ( params.getParams() != null )
@@ -254,15 +264,29 @@ public class UrlGeneratorParamsAdapter
 
     public ApiUrlGeneratorParams offlineApiUrlParams( final ApiUrlParams params )
     {
-        BaseUrlStrategy baseUrlStrategy = () -> "/api";
-
-        if ( params.getBaseUrlKey() != null )
+        final BaseUrlStrategy baseUrlStrategy;
+        if ( params.getBaseUrl() != null )
         {
-            final ProjectName projectName = offlineBaseUrlProjectName( params.getProjectName() );
-            final Branch branch = offlineBaseUrlBranch( params.getBranch() );
-            final Supplier<Content> baseUrlContentSupplier = () -> offlineNearestSite( projectName, branch, params.getBaseUrlKey() );
+            final String path = UrlTypeConstants.SERVER_RELATIVE.equals( params.getType() )
+                ? URI.create( params.getBaseUrl() ).getPath()
+                : params.getBaseUrl();
+            baseUrlStrategy = () -> path.endsWith( "/" ) ? path.substring( 0, path.length() - 1 ) + "/_/" : path + "/_/";
+        }
+        else if ( params.getBaseUrlParams() != null )
+        {
+            final BaseUrlParams baseUrlParams = params.getBaseUrlParams();
+
+            final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
+            final Branch branch = offlineBranch( baseUrlParams.getBranch() );
+            final String contentKey = baseUrlParams.getKey();
+
+            final Supplier<Content> baseUrlContentSupplier = () -> offlineNearestSite( projectName, branch, contentKey );
 
             baseUrlStrategy = offlineBaseUrlStrategy( projectName, branch, baseUrlContentSupplier, params.getType() );
+        }
+        else
+        {
+            baseUrlStrategy = () -> "/api";
         }
 
         return ApiUrlGeneratorParams.create()
@@ -340,13 +364,6 @@ public class UrlGeneratorParamsAdapter
             : ProjectName.from( Objects.requireNonNull( portalRequest.getRepositoryId(), "Project must be provided" ) );
     }
 
-    private ProjectName offlineBaseUrlProjectName( final String projectName )
-    {
-        return ContextAccessor.current().getRepositoryId() != null
-            ? ProjectName.from( ContextAccessor.current().getRepositoryId() )
-            : ProjectName.from( Objects.requireNonNull( projectName, "Project must be provided" ) );
-    }
-
     private Branch offlineBranch( final String branch )
     {
         return branch != null
@@ -361,11 +378,28 @@ public class UrlGeneratorParamsAdapter
             : Objects.requireNonNullElse( portalRequest.getBranch(), ContentConstants.BRANCH_MASTER );
     }
 
-    private Branch offlineBaseUrlBranch( final String branch )
+    private BaseUrlStrategy resolveBaseUrlStrategy( final String baseUrl, final BaseUrlParams baseUrlParams,
+                                                    final Supplier<? extends Content> contentSupplier, final String type )
     {
-        return ContextAccessor.current().getBranch() != null
-            ? ContextAccessor.current().getBranch()
-            : Objects.requireNonNullElse( Branch.from( branch ), ContentConstants.BRANCH_MASTER );
+        if ( baseUrl != null )
+        {
+            return new CustomBaseUlrStrategy( baseUrl, type );
+        }
+        else if ( baseUrlParams != null )
+        {
+            final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
+            final Branch branch = offlineBranch( baseUrlParams.getBranch() );
+            final Supplier<Content> baseUrlContentSupplier = () -> {
+                final String contentKey = baseUrlParams.getKey();
+                final Site site = contentKey != null ? offlineNearestSite( projectName, branch, contentKey ) : null;
+                return site != null ? site : contentSupplier.get();
+            };
+            return offlineBaseUrlStrategy( projectName, branch, baseUrlContentSupplier, type );
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Either baseUrl or baseUrlParams must be provided" );
+        }
     }
 
     private Content getContent( final String contentKey )

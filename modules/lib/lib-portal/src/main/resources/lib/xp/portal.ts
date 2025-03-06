@@ -29,6 +29,24 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
+function setBaseUrlParams(bean: BaseUrlHandler, baseUrl: string | BaseUrlParams | null | undefined): void {
+    if (baseUrl != null) {
+        if (typeof baseUrl === 'string') {
+            bean.setBaseUrl(baseUrl);
+        } else {
+            const baseUrlParams: BaseUrlParams = baseUrl as BaseUrlParams;
+
+            const baseUrlBean: BaseUrlParamsBean = bean.newBaseUrlParams();
+
+            baseUrlBean.setProjectName(__.nullOrValue(baseUrlParams.project));
+            baseUrlBean.setBranch(__.nullOrValue(baseUrlParams.branch));
+            baseUrlBean.setKey(__.nullOrValue(baseUrlParams.key));
+
+            bean.setBaseUrlParams(baseUrlBean);
+        }
+    }
+}
+
 export type Site<Config> = Content<{
     description?: string;
     siteConfig: SiteConfig<Config> | SiteConfig<Config>[];
@@ -43,6 +61,28 @@ export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export type IdXorPath = XOR<{ id: string }, { path: string }>;
+
+export interface BaseUrlParams {
+    project?: string;
+    branch?: string;
+    key?: string;
+}
+
+interface BaseUrlParamsBean {
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setKey(value?: string | null): void;
+}
+
+interface BaseUrlHandler {
+    setBaseUrl(value: string): void;
+
+    setBaseUrlParams(value: BaseUrlParamsBean): void;
+
+    newBaseUrlParams(): BaseUrlParamsBean;
+}
 
 export interface AssetUrlParams {
     path: string;
@@ -91,11 +131,11 @@ export type ImageUrlParams = IdXorPath & {
         | 'full';
     project?: string;
     branch?: string;
-    baseUrlKey?: string;
-    offline?: boolean | undefined;
+    baseUrl?: string | BaseUrlParams;
 };
 
-interface ImageUrlHandler {
+interface ImageUrlHandler
+    extends BaseUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -118,10 +158,6 @@ interface ImageUrlHandler {
 
     setScale(value: string): void;
 
-    setOffline(value: boolean): void;
-
-    setBaseUrlKey(value?: string | null): void;
-
     createUrl(): string;
 }
 
@@ -139,10 +175,9 @@ interface ImageUrlHandler {
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.projectName] Name of the project.
+ * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string} [params.baseUrlKey] Key of the content.
- * @param {boolean} [params.offline=false] Set to true if the URL should be generated without context of the current request.
+ * @param {string|object} [params.baseUrl] Custom baseUrl.If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -154,7 +189,7 @@ export function imageUrl(params: ImageUrlParams): string {
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
-    bean.setUrlType(params.type || 'server');
+    bean.setUrlType(__.nullOrValue(params.type));
     bean.addQueryParams(__.toScriptValue(params.params));
     bean.setBackground(__.nullOrValue(params.background));
     bean.setQuality(__.nullOrValue(params.quality));
@@ -163,8 +198,8 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setScale(params.scale);
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setBaseUrlKey(__.nullOrValue(params.baseUrlKey));
-    bean.setOffline(params.offline || false);
+
+    setBaseUrlParams(bean, params.baseUrl);
 
     return bean.createUrl();
 }
@@ -210,11 +245,11 @@ export interface AttachmentUrlParams {
     params?: object;
     project?: string;
     branch?: string;
-    baseUrlKey?: string;
-    offline?: boolean;
+    baseUrl?: string | BaseUrlParams;
 }
 
-interface AttachmentUrlHandler {
+interface AttachmentUrlHandler
+    extends BaseUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -230,10 +265,6 @@ interface AttachmentUrlHandler {
     setProjectName(value?: string | null): void;
 
     setBranch(value?: string | null): void;
-
-    setBaseUrlKey(value?: string | null): void;
-
-    setOffline(value: boolean): void;
 
     setDownload(value: boolean): void;
 
@@ -252,10 +283,9 @@ interface AttachmentUrlHandler {
  * @param {string} [params.label=source] Label of the attachment.
  * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.projectName] Name of the project.
+ * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string} [params.baseUrlKey] Key of the content.
- * @param {boolean} [params.offline=false] Set to true if the URL should be generated without context of the current request.
+ * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -265,15 +295,15 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
-    bean.setUrlType(params.type || 'server');
+    bean.setUrlType(__.nullOrValue(params.type));
     bean.setName(__.nullOrValue(params.name));
     bean.setLabel(__.nullOrValue(params.label));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setBaseUrlKey(__.nullOrValue(params.baseUrlKey));
-    bean.setOffline(params.offline || false);
     bean.setDownload(params.download || false);
     bean.addQueryParams(__.toScriptValue(params.params));
+
+    setBaseUrlParams(bean, params.baseUrl);
 
     return bean.createUrl();
 }
@@ -283,10 +313,11 @@ export type PageUrlParams = IdXorPath & {
     params?: object;
     project?: string;
     branch?: string;
-    offline?: boolean;
+    baseUrl?: string | BaseUrlParams;
 };
 
-interface PageUrlHandler {
+interface PageUrlHandler
+    extends BaseUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -298,8 +329,6 @@ interface PageUrlHandler {
     setProjectName(value?: string | null): void;
 
     setBranch(value?: string | null): void;
-
-    setOffline(value: boolean): void;
 
     createUrl(): string;
 }
@@ -313,9 +342,9 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.projectName] Project of the context.
+ * @param {string} [params.project] Project of the context.
  * @param {string} [params.branch] Branch of the project for context.
- * @param {boolean} [params.offline=false] Set to true if the URL should be generated without context of the current request.
+ * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -329,7 +358,8 @@ export function pageUrl(params: PageUrlParams): string {
     bean.setQueryParams(__.toScriptValue(params.params));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setOffline(params.offline || false);
+
+    setBaseUrlParams(bean, params.baseUrl);
 
     return bean.createUrl();
 }
@@ -734,13 +764,11 @@ export interface ApiUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     path?: string | string[];
-    offline?: boolean;
-    project?: string;
-    branch?: string;
-    baseUrlKey?: string;
+    baseUrl?: string | BaseUrlParams;
 }
 
-interface ApiUrlHandler {
+interface ApiUrlHandler
+    extends BaseUrlHandler {
     setApplication(value?: string | null): void;
 
     setApi(value?: string | null): void;
@@ -750,14 +778,6 @@ interface ApiUrlHandler {
     setPath(value?: string | ScriptValue): void;
 
     addQueryParams(value?: ScriptValue | null): void;
-
-    setOffline(value: boolean): void;
-
-    setProjectName(value?: string | null): void;
-
-    setBranch(value?: string | null): void;
-
-    setBaseUrlKey(value?: string | null): void;
 
     createUrl(): string;
 }
@@ -774,10 +794,7 @@ interface ApiUrlHandler {
  * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [urlParams.params] Custom parameters to append to the URL.
- * @param {string} [urlParams.project] Name of the project.
- * @param {string} [urlParams.branch] Name of the branch.
- * @param {string} [urlParams.baseUrlKey] Key of the content.
- * @param {boolean} [urlParams.offline=false] Set to true if the URL should be generated without context of the current request.
+ * @param {string|object} [urlParams.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  *
  * @returns {string} The generated URL.
  */
@@ -790,10 +807,7 @@ export function apiUrl(urlParams: ApiUrlParams): string {
         type,
         path,
         params,
-        project,
-        branch,
-        baseUrlKey,
-        offline = false,
+        baseUrl
     } = urlParams ?? {};
 
     const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
@@ -802,10 +816,8 @@ export function apiUrl(urlParams: ApiUrlParams): string {
     bean.setApplication(__.nullOrValue(application));
     bean.setApi(api);
     bean.addQueryParams(__.toScriptValue(params));
-    bean.setProjectName(__.nullOrValue(project));
-    bean.setBranch(__.nullOrValue(branch));
-    bean.setBaseUrlKey(__.nullOrValue(baseUrlKey));
-    bean.setOffline(offline);
+
+    setBaseUrlParams(bean, baseUrl);
 
     if (path) {
         if (Array.isArray(path)) {

@@ -121,9 +121,15 @@ public final class PortalUrlServiceImpl
     @Override
     public String pageUrl( final PageUrlParams params )
     {
-        final PageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-            ? urlStrategyFacade.offlinePageUrlParams( params )
-            : urlStrategyFacade.requestPageUrlParams( params );
+        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
+        {
+            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
+        }
+
+        final PageUrlGeneratorParams generatorParams =
+            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
+                ? urlStrategyFacade.offlinePageUrlParams( params )
+                : urlStrategyFacade.requestPageUrlParams( params );
 
         return pageUrl( generatorParams );
     }
@@ -137,9 +143,15 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        final ImageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-            ? urlStrategyFacade.offlineImageUrlParams( params )
-            : urlStrategyFacade.requestImageUrlParams( params );
+        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
+        {
+            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
+        }
+
+        final ImageUrlGeneratorParams generatorParams =
+            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
+                ? urlStrategyFacade.offlineImageUrlParams( params )
+                : urlStrategyFacade.requestImageUrlParams( params );
 
         return imageUrl( generatorParams );
     }
@@ -147,9 +159,15 @@ public final class PortalUrlServiceImpl
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-            ? urlStrategyFacade.offlineAttachmentUrlParams( params )
-            : urlStrategyFacade.requestAttachmentUrlParams( params );
+        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
+        {
+            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
+        }
+
+        final AttachmentUrlGeneratorParams generatorParams =
+            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
+                ? urlStrategyFacade.offlineAttachmentUrlParams( params )
+                : urlStrategyFacade.requestAttachmentUrlParams( params );
 
         return attachmentUrl( generatorParams );
     }
@@ -178,9 +196,10 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        final ApiUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-            ? urlStrategyFacade.offlineApiUrlParams( params )
-            : urlStrategyFacade.requestApiUrlParams( params );
+        final ApiUrlGeneratorParams generatorParams =
+            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
+                ? urlStrategyFacade.offlineApiUrlParams( params )
+                : urlStrategyFacade.requestApiUrlParams( params );
 
         return apiUrl( generatorParams );
     }

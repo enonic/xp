@@ -21,6 +21,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.Project;
@@ -109,7 +110,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase2()
+    public void createAttachmentUrlUseCase2()
     {
         // Request
         // Site based request
@@ -132,7 +133,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase3()
+    public void createAttachmentUrlUseCase3()
     {
         // Request
         // Admin Site based request
@@ -159,7 +160,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase4()
+    public void createAttachmentUrlUseCase4()
     {
         // Request
         // Site based request
@@ -183,8 +184,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final AttachmentUrlParams params =
-            new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).baseUrlKey( "siteId" );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
 
         final String url = this.service.attachmentUrl( params );
         assertEquals(
@@ -192,7 +192,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase5()
+    public void createAttachmentUrlUseCase5()
     {
         // Request
         // Site based request
@@ -208,8 +208,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
 
-        final AttachmentUrlParams params =
-            new AttachmentUrlParams().offline( false ).type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenThrow( new RuntimeException() );
 
@@ -218,7 +217,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase6()
+    public void createAttachmentUrlUseCase6()
     {
         // Request
         // Webapp based request
@@ -243,7 +242,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase7()
+    public void createAttachmentUrlUseCase7()
     {
         // Request
         // Site based request
@@ -273,15 +272,14 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final AttachmentUrlParams params =
-            new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).baseUrlKey( "siteId" );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "/main/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
     }
 
     @Test
-    public void createImageUrlUseCase8()
+    public void createAttachmentUrlUseCase8()
     {
         // Offline
         // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
@@ -290,10 +288,15 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         // baseUrl not found on project level
         // fallback to /api
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().offline( true )
-            .type( UrlTypeConstants.SERVER_RELATIVE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject2" );
+        baseUrlContextParams.setBranch( "master" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
             .projectName( "myproject2" )
             .branch( "master" )
+            .baseUrlParams( baseUrlContextParams )
             .id( "123456" );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
@@ -311,7 +314,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase9()
+    public void createAttachmentUrlUseCase9()
     {
         // Offline
         // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
@@ -319,11 +322,16 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         // Nearest site is not found
         // baseUrl found on project level
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().offline( true )
-            .type( UrlTypeConstants.ABSOLUTE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
-            .id( "123456" );
+            .id( "123456" )
+            .baseUrlParams( baseUrlContextParams );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
 
@@ -352,7 +360,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase10()
+    public void createAttachmentUrlUseCase10()
     {
         // Offline
         // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
@@ -360,12 +368,16 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         // Nearest site is found by `baseUrlKey`
         // baseUrl found on site
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().offline( true )
-            .type( UrlTypeConstants.ABSOLUTE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
-            .baseUrlKey( "siteId" )
-            .id( "123456" );
+            .id( "123456" )
+            .baseUrlParams( baseUrlContextParams );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
@@ -391,7 +403,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createImageUrlUseCase11()
+    public void createAttachmentUrlUseCase11()
     {
         // Offline
         // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
@@ -399,11 +411,15 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         // baseUrl does not resolved on site and project levels
         // fallback to /api
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().offline( true )
-            .type( UrlTypeConstants.ABSOLUTE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
-            .baseUrlKey( "siteId" )
+            .baseUrlParams( baseUrlContextParams )
             .id( "123456" );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
@@ -431,12 +447,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private Media mockMedia( String id, String name )
     {
-        final Attachment attachment = Attachment.create()
-            .name( name )
-            .mimeType( "image/png" )
-            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
-            .label( "source" )
-            .build();
+        final Attachment attachment =
+            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( "source" ).build();
 
         final Media media = mock( Media.class );
 

@@ -24,13 +24,9 @@ public final class ApiUrlParams
 
     private final List<String> pathSegments;
 
-    private final boolean offline;
+    private final String baseUrl;
 
-    private final String projectName;
-
-    private final String branch;
-
-    private final String baseUrlKey;
+    private final BaseUrlParams baseUrlParams;
 
     private final Multimap<String, String> queryParams;
 
@@ -41,14 +37,17 @@ public final class ApiUrlParams
         this.application = builder.application;
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
-        this.offline = Objects.requireNonNullElse( builder.offline, false );
-        this.projectName = builder.projectName;
-        this.branch = builder.branch;
-        this.baseUrlKey = builder.baseUrlKey;
+        this.baseUrl = builder.baseUrl;
+        this.baseUrlParams = builder.baseUrlParams;
         this.queryParams = builder.queryParams;
+
         if ( this.path != null && this.pathSegments != null )
         {
             throw new IllegalArgumentException( "Both path and pathSegments cannot be set" );
+        }
+        if ( this.baseUrl != null && this.baseUrlParams != null )
+        {
+            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
         }
     }
 
@@ -77,24 +76,14 @@ public final class ApiUrlParams
         return pathSegments;
     }
 
-    public boolean isOffline()
+    public String getBaseUrl()
     {
-        return offline;
+        return baseUrl;
     }
 
-    public String getProjectName()
+    public BaseUrlParams getBaseUrlParams()
     {
-        return projectName;
-    }
-
-    public String getBranch()
-    {
-        return branch;
-    }
-
-    public String getBaseUrlKey()
-    {
-        return baseUrlKey;
+        return baseUrlParams;
     }
 
     public Map<String, Collection<String>> getQueryParams()
@@ -119,13 +108,9 @@ public final class ApiUrlParams
 
         private List<String> pathSegments;
 
-        private Boolean offline;
+        private String baseUrl;
 
-        private String projectName;
-
-        private String branch;
-
-        private String baseUrlKey;
+        private BaseUrlParams baseUrlParams;
 
         private final Multimap<String, String> queryParams = LinkedListMultimap.create();
 
@@ -159,27 +144,15 @@ public final class ApiUrlParams
             return this;
         }
 
-        public Builder setOffline( final Boolean offline )
+        public Builder setBaseUrl( final String baseUrl )
         {
-            this.offline = offline;
+            this.baseUrl = baseUrl;
             return this;
         }
 
-        public Builder setProjectName( final String projectName )
+        public Builder setBaseUrlParams( final BaseUrlParams baseUrlParams )
         {
-            this.projectName = projectName;
-            return this;
-        }
-
-        public Builder setBranch( final String branch )
-        {
-            this.branch = branch;
-            return this;
-        }
-
-        public Builder setBaseUrlKey( final String baseUrlKey )
-        {
-            this.baseUrlKey = baseUrlKey;
+            this.baseUrlParams = baseUrlParams;
             return this;
         }
 

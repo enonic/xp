@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -29,9 +30,9 @@ public final class AttachmentUrlHandler
 
     private String branch;
 
-    private String baseUrlKey;
+    private String baseUrl;
 
-    private boolean offline;
+    private BaseUrlParams baseUrlParams;
 
     private boolean download;
 
@@ -68,11 +69,6 @@ public final class AttachmentUrlHandler
         this.label = label;
     }
 
-    public void setOffline( final boolean offline )
-    {
-        this.offline = offline;
-    }
-
     public void setProjectName( final String projectName )
     {
         this.projectName = projectName;
@@ -83,14 +79,14 @@ public final class AttachmentUrlHandler
         this.branch = branch;
     }
 
-    public void setBaseUrlKey( final String baseUrlKey )
+    public void setBaseUrl( final String baseUrl )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.baseUrl = baseUrl;
     }
 
-    public void setOffline( final Boolean offline )
+    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrlParams = baseUrlParams;
     }
 
     public void setDownload( final Boolean download )
@@ -113,8 +109,8 @@ public final class AttachmentUrlHandler
             .download( this.download )
             .projectName( this.projectName )
             .branch( this.branch )
-            .baseUrlKey( this.baseUrlKey )
-            .offline( this.offline );
+            .baseUrl( this.baseUrl )
+            .baseUrlParams( this.baseUrlParams );
 
         if ( this.queryParams != null )
         {
@@ -122,5 +118,10 @@ public final class AttachmentUrlHandler
         }
 
         return urlService.attachmentUrl( params );
+    }
+
+    public BaseUrlParams newBaseUrlParams()
+    {
+        return new BaseUrlParams();
     }
 }
