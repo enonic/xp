@@ -2,8 +2,8 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -35,9 +35,9 @@ public final class ImageUrlHandler
 
     private String branch;
 
-    private String baseUrlKey;
+    private String baseUrl;
 
-    private boolean offline;
+    private BaseUrlParams baseUrlParams;
 
     private Map<String, Collection<String>> queryParams;
 
@@ -97,14 +97,14 @@ public final class ImageUrlHandler
         this.branch = branch;
     }
 
-    public void setBaseUrlKey( final String baseUrlKey )
+    public void setBaseUrl( final String baseUrl )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.baseUrl = baseUrl;
     }
 
-    public void setOffline( final Boolean offline )
+    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrlParams = baseUrlParams;
     }
 
     public void addQueryParams( final ScriptValue params )
@@ -124,8 +124,8 @@ public final class ImageUrlHandler
             .scale( this.scale )
             .projectName( this.projectName )
             .branch( this.branch )
-            .baseUrlKey( this.baseUrlKey )
-            .offline( this.offline );
+            .baseUrl( this.baseUrl )
+            .baseUrlParams( this.baseUrlParams );
 
         if ( this.queryParams != null )
         {
@@ -133,6 +133,11 @@ public final class ImageUrlHandler
         }
 
         return this.urlService.imageUrl( params );
+    }
+
+    public BaseUrlParams newBaseUrlParams()
+    {
+        return new BaseUrlParams();
     }
 
 }

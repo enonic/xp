@@ -19,6 +19,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.Project;
@@ -152,7 +153,6 @@ public class PortalUrlServiceImpl_apiUrlTest
     void testCreateUrlOffline()
     {
         final ApiUrlParams params = ApiUrlParams.create()
-            .setOffline( true )
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
             .setPathSegments( List.of( "språk", "kurs" ) )
@@ -166,14 +166,17 @@ public class PortalUrlServiceImpl_apiUrlTest
     @Test
     void testCreateUrlOfflineWithBaseUrlKey()
     {
+        final BaseUrlParams baseUrlParams = new BaseUrlParams();
+
+        baseUrlParams.setProjectName( "myproject" );
+        baseUrlParams.setBranch( "master" );
+        baseUrlParams.setKey( "contentId" );
+
         final ApiUrlParams params = ApiUrlParams.create()
             .setType( UrlTypeConstants.ABSOLUTE )
-            .setOffline( true )
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
-            .setBaseUrlKey( "contentId" )
-            .setProjectName( "myproject" )
-            .setBranch( "master" )
+            .setBaseUrlParams( baseUrlParams )
             .addQueryParam( "k1", "v1" )
             .addQueryParam( "k2", "v2" )
             .build();
@@ -197,14 +200,17 @@ public class PortalUrlServiceImpl_apiUrlTest
     @Test
     void testCreateUrlOfflineWithBaseUrlKeyBaseUrlFromProject()
     {
+        final BaseUrlParams baseUrlParams = new BaseUrlParams();
+
+        baseUrlParams.setProjectName( "myproject" );
+        baseUrlParams.setBranch( "master" );
+        baseUrlParams.setKey( "contentId" );
+
         final ApiUrlParams params = ApiUrlParams.create()
             .setType( UrlTypeConstants.ABSOLUTE )
-            .setOffline( true )
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
-            .setBaseUrlKey( "contentId" )
-            .setProjectName( "myproject" )
-            .setBranch( "master" )
+            .setBaseUrlParams( baseUrlParams )
             .addQueryParam( "k1", "v1" )
             .addQueryParam( "k2", "v2" )
             .build();
@@ -298,10 +304,61 @@ public class PortalUrlServiceImpl_apiUrlTest
     }
 
     @Test
+    void testCreateUrlWithCustomBaseUrlJs()
+    {
+        final ApiUrlParams params = ApiUrlParams.create()
+            .setType( UrlTypeConstants.ABSOLUTE )
+            .setApplication( "com.enonic.app.myapp" )
+            .setApi( "myapi" )
+            .setBaseUrl( "https://api.mycompany.com" )
+            .build();
+
+        final String url = this.service.apiUrl( params );
+        assertEquals( "https://api.mycompany.com/_/com.enonic.app.myapp:myapi", url );
+    }
+
+    @Test
+    void testCreateUrlWithCustomBaseUrlJsServerRelative()
+    {
+        final ApiUrlParams params = ApiUrlParams.create()
+            .setType( UrlTypeConstants.SERVER_RELATIVE )
+            .setApplication( "com.enonic.app.myapp" )
+            .setApi( "myapi" )
+            .setBaseUrl( "https://api.mycompany.com" )
+            .build();
+
+        final String url = this.service.apiUrl( params );
+        assertEquals( "/_/com.enonic.app.myapp:myapi", url );
+    }
+
+    @Test
+    void testCreateUrlWithCustomBaseUrlAndBaseUrlParams()
+    {
+        IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> ApiUrlParams.create()
+            .setApplication( "com.enonic.app.myapp" )
+            .setApi( "myapi" )
+            .setBaseUrl( "https://api.mycompany.com" )
+            .setBaseUrlParams( new BaseUrlParams() )
+            .build() );
+        assertEquals( "Both baseUrl and baseUrlParams cannot be set", exception.getMessage() );
+    }
+
+    @Test
+    void testCreateUrlWithoutCustomBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApplication( "com.enonic.app.myapp" ).setApi( "myapi" ).build();
+
+        final String url = this.service.apiUrl( params );
+        assertEquals( "/api/com.enonic.app.myapp:myapi", url );
+    }
+
+    @Test
     void testCreateUrlWithCustomBaseUrl()
     {
         final ApiUrlGeneratorParams params = ApiUrlGeneratorParams.create()
-            .setBaseUrlStrategy( () -> "myCustomBaseUrl" )
+            .setBaseUrlStrategy( () -> "https://api.mycompany.com/_/" )
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
             .addQueryParam( "k1", "v1" )
@@ -309,6 +366,6 @@ public class PortalUrlServiceImpl_apiUrlTest
             .build();
 
         final String url = this.service.apiUrl( params );
-        assertEquals( "myCustomBaseUrl/com.enonic.app.myapp:myapi?k1=v1&k2=v2", url );
+        assertEquals( "https://api.mycompany.com/_/com.enonic.app.myapp:myapi?k1=v1&k2=v2", url );
     }
 }

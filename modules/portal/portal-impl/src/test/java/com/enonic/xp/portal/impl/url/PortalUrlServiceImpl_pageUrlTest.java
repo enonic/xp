@@ -8,7 +8,9 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.Project;
@@ -23,6 +25,7 @@ import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -115,10 +118,14 @@ public class PortalUrlServiceImpl_pageUrlTest
     @Test
     void createUrlOfflineWithoutBaseUrl()
     {
+        final BaseUrlParams baseUrlParams = new BaseUrlParams();
+        baseUrlParams.setProjectName( "myproject" );
+        baseUrlParams.setBranch( "draft" );
+
         final PageUrlParams params = new PageUrlParams().portalRequest( null )
             .path( "/mycontent" )
             .param( "a", 3 )
-            .offline( true )
+            .baseUrlParams( baseUrlParams )
             .projectName( "myproject" )
             .branch( "draft" );
 
@@ -135,22 +142,14 @@ public class PortalUrlServiceImpl_pageUrlTest
             .type( UrlTypeConstants.ABSOLUTE )
             .path( "/mycontent" )
             .param( "a", 3 )
-            .offline( true )
+            .baseUrl( "https://cdn.company.com" )
             .projectName( "myproject" )
             .branch( "draft" );
 
         final Content content = ContentFixtures.newContent();
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
-            .build();
-
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
@@ -162,13 +161,42 @@ public class PortalUrlServiceImpl_pageUrlTest
     }
 
     @Test
+    void createUrlOfflineWithBaseUrlServerRelative()
+    {
+        final PageUrlParams params = new PageUrlParams().portalRequest( null )
+            .type( UrlTypeConstants.SERVER_RELATIVE )
+            .path( "/mycontent" )
+            .param( "a", 3 )
+            .baseUrl( "https://cdn.company.com/data" )
+            .projectName( "myproject" )
+            .branch( "draft" );
+
+        final Content content = ContentFixtures.newContent();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+        final String url = this.service.pageUrl( params );
+        assertEquals( "/data/b/mycontent?a=3", url );
+    }
+
+    @Test
     void createUrlOfflineWithBaseUrlOnProject()
     {
+        final BaseUrlParams baseUrlParams = new BaseUrlParams();
+        baseUrlParams.setProjectName( "myproject" );
+        baseUrlParams.setBranch( "draft" );
+
         final PageUrlParams params = new PageUrlParams().portalRequest( null )
             .type( UrlTypeConstants.ABSOLUTE )
             .path( "/mycontent" )
             .param( "a", 3 )
-            .offline( true )
+            .baseUrlParams( baseUrlParams )
             .projectName( "myproject" )
             .branch( "draft" );
 
@@ -190,5 +218,29 @@ public class PortalUrlServiceImpl_pageUrlTest
 
         final String url = this.service.pageUrl( params );
         assertEquals( "https://cdn.company.com/mycontent?a=3", url );
+    }
+
+    @Test
+    void createUrlOfflineWhenBaseUrlWasNotProvided()
+    {
+        PortalRequestAccessor.set( null );
+        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
+
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.service.pageUrl( params ) );
+        assertEquals( "Either baseUrl or baseUrlParams must be provided", ex.getMessage() );
+    }
+
+    @Test
+    void createUrlOfflineWhenProvidedBothAsSBaseUrlWasNotProvided()
+    {
+        PortalRequestAccessor.set( null );
+
+        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
+            .path( "/mycontent" )
+            .baseUrl( "baseUrl" )
+            .baseUrlParams( new BaseUrlParams() );
+
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.service.pageUrl( params ) );
+        assertEquals( "Both baseUrl and baseUrlParams cannot be set", ex.getMessage() );
     }
 }
