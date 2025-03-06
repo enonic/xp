@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Objects;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
@@ -20,7 +18,9 @@ public final class PageUrlParams
 
     private String branch;
 
-    private boolean offline;
+    private String baseUrl;
+
+    private BaseUrlParams baseUrlParams;
 
     public String getId()
     {
@@ -42,9 +42,14 @@ public final class PageUrlParams
         return branch;
     }
 
-    public boolean isOffline()
+    public String getBaseUrl()
     {
-        return offline;
+        return baseUrl;
+    }
+
+    public BaseUrlParams getBaseUrlParams()
+    {
+        return baseUrlParams;
     }
 
     public PageUrlParams id( final String value )
@@ -71,9 +76,15 @@ public final class PageUrlParams
         return this;
     }
 
-    public PageUrlParams offline( final Boolean value )
+    public PageUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.offline = Objects.requireNonNullElse( value, false );
+        this.baseUrlParams = baseUrlParams;
+        return this;
+    }
+
+    public PageUrlParams baseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
         return this;
     }
 

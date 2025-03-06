@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Objects;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
@@ -28,9 +26,9 @@ public final class AttachmentUrlParams
 
     private String branch;
 
-    private String baseUrlKey;
+    private String baseUrl;
 
-    private boolean offline;
+    private BaseUrlParams baseUrlParams;
 
     public String getId()
     {
@@ -67,14 +65,14 @@ public final class AttachmentUrlParams
         return branch;
     }
 
-    public String getBaseUrlKey()
+    public String getBaseUrl()
     {
-        return baseUrlKey;
+        return baseUrl;
     }
 
-    public boolean isOffline()
+    public BaseUrlParams getBaseUrlParams()
     {
-        return offline;
+        return baseUrlParams;
     }
 
     public AttachmentUrlParams id( final String value )
@@ -124,15 +122,15 @@ public final class AttachmentUrlParams
         return this;
     }
 
-    public AttachmentUrlParams baseUrlKey( final String baseUrlKey )
+    public AttachmentUrlParams baseUrl( final String baseUrl )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.baseUrl = baseUrl;
         return this;
     }
 
-    public AttachmentUrlParams offline( final Boolean offline )
+    public AttachmentUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrlParams = baseUrlParams;
         return this;
     }
 
