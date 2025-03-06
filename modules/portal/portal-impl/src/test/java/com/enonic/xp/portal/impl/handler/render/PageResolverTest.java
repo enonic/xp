@@ -125,8 +125,8 @@ public class PageResolverTest
         // verify
         assertEquals( configA, effectivePage.getConfig() );
         assertEquals( regionsA, effectivePage.getRegions() );
-        assertNull( effectivePage.getDescriptor() );
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
+        assertNull( effectivePage.getTemplate() );
+        assertEquals( template.getController(), effectivePage.getDescriptor() );
         assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
     }
 
@@ -234,10 +234,10 @@ public class PageResolverTest
         // verify
         assertEquals( regionsA, effectivePage.getRegions() );
         assertEquals( configB, effectivePage.getConfig() );
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertNull( effectivePage.getDescriptor() );
+        assertNull( effectivePage.getTemplate() );
         assertEquals( descriptor.getApplicationKey(), result.getApplicationKey() );
         assertEquals( defaultPageDescriptor, result.getPageDescriptor() );
+        assertEquals( template.getController(), effectivePage.getDescriptor() );
     }
 
     @Test
@@ -296,8 +296,8 @@ public class PageResolverTest
         // verify
         assertEquals( configA, effectivePage.getConfig() );
         assertEquals( regionsB, effectivePage.getRegions() );
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
-        assertNull( effectivePage.getDescriptor() );
+        assertEquals( template.getController(), effectivePage.getDescriptor() );
+        assertNull( effectivePage.getTemplate() );
     }
 
     @Test
@@ -397,8 +397,9 @@ public class PageResolverTest
 
         final Page effectivePage = result.getEffectivePage();
 
-        assertEquals( template.getKey(), effectivePage.getTemplate() );
+        assertEquals( template.getController(), effectivePage.getDescriptor() );
         assertEquals( ApplicationKey.from( "myapp" ), result.getApplicationKey() );
+        assertNull( effectivePage.getTemplate() );
     }
 
     @Test

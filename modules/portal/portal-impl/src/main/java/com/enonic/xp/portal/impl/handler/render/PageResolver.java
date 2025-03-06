@@ -74,10 +74,7 @@ public class PageResolver
 
                 if ( pageTemplate != null )
                 {
-                    final DescriptorKey controller = pageTemplate.getController();
-                    return controller == null
-                        ? noPageInTemplateResult( pageTemplate )
-                        : buildPageWithRegionsFromController( mergePageFromPageTemplate( pageTemplate, page ), controller );
+                    return buildPageFromTemplate( page, pageTemplate );
                 }
                 else
                 {
@@ -97,16 +94,21 @@ public class PageResolver
 
             if ( pageTemplate != null )
             {
-                final DescriptorKey controller = pageTemplate.getController();
-                return controller == null
-                    ? noPageInTemplateResult( pageTemplate )
-                    : buildPageWithRegionsFromController( mergePageFromPageTemplate( pageTemplate, null ), controller );
+                return buildPageFromTemplate( null, pageTemplate );
             }
             else
             {
                 return PageResolverResult.errorResult( "No default template found for content" );
             }
         }
+    }
+
+    private PageResolverResult buildPageFromTemplate( final Page page, final PageTemplate pageTemplate )
+    {
+        final DescriptorKey controller = pageTemplate.getController();
+        return controller == null
+            ? noPageInTemplateResult( pageTemplate )
+            : buildPageWithRegionsFromController( mergePageFromPageTemplate( pageTemplate, page ), controller );
     }
 
     private static PageResolverResult noPageInTemplateResult( final PageTemplate pageTemplate )
@@ -134,7 +136,7 @@ public class PageResolver
         final PageTemplateKey templateKey = pageTemplate.getKey();
         if ( templatePage != null )
         {
-            final Page.Builder pageBuilder = Page.create( templatePage ).descriptor( null ).template( templateKey );
+            final Page.Builder pageBuilder = Page.create( templatePage );
 
             if ( page != null )
             {
