@@ -33,6 +33,6 @@ public class JettySessionStoreConfiguratorImpl
         server.addBean( sessionCacheFactory );
         sessionManager.setWorkerName( "" );
 
-        server.setSessionIdManager( sessionManager );
+        server.addBean( sessionManager, true );
     }
 }

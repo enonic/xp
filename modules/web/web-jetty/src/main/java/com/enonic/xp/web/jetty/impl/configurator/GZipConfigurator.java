@@ -15,11 +15,9 @@ public final class GZipConfigurator
         }
 
         final GzipHandler handler = new GzipHandler();
-        handler.setExcludedAgentPatterns();
         handler.setMinGzipSize( this.config.gzip_minSize() );
         handler.addExcludedMimeTypes( "application/octet-stream" );
-        handler.addExcludedMimeTypes( "text/event-stream" );
 
-        this.object.setGzipHandler( handler );
+        this.object.insertHandler( handler );
     }
 }
