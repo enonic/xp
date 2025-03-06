@@ -2,9 +2,9 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -26,7 +26,9 @@ public final class PageUrlHandler
 
     private String branch;
 
-    private boolean offline;
+    private String baseUrl;
+
+    private BaseUrlParams baseUrlParams;
 
     private Map<String, Collection<String>> queryParams;
 
@@ -55,9 +57,14 @@ public final class PageUrlHandler
         this.branch = branch;
     }
 
-    public void setOffline( final Boolean offline )
+    public void setBaseUrl( final String baseUrl )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrl = baseUrl;
+    }
+
+    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
+    {
+        this.baseUrlParams = baseUrlParams;
     }
 
     public void setQueryParams( final ScriptValue params )
@@ -72,7 +79,8 @@ public final class PageUrlHandler
             .type( this.type )
             .projectName( this.projectName )
             .branch( this.branch )
-            .offline( this.offline );
+            .baseUrl( this.baseUrl )
+            .baseUrlParams( this.baseUrlParams );
 
         if ( this.queryParams != null )
         {
@@ -80,6 +88,11 @@ public final class PageUrlHandler
         }
 
         return urlServiceSupplier.get().pageUrl( params );
+    }
+
+    public BaseUrlParams newBaseUrlParams()
+    {
+        return new BaseUrlParams();
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.url.ApiUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -22,13 +23,9 @@ public final class ApiUrlHandler
 
     private String type;
 
-    private Boolean offline;
+    private String baseUrl;
 
-    private String projectName;
-
-    private String branch;
-
-    private String baseUrlKey;
+    private BaseUrlParams baseUrlParams;
 
     private String path;
 
@@ -48,10 +45,8 @@ public final class ApiUrlHandler
             .setApplication( this.application )
             .setApi( this.api )
             .setType( this.type )
-            .setOffline( this.offline )
-            .setProjectName( this.projectName )
-            .setBranch( this.branch )
-            .setBaseUrlKey( this.baseUrlKey )
+            .setBaseUrl( this.baseUrl )
+            .setBaseUrlParams( this.baseUrlParams )
             .setPath( this.path )
             .setPathSegments( this.pathSegments );
 
@@ -63,6 +58,11 @@ public final class ApiUrlHandler
         final ApiUrlParams params = builder.build();
 
         return this.urlServiceSupplier.get().apiUrl( params );
+    }
+
+    public BaseUrlParams newBaseUrlParams()
+    {
+        return new BaseUrlParams();
     }
 
     public void setApplication( final String value )
@@ -80,24 +80,14 @@ public final class ApiUrlHandler
         this.type = value;
     }
 
-    public void setOffline( final Boolean value )
+    public void setBaseUrl( final String baseUrl )
     {
-        this.offline = value;
+        this.baseUrl = baseUrl;
     }
 
-    public void setProjectName( final String value )
+    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.projectName = value;
-    }
-
-    public void setBranch( final String value )
-    {
-        this.branch = value;
-    }
-
-    public void setBaseUrlKey( final String value )
-    {
-        this.baseUrlKey = value;
+        this.baseUrlParams = baseUrlParams;
     }
 
     public void setPath( final Object value )
