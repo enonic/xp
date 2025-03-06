@@ -24,6 +24,7 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlContextParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -55,21 +56,27 @@ public class UrlGeneratorParamsAdapter
     {
         final ProjectName mediaPathProjectName = offlineProjectName( params.getProjectName() );
         final Branch mediaPathBranch = offlineBranch( params.getBranch() );
-        final ProjectName baseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
-        final Branch baseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
         final Supplier<Media> mediaSupplier = () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
 
-        final Supplier<Content> baseUrlContentSupplier = () -> {
-            final String baseUriKey = params.getBaseUrlKey();
+        final BaseUrlStrategy baseUrlStrategy;
+        if ( params.getBaseUrl() != null )
+        {
+            baseUrlStrategy = new CustomOfflineBaseUlrStrategy( params.getBaseUrl(), params.getType() );
+        }
+        else
+        {
+            final BaseUrlContextParams offlineContextParams = params.getBaseUrlContext();
+            final ProjectName projectName = offlineBaseUrlProjectName( offlineContextParams.getProjectName() );
+            final Branch branch = offlineBaseUrlBranch( offlineContextParams.getBranch() );
+            final Supplier<Content> contentSupplier = () -> {
+                final String baseUriKey = offlineContextParams.getBaseUrlKey();
+                final Site site = baseUriKey != null ? offlineNearestSite( projectName, branch, baseUriKey ) : null;
+                return site != null ? site : mediaSupplier.get();
+            };
 
-            final Site site = baseUriKey != null ? offlineNearestSite( baseUrlProjectName, baseUrlBranch, params.getBaseUrlKey() ) : null;
-
-            return site != null ? site : mediaSupplier.get();
-        };
-
-        final BaseUrlStrategy baseUrlStrategy =
-            offlineBaseUrlStrategy( baseUrlProjectName, baseUrlBranch, baseUrlContentSupplier, params.getType() );
+            baseUrlStrategy = offlineBaseUrlStrategy( projectName, branch, contentSupplier, params.getType() );
+        }
 
         return ImageUrlGeneratorParams.create()
             .setBaseUrlStrategy( baseUrlStrategy )
@@ -328,9 +335,9 @@ public class UrlGeneratorParamsAdapter
 
     private ProjectName offlineBaseUrlProjectName( final String projectName )
     {
-        return ContextAccessor.current().getRepositoryId() != null
-            ? ProjectName.from( ContextAccessor.current().getRepositoryId() )
-            : ProjectName.from( Objects.requireNonNull( projectName, "Project must be provided" ) );
+        return projectName != null
+            ? ProjectName.from( projectName )
+            : ProjectName.from( Objects.requireNonNull( ContextAccessor.current().getRepositoryId(), "Project must be provided" ) );
     }
 
     private Branch offlineBranch( final String branch )

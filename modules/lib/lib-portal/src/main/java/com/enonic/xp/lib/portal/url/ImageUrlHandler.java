@@ -2,9 +2,9 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.url.BaseUrlContextParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -38,9 +38,9 @@ public final class ImageUrlHandler
 
     private String branch;
 
-    private String baseUrlKey;
+    private String baseUrl;
 
-    private boolean offline;
+    private BaseUrlContextParams baseUrlContextParams;
 
     private Map<String, Collection<String>> queryParams;
 
@@ -49,6 +49,11 @@ public final class ImageUrlHandler
     {
         this.request = context.getBinding( PortalRequest.class ).get();
         this.urlService = context.getService( PortalUrlService.class ).get();
+    }
+
+    public BaseUrlContextParams newBaseUrlContextParams()
+    {
+        return new BaseUrlContextParams();
     }
 
     public void setId( final String id )
@@ -101,14 +106,14 @@ public final class ImageUrlHandler
         this.branch = branch;
     }
 
-    public void setBaseUrlKey( final String baseUrlKey )
+    public void setBaseUrl( final String baseUrl )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.baseUrl = baseUrl;
     }
 
-    public void setOffline( final Boolean offline )
+    public void setBaseUrlContextParams( final BaseUrlContextParams baseUrlContextParams )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrlContextParams = baseUrlContextParams;
     }
 
     public void addQueryParams( final ScriptValue params )
@@ -129,8 +134,8 @@ public final class ImageUrlHandler
             .scale( this.scale )
             .projectName( this.projectName )
             .branch( this.branch )
-            .baseUrlKey( this.baseUrlKey )
-            .offline( this.offline );
+            .baseUrl( this.baseUrl )
+            .baseUrlContext( this.baseUrlContextParams );
 
         if ( this.queryParams != null )
         {
