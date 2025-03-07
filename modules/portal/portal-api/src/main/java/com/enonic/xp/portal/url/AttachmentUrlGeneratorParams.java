@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Media;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
 
 @PublicApi
@@ -18,7 +18,7 @@ public final class AttachmentUrlGeneratorParams
 {
     private final BaseUrlStrategy baseUrlStrategy;
 
-    private final Supplier<Media> mediaSupplier;
+    private final Supplier<Content> contentSupplier;
 
     private final ProjectName projectName;
 
@@ -35,7 +35,7 @@ public final class AttachmentUrlGeneratorParams
     private AttachmentUrlGeneratorParams( final Builder builder )
     {
         this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
-        this.mediaSupplier = Objects.requireNonNull( builder.mediaSupplier );
+        this.contentSupplier = Objects.requireNonNull( builder.mediaSupplier );
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.download = builder.download;
@@ -49,9 +49,9 @@ public final class AttachmentUrlGeneratorParams
         return baseUrlStrategy;
     }
 
-    public Supplier<Media> getMediaSupplier()
+    public Supplier<Content> getContentSupplier()
     {
-        return mediaSupplier;
+        return contentSupplier;
     }
 
     public ProjectName getProjectName()
@@ -93,7 +93,7 @@ public final class AttachmentUrlGeneratorParams
     {
         private BaseUrlStrategy baseUrlStrategy;
 
-        private Supplier<Media> mediaSupplier;
+        private Supplier<Content> mediaSupplier;
 
         private ProjectName projectName;
 
@@ -113,7 +113,7 @@ public final class AttachmentUrlGeneratorParams
             return this;
         }
 
-        public Builder setMedia( final Supplier<Media> mediaSupplier )
+        public Builder setContent( final Supplier<Content> mediaSupplier )
         {
             this.mediaSupplier = mediaSupplier;
             return this;

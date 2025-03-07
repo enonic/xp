@@ -7,6 +7,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Suppliers;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -116,13 +118,17 @@ public class UrlGeneratorParamsAdapter
         final ProjectName prefixAndBaseUrlProjectName = offlineBaseUrlProjectName( params.getProjectName() );
         final Branch prefixAndBaseUrlBranch = offlineBaseUrlBranch( params.getBranch() );
 
-        final Supplier<Media> mediaSupplier = () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(), params.getPath() );
+        final Supplier<Content> contentSupplier = Suppliers.memoize( () -> ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( mediaPathProjectName.getRepoId() )
+            .branch( mediaPathBranch )
+            .build()
+            .callWith( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) ) );
 
         final Supplier<Content> baseUrlContentSupplier = () -> {
             final String baseUriKey = params.getBaseUrlKey();
             final Site site =
                 baseUriKey != null ? offlineNearestSite( prefixAndBaseUrlProjectName, prefixAndBaseUrlBranch, baseUriKey ) : null;
-            return site != null ? site : mediaSupplier.get();
+            return site != null ? site : contentSupplier.get();
         };
 
         final BaseUrlStrategy baseUrlStrategy =
@@ -132,7 +138,7 @@ public class UrlGeneratorParamsAdapter
             .setBaseUrlStrategy( baseUrlStrategy )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
-            .setMedia( mediaSupplier )
+            .setContent( contentSupplier )
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )
@@ -154,9 +160,17 @@ public class UrlGeneratorParamsAdapter
             .setBaseUrlStrategy( baseUrlStrategy )
             .setProjectName( mediaPathProjectName )
             .setBranch( mediaPathBranch )
-            .setMedia( () -> resolveMedia( mediaPathProjectName, mediaPathBranch, params.getId(),
-                                           Objects.requireNonNullElseGet( params.getPath(),
-                                                                          () -> portalRequest.getContentPath().toString() ) ) )
+            .setContent( () -> ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( mediaPathProjectName.getRepoId() )
+                .branch( mediaPathBranch )
+                .build()
+                .callWith( () -> {
+                    final ContentResolver contentResolver = new ContentResolver().portalRequest( portalRequest )
+                        .contentService( this.contentService )
+                        .id( params.getId() )
+                        .path( params.getPath() );
+                    return contentResolver.resolve();
+                } ) )
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -14,8 +13,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 public final class ImageUrlHandler
     implements ScriptBean
 {
-    private PortalRequest request;
-
     private PortalUrlService urlService;
 
     private String id;
@@ -47,7 +44,6 @@ public final class ImageUrlHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = context.getBinding( PortalRequest.class ).get();
         this.urlService = context.getService( PortalUrlService.class ).get();
     }
 
@@ -118,8 +114,7 @@ public final class ImageUrlHandler
 
     public String createUrl()
     {
-        final ImageUrlParams params = new ImageUrlParams().portalRequest( this.request )
-            .id( this.id )
+        final ImageUrlParams params = new ImageUrlParams().id( this.id )
             .path( this.path )
             .type( this.urlType )
             .background( this.background )

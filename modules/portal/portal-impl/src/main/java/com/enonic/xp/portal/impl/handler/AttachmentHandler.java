@@ -22,7 +22,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
-@Deprecated(since = "8.0", forRemoval = true)
 @Component(service = AttachmentHandler.class, configurationPid = "com.enonic.xp.portal")
 public class AttachmentHandler
 {
