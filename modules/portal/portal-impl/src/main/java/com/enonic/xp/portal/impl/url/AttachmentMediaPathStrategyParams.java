@@ -3,12 +3,12 @@ package com.enonic.xp.portal.impl.url;
 import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Media;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
 
 final class AttachmentMediaPathStrategyParams
 {
-    private final Supplier<Media> mediaSupplier;
+    private final Supplier<Content> contentSupplier;
 
     private final ProjectName projectName;
 
@@ -20,16 +20,16 @@ final class AttachmentMediaPathStrategyParams
 
     private AttachmentMediaPathStrategyParams( final Builder builder )
     {
-        this.mediaSupplier = builder.mediaSupplier;
+        this.contentSupplier = builder.contentSupplier;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.name = builder.name;
         this.label = builder.label;
     }
 
-    public Supplier<Media> getMediaSupplier()
+    public Supplier<Content> getContentSupplier()
     {
-        return mediaSupplier;
+        return contentSupplier;
     }
 
     public ProjectName getProjectName()
@@ -59,7 +59,7 @@ final class AttachmentMediaPathStrategyParams
 
     static class Builder
     {
-        private Supplier<Media> mediaSupplier;
+        private Supplier<Content> contentSupplier;
 
         private ProjectName projectName;
 
@@ -69,9 +69,9 @@ final class AttachmentMediaPathStrategyParams
 
         private String label;
 
-        public Builder setMedia( final Supplier<Media> mediaSupplier )
+        public Builder setContent( final Supplier<Content> contentSupplier )
         {
-            this.mediaSupplier = mediaSupplier;
+            this.contentSupplier = contentSupplier;
             return this;
         }
 
