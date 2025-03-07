@@ -74,14 +74,13 @@ public class PortalUrlServiceImpl_processHtmlTest
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
 
         //Process an html text containing a link to this content
-        final ProcessHtmlParams params =
-            new ProcessHtmlParams().portalRequest( this.portalRequest ).value( "<a href=\"image://" + media.getId() + "\">Image</a>" );
+        final ProcessHtmlParams params = new ProcessHtmlParams().value( "<a href=\"image://" + media.getId() + "\">Image</a>" );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" + "width-768" +
-                "/" + media.getName() + "\">Image</a>", processedHtml );
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+                "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -102,7 +101,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         Map<String, String> projection = new HashMap<>();
 
         //Process an html text containing an inline link to this content
-        ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( this.portalRequest ).customHtmlProcessor( processorParams -> {
+        ProcessHtmlParams params = new ProcessHtmlParams().customHtmlProcessor( processorParams -> {
             processorParams.processDefault( ( element, properties ) -> {
                 if ( "a".equals( element.getTagName() ) )
                 {
@@ -118,7 +117,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the URL of the source attachment of the content is returned
         String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() + "/" +
+            "<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" +
                 source.getName() + "\" data-link-ref=\"linkRef\">Media</a>", processedHtml );
 
         assertEquals( content.getId().toString(), projection.get( "contentId" ) );
@@ -134,8 +133,8 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/context/path/_/attachment/download/" + content.getId() + "/" +
-                source.getName() + "\">Media</a>", processedHtml );
+            "<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" +
+                source.getName() + "?download\">Media</a>", processedHtml );
 
         //Process an html text containing an inline link to this content in a img tag
         params = new ProcessHtmlParams().portalRequest( this.portalRequest )
@@ -143,8 +142,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the URL of the source attachment of the content is returned
         processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/some/page\"><img src=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() +
-                          "/" + source.getName() + "\">Media</a>", processedHtml );
+        assertEquals( "<a href=\"/some/page\"><img src=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() +
+                          ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() + "\">Media</a>", processedHtml );
 
     }
 
@@ -175,11 +174,11 @@ public class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals( "<p>A content link:&nbsp;<a href=\"/site/myproject/draft" + content.getPath() + "\">FirstLink</a></p>\n" +
                           "<p>A second content link:&nbsp;<a href=\"/site/myproject/draft" + content.getPath() + "\">SecondLink</a>" +
-                          "&nbsp;and a download link:&nbsp;<a href=\"/site/myproject/draft/context/path/_/attachment/download/" +
-                          content.getId() + "/" + source.getName() + "\">Download</a></p>\n" +
+                          "&nbsp;and a download link:&nbsp;<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" +
+                          content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() + "?download\">Download</a></p>\n" +
                           "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
-                          "<a href=\"/site/myproject/draft/context/path/_/attachment/inline/" + content.getId() +
-                          "/" + source.getName() + "\">Inline</a>", processedHtml );
+                          "<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() +
+                          "\">Inline</a>", processedHtml );
     }
 
     @Test
@@ -200,8 +199,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches(
-            "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
     }
 
     @Test
@@ -218,8 +216,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches(
-            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
     }
 
     @Test
@@ -240,8 +237,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches(
-            "<a href=\"/site/myproject/draft/context/path/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
 
     @Test
@@ -278,8 +274,9 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
-        assertEquals( "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
-                          "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
+        assertEquals(
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+                "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -325,11 +322,10 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String expectedResult1 =
-            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
-        final String expectedResult2 =
-            "<a href=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" + "width-768" +
-                "/" + media.getName() + "\">Image</a>";
+        final String expectedResult2 = "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
+            ":b12b4c973748042e3b3a7e4798344289/width-768/" + media.getName() + "\">Image</a>";
         assertEquals( expectedResult1, processedLink1 );
         assertEquals( expectedResult2, processedLink2 );
 
@@ -359,12 +355,12 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
-                media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" " +
-                "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
-                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-660/mycontent 660w," + "/site/myproject/draft/context/path/_/image/" +
+            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
+                media.getId() + ":b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" " +
+                "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
+                ":b12b4c973748042e3b3a7e4798344289/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+                ":b12b4c973748042e3b3a7e4798344289/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -385,12 +381,12 @@ public class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/context/path/_/image/" +
-                media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" " +
-                "srcset=\"/site/myproject/draft/context/path/_/image/" + media.getId() +
-                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-660/mycontent 660w," + "/site/myproject/draft/context/path/_/image/" +
+            "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
+                media.getId() + ":b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" " +
+                "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
+                ":b12b4c973748042e3b3a7e4798344289/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
+                ":b12b4c973748042e3b3a7e4798344289/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -579,7 +575,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         final String processedLink = this.service.processHtml( params );
 
         final String expectedResult =
-            "<img src=\"/site/myproject/draft/context/path/_/image/" + media.getId() + ":bb6d2c0f3112f562ec454654b9aebe7ab47ba865/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
 
         assertEquals( expectedResult, processedLink );

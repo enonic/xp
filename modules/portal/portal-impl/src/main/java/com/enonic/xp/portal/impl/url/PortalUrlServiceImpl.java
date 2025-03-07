@@ -7,11 +7,13 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
@@ -36,9 +38,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
-
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
     implements PortalUrlService
@@ -54,10 +53,6 @@ public final class PortalUrlServiceImpl
     private final RedirectChecksumService redirectChecksumService;
 
     private final UrlGeneratorParamsAdapter urlStrategyFacade;
-
-    private volatile boolean legacyImageServiceEnabled;
-
-    private volatile boolean legacyAttachmentServiceEnabled;
 
     private volatile boolean useLegacyAssetContextPath;
 
@@ -81,8 +76,6 @@ public final class PortalUrlServiceImpl
     @Modified
     public void activate( final PortalConfig config )
     {
-        this.legacyImageServiceEnabled = config.legacy_imageService_enabled();
-        this.legacyAttachmentServiceEnabled = config.legacy_attachmentService_enabled();
         this.useLegacyAssetContextPath = config.asset_legacyContextPath();
         this.useLegacyIdProviderContextPath = config.idprovider_legacyContextPath();
     }
@@ -98,7 +91,31 @@ public final class PortalUrlServiceImpl
     @Override
     public String serviceUrl( final ServiceUrlParams params )
     {
-        return build( new ServiceUrlBuilder(), params );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        final ServiceRequestBaseUrlStrategy baseUrlStrategy = ServiceRequestBaseUrlStrategy.create()
+            .setPortalRequest( portalRequest )
+            .setUrlType( params.getType() )
+            .setContextPathType( params.getContextPathType() )
+            .build();
+
+        final PathStrategy pathStrategy = () -> {
+            final ApplicationKey applicationKey =
+                new ApplicationResolver().portalRequest( portalRequest ).application( params.getApplication() ).resolve();
+
+            final StringBuilder url = new StringBuilder();
+
+            UrlBuilderHelper.appendSubPath( url, "service" );
+            UrlBuilderHelper.appendPart( url, applicationKey.toString() );
+            UrlBuilderHelper.appendPart( url, params.getService() );
+
+            return url.toString();
+        };
+
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getParams().forEach( queryParamsStrategy::put );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( baseUrlStrategy, pathStrategy, queryParamsStrategy ) );
     }
 
     @Override
@@ -120,35 +137,21 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        if ( this.legacyImageServiceEnabled )
-        {
-            return build( new ImageUrlBuilder(), params );
-        }
-        else
-        {
-            final ImageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineImageUrlParams( params )
-                : urlStrategyFacade.requestImageUrlParams( params );
+        final ImageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
+            ? urlStrategyFacade.offlineImageUrlParams( params )
+            : urlStrategyFacade.requestImageUrlParams( params );
 
-            return imageUrl( generatorParams );
-        }
+        return imageUrl( generatorParams );
     }
 
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        if ( this.legacyAttachmentServiceEnabled )
-        {
-            return build( new AttachmentUrlBuilder(), params );
-        }
-        else
-        {
-            final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineAttachmentUrlParams( params )
-                : urlStrategyFacade.requestAttachmentUrlParams( params );
+        final AttachmentUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
+            ? urlStrategyFacade.offlineAttachmentUrlParams( params )
+            : urlStrategyFacade.requestAttachmentUrlParams( params );
 
-            return attachmentUrl( generatorParams );
-        }
+        return attachmentUrl( generatorParams );
     }
 
     @Override
@@ -223,7 +226,7 @@ public final class PortalUrlServiceImpl
     public String attachmentUrl( final AttachmentUrlGeneratorParams params )
     {
         final AttachmentMediaPathStrategyParams strategyParams = AttachmentMediaPathStrategyParams.create()
-            .setMedia( params.getMediaSupplier() )
+            .setContent( params.getContentSupplier() )
             .setProjectName( params.getProjectName() )
             .setBranch( params.getBranch() )
             .build();
@@ -259,10 +262,10 @@ public final class PortalUrlServiceImpl
     {
         final PathStrategy pathStrategy = () -> {
             final StringBuilder url = new StringBuilder();
-            appendPart( url, params.getApplication() + ":" + params.getApi() );
+            UrlBuilderHelper.appendPart( url, params.getApplication() + ":" + params.getApi() );
             if ( params.getPath() != null )
             {
-                appendSubPath( url, params.getPath().get() );
+                UrlBuilderHelper.appendSubPath( url, params.getPath().get() );
             }
             return url.toString();
         };
