@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Objects;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -33,9 +31,9 @@ public final class ImageUrlParams
 
     private String branch;
 
-    private String baseUrlKey;
+    private String baseUrl;
 
-    private boolean offline;
+    private BaseUrlParams baseUrlParams;
 
     public String getId()
     {
@@ -82,14 +80,14 @@ public final class ImageUrlParams
         return branch;
     }
 
-    public String getBaseUrlKey()
+    public String getBaseUrl()
     {
-        return baseUrlKey;
+        return baseUrl;
     }
 
-    public boolean isOffline()
+    public BaseUrlParams getBaseUrlParams()
     {
-        return offline;
+        return baseUrlParams;
     }
 
     public ImageUrlParams id( final String value )
@@ -151,15 +149,15 @@ public final class ImageUrlParams
         return this;
     }
 
-    public ImageUrlParams baseUrlKey( final String baseUrlKey )
+    public ImageUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.baseUrlParams = baseUrlParams;
         return this;
     }
 
-    public ImageUrlParams offline( final Boolean offline )
+    public ImageUrlParams baseUrl( final String baseUrl )
     {
-        this.offline = Objects.requireNonNullElse( offline, false );
+        this.baseUrl = baseUrl;
         return this;
     }
 
@@ -193,7 +191,7 @@ public final class ImageUrlParams
 
     public ImageUrlParams validate()
     {
-        Preconditions.checkState( (getPortalRequest() != null && getPortalRequest().getContent() != null) || id != null || path != null,
+        Preconditions.checkState( ( getPortalRequest() != null && getPortalRequest().getContent() != null ) || id != null || path != null,
                                   "id, path or content must be set" );
         return this;
     }

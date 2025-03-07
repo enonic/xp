@@ -19,6 +19,7 @@ import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -182,8 +183,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final ImageUrlParams params =
-            new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).scale( "max(300)" ).baseUrlKey( "siteId" );
+        final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
         assertEquals(
@@ -208,11 +208,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
 
-        final ImageUrlParams params = new ImageUrlParams().format( "png" )
-            .offline( false )
-            .type( UrlTypeConstants.SERVER_RELATIVE )
-            .id( "123456" )
-            .scale( "max(300)" );
+        final ImageUrlParams params =
+            new ImageUrlParams().format( "png" ).type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).scale( "max(300)" );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenThrow( new RuntimeException() );
 
@@ -276,8 +273,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final ImageUrlParams params =
-            new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).scale( "max(300)" ).baseUrlKey( "siteId" );
+        final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" ).scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/main/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
@@ -292,12 +288,16 @@ public class PortalUrlServiceImpl_imageUrlTest
         // Nearest site is not found
         // baseUrl not found on project level
         // fallback to /api
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject2" );
+        baseUrlContextParams.setBranch( "master" );
+        baseUrlContextParams.setKey( "siteId" );
 
-        final ImageUrlParams params = new ImageUrlParams().offline( true )
-            .type( UrlTypeConstants.SERVER_RELATIVE )
+        final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
             .projectName( "myproject2" )
             .branch( "master" )
             .id( "123456" )
+            .baseUrlParams( baseUrlContextParams )
             .scale( "max(300)" );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
@@ -323,12 +323,17 @@ public class PortalUrlServiceImpl_imageUrlTest
         // Nearest site is not found
         // baseUrl found on project level
 
-        final ImageUrlParams params = new ImageUrlParams().offline( true )
-            .type( UrlTypeConstants.ABSOLUTE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
             .id( "123456" )
-            .scale( "max(300)" );
+            .scale( "max(300)" )
+            .baseUrlParams( baseUrlContextParams );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
 
@@ -366,11 +371,15 @@ public class PortalUrlServiceImpl_imageUrlTest
         // Nearest site is found by `baseUrlKey`
         // baseUrl found on site
 
-        final ImageUrlParams params = new ImageUrlParams().offline( true )
-            .type( UrlTypeConstants.ABSOLUTE )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
-            .baseUrlKey( "siteId" )
+            .baseUrlParams( baseUrlContextParams )
             .id( "123456" )
             .scale( "max(300)" );
 
@@ -407,11 +416,16 @@ public class PortalUrlServiceImpl_imageUrlTest
         // baseUrl does not resolved on site and project levels
         // fallback to /api
 
-        final ImageUrlParams params = new ImageUrlParams().offline( true )
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
+        baseUrlContextParams.setProjectName( "myproject" );
+        baseUrlContextParams.setBranch( "draft" );
+        baseUrlContextParams.setKey( "siteId" );
+
+        final ImageUrlParams params = new ImageUrlParams()
             .type( UrlTypeConstants.ABSOLUTE )
             .projectName( "myproject2" )
             .branch( "master" )
-            .baseUrlKey( "siteId" )
+            .baseUrlParams( baseUrlContextParams )
             .id( "123456" )
             .scale( "max(300)" );
 
@@ -448,13 +462,15 @@ public class PortalUrlServiceImpl_imageUrlTest
         // baseUrl not found on project level
         // fallback to /api
         // attachmentHash is null
+        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
 
-        final ImageUrlParams params = new ImageUrlParams().offline( true )
+        final ImageUrlParams params = new ImageUrlParams()
             .type( UrlTypeConstants.SERVER_RELATIVE )
             .projectName( "myproject2" )
             .branch( "master" )
             .id( "123456" )
-            .scale( "max(300)" );
+            .scale( "max(300)" )
+            .baseUrlParams( baseUrlContextParams );
 
         when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
 

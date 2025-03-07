@@ -126,9 +126,10 @@ public final class PortalUrlServiceImpl
         }
         else
         {
-            final ImageUrlGeneratorParams generatorParams = params.isOffline() || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineImageUrlParams( params )
-                : urlStrategyFacade.requestImageUrlParams( params );
+            final ImageUrlGeneratorParams generatorParams =
+                params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
+                    ? urlStrategyFacade.offlineImageUrlParams( params )
+                    : urlStrategyFacade.requestImageUrlParams( params );
 
             return imageUrl( generatorParams );
         }
