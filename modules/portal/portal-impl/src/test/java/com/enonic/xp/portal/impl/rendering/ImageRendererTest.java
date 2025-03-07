@@ -58,7 +58,7 @@ public class ImageRendererTest
     public void imageComponentWithImage()
     {
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( createContent(), expected );
     }
@@ -70,7 +70,7 @@ public class ImageRendererTest
         content.getData().setString( "altText", "alternative" );
 
         String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/a/b/mycontent/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
+            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
 
         testImageComponentWithImage( content, expected );
     }
@@ -114,10 +114,7 @@ public class ImageRendererTest
     {
         // setup
         this.portalRequest.setContent( createContent() );
-        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) )
-            .thenThrow(
-                ContentNotFoundException.class );
-
+        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
@@ -140,8 +137,7 @@ public class ImageRendererTest
         portalRequest.setMode( RenderMode.EDIT );
         this.portalRequest.setContent( createContent() );
 
-        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow(
-            ContentNotFoundException.class );
+        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );
 
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
@@ -164,13 +160,11 @@ public class ImageRendererTest
     public void testRenderImageComponentWithReadPermission()
     {
         // simulate case when a user does not have a permission on read
-        Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) )
-            .thenThrow(
-                ContentNotFoundException.class );
+        Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );
 
         imageComponent = ImageComponent.create().image( ContentId.from( "id" ) ).build();
 
-        renderer = new ImageRenderer(this.service, contentService );
+        renderer = new ImageRenderer( this.service, contentService );
 
         PortalResponse response = renderer.render( imageComponent, portalRequest );
         assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getBody() );
