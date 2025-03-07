@@ -3,13 +3,13 @@ package com.enonic.xp.portal.url;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public final class BaseUrlContextParams
+public final class BaseUrlParams
 {
     private String projectName;
 
     private String branch;
 
-    private String baseUrlKey;
+    private String key;
 
     public String getProjectName()
     {
@@ -31,13 +31,13 @@ public final class BaseUrlContextParams
         this.branch = branch;
     }
 
-    public String getBaseUrlKey()
+    public String getKey()
     {
-        return baseUrlKey;
+        return key;
     }
 
-    public void setBaseUrlKey( final String baseUrlKey )
+    public void setKey( final String key )
     {
-        this.baseUrlKey = baseUrlKey;
+        this.key = key;
     }
 }

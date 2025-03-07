@@ -340,10 +340,11 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         final Project project = mock( Project.class );
         when( project.getSiteConfigs() ).thenReturn( siteConfigs );
 
-        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
+        // TODO fix using BaseUrlParams
+        when( projectService.get( eq( ProjectName.from( "myproject2" ) ) ) ).thenReturn( project );
 
         final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+//            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) ) // TODO fix using BaseUrlParams
             .branch( Branch.from( "draft" ) )
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );

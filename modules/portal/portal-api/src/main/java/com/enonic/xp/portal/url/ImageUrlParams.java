@@ -33,7 +33,7 @@ public final class ImageUrlParams
 
     private String baseUrl;
 
-    private BaseUrlContextParams baseUrlContext;
+    private BaseUrlParams baseUrlParams;
 
     public String getId()
     {
@@ -85,9 +85,9 @@ public final class ImageUrlParams
         return baseUrl;
     }
 
-    public BaseUrlContextParams getBaseUrlContext()
+    public BaseUrlParams getBaseUrlParams()
     {
-        return baseUrlContext;
+        return baseUrlParams;
     }
 
     public ImageUrlParams id( final String value )
@@ -149,9 +149,9 @@ public final class ImageUrlParams
         return this;
     }
 
-    public ImageUrlParams baseUrlContext( final BaseUrlContextParams baseUrlContext )
+    public ImageUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.baseUrlContext = baseUrlContext;
+        this.baseUrlParams = baseUrlParams;
         return this;
     }
 

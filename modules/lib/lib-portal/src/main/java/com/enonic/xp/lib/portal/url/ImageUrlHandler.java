@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.BaseUrlContextParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -40,7 +40,7 @@ public final class ImageUrlHandler
 
     private String baseUrl;
 
-    private BaseUrlContextParams baseUrlContextParams;
+    private BaseUrlParams baseUrlParams;
 
     private Map<String, Collection<String>> queryParams;
 
@@ -51,9 +51,9 @@ public final class ImageUrlHandler
         this.urlService = context.getService( PortalUrlService.class ).get();
     }
 
-    public BaseUrlContextParams newBaseUrlContextParams()
+    public BaseUrlParams newBaseUrlParams()
     {
-        return new BaseUrlContextParams();
+        return new BaseUrlParams();
     }
 
     public void setId( final String id )
@@ -111,9 +111,9 @@ public final class ImageUrlHandler
         this.baseUrl = baseUrl;
     }
 
-    public void setBaseUrlContextParams( final BaseUrlContextParams baseUrlContextParams )
+    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
     {
-        this.baseUrlContextParams = baseUrlContextParams;
+        this.baseUrlParams = baseUrlParams;
     }
 
     public void addQueryParams( final ScriptValue params )
@@ -135,7 +135,7 @@ public final class ImageUrlHandler
             .projectName( this.projectName )
             .branch( this.branch )
             .baseUrl( this.baseUrl )
-            .baseUrlContext( this.baseUrlContextParams );
+            .baseUrlParams( this.baseUrlParams );
 
         if ( this.queryParams != null )
         {
