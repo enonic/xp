@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -14,8 +13,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 public final class AttachmentUrlHandler
     implements ScriptBean
 {
-    private PortalRequest request;
-
     private PortalUrlService urlService;
 
     private String id;
@@ -43,7 +40,6 @@ public final class AttachmentUrlHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = context.getBinding( PortalRequest.class ).get();
         this.urlService = context.getService( PortalUrlService.class ).get();
     }
 
@@ -109,8 +105,7 @@ public final class AttachmentUrlHandler
 
     public String createUrl()
     {
-        final AttachmentUrlParams params = new AttachmentUrlParams().portalRequest( this.request )
-            .id( this.id )
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( this.id )
             .path( this.path )
             .type( this.urlType )
             .name( this.name )
