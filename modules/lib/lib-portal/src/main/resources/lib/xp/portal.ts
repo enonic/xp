@@ -56,6 +56,8 @@ interface AssetUrlHandler {
 }
 
 /**
+ * @deprecated Use `libAsset` or `libStatic` instead. This function will be removed in future versions.
+ *
  * This function generates a URL pointing to a static file.
  *
  * @example-ref examples/portal/assetUrl.js
