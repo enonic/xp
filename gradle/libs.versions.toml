@@ -44,8 +44,8 @@ jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version =
 jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.9" }
 
 jakarta-servlet = "jakarta.servlet:jakarta.servlet-api:6.1.0"
-jakarta-websocket-api = "jakarta.websocket:jakarta.websocket-api:2.2.0"
-jakarta-websocket-clientapi = "jakarta.websocket:jakarta.websocket-client-api:2.2.0"
+jakarta-websocket-api = "jakarta.websocket:jakarta.websocket-api:2.1.0"
+jakarta-websocket-clientapi = "jakarta.websocket:jakarta.websocket-client-api:2.1.0"
 
 osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
 osgi-service-componentannotations = { module = "org.osgi:org.osgi.service.component.annotations", version = "1.5.1" }

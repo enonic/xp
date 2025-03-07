@@ -1,7 +1,6 @@
 dependencies {
     api project( ':core:core-api' )
     api libs.jakarta.servlet
-    api libs.jakarta.websocket.api
     api libs.jakarta.websocket.clientapi
 
     testFixturesImplementation libs.junit.jupiter.api
