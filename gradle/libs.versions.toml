@@ -65,7 +65,7 @@ felix-logextension = { module = "org.apache.felix:org.apache.felix.log.extension
 
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.80" }
 
-elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
+elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "8.17.3" }
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
