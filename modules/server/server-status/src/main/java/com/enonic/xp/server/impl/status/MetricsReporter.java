@@ -4,19 +4,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusContext;
 import com.enonic.xp.status.StatusReporter;
-import com.enonic.xp.util.Metrics;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class MetricsReporter
@@ -26,8 +21,8 @@ public final class MetricsReporter
 
     public MetricsReporter()
     {
-        final MetricsModule module = new MetricsModule( TimeUnit.SECONDS, TimeUnit.SECONDS, false, MetricFilter.ALL );
-        this.mapper = new ObjectMapper().registerModule( module );
+        //final MetricsModule module = new MetricsModule( TimeUnit.SECONDS, TimeUnit.SECONDS, false, MetricFilter.ALL );
+        this.mapper = new ObjectMapper();//.registerModule( module );
     }
 
     @Override
@@ -65,15 +60,15 @@ public final class MetricsReporter
 
     private Map<String, Object> toMap( final String filter )
     {
-        final MetricFilter metricFilter = ( name, metric ) -> name.toLowerCase().contains( filter.toLowerCase() );
-        final MetricRegistry registry = Metrics.registry();
+        //final MetricFilter metricFilter = ( name, metric ) -> name.getKey().contains( filter );
+        //final MetricRegistry registry = OldMetrics.registry();
 
         final Map<String, Object> map = new HashMap<>();
-        map.put( "gauges", registry.getGauges( metricFilter ) );
-        map.put( "counters", registry.getCounters( metricFilter ) );
-        map.put( "histograms", registry.getHistograms( metricFilter ) );
-        map.put( "meters", registry.getMeters( metricFilter ) );
-        map.put( "timers", registry.getTimers( metricFilter ) );
+        //map.put( "gauges", registry.getGauges( metricFilter ) );
+        //map.put( "counters", registry.getCounters( metricFilter ) );
+        //map.put( "histograms", registry.getHistograms( metricFilter ) );
+        //map.put( "meters", registry.getMeters( metricFilter ) );
+        //map.put( "timers", registry.getTimers( metricFilter ) );
         return map;
     }
 }

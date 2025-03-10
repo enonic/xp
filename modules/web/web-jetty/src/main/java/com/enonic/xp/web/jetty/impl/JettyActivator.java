@@ -19,13 +19,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
-
 import jakarta.servlet.ServletContext;
 
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.util.Metrics;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.configurator.ErrorHandlerConfigurator;
@@ -125,8 +122,9 @@ public final class JettyActivator
         final int minThreads = config.threadPool_minThreads();
         final int idleTimeout = config.threadPool_idleTimeout();
 
-        Metrics.removeAll( InstrumentedQueuedThreadPool.class );
-        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( Metrics.registry(), maxThreads, minThreads, idleTimeout );
+        //OldMetrics.removeAll( InstrumentedQueuedThreadPool.class );
+        //final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( OldMetrics.registry(), maxThreads, minThreads, idleTimeout );
+        final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
         final Server server = new Server( threadPool );
 
         jettySessionStoreConfigurator.configure( server );

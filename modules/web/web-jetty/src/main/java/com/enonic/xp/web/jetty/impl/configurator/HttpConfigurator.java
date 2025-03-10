@@ -3,9 +3,6 @@ package com.enonic.xp.web.jetty.impl.configurator;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.ServerConnector;
 
-import com.codahale.metrics.jetty9.InstrumentedHttpChannelListener;
-
-import com.enonic.xp.util.Metrics;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 
 public final class HttpConfigurator
@@ -18,15 +15,14 @@ public final class HttpConfigurator
         {
             return;
         }
-
+        //OldMetrics.removeAll( InstrumentedConnectionFactory.class );
         final HttpConnectionFactory factory = new HttpConnectionFactory();
+        //new InstrumentedConnectionFactory( factory, Metrics.registry() );
         doConfigure( factory );
 
         final ServerConnector connectorXp = new ServerConnector( this.object, factory );
         connectorXp.setName( DispatchConstants.XP_CONNECTOR );
         doConfigure( connectorXp, this.config.http_xp_port() );
-        Metrics.removeAll( InstrumentedHttpChannelListener.class );
-        connectorXp.addBean( new InstrumentedHttpChannelListener( Metrics.registry() ) );
 
         final ServerConnector connectorApi = new ServerConnector( this.object, factory );
         connectorApi.setName( DispatchConstants.API_CONNECTOR );
