@@ -1,6 +1,6 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
-    implementation libs.jackson.jaxrs.jsonprovider
+    implementation libs.jackson.jakarta.jsonprovider
     implementation ( libs.resteasy ) {
         exclude group: 'org.jboss.spec.javax.ws.rs'
     }
@@ -10,10 +10,9 @@ dependencies {
     testFixturesImplementation ( libs.resteasy ) {
         exclude group: 'org.jboss.spec.javax.ws.rs'
     }
-    testFixturesImplementation libs.jetty.client
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesImplementation libs.jackson.jaxrs.jsonprovider
+    testFixturesImplementation libs.jackson.jakarta.jsonprovider
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
     testFixturesImplementation project( ':core:core-internal' )
 

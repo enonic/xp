@@ -98,8 +98,8 @@ jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
-jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version.ref = "jackson" }
-jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version.ref = "jackson" }
+jackson-jakarta-base = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-base", version.ref = "jackson" }
+jackson-jakarta-jsonprovider = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider", version.ref = "jackson" }
 jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
 jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
@@ -114,7 +114,6 @@ metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version.ref 
 metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version.ref = "dropwizard" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
-hazelcast-kubernetes = { module = "com.hazelcast:hazelcast-kubernetes", version = "1.5.6" }
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
@@ -126,6 +125,5 @@ jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets", versio
 jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version.ref = "jetty" }
 jetty-websocket-server = { module = "org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jakarta-server", version.ref = "jetty" }
 jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version.ref = "jetty" }
-jetty-client = { module = "org.eclipse.jetty:jetty-client", version.ref = "jetty" }
 
 [plugins]

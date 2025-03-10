@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.task;
 
+import java.util.Map;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +14,7 @@ import org.osgi.framework.BundleContext;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 
 import com.enonic.xp.core.internal.Dictionaries;
 
@@ -23,6 +27,8 @@ import static org.mockito.Mockito.withSettings;
 @ExtendWith(MockitoExtension.class)
 class MemberAttributesApplierTest
 {
+    final UUID uuid = UUID.randomUUID();
+
     @Mock
     BundleContext bundleContext;
 
@@ -32,12 +38,18 @@ class MemberAttributesApplierTest
     @Mock
     Member localMember;
 
+    @Mock
+    ReplicatedMap<Object, Object> replicatedMap;
+
     TaskConfig config;
 
     @BeforeEach
     void setUp()
     {
         when( hazelcastInstance.getCluster().getLocalMember() ).thenReturn( localMember );
+
+        when( localMember.getUuid() ).thenReturn( uuid );
+        when( hazelcastInstance.getReplicatedMap( MemberAttributesApplier.MAP_NAME ) ).thenReturn( replicatedMap );
         config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
     }
 
@@ -48,18 +60,15 @@ class MemberAttributesApplierTest
 
         memberAttributesApplier.activate( config );
 
-        verify( localMember ).setBooleanAttribute( "tasks-enabled", true );
-        verify( localMember ).setBooleanAttribute( "system-tasks-enabled", true );
+        verify( replicatedMap ).put( uuid, Map.of( "tasks-enabled", true, "system-tasks-enabled", true ) );
 
         when( config.distributable_acceptInbound() ).thenReturn( false );
         when( config.distributable_acceptSystem() ).thenReturn( false );
         memberAttributesApplier.modify( config );
-        verify( localMember ).setBooleanAttribute( "tasks-enabled", false );
-        verify( localMember ).setBooleanAttribute( "system-tasks-enabled", false );
+        verify( replicatedMap ).put( uuid, Map.of( "tasks-enabled", false, "system-tasks-enabled", false ) );
 
         memberAttributesApplier.deactivate();
-        verify( localMember ).removeAttribute( "tasks-enabled" );
-        verify( localMember ).removeAttribute( "system-tasks-enabled" );
+        verify( replicatedMap ).remove( uuid );
     }
 
     @Test
@@ -70,15 +79,16 @@ class MemberAttributesApplierTest
         when( bundle.getSymbolicName() ).thenReturn( "some.app" );
 
         final MemberAttributesApplier memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
+        memberAttributesApplier.activate( config );
         memberAttributesApplier.addingBundle( bundle, null );
-        verify( localMember ).setBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + "some.app", true );
+        verify( replicatedMap ).put( uuid, Map.of( "tasks-enabled", true, "system-tasks-enabled", true, MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + "some.app", true ) );
     }
 
     @Test
     void addingBundle_noApp()
     {
         final Bundle bundle = mock( Bundle.class );
-        when( bundle.getHeaders( ) ).thenReturn( Dictionaries.of() );
+        when( bundle.getHeaders() ).thenReturn( Dictionaries.of() );
 
         final MemberAttributesApplier memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
         memberAttributesApplier.addingBundle( bundle, null );
@@ -91,7 +101,10 @@ class MemberAttributesApplierTest
         final Bundle bundle = mock( Bundle.class );
         when( bundle.getSymbolicName() ).thenReturn( "some.app" );
         final MemberAttributesApplier memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
+
+        memberAttributesApplier.activate( config );
         memberAttributesApplier.removedBundle( bundle, null, null );
-        verify( localMember ).removeAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + "some.app" );
+        memberAttributesApplier.addingBundle( bundle, null );
+        verify( replicatedMap ).put( uuid, Map.of( "tasks-enabled", true, "system-tasks-enabled", true ));
     }
 }

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -152,22 +153,24 @@ class ClusteredTaskManagerImplTest
         when( executorService.submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) ) ).thenReturn( future );
         clusteredTaskManager.submitTask( task );
         final ArgumentCaptor<MemberSelector> argumentCaptor = ArgumentCaptor.forClass( MemberSelector.class );
-        verify( executorService ).submit( any( OffloadedTaskCallable.class ), argumentCaptor.capture() );
+        verify( executorService ).submit( any( OffloadedTaskCallable.class ), mock( MemberSelector.class ) );
 
         final Member memberSelectable = mock( Member.class );
-        when( memberSelectable.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberSelectable.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
+        final UUID memberSelectableUuid = UUID.randomUUID();
+        when( memberSelectable.getUuid() ).thenReturn( memberSelectableUuid );
 
         final Member memberDoesNotAcceptOffload = mock( Member.class );
-        when( memberDoesNotAcceptOffload.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( false );
+        final UUID memberDoesNotAcceptOffloadUuid = UUID.randomUUID();
+        when( memberDoesNotAcceptOffload.getUuid() ).thenReturn( memberDoesNotAcceptOffloadUuid );
+
 
         final Member memberDoesNotHaveApp = mock( Member.class );
-        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( null );
+        final UUID memberDoesNotHaveAppUuid = UUID.randomUUID();
+        when( memberDoesNotHaveApp.getUuid() ).thenReturn( memberDoesNotHaveAppUuid );
 
         final Member memberDoesAcceptSystemForNonSystemApp = mock( Member.class );
-        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
+        final UUID memberDoesAcceptSystemForNonSystemAppUuid = UUID.randomUUID();
+        when( memberDoesAcceptSystemForNonSystemApp.getUuid() ).thenReturn( memberDoesAcceptSystemForNonSystemAppUuid );
 
         final MemberSelector memberSelector = argumentCaptor.getValue();
         assertTrue( memberSelector.select( memberSelectable ) );
@@ -176,8 +179,9 @@ class ClusteredTaskManagerImplTest
         assertFalse( memberSelector.select( memberDoesNotHaveApp ) );
 
         final Member memberDoesNotAcceptSystemForSystemApp = mock( Member.class );
-        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "system-tasks-enabled" ) ).thenReturn( false );
+        final UUID memberDoesNotAcceptSystemForSystemAppUuid = UUID.randomUUID();
+        when( memberDoesNotAcceptSystemForSystemApp.getUuid() ).thenReturn( memberDoesNotAcceptSystemForSystemAppUuid );
+
         when( task.getApplicationKey() ).thenReturn( ApplicationKey.from( "com.enonic.xp.app.system" ) );
 
         assertFalse( memberSelector.select( memberDoesNotAcceptSystemForSystemApp ) );
