@@ -12,5 +12,6 @@ dependencies {
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Scheduler',
          'Export-Package': 'com.enonic.xp.impl.scheduler.distributed',
-         'Private-Package': 'com.cronutils.*')
+         'Private-Package': 'com.cronutils.*',
+         'Import-Package': 'javax.validation;resolution:=optional,*')
 }

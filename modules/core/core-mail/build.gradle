@@ -3,8 +3,7 @@ dependencies {
     implementation project( ':core:core-internal' )
 
     testImplementation ( libs.mockjavamail ) {
-        exclude group: 'javax.mail'
-        exclude group: 'junit'
+        exclude group: 'jakarta.mail'
     }
 }
 

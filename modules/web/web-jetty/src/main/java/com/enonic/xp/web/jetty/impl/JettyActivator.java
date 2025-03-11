@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.servlet.SessionHandler;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.JakartaWebSocketServerContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -98,7 +97,7 @@ public final class JettyActivator
     {
         if ( xpServletContext != null )
         {
-            JakartaWebSocketServerContainer.ensureContainer( xpServletContext );
+           // JakartaWebSocketServerContainer.ensureContainer( xpServletContext );
         }
 
         this.server.start();
