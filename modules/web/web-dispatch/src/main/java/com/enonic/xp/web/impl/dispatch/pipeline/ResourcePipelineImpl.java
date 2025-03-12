@@ -38,6 +38,11 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         this.list.snapshot().forEach( r -> r.init( this.context ) );
     }
 
+    public List<T> list()
+    {
+        return this.list.snapshot();
+    }
+
     @Override
     public final void destroy()
     {

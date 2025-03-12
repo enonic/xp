@@ -49,7 +49,7 @@ abstract class ResourceDefinitionImpl<T>
         }
         catch ( final ServletException e )
         {
-            LOG.error( "Failed to initialize " + this.resource.getClass().toString(), e );
+            LOG.error( "Failed to initialize {}", this.resource.getClass(), e );
         }
         finally
         {
