@@ -56,11 +56,11 @@ allprojects {
             repositories {
                 maven {
                     credentials {
-                        username rootProject.findProperty( 'repoUser' )
-                        password rootProject.findProperty( 'repoPassword' )
+                        username = rootProject.findProperty( 'repoUser' )
+                        password = rootProject.findProperty( 'repoPassword' )
                     }
-                    name "public"
-                    url "https://repo.enonic.com/${rootProject.version.endsWith( 'SNAPSHOT' ) ? 'snapshot' : 'public'}"
+                    name = "public"
+                    url = "https://repo.enonic.com/${rootProject.version.endsWith( 'SNAPSHOT' ) ? 'snapshot' : 'public'}"
                 }
             }
         }

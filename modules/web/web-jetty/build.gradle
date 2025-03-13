@@ -19,7 +19,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
          'Export-Package': 'org.eclipse.jetty.*, jakarta.servlet.*;-split-package:=merge-first, jakarta.websocket.*;-split-package:=merge-first',
          'Import-Package': 'com.enonic.xp.security.auth;resolution:=optional,' +
              'com.enonic.xp.security;resolution:=optional,' +
@@ -27,4 +28,5 @@ jar {
              'com.enonic.xp.support;resolution:=optional,' +
              '*;resolution:=optional',
          'X-Jetty-Version': libs.jetty.server.get().version )
+    }
 }

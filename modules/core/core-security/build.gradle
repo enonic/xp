@@ -8,5 +8,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Security' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Security' )
+    }
 }

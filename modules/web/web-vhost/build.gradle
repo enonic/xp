@@ -3,5 +3,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - VHost' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - VHost' )
+    }
 }

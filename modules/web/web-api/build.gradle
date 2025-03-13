@@ -7,6 +7,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Api',
-         'Export-Package': 'com.enonic.xp.web.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - Api',
+             'Export-Package': 'com.enonic.xp.web.*' )
+    }
 }

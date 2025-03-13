@@ -4,5 +4,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - DoS Filter' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - DoS Filter' )
+    }
 }

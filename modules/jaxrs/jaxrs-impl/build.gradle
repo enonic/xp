@@ -20,11 +20,13 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
          'Export-Package': 'jakarta.ws.rs.*',
          'Import-Package': '*;resolution:=optional',
          'Private-Package': 'org.jboss.resteasy.*;-split-package:=merge-first' + ',' +
              'org.reactivestreams.*' + ',' +
              'com.ibm.asyncutil.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' )
+    }
 }

@@ -57,10 +57,12 @@ jar {
     manifest {
         attributes( ['Implementation-Version': project.version] )
     }
-    bnd( 'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
-         '-nouses': 'true',
-         '-dsannotations': '*',
-         'Implementation-Version': project.version )
+    bundle {
+        bnd( 'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
+             '-nouses': 'true',
+             '-dsannotations': '*',
+             'Implementation-Version': project.version )
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

@@ -14,7 +14,9 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Script - Impl',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Script - Impl',
          'Import-Package': 'org.openjdk.nashorn.api.scripting;resolution:=optional,org.graalvm.polyglot.*;resolution:=optional,*' )
+    }
     exclude '**/*.ts'
 }

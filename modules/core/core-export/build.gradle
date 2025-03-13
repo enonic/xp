@@ -5,5 +5,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Export' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Export' )
+    }
 }

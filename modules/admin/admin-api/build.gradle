@@ -4,6 +4,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Admin - Api',
-         'Export-Package': 'com.enonic.xp.admin.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Admin - Api',
+             'Export-Package': 'com.enonic.xp.admin.*' )
+    }
 }

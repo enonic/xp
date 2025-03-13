@@ -8,7 +8,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Hazelcast',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Hazelcast',
          'Import-Package':
              'com.enonic.xp.app;resolution:=optional' + ',' +
              'com.enonic.xp.branch;resolution:=optional' + ',' +
@@ -25,4 +26,5 @@ jar {
              'com.enonic.xp.impl.task.distributed;resolution:=optional' + ',' +
              'com.google.common.collect;resolution:=optional,' +
              '*')
+    }
 }
