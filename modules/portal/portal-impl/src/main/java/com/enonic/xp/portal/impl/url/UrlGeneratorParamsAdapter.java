@@ -212,10 +212,13 @@ public class UrlGeneratorParamsAdapter
 
     public PageUrlGeneratorParams requestPageUrlParams( final PageUrlParams params )
     {
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
         final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create()
             .setUrlType( params.getType() )
             .setId( params.getId() )
             .setPath( params.getPath() )
+            .setPortalRequest( portalRequest )
             .setContentService( contentService )
             .build();
 

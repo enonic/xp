@@ -29,6 +29,10 @@ public final class ProcessHtmlParams
 
     private boolean processMacros = true;
 
+    private String baseUrl;
+
+    private BaseUrlParams baseUrlParams;
+
     public String getValue()
     {
         return this.value;
@@ -92,6 +96,28 @@ public final class ProcessHtmlParams
     public ProcessHtmlParams processMacros( final boolean processMacros )
     {
         this.processMacros = processMacros;
+        return this;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
+    }
+
+    public ProcessHtmlParams baseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
+        return this;
+    }
+
+    public BaseUrlParams getBaseUrlParams()
+    {
+        return baseUrlParams;
+    }
+
+    public ProcessHtmlParams baseUrlParams( final BaseUrlParams baseUrlParams )
+    {
+        this.baseUrlParams = baseUrlParams;
         return this;
     }
 

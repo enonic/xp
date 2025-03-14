@@ -7,7 +7,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -28,7 +27,7 @@ final class PageRequestBaseUrlStrategy
     private PageRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
-        this.portalRequest = Objects.requireNonNull( PortalRequestAccessor.get() );
+        this.portalRequest = Objects.requireNonNull( builder.portalRequest );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.id = builder.id;
         this.path = builder.path;
@@ -75,6 +74,8 @@ final class PageRequestBaseUrlStrategy
 
         private String urlType;
 
+        private PortalRequest portalRequest;
+
         public Builder setContentService( final ContentService contentService )
         {
             this.contentService = contentService;
@@ -96,6 +97,12 @@ final class PageRequestBaseUrlStrategy
         public Builder setUrlType( final String urlType )
         {
             this.urlType = urlType;
+            return this;
+        }
+
+        public Builder setPortalRequest( final PortalRequest portalRequest )
+        {
+            this.portalRequest = portalRequest;
             return this;
         }
 

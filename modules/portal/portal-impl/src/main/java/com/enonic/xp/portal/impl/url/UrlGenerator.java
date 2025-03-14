@@ -27,7 +27,7 @@ final class UrlGenerator
         {
             baseUrl = removeTrailingSlash( baseUrlStrategy.generateBaseUrl() );
             String path = normalizePath( pathStrategy.generatePath() );
-            String queryParams = normalizeQueryParams( queryParamsStrategy.generateQueryParams() );
+            String queryParams = nullToEmpty( queryParamsStrategy.generateQueryParams() );
             return baseUrl + path + queryParams;
         }
         catch ( Exception e )
@@ -54,11 +54,6 @@ final class UrlGenerator
         }
 
         return !path.startsWith( "/" ) ? "/" + path : path;
-    }
-
-    private static String normalizeQueryParams( final String value )
-    {
-        return nullToEmpty( value );
     }
 
     private static String buildErrorUrl( final String baseUrl, final Exception e )

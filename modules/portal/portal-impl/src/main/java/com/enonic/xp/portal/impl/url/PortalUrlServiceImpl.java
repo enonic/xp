@@ -190,7 +190,7 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, macroService ).process( params );
+        return new RichTextProcessor( styleDescriptorService, this, macroService, contentService ).process( params );
     }
 
     @Override
