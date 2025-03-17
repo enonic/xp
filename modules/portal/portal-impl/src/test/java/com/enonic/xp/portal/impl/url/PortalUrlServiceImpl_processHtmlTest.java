@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -121,7 +122,6 @@ public class PortalUrlServiceImpl_processHtmlTest
                 source.getName() + "\" data-link-ref=\"linkRef\">Media</a>", processedHtml );
 
         assertEquals( content.getId().toString(), projection.get( "contentId" ) );
-        assertEquals( "server", projection.get( "type" ) );
         assertEquals( "media://inline/" + content.getId(), projection.get( "uri" ) );
         assertEquals( "inline", projection.get( "mode" ) );
         assertNull( projection.get( "queryParams" ) );
@@ -199,7 +199,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Content</a>" );
     }
 
     @Test
@@ -237,7 +237,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertThat( processedHtml ).matches(
+            Pattern.compile( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" ) );
     }
 
     @Test
@@ -330,7 +331,6 @@ public class PortalUrlServiceImpl_processHtmlTest
         assertEquals( expectedResult2, processedLink2 );
 
         assertEquals( media.getId().toString(), imageProjection.get( "contentId" ) );
-        assertEquals( "server", imageProjection.get( "type" ) );
         assertNull( imageProjection.get( "mode" ) );
         assertEquals( "?style=mystyle", imageProjection.get( "queryParams" ) );
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );
@@ -500,7 +500,6 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         assertEquals( "<a href=\"/site/myproject/draft" + content.getPath() + "\" data-link-ref=\"linkRef\">Text</a>", result );
         assertEquals( content.getId().toString(), linkProjection.get( "contentId" ) );
-        assertEquals( "server", linkProjection.get( "type" ) );
         assertEquals( "content://" + content.getId(), linkProjection.get( "uri" ) );
         assertNull( linkProjection.get( "mode" ) );
         assertNull( linkProjection.get( "queryParams" ) );
@@ -580,7 +579,6 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         assertEquals( expectedResult, processedLink );
         assertEquals( media.getId().toString(), imageProjection.get( "contentId" ) );
-        assertEquals( "server", imageProjection.get( "type" ) );
         assertNull( imageProjection.get( "mode" ) );
         assertEquals( "?style=mystyle", imageProjection.get( "queryParams" ) );
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );

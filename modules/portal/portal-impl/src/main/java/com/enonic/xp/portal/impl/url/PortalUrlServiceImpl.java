@@ -32,6 +32,7 @@ import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.portal.url.ProcessHtmlUrlGeneratorParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
@@ -190,7 +191,27 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, macroService, contentService ).process( params );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        final ProcessHtmlUrlGeneratorParams processHtmlUrlGeneratorParams = ProcessHtmlUrlGeneratorParams.create()
+            .setMediaBaseUrlStrategy( RequestBaseUrlStrategy.create()
+                                          .setContentService( contentService )
+                                          .setPortalRequest( portalRequest )
+                                          .setUrlType( params.getType() )
+                                          .build() )
+            .setPageBaseUrlStrategy(
+                PageRequestBaseUrlStrategy.create().setUrlType( params.getType() ).setPortalRequest( portalRequest ).build() )
+            .setCustomHtmlProcessor( params.getCustomHtmlProcessor() )
+            .setCustomStyleDescriptors( params.getCustomStyleDescriptorsCallback() )
+            .setImageWidths( params.getImageWidths() )
+            .setImageSizes( params.getImageSizes() )
+            .setProcessMacros( params.isProcessMacros() )
+            .setValue( params.getValue() )
+            .setProcessMacros( params.isProcessMacros() )
+            .addQueryParams( params.getParams().asMap() )
+            .build();
+
+        return processHtml( processHtmlUrlGeneratorParams );
     }
 
     @Override
@@ -273,7 +294,11 @@ public final class PortalUrlServiceImpl
         final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> "", queryParamsStrategy ) );
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), () -> {
+            final StringBuilder str = new StringBuilder();
+            UrlBuilderHelper.appendAndEncodePathParts( str, params.getContentPathSupplier().get() );
+            return str.toString();
+        }, queryParamsStrategy ) );
     }
 
     @Override
@@ -293,6 +318,13 @@ public final class PortalUrlServiceImpl
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
         return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), pathStrategy, queryParamsStrategy ) );
+    }
+
+    @Override
+    public String processHtml( final ProcessHtmlUrlGeneratorParams params )
+    {
+        return runWithAdminRole(
+            () -> new RichTextProcessor( styleDescriptorService, this, macroService, contentService ).process( params ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

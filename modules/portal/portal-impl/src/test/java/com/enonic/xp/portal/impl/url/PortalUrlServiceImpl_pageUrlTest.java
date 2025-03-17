@@ -98,7 +98,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         final PageUrlParams params = new PageUrlParams().portalRequest( this.portalRequest ).id( "123456" );
 
         final String url = this.service.pageUrl( params );
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertThat( url ).contains( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -153,7 +153,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( eq( content.getPath() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
         final String url = this.service.pageUrl( params );
@@ -178,7 +178,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.findNearestSiteByPath( eq( content.getPath() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
         final String url = this.service.pageUrl( params );

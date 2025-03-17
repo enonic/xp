@@ -11,7 +11,6 @@ import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.site.Site;
 
 final class PageOfflineBaseUrlStrategy
     implements BaseUrlStrategy
@@ -53,22 +52,7 @@ final class PageOfflineBaseUrlStrategy
             .resolve();
 
         final String baseUrl = Objects.requireNonNullElseGet( baseUrlResult.getBaseUrl(), () -> "/site/" + projectName + "/" + branch );
-        final String normalizedBaseUrl = normalizeBaseUrl( baseUrl );
-
-        final Site nearestSite = baseUrlResult.getNearestSite();
-
-        final StringBuilder result = new StringBuilder( normalizedBaseUrl );
-        UrlBuilderHelper.appendAndEncodePathParts( result, resolvePath( content.getPath().toString(), nearestSite ) );
-        return result.toString();
-    }
-
-    private String resolvePath( final String contentPath, final Site nearestSite )
-    {
-        if ( nearestSite != null )
-        {
-            return contentPath.substring( nearestSite.getPath().toString().length() );
-        }
-        return contentPath;
+        return normalizeBaseUrl( baseUrl );
     }
 
     private String normalizeBaseUrl( final String baseUrl )

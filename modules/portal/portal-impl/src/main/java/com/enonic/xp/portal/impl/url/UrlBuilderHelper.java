@@ -124,7 +124,7 @@ public final class UrlBuilderHelper
         }
     }
 
-    public static void appendParam( final StringBuilder str, final Map.Entry<String, String> param )
+    private static void appendParam( final StringBuilder str, final Map.Entry<String, String> param )
     {
         final String value = param.getValue();
         str.append( urlEncode( param.getKey() ) );

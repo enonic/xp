@@ -2,10 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -14,23 +10,14 @@ import com.enonic.xp.project.ProjectName;
 final class PageRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
-    private final ContentService contentService;
-
     private final PortalRequest portalRequest;
-
-    private final String id;
-
-    private final String path;
 
     private final String urlType;
 
     private PageRequestBaseUrlStrategy( final Builder builder )
     {
-        this.contentService = Objects.requireNonNull( builder.contentService );
         this.portalRequest = Objects.requireNonNull( builder.portalRequest );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.id = builder.id;
-        this.path = builder.path;
     }
 
     @Override
@@ -44,18 +31,6 @@ final class PageRequestBaseUrlStrategy
             UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
         }
 
-        final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( portalRequest.getRepositoryId() )
-            .branch( portalRequest.getBranch() )
-            .build()
-            .callWith( () -> new ContentPathResolver().portalRequest( portalRequest )
-                .contentService( this.contentService )
-                .id( id )
-                .path( path )
-                .resolve() );
-
-        UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, contentPath.toString() );
-
         return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
     }
 
@@ -66,33 +41,9 @@ final class PageRequestBaseUrlStrategy
 
     static class Builder
     {
-        private ContentService contentService;
-
-        private String id;
-
-        private String path;
-
         private String urlType;
 
         private PortalRequest portalRequest;
-
-        public Builder setContentService( final ContentService contentService )
-        {
-            this.contentService = contentService;
-            return this;
-        }
-
-        public Builder setId( final String id )
-        {
-            this.id = id;
-            return this;
-        }
-
-        public Builder setPath( final String path )
-        {
-            this.path = path;
-            return this;
-        }
 
         public Builder setUrlType( final String urlType )
         {

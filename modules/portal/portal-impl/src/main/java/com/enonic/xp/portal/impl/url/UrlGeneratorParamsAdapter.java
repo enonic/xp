@@ -165,35 +165,27 @@ public class UrlGeneratorParamsAdapter
 
     public PageUrlGeneratorParams offlinePageUrlParams( final PageUrlParams params )
     {
-        final Supplier<Content> contentSupplier = () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) );
-
         final BaseUrlStrategy baseUrlStrategy;
         if ( params.getBaseUrl() != null )
         {
-            final ProjectName projectName = offlineProjectName( params.getProjectName() );
-            final Branch branch = offlineBranch( params.getBranch() );
-
             baseUrlStrategy = PageCustomBaseUrlStrategy.create()
-                .setContentService( contentService )
-                .setProjectName( projectName )
-                .setBranch( branch )
                 .setUrlType( params.getType() )
-                .setContentSupplier( contentSupplier )
-                .setBaseUrl( params.getBaseUrl() )
-                .build();
+                .setBaseUrl( params.getBaseUrl() ).build();
         }
         else if ( params.getBaseUrlParams() != null )
         {
             final BaseUrlParams baseUrlParams = params.getBaseUrlParams();
             final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
             final Branch branch = offlineBranch( baseUrlParams.getBranch() );
+            final String contentKey = baseUrlParams.getKey();
 
             baseUrlStrategy = PageOfflineBaseUrlStrategy.create()
                 .contentService( contentService )
                 .projectService( projectService )
                 .projectName( projectName )
                 .branch( branch )
-                .content( contentSupplier )
+                .content( () -> getContent(
+                    Objects.requireNonNullElseGet( contentKey, () -> Objects.requireNonNullElse( params.getId(), params.getPath() ) ) ) )
                 .urlType( params.getType() )
                 .build();
         }
@@ -202,7 +194,29 @@ public class UrlGeneratorParamsAdapter
             throw new IllegalArgumentException( "Either baseUrl or baseUrlParams must be provided" );
         }
 
-        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
+        final PageUrlGeneratorParams.Builder builder =
+            PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy ).setContentPathSupplier( () -> {
+                final ProjectName projectName = offlineProjectName( params.getProjectName() );
+                final Branch branch = offlineBranch( params.getBranch() );
+
+                final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
+                    .repositoryId( projectName.getRepoId() )
+                    .branch( branch )
+                    .build()
+                    .callWith( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
+
+                final Site nearestSite = ContextBuilder.copyOf( ContextAccessor.current() )
+                    .repositoryId( projectName.getRepoId() )
+                    .branch( branch )
+                    .build()
+                    .callWith( () -> contentService.findNearestSiteByPath( content.getPath() ) );
+
+                if ( nearestSite != null )
+                {
+                    return content.getPath().toString().substring( nearestSite.getPath().toString().length() );
+                }
+                return content.getPath().toString();
+            } );
         if ( params.getParams() != null )
         {
             builder.addQueryParams( params.getParams().asMap() );
@@ -214,19 +228,29 @@ public class UrlGeneratorParamsAdapter
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create()
-            .setUrlType( params.getType() )
-            .setId( params.getId() )
-            .setPath( params.getPath() )
+        final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create().setUrlType( params.getType() )
             .setPortalRequest( portalRequest )
-            .setContentService( contentService )
             .build();
 
-        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
+        final PageUrlGeneratorParams.Builder builder =
+            PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy ).setContentPathSupplier( () -> {
+                final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
+                    .repositoryId( portalRequest.getRepositoryId() )
+                    .branch( portalRequest.getBranch() )
+                    .build()
+                    .callWith( () -> new ContentPathResolver().portalRequest( portalRequest )
+                        .contentService( contentService )
+                        .id( params.getId() )
+                        .path( params.getPath() )
+                        .resolve() );
+                return contentPath != null ? contentPath.toString() : null;
+            } );
+
         if ( params.getParams() != null )
         {
             builder.addQueryParams( params.getParams().asMap() );
         }
+
         return builder.build();
     }
 
