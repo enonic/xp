@@ -21,7 +21,7 @@ equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 
-tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0.0" }
+tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "4.0.1" }
 
 mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "1.9" }
 
