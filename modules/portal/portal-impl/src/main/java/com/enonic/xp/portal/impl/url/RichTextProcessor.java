@@ -9,32 +9,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
-import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
-import com.enonic.xp.portal.url.ImageUrlParams;
-import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
+import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.portal.url.ProcessHtmlUrlGeneratorParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-public class RichTextProcessor
+final class RichTextProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
@@ -91,19 +104,23 @@ public class RichTextProcessor
 
     private final PortalUrlService portalUrlService;
 
+    private final ContentService contentService;
+
     private final MacroService macroService;
 
     private Map<String, ImageStyle> imageStyleMap;
 
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
-                              final MacroService macroService )
+                              final MacroService macroService, final ContentService contentService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.macroService = macroService;
+        this.contentService = contentService;
     }
 
-    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
+    private void defaultElementProcessing( HtmlElement element, ProcessHtmlUrlGeneratorParams params,
+                                           HtmlElementPostProcessor postProcessor )
     {
         final Matcher contentMatcher = PATTERN.matcher( getLinkValue( element ) );
 
@@ -139,12 +156,12 @@ public class RichTextProcessor
         }
     }
 
-    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
+    private void defaultProcessing( HtmlDocument document, ProcessHtmlUrlGeneratorParams params, HtmlElementPostProcessor postProcessor )
     {
         document.select( "[href],[src]" ).forEach( element -> defaultElementProcessing( element, params, postProcessor ) );
     }
 
-    public String process( final ProcessHtmlParams params )
+    public String process( final ProcessHtmlUrlGeneratorParams params )
     {
         if ( params.getValue() == null || params.getValue().isEmpty() )
         {
@@ -173,15 +190,27 @@ public class RichTextProcessor
         return new HtmlMacroProcessor( macroService ).process( document.getInnerHtml() );
     }
 
-    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, String id, String mode,
+    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlUrlGeneratorParams params, String id, String mode,
                                                   String urlParamsString, HtmlElementPostProcessor postProcessor )
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final PageUrlParams pageUrlParams =
-            new PageUrlParams().type( params.getType() ).id( id ).portalRequest( params.getPortalRequest() );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
+        final PageUrlGeneratorParams urlGeneratorParams =
+            PageUrlGeneratorParams.create().setBaseUrlStrategy( params.getPageBaseUrlStrategy() ).setContentPathSupplier( () -> {
+                final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
+                    .repositoryId( portalRequest.getRepositoryId() )
+                    .branch( portalRequest.getBranch() )
+                    .build()
+                    .callWith( () -> new ContentPathResolver().portalRequest( portalRequest )
+                        .contentService( contentService )
+                        .id( id )
+                        .resolve() );
+                return contentPath != null ? contentPath.toString() : null;
+            } ).build();
+
+        final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( urlGeneratorParams ), urlParamsString );
 
         element.setAttribute( getLinkAttribute( element ), pageUrl );
 
@@ -189,7 +218,6 @@ public class RichTextProcessor
         {
             Map<String, String> properties = new HashMap<>();
 
-            properties.put( "type", params.getType() );
             properties.put( "contentId", id );
             properties.put( "uri", originalUri );
             properties.put( "mode", mode );
@@ -199,25 +227,52 @@ public class RichTextProcessor
         }
     }
 
-    private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String mode, String urlParamsString,
-                                         HtmlElementPostProcessor callback )
+    private void defaultImageProcessing( HtmlElement element, ProcessHtmlUrlGeneratorParams params, String id, String mode,
+                                         String urlParamsString, HtmlElementPostProcessor callback )
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
         if ( imageStyleMap == null )
         {
-            StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
-                ? params.getCustomStyleDescriptorsCallback().get()
-                : getStyleDescriptors( params.getPortalRequest() );
+            StyleDescriptors styleDescriptors = params.getCustomStyleDescriptors() != null
+                ? params.getCustomStyleDescriptors().get()
+                : getStyleDescriptors( PortalRequestAccessor.get() );
             imageStyleMap = getImageStyleMap( styleDescriptors );
         }
 
-        ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
-        ImageUrlParams imageUrlParams = new ImageUrlParams().type( params.getType() )
-            .id( id )
-            .scale( getScale( imageStyle, urlParams, null ) )
-            .filter( getFilter( imageStyle ) )
-            .portalRequest( params.getPortalRequest() );
+        final ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
+
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        final ProjectName projectName = ProjectName.from( portalRequest.getRepositoryId() );
+        final Branch branch = portalRequest.getBranch();
+
+        final Supplier<Media> imageSupplier = Suppliers.memoize( () -> {
+            final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( projectName.getRepoId() )
+                .branch( branch )
+                .build()
+                .callWith( () -> contentService.getById( ContentId.from( id ) ) );
+
+            if ( content instanceof Media media && media.isImage() )
+            {
+                return media;
+            }
+            throw new NotFoundException( "Image not found." )
+            {
+            };
+        } );
+
+        final Supplier<String> baseUrlSupplier = Suppliers.memoize( () -> params.getMediaBaseUrlStrategy().generateBaseUrl() );
+
+        final ImageUrlGeneratorParams imageUrlParams = ImageUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlSupplier::get )
+            .setMedia( imageSupplier )
+            .setScale( getScale( imageStyle, urlParams, null ) )
+            .setFilter( getFilter( imageStyle ) )
+            .setProjectName( projectName )
+            .setBranch( branch )
+            .build();
 
         final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
 
@@ -228,13 +283,16 @@ public class RichTextProcessor
             if ( params.getImageWidths() != null )
             {
                 final String srcsetValues = params.getImageWidths().stream().map( imageWidth -> {
-                    final ImageUrlParams imageParams = new ImageUrlParams().type( params.getType() )
-                        .id( id )
-                        .scale( getScale( imageStyle, urlParams, imageWidth ) )
-                        .filter( getFilter( imageStyle ) )
-                        .portalRequest( params.getPortalRequest() );
+                    final ImageUrlGeneratorParams scaledImageUrlParams = ImageUrlGeneratorParams.create()
+                        .setBaseUrlStrategy( baseUrlSupplier::get )
+                        .setMedia( imageSupplier )
+                        .setScale( getScale( imageStyle, urlParams, imageWidth ) )
+                        .setFilter( getFilter( imageStyle ) )
+                        .setProjectName( projectName )
+                        .setBranch( branch )
+                        .build();
 
-                    return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
+                    return portalUrlService.imageUrl( scaledImageUrlParams ) + " " + imageWidth + "w";
                 } ).collect( Collectors.joining( "," ) );
 
                 element.setAttribute( "srcset", srcsetValues );
@@ -250,7 +308,6 @@ public class RichTextProcessor
         {
             Map<String, String> properties = new HashMap<>();
 
-            properties.put( "type", params.getType() );
             properties.put( "contentId", id );
             properties.put( "mode", mode );
             properties.put( "queryParams", urlParamsString );
@@ -265,17 +322,35 @@ public class RichTextProcessor
         }
     }
 
-    private void defaultAttachmentProcessing( HtmlElement element, ProcessHtmlParams params, String id, String mode, String urlParamsString,
-                                              HtmlElementPostProcessor callback )
+    private void defaultAttachmentProcessing( HtmlElement element, ProcessHtmlUrlGeneratorParams params, String id, String mode,
+                                              String urlParamsString, HtmlElementPostProcessor callback )
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().type( params.getType() )
-            .id( id )
-            .download( DOWNLOAD_MODE.equals( mode ) )
-            .portalRequest( params.getPortalRequest() );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
+        final ProjectName projectName =
+            Objects.requireNonNullElseGet( params.getProjectName(), () -> ProjectName.from( portalRequest.getRepositoryId() ) );
+
+        final Branch branch = Objects.requireNonNullElseGet( params.getBranch(), portalRequest::getBranch );
+
+        final AttachmentUrlGeneratorParams urlGeneratorParams = AttachmentUrlGeneratorParams.create()
+            .setBaseUrlStrategy( params.getMediaBaseUrlStrategy() )
+            .setContent( () -> ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( projectName.getRepoId() )
+                .branch( branch )
+                .build()
+                .callWith( () -> {
+                    final ContentResolver contentResolver =
+                        new ContentResolver().portalRequest( portalRequest ).contentService( this.contentService ).id( id );
+                    return contentResolver.resolve();
+                } ) )
+            .setProjectName( projectName )
+            .setBranch( branch )
+            .setDownload( DOWNLOAD_MODE.equals( mode ) )
+            .build();
+
+        final String attachmentUrl = portalUrlService.attachmentUrl( urlGeneratorParams );
 
         element.setAttribute( getLinkAttribute( element ), attachmentUrl );
 
@@ -283,7 +358,6 @@ public class RichTextProcessor
         {
             Map<String, String> properties = new HashMap<>();
 
-            properties.put( "type", params.getType() );
             properties.put( "contentId", id );
             properties.put( "uri", originalUri );
             properties.put( "mode", mode );

@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +12,6 @@ import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.urlEncode;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -27,7 +27,7 @@ final class UrlGenerator
         {
             baseUrl = removeTrailingSlash( baseUrlStrategy.generateBaseUrl() );
             String path = normalizePath( pathStrategy.generatePath() );
-            String queryParams = normalizeQueryParams( queryParamsStrategy.generateQueryParams() );
+            String queryParams = nullToEmpty( queryParamsStrategy.generateQueryParams() );
             return baseUrl + path + queryParams;
         }
         catch ( Exception e )
@@ -56,11 +56,6 @@ final class UrlGenerator
         return !path.startsWith( "/" ) ? "/" + path : path;
     }
 
-    private static String normalizeQueryParams( final String value )
-    {
-        return nullToEmpty( value );
-    }
-
     private static String buildErrorUrl( final String baseUrl, final Exception e )
     {
         final String logRef = LOG.isWarnEnabled() ? newLogRef() : "";
@@ -87,6 +82,18 @@ final class UrlGenerator
 
     private static String buildErrorUrl( final String baseUrl, final int code, final String message )
     {
-        return Objects.requireNonNullElse( baseUrl, "/_" ) + "/error/" + code + "?message=" + urlEncode( message );
+        final String normalizedBaseUrl = Objects.requireNonNullElse( baseUrl, "" );
+
+        final StringBuilder result = new StringBuilder( normalizedBaseUrl );
+
+        if ( !( normalizedBaseUrl.endsWith( "/_/" ) || normalizedBaseUrl.endsWith( "/_" ) ) )
+        {
+            UrlBuilderHelper.appendPart( result, "_" );
+        }
+        UrlBuilderHelper.appendPart( result, "error" );
+        UrlBuilderHelper.appendPart( result, String.valueOf( code ) );
+        UrlBuilderHelper.appendParams( result, Map.of( "message", message ).entrySet() );
+
+        return result.toString();
     }
 }

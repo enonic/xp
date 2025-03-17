@@ -2,17 +2,21 @@ package com.enonic.xp.portal.impl.rendering;
 
 import java.util.function.Function;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.url.PortalUrlServiceImpl;
+import com.enonic.xp.portal.impl.url.UrlGeneratorParamsAdapter;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.style.StyleDescriptor;
@@ -40,8 +44,18 @@ public class TextRendererTest
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
-        service = new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock(), null );
+        service =
+            new PortalUrlServiceImpl( mock( ContentService.class ), null, new MockMacroService(), new MockStyleDescriptorService(), mock(),
+                                      mock( UrlGeneratorParamsAdapter.class ) );
         portalRequest.setMode( RenderMode.LIVE );
+
+        PortalRequestAccessor.set( portalRequest );
+    }
+
+    @AfterEach
+    public void destroy()
+    {
+        PortalRequestAccessor.remove();
     }
 
     @Test
