@@ -32,7 +32,7 @@ public class ModifiableContent
 
     public ModifiableField<Boolean> valid;
 
-    public ModifiableField<Thumbnail> thumbnail; //TODO: to remove?
+    public ModifiableField<Thumbnail> thumbnail;
 
     public ModifiableField<PrincipalKey> owner;
 

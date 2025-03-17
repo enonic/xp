@@ -52,7 +52,6 @@ final class ValidateContentDataCommand
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 
-//        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
         final ContentValidatorParams validatorParams = contentValidatorParamsBuilder.contentType( contentType ).build();
 
         for ( ContentValidator contentValidator : contentValidators )
