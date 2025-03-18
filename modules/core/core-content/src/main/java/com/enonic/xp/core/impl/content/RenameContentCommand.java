@@ -4,9 +4,10 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -91,12 +92,10 @@ final class RenameContentCommand
 
     private Content updateValidState( final Content content )
     {
-        final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
-            .contentId( content.getId() )
-            .stopInherit( false )
-            .editor( edit -> edit.valid = !content.isValid() );
+        final ModifyContentParams updateContentParams = ModifyContentParams.create()
+            .contentId( content.getId() ).modifier( edit -> edit.valid.setValue( !content.isValid() ) ).build();
 
-        return UpdateContentCommand.create( this )
+        return ModifyContentCommand.create( this )
             .params( updateContentParams )
             .siteService( siteService )
             .contentTypeService( contentTypeService )
@@ -104,8 +103,7 @@ final class RenameContentCommand
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .build()
-            .execute();
+            .build().execute().getResult( ContextAccessor.current().getBranch() );
     }
 
     public static class Builder

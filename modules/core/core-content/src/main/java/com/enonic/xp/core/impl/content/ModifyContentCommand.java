@@ -30,6 +30,11 @@ public class ModifyContentCommand
         return create().params( params );
     }
 
+    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
+    {
+        return new Builder( source );
+    }
+
     ModifyContentResult execute()
     {
         validateCreateAttachments( params.getCreateAttachments() );
@@ -83,6 +88,11 @@ public class ModifyContentCommand
 
         private Builder()
         {
+        }
+
+        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final ModifyContentParams params )

@@ -178,7 +178,7 @@ class RenameContentCommandTest
         return Content.create()
             .id( ContentId.from( "testId" ) )
             .path( "/mycontent" )
-            .creator( PrincipalKey.from( "user:system:anonymous" ) )
+            .creator( PrincipalKey.from( "user:system:anonymous" ) ).modifier( PrincipalKey.from( "user:system:anonymous" ) )
             .type( ContentTypeName.folder() )
             .data( new PropertyTree() )
             .valid( valid )

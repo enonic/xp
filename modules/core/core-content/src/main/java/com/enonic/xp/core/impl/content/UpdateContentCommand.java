@@ -8,7 +8,9 @@ import java.time.Instant;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -99,15 +101,12 @@ final class UpdateContentCommand
 
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( contentBeforeChange, editedContent );
-        editedContent = editContentMetadata( getPreModifier(), editedContent );
+        editedContent = editContentMetadata( getModifier(), editedContent );
 
-
-        if ( contentBeforeChange.equals( editedContent ) && contentBeforeChange.getAttachments().equals( editedContent.getAttachments() ) )
+        if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
             return contentBeforeChange;
         }
-
-        editedContent = editContentMetadata( getPostModifier(), editedContent );
 
         validate( editedContent );
 
@@ -146,17 +145,32 @@ final class UpdateContentCommand
         return modifiableContent.build();
     }
 
-    private ContentModifier getPreModifier()
+    private BiPredicate<Content, Content> isContentTheSame()
+    {
+
+        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getName(), c2.getName() ) &&
+            Objects.equals( c1.getParentPath(), c2.getParentPath() ) && Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) &&
+            Objects.equals( c1.getType(), c2.getType() ) && Objects.equals( c1.getCreator(), c2.getCreator() ) &&
+            Objects.equals( c1.getOwner(), c2.getOwner() ) && Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) &&
+            Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
+            Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) && Objects.equals( c1.getThumbnail(), c2.getThumbnail() ) &&
+            Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
+            Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
+            Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
+            Objects.equals( c1.getOriginalName(), c2.getOriginalName() ) &&
+            Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
+            Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
+            Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
+    }
+
+    private ContentModifier getModifier()
     {
         return edit -> {
             edit.inherit.setModifier( c -> stopInherit( c.inherit.originalValue ) );
             edit.attachments.setModifier( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-        };
-    }
 
-    private ContentModifier getPostModifier()
-    {
-        return edit -> {
             edit.modifier.setValue( getCurrentUser().getKey() );
             edit.modifiedTime.setValue( Instant.now() );
 
