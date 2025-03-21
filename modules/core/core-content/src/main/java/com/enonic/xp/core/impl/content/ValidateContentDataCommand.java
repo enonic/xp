@@ -3,15 +3,13 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -54,7 +52,6 @@ final class ValidateContentDataCommand
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 
-        Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
         final ContentValidatorParams validatorParams = contentValidatorParamsBuilder.contentType( contentType ).build();
 
         for ( ContentValidator contentValidator : contentValidators )
