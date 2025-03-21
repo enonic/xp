@@ -97,7 +97,9 @@ class RenameContentCommandTest
         mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
 
         when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
-        when( nodeService.modify( isA( UpdateNodeParams.class ) ) ).thenReturn( mock( ModifyNodeResult.class ) );
+        final ModifyNodeResult modifyResult = mock( ModifyNodeResult.class );
+        when( modifyResult.getNodeId() ).thenReturn( mockNode.id() );
+        when( nodeService.modify( isA( UpdateNodeParams.class ) ) ).thenReturn( modifyResult );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
     }
@@ -176,7 +178,7 @@ class RenameContentCommandTest
         return Content.create()
             .id( ContentId.from( "testId" ) )
             .path( "/mycontent" )
-            .creator( PrincipalKey.from( "user:system:anonymous" ) )
+            .creator( PrincipalKey.from( "user:system:anonymous" ) ).modifier( PrincipalKey.from( "user:system:anonymous" ) )
             .type( ContentTypeName.folder() )
             .data( new PropertyTree() )
             .valid( valid )

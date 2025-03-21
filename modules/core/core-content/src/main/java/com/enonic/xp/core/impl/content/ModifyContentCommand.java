@@ -30,6 +30,11 @@ public class ModifyContentCommand
         return create().params( params );
     }
 
+    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
+    {
+        return new Builder( source );
+    }
+
     ModifyContentResult execute()
     {
         validateCreateAttachments( params.getCreateAttachments() );
@@ -39,8 +44,7 @@ public class ModifyContentCommand
     private ModifyContentResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
-
-        Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
+        final Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().editedContent( modifiedContent )
             .createAttachments( params.getCreateAttachments() )
@@ -84,6 +88,11 @@ public class ModifyContentCommand
 
         private Builder()
         {
+        }
+
+        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
+        {
+            super( source );
         }
 
         public Builder params( final ModifyContentParams params )

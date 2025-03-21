@@ -4,13 +4,17 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
@@ -44,19 +48,37 @@ public class ModifiableContent
 
     public ModifiableField<ContentPublishInfo> publishInfo;
 
-    public ModifiableField<ContentIds.Builder> processedReferences;
+    public ModifiableField<ContentIds> processedReferences;
 
     public ModifiableField<WorkflowInfo> workflowInfo;
 
     public ModifiableField<Long> manualOrderValue;
 
-    public ModifiableField<EnumSet<ContentInheritType>> inherit;
+    public ModifiableField<Set<ContentInheritType>> inherit;
 
     public ModifiableField<ContentId> variantOf;
 
     public ModifiableField<Attachments> attachments;
 
     public ModifiableField<ValidationErrors> validationErrors;
+
+    public ModifiableField<ContentTypeName> type;
+
+    public ModifiableField<ContentPath> parentPath;
+
+    public ModifiableField<ContentName> name;
+
+    public ModifiableField<ChildOrder> childOrder;
+
+    public ModifiableField<ProjectName> originProject;
+
+    public ModifiableField<ContentPath> originalParentPath;
+
+    public ModifiableField<ContentName> originalName;
+
+    public ModifiableField<Instant> archivedTime;
+
+    public ModifiableField<PrincipalKey> archivedBy;
 
     public ModifiableContent( final Content source )
     {
@@ -72,7 +94,7 @@ public class ModifiableContent
         this.creator = new ModifiableField<>( source.getCreator() );
         this.createdTime = new ModifiableField<>( source.getCreatedTime() );
         this.publishInfo = new ModifiableField<>( source.getPublishInfo() );
-        this.processedReferences = new ModifiableField<>( ContentIds.create().addAll( source.getProcessedReferences() ) );
+        this.processedReferences = new ModifiableField<>( source.getProcessedReferences() );
         this.workflowInfo = new ModifiableField<>( source.getWorkflowInfo() );
         this.manualOrderValue = new ModifiableField<>( source.getManualOrderValue() );
         this.inherit = new ModifiableField<>(
@@ -83,8 +105,16 @@ public class ModifiableContent
         this.modifier = new ModifiableField<>( source.getModifier() );
         this.modifiedTime = new ModifiableField<>( source.getModifiedTime() );
         this.attachments = new ModifiableField<>( source.getAttachments() );
-
         this.validationErrors = new ModifiableField<>( source.getValidationErrors() );
+        this.type = new ModifiableField<>( source.getType() );
+        this.parentPath = new ModifiableField<>( source.getPath().getParentPath() );
+        this.name = new ModifiableField<>( source.getName() );
+        this.childOrder = new ModifiableField<>( source.getChildOrder() );
+        this.originProject = new ModifiableField<>( source.getOriginProject() );
+        this.originalParentPath = new ModifiableField<>( source.getOriginalParentPath() );
+        this.originalName = new ModifiableField<>( source.getOriginalName() );
+        this.archivedTime = new ModifiableField<>( source.getArchivedTime() );
+        this.archivedBy = new ModifiableField<>( source.getArchivedBy() );
     }
 
     public Content build()
@@ -94,14 +124,12 @@ public class ModifiableContent
             .data( data.produce() )
             .extraDatas( extraDatas.produce() )
             .page( page.produce() )
-            .valid( valid.produce() )
             .thumbnail( thumbnail.produce() )
             .owner( owner.produce() )
             .language( language.produce() )
             .creator( creator.produce() )
             .createdTime( createdTime.produce() )
-            .publishInfo( publishInfo.produce() )
-            .processedReferences( processedReferences.produce().build() )
+            .publishInfo( publishInfo.produce() ).processedReferences( processedReferences.produce() )
             .workflowInfo( workflowInfo.produce() )
             .manualOrderValue( manualOrderValue.produce() )
             .setInherit( inherit.produce() )
@@ -110,7 +138,18 @@ public class ModifiableContent
             // differs from "update"
             .modifier( modifier.produce() )
             .modifiedTime( modifiedTime.produce() )
-            .attachments( attachments.produce() ).validationErrors( validationErrors.produce() )
+            .attachments( attachments.produce() )
+            .type( type.produce() )
+            .parentPath( parentPath.produce() )
+            .name( name.produce() )
+            .childOrder( childOrder.produce() )
+            .originProject( originProject.produce() )
+            .originalParentPath( originalParentPath.produce() )
+            .originalName( originalName.produce() )
+            .archivedTime( archivedTime.produce() )
+            .archivedBy( archivedBy.produce() )
+            .validationErrors( validationErrors.produce() )
+            .valid( valid.produce() ) // should be after validationErrors
             .build();
     }
 
@@ -122,6 +161,8 @@ public class ModifiableContent
     public class ModifiableField<T>
     {
         public T originalValue;
+
+        private T producedValue;
 
         private EditableFieldPolicy policy;
 
@@ -152,14 +193,21 @@ public class ModifiableContent
             this.policy = EditableFieldPolicy.REMOVE;
         }
 
+        public T getProducedValue()
+        {
+            return this.producedValue;
+        }
+
         T produce()
         {
-            return switch ( policy )
+            this.producedValue = switch ( policy )
             {
                 case KEEP -> originalValue;
                 case REPLACE -> modifier.apply( ModifiableContent.this );
                 case REMOVE -> null;
             };
+
+            return this.producedValue;
         }
     }
 }

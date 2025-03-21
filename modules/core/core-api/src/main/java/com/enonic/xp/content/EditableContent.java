@@ -25,6 +25,7 @@ public class EditableContent
 
     public Page page;
 
+    @Deprecated
     public boolean valid;
 
     public Thumbnail thumbnail;
