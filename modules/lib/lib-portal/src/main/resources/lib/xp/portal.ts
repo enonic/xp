@@ -309,15 +309,13 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
 }
 
 export type PageUrlParams = IdXorPath & {
-    type?: 'server' | 'absolute';
+    type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     project?: string;
     branch?: string;
-    baseUrl?: string | BaseUrlParams;
 };
 
-interface PageUrlHandler
-    extends BaseUrlHandler {
+interface PageUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -358,8 +356,6 @@ export function pageUrl(params: PageUrlParams): string {
     bean.setQueryParams(__.toScriptValue(params.params));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-
-    setBaseUrlParams(bean, params.baseUrl);
 
     return bean.createUrl();
 }

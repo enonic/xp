@@ -31,7 +31,6 @@ import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
-import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -163,68 +162,41 @@ public class UrlGeneratorParamsAdapter
             .build();
     }
 
-    public PageUrlGeneratorParams offlinePageUrlParams( final PageUrlParams params )
+    public BaseUrlStrategy pageNoRequestBaseUrlStrategy( final PageUrlParams params )
     {
-        final Supplier<Content> contentSupplier = () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) );
+        return PageNoRequestBaseUrlStrategy.create()
+            .contentService( contentService )
+            .projectService( projectService )
+            .projectName( () -> new ContentProjectResolver( params.getProjectName() ).resolve() )
+            .branch( () -> new ContentBranchResolver( params.getBranch() ).resolve() )
+            .content( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) )
+            .urlType( params.getType() )
+            .build();
+    }
 
-        final BaseUrlStrategy baseUrlStrategy;
-        if ( params.getBaseUrl() != null )
+    public BaseUrlStrategy pageRequestBaseUrlStrategy( final PageUrlParams params )
+    {
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        if ( portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null )
         {
-            final ProjectName projectName = offlineProjectName( params.getProjectName() );
-            final Branch branch = offlineBranch( params.getBranch() );
+            final ProjectName projectName = ProjectName.from( portalRequest.getRepositoryId() );
+            final Branch branch = portalRequest.getBranch();
 
-            baseUrlStrategy = PageCustomBaseUrlStrategy.create()
-                .setContentService( contentService )
+            return PageSiteRequestBaseUrlStrategy.create()
+                .setPortalRequest( portalRequest )
+                .setUrlType( params.getType() )
+                .setId( params.getId() )
+                .setPath( params.getPath() )
                 .setProjectName( projectName )
                 .setBranch( branch )
-                .setUrlType( params.getType() )
-                .setContentSupplier( contentSupplier )
-                .setBaseUrl( params.getBaseUrl() )
-                .build();
-        }
-        else if ( params.getBaseUrlParams() != null )
-        {
-            final BaseUrlParams baseUrlParams = params.getBaseUrlParams();
-            final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
-            final Branch branch = offlineBranch( baseUrlParams.getBranch() );
-
-            baseUrlStrategy = PageOfflineBaseUrlStrategy.create()
-                .contentService( contentService )
-                .projectService( projectService )
-                .projectName( projectName )
-                .branch( branch )
-                .content( contentSupplier )
-                .urlType( params.getType() )
+                .setContentService( contentService )
                 .build();
         }
         else
         {
-            throw new IllegalArgumentException( "Either baseUrl or baseUrlParams must be provided" );
+            return pageNoRequestBaseUrlStrategy( params );
         }
-
-        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
-        if ( params.getParams() != null )
-        {
-            builder.addQueryParams( params.getParams().asMap() );
-        }
-        return builder.build();
-    }
-
-    public PageUrlGeneratorParams requestPageUrlParams( final PageUrlParams params )
-    {
-        final BaseUrlStrategy baseUrlStrategy = PageRequestBaseUrlStrategy.create()
-            .setUrlType( params.getType() )
-            .setId( params.getId() )
-            .setPath( params.getPath() )
-            .setContentService( contentService )
-            .build();
-
-        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
-        if ( params.getParams() != null )
-        {
-            builder.addQueryParams( params.getParams().asMap() );
-        }
-        return builder.build();
     }
 
     private String resolveApiApplication( final String application, final ApplicationKey applicationFromRequest )

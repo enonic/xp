@@ -18,10 +18,6 @@ public final class PageUrlParams
 
     private String branch;
 
-    private String baseUrl;
-
-    private BaseUrlParams baseUrlParams;
-
     public String getId()
     {
         return this.id;
@@ -40,16 +36,6 @@ public final class PageUrlParams
     public String getBranch()
     {
         return branch;
-    }
-
-    public String getBaseUrl()
-    {
-        return baseUrl;
-    }
-
-    public BaseUrlParams getBaseUrlParams()
-    {
-        return baseUrlParams;
     }
 
     public PageUrlParams id( final String value )
@@ -76,18 +62,6 @@ public final class PageUrlParams
         return this;
     }
 
-    public PageUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
-        return this;
-    }
-
-    public PageUrlParams baseUrl( final String baseUrl )
-    {
-        this.baseUrl = baseUrl;
-        return this;
-    }
-
     @Override
     public PageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -104,5 +78,7 @@ public final class PageUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
     }
 }

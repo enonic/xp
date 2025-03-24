@@ -23,6 +23,7 @@ import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
@@ -121,17 +122,16 @@ public final class PortalUrlServiceImpl
     @Override
     public String pageUrl( final PageUrlParams params )
     {
-        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
+        final BaseUrlStrategy baseUrlStrategy = PortalRequestAccessor.get() == null
+            ? urlStrategyFacade.pageNoRequestBaseUrlStrategy( params )
+            : urlStrategyFacade.pageRequestBaseUrlStrategy( params );
+
+        final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
+        if ( params.getParams() != null )
         {
-            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
+            builder.addQueryParams( params.getParams().asMap() );
         }
-
-        final PageUrlGeneratorParams generatorParams =
-            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlinePageUrlParams( params )
-                : urlStrategyFacade.requestPageUrlParams( params );
-
-        return pageUrl( generatorParams );
+        return pageUrl( builder.build() );
     }
 
     @Override
