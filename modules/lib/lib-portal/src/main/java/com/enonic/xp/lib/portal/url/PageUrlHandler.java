@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -25,10 +24,6 @@ public final class PageUrlHandler
     private String projectName;
 
     private String branch;
-
-    private String baseUrl;
-
-    private BaseUrlParams baseUrlParams;
 
     private Map<String, Collection<String>> queryParams;
 
@@ -57,16 +52,6 @@ public final class PageUrlHandler
         this.branch = branch;
     }
 
-    public void setBaseUrl( final String baseUrl )
-    {
-        this.baseUrl = baseUrl;
-    }
-
-    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
-    }
-
     public void setQueryParams( final ScriptValue params )
     {
         this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
@@ -74,13 +59,8 @@ public final class PageUrlHandler
 
     public String createUrl()
     {
-        final PageUrlParams params = new PageUrlParams().id( this.id )
-            .path( this.path )
-            .type( this.type )
-            .projectName( this.projectName )
-            .branch( this.branch )
-            .baseUrl( this.baseUrl )
-            .baseUrlParams( this.baseUrlParams );
+        final PageUrlParams params =
+            new PageUrlParams().id( this.id ).path( this.path ).type( this.type ).projectName( this.projectName ).branch( this.branch );
 
         if ( this.queryParams != null )
         {
@@ -88,11 +68,6 @@ public final class PageUrlHandler
         }
 
         return urlServiceSupplier.get().pageUrl( params );
-    }
-
-    public BaseUrlParams newBaseUrlParams()
-    {
-        return new BaseUrlParams();
     }
 
     @Override

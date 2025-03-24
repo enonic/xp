@@ -185,7 +185,7 @@ public class PortalUrlServiceImpl_apiUrlTest
         config.addString( "baseUrl", "https://cdn.company.com" );
 
         SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
+            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
             .build();
 
         final Site site = mock( Site.class );
@@ -219,7 +219,7 @@ public class PortalUrlServiceImpl_apiUrlTest
         config.addString( "baseUrl", "https://cdn.company.com" );
 
         SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "com.enonic.xp.site" ) ).config( config ).build() )
+            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
             .build();
 
         final Site site = mock( Site.class );

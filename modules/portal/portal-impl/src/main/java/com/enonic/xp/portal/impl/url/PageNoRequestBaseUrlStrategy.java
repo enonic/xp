@@ -7,18 +7,20 @@ import java.util.function.Supplier;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 
-final class PageOfflineBaseUrlStrategy
+final class PageNoRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
-    private final ProjectName projectName;
+    private final Supplier<ProjectName> projectNameSupplier;
 
-    private final Branch branch;
+    private final Supplier<Branch> branchSupplier;
 
     private final Supplier<Content> contentSupplier;
 
@@ -28,12 +30,12 @@ final class PageOfflineBaseUrlStrategy
 
     private final ProjectService projectService;
 
-    private PageOfflineBaseUrlStrategy( final Builder builder )
+    private PageNoRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.projectService = Objects.requireNonNull( builder.projectService );
-        this.projectName = Objects.requireNonNull( builder.projectName );
-        this.branch = Objects.requireNonNull( builder.branch );
+        this.projectNameSupplier = Objects.requireNonNull( builder.projectName );
+        this.branchSupplier = Objects.requireNonNull( builder.branch );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
     }
@@ -41,7 +43,14 @@ final class PageOfflineBaseUrlStrategy
     @Override
     public String generateBaseUrl()
     {
-        final Content content = contentSupplier.get();
+        final ProjectName projectName = Objects.requireNonNull( this.projectNameSupplier.get() );
+        final Branch branch = Objects.requireNonNull( this.branchSupplier.get() );
+
+        final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .branch( branch )
+            .build()
+            .callWith( contentSupplier::get );
 
         final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
@@ -52,13 +61,20 @@ final class PageOfflineBaseUrlStrategy
             .build()
             .resolve();
 
-        final String baseUrl = Objects.requireNonNullElseGet( baseUrlResult.getBaseUrl(), () -> "/site/" + projectName + "/" + branch );
-        final String normalizedBaseUrl = normalizeBaseUrl( baseUrl );
+        final StringBuilder result = new StringBuilder();
 
-        final Site nearestSite = baseUrlResult.getNearestSite();
+        if ( baseUrlResult.getBaseUrl() == null )
+        {
+            result.append( "/site/" ).append( projectName ).append( "/" ).append( branch );
+            UrlBuilderHelper.appendAndEncodePathParts( result, content.getPath().toString() );
+        }
+        else
+        {
+            result.append( normalizeBaseUrl( baseUrlResult.getBaseUrl() ) );
+            UrlBuilderHelper.appendAndEncodePathParts( result,
+                                                       resolvePath( content.getPath().toString(), baseUrlResult.getNearestSite() ) );
+        }
 
-        final StringBuilder result = new StringBuilder( normalizedBaseUrl );
-        UrlBuilderHelper.appendAndEncodePathParts( result, resolvePath( content.getPath().toString(), nearestSite ) );
         return result.toString();
     }
 
@@ -92,9 +108,9 @@ final class PageOfflineBaseUrlStrategy
 
         private ProjectService projectService;
 
-        private ProjectName projectName;
+        private Supplier<ProjectName> projectName;
 
-        private Branch branch;
+        private Supplier<Branch> branch;
 
         private Supplier<Content> contentSupplier;
 
@@ -112,13 +128,13 @@ final class PageOfflineBaseUrlStrategy
             return this;
         }
 
-        public Builder projectName( final ProjectName projectName )
+        public Builder projectName( final Supplier<ProjectName> projectName )
         {
             this.projectName = projectName;
             return this;
         }
 
-        public Builder branch( final Branch branch )
+        public Builder branch( final Supplier<Branch> branch )
         {
             this.branch = branch;
             return this;
@@ -136,9 +152,9 @@ final class PageOfflineBaseUrlStrategy
             return this;
         }
 
-        public PageOfflineBaseUrlStrategy build()
+        public PageNoRequestBaseUrlStrategy build()
         {
-            return new PageOfflineBaseUrlStrategy( this );
+            return new PageNoRequestBaseUrlStrategy( this );
         }
     }
 }
