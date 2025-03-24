@@ -7,8 +7,10 @@ var url = portalLib.pageUrl({
     params: {
         a: 1,
         b: [1, 2]
-    }
+    },
+    project: 'myproject',
+    branch: 'draft'
 });
 // END
 
-t.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=/my/page}', url);
+t.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=/my/page, project=myproject, branch=draft}', url);

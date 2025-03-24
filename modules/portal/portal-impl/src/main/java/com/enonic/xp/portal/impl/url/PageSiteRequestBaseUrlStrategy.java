@@ -2,17 +2,17 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
-final class PageRequestBaseUrlStrategy
+final class PageSiteRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
     private final ContentService contentService;
@@ -25,29 +25,32 @@ final class PageRequestBaseUrlStrategy
 
     private final String urlType;
 
-    private PageRequestBaseUrlStrategy( final Builder builder )
+    private final ProjectName projectName;
+
+    private final Branch branch;
+
+    private PageSiteRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
-        this.portalRequest = Objects.requireNonNull( PortalRequestAccessor.get() );
+        this.portalRequest = Objects.requireNonNull( builder.portalRequest );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.id = builder.id;
         this.path = builder.path;
+        this.projectName = builder.projectName;
+        this.branch = builder.branch;
     }
 
     @Override
     public String generateBaseUrl()
     {
-        final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
+        final StringBuilder result = new StringBuilder( portalRequest.getBaseUri() );
 
-        if ( portalRequest.isSiteBase() )
-        {
-            UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
-            UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
-        }
+        UrlBuilderHelper.appendSubPath( result, projectName.toString() );
+        UrlBuilderHelper.appendSubPath( result, branch.toString() );
 
         final ContentPath contentPath = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( portalRequest.getRepositoryId() )
-            .branch( portalRequest.getBranch() )
+            .repositoryId( projectName.getRepoId() )
+            .branch( branch )
             .build()
             .callWith( () -> new ContentPathResolver().portalRequest( portalRequest )
                 .contentService( this.contentService )
@@ -55,9 +58,9 @@ final class PageRequestBaseUrlStrategy
                 .path( path )
                 .resolve() );
 
-        UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, contentPath.toString() );
+        UrlBuilderHelper.appendAndEncodePathParts( result, contentPath.toString() );
 
-        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
+        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, result.toString() );
     }
 
     public static Builder create()
@@ -69,15 +72,27 @@ final class PageRequestBaseUrlStrategy
     {
         private ContentService contentService;
 
+        private PortalRequest portalRequest;
+
         private String id;
 
         private String path;
 
         private String urlType;
 
+        private ProjectName projectName;
+
+        private Branch branch;
+
         public Builder setContentService( final ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        public Builder setPortalRequest( final PortalRequest portalRequest )
+        {
+            this.portalRequest = portalRequest;
             return this;
         }
 
@@ -99,9 +114,21 @@ final class PageRequestBaseUrlStrategy
             return this;
         }
 
-        public PageRequestBaseUrlStrategy build()
+        public Builder setProjectName( final ProjectName projectName )
         {
-            return new PageRequestBaseUrlStrategy( this );
+            this.projectName = projectName;
+            return this;
+        }
+
+        public Builder setBranch( final Branch branch )
+        {
+            this.branch = branch;
+            return this;
+        }
+
+        public PageSiteRequestBaseUrlStrategy build()
+        {
+            return new PageSiteRequestBaseUrlStrategy( this );
         }
     }
 }

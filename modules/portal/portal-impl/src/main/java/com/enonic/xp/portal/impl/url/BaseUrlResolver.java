@@ -80,7 +80,7 @@ final class BaseUrlResolver
 
     private String resolveBaseUrl( final SiteConfigs siteConfigs )
     {
-        final SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "com.enonic.xp.site" ) );
+        final SiteConfig siteConfig = siteConfigs.get( ApplicationKey.from( "portal" ) );
         if ( siteConfig != null )
         {
             return siteConfig.getConfig().getString( "baseUrl" );
