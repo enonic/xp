@@ -14,7 +14,7 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 
-final class RequestBaseUrlStrategy
+final class SiteRequestBaseUrlStrategy
     implements BaseUrlStrategy
 {
     private final ContentService contentService;
@@ -23,7 +23,7 @@ final class RequestBaseUrlStrategy
 
     private final String urlType;
 
-    private RequestBaseUrlStrategy( final Builder builder )
+    private SiteRequestBaseUrlStrategy( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService );
         this.portalRequest = Objects.requireNonNull( builder.portalRequest );
@@ -98,9 +98,9 @@ final class RequestBaseUrlStrategy
             return this;
         }
 
-        public RequestBaseUrlStrategy build()
+        public SiteRequestBaseUrlStrategy build()
         {
-            return new RequestBaseUrlStrategy( this );
+            return new SiteRequestBaseUrlStrategy( this );
         }
     }
 }

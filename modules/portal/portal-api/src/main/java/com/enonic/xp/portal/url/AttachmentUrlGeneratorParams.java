@@ -20,9 +20,9 @@ public final class AttachmentUrlGeneratorParams
 
     private final Supplier<Content> contentSupplier;
 
-    private final ProjectName projectName;
+    private final Supplier<ProjectName> projectName;
 
-    private final Branch branch;
+    private final Supplier<Branch> branch;
 
     private final boolean download;
 
@@ -36,8 +36,8 @@ public final class AttachmentUrlGeneratorParams
     {
         this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
         this.contentSupplier = Objects.requireNonNull( builder.mediaSupplier );
-        this.projectName = builder.projectName;
-        this.branch = builder.branch;
+        this.projectName = Objects.requireNonNull( builder.projectNameSupplier );
+        this.branch = Objects.requireNonNull( builder.branchSupplier );
         this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;
@@ -54,12 +54,12 @@ public final class AttachmentUrlGeneratorParams
         return contentSupplier;
     }
 
-    public ProjectName getProjectName()
+    public Supplier<ProjectName> getProjectName()
     {
         return projectName;
     }
 
-    public Branch getBranch()
+    public Supplier<Branch> getBranch()
     {
         return branch;
     }
@@ -95,9 +95,9 @@ public final class AttachmentUrlGeneratorParams
 
         private Supplier<Content> mediaSupplier;
 
-        private ProjectName projectName;
+        private Supplier<ProjectName> projectNameSupplier;
 
-        private Branch branch;
+        private Supplier<Branch> branchSupplier;
 
         private boolean download;
 
@@ -119,15 +119,15 @@ public final class AttachmentUrlGeneratorParams
             return this;
         }
 
-        public Builder setProjectName( final ProjectName projectName )
+        public Builder setProjectName( final Supplier<ProjectName> projectNameSupplier )
         {
-            this.projectName = projectName;
+            this.projectNameSupplier = projectNameSupplier;
             return this;
         }
 
-        public Builder setBranch( final Branch branch )
+        public Builder setBranch( final Supplier<Branch> branchSupplier )
         {
-            this.branch = branch;
+            this.branchSupplier = branchSupplier;
             return this;
         }
 

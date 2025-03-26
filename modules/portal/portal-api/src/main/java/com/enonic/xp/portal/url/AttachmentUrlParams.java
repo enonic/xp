@@ -28,8 +28,6 @@ public final class AttachmentUrlParams
 
     private String baseUrl;
 
-    private BaseUrlParams baseUrlParams;
-
     public String getId()
     {
         return this.id;
@@ -68,11 +66,6 @@ public final class AttachmentUrlParams
     public String getBaseUrl()
     {
         return baseUrl;
-    }
-
-    public BaseUrlParams getBaseUrlParams()
-    {
-        return baseUrlParams;
     }
 
     public AttachmentUrlParams id( final String value )
@@ -128,12 +121,6 @@ public final class AttachmentUrlParams
         return this;
     }
 
-    public AttachmentUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
-        return this;
-    }
-
     @Override
     public AttachmentUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -153,6 +140,9 @@ public final class AttachmentUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
+        helper.add( "baseUrl", this.baseUrl );
         helper.add( "name", this.name );
         helper.add( "label", this.label );
         helper.add( "download", this.download );

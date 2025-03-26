@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
@@ -15,16 +14,14 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
@@ -33,13 +30,11 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -49,32 +44,29 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 {
     private ContentService contentService;
 
-    private ProjectService projectService;
-
     private PortalUrlService service;
 
     private PortalRequest portalRequest;
+
+    private HttpServletRequest req;
 
     @BeforeEach
     public void setUp()
     {
         this.contentService = mock( ContentService.class );
-        this.projectService = mock( ProjectService.class );
-
-        UrlGeneratorParamsAdapter urlGeneratorParamsAdapter = new UrlGeneratorParamsAdapter( this.contentService, this.projectService );
+        UrlGeneratorParamsAdapter urlGeneratorParamsAdapter =
+            new UrlGeneratorParamsAdapter( this.contentService, mock( ProjectService.class ) );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
                                                  urlGeneratorParamsAdapter );
 
-        final HttpServletRequest req = mock( HttpServletRequest.class );
+        req = mock( HttpServletRequest.class );
 
         portalRequest = new PortalRequest();
-        portalRequest.setBranch( Branch.from( "draft" ) );
-        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
-        portalRequest.setBaseUri( "/site" );
-        portalRequest.setRawPath( "/site/myproject/draft" );
         portalRequest.setRawRequest( req );
+
+        PortalRequestAccessor.set( portalRequest );
     }
 
     @Test
@@ -84,99 +76,367 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    public void createAttachmentUrlUseCase1()
+    void testNoRequestAndWithoutContext()
     {
-        // Request
-        // Site based request
-        // Generate attachmentUrl for request mode:
-        //  - for baseUrl `project` and `branch` are used from the portalRequest
-        //  - for media path `project` and `branch` are used from the params
-        // Nearest site is not found
+        PortalRequestAccessor.set( null );
 
-        PortalRequestAccessor.set( portalRequest );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .id( "123456" );
+        final String url = ContextBuilder.create().build().callWith( () -> this.service.attachmentUrl( params ) );
 
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/myproject/draft/_/media:attachment/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
-    public void createAttachmentUrlUseCase2()
+    void testNoRequestAndWithoutBranchInContext()
     {
-        // Request
-        // Site based request
-        // Generate url for request mode, for baseUrl `project` and `branch` are used from the portalRequest
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-        // Nearest site is not found
+        PortalRequestAccessor.set( null );
 
-        PortalRequestAccessor.set( portalRequest );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-repo" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
 
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
+        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
+    }
+
+    @Test
+    void testNoRequestAndWithBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ).baseUrl( "baseUrl" );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
 
-        final String url = this.service.attachmentUrl( params );
-        assertEquals( "/site/myproject/draft/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
                       url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase3()
+    void testNoRequestAndWithoutBaseUrl()
     {
-        // Request
-        // Admin Site based request
-        // Generate url for request mode, for baseUrl `project` and `branch` are used from the portalRequest
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-        // Nearest site is not found
+        PortalRequestAccessor.set( null );
 
-        portalRequest.setBaseUri( "/admin/site/preview" );
-        portalRequest.setRawPath( "/admin/site/preview/myproject/draft" );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
 
-        PortalRequestAccessor.set( portalRequest );
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
 
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
+        assertEquals( "/api/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testNoRequestAndWithBaseUrlButWithoutIdAndPath()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().baseUrl( "baseUrl" );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertThat( url ).startsWith( "baseUrl/_/error/500?message=Something+went+wrong." );
+    }
+
+    @Test
+    void testNoRequestAndContentNotFoundById()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" );
+
+        when( contentService.getById( any( ContentId.class ) ) ).thenReturn( null );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+    }
+
+    @Test
+    void testNoRequestAndContentNotFoundByPath()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().path( "/path" );
+
+        when( contentService.getByPath( any( ContentPath.class ) ) ).thenReturn( null );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+    }
+
+    @Test
+    void testNoRequestAndWithoutContextAndWithExplicitProjectAndBranch()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
+            .id( "123456" )
+            .projectName( "explicit-project" )
+            .branch( "explicit-branch" );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
 
         final String url = this.service.attachmentUrl( params );
+
+        assertEquals( "/api/media:attachment/explicit-project:explicit-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithNoSiteRequestInContextWithVirtualHost()
+    {
+        portalRequest.setBaseUri( "/api" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/app:api" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
+        when( virtualHost.getTarget() ).thenReturn( "/api/media:attachment" );
+        when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "http://localhost/source/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithNoSiteRequestWithBaseUrlIgnoreRewrite()
+    {
+        portalRequest.setBaseUri( "/webapp/myapp" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/webapp/myapp/path" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
+        when( virtualHost.getTarget() ).thenReturn( "/webapp/myapp" );
+        when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" ).baseUrl( "baseUrl" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithNoSiteRequestInContextWithDefaultVirtualHost()
+    {
+        portalRequest.setBaseUri( "/api" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/app:api" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
         assertEquals(
-            "/admin/site/preview/myproject/draft/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+            "http://localhost/api/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithNoSiteRequestNonApiBaseUri()
+    {
+        portalRequest.setBaseUri( "/webapp/myapp" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/webapp/myapp/path" );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "/webapp/myapp/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+                      url );
+    }
+
+    @Test
+    void testWithNoSiteRequestNonApiBaseUriWithVirtualHost()
+    {
+        portalRequest.setBaseUri( "/webapp/myapp" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/webapp/myapp/path" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
+        when( virtualHost.getTarget() ).thenReturn( "/webapp/myapp" );
+        when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "/source/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithNoSiteRequestWithEmptyBaseUriWithIgnoringRewrite()
+    {
+        portalRequest.setBaseUri( "" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/path/sub-path" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
+        when( virtualHost.getTarget() ).thenReturn( "/api/media:image" );
+        when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "/api/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+    }
+
+    @Test
+    void testWithSiteRequestWithoutContext()
+    {
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
+        portalRequest.setBranch( Branch.from( "request-branch" ) );
+        portalRequest.setRawPath( "/site/request-project/request-branch/mysite" );
+        portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
+        when( media.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.getByPath( eq( media.getPath() ) ) ).thenReturn( media );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams();
+
+        final String url = this.service.attachmentUrl( params );
+
+        assertEquals(
+            "/site/request-project/request-branch/mysite/_/media:attachment/request-project:request-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
             url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase4()
+    void testWithSiteRequestWithContext()
     {
-        // Request
-        // Site based request
-        // Generate url for request mode, for baseUrl `project` and `branch` are used from the portalRequest
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
+        portalRequest.setBranch( Branch.from( "request-branch" ) );
+        portalRequest.setRawPath( "/site/request-project/request-branch/mysite" );
         portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
-
-        PortalRequestAccessor.set( portalRequest );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
         when( media.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
         when( contentService.getByPath( eq( media.getPath() ) ) ).thenReturn( media );
 
         final Site site = mock( Site.class );
@@ -184,87 +444,42 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
 
-        final String url = this.service.attachmentUrl( params );
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
         assertEquals(
-            "/site/myproject/draft/mysite/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+            "/site/request-project/request-branch/mysite/_/media:attachment/request-project:request-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+            url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase5()
+    void testWithSiteRequestWithoutVirtualHost()
     {
-        // Request
-        // Site based request
-        // Generate url for request mode, for baseUrl `project` and `branch` are used from the portalRequest
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-        // Throw exception when finding nearest site
-
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
+        portalRequest.setBranch( Branch.from( "request-branch" ) );
+        portalRequest.setRawPath( "/site/request-project/request-branch/mysite" );
         portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
 
-        PortalRequestAccessor.set( portalRequest );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
-
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenThrow( new RuntimeException() );
-
-        final String url = this.service.attachmentUrl( params );
-        assertTrue( url.startsWith( "/_/error/500?message=Something+went+wrong.+" ) );
-    }
-
-    @Test
-    public void createAttachmentUrlUseCase6()
-    {
-        // Request
-        // Webapp based request
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-
-        portalRequest.setBaseUri( "/webapp/myapp" );
-        portalRequest.setRawPath( "/webapp/myapp/path" );
-
-        PortalRequestAccessor.set( portalRequest );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
-        when( media.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
-
-        final String url = this.service.attachmentUrl( params );
-        assertEquals( "/webapp/myapp/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
-    }
-
-    @Test
-    public void createAttachmentUrlUseCase7()
-    {
-        // Request
-        // Site based request
-        // Generate url for request mode, for baseUrl `project` and `branch` are used from the portalRequest
-        // `project` and `branch` are not provided in the params and they will be resolved from the portalRequest
-        // baseUrl must be overridden by virtual host
-
-        portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
-
-        VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/main" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/mysite" );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch/mysite" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        PortalRequestAccessor.set( portalRequest );
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
         when( media.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
         when( contentService.getByPath( eq( media.getPath() ) ) ).thenReturn( media );
 
         final Site site = mock( Site.class );
@@ -272,177 +487,91 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).id( "123456" );
+        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE );
 
         final String url = this.service.attachmentUrl( params );
-        assertEquals( "/main/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+
+        assertEquals(
+            "http://localhost/source/_/media:attachment/request-project:request-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+            url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase8()
+    void testWithSiteRequestWithExplicitProjectAndBranch()
     {
-        // Offline
-        // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
-        // `project` and `branch` are provided in the params and used for media path
-        // Nearest site is not found
-        // baseUrl not found on project level
-        // fallback to /api
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
+        portalRequest.setBranch( Branch.from( "request-branch" ) );
+        portalRequest.setRawPath( "/site/request-project/request-branch/mysite" );
+        portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
 
-        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
-        baseUrlContextParams.setProjectName( "myproject2" );
-        baseUrlContextParams.setBranch( "master" );
-        baseUrlContextParams.setKey( "siteId" );
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
+        when( media.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        when( contentService.getByPath( eq( media.getPath() ) ) ).thenReturn( media );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .baseUrlParams( baseUrlContextParams )
-            .id( "123456" );
 
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
+            .projectName( "explicit-project" ).branch( "explicit-branch" );
 
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+        final String url = this.service.attachmentUrl( params );
 
-        final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "draft" ) )
-            .build()
-            .callWith( () -> this.service.attachmentUrl( params ) );
-
-        assertEquals( "/api/media:attachment/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals(
+            "/site/request-project/request-branch/mysite/_/media:attachment/explicit-project:explicit-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+            url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase9()
+    void testWithSiteRequestWithBaseUrlWithoutContext()
     {
-        // Offline
-        // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
-        // `project` and `branch` are provided in the params and used for media path
-        // Nearest site is not found
-        // baseUrl found on project level
-
-        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
-        baseUrlContextParams.setProjectName( "myproject" );
-        baseUrlContextParams.setBranch( "draft" );
-        baseUrlContextParams.setKey( "siteId" );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .id( "123456" )
-            .baseUrlParams( baseUrlContextParams );
-
-        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( null );
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
+        portalRequest.setBranch( Branch.from( "request-branch" ) );
+        portalRequest.setRawPath( "/site/request-project/request-branch/mysite" );
+        portalRequest.setContentPath( ContentPath.from( "/mysite/123456" ) );
 
         final Media media = mockMedia( "123456", "mycontent.png" );
+        when( media.getPath() ).thenReturn( ContentPath.from( "/mysite/123456" ) );
+
         when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-            .build();
-
-        final Project project = mock( Project.class );
-        when( project.getSiteConfigs() ).thenReturn( siteConfigs );
-
-        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
-
-        final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "draft" ) )
-            .build()
-            .callWith( () -> this.service.attachmentUrl( params ) );
-
-        assertEquals( "https://cdn.company.com/_/media:attachment/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
-    }
-
-    @Test
-    public void createAttachmentUrlUseCase10()
-    {
-        // Offline
-        // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
-        // `project` and `branch` are provided in the params and used for media path
-        // Nearest site is found by `baseUrlKey`
-        // baseUrl found on site
-
-        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
-        baseUrlContextParams.setProjectName( "myproject" );
-        baseUrlContextParams.setBranch( "draft" );
-        baseUrlContextParams.setKey( "siteId" );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .id( "123456" )
-            .baseUrlParams( baseUrlContextParams );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-            .build();
 
         final Site site = mock( Site.class );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-        when( contentService.getNearestSite( eq( ContentId.from( "siteId" ) ) ) ).thenReturn( site );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" ).baseUrl( "baseUrl" );
 
         final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "draft" ) )
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "https://cdn.company.com/_/media:attachment/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
     }
 
     @Test
-    public void createAttachmentUrlUseCase11()
+    void testAttachmentUrl()
     {
-        // Offline
-        // Generate url for offline mode, for baseUrl `project` and `branch` are used from the Context
-        // `project` and `branch` are provided in the params and used for media path
-        // baseUrl does not resolved on site and project levels
-        // fallback to /api
+        AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+            .setBaseUrlStrategy( () -> "baseUrl" )
+            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setProjectName( () -> ProjectName.from( "project" ) )
+            .setBranch( () -> Branch.from( "branch" ) )
+            .setDownload( true )
+            .build();
 
-        final BaseUrlParams baseUrlContextParams = new BaseUrlParams();
-        baseUrlContextParams.setProjectName( "myproject" );
-        baseUrlContextParams.setBranch( "draft" );
-        baseUrlContextParams.setKey( "siteId" );
+        final String url = this.service.attachmentUrl( params );
 
-        final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE )
-            .projectName( "myproject2" )
-            .branch( "master" )
-            .baseUrlParams( baseUrlContextParams )
-            .id( "123456" );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final Site site = mock( Site.class );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
-        when( contentService.getNearestSite( eq( ContentId.from( "siteId" ) ) ) ).thenReturn( site );
-
-        final Project project = mock( Project.class );
-        when( project.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
-        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
-
-        final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "draft" ) )
-            .build()
-            .callWith( () -> this.service.attachmentUrl( params ) );
-
-        assertEquals( "/api/media:attachment/myproject2/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals( "baseUrl/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
     }
 
     private Media mockMedia( String id, String name )
