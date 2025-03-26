@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.enonic.xp.portal.url.AttachmentUrlParams;
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -31,8 +30,6 @@ public final class AttachmentUrlHandler
     private String branch;
 
     private String baseUrl;
-
-    private BaseUrlParams baseUrlParams;
 
     private boolean download;
 
@@ -84,11 +81,6 @@ public final class AttachmentUrlHandler
         this.baseUrl = baseUrl;
     }
 
-    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
-    }
-
     public void setDownload( final Boolean download )
     {
         this.download = Objects.requireNonNullElse( download, false );
@@ -109,8 +101,7 @@ public final class AttachmentUrlHandler
             .download( this.download )
             .projectName( this.projectName )
             .branch( this.branch )
-            .baseUrl( this.baseUrl )
-            .baseUrlParams( this.baseUrlParams );
+            .baseUrl( this.baseUrl );
 
         if ( this.queryParams != null )
         {
@@ -118,10 +109,5 @@ public final class AttachmentUrlHandler
         }
 
         return urlService.attachmentUrl( params );
-    }
-
-    public BaseUrlParams newBaseUrlParams()
-    {
-        return new BaseUrlParams();
     }
 }

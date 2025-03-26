@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -8,7 +9,13 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -34,6 +41,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -143,15 +151,56 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
-        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
-        {
-            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
-        }
+        final Supplier<ProjectName> projectNameSupplier = () -> ContentProjectResolver.create()
+            .setProjectName( params.getProjectName() )
+            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .build()
+            .resolve();
 
-        final ImageUrlGeneratorParams generatorParams =
-            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineImageUrlParams( params )
-                : urlStrategyFacade.requestImageUrlParams( params );
+        final Supplier<Branch> branchSupplier = () -> ContentBranchResolver.create()
+            .setBranch( params.getBranch() )
+            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .build()
+            .resolve();
+
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        final Supplier<Media> mediaSupplier = () -> {
+            final ProjectName projectName = projectNameSupplier.get();
+            final Branch branch = branchSupplier.get();
+
+            final MediaResolverResult mediaResolverResult = MediaResolver.create( projectName, branch, contentService )
+                .setPortalRequest( portalRequest )
+                .setBaseUrl( params.getBaseUrl() )
+                .setId( params.getId() )
+                .setPath( params.getPath() )
+                .build()
+                .resolve();
+
+            if ( mediaResolverResult.getContent() instanceof Media media )
+            {
+                return media;
+            }
+
+            throw createContentNotFoundException( projectName, branch, mediaResolverResult.getContentKey() );
+        };
+
+        final BaseUrlStrategy baseUrlStrategy = portalRequest == null
+            ? urlStrategyFacade.noRequestMediaBaseUrlStrategy( params.getBaseUrl() )
+            : urlStrategyFacade.requestMediaBaseUrlStrategy( params.getBaseUrl(), params.getType(), "image" );
+
+        final ImageUrlGeneratorParams generatorParams = ImageUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setMedia( mediaSupplier )
+            .setProjectName( projectNameSupplier )
+            .setBranch( branchSupplier )
+            .setScale( params.getScale() )
+            .setFormat( params.getFormat() )
+            .setFilter( params.getFilter() )
+            .setQuality( params.getQuality() )
+            .setBackground( params.getBackground() )
+            .addQueryParams( params.getParams().asMap() )
+            .build();
 
         return imageUrl( generatorParams );
     }
@@ -159,15 +208,56 @@ public final class PortalUrlServiceImpl
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
-        if ( params.getBaseUrl() != null && params.getBaseUrlParams() != null )
-        {
-            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
-        }
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final AttachmentUrlGeneratorParams generatorParams =
-            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineAttachmentUrlParams( params )
-                : urlStrategyFacade.requestAttachmentUrlParams( params );
+        final Supplier<ProjectName> projectNameSupplier = () -> ContentProjectResolver.create()
+            .setProjectName( params.getProjectName() )
+            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .build()
+            .resolve();
+
+        final Supplier<Branch> branchSupplier = () -> ContentBranchResolver.create()
+            .setBranch( params.getBranch() )
+            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .build()
+            .resolve();
+
+        final Supplier<Content> contentSupplier = () -> {
+            final ProjectName projectName = projectNameSupplier.get();
+            final Branch branch = branchSupplier.get();
+
+            final MediaResolverResult mediaResolverResult = MediaResolver.create( projectName, branch, contentService )
+                .setPortalRequest( portalRequest )
+                .setBaseUrl( params.getBaseUrl() )
+                .setId( params.getId() )
+                .setPath( params.getPath() )
+                .build()
+                .resolve();
+
+            final Content content = mediaResolverResult.getContent();
+
+            if ( content == null )
+            {
+                throw createContentNotFoundException( projectName, branch, mediaResolverResult.getContentKey() );
+            }
+
+            return content;
+        };
+
+        final BaseUrlStrategy baseUrlStrategy = portalRequest == null
+            ? urlStrategyFacade.noRequestMediaBaseUrlStrategy( params.getBaseUrl() )
+            : urlStrategyFacade.requestMediaBaseUrlStrategy( params.getBaseUrl(), params.getType(), "attachment" );
+
+        final AttachmentUrlGeneratorParams generatorParams = AttachmentUrlGeneratorParams.create()
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setProjectName( projectNameSupplier )
+            .setBranch( branchSupplier )
+            .setContent( contentSupplier )
+            .setDownload( params.isDownload() )
+            .setName( params.getName() )
+            .setLabel( params.getLabel() )
+            .addQueryParams( params.getParams().asMap() )
+            .build();
 
         return attachmentUrl( generatorParams );
     }
@@ -309,5 +399,23 @@ public final class PortalUrlServiceImpl
         final AuthenticationInfo authenticationInfo =
             AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
         return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
+    }
+
+    private ContentNotFoundException createContentNotFoundException( final ProjectName projectName, final Branch branch,
+                                                                     final String contentKey )
+    {
+        final ContentNotFoundException.Builder ex =
+            ContentNotFoundException.create().repositoryId( projectName.getRepoId() ).branch( branch );
+
+        if ( contentKey.startsWith( "/" ) )
+        {
+            ex.contentPath( ContentPath.from( contentKey ) );
+        }
+        else
+        {
+            ex.contentId( ContentId.from( contentKey ) );
+        }
+
+        return ex.build();
     }
 }

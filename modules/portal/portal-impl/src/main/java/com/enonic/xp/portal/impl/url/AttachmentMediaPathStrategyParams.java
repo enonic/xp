@@ -10,9 +10,9 @@ final class AttachmentMediaPathStrategyParams
 {
     private final Supplier<Content> contentSupplier;
 
-    private final ProjectName projectName;
+    private final Supplier<ProjectName> projectNameSupplier;
 
-    private final Branch branch;
+    private final Supplier<Branch> branchSupplier;
 
     private final String name;
 
@@ -21,8 +21,8 @@ final class AttachmentMediaPathStrategyParams
     private AttachmentMediaPathStrategyParams( final Builder builder )
     {
         this.contentSupplier = builder.contentSupplier;
-        this.projectName = builder.projectName;
-        this.branch = builder.branch;
+        this.projectNameSupplier = builder.projectNameSupplier;
+        this.branchSupplier = builder.branchSupplier;
         this.name = builder.name;
         this.label = builder.label;
     }
@@ -32,14 +32,14 @@ final class AttachmentMediaPathStrategyParams
         return contentSupplier;
     }
 
-    public ProjectName getProjectName()
+    public Supplier<ProjectName> getProjectName()
     {
-        return projectName;
+        return projectNameSupplier;
     }
 
-    public Branch getBranch()
+    public Supplier<Branch> getBranch()
     {
-        return branch;
+        return branchSupplier;
     }
 
     public String getName()
@@ -61,9 +61,9 @@ final class AttachmentMediaPathStrategyParams
     {
         private Supplier<Content> contentSupplier;
 
-        private ProjectName projectName;
+        private Supplier<ProjectName> projectNameSupplier;
 
-        private Branch branch;
+        private Supplier<Branch> branchSupplier;
 
         private String name;
 
@@ -75,15 +75,15 @@ final class AttachmentMediaPathStrategyParams
             return this;
         }
 
-        public Builder setProjectName( final ProjectName projectName )
+        public Builder setProjectName( final Supplier<ProjectName> projectNameSupplier )
         {
-            this.projectName = projectName;
+            this.projectNameSupplier = projectNameSupplier;
             return this;
         }
 
-        public Builder setBranch( final Branch branch )
+        public Builder setBranch( final Supplier<Branch> branchSupplier )
         {
-            this.branch = branch;
+            this.branchSupplier = branchSupplier;
             return this;
         }
 
