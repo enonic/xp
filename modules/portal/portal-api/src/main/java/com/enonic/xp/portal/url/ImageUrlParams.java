@@ -33,8 +33,6 @@ public final class ImageUrlParams
 
     private String baseUrl;
 
-    private BaseUrlParams baseUrlParams;
-
     public String getId()
     {
         return this.id;
@@ -83,11 +81,6 @@ public final class ImageUrlParams
     public String getBaseUrl()
     {
         return baseUrl;
-    }
-
-    public BaseUrlParams getBaseUrlParams()
-    {
-        return baseUrlParams;
     }
 
     public ImageUrlParams id( final String value )
@@ -149,12 +142,6 @@ public final class ImageUrlParams
         return this;
     }
 
-    public ImageUrlParams baseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
-        return this;
-    }
-
     public ImageUrlParams baseUrl( final String baseUrl )
     {
         this.baseUrl = baseUrl;
@@ -182,6 +169,9 @@ public final class ImageUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
+        helper.add( "baseUrl", this.baseUrl );
         helper.add( "format", this.format );
         helper.add( "quality", this.quality );
         helper.add( "filter", this.filter );

@@ -131,11 +131,10 @@ export type ImageUrlParams = IdXorPath & {
         | 'full';
     project?: string;
     branch?: string;
-    baseUrl?: string | BaseUrlParams;
+    baseUrl?: string;
 };
 
-interface ImageUrlHandler
-    extends BaseUrlHandler {
+interface ImageUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -147,6 +146,8 @@ interface ImageUrlHandler
     setProjectName(value?: string | null): void;
 
     setBranch(value?: string | null): void;
+
+    setBaseUrl(value?: string | null): void;
 
     setBackground(value?: string | null): void;
 
@@ -198,8 +199,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setScale(params.scale);
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-
-    setBaseUrlParams(bean, params.baseUrl);
+    bean.setBaseUrl(__.nullOrValue(params.baseUrl));
 
     return bean.createUrl();
 }
@@ -245,11 +245,10 @@ export interface AttachmentUrlParams {
     params?: object;
     project?: string;
     branch?: string;
-    baseUrl?: string | BaseUrlParams;
+    baseUrl?: string
 }
 
-interface AttachmentUrlHandler
-    extends BaseUrlHandler {
+interface AttachmentUrlHandler {
     setId(value?: string | null): void;
 
     setPath(value?: string | null): void;
@@ -265,6 +264,8 @@ interface AttachmentUrlHandler
     setProjectName(value?: string | null): void;
 
     setBranch(value?: string | null): void;
+
+    setBaseUrl(value?: string | null): void;
 
     setDownload(value: boolean): void;
 
@@ -302,8 +303,7 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
     bean.setBranch(__.nullOrValue(params.branch));
     bean.setDownload(params.download || false);
     bean.addQueryParams(__.toScriptValue(params.params));
-
-    setBaseUrlParams(bean, params.baseUrl);
+    bean.setBaseUrl(__.nullOrValue(params.baseUrl));
 
     return bean.createUrl();
 }

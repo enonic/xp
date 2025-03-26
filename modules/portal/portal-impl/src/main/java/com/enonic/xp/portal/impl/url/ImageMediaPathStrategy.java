@@ -27,9 +27,9 @@ final class ImageMediaPathStrategy
     @Override
     public String generatePath()
     {
-        final Media media = params.getMedia().get();
-        final ProjectName project = params.getProjectName();
-        final Branch branch = params.getBranch();
+        final Media media = Objects.requireNonNull( params.getMedia().get() );
+        final ProjectName project = Objects.requireNonNull( params.getProjectName().get() );
+        final Branch branch = Objects.requireNonNull( params.getBranch().get() );
 
         final String hash = MediaHashResolver.resolveImageHash( media );
         final String scale = resolveScale( params.getScale() );
