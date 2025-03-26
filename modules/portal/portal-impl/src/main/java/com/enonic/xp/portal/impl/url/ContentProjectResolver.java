@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -9,22 +11,25 @@ import com.enonic.xp.repository.RepositoryId;
 
 final class ContentProjectResolver
 {
-    private final String explicitProjectName;
+    private final String projectName;
 
-    ContentProjectResolver( final String explicitProjectName )
+    private final boolean preferSiteRequest;
+
+    private ContentProjectResolver( final Builder builder )
     {
-        this.explicitProjectName = explicitProjectName;
+        this.projectName = builder.projectName;
+        this.preferSiteRequest = Objects.requireNonNullElse( builder.preferSiteRequest, true );
     }
 
     public ProjectName resolve()
     {
-        if ( explicitProjectName != null )
+        if ( projectName != null )
         {
-            return ProjectName.from( explicitProjectName );
+            return ProjectName.from( projectName );
         }
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( portalRequest != null && portalRequest.isSiteBase() )
+        if ( preferSiteRequest && portalRequest != null && portalRequest.isSiteBase() )
         {
             return ProjectName.from( portalRequest.getRepositoryId() );
         }
@@ -41,5 +46,34 @@ final class ContentProjectResolver
         }
 
         return ProjectName.from( repositoryId );
+    }
+
+    static Builder create()
+    {
+        return new Builder();
+    }
+
+    static class Builder
+    {
+        private String projectName;
+
+        private Boolean preferSiteRequest;
+
+        Builder setProjectName( final String projectName )
+        {
+            this.projectName = projectName;
+            return this;
+        }
+
+        Builder setPreferSiteRequest( final Boolean preferSiteRequest )
+        {
+            this.preferSiteRequest = preferSiteRequest;
+            return this;
+        }
+
+        ContentProjectResolver build()
+        {
+            return new ContentProjectResolver( this );
+        }
     }
 }

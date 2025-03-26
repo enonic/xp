@@ -25,9 +25,9 @@ final class AttachmentMediaPathStrategy
     @Override
     public String generatePath()
     {
-        final Content content = params.getContentSupplier().get();
-        final ProjectName project = params.getProjectName();
-        final Branch branch = params.getBranch();
+        final Content content = Objects.requireNonNull( params.getContentSupplier().get() );
+        final ProjectName project = Objects.requireNonNull( params.getProjectName().get() );
+        final Branch branch = Objects.requireNonNull( params.getBranch().get() );
 
         final StringBuilder url = new StringBuilder();
 
