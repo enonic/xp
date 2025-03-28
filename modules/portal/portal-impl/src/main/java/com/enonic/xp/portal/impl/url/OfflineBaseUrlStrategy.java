@@ -47,7 +47,7 @@ final class OfflineBaseUrlStrategy
             return "/api";
         }
 
-        final BaseUrlResult baseUrlResult = BaseUrlResolver.create()
+        final BaseUrlMetadata baseUrlResult = BaseUrlResolver.create()
             .contentService( contentService )
             .projectService( projectService )
             .projectName( projectName )
