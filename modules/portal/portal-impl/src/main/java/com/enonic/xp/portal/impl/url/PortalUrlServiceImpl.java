@@ -30,6 +30,7 @@ import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
@@ -128,11 +129,16 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
+    public String baseUrl( final BaseUrlParams params )
+    {
+        final BaseUrlStrategy baseUrlStrategy = urlStrategyFacade.contentBaseUrlStrategy( params );
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( baseUrlStrategy, () -> null, () -> null ) );
+    }
+
+    @Override
     public String pageUrl( final PageUrlParams params )
     {
-        final BaseUrlStrategy baseUrlStrategy = PortalRequestAccessor.get() == null
-            ? urlStrategyFacade.pageNoRequestBaseUrlStrategy( params )
-            : urlStrategyFacade.pageRequestBaseUrlStrategy( params );
+        final BaseUrlStrategy baseUrlStrategy = urlStrategyFacade.pageBaseUrlStrategy( params );
 
         final PageUrlGeneratorParams.Builder builder = PageUrlGeneratorParams.create().setBaseUrlStrategy( baseUrlStrategy );
         if ( params.getParams() != null )

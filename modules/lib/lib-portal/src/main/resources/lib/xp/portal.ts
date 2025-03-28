@@ -29,24 +29,6 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-function setBaseUrlParams(bean: BaseUrlHandler, baseUrl: string | BaseUrlParams | null | undefined): void {
-    if (baseUrl != null) {
-        if (typeof baseUrl === 'string') {
-            bean.setBaseUrl(baseUrl);
-        } else {
-            const baseUrlParams: BaseUrlParams = baseUrl as BaseUrlParams;
-
-            const baseUrlBean: BaseUrlParamsBean = bean.newBaseUrlParams();
-
-            baseUrlBean.setProjectName(__.nullOrValue(baseUrlParams.project));
-            baseUrlBean.setBranch(__.nullOrValue(baseUrlParams.branch));
-            baseUrlBean.setKey(__.nullOrValue(baseUrlParams.key));
-
-            bean.setBaseUrlParams(baseUrlBean);
-        }
-    }
-}
-
 export type Site<Config> = Content<{
     description?: string;
     siteConfig: SiteConfig<Config> | SiteConfig<Config>[];
@@ -61,28 +43,6 @@ export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export type IdXorPath = XOR<{ id: string }, { path: string }>;
-
-export interface BaseUrlParams {
-    project?: string;
-    branch?: string;
-    key?: string;
-}
-
-interface BaseUrlParamsBean {
-    setProjectName(value?: string | null): void;
-
-    setBranch(value?: string | null): void;
-
-    setKey(value?: string | null): void;
-}
-
-interface BaseUrlHandler {
-    setBaseUrl(value: string): void;
-
-    setBaseUrlParams(value: BaseUrlParamsBean): void;
-
-    newBaseUrlParams(): BaseUrlParamsBean;
-}
 
 export interface AssetUrlParams {
     path: string;
@@ -762,11 +722,10 @@ export interface ApiUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     path?: string | string[];
-    baseUrl?: string | BaseUrlParams;
+    baseUrl?: string;
 }
 
-interface ApiUrlHandler
-    extends BaseUrlHandler {
+interface ApiUrlHandler {
     setApplication(value?: string | null): void;
 
     setApi(value?: string | null): void;
@@ -774,6 +733,8 @@ interface ApiUrlHandler
     setUrlType(value?: string | null): void;
 
     setPath(value?: string | ScriptValue): void;
+
+    setBaseUrl(value?: string | null): void;
 
     addQueryParams(value?: ScriptValue | null): void;
 
@@ -815,8 +776,6 @@ export function apiUrl(urlParams: ApiUrlParams): string {
     bean.setApi(api);
     bean.addQueryParams(__.toScriptValue(params));
 
-    setBaseUrlParams(bean, baseUrl);
-
     if (path) {
         if (Array.isArray(path)) {
             bean.setPath(__.toScriptValue(path));
@@ -824,6 +783,53 @@ export function apiUrl(urlParams: ApiUrlParams): string {
             bean.setPath(path);
         }
     }
+
+    return bean.createUrl();
+}
+
+export interface BaseUrlParams {
+    type?: 'server' | 'absolute' | 'websocket';
+    id?: string;
+    path?: string;
+    project?: string;
+    branch?: string;
+}
+interface BaseUrlHandler {
+    setUrlType(value?: string | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    createUrl(): string;
+}
+
+/**
+ * This function generates a baseURL.
+ *
+ * @example-ref examples/portal/baseUrl.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {string} [params.id] ID of the content.
+ * @param {string} [params.path] Path to the content.
+ * @param {string} [params.project] Name of the project to use for resolving the URL.
+ * @param {string} [params.branch] Name of the branch to use for resolving the URL.
+ *
+ * @returns {string} The generated URL.
+ */
+export function baseUrl(params: BaseUrlParams): string {
+    const bean: BaseUrlHandler = __.newBean<BaseUrlHandler>('com.enonic.xp.lib.portal.url.BaseUrlHandler');
+
+    bean.setUrlType(__.nullOrValue(params.type));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
 
     return bean.createUrl();
 }

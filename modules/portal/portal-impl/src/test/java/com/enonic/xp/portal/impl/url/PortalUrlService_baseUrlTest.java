@@ -14,8 +14,7 @@ import com.enonic.xp.core.impl.content.ContentNodeHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
-import com.enonic.xp.portal.url.PageUrlGeneratorParams;
-import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
@@ -32,59 +31,53 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_pageUrlTest
+public class PortalUrlService_baseUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
-    void testNoRequestNoContext()
+    void testNoRequestNoProjectInContext()
     {
-        ContextBuilder.create().build().runWith( () -> {
-            PortalRequestAccessor.set( null );
+        PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
 
-            final String url = this.service.pageUrl( params );
-            // Not possible to resolve project
-            assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
-        } );
+        final String url = ContextBuilder.create().build().callWith( () -> this.service.baseUrl( params ) );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
     void testNoRequestWithNonContentProject()
     {
-        ContextBuilder.create()
+        PortalRequestAccessor.set( null );
+
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
+
+        final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "non.content.project" ) )
             .branch( Branch.from( "branch" ) )
             .build()
-            .runWith( () -> {
-                PortalRequestAccessor.set( null );
-
-                final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
-
-                final String url = this.service.pageUrl( params );
-                // Not possible to resolve branch
-                assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
-            } );
+            .callWith( () -> this.service.baseUrl( params ) );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
     void testNoRequestWithContextProjectAndWithoutContextBranch()
     {
-        ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) ).build().runWith( () -> {
-            PortalRequestAccessor.set( null );
+        PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
 
-            final String url = this.service.pageUrl( params );
-            // Not possible to resolve branch
-            assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
-        } );
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "branch" ) )
+            .build()
+            .callWith( () -> this.service.baseUrl( params ) );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
     void testNoRequestWithUnknownContent()
     {
-
         PortalRequestAccessor.set( null );
 
         final ContentId contentId = ContentId.from( "unknown" );
@@ -95,13 +88,13 @@ public class PortalUrlServiceImpl_pageUrlTest
                                                                          .contentRoot( ContentNodeHelper.getContentRoot() )
                                                                          .build() );
 
-        final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( contentId.toString() );
+        final BaseUrlParams params = BaseUrlParams.create().setId( contentId.toString() ).build();
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "draft" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( params ) );
+            .callWith( () -> this.service.baseUrl( params ) );
 
         assertThat( url ).startsWith( "/_/error/404?message=Not+Found" );
     }
@@ -109,102 +102,92 @@ public class PortalUrlServiceImpl_pageUrlTest
     @Test
     void testNoRequestWithAbsoluteUrlTypeWithBaseUrl()
     {
-        ContextBuilder.create()
+        PortalRequestAccessor.set( null );
+
+        final BaseUrlParams params = BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setPath( "/mycontent" ).build();
+
+        final Content content = ContentFixtures.newContent();
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", "https://cdn.company.com" );
+
+        final SiteConfigs siteConfigs =
+            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+        final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "draft" ) )
             .build()
-            .runWith( () -> {
-                PortalRequestAccessor.set( null );
+            .callWith( () -> this.service.baseUrl( params ) );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
-
-                final Content content = ContentFixtures.newContent();
-
-                final PropertyTree config = new PropertyTree();
-                config.addString( "baseUrl", "https://cdn.company.com" );
-
-                final SiteConfigs siteConfigs = SiteConfigs.create()
-                    .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-                    .build();
-
-                final Site site = mock( Site.class );
-                when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-                when( site.getPermissions() ).thenReturn(
-                    AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-                when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-                when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
-                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
-
-                final String url = this.service.pageUrl( params );
-                assertEquals( "https://cdn.company.com/b/mycontent", url );
-            } );
+        assertEquals( "https://cdn.company.com", url );
     }
 
     @Test
     void testNoRequestWithServerRelativeUrlTypeWithBaseUrl()
     {
-        ContextBuilder.create()
+        PortalRequestAccessor.set( null );
+
+        final Content content = ContentFixtures.newContent();
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", "https://cdn.company.com" );
+
+        final SiteConfigs siteConfigs =
+            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+        final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "draft" ) )
             .build()
-            .runWith( () -> {
-                PortalRequestAccessor.set( null );
+            .callWith( () -> this.service.baseUrl(
+                BaseUrlParams.create().setUrlType( UrlTypeConstants.SERVER_RELATIVE ).setPath( "/mycontent" ).build() ) );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.SERVER_RELATIVE ).path( "/mycontent" );
-
-                final Content content = ContentFixtures.newContent();
-
-                final PropertyTree config = new PropertyTree();
-                config.addString( "baseUrl", "https://cdn.company.com" );
-
-                final SiteConfigs siteConfigs = SiteConfigs.create()
-                    .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-                    .build();
-
-                final Site site = mock( Site.class );
-                when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-                when( site.getPermissions() ).thenReturn(
-                    AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-                when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-                when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
-                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
-
-                final String url = this.service.pageUrl( params );
-                assertEquals( "/b/mycontent", url );
-            } );
+        assertEquals( "", url );
     }
 
     @Test
     void testNoRequestWithAbsoluteUrlTypeWithoutBaseUrl()
     {
-        ContextBuilder.create()
+        PortalRequestAccessor.set( null );
+
+        final Content content = ContentFixtures.newContent();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+        final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "master" ) )
             .build()
-            .runWith( () -> {
-                PortalRequestAccessor.set( null );
+            .callWith( () -> this.service.baseUrl(
+                BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setPath( "/mycontent" ).build() ) );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
-
-                final Content content = ContentFixtures.newContent();
-
-                final Site site = mock( Site.class );
-                when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-                when( site.getPermissions() ).thenReturn(
-                    AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-                when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
-
-                when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
-                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
-
-                final String url = this.service.pageUrl( params );
-                assertEquals( "/site/myproject/master/a/b/mycontent", url );
-            } );
+        assertEquals( "/site/myproject/master", url );
     }
 
     @Test
@@ -228,15 +211,16 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
-                    .path( "/mycontent" )
-                    .projectName( "explicit-project" );
+                final BaseUrlParams params = BaseUrlParams.create()
+                    .setUrlType( UrlTypeConstants.ABSOLUTE )
+                    .setPath( "/mycontent" )
+                    .setProjectName( "explicit-project" )
+                    .build();
 
-                return this.service.pageUrl( params );
+                return this.service.baseUrl( params );
             } );
 
-        assertEquals( "/site/explicit-project/context-branch/a/b/mycontent", url );
+        assertEquals( "/site/explicit-project/context-branch", url );
     }
 
     @Test
@@ -260,16 +244,17 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
-                    .path( "/mycontent" )
-                    .projectName( "explicit-project" )
-                    .branch( "explicit-branch" );
+                final BaseUrlParams params = BaseUrlParams.create()
+                    .setUrlType( UrlTypeConstants.ABSOLUTE )
+                    .setPath( "/mycontent" )
+                    .setProjectName( "explicit-project" )
+                    .setBranch( "explicit-branch" )
+                    .build();
 
-                return this.service.pageUrl( params );
+                return this.service.baseUrl( params );
             } );
 
-        assertEquals( "/site/explicit-project/explicit-branch/a/b/mycontent", url );
+        assertEquals( "/site/explicit-project/explicit-branch", url );
     }
 
     @Test
@@ -299,16 +284,17 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
-                    .path( "/mycontent" )
-                    .projectName( "explicit-project" )
-                    .branch( "explicit-branch" );
+                final BaseUrlParams params = BaseUrlParams.create()
+                    .setUrlType( UrlTypeConstants.ABSOLUTE )
+                    .setPath( "/mycontent" )
+                    .setProjectName( "explicit-project" )
+                    .setBranch( "explicit-branch" )
+                    .build();
 
-                return this.service.pageUrl( params );
+                return this.service.baseUrl( params );
             } );
 
-        assertEquals( "https://cdn.company.com/b/mycontent", url );
+        assertEquals( "https://cdn.company.com", url );
     }
 
     @Test
@@ -326,10 +312,10 @@ public class PortalUrlServiceImpl_pageUrlTest
         final Content content = ContentFixtures.newContent();
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
 
-        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
+        final BaseUrlParams params = BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build();
 
-        final String url = this.service.pageUrl( params );
-        assertEquals( "http://localhost/site/request-project/request-branch/a/b/mycontent", url );
+        final String url = this.service.baseUrl( params );
+        assertEquals( "http://localhost/site/request-project/request-branch", url );
     }
 
     @Test
@@ -347,10 +333,10 @@ public class PortalUrlServiceImpl_pageUrlTest
         final Content content = ContentFixtures.newContent();
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
 
-        final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" );
+        final BaseUrlParams params = BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build();
 
-        final String url = this.service.pageUrl( params );
-        assertEquals( "http://localhost/admin/site/preview/request-project/request-branch/a/b/mycontent", url );
+        final String url = this.service.baseUrl( params );
+        assertEquals( "http://localhost/admin/site/preview/request-project/request-branch", url );
     }
 
     @Test
@@ -372,9 +358,10 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ) ) );
+            .callWith(
+                () -> this.service.baseUrl( BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build() ) );
 
-        assertEquals( "http://localhost/site/request-project/request-branch/a/b/mycontent", url );
+        assertEquals( "http://localhost/site/request-project/request-branch", url );
     }
 
     @Test
@@ -387,7 +374,7 @@ public class PortalUrlServiceImpl_pageUrlTest
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/source" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch/a" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
@@ -401,9 +388,10 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ) ) );
+            .callWith(
+                () -> this.service.baseUrl( BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build() ) );
 
-        assertEquals( "http://localhost/source/b/mycontent", url );
+        assertEquals( "http://localhost/source", url );
     }
 
     @Test
@@ -430,10 +418,11 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ) ) );
+            .callWith(
+                () -> this.service.baseUrl( BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build() ) );
 
         // Without virtual host rewrite to avoid OutOfScopeException
-        assertEquals( "/site/context-project/context-branch/a/b/mycontent", url );
+        assertEquals( "/site/context-project/context-branch", url );
     }
 
     @Test
@@ -465,9 +454,10 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ) ) );
+            .callWith(
+                () -> this.service.baseUrl( BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setId( "123456" ).build() ) );
 
-        assertEquals( "https://cdn.company.com/b/mycontent", url );
+        assertEquals( "https://cdn.company.com", url );
     }
 
     @Test
@@ -499,12 +489,14 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
-                                                       .id( "123456" )
-                                                       .projectName( "explicit-project" )
-                                                       .branch( "explicit-branch" ) ) );
+            .callWith( () -> this.service.baseUrl( BaseUrlParams.create()
+                                                       .setUrlType( UrlTypeConstants.ABSOLUTE )
+                                                       .setId( "123456" )
+                                                       .setProjectName( "explicit-project" )
+                                                       .setBranch( "explicit-branch" )
+                                                       .build() ) );
 
-        assertEquals( "https://cdn.company.com/b/mycontent", url );
+        assertEquals( "https://cdn.company.com", url );
     }
 
     @Test
@@ -530,19 +522,13 @@ public class PortalUrlServiceImpl_pageUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> this.service.pageUrl( new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
-                                                       .id( "123456" )
-                                                       .projectName( "explicit-project" )
-                                                       .branch( "explicit-branch" )
-                                                       .param( "k", "v" ) ) );
+            .callWith( () -> this.service.baseUrl( BaseUrlParams.create()
+                                                       .setUrlType( UrlTypeConstants.ABSOLUTE )
+                                                       .setId( "123456" )
+                                                       .setProjectName( "explicit-project" )
+                                                       .setBranch( "explicit-branch" )
+                                                       .build() ) );
 
-        assertEquals( "/site/explicit-project/explicit-branch/a/b/mycontent?k=v", url );
-    }
-
-    @Test
-    void testUrlGenerator()
-    {
-        PageUrlGeneratorParams params = PageUrlGeneratorParams.create().setBaseUrlStrategy( () -> "baseUrl" ).build();
-        assertEquals( "baseUrl", this.service.pageUrl( params ) );
+        assertEquals( "/site/explicit-project/explicit-branch", url );
     }
 }
