@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.url.ApiUrlParams;
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -24,8 +23,6 @@ public final class ApiUrlHandler
     private String type;
 
     private String baseUrl;
-
-    private BaseUrlParams baseUrlParams;
 
     private String path;
 
@@ -46,7 +43,6 @@ public final class ApiUrlHandler
             .setApi( this.api )
             .setType( this.type )
             .setBaseUrl( this.baseUrl )
-            .setBaseUrlParams( this.baseUrlParams )
             .setPath( this.path )
             .setPathSegments( this.pathSegments );
 
@@ -58,11 +54,6 @@ public final class ApiUrlHandler
         final ApiUrlParams params = builder.build();
 
         return this.urlServiceSupplier.get().apiUrl( params );
-    }
-
-    public BaseUrlParams newBaseUrlParams()
-    {
-        return new BaseUrlParams();
     }
 
     public void setApplication( final String value )
@@ -83,11 +74,6 @@ public final class ApiUrlHandler
     public void setBaseUrl( final String baseUrl )
     {
         this.baseUrl = baseUrl;
-    }
-
-    public void setBaseUrlParams( final BaseUrlParams baseUrlParams )
-    {
-        this.baseUrlParams = baseUrlParams;
     }
 
     public void setPath( final Object value )

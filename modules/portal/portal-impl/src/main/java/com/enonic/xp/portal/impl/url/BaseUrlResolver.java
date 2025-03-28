@@ -16,6 +16,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
+@Deprecated
 final class BaseUrlResolver
 {
     private final ProjectName projectName;
@@ -38,7 +39,8 @@ final class BaseUrlResolver
         this.content = Objects.requireNonNull( builder.content );
     }
 
-    public BaseUrlResult resolve()
+    @Deprecated
+    public BaseUrlMetadata resolve()
     {
         Site site = null;
         if ( content instanceof Site )
@@ -54,7 +56,7 @@ final class BaseUrlResolver
                 .callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
         }
 
-        final BaseUrlResult.Builder builder = BaseUrlResult.create();
+        final BaseUrlMetadata.Builder builder = BaseUrlMetadata.create();
 
         if ( site != null )
         {

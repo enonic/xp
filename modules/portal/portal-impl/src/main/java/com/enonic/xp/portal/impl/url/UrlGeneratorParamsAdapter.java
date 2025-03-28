@@ -85,41 +85,63 @@ public class UrlGeneratorParamsAdapter
         }
     }
 
-    public BaseUrlStrategy pageNoRequestBaseUrlStrategy( final PageUrlParams params )
+    public BaseUrlStrategy contentBaseUrlStrategy( final BaseUrlParams params )
     {
-        return PageNoRequestBaseUrlStrategy.create()
-            .contentService( contentService )
-            .projectService( projectService )
-            .projectName( () -> ContentProjectResolver.create().setProjectName( params.getProjectName() ).build().resolve() )
-            .branch( () -> ContentBranchResolver.create().setBranch( params.getBranch() ).build().resolve() )
-            .content( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) )
-            .urlType( params.getType() )
-            .build();
+        return () -> {
+            final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params ).resolve( metadata -> null );
+
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
+            if ( portalRequest != null && portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null )
+            {
+                return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getUrlType(), baseUrl );
+            }
+            return baseUrl;
+        };
     }
 
-    public BaseUrlStrategy pageRequestBaseUrlStrategy( final PageUrlParams params )
+
+    public BaseUrlStrategy pageBaseUrlStrategy( final PageUrlParams params )
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        final BaseUrlParams baseUrlParams = BaseUrlParams.create()
+            .setUrlType( params.getType() )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setId( params.getId() )
+            .setPath( params.getPath() )
+            .build();
 
-        if ( portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null )
-        {
-            final ProjectName projectName = ProjectName.from( portalRequest.getRepositoryId() );
-            final Branch branch = portalRequest.getBranch();
+        return () -> {
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-            return PageSiteRequestBaseUrlStrategy.create()
-                .setPortalRequest( portalRequest )
-                .setUrlType( params.getType() )
-                .setId( params.getId() )
-                .setPath( params.getPath() )
-                .setProjectName( projectName )
-                .setBranch( branch )
-                .setContentService( contentService )
-                .build();
-        }
-        else
-        {
-            return pageNoRequestBaseUrlStrategy( params );
-        }
+            final boolean preferSiteRequest =
+                portalRequest != null && portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null;
+
+            final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams ).resolve( metadata -> {
+                if ( preferSiteRequest )
+                {
+                    return new ContentPathResolver().portalRequest( portalRequest )
+                        .contentService( this.contentService )
+                        .id( params.getId() )
+                        .path( params.getPath() )
+                        .resolve()
+                        .toString();
+                }
+                else if ( metadata.getBaseUrl() == null )
+                {
+                    return metadata.getContent().getPath().toString();
+                }
+                else
+                {
+                    final Site nearestSite = metadata.getNearestSite();
+                    final Content content = metadata.getContent();
+                    return nearestSite != null
+                        ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
+                        : content.getPath().toString();
+                }
+            } );
+
+            return preferSiteRequest ? UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getType(), baseUrl ) : baseUrl;
+        };
     }
 
     private String resolveApiApplication( final String application, final ApplicationKey applicationFromRequest )
@@ -173,7 +195,7 @@ public class UrlGeneratorParamsAdapter
 
             final ProjectName projectName = offlineProjectName( baseUrlParams.getProjectName() );
             final Branch branch = offlineBranch( baseUrlParams.getBranch() );
-            final String contentKey = baseUrlParams.getKey();
+            final String contentKey = Objects.requireNonNullElse( baseUrlParams.getId(), baseUrlParams.getPath() );
 
             final Supplier<Content> baseUrlContentSupplier = () -> offlineNearestSite( projectName, branch, contentKey );
 
@@ -239,18 +261,6 @@ public class UrlGeneratorParamsAdapter
         return branch != null
             ? Branch.from( branch )
             : Objects.requireNonNullElse( ContextAccessor.current().getBranch(), ContentConstants.BRANCH_MASTER );
-    }
-
-    private Content getContent( final String contentKey )
-    {
-        if ( contentKey.startsWith( "/" ) )
-        {
-            return contentService.getByPath( ContentPath.from( contentKey ) );
-        }
-        else
-        {
-            return contentService.getById( ContentId.from( contentKey ) );
-        }
     }
 
 }
