@@ -8,6 +8,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Suppliers;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -151,7 +153,16 @@ public final class PortalUrlServiceImpl
     @Override
     public String componentUrl( final ComponentUrlParams params )
     {
-        return build( new ComponentUrlBuilder(), params );
+        final Supplier<String> componentPathSupplier = Suppliers.memoize( () -> new ComponentResolver( params.getComponent() ).resolve() );
+
+        final BaseUrlStrategy baseUrlStrategy = urlStrategyFacade.componentBaseUrlStrategy( params, componentPathSupplier );
+
+        final PathStrategy pathStrategy = new ComponentPathStrategy( componentPathSupplier );
+
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getParams().forEach( queryParamsStrategy::put );
+
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( baseUrlStrategy, pathStrategy, queryParamsStrategy ) );
     }
 
     @Override

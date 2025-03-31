@@ -16,6 +16,10 @@ public final class ComponentUrlParams
 
     private String component;
 
+    private String projectName;
+
+    private String branch;
+
     public String getId()
     {
         return this.id;
@@ -24,6 +28,16 @@ public final class ComponentUrlParams
     public String getPath()
     {
         return this.path;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
     }
 
     public String getComponent()
@@ -49,6 +63,18 @@ public final class ComponentUrlParams
         return this;
     }
 
+    public ComponentUrlParams projectName( final String projectName )
+    {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public ComponentUrlParams branch( final String branch )
+    {
+        this.branch = branch;
+        return this;
+    }
+
     @Override
     public ComponentUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -66,6 +92,8 @@ public final class ComponentUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
         helper.add( "component", this.component );
     }
 }
