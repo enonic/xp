@@ -69,7 +69,6 @@ public class PortalUrlService_baseUrlTest
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "branch" ) )
             .build()
             .callWith( () -> this.service.baseUrl( params ) );
         assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
