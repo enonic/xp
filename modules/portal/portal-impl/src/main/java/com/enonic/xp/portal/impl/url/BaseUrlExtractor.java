@@ -58,7 +58,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
             UrlBuilderHelper.appendSubPath( str, projectName.toString() );
-            UrlBuilderHelper.appendSubPath( str, portalRequest.getBranch().toString() );
+            UrlBuilderHelper.appendSubPath( str, branch.toString() );
 
             builder.setBaseUrl( str.toString() );
         }

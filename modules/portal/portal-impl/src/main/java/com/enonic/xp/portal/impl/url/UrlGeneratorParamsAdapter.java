@@ -23,6 +23,7 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
+import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -141,6 +142,29 @@ public class UrlGeneratorParamsAdapter
             } );
 
             return preferSiteRequest ? UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getType(), baseUrl ) : baseUrl;
+        };
+    }
+
+    public BaseUrlStrategy componentBaseUrlStrategy( final ComponentUrlParams params, final Supplier<String> componentPathSupplier )
+    {
+        return () -> {
+            final PageUrlParams pageUrlParams = new PageUrlParams().type( params.getType() )
+                .id( params.getId() )
+                .path( params.getPath() )
+                .projectName( params.getProjectName() )
+                .branch( params.getBranch() );
+
+            final StringBuilder result = new StringBuilder();
+
+            result.append( pageBaseUrlStrategy( pageUrlParams ).generateBaseUrl() );
+
+            final String componentPath = componentPathSupplier.get();
+            if ( componentPath != null )
+            {
+                UrlBuilderHelper.appendPart( result, "_" );
+            }
+
+            return result.toString();
         };
     }
 
