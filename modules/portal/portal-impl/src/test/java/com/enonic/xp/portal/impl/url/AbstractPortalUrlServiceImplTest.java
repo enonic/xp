@@ -83,7 +83,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
         when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
 
-        this.virtualHost = Mockito.mock( VirtualHost.class );
+        this.virtualHost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );

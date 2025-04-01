@@ -2,6 +2,7 @@ dependencies {
     api project( ':web:web-api' )
     api libs.jakarta.jaxrs
     api libs.jakarta.annotation
+    api libs.jackson.annotations
 }
 
 jar {

@@ -5,8 +5,6 @@ dependencies {
     api libs.osgi.core
     api libs.jakarta.mail
 
-    // The following libraries are not really API. Remove in future versions of XP.
-    api libs.jackson.databind
     api libs.slf4j.api
     compileOnlyApi libs.osgi.service.componentannotations
     api libs.osgi.service.component

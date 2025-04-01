@@ -4,7 +4,6 @@ junit5 = "5.11.4"
 mockito = "5.15.2"
 slf4j = "2.0.17"
 jetty = "12.0.16"
-dropwizard = "5.0.0-rc24"
 hazelcast = "5.5.0"
 tika = "3.1.0"
 
@@ -41,11 +40,7 @@ jakarta-annotation = { module = "jakarta.annotation:jakarta.annotation-api", ver
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "3.0.2" }
 jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "3.1.0" }
 
-jakarta-xml-bind = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version = "2.3.3" }
-jakarta-jaxb-osgi = { module = "com.sun.xml.bind:jaxb-osgi", version = "2.3.9" }
-
 jakarta-servlet = "jakarta.servlet:jakarta.servlet-api:6.1.0"
-jakarta-websocket-api = "jakarta.websocket:jakarta.websocket-api:2.1.0"
 jakarta-websocket-clientapi = "jakarta.websocket:jakarta.websocket-client-api:2.1.0"
 
 osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
