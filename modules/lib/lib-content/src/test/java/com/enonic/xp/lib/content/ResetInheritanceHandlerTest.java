@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.content;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -11,6 +10,9 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResetInheritanceHandlerTest
     extends BaseContentHandlerTest
@@ -48,15 +50,15 @@ public class ResetInheritanceHandlerTest
 
         final ResetContentInheritParams idParams = this.captor.getAllValues().get( 0 );
 
-        Assert.assertEquals( "mycontent-id", idParams.getContentId().toString() );
-        Assert.assertEquals( "child1", idParams.getProjectName().toString() );
-        Assert.assertTrue( idParams.getInherit().contains( ContentInheritType.NAME ) );
-        Assert.assertTrue( idParams.getInherit().contains( ContentInheritType.CONTENT ) );
+        assertEquals( "mycontent-id", idParams.getContentId().toString() );
+        assertEquals( "child1", idParams.getProjectName().toString() );
+        assertTrue( idParams.getInherit().contains( ContentInheritType.NAME ) );
+        assertTrue( idParams.getInherit().contains( ContentInheritType.CONTENT ) );
 
         final ResetContentInheritParams pathParams = this.captor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "mycontent-id", pathParams.getContentId().toString() );
-        Assert.assertEquals( "child2", pathParams.getProjectName().toString() );
-        Assert.assertTrue( pathParams.getInherit().contains( ContentInheritType.SORT ) );
+        assertEquals( "mycontent-id", pathParams.getContentId().toString() );
+        assertEquals( "child2", pathParams.getProjectName().toString() );
+        assertTrue( pathParams.getInherit().contains( ContentInheritType.SORT ) );
     }
 }
