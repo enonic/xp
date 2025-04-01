@@ -108,12 +108,6 @@ jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-d
 tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version.ref = "tika" }
 
-metrics-core = { module = "io.dropwizard.metrics5:metrics-core", version.ref = "dropwizard" }
-metrics-json = { module = "io.dropwizard.metrics5:metrics-json", version.ref = "dropwizard" }
-metrics-jvm = { module = "io.dropwizard.metrics5:metrics-jvm", version.ref = "dropwizard" }
-metrics-jetty12 = { module = "io.dropwizard.metrics5:metrics-jetty12", version.ref = "dropwizard" }
-metrics-annotation = { module = "io.dropwizard.metrics5:metrics-annotation", version.ref = "dropwizard" }
-
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }

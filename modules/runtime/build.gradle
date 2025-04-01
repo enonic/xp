@@ -65,12 +65,6 @@ addBundle( libs.jackson.jakarta.jsonprovider, 8 )
 repackTikaBundle( libs.tika.core, 8 )
 repackTikaBundle( libs.tika.bundlestandard, 8 )
 
-// addBundle( libs.metrics.core, 8 )
-// addBundle( libs.metrics.json, 8 )
-// addBundle( libs.metrics.jvm, 8 )
-// addBundle( libs.metrics.annotation, 8)
-// addBundle( libs.metrics.jetty12, 8 )
-
 addBundle( libs.hazelcast.hazelcast, 8 )
 addBundle( libs.jparsec, 8 )
 
