@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
@@ -20,8 +19,6 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 @PublicApi
 public class WebResponse
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private final HttpStatus status;
 
     private final MediaType contentType;
@@ -72,28 +69,6 @@ public class WebResponse
     public ImmutableMap<String, String> getHeaders()
     {
         return this.headers;
-    }
-
-    @Deprecated
-    public String getAsString()
-    {
-        if ( this.body instanceof Map )
-        {
-            return convertToJson( this.body );
-        }
-        return ( this.body != null ) ? this.body.toString() : null;
-    }
-
-    private String convertToJson( final Object value )
-    {
-        try
-        {
-            return MAPPER.writeValueAsString( value );
-        }
-        catch ( final Exception e )
-        {
-            throw new RuntimeException( e );
-        }
     }
 
     public ImmutableList<Cookie> getCookies()

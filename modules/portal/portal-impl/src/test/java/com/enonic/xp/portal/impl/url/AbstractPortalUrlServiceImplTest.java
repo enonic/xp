@@ -91,7 +91,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         PortalRequestAccessor.set( this.portalRequest );
 
-        this.virtualHost = Mockito.mock( VirtualHost.class );
+        this.virtualHost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
