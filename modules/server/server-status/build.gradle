@@ -1,8 +1,6 @@
 dependencies {
     implementation project( ':web:web-api' )
     implementation project( ':core:core-internal' )
-    implementation libs.metrics.jvm
-    implementation libs.metrics.json
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

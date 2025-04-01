@@ -1,7 +1,6 @@
 dependencies {
     api libs.osgi.core
     api libs.jackson.databind
-    api libs.metrics.core
     compileOnlyApi libs.osgi.service.componentannotations
     implementation libs.jsoup
     implementation libs.jackson.datatype.jsr310
