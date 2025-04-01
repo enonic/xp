@@ -3,6 +3,4 @@ dependencies {
     compileOnly project( ':script:script-api' )
 
     testImplementation project( ':tools:testing' )
-
-    testRuntimeOnly libs.junit.jupiter.vintage
 }

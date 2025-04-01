@@ -1,12 +1,12 @@
 package com.enonic.xp.testing;
 
 import java.io.Closeable;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -87,7 +87,6 @@ public abstract class ScriptTestSupport
         this.appVersion = value;
     }
 
-    @Before
     @BeforeEach
     public final void setup()
         throws Exception
@@ -95,16 +94,11 @@ public abstract class ScriptTestSupport
         initialize();
     }
 
-    @After
     @AfterEach
     public final void destroy()
         throws Exception
     {
-        if ( executor instanceof Closeable )
-        {
-            ( (Closeable) executor ).close();
-        }
-        PortalRequestAccessor.remove();
+        deinitialize();
     }
 
     protected void initialize()
@@ -113,7 +107,6 @@ public abstract class ScriptTestSupport
         this.serviceRegistry = new MockServiceRegistry();
 
         this.portalRequest = createPortalRequest();
-        PortalRequestAccessor.set( this.portalRequest );
 
         this.bundleContext = createBundleContext();
         this.contentService = Mockito.mock( ContentService.class );
@@ -132,6 +125,17 @@ public abstract class ScriptTestSupport
         this.scriptSettings.globalVariable( "testInstance", this );
 
         this.executor = createExecutor();
+        PortalRequestAccessor.set( this.portalRequest );
+    }
+
+    protected void deinitialize()
+        throws Exception
+    {
+        PortalRequestAccessor.remove();
+        if ( executor instanceof Closeable )
+        {
+            ( (Closeable) executor ).close();
+        }
     }
 
     protected final <T> void addService( final Class<T> type, final T instance )
@@ -211,19 +215,25 @@ public abstract class ScriptTestSupport
     }
 
     private ScriptExecutor createExecutor()
-        throws Exception
     {
         return ScriptFixturesFacade.getInstance().createExecutor( this.scriptSettings.build(), this.serviceRegistry, this.resourceService,
                                                     createApplication() );
     }
 
     private Application createApplication()
-        throws Exception
     {
         final Bundle bundle = createBundle();
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
-        URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
+        URL[] resourcesPath;
+        try
+        {
+            resourcesPath = new URL[]{Path.of( "src/test/resources" ).toUri().toURL()};
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new UncheckedIOException( e );
+        }
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
         builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader, ApplicationKey.from( bundle ) ) );
         builder.config( ConfigBuilder.create().build() );

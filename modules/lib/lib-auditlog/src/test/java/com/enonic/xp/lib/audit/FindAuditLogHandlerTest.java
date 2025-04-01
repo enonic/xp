@@ -9,7 +9,8 @@ import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 public class FindAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
