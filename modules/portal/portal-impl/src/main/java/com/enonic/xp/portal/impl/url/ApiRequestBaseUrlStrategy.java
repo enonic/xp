@@ -72,7 +72,8 @@ final class ApiRequestBaseUrlStrategy
 
         final String baseUrl = url.toString();
 
-        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, baseUrl );
+        return baseUrl;
+//        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, baseUrl );
     }
 
     public static Builder create()

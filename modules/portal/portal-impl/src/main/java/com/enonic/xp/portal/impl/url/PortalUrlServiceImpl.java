@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -24,6 +25,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AbstractUrlParams;
@@ -48,7 +50,11 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.style.StyleDescriptorService;
+
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -303,10 +309,55 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        final ApiUrlGeneratorParams generatorParams =
-            params.getBaseUrl() != null || params.getBaseUrlParams() != null || PortalRequestAccessor.get() == null
-                ? urlStrategyFacade.offlineApiUrlParams( params )
-                : urlStrategyFacade.requestApiUrlParams( params );
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+        BaseUrlStrategy baseUrlStrategy;
+        if ( params.getBaseUrl() != null )
+        {
+            baseUrlStrategy = new CustomBaseUrlStrategy( params.getBaseUrl() );
+        }
+        else if ( portalRequest == null || portalRequest.getBaseUri().isEmpty() || portalRequest.getBaseUri().startsWith( "/api/" ) )
+        {
+            baseUrlStrategy = new SlashApiBaseUrlStrategy();
+        }
+        else
+        {
+            baseUrlStrategy = new RequestBaseUrlStrategy( portalRequest, contentService );
+        }
+
+        String application = params.getApplication();
+        if ( portalRequest == null )
+        {
+            Objects.requireNonNull( application, "Application must be provided" );
+        }
+        else
+        {
+            if ( application == null && portalRequest.getApplicationKey() != null )
+            {
+                application = portalRequest.getApplicationKey().toString();
+            }
+
+            if ( application == null )
+            {
+                throw new IllegalArgumentException( "Application must be provided" );
+            }
+        }
+
+        final ApiUrlGeneratorParams generatorParams = ApiUrlGeneratorParams.create()
+            .setUrlType( params.getType() )
+            .setBaseUrlStrategy( baseUrlStrategy )
+            .setApplication( application )
+            .setApi( params.getApi() )
+            .setPath( () -> {
+                final StringBuilder path = new StringBuilder();
+
+                appendSubPath( path, params.getPath() );
+                appendPathSegments( path, params.getPathSegments() );
+
+                return path.toString();
+            } )
+            .addQueryParams( params.getQueryParams() )
+            .build();
 
         return apiUrl( generatorParams );
     }
@@ -386,20 +437,34 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlGeneratorParams params )
     {
-        final PathStrategy pathStrategy = () -> {
-            final StringBuilder url = new StringBuilder();
+        final BaseUrlStrategy baseUrlStrategy = () -> {
+            final BaseUrlStrategy originalBaseUrlStrategy = params.getBaseUrlStrategy();
+
+            final StringBuilder url = new StringBuilder( originalBaseUrlStrategy.generateBaseUrl() );
             UrlBuilderHelper.appendPart( url, params.getApplication() + ":" + params.getApi() );
-            if ( params.getPath() != null )
+
+            if ( originalBaseUrlStrategy instanceof CustomBaseUrlStrategy )
             {
-                UrlBuilderHelper.appendSubPath( url, params.getPath().get() );
+                return url.toString();
             }
-            return url.toString();
+
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
+            if (portalRequest != null )
+            {
+                return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getUrlType() , url.toString() );
+            }
+            else
+            {
+                return url.toString();
+            }
         };
+
+        final PathStrategy pathStrategy = () -> params.getPath() != null ? params.getPath().get() : null;
 
         final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( params.getBaseUrlStrategy(), pathStrategy, queryParamsStrategy ) );
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( baseUrlStrategy, pathStrategy, queryParamsStrategy ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

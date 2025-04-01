@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.BaseUrlStrategy;
 
@@ -28,15 +27,6 @@ final class UrlGenerator
         {
             baseUrl = removeTrailingSlash( baseUrlStrategy.generateBaseUrl() );
             String path = normalizePath( pathStrategy.generatePath() );
-            if ( baseUrlStrategy instanceof SlashApiRewritableBaseUrlStrategy rewritableBaseUrlStrategy )
-            {
-                final DescriptorKey descriptorKey = rewritableBaseUrlStrategy.getDescriptorKey();
-                final int pos = path.indexOf( descriptorKey + "/" );
-                if ( pos != -1 )
-                {
-                    path = normalizePath( path.substring( pos + descriptorKey.toString().length() + 1 ) );
-                }
-            }
             String queryParams = nullToEmpty( queryParamsStrategy.generateQueryParams() );
             return baseUrl + path + queryParams;
         }

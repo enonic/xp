@@ -17,6 +17,8 @@ final class CustomBaseUrlStrategy
     @Override
     public String generateBaseUrl()
     {
-        return baseUrl + "/_/";
+        StringBuilder url = new StringBuilder( this.baseUrl );
+        UrlBuilderHelper.appendPart( url, "_" );
+        return url.toString();
     }
 }

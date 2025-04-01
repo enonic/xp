@@ -15,7 +15,11 @@ import static com.google.common.base.Strings.emptyToNull;
 @PublicApi
 public final class ApiUrlGeneratorParams
 {
+    private final String urlType;
+
     private final BaseUrlStrategy baseUrlStrategy;
+
+    private final String baseUrl;
 
     private final String application;
 
@@ -27,11 +31,23 @@ public final class ApiUrlGeneratorParams
 
     private ApiUrlGeneratorParams( final Builder builder )
     {
+        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.baseUrl = builder.baseUrl;
         this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
         this.application = Objects.requireNonNull( builder.application );
         this.api = Objects.requireNonNull( builder.api );
         this.pathSupplier = builder.pathSupplier;
         this.queryParams = builder.queryParams;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
+    }
+
+    public String getUrlType()
+    {
+        return urlType;
     }
 
     public BaseUrlStrategy getBaseUrlStrategy()
@@ -66,7 +82,11 @@ public final class ApiUrlGeneratorParams
 
     public static class Builder
     {
+        private String urlType;
+
         private BaseUrlStrategy baseUrlStrategy;
+
+        private String baseUrl;
 
         private String application;
 
@@ -76,9 +96,21 @@ public final class ApiUrlGeneratorParams
 
         private final Multimap<String, String> queryParams = LinkedListMultimap.create();
 
+        public Builder setUrlType( final String urlType )
+        {
+            this.urlType = emptyToNull( urlType );
+            return this;
+        }
+
         public Builder setBaseUrlStrategy( final BaseUrlStrategy baseUrlStrategy )
         {
             this.baseUrlStrategy = baseUrlStrategy;
+            return this;
+        }
+
+        public Builder setBaseUrl( final String baseUrl )
+        {
+            this.baseUrl = emptyToNull( baseUrl );
             return this;
         }
 

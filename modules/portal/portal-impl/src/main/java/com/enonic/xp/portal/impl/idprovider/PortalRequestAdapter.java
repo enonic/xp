@@ -177,7 +177,12 @@ class PortalRequestAdapter
         }
         else if ( requestURI.startsWith( "/api/" ) )
         {
-            result.setBaseUri( "/api" );
+            final String subPath = subPath( requestURI, "/api/" );
+            final Matcher matcher = Pattern.compile( "^(?<app>[^/]+):(?<api>[^/?]+)" ).matcher( subPath );
+            if ( matcher.find() )
+            {
+                result.setBaseUri( "/api/" + matcher.group( 0 ) );
+            }
         }
     }
 
