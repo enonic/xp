@@ -58,15 +58,16 @@ import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegme
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriter;
+import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.repository.NodeRepositoryService;
+import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
+import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
@@ -229,6 +230,7 @@ public class DumpServiceImpl
                 .stream()
                 .map( repositoryEntryService::getRepositoryEntry )
                 .filter( Objects::nonNull )
+                .map( RepositoryEntry::asRepository )
                 .filter( repository -> !repository.isTransient() )
                 .collect( Collectors.toList() );
 
@@ -364,7 +366,7 @@ public class DumpServiceImpl
                     or( SYSTEM_REPO_IDS::contains ).
                     negate() ).
                 forEach( repositoryId -> {
-                    final Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+                    final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
                     final RepositorySettings settings = repository.getSettings();
                     final PropertyTree data = repository.getData();
                     final AttachedBinaries attachedBinaries = repository.getAttachments();
@@ -407,7 +409,7 @@ public class DumpServiceImpl
         }
     }
 
-    void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
+    private void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
                       final RepositoryId repository, RepositorySettings settings, PropertyTree data, AttachedBinaries attachedBinaries )
     {
         initializeRepo( repository, settings, data, attachedBinaries );
@@ -427,15 +429,14 @@ public class DumpServiceImpl
     private void initializeRepo( final RepositoryId repositoryId, RepositorySettings settings, PropertyTree data,
                                  AttachedBinaries attachedBinaries )
     {
-        final CreateRepositoryParams params = CreateRepositoryParams.create().
+        final CreateRepositoryIndexParams params = CreateRepositoryIndexParams.create().
             repositoryId( repositoryId ).
             repositorySettings( settings ).
-            data( data ).
             build();
 
         this.nodeRepositoryService.create( params );
 
-        final Repository createRepositoryParams = Repository.create().
+        final RepositoryEntry createRepositoryParams = RepositoryEntry.create().
             id( repositoryId ).
             settings( settings ).
             data( data ).

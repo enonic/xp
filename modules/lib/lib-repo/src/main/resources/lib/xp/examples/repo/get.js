@@ -20,7 +20,6 @@ var expected = {
     'branches': [
         'master'
     ],
-    settings: {},
     data: {}
 };
 // END

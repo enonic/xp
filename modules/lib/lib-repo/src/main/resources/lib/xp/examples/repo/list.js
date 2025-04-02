@@ -15,7 +15,6 @@ var expected = [{
     'branches': [
         'master'
     ],
-    settings: {},
     data: {}
 }, {
     'id': 'another-repo',
@@ -23,7 +22,6 @@ var expected = [{
     'branches': [
         'master'
     ],
-    settings: {},
     data: {}
 }];
 // END

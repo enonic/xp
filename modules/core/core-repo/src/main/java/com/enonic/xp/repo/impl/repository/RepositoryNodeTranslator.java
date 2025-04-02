@@ -15,14 +15,10 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repository.IndexDefinition;
-import com.enonic.xp.repository.IndexDefinitions;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repo.impl.index.IndexMapping;
+import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
@@ -39,7 +35,7 @@ public class RepositoryNodeTranslator
 
     private static final String TRANSIENT_KEY = "transient";
 
-    public static Node toNode( final Repository repository )
+    public static Node toNode( final RepositoryEntry repository )
     {
         final PropertyTree repositoryNodeData = new PropertyTree();
         toNodeData( repository.getBranches(), repositoryNodeData );
@@ -139,20 +135,16 @@ public class RepositoryNodeTranslator
         }
     }
 
-    public static Repository toRepository( final Node node )
+    public static RepositoryEntry toRepository( final Node node )
     {
         final PropertyTree nodeData = node.data();
 
-        final RepositorySettings repositorySettings = RepositorySettings.create().
-            indexDefinitions( toIndexConfigs( nodeData ) ).
-            build();
-
         final PropertyTree repositoryData = toRepositoryData( nodeData );
 
-        return Repository.create().
+        return RepositoryEntry.create().
             id( RepositoryId.from( node.id().toString() ) ).
             branches( toBranches( nodeData ) ).
-            settings( repositorySettings ).
+            settings( toRepositorySettings( nodeData ) ).
             data( repositoryData ).
             attachments( node.getAttachedBinaries() ).
             transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) ).
@@ -167,7 +159,7 @@ public class RepositoryNodeTranslator
         return Branches.from( branches.build() );
     }
 
-    private static IndexDefinitions toIndexConfigs( final PropertyTree nodeData )
+    public static RepositorySettings toRepositorySettings( final PropertyTree nodeData )
     {
         final PropertySet indexConfigsSet = nodeData.getSet( INDEX_CONFIG_KEY );
         if ( indexConfigsSet != null )
@@ -189,7 +181,7 @@ public class RepositoryNodeTranslator
                     indexConfigs.add( indexType, indexConfig.build() );
                 }
             }
-            return indexConfigs.build();
+            return RepositorySettings.create().indexDefinitions( indexConfigs.build() ).build();
         }
         return null;
     }

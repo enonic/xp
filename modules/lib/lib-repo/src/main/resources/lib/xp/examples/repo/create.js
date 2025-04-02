@@ -44,7 +44,6 @@ var expected1 = {
     'branches': [
         'master'
     ],
-    settings: {},
     data: {}
 };
 // END
@@ -57,7 +56,6 @@ var expected2 =
         'branches': [
             'master'
         ],
-        'settings': {},
         'data': {}
     };
 assert.assertJsonEquals(expected2, result2);

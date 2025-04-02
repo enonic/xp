@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.index;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.core.internal.json.JsonHelper;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
 
 public final class IndexSettingsMerger
 {

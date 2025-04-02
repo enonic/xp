@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
@@ -16,12 +17,12 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +34,7 @@ class RepositoryServiceActivatorTest
     private BundleContext bundleContext;
 
     @Mock
-    private ServiceRegistration<RepositoryService> service;
+    private ServiceRegistration<?> service;
 
     @Mock(stubOnly = true)
     private RepositoryEntryService repositoryEntryService;
@@ -69,8 +70,9 @@ class RepositoryServiceActivatorTest
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
                                             nodeSearchService );
 
-        when( bundleContext.registerService( same( RepositoryService.class ), any( RepositoryService.class ), isNull() ) ).
-            thenReturn( service );
+        doReturn( service ).when( bundleContext ).registerService(
+            AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
+            any( RepositoryService.class ), isNull() );
 
         activator.activate( bundleContext );
 

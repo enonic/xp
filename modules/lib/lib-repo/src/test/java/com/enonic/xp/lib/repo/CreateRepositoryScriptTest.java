@@ -27,7 +27,6 @@ public class CreateRepositoryScriptTest
                 return Repository.create().
                     id( params.getRepositoryId() ).
                     branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-                    settings( params.getRepositorySettings() ).
                     transientFlag( params.isTransient() ).
                     build();
             } );

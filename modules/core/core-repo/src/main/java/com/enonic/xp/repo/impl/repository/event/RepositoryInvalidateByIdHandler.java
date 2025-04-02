@@ -6,16 +6,16 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class RepositoryInvalidateByIdHandler
     implements RepositoryEventHandler
 {
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
     private final NodeStorageService nodeStorageService;
 
-    public RepositoryInvalidateByIdHandler( final RepositoryService repositoryService, final NodeStorageService nodeStorageService )
+    public RepositoryInvalidateByIdHandler( final InternalRepositoryService repositoryService, final NodeStorageService nodeStorageService )
     {
         this.repositoryService = repositoryService;
         this.nodeStorageService = nodeStorageService;

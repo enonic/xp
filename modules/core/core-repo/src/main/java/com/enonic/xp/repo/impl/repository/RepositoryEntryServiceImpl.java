@@ -31,7 +31,6 @@ import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -41,7 +40,6 @@ import com.enonic.xp.security.SystemConstants;
 public class RepositoryEntryServiceImpl
     implements RepositoryEntryService
 {
-
     private final IndexServiceInternal indexServiceInternal;
 
     private final NodeStorageService nodeStorageService;
@@ -65,7 +63,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public void createRepositoryEntry( final Repository repository )
+    public void createRepositoryEntry( final RepositoryEntry repository )
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
         final Node createdNode = nodeStorageService.store( node, createInternalContext() ).node();
@@ -94,7 +92,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public Repository getRepositoryEntry( final RepositoryId repositoryId )
+    public RepositoryEntry getRepositoryEntry( final RepositoryId repositoryId )
     {
         final NodeId nodeId = NodeId.from( repositoryId );
         final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
@@ -102,7 +100,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
+    public RepositoryEntry addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( repositoryId ) ).
@@ -114,7 +112,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
+    public RepositoryEntry removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( repositoryId ) ).
@@ -126,7 +124,7 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public Repository updateRepositoryEntry( UpdateRepositoryEntryParams params )
+    public RepositoryEntry updateRepositoryEntry( UpdateRepositoryEntryParams params )
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( NodeId.from( params.getRepositoryId() ) ).
@@ -173,7 +171,7 @@ public class RepositoryEntryServiceImpl
         } );
     }
 
-    private Repository updateRepositoryNode( final UpdateNodeParams updateNodeParams )
+    private RepositoryEntry updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
         final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
@@ -186,7 +184,7 @@ public class RepositoryEntryServiceImpl
 
         eventPublisher.publish( NodeEvents.updated( updatedNode ) );
 
-        Repository repository = RepositoryNodeTranslator.toRepository( updatedNode );
+        RepositoryEntry repository = RepositoryNodeTranslator.toRepository( updatedNode );
 
         eventPublisher.publish( RepositoryEvents.updated( repository.getId() ) );
 

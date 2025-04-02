@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.repository.event;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class RepositoryRestoreInitializedHandler
     implements RepositoryEventHandler
@@ -10,9 +10,9 @@ public class RepositoryRestoreInitializedHandler
 
     private final NodeStorageService nodeStorageService;
 
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
-    public RepositoryRestoreInitializedHandler( final RepositoryService repositoryService, final NodeStorageService nodeStorageService )
+    public RepositoryRestoreInitializedHandler( final InternalRepositoryService repositoryService, final NodeStorageService nodeStorageService )
     {
         this.repositoryService = repositoryService;
         this.nodeStorageService = nodeStorageService;

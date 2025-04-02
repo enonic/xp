@@ -10,14 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
+import com.enonic.xp.repo.impl.index.IndexMapping;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repo.impl.index.IndexSettingsMerger;
-import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 
 @Component
@@ -40,17 +37,17 @@ public class NodeRepositoryServiceImpl
     }
 
     @Override
-    public void create( final CreateRepositoryParams params )
+    public void create( final CreateRepositoryIndexParams params )
     {
         final RepositoryId repositoryId = params.getRepositoryId();
-
         final RepositorySettings repositorySettings = params.getRepositorySettings();
-        createIndex( params, IndexType.VERSION,
+
+        createIndex( repositoryId, repositorySettings, IndexType.VERSION,
                      Map.ofEntries( mergeWithDefaultMapping( repositorySettings, IndexType.VERSION ),
                                     mergeWithDefaultMapping( repositorySettings, IndexType.BRANCH ),
                                     mergeWithDefaultMapping( repositorySettings, IndexType.COMMIT ) ) );
 
-        createIndex( params, IndexType.SEARCH,
+        createIndex( repositoryId, repositorySettings, IndexType.SEARCH,
                      Map.ofEntries( mergeWithDefaultMapping( repositorySettings, IndexType.SEARCH ) ) );
 
         indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
@@ -68,10 +65,10 @@ public class NodeRepositoryServiceImpl
         return indexServiceInternal.indicesExists( resolveIndexNames( repositoryId ) );
     }
 
-    private void createIndex( final CreateRepositoryParams params, final IndexType indexType, final Map<IndexType, IndexMapping> mappings )
+    private void createIndex( final RepositoryId repositoryId, final RepositorySettings settings, final IndexType indexType,
+                              final Map<IndexType, IndexMapping> mappings )
     {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final IndexSettings mergedSettings = mergeWithDefaultSettings( repositoryId, params.getRepositorySettings().getIndexSettings( indexType ), indexType );
+        final IndexSettings mergedSettings = mergeWithDefaultSettings( repositoryId, settings.getIndexSettings( indexType ), indexType );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create()
                                               .indexName( resolveIndexName( repositoryId, indexType ) )

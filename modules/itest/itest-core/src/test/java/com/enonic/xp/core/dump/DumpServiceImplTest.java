@@ -76,8 +76,9 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.UpdateRepositoryEntryParams;
-import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -192,12 +193,12 @@ public class DumpServiceImplTest
         final AccessControlList newRepoACL =
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
-        final Repository newRepoInsideDump = NodeHelper.runAsAdmin(
+        final RepositoryEntry newRepoInsideDump = NodeHelper.runAsAdmin(
             () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
 
         NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
 
-        final Repository newRepoOutsideDump = NodeHelper.runAsAdmin(
+        final RepositoryEntry newRepoOutsideDump = NodeHelper.runAsAdmin(
             () -> doCreateRepository( RepositoryId.from( "new-repo-outside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
 
         final Repositories oldRepos = NodeHelper.runAsAdmin( this::doListRepositories );
@@ -258,7 +259,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         NodeHelper.runAsAdmin( () -> {
-            final Repository newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ),
+            final RepositoryEntry newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ),
                                                                                         AccessControlList.create()
                                                                                             .add( AccessControlEntry.create()
                                                                                                       .principal( RoleKeys.EVERYONE )
@@ -342,7 +343,7 @@ public class DumpServiceImplTest
         final AccessControlList newRepoACL =
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
-        final Repository newRepo =
+        final RepositoryEntry newRepo =
             NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-new-repo" ), newRepoACL, ChildOrder.manualOrder() ) );
 
         final Context newContext = ContextBuilder.from( ContextAccessor.current() )
@@ -583,7 +584,7 @@ public class DumpServiceImplTest
     @Test
     public void number_of_versions_in_other_repo()
     {
-        final Repository myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create()
+        final RepositoryEntry myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create()
             .add( AccessControlEntry.create().principal( ctxDefault().getAuthInfo().getUser().getKey() ).allowAll().build() )
             .build(), null ) );
 
@@ -1045,20 +1046,20 @@ public class DumpServiceImplTest
         this.dumpService.dump( params );
     }
 
-    private Repository doCreateRepository( final RepositoryId repositoryId, final AccessControlList permissions,
+    private RepositoryEntry doCreateRepository( final RepositoryId repositoryId, final AccessControlList permissions,
                                            final ChildOrder childOrder )
     {
-        final CreateRepositoryParams params =
-            CreateRepositoryParams.create().repositoryId( repositoryId ).data( new PropertyTree() ).build();
+        final CreateRepositoryIndexParams params =
+            CreateRepositoryIndexParams.create().repositoryId( repositoryId ).build();
 
         this.nodeRepositoryService.create( params );
 
-        final Repository createRepositoryParams =
-            Repository.create().id( repositoryId ).branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).build();
+        final RepositoryEntry createRepositoryParams =
+            RepositoryEntry.create().id( repositoryId ).branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).build();
 
         this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
 
-        final Repository repo = this.repositoryEntryService.getRepositoryEntry( repositoryId );
+        final RepositoryEntry repo = this.repositoryEntryService.getRepositoryEntry( repositoryId );
 
         createRootNode( repositoryId, permissions, childOrder );
 
@@ -1098,6 +1099,7 @@ public class DumpServiceImplTest
             .stream()
             .map( repositoryEntryService::getRepositoryEntry )
             .filter( Objects::nonNull )
+            .map( RepositoryEntry::asRepository )
             .forEach( repositories::add );
 
         return repositories.build();

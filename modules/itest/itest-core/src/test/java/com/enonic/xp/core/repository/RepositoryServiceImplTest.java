@@ -147,7 +147,6 @@ class RepositoryServiceImplTest
             } ).
             build() ) );
 
-        createAdminContext().runWith( () -> repositoryService.invalidateAll() );
 
         ByteSource persistedAttachment = mockCurrentContext.callWith(
             () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );

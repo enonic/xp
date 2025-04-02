@@ -13,8 +13,8 @@ import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.CommitEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
+import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -118,7 +118,7 @@ class RepoLoader
 
     private void verifyOrCreateBranch( final Branch branch )
     {
-        final Repository currentRepo = this.repositoryEntryService.getRepositoryEntry( this.repositoryId );
+        final RepositoryEntry currentRepo = this.repositoryEntryService.getRepositoryEntry( this.repositoryId );
 
         if ( currentRepo.getBranches().contains( branch ) )
         {

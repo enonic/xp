@@ -41,7 +41,6 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.EditableRepository;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -50,17 +49,18 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
 public class RepositoryServiceImpl
-    implements RepositoryService
+    implements RepositoryService, InternalRepositoryService
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
-    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RepositoryId, RepositoryEntry> repositoryMap = new ConcurrentHashMap<>();
 
     private final RepositoryEntryService repositoryEntryService;
 
@@ -88,10 +88,11 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return repositoryMap.compute( params.getRepositoryId(), ( repositoryId, previousRepository ) -> doCreateRepo( params ) );
+        return repositoryMap.compute( params.getRepositoryId(), ( repositoryId, previousRepository ) -> doCreateRepo( params ) )
+            .asRepository();
     }
 
-    private Repository doCreateRepo( final CreateRepositoryParams params )
+    private RepositoryEntry doCreateRepo( final CreateRepositoryParams params )
     {
         final RepositoryId repositoryId = params.getRepositoryId();
         final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
@@ -101,11 +102,18 @@ public class RepositoryServiceImpl
             throw new RepositoryAlreadyExistException( repositoryId );
         }
 
-        this.nodeRepositoryService.create( params );
+        this.nodeRepositoryService.create( CreateRepositoryIndexParams.create()
+                                               .repositoryId( params.getRepositoryId() )
+                                               .build() );
 
         createRootNode( params );
 
-        final Repository repository = createRepositoryObject( params );
+        final RepositoryEntry repository = RepositoryEntry.create()
+            .id( params.getRepositoryId() )
+            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+            .data( params.getData() )
+            .transientFlag( params.isTransient() )
+            .build();
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
     }
@@ -115,15 +123,15 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        Repository repository = repositoryMap.compute( params.getRepositoryId(),
+        RepositoryEntry repository = repositoryMap.compute( params.getRepositoryId(),
                                                        ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
 
         invalidatePathCache();
 
-        return repository;
+        return repository.asRepository();
     }
 
-    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, Repository previousRepository )
+    private RepositoryEntry doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, RepositoryEntry previousRepository )
     {
         RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
 
@@ -134,7 +142,7 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
 
-        final EditableRepository editableRepository = new EditableRepository( previousRepository );
+        final EditableRepository editableRepository = new EditableRepository( previousRepository.asRepository() );
 
         updateRepositoryParams.getEditor().accept( editableRepository );
 
@@ -159,8 +167,8 @@ public class RepositoryServiceImpl
         return createBranchParams.getBranch();
     }
 
-    private Repository doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId,
-                                       Repository previousRepository )
+    private RepositoryEntry doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId,
+                                            RepositoryEntry previousRepository )
     {
         //If the repository entry does not exist, throws an exception
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
@@ -228,7 +236,9 @@ public class RepositoryServiceImpl
 
     private Repository doGet( final RepositoryId repositoryId )
     {
-        return repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
+        final RepositoryEntry repositoryEntry =
+            repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
+        return repositoryEntry == null ? null : repositoryEntry.asRepository();
     }
 
     @Override
@@ -279,7 +289,7 @@ public class RepositoryServiceImpl
         }
     }
 
-    private Repository doDeleteBranch( final DeleteBranchParams params, final RepositoryId repositoryId, Repository previousRepository )
+    private RepositoryEntry doDeleteBranch( final DeleteBranchParams params, final RepositoryId repositoryId, RepositoryEntry previousRepository )
     {
         //If the repository entry does not exist, throws an exception
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
@@ -321,11 +331,27 @@ public class RepositoryServiceImpl
     }
 
     @Override
+    public void recreateMissing()
+    {
+        for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
+        {
+            if ( !this.nodeRepositoryService.isInitialized( repositoryId ) )
+            {
+                final CreateRepositoryIndexParams createRepositoryParams = CreateRepositoryIndexParams.create()
+                    .repositorySettings( repositoryEntryService.getRepositoryEntry( repositoryId ).getSettings() )
+                    .repositoryId( repositoryId )
+                    .build();
+                this.nodeRepositoryService.create( createRepositoryParams );
+            }
+        }
+    }
+
+    @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
     {
         requireAdminRole();
 
-        Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
         if ( repository == null )
         {
             throw new RepositoryNotFoundException( repositoryId );
@@ -343,17 +369,6 @@ public class RepositoryServiceImpl
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
-    }
-
-    private Repository createRepositoryObject( final CreateRepositoryParams params )
-    {
-        return Repository.create().
-            id( params.getRepositoryId() ).
-            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-            settings( params.getRepositorySettings() ).
-            data( params.getData() ).
-            transientFlag( params.isTransient() ).
-            build();
     }
 
     private Node getRootNode( final RepositoryId repositoryId, final Branch branch )

@@ -12,12 +12,7 @@ import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.ImportListenerImpl;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.NodeRepositoryService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -47,10 +42,6 @@ public class ImportRunnableTask
 
     private final ExportService exportService;
 
-    private final RepositoryService repositoryService;
-
-    private final NodeRepositoryService nodeRepositoryService;
-
     private ImportRunnableTask( Builder builder )
     {
         this.repositoryId = builder.repositoryId;
@@ -64,8 +55,6 @@ public class ImportRunnableTask
         this.xslParams = builder.xslParams;
 
         this.exportService = builder.exportService;
-        this.repositoryService = builder.repositoryService;
-        this.nodeRepositoryService = builder.nodeRepositoryService;
     }
 
     public static Builder create()
@@ -90,11 +79,6 @@ public class ImportRunnableTask
             return this.exportService.importNodes( builder.build() );
         } );
 
-        if ( targetIsSystemRepo() )
-        {
-            initializeStoredRepositories();
-        }
-
         progressReporter.info( NodeImportResultJson.from( result ).toString() );
     }
 
@@ -104,29 +88,6 @@ public class ImportRunnableTask
             .branch( branch )
             .repositoryId( repositoryId )
             .build();
-    }
-
-    private boolean targetIsSystemRepo()
-    {
-        return SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) &&
-            SystemConstants.BRANCH_SYSTEM.equals( branch );
-    }
-
-    private void initializeStoredRepositories()
-    {
-        this.repositoryService.invalidateAll();
-        for ( Repository repository : repositoryService.list() )
-        {
-            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
-            {
-                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
-                    .repositoryId( repository.getId() )
-                    .repositorySettings( repository.getSettings() )
-                    .data( repository.getData() )
-                    .build();
-                this.nodeRepositoryService.create( createRepositoryParams );
-            }
-        }
     }
 
     public static class Builder
@@ -150,10 +111,6 @@ public class ImportRunnableTask
         private Map<String, Object> xslParams;
 
         private ExportService exportService;
-
-        private RepositoryService repositoryService;
-
-        private NodeRepositoryService nodeRepositoryService;
 
         public Builder repositoryId( final RepositoryId repositoryId )
         {
@@ -212,18 +169,6 @@ public class ImportRunnableTask
         public Builder exportService( final ExportService exportService )
         {
             this.exportService = exportService;
-            return this;
-        }
-
-        public Builder repositoryService( final RepositoryService repositoryService )
-        {
-            this.repositoryService = repositoryService;
-            return this;
-        }
-
-        public Builder nodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-        {
-            this.nodeRepositoryService = nodeRepositoryService;
             return this;
         }
 

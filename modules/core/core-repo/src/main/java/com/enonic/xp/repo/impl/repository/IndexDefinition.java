@@ -1,9 +1,9 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.repo.impl.index.IndexMapping;
+import com.enonic.xp.repo.impl.index.IndexSettings;
 
-@PublicApi
-public class IndexDefinition
+public final class IndexDefinition
 {
     private final IndexSettings settings;
 
