@@ -216,7 +216,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
     }
 
     @Test
@@ -237,7 +237,7 @@ public class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/site/myproject/draft/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
     }
 
     @Test

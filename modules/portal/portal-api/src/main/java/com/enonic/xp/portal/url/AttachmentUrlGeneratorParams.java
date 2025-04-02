@@ -16,7 +16,9 @@ import com.enonic.xp.project.ProjectName;
 @PublicApi
 public final class AttachmentUrlGeneratorParams
 {
-    private final BaseUrlStrategy baseUrlStrategy;
+    private final String baseUrl;
+
+    private final String urlType;
 
     private final Supplier<Content> contentSupplier;
 
@@ -34,7 +36,8 @@ public final class AttachmentUrlGeneratorParams
 
     private AttachmentUrlGeneratorParams( final Builder builder )
     {
-        this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
+        this.baseUrl = builder.baseUrl;
+        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.contentSupplier = Objects.requireNonNull( builder.mediaSupplier );
         this.projectName = Objects.requireNonNull( builder.projectNameSupplier );
         this.branch = Objects.requireNonNull( builder.branchSupplier );
@@ -44,9 +47,14 @@ public final class AttachmentUrlGeneratorParams
         this.queryParams = builder.queryParams;
     }
 
-    public BaseUrlStrategy getBaseUrlStrategy()
+    public String getBaseUrl()
     {
-        return baseUrlStrategy;
+        return baseUrl;
+    }
+
+    public String getUrlType()
+    {
+        return urlType;
     }
 
     public Supplier<Content> getContentSupplier()
@@ -91,7 +99,9 @@ public final class AttachmentUrlGeneratorParams
 
     public static class Builder
     {
-        private BaseUrlStrategy baseUrlStrategy;
+        private String baseUrl;
+
+        private String urlType;
 
         private Supplier<Content> mediaSupplier;
 
@@ -107,9 +117,15 @@ public final class AttachmentUrlGeneratorParams
 
         private final Multimap<String, String> queryParams = HashMultimap.create();
 
-        public Builder setBaseUrlStrategy( final BaseUrlStrategy baseUrlStrategy )
+        public Builder setBaseUrl( final String baseUrl )
         {
-            this.baseUrlStrategy = baseUrlStrategy;
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder setUrlType( final String urlType )
+        {
+            this.urlType = urlType;
             return this;
         }
 

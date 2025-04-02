@@ -14,7 +14,6 @@ import com.enonic.xp.core.impl.content.ContentNodeHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
-import com.enonic.xp.portal.url.PageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -537,12 +536,5 @@ public class PortalUrlServiceImpl_pageUrlTest
                                                        .param( "k", "v" ) ) );
 
         assertEquals( "/site/explicit-project/explicit-branch/a/b/mycontent?k=v", url );
-    }
-
-    @Test
-    void testUrlGenerator()
-    {
-        PageUrlGeneratorParams params = PageUrlGeneratorParams.create().setBaseUrlStrategy( () -> "baseUrl" ).build();
-        assertEquals( "baseUrl", this.service.pageUrl( params ) );
     }
 }

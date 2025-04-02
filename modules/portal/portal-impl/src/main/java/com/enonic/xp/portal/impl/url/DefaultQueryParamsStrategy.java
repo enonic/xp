@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.function.Supplier;
+
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 final class DefaultQueryParamsStrategy
-    implements QueryParamsStrategy
+    implements Supplier<String>
 {
     private final Multimap<String, String> queryParams;
 
@@ -14,7 +16,7 @@ final class DefaultQueryParamsStrategy
     }
 
     @Override
-    public String generateQueryParams()
+    public String get()
     {
         final StringBuilder path = new StringBuilder();
         UrlBuilderHelper.appendParams( path, queryParams.entries() );

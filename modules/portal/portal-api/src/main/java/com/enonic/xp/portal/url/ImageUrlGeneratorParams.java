@@ -16,7 +16,9 @@ import com.enonic.xp.project.ProjectName;
 @PublicApi
 public final class ImageUrlGeneratorParams
 {
-    private final BaseUrlStrategy baseUrlStrategy;
+    private final String baseUrl;
+
+    private final String urlType;
 
     private final Supplier<Media> mediaSupplier;
 
@@ -38,7 +40,8 @@ public final class ImageUrlGeneratorParams
 
     private ImageUrlGeneratorParams( final Builder builder )
     {
-        this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
+        this.baseUrl = builder.baseUrl;
+        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.mediaSupplier = Objects.requireNonNull( builder.mediaSupplier );
         this.projectNameSupplier = Objects.requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = Objects.requireNonNull( builder.branchSupplier );
@@ -50,9 +53,14 @@ public final class ImageUrlGeneratorParams
         this.queryParams = builder.queryParams;
     }
 
-    public BaseUrlStrategy getBaseUrlStrategy()
+    public String getBaseUrl()
     {
-        return baseUrlStrategy;
+        return baseUrl;
+    }
+
+    public String getUrlType()
+    {
+        return urlType;
     }
 
     public Supplier<Media> getMedia()
@@ -107,7 +115,9 @@ public final class ImageUrlGeneratorParams
 
     public static class Builder
     {
-        private BaseUrlStrategy baseUrlStrategy;
+        private String baseUrl;
+
+        private String urlType;
 
         private Supplier<Media> mediaSupplier;
 
@@ -127,9 +137,15 @@ public final class ImageUrlGeneratorParams
 
         private final Multimap<String, String> queryParams = HashMultimap.create();
 
-        public Builder setBaseUrlStrategy( final BaseUrlStrategy baseUrlStrategy )
+        public Builder setBaseUrl( final String baseUrl )
         {
-            this.baseUrlStrategy = baseUrlStrategy;
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder setUrlType( final String urlType )
+        {
+            this.urlType = urlType;
             return this;
         }
 

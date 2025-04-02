@@ -49,12 +49,9 @@ public class PortalUrlServiceImpl_apiUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        UrlGeneratorParamsAdapter urlGeneratorParamsAdapter =
-            new UrlGeneratorParamsAdapter( this.contentService, mock( ProjectService.class ) );
-
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 urlGeneratorParamsAdapter );
+                                                 mock( ProjectService.class ) );
 
         req = mock( HttpServletRequest.class );
 
@@ -283,7 +280,7 @@ public class PortalUrlServiceImpl_apiUrlTest
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
 
-        when( contentService.findNearestSiteByPath( any( ContentPath.class) )).thenReturn( site );
+        when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setType( UrlTypeConstants.ABSOLUTE )
@@ -356,7 +353,7 @@ public class PortalUrlServiceImpl_apiUrlTest
     void testCreateUrlWithCustomBaseUrl()
     {
         final ApiUrlGeneratorParams params = ApiUrlGeneratorParams.create()
-            .setBaseUrlStrategy( () -> "https://api.mycompany.com/_/" )
+            .setBaseUrl( "https://api.mycompany.com" )
             .setApplication( "com.enonic.app.myapp" )
             .setApi( "myapi" )
             .addQueryParam( "k1", "v1" )
