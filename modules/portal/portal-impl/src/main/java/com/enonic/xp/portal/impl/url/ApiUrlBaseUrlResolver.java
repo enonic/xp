@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.google.common.base.Supplier;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
@@ -33,7 +34,9 @@ final class ApiUrlBaseUrlResolver
 
         final StringBuilder url = new StringBuilder( generateBaseUrlPrefix( portalRequest ) );
 
-        UrlBuilderHelper.appendPart( url, params.getApplication() + ":" + params.getApi() );
+        final String application = Objects.requireNonNull( params.getApplication().get(), "Application must be set" );
+
+        UrlBuilderHelper.appendPart( url, application + ":" + params.getApi() );
 
         if ( params.getBaseUrl() != null )
         {

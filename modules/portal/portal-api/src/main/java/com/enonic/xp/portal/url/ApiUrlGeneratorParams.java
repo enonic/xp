@@ -19,7 +19,7 @@ public final class ApiUrlGeneratorParams
 
     private final String urlType;
 
-    private final String application;
+    private final Supplier<String> application;
 
     private final String api;
 
@@ -47,7 +47,7 @@ public final class ApiUrlGeneratorParams
         return urlType;
     }
 
-    public String getApplication()
+    public Supplier<String> getApplication()
     {
         return application;
     }
@@ -78,7 +78,7 @@ public final class ApiUrlGeneratorParams
 
         private String baseUrl;
 
-        private String application;
+        private Supplier<String> application;
 
         private String api;
 
@@ -98,9 +98,9 @@ public final class ApiUrlGeneratorParams
             return this;
         }
 
-        public Builder setApplication( final String application )
+        public Builder setApplication( final Supplier<String> application )
         {
-            this.application = emptyToNull( application );
+            this.application = application;
             return this;
         }
 

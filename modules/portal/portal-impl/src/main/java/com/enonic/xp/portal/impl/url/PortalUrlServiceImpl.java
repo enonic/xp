@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
@@ -49,9 +48,6 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
-
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -149,17 +145,11 @@ public final class PortalUrlServiceImpl
     {
         final Supplier<String> baseUrlSupplier = new PageBaseUrlSupplier( contentService, projectService, params );
 
-        final UrlGeneratorParams.Builder builder = UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier );
+        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        params.getParams().forEach( queryParamsStrategy::put );
 
-        if ( params.getParams() != null )
-        {
-            final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
-            params.getParams().forEach( queryParamsStrategy::put );
-
-            builder.setQueryString( queryParamsStrategy );
-        }
-
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( builder.build() ) );
+        return runWithAdminRole( () -> UrlGenerator.generateUrl(
+            UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() ) );
     }
 
     @Override
@@ -308,39 +298,12 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlParams params )
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-
-        String application = params.getApplication();
-        if ( portalRequest == null )
-        {
-            Objects.requireNonNull( application, "Application must be provided" );
-        }
-        else
-        {
-            if ( application == null && portalRequest.getApplicationKey() != null )
-            {
-                application = portalRequest.getApplicationKey().toString();
-            }
-
-            if ( application == null )
-            {
-                throw new IllegalArgumentException( "Application must be provided" );
-            }
-        }
-
         final ApiUrlGeneratorParams generatorParams = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getType() )
-            .setApplication( application )
+            .setApplication( new ApiUrlApplicationResolver( params.getApplication() ) )
             .setApi( params.getApi() )
-            .setPath( () -> {
-                final StringBuilder path = new StringBuilder();
-
-                appendSubPath( path, params.getPath() );
-                appendPathSegments( path, params.getPathSegments() );
-
-                return path.toString();
-            } )
+            .setPath( new ApiUrlPathResolver( params.getPath(), params.getPathSegments() ) )
             .addQueryParams( params.getQueryParams() )
             .build();
 
@@ -353,7 +316,7 @@ public final class PortalUrlServiceImpl
         final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
             .setUrlType( params.getUrlType() )
             .setBaseUrl( params.getBaseUrl() )
-            .setApplication( "media" )
+            .setApplication( () -> "media" )
             .setApi( "image" )
             .setPath( ImageMediaPathSupplier.create()
                           .setMedia( params.getMedia() )
@@ -395,7 +358,7 @@ public final class PortalUrlServiceImpl
         final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getUrlType() )
-            .setApplication( "media" )
+            .setApplication( () -> "media" )
             .setApi( "attachment" )
             .setPath( pathStrategy )
             .addQueryParams( params.getQueryParams() );
