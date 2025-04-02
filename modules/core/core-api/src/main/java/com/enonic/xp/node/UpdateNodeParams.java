@@ -1,12 +1,9 @@
 package com.enonic.xp.node;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
@@ -22,8 +19,6 @@ public class UpdateNodeParams
 
     private final RefreshMode refresh;
 
-    private final Branches branches;
-
     private UpdateNodeParams( final Builder builder )
     {
         this.id = builder.id;
@@ -31,7 +26,6 @@ public class UpdateNodeParams
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
         this.refresh = builder.refresh;
-        branches = Branches.from( builder.branches.build() );
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -70,11 +64,6 @@ public class UpdateNodeParams
         return refresh;
     }
 
-    public Branches getBranches()
-    {
-        return branches;
-    }
-
     public static final class Builder
     {
         private NodeId id;
@@ -86,8 +75,6 @@ public class UpdateNodeParams
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
         private RefreshMode refresh;
-
-        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
 
         private Builder()
@@ -137,12 +124,6 @@ public class UpdateNodeParams
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;
-            return this;
-        }
-
-        public Builder addBranches( final Branches branches )
-        {
-            this.branches.addAll( branches );
             return this;
         }
 

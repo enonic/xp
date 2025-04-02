@@ -6,8 +6,8 @@ import com.enonic.xp.content.ContentModifier;
 import com.enonic.xp.content.ModifiableContent;
 import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.ModifyContentResult;
-import com.enonic.xp.node.ModifyNodeResult;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 
 public class ModifyContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -46,7 +46,7 @@ public class ModifyContentCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
         final Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create().editedContent( modifiedContent )
+        final PatchNodeParams updateNodeParams = PatchNodeParamsFactory.create().editedContent( modifiedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
@@ -59,7 +59,7 @@ public class ModifyContentCommand
             .build()
             .produce();
 
-        final ModifyNodeResult result = nodeService.modify( updateNodeParams );
+        final PatchNodeResult result = nodeService.patch( updateNodeParams );
 
         final ModifyContentResult.Builder builder = ModifyContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 

@@ -20,8 +20,8 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -253,8 +253,7 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            UpdateNodeCommand.create( this ).
-                params( UpdateNodeParams.create().
+            PatchNodeCommand.create( this ).params( PatchNodeParams.create().
                     id( node.id() ).
                     editor( toBeEdited -> toBeEdited.data = data ).
                     build() ).
