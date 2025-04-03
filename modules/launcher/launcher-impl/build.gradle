@@ -5,15 +5,10 @@ dependencies {
     }
     implementation libs.felix.utils
 
-    runtimeOnly ( libs.felix.log ) {
+    implementation ( libs.felix.log ) {
         exclude group: 'org.osgi'
     }
-    runtimeOnly libs.felix.logback
-    implementation ( libs.felix.logextension ) {
-        exclude group: 'org.osgi'
-        exclude group: 'org.apache.felix'
-    }
-    runtimeOnly libs.logback.classic
+    implementation libs.logback.classic
     runtimeOnly libs.jansi
     implementation libs.slf4j.api
     implementation libs.slf4j.jultoslf4j

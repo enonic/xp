@@ -73,10 +73,6 @@ public final class PortalResponseMapper
             {
                 gen.value( "domain", cookie.getDomain() );
             }
-            if ( cookie.getComment() != null )
-            {
-                gen.value( "comment", cookie.getComment() );
-            }
             if ( cookie.getMaxAge() >= 0 )
             {
                 gen.value( "maxAge", cookie.getMaxAge() );
