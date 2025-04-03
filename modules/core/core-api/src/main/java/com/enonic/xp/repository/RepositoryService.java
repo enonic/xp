@@ -25,9 +25,5 @@ public interface RepositoryService
 
     Branch deleteBranch( DeleteBranchParams params );
 
-    void invalidateAll();
-
-    void invalidate( RepositoryId repositoryId );
-
     ByteSource getBinary( RepositoryId repositoryId, BinaryReference binaryReference );
 }

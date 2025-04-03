@@ -2,12 +2,8 @@ package com.enonic.xp.lib.repo.mapper;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
-import com.enonic.xp.repository.IndexDefinition;
-import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -27,7 +23,6 @@ public class RepositoryMapper
         gen.value( "id", repository.getId() );
         gen.value( "transient", repository.isTransient() );
         serialize( gen, repository.getBranches() );
-        serialize( gen, repository.getSettings() );
         serialize( "data", gen, repository.getData() );
     }
 
@@ -38,46 +33,11 @@ public class RepositoryMapper
         gen.end();
     }
 
-    private void serialize( final MapGenerator gen, final RepositorySettings settings )
-    {
-        gen.map( "settings" );
-        serialize( gen, settings.getIndexDefinitions() );
-        gen.end();
-    }
 
     private void serialize( String field, final MapGenerator gen, final PropertyTree repositoryData )
     {
         gen.map( field );
         new PropertyTreeMapper( repositoryData ).serialize( gen );
         gen.end();
-    }
-
-    private void serialize( final MapGenerator gen, final IndexDefinitions indexDefinitions )
-    {
-        if ( indexDefinitions != null )
-        {
-            gen.map( "definitions" );
-            for ( IndexType indexType : IndexType.values() )
-            {
-                final IndexDefinition indexDefinition = indexDefinitions.get( indexType );
-                if ( indexDefinition != null )
-                {
-                    gen.map( indexType.getName() );
-
-                    if ( indexDefinition.getSettings() != null )
-                    {
-                        serialize( "settings", gen, PropertyTree.fromMap( indexDefinition.getSettings().getData() ) );
-                    }
-
-                    if ( indexDefinition.getMapping() != null )
-                    {
-                        serialize( "mapping", gen, PropertyTree.fromMap( indexDefinition.getMapping().getData() ) );
-                    }
-
-                    gen.end();
-                }
-            }
-            gen.end();
-        }
     }
 }

@@ -10,7 +10,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class RepositoryEventListenerTest
 {
@@ -18,14 +18,14 @@ public class RepositoryEventListenerTest
 
     private NodeStorageService storageService;
 
-    private RepositoryService repositoryService;
+    private InternalRepositoryService repositoryService;
 
     @BeforeEach
     public void setUp()
         throws Exception
     {
         this.storageService = Mockito.mock( NodeStorageService.class );
-        this.repositoryService = Mockito.mock( RepositoryService.class );
+        this.repositoryService = Mockito.mock( InternalRepositoryService.class );
 
         repositoryEventListener = new RepositoryEventListener( repositoryService, storageService );
     }

@@ -18,7 +18,6 @@ import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
 import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
@@ -36,8 +35,6 @@ public final class RepositoryResource
     private ExportService exportService;
 
     private RepositoryService repositoryService;
-
-    private NodeRepositoryService nodeRepositoryService;
 
     private TaskService taskService;
 
@@ -74,9 +71,7 @@ public final class RepositoryResource
             .importWithPermissions( params.isImportWithPermissions() )
             .xslSource( params.getXslSource() )
             .xslParams( params.getXslParams() )
-            .nodeRepositoryService( nodeRepositoryService )
             .exportService( exportService )
-            .repositoryService( repositoryService )
             .build();
         final TaskId taskId = taskService.submitLocalTask(
             SubmitLocalTaskParams.create().runnableTask( task ).description( "Import " + params.getExportName() ).build() );
@@ -103,12 +98,6 @@ public final class RepositoryResource
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
     }
 
     @Reference

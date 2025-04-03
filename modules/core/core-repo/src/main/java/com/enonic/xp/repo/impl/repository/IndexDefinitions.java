@@ -1,14 +1,12 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.repo.impl.repository;
 
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexType;
 
-@PublicApi
-public class IndexDefinitions
+public final class IndexDefinitions
 {
     private final Map<IndexType, IndexDefinition> configs;
 

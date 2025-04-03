@@ -21,12 +21,10 @@ import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
+import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 
 @Component
 public class IndexServiceImpl
@@ -129,9 +127,9 @@ public class IndexServiceImpl
     }
 
     @Override
-    public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
+    public Map<String, String> getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return IndexSettings.from( this.indexServiceInternal.getIndexSettings( repositoryId, indexType ) );
+        return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
     }
 
     @Override

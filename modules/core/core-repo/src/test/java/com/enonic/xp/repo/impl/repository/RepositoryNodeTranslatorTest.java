@@ -6,13 +6,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.repository.IndexDefinition;
-import com.enonic.xp.repository.IndexDefinitions;
-import com.enonic.xp.repository.IndexMapping;
-import com.enonic.xp.repository.IndexSettings;
-import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repo.impl.index.IndexMapping;
+import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositorySettings;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -29,7 +25,7 @@ public class RepositoryNodeTranslatorTest
         final PropertyTree indexSettings = new PropertyTree();
         indexSettings.addString( "mySetting", "mySettingValue" );
 
-        final Repository repo = Repository.create().
+        final RepositoryEntry repo = RepositoryEntry.create().
             branches( Branch.from( "master" ) ).
             id( RepositoryId.from( "myrepoid" ) ).
             settings( RepositorySettings.create().

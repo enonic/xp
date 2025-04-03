@@ -2,14 +2,14 @@ package com.enonic.xp.repo.impl.repository.event;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class RepositoryRestoredHandler
     implements RepositoryEventHandler
 {
     private final NodeStorageService nodeStorageService;
 
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
     private RepositoryRestoredHandler( final Builder builder )
     {
@@ -33,7 +33,7 @@ public class RepositoryRestoredHandler
     {
         private NodeStorageService nodeStorageService;
 
-        private RepositoryService repositoryService;
+        private InternalRepositoryService repositoryService;
 
         private Builder()
         {
@@ -45,7 +45,7 @@ public class RepositoryRestoredHandler
             return this;
         }
 
-        public Builder repositoryService( final RepositoryService val )
+        public Builder repositoryService( final InternalRepositoryService val )
         {
             repositoryService = val;
             return this;

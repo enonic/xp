@@ -1,12 +1,10 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.repo.impl.repository;
 
-import java.util.Objects;
-
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.repo.impl.index.IndexMapping;
+import com.enonic.xp.repo.impl.index.IndexSettings;
 
-@PublicApi
-public class RepositorySettings
+public final class RepositorySettings
 {
     private final IndexDefinitions indexDefinitions;
 
@@ -53,27 +51,6 @@ public class RepositorySettings
         }
 
         return null;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final RepositorySettings that = (RepositorySettings) o;
-        return Objects.equals( indexDefinitions, that.indexDefinitions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( indexDefinitions );
     }
 
     public static final class Builder

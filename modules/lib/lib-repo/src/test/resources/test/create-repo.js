@@ -26,6 +26,5 @@ assert.assertJsonEquals({
     'branches': [
         'master'
     ],
-    'settings': {},
     'data': {}
 }, result);

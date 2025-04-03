@@ -10,7 +10,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
 public class RepositoryEventListener
@@ -25,7 +25,7 @@ public class RepositoryEventListener
     private final RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
 
     @Activate
-    public RepositoryEventListener( @Reference final RepositoryService repositoryService,
+    public RepositoryEventListener( @Reference final InternalRepositoryService repositoryService,
                                     @Reference final NodeStorageService storageService )
     {
         this.repositoryRestoredHandler = RepositoryRestoredHandler.create().

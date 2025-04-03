@@ -1,5 +1,7 @@
 package com.enonic.xp.core.index;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +28,6 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -284,9 +285,9 @@ public class IndexServiceImplTest
     public void getIndexSettings_empty()
         throws Exception
     {
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
+        final Map<String, String> indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 
-        assertNull( indexSettings.getData().get( "index.invalid_path" ) );
+        assertNull( indexSettings.get( "index.invalid_path" ) );
     }
 
     @Test
@@ -298,9 +299,9 @@ public class IndexServiceImplTest
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
+        final Map<String, String> indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 
-        assertEquals( "2", indexSettings.getData().get( "index.number_of_replicas" ) );
+        assertEquals( "2", indexSettings.get( "index.number_of_replicas" ) );
     }
 
 }

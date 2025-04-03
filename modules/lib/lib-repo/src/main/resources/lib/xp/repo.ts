@@ -29,24 +29,10 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
-export interface IndexDefinition {
-    settings?: Record<string, unknown>; // https://www.elastic.co/guide/en/elasticsearch/reference/2.4/index-modules.html
-    mapping?: Record<string, unknown>;
-}
-
-export interface RepositorySettings {
-    definitions?: {
-        SEARCH?: IndexDefinition,
-        VERSION?: IndexDefinition,
-        BRANCH?: IndexDefinition,
-        COMMIT?: IndexDefinition,
-    }
-}
 
 export interface Repository {
     id: string;
     branches: string[];
-    settings?: RepositorySettings;
     data?: Record<string, unknown>;
     transient: boolean;
 }
@@ -108,7 +94,6 @@ export interface CreateRepositoryParams {
     id: string;
     rootPermissions?: AccessControlEntry[];
     rootChildOrder?: string;
-    settings?: RepositorySettings;
     transient?: boolean;
 }
 
@@ -119,19 +104,11 @@ interface CreateRepositoryHandler {
 
     setRootChildOrder(value?: string | null): void;
 
-    setIndexDefinitions(value: ScriptValue): void;
-
     setTransient(value: boolean): void;
 
     execute(): Repository;
 }
 
-/**
- @typedef IndexDefinition
- @type {object}
- @property {object} [settings] - Index definition settings.
- @property {object} [mapping] - Index definition settings.
- */
 /**
  * Creates a repository
  *
@@ -142,11 +119,6 @@ interface CreateRepositoryHandler {
  * @param {array} [params.rootPermissions] Array of root permissions.
  * By default, all permissions to 'system.admin' and read permission to 'system.authenticated'
  * @param {string} [params.rootChildOrder] Root child order.
- * @param {object} [params.settings] Repository settings.
- * @param {object} [params.settings.definitions] Index definitions.
- * @param {IndexDefinition} [params.settings.definitions.search] Search index definition.
- * @param {IndexDefinition} [params.settings.definitions.version] Version index definition.
- * @param {IndexDefinition} [params.settings.definitions.branch] Branch indexes definition.
  * @param {boolean} [params.transient] Transient flag to mark a repository as a transient.
  *
  * @returns {object} Repository created as JSON.
@@ -159,9 +131,6 @@ export function create(params: CreateRepositoryParams): Repository {
 
     bean.setRepositoryId(params.id);
     bean.setRootChildOrder(__.nullOrValue(params.rootChildOrder));
-    if (params.settings && params.settings.definitions) {
-        bean.setIndexDefinitions(__.toScriptValue(params.settings.definitions));
-    }
     if (params.rootPermissions) {
         bean.setRootPermissions(__.toScriptValue(params.rootPermissions));
     }

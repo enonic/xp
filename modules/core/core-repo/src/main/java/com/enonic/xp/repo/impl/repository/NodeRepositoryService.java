@@ -1,11 +1,10 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
 public interface NodeRepositoryService
 {
-    void create( CreateRepositoryParams params );
+    void create( CreateRepositoryIndexParams params );
 
     void delete( RepositoryId repositoryId );
 

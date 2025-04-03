@@ -10,8 +10,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
 public class RepositoryServiceActivator
@@ -26,7 +26,7 @@ public class RepositoryServiceActivator
 
     private final NodeSearchService nodeSearchService;
 
-    private ServiceRegistration<RepositoryService> service;
+    private ServiceRegistration<?> service;
 
     @Activate
     public RepositoryServiceActivator( @Reference final RepositoryEntryService repositoryEntryService,
@@ -54,7 +54,8 @@ public class RepositoryServiceActivator
             setNodeStorageService( nodeStorageService ).
             build().
             initialize();
-        service = context.registerService( RepositoryService.class, repositoryService, null );
+        service = context.registerService( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()},
+                                           repositoryService, null );
     }
 
     @Deactivate

@@ -1,21 +1,21 @@
-package com.enonic.xp.repository;
+package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
-public final class Repository
+public final class RepositoryEntry
 {
     private final RepositoryId id;
 
     private final Branches branches;
+
+    private final RepositorySettings settings;
 
     private final PropertyTree data;
 
@@ -23,10 +23,11 @@ public final class Repository
 
     private final boolean transientFlag;
 
-    private Repository( Builder builder )
+    private RepositoryEntry( RepositoryEntry.Builder builder )
     {
         this.id = builder.id;
         this.branches = builder.branches;
+        this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
         this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
         this.transientFlag = builder.transientFlag;
@@ -35,6 +36,11 @@ public final class Repository
     public RepositoryId getId()
     {
         return id;
+    }
+
+    public RepositorySettings getSettings()
+    {
+        return settings;
     }
 
     public Branches getBranches()
@@ -57,37 +63,27 @@ public final class Repository
         return transientFlag;
     }
 
-    public static Builder create()
+    public static RepositoryEntry.Builder create()
     {
-        return new Builder();
+        return new RepositoryEntry.Builder();
     }
 
-    @Override
-    public boolean equals( final Object o )
+    public Repository asRepository()
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final Repository that = (Repository) o;
-
-        return id != null ? id.equals( that.id ) : that.id == null;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return id != null ? id.hashCode() : 0;
+        return Repository.create()
+            .id( this.id )
+            .branches( this.branches )
+            .data( this.data.copy() )
+            .attachments( this.attachments )
+            .transientFlag( this.transientFlag )
+            .build();
     }
 
     public static final class Builder
     {
         private RepositoryId id;
+
+        private RepositorySettings settings;
 
         private Branches branches;
 
@@ -101,54 +97,52 @@ public final class Repository
         {
         }
 
-        public Builder id( final RepositoryId id )
+        public RepositoryEntry.Builder id( final RepositoryId id )
         {
             this.id = id;
             return this;
         }
 
-        public Builder branches( final Branches branches )
+        public RepositoryEntry.Builder branches( final Branches branches )
         {
             this.branches = branches;
             return this;
         }
 
 
-        public Builder branches( final Branch... branches )
+        public RepositoryEntry.Builder branches( final Branch... branches )
         {
             this.branches = Branches.from( branches );
             return this;
         }
 
-        public Builder data( final PropertyTree data )
+        public RepositoryEntry.Builder settings( final RepositorySettings settings )
+        {
+            this.settings = settings;
+            return this;
+        }
+
+        public RepositoryEntry.Builder data( final PropertyTree data )
         {
             this.data = data;
             return this;
         }
 
-        public Builder transientFlag( final boolean value )
+        public RepositoryEntry.Builder transientFlag( final boolean value )
         {
             this.transientFlag = value;
             return this;
         }
 
-        public Builder attachments( final AttachedBinaries attachments )
+        public RepositoryEntry.Builder attachments( final AttachedBinaries attachments )
         {
             this.attachments = attachments;
             return this;
         }
 
-        private void validate()
+        public RepositoryEntry build()
         {
-            Preconditions.checkNotNull( branches, "branches cannot be null" );
-            Preconditions.checkArgument( branches.contains( RepositoryConstants.MASTER_BRANCH ), "branches must contain master branch" );
-        }
-
-
-        public Repository build()
-        {
-            validate();
-            return new Repository( this );
+            return new RepositoryEntry( this );
         }
     }
 }
