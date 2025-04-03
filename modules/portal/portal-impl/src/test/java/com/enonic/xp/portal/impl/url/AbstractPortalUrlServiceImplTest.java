@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
 
