@@ -31,7 +31,5 @@ public interface PortalUrlService
 
     String attachmentUrl( AttachmentUrlGeneratorParams params );
 
-    String pageUrl( PageUrlGeneratorParams params );
-
     String apiUrl( ApiUrlGeneratorParams params );
 }

@@ -153,4 +153,34 @@ public class PortalRequestAdapterTest
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "" );
     }
+
+    @Test
+    void adaptSlashApiTest()
+    {
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+
+        // use case 1
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api?k=v" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
+
+        // use case 2
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api" );
+
+        adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
+
+        // use case 3
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api/" );
+
+        adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
+    }
 }

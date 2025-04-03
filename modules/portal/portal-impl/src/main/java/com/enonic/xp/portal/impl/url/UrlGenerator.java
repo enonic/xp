@@ -2,16 +2,13 @@ package com.enonic.xp.portal.impl.url;
 
 import java.math.BigInteger;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
-import com.enonic.xp.portal.url.BaseUrlStrategy;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -20,29 +17,20 @@ final class UrlGenerator
 {
     private static final Logger LOG = LoggerFactory.getLogger( UrlGenerator.class );
 
-    public static String generateUrl( final BaseUrlStrategy baseUrlStrategy, final PathStrategy pathStrategy,
-                                      final QueryParamsStrategy queryParamsStrategy )
+    public static String generateUrl( final UrlGeneratorParams params )
     {
-        String baseUrl = null;
         try
         {
-            baseUrl = removeTrailingSlash( baseUrlStrategy.generateBaseUrl() );
-            String path = normalizePath( pathStrategy.generatePath() );
-            if ( baseUrlStrategy instanceof SlashApiRewritableBaseUrlStrategy rewritableBaseUrlStrategy )
-            {
-                final DescriptorKey descriptorKey = rewritableBaseUrlStrategy.getDescriptorKey();
-                final int pos = path.indexOf( descriptorKey + "/" );
-                if ( pos != -1 )
-                {
-                    path = normalizePath( path.substring( pos + descriptorKey.toString().length() + 1 ) );
-                }
-            }
-            String queryParams = nullToEmpty( queryParamsStrategy.generateQueryParams() );
+            final String baseUrl = removeTrailingSlash( params.getBaseUrl() != null ? params.getBaseUrl().get() : null );
+            final String path = normalizePath( params.getPath() != null ? params.getPath().get() : null );
+            final String queryParams =
+                nullToEmpty( params.getQueryString() != null ? params.getQueryString().get() : null );
+
             return baseUrl + path + queryParams;
         }
         catch ( Exception e )
         {
-            return buildErrorUrl( baseUrl, e );
+            return buildErrorUrl( e );
         }
     }
 
@@ -66,22 +54,22 @@ final class UrlGenerator
         return !path.startsWith( "/" ) ? "/" + path : path;
     }
 
-    private static String buildErrorUrl( final String baseUrl, final Exception e )
+    private static String buildErrorUrl( final Exception e )
     {
         final String logRef = LOG.isWarnEnabled() ? newLogRef() : "";
         LOG.warn( "Portal url build failed. Logref: {}", logRef, e );
 
         if ( e instanceof NotFoundException )
         {
-            return buildErrorUrl( baseUrl, 404, String.join( " ", "Not Found.", logRef ) );
+            return buildErrorUrl( 404, String.join( " ", "Not Found.", logRef ) );
         }
         else if ( e instanceof OutOfScopeException )
         {
-            return buildErrorUrl( baseUrl, 400, String.join( " ", "Out of scope.", logRef ) );
+            return buildErrorUrl( 400, String.join( " ", "Out of scope.", logRef ) );
         }
         else
         {
-            return buildErrorUrl( baseUrl, 500, String.join( " ", "Something went wrong.", logRef ) );
+            return buildErrorUrl( 500, String.join( " ", "Something went wrong.", logRef ) );
         }
     }
 
@@ -90,16 +78,11 @@ final class UrlGenerator
         return new BigInteger( UUID.randomUUID().toString().replace( "-", "" ), 16 ).toString( 32 );
     }
 
-    private static String buildErrorUrl( final String baseUrl, final int code, final String message )
+    private static String buildErrorUrl( final int code, final String message )
     {
-        final String normalizedBaseUrl = Objects.requireNonNullElse( baseUrl, "" );
+        final StringBuilder result = new StringBuilder();
 
-        final StringBuilder result = new StringBuilder( normalizedBaseUrl );
-
-        if ( !( normalizedBaseUrl.endsWith( "/_/" ) || normalizedBaseUrl.endsWith( "/_" ) ) )
-        {
-            UrlBuilderHelper.appendPart( result, "_" );
-        }
+        UrlBuilderHelper.appendPart( result, "_" );
         UrlBuilderHelper.appendPart( result, "error" );
         UrlBuilderHelper.appendPart( result, String.valueOf( code ) );
         UrlBuilderHelper.appendParams( result, Map.of( "message", message ).entrySet() );

@@ -26,8 +26,6 @@ public final class ApiUrlParams
 
     private final String baseUrl;
 
-    private final BaseUrlParams baseUrlParams;
-
     private final Multimap<String, String> queryParams;
 
     private ApiUrlParams( final Builder builder )
@@ -38,16 +36,11 @@ public final class ApiUrlParams
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
         this.baseUrl = builder.baseUrl;
-        this.baseUrlParams = builder.baseUrlParams;
         this.queryParams = builder.queryParams;
 
         if ( this.path != null && this.pathSegments != null )
         {
             throw new IllegalArgumentException( "Both path and pathSegments cannot be set" );
-        }
-        if ( this.baseUrl != null && this.baseUrlParams != null )
-        {
-            throw new IllegalArgumentException( "Both baseUrl and baseUrlParams cannot be set" );
         }
     }
 
@@ -81,11 +74,6 @@ public final class ApiUrlParams
         return baseUrl;
     }
 
-    public BaseUrlParams getBaseUrlParams()
-    {
-        return baseUrlParams;
-    }
-
     public Map<String, Collection<String>> getQueryParams()
     {
         return queryParams.asMap();
@@ -109,8 +97,6 @@ public final class ApiUrlParams
         private List<String> pathSegments;
 
         private String baseUrl;
-
-        private BaseUrlParams baseUrlParams;
 
         private final Multimap<String, String> queryParams = LinkedListMultimap.create();
 
@@ -147,12 +133,6 @@ public final class ApiUrlParams
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
-            return this;
-        }
-
-        public Builder setBaseUrlParams( final BaseUrlParams baseUrlParams )
-        {
-            this.baseUrlParams = baseUrlParams;
             return this;
         }
 

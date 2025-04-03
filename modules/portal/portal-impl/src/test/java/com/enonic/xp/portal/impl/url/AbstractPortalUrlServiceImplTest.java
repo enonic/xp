@@ -75,11 +75,9 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
-        UrlGeneratorParamsAdapter urlStrategyFacade = new UrlGeneratorParamsAdapter( this.contentService, this.projectService );
-
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, urlStrategyFacade );
+                                      this.redirectChecksumService, this.projectService );
 
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );

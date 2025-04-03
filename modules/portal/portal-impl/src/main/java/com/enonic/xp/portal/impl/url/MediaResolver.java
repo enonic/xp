@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.project.ProjectName;
 
 final class MediaResolver
@@ -19,8 +20,6 @@ final class MediaResolver
     private final Branch branch;
 
     private final ContentService contentService;
-
-    private final PortalRequest portalRequest;
 
     private final String baseUrl;
 
@@ -33,7 +32,6 @@ final class MediaResolver
         this.projectName = Objects.requireNonNull( builder.projectName );
         this.branch = Objects.requireNonNull( builder.branch );
         this.contentService = Objects.requireNonNull( builder.contentService );
-        this.portalRequest = builder.portalRequest;
         this.baseUrl = builder.baseUrl;
         this.id = builder.id;
         this.path = builder.path;
@@ -41,6 +39,8 @@ final class MediaResolver
 
     public MediaResolverResult resolve()
     {
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
+
         final String contentKey = Objects.requireNonNullElseGet( id, () -> {
             if ( portalRequest == null || baseUrl != null )
             {
@@ -80,8 +80,6 @@ final class MediaResolver
 
         private final ContentService contentService;
 
-        private PortalRequest portalRequest;
-
         private String baseUrl;
 
         private String id;
@@ -93,12 +91,6 @@ final class MediaResolver
             this.projectName = projectName;
             this.branch = branch;
             this.contentService = contentService;
-        }
-
-        public Builder setPortalRequest( final PortalRequest portalRequest )
-        {
-            this.portalRequest = portalRequest;
-            return this;
         }
 
         public Builder setBaseUrl( final String baseUrl )

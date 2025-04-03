@@ -3,8 +3,8 @@ package com.enonic.xp.portal.url;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -15,9 +15,11 @@ import static com.google.common.base.Strings.emptyToNull;
 @PublicApi
 public final class ApiUrlGeneratorParams
 {
-    private final BaseUrlStrategy baseUrlStrategy;
+    private final String baseUrl;
 
-    private final String application;
+    private final String urlType;
+
+    private final Supplier<String> application;
 
     private final String api;
 
@@ -27,19 +29,25 @@ public final class ApiUrlGeneratorParams
 
     private ApiUrlGeneratorParams( final Builder builder )
     {
-        this.baseUrlStrategy = Objects.requireNonNull( builder.baseUrlStrategy );
+        this.baseUrl = builder.baseUrl;
+        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.application = Objects.requireNonNull( builder.application );
         this.api = Objects.requireNonNull( builder.api );
         this.pathSupplier = builder.pathSupplier;
         this.queryParams = builder.queryParams;
     }
 
-    public BaseUrlStrategy getBaseUrlStrategy()
+    public String getBaseUrl()
     {
-        return baseUrlStrategy;
+        return baseUrl;
     }
 
-    public String getApplication()
+    public String getUrlType()
+    {
+        return urlType;
+    }
+
+    public Supplier<String> getApplication()
     {
         return application;
     }
@@ -66,9 +74,11 @@ public final class ApiUrlGeneratorParams
 
     public static class Builder
     {
-        private BaseUrlStrategy baseUrlStrategy;
+        private String urlType;
 
-        private String application;
+        private String baseUrl;
+
+        private Supplier<String> application;
 
         private String api;
 
@@ -76,15 +86,21 @@ public final class ApiUrlGeneratorParams
 
         private final Multimap<String, String> queryParams = LinkedListMultimap.create();
 
-        public Builder setBaseUrlStrategy( final BaseUrlStrategy baseUrlStrategy )
+        public Builder setUrlType( final String urlType )
         {
-            this.baseUrlStrategy = baseUrlStrategy;
+            this.urlType = emptyToNull( urlType );
             return this;
         }
 
-        public Builder setApplication( final String application )
+        public Builder setBaseUrl( final String baseUrl )
         {
-            this.application = emptyToNull( application );
+            this.baseUrl = emptyToNull( baseUrl );
+            return this;
+        }
+
+        public Builder setApplication( final Supplier<String> application )
+        {
+            this.application = application;
             return this;
         }
 
