@@ -177,8 +177,8 @@ public class PortalUrlServiceImpl_processHtmlTest
                           "&nbsp;and a download link:&nbsp;<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" +
                           content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() + "?download\">Download</a></p>\n" +
                           "<p>An external link:&nbsp;<a href=\"http://www.enonic.com\">An external  link</a></p>\n" + "<p>&nbsp;</p>\n" +
-                          "<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() + ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() +
-                          "\">Inline</a>", processedHtml );
+                          "<a href=\"/site/myproject/draft/_/media:attachment/myproject:draft/" + content.getId() +
+                          ":bb6d2c0f3112f562ec454654b9aebe7a/" + source.getName() + "\">Inline</a>", processedHtml );
     }
 
     @Test

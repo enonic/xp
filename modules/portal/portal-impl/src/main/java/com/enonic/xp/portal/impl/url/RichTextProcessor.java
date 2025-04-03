@@ -8,15 +8,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.html.HtmlDocument;
@@ -25,7 +27,6 @@ import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
-import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -73,37 +74,29 @@ public class RichTextProcessor
 
     private static final String STYLE_PARAM = "style";
 
-    /*
-     * Default Values
-     */
-
-    private static final String IMAGE_SCALE = "width(768)";
-
-    private static final int DEFAULT_WIDTH = 768;
-
     private static final Pattern PATTERN = Pattern.compile(
         "(" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE +
             ")/)?([0-9a-z-/]+)(\\?[^\"]+)?" );
-
-    private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
 
     private final StyleDescriptorService styleDescriptorService;
 
     private final PortalUrlService portalUrlService;
 
+    private final ContentService contentService;
+
     private final MacroService macroService;
 
-    private Map<String, ImageStyle> imageStyleMap;
-
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
-                              final MacroService macroService )
+                              final MacroService macroService, final ContentService contentService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.macroService = macroService;
+        this.contentService = contentService;
     }
 
-    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
+    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params,
+                                           Supplier<Map<String, ImageStyle>> imageStylesSupplier, HtmlElementPostProcessor postProcessor )
     {
         final Matcher contentMatcher = PATTERN.matcher( getLinkValue( element ) );
 
@@ -118,12 +111,12 @@ public class RichTextProcessor
             {
                 case CONTENT_TYPE:
                 {
-                    defaultLinkProcessingForContent( element, params, id, mode, urlParamsString, postProcessor );
+                    defaultLinkProcessingForContent( element, params, id, urlParamsString, postProcessor );
                     break;
                 }
                 case IMAGE_TYPE:
                 {
-                    defaultImageProcessing( element, params, id, mode, urlParamsString, postProcessor );
+                    defaultImageProcessing( element, params, id, urlParamsString, imageStylesSupplier, postProcessor );
                     break;
                 }
                 case MEDIA_TYPE:
@@ -139,9 +132,11 @@ public class RichTextProcessor
         }
     }
 
-    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
+    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, Supplier<Map<String, ImageStyle>> imageStylesSupplier,
+                                    HtmlElementPostProcessor postProcessor )
     {
-        document.select( "[href],[src]" ).forEach( element -> defaultElementProcessing( element, params, postProcessor ) );
+        document.select( "[href],[src]" )
+            .forEach( element -> defaultElementProcessing( element, params, imageStylesSupplier, postProcessor ) );
     }
 
     public String process( final ProcessHtmlParams params )
@@ -151,19 +146,45 @@ public class RichTextProcessor
             return "";
         }
 
-        HtmlDocument document = HtmlParser.parse( params.getValue() );
+        final Supplier<Map<String, ImageStyle>> imageStylesSupplier = Suppliers.memoize( () -> {
+            final StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
+                ? params.getCustomStyleDescriptorsCallback().get()
+                : getStyleDescriptors( params.getPortalRequest() );
+            return getImageStyleMap( styleDescriptors );
+        } );
+
+        final Supplier<String> imageBaseUrlSupplier = Suppliers.memoize( () -> ApiUrlBaseUrlResolver.create()
+            .setContentService( contentService )
+            .setApplication( "media" )
+            .setApi( "image" )
+            .setBaseUrl( params.getBaseUrl() )
+            .setUrlType( params.getType() )
+            .build()
+            .get() );
+
+        final Supplier<String> attachmentBaseUrlSupplier = Suppliers.memoize( () -> ApiUrlBaseUrlResolver.create()
+            .setContentService( contentService )
+            .setApplication( "media" )
+            .setApi( "attachment" )
+            .setBaseUrl( params.getBaseUrl() )
+            .setUrlType( params.getType() )
+            .build()
+            .get() );
+
+        final HtmlDocument document = HtmlParser.parse( params.getValue() );
         if ( params.getCustomHtmlProcessor() == null )
         {
-            defaultProcessing( document, params, null );
+            defaultProcessing( document, params, imageStylesSupplier, null );
         }
         else
         {
             final String html = params.getCustomHtmlProcessor()
                 .apply( HtmlProcessorParams.create()
                             .htmlDocument( document )
-                            .defaultProcessor( postProcessor -> defaultProcessing( document, params, postProcessor ) )
+                            .defaultProcessor( postProcessor -> defaultProcessing( document, params, imageStylesSupplier, postProcessor ) )
                             .defaultElementProcessor(
-                                ( htmlElement, postProcessor ) -> defaultElementProcessing( htmlElement, params, postProcessor ) )
+                                ( htmlElement, postProcessor ) -> defaultElementProcessing( htmlElement, params, imageStylesSupplier,
+                                                                                            postProcessor ) )
                             .build() );
             if ( !params.isProcessMacros() )
             {
@@ -173,13 +194,12 @@ public class RichTextProcessor
         return new HtmlMacroProcessor( macroService ).process( document.getInnerHtml() );
     }
 
-    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, String id, String mode,
-                                                  String urlParamsString, HtmlElementPostProcessor postProcessor )
+    private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, String id, String urlParamsString,
+                                                  HtmlElementPostProcessor postProcessor )
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final PageUrlParams pageUrlParams =
-            new PageUrlParams().type( params.getType() ).id( id ).portalRequest( params.getPortalRequest() );
+        final PageUrlParams pageUrlParams = new PageUrlParams().type( params.getType() ).id( id );
 
         final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
 
@@ -192,59 +212,31 @@ public class RichTextProcessor
             properties.put( "type", params.getType() );
             properties.put( "contentId", id );
             properties.put( "uri", originalUri );
-            properties.put( "mode", mode );
             properties.put( "queryParams", urlParamsString );
 
             postProcessor.process( element, properties );
         }
     }
 
-    private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String mode, String urlParamsString,
-                                         HtmlElementPostProcessor callback )
+    private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String urlParamsString,
+                                         Supplier<Map<String, ImageStyle>> imageStylesSupplier, HtmlElementPostProcessor callback )
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
-        if ( imageStyleMap == null )
-        {
-            StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
-                ? params.getCustomStyleDescriptorsCallback().get()
-                : getStyleDescriptors( params.getPortalRequest() );
-            imageStyleMap = getImageStyleMap( styleDescriptors );
-        }
+        final ImageStyle imageStyle = getImageStyle( imageStylesSupplier.get(), urlParams );
 
-        ImageStyle imageStyle = getImageStyle( imageStyleMap, urlParams );
-        ImageUrlParams imageUrlParams = new ImageUrlParams().type( params.getType() )
-            .id( id )
-            .scale( getScale( imageStyle, urlParams, null ) )
-            .filter( getFilter( imageStyle ) )
-            .portalRequest( params.getPortalRequest() );
+        final String scaleFromQueryParams = urlParams.get( SCALE_PARAM );
 
-        final String imageUrl = portalUrlService.imageUrl( imageUrlParams );
+        final DefaultImageLinkProcessor imageLinkProcessor = new DefaultImageLinkProcessor();
 
-        element.setAttribute( getLinkAttribute( element ), imageUrl );
-
-        if ( "img".equals( element.getTagName() ) )
-        {
-            if ( params.getImageWidths() != null )
-            {
-                final String srcsetValues = params.getImageWidths().stream().map( imageWidth -> {
-                    final ImageUrlParams imageParams = new ImageUrlParams().type( params.getType() )
-                        .id( id )
-                        .scale( getScale( imageStyle, urlParams, imageWidth ) )
-                        .filter( getFilter( imageStyle ) )
-                        .portalRequest( params.getPortalRequest() );
-
-                    return portalUrlService.imageUrl( imageParams ) + " " + imageWidth + "w";
-                } ).collect( Collectors.joining( "," ) );
-
-                element.setAttribute( "srcset", srcsetValues );
-            }
-
-            if ( params.getImageSizes() != null && !params.getImageSizes().trim().isEmpty() )
-            {
-                element.setAttribute( "sizes", params.getImageSizes() );
-            }
-        }
+        imageLinkProcessor.contentService = contentService;
+        imageLinkProcessor.portalUrlService = portalUrlService;
+        imageLinkProcessor.params = params;
+        imageLinkProcessor.element = element;
+        imageLinkProcessor.imageStyle = imageStyle;
+        imageLinkProcessor.id = id;
+        imageLinkProcessor.scaleFromQueryString = scaleFromQueryParams;
+        imageLinkProcessor.process();
 
         if ( callback != null )
         {
@@ -252,7 +244,6 @@ public class RichTextProcessor
 
             properties.put( "type", params.getType() );
             properties.put( "contentId", id );
-            properties.put( "mode", mode );
             properties.put( "queryParams", urlParamsString );
             if ( imageStyle != null )
             {
@@ -270,10 +261,10 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().type( params.getType() )
+        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().baseUrl( params.getBaseUrl() )
+            .type( params.getType() )
             .id( id )
-            .download( DOWNLOAD_MODE.equals( mode ) )
-            .portalRequest( params.getPortalRequest() );
+            .download( DOWNLOAD_MODE.equals( mode ) );
 
         final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
 
@@ -329,47 +320,6 @@ public class RichTextProcessor
         return styleString != null ? imageStyleMap.get( styleString ) : null;
     }
 
-    private String getScale( final ImageStyle imageStyle, final Map<String, String> urlParams, final Integer expectedWidth )
-    {
-        final String aspectRatio = getAspectRation( imageStyle, urlParams );
-
-        if ( aspectRatio != null )
-        {
-            final Matcher matcher = ASPECT_RATIO_PATTEN.matcher( aspectRatio );
-            if ( !matcher.matches() )
-            {
-                throw new IllegalArgumentException( "Invalid aspect ratio: " + aspectRatio );
-            }
-            final String horizontalProportion = matcher.group( "horizontalProportion" );
-            final String verticalProportion = matcher.group( "verticalProportion" );
-
-            final int width = Objects.requireNonNullElse( expectedWidth, DEFAULT_WIDTH );
-            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
-
-            return "block(" + width + "," + height + ")";
-        }
-
-        return expectedWidth != null ? "width(" + expectedWidth + ")" : IMAGE_SCALE;
-    }
-
-    private String getFilter( final ImageStyle imageStyle )
-    {
-        return imageStyle == null ? null : imageStyle.getFilter();
-    }
-
-    private String getAspectRation( final ImageStyle imageStyle, final Map<String, String> urlParams )
-    {
-        if ( imageStyle != null )
-        {
-            final String aspectRatio = imageStyle.getAspectRatio();
-            if ( aspectRatio != null )
-            {
-                return aspectRatio;
-            }
-        }
-        return urlParams.get( SCALE_PARAM );
-    }
-
     private Map<String, String> extractUrlParams( final String urlQuery )
     {
         if ( urlQuery == null )
@@ -386,10 +336,8 @@ public class RichTextProcessor
         {
             return url;
         }
-        final String query = urlQuery.startsWith( "?" ) ? urlQuery.substring( 1 ) : urlQuery;
-
         final StringBuilder urlSuffix = new StringBuilder();
-        final Map<String, String> queryParamsAsMap = extractUrlParams( query );
+        final Map<String, String> queryParamsAsMap = extractUrlParams( urlQuery );
 
         addComponentToUrlIfValid( queryParamsAsMap.get( "query" ), "?", urlSuffix );
         addComponentToUrlIfValid( queryParamsAsMap.get( "fragment" ), "#", urlSuffix );

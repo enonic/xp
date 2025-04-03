@@ -1,8 +1,11 @@
-package com.enonic.xp.portal.impl.url;
+package com.enonic.xp.portal.url;
 
 import java.util.function.Supplier;
 
-final class UrlGeneratorParams
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
+public final class UrlGeneratorParams
 {
     private final Supplier<String> baseUrlSupplier;
 
@@ -37,7 +40,7 @@ final class UrlGeneratorParams
         return new Builder();
     }
 
-    static class Builder
+    public static class Builder
     {
         private Supplier<String> baseUrlSupplier;
 

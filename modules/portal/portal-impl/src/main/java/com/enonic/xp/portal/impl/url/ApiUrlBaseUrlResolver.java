@@ -10,7 +10,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 
@@ -19,12 +18,74 @@ final class ApiUrlBaseUrlResolver
 {
     private final ContentService contentService;
 
-    private final ApiUrlGeneratorParams params;
+    private final String application;
 
-    ApiUrlBaseUrlResolver( final ContentService contentService, final ApiUrlGeneratorParams params )
+    private final String api;
+
+    private final String baseUrl;
+
+    private final String urlType;
+
+    ApiUrlBaseUrlResolver( final Builder builder )
     {
-        this.contentService = contentService;
-        this.params = params;
+        this.contentService = Objects.requireNonNull( builder.contentService, "ContentService must be set" );
+        this.application = Objects.requireNonNull( builder.application, "Application must be set" );
+        this.api = Objects.requireNonNull( builder.api, "apiKey must be set" );
+        this.baseUrl = builder.baseUrl;
+        this.urlType = builder.urlType;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
+    }
+
+    static final class Builder
+    {
+        private ContentService contentService;
+
+        private String application;
+
+        private String api;
+
+        private String baseUrl;
+
+        private String urlType;
+
+        Builder setContentService( final ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
+        }
+
+        Builder setApplication( final String application )
+        {
+            this.application = application;
+            return this;
+        }
+
+        Builder setApi( final String api )
+        {
+            this.api = api;
+            return this;
+        }
+
+        Builder setBaseUrl( final String baseUrl )
+        {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        Builder setUrlType( final String urlType )
+        {
+            this.urlType = urlType;
+            return this;
+        }
+
+        ApiUrlBaseUrlResolver build()
+        {
+            return new ApiUrlBaseUrlResolver( this );
+        }
     }
 
     @Override
@@ -34,17 +95,15 @@ final class ApiUrlBaseUrlResolver
 
         final StringBuilder url = new StringBuilder( generateBaseUrlPrefix( portalRequest ) );
 
-        final String application = Objects.requireNonNull( params.getApplication().get(), "Application must be set" );
+        UrlBuilderHelper.appendPart( url, application + ":" + api );
 
-        UrlBuilderHelper.appendPart( url, application + ":" + params.getApi() );
-
-        if ( params.getBaseUrl() != null )
+        if ( baseUrl != null )
         {
             return url.toString();
         }
         else if ( portalRequest != null && !portalRequest.getBaseUri().isEmpty() )
         {
-            return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getUrlType(), url.toString() );
+            return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
         }
         else
         {
@@ -56,9 +115,9 @@ final class ApiUrlBaseUrlResolver
     {
         final StringBuilder url = new StringBuilder();
 
-        if ( params.getBaseUrl() != null )
+        if ( baseUrl != null )
         {
-            url.append( params.getBaseUrl() );
+            url.append( baseUrl );
             UrlBuilderHelper.appendPart( url, "_" );
         }
         else if ( portalRequest == null || portalRequest.getBaseUri().isEmpty() || portalRequest.getBaseUri().startsWith( "/api/" ) )
