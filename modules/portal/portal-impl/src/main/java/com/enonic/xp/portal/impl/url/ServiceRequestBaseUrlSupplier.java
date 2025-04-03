@@ -1,15 +1,15 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.BaseUrlStrategy;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
-final class ServiceRequestBaseUrlStrategy
-    implements BaseUrlStrategy
+final class ServiceRequestBaseUrlSupplier
+    implements Supplier<String>
 {
     private final PortalRequest portalRequest;
 
@@ -17,7 +17,7 @@ final class ServiceRequestBaseUrlStrategy
 
     private final ContextPathType contextPathType;
 
-    private ServiceRequestBaseUrlStrategy( final Builder builder )
+    private ServiceRequestBaseUrlSupplier( final Builder builder )
     {
         this.portalRequest = Objects.requireNonNull( builder.portalRequest );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
@@ -25,7 +25,7 @@ final class ServiceRequestBaseUrlStrategy
     }
 
     @Override
-    public String generateBaseUrl()
+    public String get()
     {
         final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -76,9 +76,9 @@ final class ServiceRequestBaseUrlStrategy
             return this;
         }
 
-        public ServiceRequestBaseUrlStrategy build()
+        public ServiceRequestBaseUrlSupplier build()
         {
-            return new ServiceRequestBaseUrlStrategy( this );
+            return new ServiceRequestBaseUrlSupplier( this );
         }
     }
 }

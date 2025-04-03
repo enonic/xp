@@ -53,12 +53,9 @@ public class PortalUrlServiceImpl_imageUrlTest
     public void setUp()
     {
         this.contentService = mock( ContentService.class );
-        UrlGeneratorParamsAdapter urlGeneratorParamsAdapter =
-            new UrlGeneratorParamsAdapter( this.contentService, mock( ProjectService.class ) );
-
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 urlGeneratorParamsAdapter );
+                                                 mock( ProjectService.class ) );
 
         req = mock( HttpServletRequest.class );
 
@@ -83,7 +80,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -96,7 +93,7 @@ public class PortalUrlServiceImpl_imageUrlTest
         final String url =
             ContextBuilder.create().repositoryId( "com.enonic.cms.context-repo" ).build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -156,7 +153,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "baseUrl/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -174,7 +171,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -192,7 +189,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -218,10 +215,10 @@ public class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestInContextWithVirtualHost()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
-        portalRequest.setRawPath( "/api/app:api" );
+        portalRequest.setRawPath( "/api/app:api/path" );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/source" );
@@ -282,7 +279,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestInContextWithDefaultVirtualHost()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/app:api" );
@@ -378,7 +375,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/source" );
-        when( virtualHost.getTarget() ).thenReturn( "/api/media:image" );
+        when( virtualHost.getTarget() ).thenReturn( "/jax-rs" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
@@ -571,7 +568,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     void testImageUrl()
     {
         ImageUrlGeneratorParams params = ImageUrlGeneratorParams.create()
-            .setBaseUrlStrategy( () -> "baseUrl" )
+            .setBaseUrl( "baseUrl" )
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "project" ) )
             .setBranch( () -> Branch.from( "branch" ) )
@@ -580,7 +577,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/media:image/project:branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/project:branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
     }
 
     private Media mockMedia( String id, String name, String attachmentHash )

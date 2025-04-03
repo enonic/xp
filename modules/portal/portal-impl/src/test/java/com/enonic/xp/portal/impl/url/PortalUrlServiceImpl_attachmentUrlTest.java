@@ -54,12 +54,10 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     public void setUp()
     {
         this.contentService = mock( ContentService.class );
-        UrlGeneratorParamsAdapter urlGeneratorParamsAdapter =
-            new UrlGeneratorParamsAdapter( this.contentService, mock( ProjectService.class ) );
+
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
-                                                 mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 urlGeneratorParamsAdapter );
+                                                 mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ), mock( ProjectService.class ) );
 
         req = mock( HttpServletRequest.class );
 
@@ -84,7 +82,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -99,7 +97,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -157,7 +155,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "baseUrl/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
     }
 
     @Test
@@ -175,7 +173,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -193,7 +191,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/api/_/error/404?message=Not+Found." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -217,7 +215,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     void testWithNoSiteRequestInContextWithVirtualHost()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/app:api" );
@@ -279,7 +277,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     @Test
     void testWithNoSiteRequestInContextWithDefaultVirtualHost()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/app:api" );
@@ -562,7 +560,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     void testAttachmentUrl()
     {
         AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
-            .setBaseUrlStrategy( () -> "baseUrl" )
+            .setBaseUrl("baseUrl" )
             .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "project" ) )
             .setBranch( () -> Branch.from( "branch" ) )
@@ -571,7 +569,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.service.attachmentUrl( params );
 
-        assertEquals( "baseUrl/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
+        assertEquals( "baseUrl/_/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
     }
 
     private Media mockMedia( String id, String name )
