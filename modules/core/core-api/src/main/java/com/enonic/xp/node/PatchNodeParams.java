@@ -7,11 +7,10 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class PatchNodeParams
+public final class PatchNodeParams
 {
     private final NodeId id;
 
@@ -32,24 +31,12 @@ public class PatchNodeParams
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
         this.refresh = builder.refresh;
-        branches = Branches.from( builder.branches.build() );
+        this.branches = Branches.from( builder.branches.build() );
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public static PatchNodeParams from( final UpdateNodeParams params )
-    {
-        return PatchNodeParams.create()
-            .id( params.getId() )
-            .path( params.getPath() )
-            .editor( params.getEditor() )
-            .setBinaryAttachments( params.getBinaryAttachments() )
-            .refresh( params.getRefresh() )
-            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
-            .build();
     }
 
     public BinaryAttachments getBinaryAttachments()
@@ -70,12 +57,6 @@ public class PatchNodeParams
     public NodeEditor getEditor()
     {
         return editor;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public RefreshMode getRefresh()

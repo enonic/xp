@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -464,7 +465,7 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final PatchNodeResult result = PatchNodeCommand.create().params( PatchNodeParams.from( params ) ).
+        final PatchNodeResult result = PatchNodeCommand.create().params( convertUpdateParams( params ) ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
@@ -1258,5 +1259,17 @@ public class NodeServiceImpl
                 throw new BranchNotFoundException( branch );
             }
         } );
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 }

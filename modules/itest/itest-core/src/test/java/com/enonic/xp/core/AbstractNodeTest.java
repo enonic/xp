@@ -340,8 +340,7 @@ public abstract class AbstractNodeTest
 
     protected Node updateNode( final UpdateNodeParams updateNodeParams )
     {
-        return PatchNodeCommand.create()
-            .params( PatchNodeParams.from( updateNodeParams ) )
+        return PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) )
             .indexServiceInternal( this.indexServiceInternal )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
@@ -349,6 +348,18 @@ public abstract class AbstractNodeTest
             .build()
             .execute()
             .getResult( ContextAccessor.current().getBranch() );
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 
     protected Node createNode( final NodePath parent, final String name )

@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -177,7 +178,7 @@ public class RepositoryEntryServiceImpl
     private Repository updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
         final Node updatedNode =
-            createContext().callWith( () -> PatchNodeCommand.create().params( PatchNodeParams.from( updateNodeParams ) ).
+            createContext().callWith( () -> PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -207,5 +208,17 @@ public class RepositoryEntryServiceImpl
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 }
