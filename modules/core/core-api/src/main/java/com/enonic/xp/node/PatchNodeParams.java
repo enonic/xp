@@ -150,7 +150,7 @@ public final class PatchNodeParams
         {
             if ( this.id == null && this.path == null )
             {
-                throw new NullPointerException( "id and path cannot be both null" );
+                throw new IllegalArgumentException("id and path cannot be both null");
             }
             Preconditions.checkNotNull( this.editor, "editor cannot be null" );
         }
