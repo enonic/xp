@@ -38,9 +38,9 @@ public class Activator
     private static class LoggerAdminServiceTracker
         extends ServiceTracker<LoggerAdmin, LogReaderServiceTracker>
     {
-        private final BundleContext bundleContext;
+        final BundleContext bundleContext;
 
-        public LoggerAdminServiceTracker( final BundleContext bundleContext )
+        LoggerAdminServiceTracker( final BundleContext bundleContext )
         {
             super( bundleContext, LoggerAdmin.class, null );
             this.bundleContext = bundleContext;
@@ -70,9 +70,9 @@ public class Activator
     private static class LogReaderServiceTracker
         extends ServiceTracker<LogReaderService, SimpleEntry<LogReaderService, LogbackLogListener>>
     {
-        private final LoggerAdmin loggerAdmin;
+        final LoggerAdmin loggerAdmin;
 
-        public LogReaderServiceTracker( final BundleContext context, final LoggerAdmin loggerAdmin )
+        LogReaderServiceTracker( final BundleContext context, final LoggerAdmin loggerAdmin )
         {
             super( context, LogReaderService.class, null );
             this.loggerAdmin = loggerAdmin;
