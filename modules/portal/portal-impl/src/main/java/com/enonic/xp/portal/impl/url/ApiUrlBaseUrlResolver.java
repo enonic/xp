@@ -18,7 +18,7 @@ final class ApiUrlBaseUrlResolver
 {
     private final ContentService contentService;
 
-    private final String application;
+    private final Supplier<String> application;
 
     private final String api;
 
@@ -44,7 +44,7 @@ final class ApiUrlBaseUrlResolver
     {
         private ContentService contentService;
 
-        private String application;
+        private Supplier<String> application;
 
         private String api;
 
@@ -58,9 +58,15 @@ final class ApiUrlBaseUrlResolver
             return this;
         }
 
-        Builder setApplication( final String application )
+        Builder setApplication( final Supplier<String> application )
         {
             this.application = application;
+            return this;
+        }
+
+        Builder setApplication( final String application )
+        {
+            this.application = () -> application;
             return this;
         }
 
@@ -95,7 +101,9 @@ final class ApiUrlBaseUrlResolver
 
         final StringBuilder url = new StringBuilder( generateBaseUrlPrefix( portalRequest ) );
 
-        UrlBuilderHelper.appendPart( url, application + ":" + api );
+        final String applicationKey = Objects.requireNonNull( application.get(), "Application must be set" );
+
+        UrlBuilderHelper.appendPart( url, applicationKey + ":" + api );
 
         if ( baseUrl != null )
         {

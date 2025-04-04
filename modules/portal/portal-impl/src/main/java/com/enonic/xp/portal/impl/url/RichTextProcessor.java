@@ -24,6 +24,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
+import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
@@ -86,6 +87,10 @@ public class RichTextProcessor
 
     private final MacroService macroService;
 
+    private Supplier<Map<String, ImageStyle>> imageStylesSupplier;
+
+    private Supplier<String> imageBaseUrlSupplier;
+
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                               final MacroService macroService, final ContentService contentService )
     {
@@ -95,8 +100,7 @@ public class RichTextProcessor
         this.contentService = contentService;
     }
 
-    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params,
-                                           Supplier<Map<String, ImageStyle>> imageStylesSupplier, HtmlElementPostProcessor postProcessor )
+    private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
     {
         final Matcher contentMatcher = PATTERN.matcher( getLinkValue( element ) );
 
@@ -116,7 +120,7 @@ public class RichTextProcessor
                 }
                 case IMAGE_TYPE:
                 {
-                    defaultImageProcessing( element, params, id, urlParamsString, imageStylesSupplier, postProcessor );
+                    defaultImageProcessing( element, params, id, urlParamsString, postProcessor );
                     break;
                 }
                 case MEDIA_TYPE:
@@ -132,11 +136,9 @@ public class RichTextProcessor
         }
     }
 
-    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, Supplier<Map<String, ImageStyle>> imageStylesSupplier,
-                                    HtmlElementPostProcessor postProcessor )
+    private void defaultProcessing( HtmlDocument document, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
     {
-        document.select( "[href],[src]" )
-            .forEach( element -> defaultElementProcessing( element, params, imageStylesSupplier, postProcessor ) );
+        document.select( "[href],[src]" ).forEach( element -> defaultElementProcessing( element, params, postProcessor ) );
     }
 
     public String process( final ProcessHtmlParams params )
@@ -146,45 +148,36 @@ public class RichTextProcessor
             return "";
         }
 
-        final Supplier<Map<String, ImageStyle>> imageStylesSupplier = Suppliers.memoize( () -> {
+        this.imageStylesSupplier = Suppliers.memoize( () -> {
             final StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
                 ? params.getCustomStyleDescriptorsCallback().get()
                 : getStyleDescriptors( params.getPortalRequest() );
             return getImageStyleMap( styleDescriptors );
         } );
 
-        final Supplier<String> imageBaseUrlSupplier = Suppliers.memoize( () -> ApiUrlBaseUrlResolver.create()
-            .setContentService( contentService )
-            .setApplication( "media" )
-            .setApi( "image" )
-            .setBaseUrl( params.getBaseUrl() )
-            .setUrlType( params.getType() )
-            .build()
-            .get() );
-
-        final Supplier<String> attachmentBaseUrlSupplier = Suppliers.memoize( () -> ApiUrlBaseUrlResolver.create()
-            .setContentService( contentService )
-            .setApplication( "media" )
-            .setApi( "attachment" )
-            .setBaseUrl( params.getBaseUrl() )
-            .setUrlType( params.getType() )
-            .build()
-            .get() );
+        this.imageBaseUrlSupplier = Suppliers.memoize( () -> {
+            final ApiUrlGeneratorParams apiParams = ApiUrlGeneratorParams.create()
+                .setUrlType( params.getType() )
+                .setBaseUrl( params.getBaseUrl() )
+                .setApplication( "media" )
+                .setApi( "image" )
+                .build();
+            return portalUrlService.apiUrl( apiParams );
+        } );
 
         final HtmlDocument document = HtmlParser.parse( params.getValue() );
         if ( params.getCustomHtmlProcessor() == null )
         {
-            defaultProcessing( document, params, imageStylesSupplier, null );
+            defaultProcessing( document, params, null );
         }
         else
         {
             final String html = params.getCustomHtmlProcessor()
                 .apply( HtmlProcessorParams.create()
                             .htmlDocument( document )
-                            .defaultProcessor( postProcessor -> defaultProcessing( document, params, imageStylesSupplier, postProcessor ) )
+                            .defaultProcessor( postProcessor -> defaultProcessing( document, params, postProcessor ) )
                             .defaultElementProcessor(
-                                ( htmlElement, postProcessor ) -> defaultElementProcessing( htmlElement, params, imageStylesSupplier,
-                                                                                            postProcessor ) )
+                                ( htmlElement, postProcessor ) -> defaultElementProcessing( htmlElement, params, postProcessor ) )
                             .build() );
             if ( !params.isProcessMacros() )
             {
@@ -219,7 +212,7 @@ public class RichTextProcessor
     }
 
     private void defaultImageProcessing( HtmlElement element, ProcessHtmlParams params, String id, String urlParamsString,
-                                         Supplier<Map<String, ImageStyle>> imageStylesSupplier, HtmlElementPostProcessor callback )
+                                         HtmlElementPostProcessor callback )
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
@@ -231,6 +224,7 @@ public class RichTextProcessor
 
         imageLinkProcessor.contentService = contentService;
         imageLinkProcessor.portalUrlService = portalUrlService;
+        imageLinkProcessor.baseUrlSupplier = imageBaseUrlSupplier;
         imageLinkProcessor.params = params;
         imageLinkProcessor.element = element;
         imageLinkProcessor.imageStyle = imageStyle;

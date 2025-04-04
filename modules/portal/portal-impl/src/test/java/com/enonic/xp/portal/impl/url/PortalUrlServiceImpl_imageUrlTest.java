@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +66,7 @@ public class PortalUrlServiceImpl_imageUrlTest
         PortalRequestAccessor.set( portalRequest );
     }
 
-    @Test
+    @AfterEach
     public void destroy()
     {
         PortalRequestAccessor.remove();

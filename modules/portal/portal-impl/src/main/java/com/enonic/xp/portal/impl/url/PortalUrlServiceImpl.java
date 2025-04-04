@@ -382,7 +382,7 @@ public final class PortalUrlServiceImpl
                              .setContentService( contentService )
                              .setApi( params.getApi() )
                              .setBaseUrl( params.getBaseUrl() )
-                             .setApplication( params.getApplication().get() )
+                             .setApplication( params.getApplication() )
                              .setUrlType( params.getUrlType() )
                              .build() )
             .setPath( params.getPath() )

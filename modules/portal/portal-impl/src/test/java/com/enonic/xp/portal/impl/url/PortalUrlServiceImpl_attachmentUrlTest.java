@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,9 +56,9 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
-                                                 mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ), mock( ProjectService.class ) );
+                                                 mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
+                                                 mock( ProjectService.class ) );
 
         req = mock( HttpServletRequest.class );
 
@@ -67,7 +68,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         PortalRequestAccessor.set( portalRequest );
     }
 
-    @Test
+    @AfterEach
     public void destroy()
     {
         PortalRequestAccessor.remove();
@@ -271,7 +272,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+                      url );
     }
 
     @Test
@@ -303,7 +305,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .callWith( () -> this.service.attachmentUrl( params ) );
 
         assertEquals(
-            "http://localhost/api/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+            "http://localhost/api/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+            url );
     }
 
     @Test
@@ -325,8 +328,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "/webapp/myapp/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
-                      url );
+        assertEquals(
+            "/webapp/myapp/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
     }
 
     @Test
@@ -357,7 +360,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "/source/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals( "/source/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+                      url );
     }
 
     @Test
@@ -553,14 +557,15 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
+                      url );
     }
 
     @Test
     void testAttachmentUrl()
     {
         AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
-            .setBaseUrl("baseUrl" )
+            .setBaseUrl( "baseUrl" )
             .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "project" ) )
             .setBranch( () -> Branch.from( "branch" ) )

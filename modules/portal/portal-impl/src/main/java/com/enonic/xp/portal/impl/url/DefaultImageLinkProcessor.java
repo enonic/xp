@@ -35,6 +35,8 @@ final class DefaultImageLinkProcessor
 
     PortalUrlService portalUrlService;
 
+    Supplier<String> baseUrlSupplier;
+
     ProcessHtmlParams params;
 
     HtmlElement element;
@@ -47,15 +49,6 @@ final class DefaultImageLinkProcessor
 
     void process()
     {
-        final Supplier<String> baseUrlSupplier = Suppliers.memoize( () -> ApiUrlBaseUrlResolver.create()
-            .setContentService( contentService )
-            .setApplication( "media" )
-            .setApi( "image" )
-            .setBaseUrl( params.getBaseUrl() )
-            .setUrlType( params.getType() )
-            .build()
-            .get() );
-
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         queryParamsStrategy.putNotNull( "filter", imageStyle == null ? null : imageStyle.getFilter() );
 
