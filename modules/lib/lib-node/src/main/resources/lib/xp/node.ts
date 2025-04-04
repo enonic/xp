@@ -231,7 +231,7 @@ interface MultiRepoNodeHandler {
 interface NodeHandler {
     create<NodeData>(node: ScriptValue): Node<NodeData>;
 
-    modify<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
+    update<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
 
     setChildOrder<NodeData>(key: string, childOrder: string): Node<NodeData>;
 
@@ -277,7 +277,15 @@ interface NodeHandler {
 
 export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & NodeData;
 
+/**
+ * @deprecated Use ModifyNodeParams instead
+ */
 export interface ModifyNodeParams<NodeData = unknown> {
+    key: string;
+    editor: (node: Node<NodeData>) => ModifiedNode<NodeData>;
+}
+
+export interface UpdateNodeParams<NodeData = unknown> {
     key: string;
     editor: (node: Node<NodeData>) => ModifiedNode<NodeData>;
 }
@@ -611,7 +619,7 @@ export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 export interface RepoConnection {
     create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
 
-    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData>;
+    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData>;
 
     get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
 
@@ -697,9 +705,25 @@ class RepoConnectionImpl
     }
 
     /**
-     * This function modifies a node.
+     * This function updates a node.
      *
-     * @example-ref examples/node/modify.js
+     * @example-ref examples/node/update.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {object} Updated node as JSON.
+     */
+    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData> {
+        checkRequired(params, 'key');
+
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+    }
+
+    /**
+     * @deprecated Use update instead
+     * This function modifies a node.
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.key Path or id to the node.
@@ -710,7 +734,7 @@ class RepoConnectionImpl
     modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
         checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.modify(__.toScriptValue(params.editor), params.key));
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
     }
 
     get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;

@@ -13,11 +13,11 @@ import com.enonic.xp.util.GeoPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ModifyNodeExecutorTest
+public class UpdateNodeExecutorTest
 {
 
     @Test
-    public void modify_user_properties()
+    public void update_user_properties()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -36,7 +36,7 @@ public class ModifyNodeExecutorTest
 
         final PropertyTree updateScript = createUpdateScript();
 
-        ModifyNodeExecutor.create().
+        UpdateNodeExecutor.create().
             editableNode( editableNode ).
             propertyTree( updateScript ).
             build().
@@ -70,7 +70,7 @@ public class ModifyNodeExecutorTest
         final PropertyTree updateScript = new PropertyTree();
         updateScript.setString( "_childOrder", ChildOrder.reverseManualOrder().toString() );
 
-        ModifyNodeExecutor.create().
+        UpdateNodeExecutor.create().
             editableNode( editableNode ).
             propertyTree( updateScript ).
             build().
@@ -96,7 +96,7 @@ public class ModifyNodeExecutorTest
 
         final PropertyTree updateScript = new PropertyTree();
 
-        ModifyNodeExecutor.create().
+        UpdateNodeExecutor.create().
             editableNode( editableNode ).
             propertyTree( updateScript ).
             build().
