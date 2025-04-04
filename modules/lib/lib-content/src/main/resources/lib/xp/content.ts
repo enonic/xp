@@ -743,7 +743,7 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
 }
 
 /**
- * This function modifies a content.
+ * This function updates a content.
  *
  * @example-ref examples/content/update.js
  *
