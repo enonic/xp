@@ -122,12 +122,6 @@ public final class PatchNodeParams
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;
