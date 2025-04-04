@@ -278,7 +278,7 @@ interface NodeHandler {
 export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & NodeData;
 
 /**
- * @deprecated Use ModifyNodeParams instead
+ * @deprecated Use {@link UpdateNodeParams} instead
  */
 export interface ModifyNodeParams<NodeData = unknown> {
     key: string;
@@ -705,6 +705,22 @@ class RepoConnectionImpl
     }
 
     /**
+     * @deprecated Use {@link update} instead
+     * This function modifies a node.
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {object} Modified node as JSON.
+     */
+    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
+        checkRequired(params, 'key');
+
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+    }
+
+    /**
      * This function updates a node.
      *
      * @example-ref examples/node/update.js
@@ -716,22 +732,6 @@ class RepoConnectionImpl
      * @returns {object} Updated node as JSON.
      */
     update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData> {
-        checkRequired(params, 'key');
-
-        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
-    }
-
-    /**
-     * @deprecated Use update instead
-     * This function modifies a node.
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key Path or id to the node.
-     * @param {function} params.editor Editor callback function.
-     *
-     * @returns {object} Modified node as JSON.
-     */
-    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));

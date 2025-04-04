@@ -17,7 +17,7 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 
-public class ModifyMediaHandler
+public class UpdateMediaHandler
     extends BaseContextHandler
 {
     private String key;
