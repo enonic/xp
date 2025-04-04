@@ -12,12 +12,12 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.CompareNodeCommand;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -207,12 +207,12 @@ public class CompareNodeCommandTest
 
     private Node doUpdateNode( final Node createdNode )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( createdNode.id() ).
             editor( editableNode -> editableNode.manualOrderValue = 10L ).
             build();
 
-        return UpdateNodeCommand.create().
+        return PatchNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).

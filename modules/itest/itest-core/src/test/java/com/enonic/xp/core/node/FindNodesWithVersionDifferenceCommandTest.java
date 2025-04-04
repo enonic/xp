@@ -12,11 +12,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.FindNodesWithVersionDifferenceCommand;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -341,12 +341,12 @@ public class FindNodesWithVersionDifferenceCommandTest
 
     private Node doUpdateNode( final Node node )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( node.id() ).
             editor( editableNode -> editableNode.manualOrderValue = 10L ).
             build();
 
-        return UpdateNodeCommand.create().
+        return PatchNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).

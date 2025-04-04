@@ -22,14 +22,14 @@ import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -97,9 +97,9 @@ class RenameContentCommandTest
         mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
 
         when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
-        final ModifyNodeResult modifyResult = mock( ModifyNodeResult.class );
-        when( modifyResult.getNodeId() ).thenReturn( mockNode.id() );
-        when( nodeService.modify( isA( UpdateNodeParams.class ) ) ).thenReturn( modifyResult );
+        final PatchNodeResult patchNodeResult = mock( PatchNodeResult.class );
+        when( patchNodeResult.getNodeId() ).thenReturn( mockNode.id() );
+        when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( patchNodeResult );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
     }
@@ -118,7 +118,7 @@ class RenameContentCommandTest
 
         createCommand( params ).execute();
 
-        verify( nodeService, times( 1 ) ).modify( isA( UpdateNodeParams.class ) );
+        verify( nodeService, times( 1 ) ).patch( isA( PatchNodeParams.class ) );
     }
 
     @Test
@@ -178,7 +178,8 @@ class RenameContentCommandTest
         return Content.create()
             .id( ContentId.from( "testId" ) )
             .path( "/mycontent" )
-            .creator( PrincipalKey.from( "user:system:anonymous" ) ).modifier( PrincipalKey.from( "user:system:anonymous" ) )
+            .creator( PrincipalKey.from( "user:system:anonymous" ) )
+            .modifier( PrincipalKey.from( "user:system:anonymous" ) )
             .type( ContentTypeName.folder() )
             .data( new PropertyTree() )
             .valid( valid )

@@ -12,9 +12,9 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.node.GetActiveNodeVersionsCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -80,12 +80,12 @@ public class GetActiveNodeVersionsCommandTest
 
     private void updateNode( final Node node, Context context )
     {
-        UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( node.id() ).
             editor( toBeEdited -> toBeEdited.data.setString( "myString", "edit" ) ).
             build();
 
-        context.runWith( () -> UpdateNodeCommand.create().
+        context.runWith( () -> PatchNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
