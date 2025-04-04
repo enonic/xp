@@ -13,15 +13,15 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodeEntry;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
@@ -29,14 +29,14 @@ import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
-public final class UpdateNodeCommand
+public final class PatchNodeCommand
     extends AbstractNodeCommand
 {
-    private final UpdateNodeParams params;
+    private final PatchNodeParams params;
 
     private final BinaryService binaryService;
 
-    private UpdateNodeCommand( final Builder builder )
+    private PatchNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -53,14 +53,14 @@ public final class UpdateNodeCommand
         return new Builder( source );
     }
 
-    public ModifyNodeResult execute()
+    public PatchNodeResult execute()
     {
-        return doModifyNode();
+        return doPatchNode();
     }
 
-    private ModifyNodeResult doModifyNode()
+    private PatchNodeResult doPatchNode()
     {
-        final ModifyNodeResult.Builder result = ModifyNodeResult.create().nodeId( params.getId() );
+        final PatchNodeResult.Builder result = PatchNodeResult.create().nodeId( params.getId() );
 
         final Branches branches =
             params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
@@ -182,7 +182,7 @@ public final class UpdateNodeCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private UpdateNodeParams params;
+        private PatchNodeParams params;
 
         private BinaryService binaryService;
 
@@ -196,7 +196,7 @@ public final class UpdateNodeCommand
             super( source );
         }
 
-        public Builder params( final UpdateNodeParams params )
+        public Builder params( final PatchNodeParams params )
         {
             this.params = params;
             return this;
@@ -217,10 +217,10 @@ public final class UpdateNodeCommand
                                          "Only one branch is allowed with path" );
         }
 
-        public UpdateNodeCommand build()
+        public PatchNodeCommand build()
         {
             this.validate();
-            return new UpdateNodeCommand( this );
+            return new PatchNodeCommand( this );
         }
     }
 

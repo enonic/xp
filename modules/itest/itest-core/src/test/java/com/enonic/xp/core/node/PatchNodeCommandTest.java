@@ -20,12 +20,13 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class ModifyNodeCommandTest
+public class PatchNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -62,13 +63,13 @@ public class ModifyNodeCommandTest
 
         final Node node = createNode( CreateNodeParams.create().name( "myNode" ).data( data ).parent( NodePath.ROOT ).build() );
 
-        nodeService.modify( UpdateNodeParams.create()
-                                .id( node.id() )
-                                .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
-                                .editor( toBeEdited -> {
-                                    toBeEdited.data.addString( "another", "stuff" );
-                                } )
-                                .build() );
+        nodeService.patch( PatchNodeParams.create()
+                               .id( node.id() )
+                               .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+                               .editor( toBeEdited -> {
+                                   toBeEdited.data.addString( "another", "stuff" );
+                               } )
+                               .build() );
 
         final Node modifiedNode = getNodeById( node.id() );
 
@@ -84,36 +85,36 @@ public class ModifyNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        Node modifiedNode = nodeService.modify(
-            UpdateNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
+        Node modifiedNode = nodeService.patch(
+            PatchNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
                 toBeEdited.data.addString( "another", "stuff" );
             } ).build() ).getResult( branch );
 
         assertNotEquals( createdNode.data(), modifiedNode.data() );
 
-        modifiedNode = nodeService.modify(
-            UpdateNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
+        modifiedNode = nodeService.patch(
+            PatchNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
                 toBeEdited.childOrder = ChildOrder.manualOrder();
             } ).build() ).getResult( branch );
 
         assertNotEquals( createdNode.getChildOrder(), modifiedNode.getChildOrder() );
 
-        modifiedNode = nodeService.modify(
-            UpdateNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
+        modifiedNode = nodeService.patch(
+            PatchNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
                 toBeEdited.indexConfigDocument = PatternIndexConfigDocument.create().defaultConfig( IndexConfig.FULLTEXT ).build();
             } ).build() ).getResult( branch );
 
         assertNotEquals( createdNode.getIndexConfigDocument(), modifiedNode.getIndexConfigDocument() );
 
-        modifiedNode = nodeService.modify(
-            UpdateNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
+        modifiedNode = nodeService.patch(
+            PatchNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
                 toBeEdited.manualOrderValue = -1L;
             } ).build() ).getResult( branch );
 
         assertNotEquals( createdNode.getManualOrderValue(), modifiedNode.getManualOrderValue() );
 
-        modifiedNode = nodeService.modify(
-            UpdateNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
+        modifiedNode = nodeService.patch(
+            PatchNodeParams.create().id( createdNode.id() ).addBranches( Branches.from( branch ) ).editor( toBeEdited -> {
                 toBeEdited.nodeType = NodeType.from( "NewType" );
             } ).build() ).getResult( branch );
 
@@ -140,13 +141,13 @@ public class ModifyNodeCommandTest
 
         pushNodes( RepositoryConstants.MASTER_BRANCH, createdNode.id() );
 
-        nodeService.modify( UpdateNodeParams.create()
-                                .id( createdNode.id() )
-                                .addBranches( Branches.from( branch, RepositoryConstants.MASTER_BRANCH ) )
-                                .editor( toBeEdited -> {
-                                    toBeEdited.data.addString( "another", "stuff" );
-                                } )
-                                .build() );
+        nodeService.patch( PatchNodeParams.create()
+                               .id( createdNode.id() )
+                               .addBranches( Branches.from( branch, RepositoryConstants.MASTER_BRANCH ) )
+                               .editor( toBeEdited -> {
+                                   toBeEdited.data.addString( "another", "stuff" );
+                               } )
+                               .build() );
 
         verify( eventPublisher, atLeastOnce() ).publish( captor.capture() );
 
@@ -179,14 +180,14 @@ public class ModifyNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final ModifyNodeResult result = nodeService.modify( UpdateNodeParams.create()
-                                                                .id( createdNode.id() )
-                                                                .addBranches( Branches.from( ContextAccessor.current().getBranch(),
-                                                                                             RepositoryConstants.MASTER_BRANCH ) )
-                                                                .editor( toBeEdited -> {
-                                                                    toBeEdited.data.addString( "another", "stuff" );
-                                                                } )
-                                                                .build() );
+        final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
+                                                              .id( createdNode.id() )
+                                                              .addBranches( Branches.from( ContextAccessor.current().getBranch(),
+                                                                                           RepositoryConstants.MASTER_BRANCH ) )
+                                                              .editor( toBeEdited -> {
+                                                                  toBeEdited.data.addString( "another", "stuff" );
+                                                              } )
+                                                              .build() );
 
         assertNotNull( result.getResult( branch ) );
         assertEquals( createdNode.id(), result.getNodeId() );
@@ -202,13 +203,13 @@ public class ModifyNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final ModifyNodeResult result = nodeService.modify( UpdateNodeParams.create()
-                                                                .id( createdNode.id() )
-                                                                .addBranches( Branches.from( branch, RepositoryConstants.MASTER_BRANCH ) )
-                                                                .editor( toBeEdited -> {
-                                                                    toBeEdited.data.addString( "another", "stuff" );
-                                                                } )
-                                                                .build() );
+        final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
+                                                              .id( createdNode.id() )
+                                                              .addBranches( Branches.from( branch, RepositoryConstants.MASTER_BRANCH ) )
+                                                              .editor( toBeEdited -> {
+                                                                  toBeEdited.data.addString( "another", "stuff" );
+                                                              } )
+                                                              .build() );
 
         assertEquals( result.getResult( branch ), result.getResult( RepositoryConstants.MASTER_BRANCH ) );
     }
@@ -226,13 +227,13 @@ public class ModifyNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final ModifyNodeResult result = nodeService.modify( UpdateNodeParams.create()
-                                                                .id( createdNode.id() )
-                                                                .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-                                                                .editor( toBeEdited -> {
-                                                                    toBeEdited.data.addString( "another", "stuff2" );
-                                                                } )
-                                                                .build() );
+        final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
+                                                              .id( createdNode.id() )
+                                                              .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                                              .editor( toBeEdited -> {
+                                                                  toBeEdited.data.addString( "another", "stuff2" );
+                                                              } )
+                                                              .build() );
 
         assertNotEquals( result.getResult( branch ), result.getResult( RepositoryConstants.MASTER_BRANCH ) );
     }
@@ -240,15 +241,15 @@ public class ModifyNodeCommandTest
     @Test
     public void modify_not_existing()
     {
-        assertThrows( NodeNotFoundException.class, () -> nodeService.modify( UpdateNodeParams.create()
-                                                                                 .id( NodeId.from( "non-existing" ) )
-                                                                                 .addBranches(
-                                                                                     Branches.from( ContextAccessor.current().getBranch(),
-                                                                                                    RepositoryConstants.MASTER_BRANCH ) )
-                                                                                 .editor( toBeEdited -> {
-                                                                                     toBeEdited.data.addString( "another", "stuff2" );
-                                                                                 } )
-                                                                                 .build() ) );
+        assertThrows( NodeNotFoundException.class, () -> nodeService.patch( PatchNodeParams.create()
+                                                                                .id( NodeId.from( "non-existing" ) )
+                                                                                .addBranches(
+                                                                                    Branches.from( ContextAccessor.current().getBranch(),
+                                                                                                   RepositoryConstants.MASTER_BRANCH ) )
+                                                                                .editor( toBeEdited -> {
+                                                                                    toBeEdited.data.addString( "another", "stuff2" );
+                                                                                } )
+                                                                                .build() ) );
     }
 
     @Test
@@ -286,15 +287,15 @@ public class ModifyNodeCommandTest
         final Context userContext =
             ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().user( User.ANONYMOUS ).build() ).build();
 
-        final ModifyNodeResult result = userContext.callWith( () -> nodeService.modify( UpdateNodeParams.create()
-                                                                                            .id( createdNode.id() )
-                                                                                            .addBranches( Branches.from( branch,
-                                                                                                                         RepositoryConstants.MASTER_BRANCH ) )
-                                                                                            .editor( toBeEdited -> {
-                                                                                                toBeEdited.data.addString( "another",
-                                                                                                                           "stuff2" );
-                                                                                            } )
-                                                                                            .build() ) );
+        final PatchNodeResult result = userContext.callWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                                                          .id( createdNode.id() )
+                                                                                          .addBranches( Branches.from( branch,
+                                                                                                                       RepositoryConstants.MASTER_BRANCH ) )
+                                                                                          .editor( toBeEdited -> {
+                                                                                              toBeEdited.data.addString( "another",
+                                                                                                                         "stuff2" );
+                                                                                          } )
+                                                                                          .build() ) );
 
         assertEquals( "stuff2", result.getResult( branch ).data().getString( "another" ) );
         assertNull( result.getResult( RepositoryConstants.MASTER_BRANCH ) );

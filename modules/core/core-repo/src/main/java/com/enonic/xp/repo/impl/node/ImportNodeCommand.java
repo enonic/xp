@@ -13,8 +13,8 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -128,7 +128,7 @@ public class ImportNodeCommand
 
     private Node updateNode( final Node existingNode )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create()
             .id( existingNode.id() )
             .setBinaryAttachments( this.binaryAttachments )
             .editor( editableNode -> {
@@ -137,7 +137,7 @@ public class ImportNodeCommand
             .refresh( RefreshMode.ALL )
             .build();
 
-        final Node updatedNode = UpdateNodeCommand.create( this )
+        final Node updatedNode = PatchNodeCommand.create( this )
             .params( updateNodeParams )
             .binaryService( binaryService )
             .build()

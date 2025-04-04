@@ -42,12 +42,12 @@ import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -116,7 +116,7 @@ final class UpdateContentCommand
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
         }
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create()
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
@@ -130,7 +130,7 @@ final class UpdateContentCommand
             .build()
             .produce();
 
-        final ModifyNodeResult result = this.nodeService.modify( updateNodeParams );
+        final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
         return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
 

@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -17,6 +18,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -26,8 +28,8 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -175,8 +177,8 @@ public class RepositoryEntryServiceImpl
 
     private Repository updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
-        final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().
-            params( updateNodeParams ).
+        final Node updatedNode =
+            createContext().callWith( () -> PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -206,5 +208,17 @@ public class RepositoryEntryServiceImpl
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 }

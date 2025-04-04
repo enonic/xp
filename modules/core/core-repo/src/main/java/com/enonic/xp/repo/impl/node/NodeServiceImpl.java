@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -37,7 +38,6 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
-import com.enonic.xp.node.ModifyNodeResult;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
@@ -65,6 +65,8 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -459,13 +461,11 @@ public class NodeServiceImpl
         return createdNode;
     }
 
-    @Deprecated
     public Node update( final UpdateNodeParams params )
     {
         verifyContext();
 
-        final ModifyNodeResult result = UpdateNodeCommand.create().
-            params( params ).
+        final PatchNodeResult result = PatchNodeCommand.create().params( convertUpdateParams( params ) ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
@@ -486,11 +486,11 @@ public class NodeServiceImpl
     }
 
     @Override
-    public ModifyNodeResult modify( final UpdateNodeParams params )
+    public PatchNodeResult patch( final PatchNodeParams params )
     {
         verifyContext();
 
-        final ModifyNodeResult result = UpdateNodeCommand.create()
+        final PatchNodeResult result = PatchNodeCommand.create()
             .params( params )
             .indexServiceInternal( this.indexServiceInternal ).binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
@@ -1259,5 +1259,17 @@ public class NodeServiceImpl
                 throw new BranchNotFoundException( branch );
             }
         } );
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 }

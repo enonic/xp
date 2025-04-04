@@ -1,13 +1,16 @@
 package com.enonic.xp.node;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class UpdateNodeParams
+public final class PatchNodeParams
 {
     private final NodeId id;
 
@@ -19,23 +22,26 @@ public class UpdateNodeParams
 
     private final RefreshMode refresh;
 
-    private UpdateNodeParams( final Builder builder )
+    private final Branches branches;
+
+    private PatchNodeParams( final Builder builder )
     {
         this.id = builder.id;
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
         this.refresh = builder.refresh;
-    }
-
-    public BinaryAttachments getBinaryAttachments()
-    {
-        return binaryAttachments;
+        this.branches = Branches.from( builder.branches.build() );
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public BinaryAttachments getBinaryAttachments()
+    {
+        return binaryAttachments;
     }
 
     public NodeId getId()
@@ -53,19 +59,20 @@ public class UpdateNodeParams
         return editor;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public RefreshMode getRefresh()
     {
         return refresh;
     }
 
+    public Branches getBranches()
+    {
+        return branches;
+    }
+
     public static final class Builder
     {
+        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
+
         private NodeId id;
 
         private NodePath path;
@@ -115,29 +122,29 @@ public class UpdateNodeParams
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;
             return this;
         }
 
-        public UpdateNodeParams build()
+        public Builder addBranches( final Branches branches )
+        {
+            this.branches.addAll( branches );
+            return this;
+        }
+
+        public PatchNodeParams build()
         {
             this.validate();
-            return new UpdateNodeParams( this );
+            return new PatchNodeParams( this );
         }
 
         private void validate()
         {
             if ( this.id == null && this.path == null )
             {
-                throw new NullPointerException( "id and path cannot be both null" );
+                throw new IllegalArgumentException("id and path cannot be both null");
             }
             Preconditions.checkNotNull( this.editor, "editor cannot be null" );
         }
