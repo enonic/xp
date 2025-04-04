@@ -287,7 +287,7 @@ export interface ModifyNodeParams<NodeData = unknown> {
 
 export interface UpdateNodeParams<NodeData = unknown> {
     key: string;
-    editor: (node: Node<NodeData>) => ModifiedNode<NodeData>;
+    editor: (node: Node<NodeData>) => UpdatedNode<NodeData>;
 }
 
 export interface GetNodeParams {
@@ -600,7 +600,16 @@ export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _inheritsPermissions?: boolean;
 };
 
+/**
+ * @deprecated Use {@link NodePropertiesOnUpdate} instead
+ */
 export type NodePropertiesOnModify = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfigParams;
+    _parentPath?: never;
+};
+
+export type NodePropertiesOnUpdate = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
     _parentPath?: never;
@@ -612,7 +621,12 @@ export type NodePropertiesOnRead = CommonNodeProperties & {
     _parentPath?: never;
 };
 
+/**
+ * @deprecated Use {@link UpdatedNode} instead
+ */
 export type ModifiedNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
+
+export type UpdatedNode<Data = Record<string, unknown>> = NodePropertiesOnUpdate & Data;
 
 export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
