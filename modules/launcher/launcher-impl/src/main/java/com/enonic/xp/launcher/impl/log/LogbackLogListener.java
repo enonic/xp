@@ -27,7 +27,7 @@ public class LogbackLogListener
 
     private static final String LOG_SERVICE = "LogService";
 
-    private static final List<String> osgiLoggers = List.of( EVENTS_BUNDLE, EVENTS_FRAMEWORK, EVENTS_SERVICE, LOG_SERVICE );
+    private static final List<String> OSGI_LOGGERS = List.of( EVENTS_BUNDLE, EVENTS_FRAMEWORK, EVENTS_SERVICE, LOG_SERVICE );
 
     private final LoggerContext loggerContext;
 
@@ -42,38 +42,15 @@ public class LogbackLogListener
         final LevelChangePropagator levelChangePropagator = new LevelChangePropagator();
         levelChangePropagator.setResetJUL( true );
         this.loggerContext.addListener( levelChangePropagator );
+
         this.loggerContext.addListener( this );
-    }
-
-    private void updateLoggerContext( final LoggerContext context )
-    {
-        final Map<String, LogLevel> updatedLevels = osgiLoggerContext.getLogLevels();
-        updatedLevels.put( org.osgi.service.log.Logger.ROOT_LOGGER_NAME, toOsgiLogLevel( context.getLogger( Logger.ROOT_LOGGER_NAME ).getLevel() ) );
-
-        final List<Logger> loggerList = context.getLoggerList();
-
-        osgiLoggers.stream().map( context::getLogger ).filter( l -> l.getLevel() == null ).forEach( l -> {
-            updatedLevels.put( l.getName(), LogLevel.WARN );
-        } );
-
-        for ( Logger logger : loggerList )
-        {
-            updateLevel( updatedLevels, logger.getLevel(), logger.getName() );
-        }
-
-        this.osgiLoggerContext.setLogLevels( updatedLevels );
-    }
-
-    @Override
-    public boolean isResetResistant()
-    {
-        return true;
     }
 
     @Override
     public void logged( final LogEntry entry )
     {
         final String loggerName = entry.getLoggerName();
+
         if ( !osgiLoggerContext.getEffectiveLogLevel( loggerName ).implies( entry.getLogLevel() ) )
         {
             return;
@@ -118,20 +95,10 @@ public class LogbackLogListener
         this.osgiLoggerContext.setLogLevels( updatedLevels );
     }
 
-    private static void updateLevel( final Map<String, LogLevel> updatedLevels, final Level level, final String loggerName )
+    @Override
+    public boolean isResetResistant()
     {
-        if ( level == null )
-        {
-            return;
-        }
-        if ( level.toInt() == Level.OFF_INT )
-        {
-            updatedLevels.remove( loggerName );
-        }
-        else
-        {
-            updatedLevels.put( loggerName, toOsgiLogLevel( level ) );
-        }
+        return true;
     }
 
     @Override
@@ -148,6 +115,42 @@ public class LogbackLogListener
     public void onReset( final LoggerContext context )
     {
         updateLoggerContext( context );
+    }
+
+    private void updateLoggerContext( final LoggerContext context )
+    {
+        final Map<String, LogLevel> updatedLevels = osgiLoggerContext.getLogLevels();
+        updatedLevels.put( org.osgi.service.log.Logger.ROOT_LOGGER_NAME, toOsgiLogLevel( context.getLogger( Logger.ROOT_LOGGER_NAME ).getLevel() ) );
+
+        final List<Logger> loggerList = context.getLoggerList();
+
+        OSGI_LOGGERS.stream()
+            .map( context::getLogger )
+            .filter( l -> l.getLevel() == null )
+            .forEach( l -> updatedLevels.put( l.getName(), LogLevel.WARN ) );
+
+        for ( Logger logger : loggerList )
+        {
+            updateLevel( updatedLevels, logger.getLevel(), logger.getName() );
+        }
+
+        this.osgiLoggerContext.setLogLevels( updatedLevels );
+    }
+
+    private static void updateLevel( final Map<String, LogLevel> updatedLevels, final Level level, final String loggerName )
+    {
+        if ( level == null )
+        {
+            return;
+        }
+        if ( level.toInt() == Level.OFF_INT )
+        {
+            updatedLevels.remove( loggerName );
+        }
+        else
+        {
+            updatedLevels.put( loggerName, toOsgiLogLevel( level ) );
+        }
     }
 
     private static LogLevel toOsgiLogLevel( final Level level )
