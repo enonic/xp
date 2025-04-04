@@ -104,6 +104,12 @@ public final class ApiUrlGeneratorParams
             return this;
         }
 
+        public Builder setApplication( final String application )
+        {
+            this.application = () -> emptyToNull( application );
+            return this;
+        }
+
         public Builder setApi( final String api )
         {
             this.api = emptyToNull( api );

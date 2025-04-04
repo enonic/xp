@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
+import com.enonic.xp.portal.url.UrlGeneratorParams;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;

@@ -42,6 +42,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
@@ -123,7 +124,7 @@ public final class PortalUrlServiceImpl
             return url.toString();
         };
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
         return runWithAdminRole( () -> UrlGenerator.generateUrl( UrlGeneratorParams.create()
@@ -137,7 +138,7 @@ public final class PortalUrlServiceImpl
     public String baseUrl( final BaseUrlParams params )
     {
         final Supplier<String> baseUrlStrategy = new ContentBaseUrlSupplier( contentService, projectService, params );
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() ) );
+        return generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() );
     }
 
     @Override
@@ -145,11 +146,10 @@ public final class PortalUrlServiceImpl
     {
         final Supplier<String> baseUrlSupplier = new PageBaseUrlSupplier( contentService, projectService, params );
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl(
-            UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() ) );
+        return generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
     }
 
     @Override
@@ -162,14 +162,14 @@ public final class PortalUrlServiceImpl
 
         final Supplier<String> pathSupplier = new ComponentPathSupplier( componentPathSupplier );
 
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( UrlGeneratorParams.create()
-                                                                     .setBaseUrl( baseUrlSupplier )
-                                                                     .setPath( pathSupplier )
-                                                                     .setQueryString( queryParamsStrategy )
-                                                                     .build() ) );
+        return generateUrl( UrlGeneratorParams.create()
+                                .setBaseUrl( baseUrlSupplier )
+                                .setPath( pathSupplier )
+                                .setQueryString( queryParamsStrategy )
+                                .build() );
     }
 
     @Override
@@ -292,7 +292,7 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, macroService ).process( params );
+        return new RichTextProcessor( styleDescriptorService, this, macroService, contentService ).process( params );
     }
 
     @Override
@@ -374,14 +374,28 @@ public final class PortalUrlServiceImpl
     @Override
     public String apiUrl( final ApiUrlGeneratorParams params )
     {
-        final DefaultQueryParamsStrategy queryParamsStrategy = new DefaultQueryParamsStrategy();
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getQueryParams().forEach( queryParamsStrategy::putAll );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( UrlGeneratorParams.create()
-                                                                     .setBaseUrl( new ApiUrlBaseUrlResolver( contentService, params ) )
-                                                                     .setPath( params.getPath() )
-                                                                     .setQueryString( queryParamsStrategy )
-                                                                     .build() ) );
+        final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
+            .setBaseUrl( ApiUrlBaseUrlResolver.create()
+                             .setContentService( contentService )
+                             .setApi( params.getApi() )
+                             .setBaseUrl( params.getBaseUrl() )
+                             .setApplication( params.getApplication() )
+                             .setUrlType( params.getUrlType() )
+                             .build() )
+            .setPath( params.getPath() )
+            .setQueryString( queryParamsStrategy )
+            .build();
+
+        return generateUrl( generatorParams );
+    }
+
+    @Override
+    public String generateUrl( final UrlGeneratorParams params )
+    {
+        return runWithAdminRole( () -> UrlGenerator.generateUrl( params ) );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )

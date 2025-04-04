@@ -5,12 +5,12 @@ import java.util.function.Supplier;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
-final class DefaultQueryParamsStrategy
+final class DefaultQueryParamsSupplier
     implements Supplier<String>
 {
     private final Multimap<String, String> queryParams;
 
-    DefaultQueryParamsStrategy()
+    DefaultQueryParamsSupplier()
     {
         queryParams = LinkedListMultimap.create();
     }

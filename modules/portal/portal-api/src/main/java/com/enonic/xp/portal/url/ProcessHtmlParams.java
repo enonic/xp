@@ -29,6 +29,8 @@ public final class ProcessHtmlParams
 
     private boolean processMacros = true;
 
+    private String baseUrl;
+
     public String getValue()
     {
         return this.value;
@@ -95,15 +97,26 @@ public final class ProcessHtmlParams
         return this;
     }
 
+    public String getBaseUrl()
+    {
+        return baseUrl;
+    }
+
+    public ProcessHtmlParams baseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
+        return this;
+    }
+
     @Override
     public ProcessHtmlParams setAsMap( final Multimap<String, String> map )
     {
         super.setAsMap( map );
         value( singleValue( map, "_value" ) );
-        imageWidths( Objects.requireNonNullElse( map.removeAll( "_imageWidths" ), List.<String>of() ).
-            stream().
-            map( Integer::parseInt ).
-            collect( Collectors.toUnmodifiableList() ) );
+        imageWidths( Objects.requireNonNullElse( map.removeAll( "_imageWidths" ), List.<String>of() )
+                         .stream()
+                         .map( Integer::parseInt )
+                         .collect( Collectors.toUnmodifiableList() ) );
         imageSizes( singleValue( map, "_imageSizes" ) );
         getParams().putAll( map );
         return this;
