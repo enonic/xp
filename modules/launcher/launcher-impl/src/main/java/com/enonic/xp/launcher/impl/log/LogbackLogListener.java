@@ -1,9 +1,8 @@
 package com.enonic.xp.launcher.impl.log;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
@@ -28,31 +27,41 @@ public class LogbackLogListener
 
     private static final String LOG_SERVICE = "LogService";
 
-    private volatile LoggerContext loggerContext;
+    private static final List<String> osgiLoggers = List.of( EVENTS_BUNDLE, EVENTS_FRAMEWORK, EVENTS_SERVICE, LOG_SERVICE );
 
-    private volatile Logger rootLogger;
-
-    private final Map<String, LogLevel> initialLogLevels;
+    private final LoggerContext loggerContext;
 
     private final org.osgi.service.log.admin.LoggerContext osgiLoggerContext;
 
     public LogbackLogListener( final LoggerAdmin loggerAdmin )
     {
         this.osgiLoggerContext = loggerAdmin.getLoggerContext( null );
-        this.initialLogLevels = osgiLoggerContext.getLogLevels();
+        this.loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        updateLoggerContext( this.loggerContext );
 
-        setLoggerContext( (LoggerContext) LoggerFactory.getILoggerFactory() );
         final LevelChangePropagator levelChangePropagator = new LevelChangePropagator();
         levelChangePropagator.setResetJUL( true );
         this.loggerContext.addListener( levelChangePropagator );
         this.loggerContext.addListener( this );
     }
 
-    private void setLoggerContext( final LoggerContext context )
+    private void updateLoggerContext( final LoggerContext context )
     {
-        this.loggerContext = context;
-        this.rootLogger = context.getLogger( Logger.ROOT_LOGGER_NAME );
-        this.osgiLoggerContext.setLogLevels( updateLevels( context, initialLogLevels ) );
+        final Map<String, LogLevel> updatedLevels = osgiLoggerContext.getLogLevels();
+        updatedLevels.put( org.osgi.service.log.Logger.ROOT_LOGGER_NAME, toOsgiLogLevel( context.getLogger( Logger.ROOT_LOGGER_NAME ).getLevel() ) );
+
+        final List<Logger> loggerList = context.getLoggerList();
+
+        osgiLoggers.stream().map( context::getLogger ).filter( l -> l.getLevel() == null ).forEach( l -> {
+            updatedLevels.put( l.getName(), LogLevel.WARN );
+        } );
+
+        for ( Logger logger : loggerList )
+        {
+            updateLevel( updatedLevels, logger.getLevel(), logger.getName() );
+        }
+
+        this.osgiLoggerContext.setLogLevels( updatedLevels );
     }
 
     @Override
@@ -64,67 +73,39 @@ public class LogbackLogListener
     @Override
     public void logged( final LogEntry entry )
     {
-        String loggerName = entry.getLoggerName();
-        final String message;
-        final Object[] arguments;
-        boolean avoidCallerData;
-        if ( EVENTS_BUNDLE.equals( loggerName ) || EVENTS_FRAMEWORK.equals( loggerName ) || LOG_SERVICE.equals( loggerName ) )
+        final String loggerName = entry.getLoggerName();
+        if ( !osgiLoggerContext.getEffectiveLogLevel( loggerName ).implies( entry.getLogLevel() ) )
         {
-            Bundle bundle = entry.getBundle();
-            loggerName = loggerName + "." + bundle.getSymbolicName();
-            message = entry.getMessage();
-            arguments = null;
-            avoidCallerData = true;
-        }
-        else if ( loggerName.startsWith( EVENTS_BUNDLE ) || loggerName.startsWith( EVENTS_FRAMEWORK ) ||
-            loggerName.startsWith( LOG_SERVICE ) )
-        {
-            message = entry.getMessage();
-            arguments = null;
-            avoidCallerData = true;
-        }
-        else if ( EVENTS_SERVICE.equals( loggerName ) )
-        {
-            Bundle bundle = entry.getBundle();
-            loggerName = loggerName + "." + bundle.getSymbolicName();
-            message = entry.getMessage() + " {}";
-            arguments = new Object[]{entry.getServiceReference()};
-            avoidCallerData = true;
-        }
-        else if ( loggerName.startsWith( EVENTS_SERVICE ) )
-        {
-            message = entry.getMessage() + " {}";
-            arguments = new Object[]{entry.getServiceReference()};
-            avoidCallerData = true;
-        }
-        else
-        {
-            message = entry.getMessage();
-            arguments = null;
-            avoidCallerData = false;
+            return;
         }
 
         final Logger logger = loggerContext.getLogger( loggerName );
         final Level level = toLogbackLevel( entry.getLogLevel() );
 
-        if ( !logger.equals( rootLogger ) && !logger.isEnabledFor( level ) )
+        if ( !logger.isEnabledFor( level ) )
         {
             return;
         }
 
-        final LoggingEvent loggingEvent =
-            new LoggingEvent( org.osgi.service.log.Logger.class.getName(), logger, level, message, entry.getException(), arguments )
-            {
-                @Override
-                public StackTraceElement[] getCallerData()
-                {
-                    return avoidCallerData ? super.getCallerData() : null;
-                }
-            };
+        String message = entry.getMessage();
+        Object[] arguments = null;
+        boolean noCallerData = false;
+        if ( loggerName.startsWith( EVENTS_BUNDLE ) || loggerName.startsWith( EVENTS_FRAMEWORK ) || loggerName.startsWith( LOG_SERVICE ) )
+        {
+            noCallerData = true;
+        }
+        else if ( loggerName.startsWith( EVENTS_SERVICE ) )
+        {
+            message = message + " {}";
+            arguments = new Object[]{entry.getServiceReference()};
+            noCallerData = true;
+        }
+
+        final LoggingEvent loggingEvent = new OsgiLoggingEvent( logger, level, message, entry, arguments, noCallerData );
         loggingEvent.setThreadName( entry.getThreadInfo() );
         loggingEvent.setTimeStamp( entry.getTime() );
 
-        rootLogger.callAppenders( loggingEvent );
+        logger.callAppenders( loggingEvent );
     }
 
     @Override
@@ -132,34 +113,41 @@ public class LogbackLogListener
     {
         final Map<String, LogLevel> updatedLevels = this.osgiLoggerContext.getLogLevels();
 
-        if ( Level.OFF.equals( level ) )
+        updateLevel( updatedLevels, level, logger.getName() );
+
+        this.osgiLoggerContext.setLogLevels( updatedLevels );
+    }
+
+    private static void updateLevel( final Map<String, LogLevel> updatedLevels, final Level level, final String loggerName )
+    {
+        if ( level == null )
         {
-            updatedLevels.remove( logger.getName() );
+            return;
+        }
+        if ( level.toInt() == Level.OFF_INT )
+        {
+            updatedLevels.remove( loggerName );
         }
         else
         {
-            updatedLevels.put( logger.getName(), toOsgiLogLevel( level ) );
+            updatedLevels.put( loggerName, toOsgiLogLevel( level ) );
         }
-
-        this.osgiLoggerContext.setLogLevels( updatedLevels );
     }
 
     @Override
     public void onStart( final LoggerContext context )
     {
-        setLoggerContext( context );
     }
 
     @Override
     public void onStop( final LoggerContext context )
     {
-        this.osgiLoggerContext.setLogLevels( initialLogLevels );
     }
 
     @Override
     public void onReset( final LoggerContext context )
     {
-        setLoggerContext( context );
+        updateLoggerContext( context );
     }
 
     private static LogLevel toOsgiLogLevel( final Level level )
@@ -191,33 +179,22 @@ public class LogbackLogListener
         };
     }
 
-    private static Map<String, LogLevel> updateLevels( LoggerContext loggerContext, final Map<String, LogLevel> levels )
+    private static class OsgiLoggingEvent
+        extends LoggingEvent
     {
-        final LogLevel rootLevel = toOsgiLogLevel( loggerContext.getLogger( Logger.ROOT_LOGGER_NAME ).getLevel() );
+        private final boolean noCallerData;
 
-        final Map<String, LogLevel> updatedLevels = new HashMap<>( levels );
-        updatedLevels.put( org.osgi.service.log.Logger.ROOT_LOGGER_NAME, rootLevel );
-        updatedLevels.put( EVENTS_BUNDLE, LogLevel.TRACE );
-        updatedLevels.put( EVENTS_FRAMEWORK, LogLevel.TRACE );
-        updatedLevels.put( EVENTS_SERVICE, LogLevel.TRACE );
-        updatedLevels.put( LOG_SERVICE, LogLevel.TRACE );
-
-        for ( Logger logger : loggerContext.getLoggerList() )
+        OsgiLoggingEvent( final Logger logger, final Level level, final String message, final LogEntry entry,
+                                 final Object[] arguments, final boolean noCallerData )
         {
-            final Level level = logger.getLevel();
-            if ( level != null )
-            {
-                final String name = logger.getName();
-                if ( level != Level.OFF )
-                {
-                    updatedLevels.put( name, toOsgiLogLevel( level ) );
-                }
-                else
-                {
-                    updatedLevels.remove( name );
-                }
-            }
+            super( org.osgi.service.log.Logger.class.getName(), logger, level, message, entry.getException(), arguments );
+            this.noCallerData = noCallerData;
         }
-        return updatedLevels;
+
+        @Override
+        public StackTraceElement[] getCallerData()
+        {
+            return noCallerData ? super.getCallerData() : null;
+        }
     }
 }

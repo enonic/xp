@@ -9,7 +9,6 @@ dependencies {
         exclude group: 'org.osgi'
     }
     implementation libs.logback.classic
-    runtimeOnly libs.jansi
     implementation libs.slf4j.api
     implementation libs.slf4j.jultoslf4j
 
