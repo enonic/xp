@@ -1507,7 +1507,7 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     return __.toNativeObject(bean.execute());
 }
 
-/** This function modifies a media content.
+/** This function updates a media content.
  *
  * @example-ref examples/content/updateMedia.js
  *
