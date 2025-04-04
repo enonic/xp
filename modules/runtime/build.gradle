@@ -62,6 +62,18 @@ addBundle( libs.jackson.databind, 8 )
 addBundle( libs.jackson.datatype.jsr310, 8 )
 addBundle( libs.jackson.jakarta.base, 8 )
 addBundle( libs.jackson.jakarta.jsonprovider, 8 )
+
+repackFixSlf4j( libs.micrometer.commons, 8 )
+repackFixSlf4j( libs.micrometer.core, 8 )
+repackFixSlf4j( libs.micrometer.registry.prometheus, 8 )
+addBundle( libs.prometheus.metrics.config, 8 )
+addBundle( libs.prometheus.metrics.core, 8 )
+addBundle( libs.prometheus.metrics.exposition.formats, 8 )
+addBundle( libs.prometheus.metrics.exposition.textformats, 8 )
+addBundle( libs.prometheus.metrics.model, 8 )
+addBundle( libs.prometheus.metrics.tracer.common, 8 )
+addBundle("com.google.protobuf:protobuf-java:4.30.2", 8)
+
 repackTikaBundle( libs.tika.core, 8 )
 repackTikaBundle( libs.tika.bundlestandard, 8 )
 
@@ -136,6 +148,55 @@ addBundle( project( ':admin:admin-impl' ), 30 )
 
 // Applications
 addBundle( project( ':app:app-system' ), 32 )
+
+def repackFixSlf4j ( depProvider, level ) {
+    def levelStr = "$level".padLeft( 2, '0' )
+    def dep = depProvider.get()
+    def modifiedJarConfig = configurations.create("modifiedBundle@${dep.name}") {
+        transitive = false
+    }
+    dependencies.add( modifiedJarConfig.name, depProvider )
+
+    def modifyManifestTask = tasks.register("modifiedBundleManifest@${dep.name}", Jar) {
+
+        archiveFileName = "${dep.name}-${dep.version}-repack.jar"
+        destinationDirectory = layout.buildDirectory.dir( "tmp/modified-bundles" )
+
+        def artifact = modifiedJarConfig.resolve().first()
+
+        java.util.jar.JarFile jar = new java.util.jar.JarFile( artifact )
+        java.util.jar.Manifest originalManifest = jar.manifest
+
+
+        def modifiedImportPackage = originalManifest.getMainAttributes().getValue( "Import-Package" ).split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+                it.startsWithAny( "org.slf4j" ) ? it.replace( "version=\"[1.7,2)", "version=\"[1.7,3)" ) : it
+            }.join( ',' )
+
+        from {
+            zipTree(artifact)
+        }
+
+        with copySpec {
+            exclude "META-INF/MANIFEST.MF"
+        }
+
+        manifest {
+            attributes originalManifest.mainAttributes.collectEntries { key, value ->
+                if (key.toString() == "Import-Package") {
+                    ["Import-Package": modifiedImportPackage]
+                } else {
+                    [(key.toString()): value.toString()]
+                }
+            }
+        }
+    }
+
+    ext.bundleCopySpecs += project.copySpec {
+        from modifyManifestTask
+        into levelStr
+    }
+}
 
 def repackTikaBundle( depProvider, level ) {
     def levelStr = "$level".padLeft( 2, '0' )

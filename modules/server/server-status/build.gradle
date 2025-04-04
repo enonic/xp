@@ -1,6 +1,7 @@
 dependencies {
     implementation project( ':web:web-api' )
     implementation project( ':core:core-internal' )
+    implementation( libs.micrometer.registry.prometheus )
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }
