@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class ModifyNodeHandlerTest
+public class UpdateNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Captor
@@ -111,7 +111,7 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        runScript( "/lib/xp/examples/node/modify.js" );
+        runScript( "/lib/xp/examples/node/update.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
@@ -157,7 +157,7 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        runScript( "/lib/xp/examples/node/modify-keep-types.js" );
+        runScript( "/lib/xp/examples/node/update-keep-types.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );

@@ -17,7 +17,7 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 
-public final class ModifyContentHandler
+public final class UpdateContentHandler
     extends BaseContentHandler
 {
     private String key;

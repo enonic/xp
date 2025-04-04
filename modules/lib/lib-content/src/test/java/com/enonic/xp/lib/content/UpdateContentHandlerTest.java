@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class ModifyContentHandlerTest
+public class UpdateContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
@@ -44,11 +44,11 @@ public class ModifyContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
         mockXData();
-        runScript( "/lib/xp/examples/content/modify.js" );
+        runScript( "/lib/xp/examples/content/update.js" );
     }
 
     @Test
-    public void modifySiteConfig()
+    public void updateSiteConfig()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -87,12 +87,12 @@ public class ModifyContentHandlerTest
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
 
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteConfig" );
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteConfig_strict" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateSiteConfig" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateSiteConfig_strict" );
     }
 
     @Test
-    public void modifySiteSingleDescriptor()
+    public void updateSiteSingleDescriptor()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -119,12 +119,12 @@ public class ModifyContentHandlerTest
             build();
 
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifySiteSingleDescriptor" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateSiteSingleDescriptor" );
     }
 
 
     @Test
-    public void modifyById()
+    public void updateById()
         throws Exception
     {
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
@@ -136,11 +136,11 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifyById" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateById" );
     }
 
     @Test
-    public void modifyByPath()
+    public void updateByPath()
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
@@ -152,11 +152,11 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifyByPath" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateByPath" );
     }
 
     @Test
-    public void modifyNotMappedXDataFieldNameStricted()
+    public void updateNotMappedXDataFieldNameStricted()
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
@@ -168,11 +168,11 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_stricted" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedXDataFieldName_stricted" );
     }
 
     @Test
-    public void modifyNotMappedXDataFieldNameNotStricted()
+    public void updateNotMappedXDataFieldNameNotStricted()
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
@@ -184,14 +184,14 @@ public class ModifyContentHandlerTest
 
         mockXData();
 
-        runFunction( "/test/ModifyContentHandlerTest.js", "modifyNotMappedXDataFieldName_notStricted" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedXDataFieldName_notStricted" );
     }
 
     @Test
-    public void modifyNotFound()
+    public void updateNotFound()
         throws Exception
     {
-        runFunction( "/test/ModifyContentHandlerTest.js", "modify_notFound" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
     }
 
     private void mockXData()

@@ -13,13 +13,13 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
 import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
 
-class ModifyNodeExecutor
+class UpdateNodeExecutor
 {
     private final EditableNode editableNode;
 
     private final PropertyTree propertyTree;
 
-    private ModifyNodeExecutor( final Builder builder )
+    private UpdateNodeExecutor( final Builder builder )
     {
         editableNode = builder.editableNode;
         propertyTree = builder.propertyTree;
@@ -111,9 +111,9 @@ class ModifyNodeExecutor
             return this;
         }
 
-        public ModifyNodeExecutor build()
+        public UpdateNodeExecutor build()
         {
-            return new ModifyNodeExecutor( this );
+            return new UpdateNodeExecutor( this );
         }
     }
 }

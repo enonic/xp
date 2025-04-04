@@ -18,8 +18,8 @@ function editor(c) {
     return c;
 }
 
-// Modify content by path
-var result = contentLib.modify({
+// Update content by path
+var result = contentLib.update({
     key: '/a/b/mycontent',
     editor: editor
 });

@@ -5,8 +5,8 @@ var TestClass = Java.type('com.enonic.xp.lib.content.CreateMediaHandlerTest');
 var stream = TestClass.createByteSource('Hello World');
 
 // BEGIN
-// Modify media
-var modifyResult = contentLib.modifyMedia({
+// Update media
+var updateResult = contentLib.updateMedia({
     key: '/a/b/myMedia',
     name: 'myMedia',
     data: stream,
@@ -57,4 +57,4 @@ var expectedJson = {
 };
 // END
 
-t.assertJsonEquals(expectedJson, modifyResult);
+t.assertJsonEquals(expectedJson, updateResult);

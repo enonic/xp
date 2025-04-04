@@ -687,13 +687,22 @@ export function query<
     return __.toNativeObject(bean.execute<Hit, AggregationInput>());
 }
 
+/**
+ * @deprecated Use {@link UpdateContentParams} instead.
+ */
 export interface ModifyContentParams<Data, Type extends string> {
     key: string;
     editor: (v: Content<Data, Type>) => Content<Data, Type>;
     requireValid?: boolean;
 }
 
-interface ModifyContentHandler {
+export interface UpdateContentParams<Data, Type extends string> {
+    key: string;
+    editor: (v: Content<Data, Type>) => Content<Data, Type>;
+    requireValid?: boolean;
+}
+
+interface UpdateContentHandler {
     setKey(value: string): void;
 
     setEditor(value: ScriptValue): void;
@@ -706,7 +715,7 @@ interface ModifyContentHandler {
 /**
  * This function modifies a content.
  *
- * @example-ref examples/content/modify.js
+ * @deprecated Use {@link update} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -724,7 +733,37 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
         requireValid = true,
     } = params ?? {};
 
-    const bean: ModifyContentHandler = __.newBean<ModifyContentHandler>('com.enonic.xp.lib.content.ModifyContentHandler');
+    const bean: UpdateContentHandler = __.newBean<UpdateContentHandler>('com.enonic.xp.lib.content.UpdateContentHandler');
+
+    bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
+    bean.setRequireValid(requireValid);
+
+    return __.toNativeObject(bean.execute<Data, Type>());
+}
+
+/**
+ * This function updates a content.
+ *
+ * @example-ref examples/content/update.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.editor Editor callback function.
+ * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be updated. If requireValid=true and the content is not strictly valid, an error will be thrown.
+ *
+ * @returns {object} Modified content as JSON.
+ */
+export function update<Data = Record<string, unknown>, Type extends string = string>(params: UpdateContentParams<Data, Type>): Content<Data, Type> | null {
+    checkRequired(params, 'key');
+
+    const {
+        key,
+        editor,
+        requireValid = true,
+    } = params ?? {};
+
+    const bean: UpdateContentHandler = __.newBean<UpdateContentHandler>('com.enonic.xp.lib.content.UpdateContentHandler');
 
     bean.setKey(key);
     bean.setEditor(__.toScriptValue(editor));
@@ -1317,6 +1356,9 @@ export function resetInheritance(params: ResetInheritanceParams): void {
     bean.execute();
 }
 
+/**
+ * @deprecated Use {@link UpdateMediaParams} instead.
+ */
 export interface ModifyMediaParams {
     key: string;
     name: string;
@@ -1331,7 +1373,50 @@ export interface ModifyMediaParams {
     workflow?: Workflow;
 }
 
+export interface UpdateMediaParams {
+    key: string;
+    name: string;
+    data: ByteSource;
+    artist?: string | string[];
+    caption?: string;
+    copyright?: string;
+    focalX?: number;
+    focalY?: number;
+    mimeType?: string;
+    tags?: string | string[];
+    workflow?: Workflow;
+}
+
+/**
+ * @deprecated Use {@link UpdateMediaHandler} instead.
+ */
 interface ModifyMediaHandler {
+    setKey(value: string): void;
+
+    setName(value: string): void;
+
+    setData(value: ByteSource): void;
+
+    setFocalX(value: number): void;
+
+    setFocalY(value: number): void;
+
+    setArtist(value: string[]): void;
+
+    setCaption(value?: string | null): void;
+
+    setCopyright(value?: string | null): void;
+
+    setMimeType(value?: string | null): void;
+
+    setTags(value: string[]): void;
+
+    setWorkflow(value: ScriptValue): void;
+
+    execute<Data, Type extends string>(): Content<Data, Type>;
+}
+
+interface UpdateMediaHandler {
     setKey(value: string): void;
 
     setName(value: string): void;
@@ -1359,7 +1444,7 @@ interface ModifyMediaHandler {
 
 /** This function modifies a media content.
  *
- * @example-ref examples/content/modifyMedia.js
+ * deprecated Use {@link updateMedia} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
@@ -1400,7 +1485,72 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
         tags = [],
     } = params;
 
-    const bean: ModifyMediaHandler = __.newBean<ModifyMediaHandler>('com.enonic.xp.lib.content.ModifyMediaHandler');
+    const bean: UpdateMediaHandler = __.newBean<UpdateMediaHandler>('com.enonic.xp.lib.content.UpdateMediaHandler');
+
+    bean.setKey(key);
+    bean.setName(name);
+    bean.setData(data);
+    bean.setCaption(__.nullOrValue(caption));
+    bean.setCopyright(__.nullOrValue(copyright));
+    bean.setMimeType(__.nullOrValue(mimeType));
+    bean.setWorkflow(__.toScriptValue(workflow));
+    bean.setArtist(([] as string[]).concat(artist));
+    bean.setTags(([] as string[]).concat(tags));
+
+    if (focalX != null) {
+        bean.setFocalX(focalX);
+    }
+    if (focalY != null) {
+        bean.setFocalY(focalY);
+    }
+
+    return __.toNativeObject(bean.execute());
+}
+
+/** This function updates a media content.
+ *
+ * @example-ref examples/content/updateMedia.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} params.name Name to the content.
+ * @param {function} params.data Data (as stream) to use.
+ * @param {string} [params.mimeType] Mime-type of the data.
+ * @param {string|string[]} [params.artist] Artist to the content.
+ * @param {string} [params.caption] Caption to the content.
+ * @param {string} [params.copyright] Copyright to the content.
+ * @param {string|string[]} [params.tags] Tags to the content.
+ * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
+ * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ *
+ * @returns {object} Modified content as JSON.
+ */
+export function updateMedia<Data = Record<string, unknown>, Type extends string = string>(params: UpdateMediaParams): Content<Data, Type> | null {
+    checkRequired(params, 'data');
+    checkRequiredString(params, 'key');
+    checkRequiredString(params, 'name');
+    checkOptionalString(params, 'caption');
+    checkOptionalString(params, 'copyright');
+    checkOptionalString(params, 'mimeType');
+    checkOptionalNumber(params, 'focalX');
+    checkOptionalNumber(params, 'focalY');
+
+    const {
+        data,
+        key,
+        name,
+        caption,
+        copyright,
+        mimeType,
+        focalX,
+        focalY,
+        workflow,
+        artist = [],
+        tags = [],
+    } = params;
+
+    const bean: UpdateMediaHandler = __.newBean<UpdateMediaHandler>('com.enonic.xp.lib.content.UpdateMediaHandler');
 
     bean.setKey(key);
     bean.setName(name);
