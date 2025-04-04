@@ -5,6 +5,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Image',
-         'Private-Package': 'com.jhlabs.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Image',
+             'Private-Package': 'com.jhlabs.*' )
+    }
 }

@@ -15,5 +15,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch' )
+    }
 }

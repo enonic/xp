@@ -12,6 +12,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Task',
-         'Export-Package': 'com.enonic.xp.impl.task.distributed')
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Task',
+             'Export-Package': 'com.enonic.xp.impl.task.distributed')
+    }
 }

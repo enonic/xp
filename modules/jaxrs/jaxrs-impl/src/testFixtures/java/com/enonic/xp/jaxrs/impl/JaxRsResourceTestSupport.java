@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +17,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;

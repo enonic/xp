@@ -50,7 +50,7 @@ task typescript( type: NpmTask ) {
 }
 
 task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
-    into "$buildDir/js"
+    into layout.buildDirectory.dir("js")
     into( "" ) {
         from projectDir
         include "lib-*/build/typescript/lib/xp/*.js"
@@ -73,7 +73,7 @@ task jsdoc( type: NpmTask, dependsOn: prepareToJsdoc ) {
     doFirst {
         copy {
             from 'jsdoc/template/jsdoc-main.css'
-            into "$buildDir/resources/main/jsdoc/styles"
+            into layout.buildDirectory.dir("resources/main/jsdoc/styles")
         }
     }
 }
@@ -81,7 +81,7 @@ task jsdoc( type: NpmTask, dependsOn: prepareToJsdoc ) {
 /* Publish */
 
 task prepareGlobalToPublish( type: Copy ) {
-    into "$buildDir/npm"
+    into layout.buildDirectory.dir("npm")
 
     from 'README.md'
     from 'global.d.ts'
@@ -141,7 +141,7 @@ task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInsta
 task publishToNpm( dependsOn: [publishGlobalToNpm, publishCoreToNpm] ) {}
 
 task packageJsdoc( type: Jar, dependsOn: jsdoc ) {
-    from "$buildDir/resources/main/jsdoc"
+    from layout.buildDirectory.dir("resources/main/jsdoc")
     archiveClassifier = 'jsdoc'
 }
 
@@ -169,13 +169,13 @@ subprojects {
             include '**/*.ts'
             includeEmptyDirs = false
         }
-        into "$buildDir/typescript"
+        into layout.buildDirectory.dir("typescript")
     }
 
     parent.typescript.dependsOn prepareToTypescript
 
     processResources {
-        from( "$buildDir/typescript" ) {
+        from( layout.buildDirectory.dir("typescript") ) {
             include '**/*.js'
         }
         dependsOn parent.typescript
@@ -189,10 +189,10 @@ subprojects {
         def dependencies = hasCoreDependency ? ['@enonic-types/core'] : []
         def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
 
-        into "$buildDir/npm"
+        into layout.buildDirectory.dir("npm")
 
         from( 'README.md' )
-        from( "$buildDir/typescript/lib/xp/" ) {
+        from( layout.buildDirectory.dir("typescript/lib/xp") ) {
             include '*.d.ts'
         }
 

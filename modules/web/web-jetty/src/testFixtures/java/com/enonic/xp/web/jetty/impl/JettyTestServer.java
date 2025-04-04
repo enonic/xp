@@ -1,17 +1,18 @@
 package com.enonic.xp.web.jetty.impl;
 
 import java.util.EnumSet;
+import java.util.List;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.http.HttpServlet;
-
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServlet;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 
@@ -32,7 +33,7 @@ public final class JettyTestServer
 
         this.server.addConnector( connector );
 
-        this.handler = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
         this.server.setHandler( this.handler );
     }
 
@@ -66,7 +67,7 @@ public final class JettyTestServer
     }
 
 
-    public void setVirtualHosts( final String[] hosts )
+    public void setVirtualHosts( final List<String> hosts )
     {
         this.handler.setVirtualHosts( hosts );
     }

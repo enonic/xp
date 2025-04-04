@@ -5,8 +5,11 @@ import java.util.function.Function;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 final class IdentityUrlBuilder
     extends GenericEndpointUrlBuilder<IdentityUrlParams>
@@ -29,6 +32,8 @@ final class IdentityUrlBuilder
     @Override
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
+
         if ( useLegacyContextPath )
         {
             super.buildUrl( url, params );
@@ -37,17 +42,13 @@ final class IdentityUrlBuilder
         {
             url.setLength( 0 );
 
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
             appendPart( url, virtualHost.getTarget() );
             appendPart( url, "_" );
             appendPart( url, this.endpointType );
         }
 
-        if ( this.params.getIdProviderKey() == null )
-        {
-            throw new IllegalArgumentException( "Could not find id provider" );
-        }
-        appendPart( url, this.params.getIdProviderKey().toString() );
+        final IdProviderKey idProviderKey = requireNonNullElseGet( this.params.getIdProviderKey(), virtualHost::getDefaultIdProviderKey );
+        appendPart( url, idProviderKey.toString() );
 
         final String idProviderFunction = this.params.getIdProviderFunction();
         if ( idProviderFunction != null )
@@ -63,5 +64,4 @@ final class IdentityUrlBuilder
             params.put( "_ticket", checksumGenerator.apply( redirectionUrl ) );
         }
     }
-
 }

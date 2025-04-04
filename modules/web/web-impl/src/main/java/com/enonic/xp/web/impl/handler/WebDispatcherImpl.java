@@ -1,7 +1,7 @@
 package com.enonic.xp.web.impl.handler;
 
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -36,8 +36,8 @@ public final class WebDispatcherImpl
     }
 
     @Override
-    public Iterator<WebHandler> iterator()
+    public List<WebHandler> list()
     {
-        return this.webHandlerList.snapshot().iterator();
+        return this.webHandlerList.snapshot();
     }
 }

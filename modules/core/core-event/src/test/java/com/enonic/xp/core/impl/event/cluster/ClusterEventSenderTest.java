@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 
 import com.enonic.xp.event.Event;
 

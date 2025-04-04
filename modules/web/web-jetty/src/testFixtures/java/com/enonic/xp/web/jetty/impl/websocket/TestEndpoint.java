@@ -7,11 +7,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Endpoint;
-import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler;
-import javax.websocket.Session;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.Endpoint;
+import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.MessageHandler;
+import jakarta.websocket.Session;
 
 public class TestEndpoint
     extends Endpoint

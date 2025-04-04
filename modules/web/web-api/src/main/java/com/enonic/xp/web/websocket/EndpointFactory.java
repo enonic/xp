@@ -3,7 +3,7 @@ package com.enonic.xp.web.websocket;
 import java.util.Collections;
 import java.util.List;
 
-import javax.websocket.Endpoint;
+import jakarta.websocket.Endpoint;
 
 public interface EndpointFactory
 {

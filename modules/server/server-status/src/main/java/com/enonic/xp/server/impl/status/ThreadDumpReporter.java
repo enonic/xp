@@ -3,10 +3,11 @@ package com.enonic.xp.server.impl.status;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.nio.charset.StandardCharsets;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.codahale.metrics.jvm.ThreadDump;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusReporter;
@@ -15,12 +16,6 @@ import com.enonic.xp.status.StatusReporter;
 public final class ThreadDumpReporter
     implements StatusReporter
 {
-    private final ThreadDump threadDump;
-
-    public ThreadDumpReporter()
-    {
-        this.threadDump = new ThreadDump( ManagementFactory.getThreadMXBean() );
-    }
 
     @Override
     public String getName()
@@ -38,6 +33,9 @@ public final class ThreadDumpReporter
     public void report( final OutputStream outputStream )
         throws IOException
     {
-        this.threadDump.dump( outputStream );
+        for ( ThreadInfo threadInfo : ManagementFactory.getThreadMXBean().dumpAllThreads( true, true ) )
+        {
+            outputStream.write( threadInfo.toString().getBytes( StandardCharsets.UTF_8 ) );
+        }
     }
 }

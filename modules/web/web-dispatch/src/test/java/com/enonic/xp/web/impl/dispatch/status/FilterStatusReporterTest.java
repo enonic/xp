@@ -2,25 +2,28 @@ package com.enonic.xp.web.impl.dispatch.status;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.ServiceReference;
 
 import com.google.common.net.MediaType;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinitionFactory;
+import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 class FilterStatusReporterTest
 {
@@ -33,15 +36,12 @@ class FilterStatusReporterTest
         final Filter filter1 = new MyFilter();
         final Filter filter2 = new MyFilter();
 
-        final ServiceReference<Filter> serviceReference1 = Mockito.mock( ServiceReference.class );
-        final ServiceReference<Filter> serviceReference2 = Mockito.mock( ServiceReference.class );
+        final FilterPipeline filterPipeline = Mockito.mock( FilterPipeline.class );
+        when( filterPipeline.list() ).thenReturn( List.of( ResourceDefinitionFactory.create( filter1, List.of( "a" ) ),
+                                                           ResourceDefinitionFactory.create( filter2,
+                                                                                                               List.of( "a", "b" ) ) ) );
 
-        Mockito.when( serviceReference1.getProperty( "connector" ) ).thenReturn( "a" );
-        Mockito.when( serviceReference2.getProperty( "connector" ) ).thenReturn( new String[]{"a", "b"} );
-
-        final FilterStatusReporter reporter = new FilterStatusReporter();
-        reporter.addFilter( filter1, serviceReference1 );
-        reporter.addFilter( filter2, serviceReference2 );
+        final FilterStatusReporter reporter = new FilterStatusReporter( filterPipeline );
 
         assertEquals( "http.filter", reporter.getName() );
         assertJson( "filter_status_report.json", reporter );

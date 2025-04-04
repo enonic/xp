@@ -2,7 +2,7 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.util.Iterator;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;

@@ -1,6 +1,6 @@
 package com.enonic.xp.web.dispatch;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 
 public interface DispatchServlet
     extends Servlet

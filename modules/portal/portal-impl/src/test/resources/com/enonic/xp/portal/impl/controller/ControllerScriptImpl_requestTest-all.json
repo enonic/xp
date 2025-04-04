@@ -20,5 +20,6 @@
   "cookies": {
     "mycookie": "123",
     "other": "abc"
-  }
+  },
+  "locales" : []
 }

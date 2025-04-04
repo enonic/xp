@@ -5,8 +5,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 
 final class ServletConfigImpl
     implements ServletConfig

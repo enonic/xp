@@ -7,5 +7,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Shared')
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Shared')
+    }
 }

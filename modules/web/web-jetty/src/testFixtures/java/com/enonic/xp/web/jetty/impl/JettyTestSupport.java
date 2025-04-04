@@ -5,11 +5,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import javax.servlet.Filter;
-import javax.servlet.http.HttpServlet;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServlet;
 
 import static org.mockito.Mockito.mock;
 

@@ -12,7 +12,6 @@
       "value" : "some value",
       "path" : "/admin",
       "domain" : "enonic.com",
-      "comment" : "some comment",
       "maxAge" : 100,
       "secure" : true,
       "httpOnly" : true

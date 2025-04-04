@@ -3,13 +3,13 @@ package com.enonic.xp.portal.impl.serializer;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 

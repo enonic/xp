@@ -7,8 +7,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -18,6 +16,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

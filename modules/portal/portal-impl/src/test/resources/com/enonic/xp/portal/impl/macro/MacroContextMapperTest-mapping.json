@@ -35,7 +35,8 @@
       "header2": "value2",
       "header3": "value3"
     },
-    "cookies": {}
+    "cookies": {},
+    "locales":[]
   },
   "document": "<h1>document</h1>"
 }

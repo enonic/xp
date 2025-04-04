@@ -1,9 +1,9 @@
 package com.enonic.xp.jaxrs.impl;
 
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import jakarta.ws.rs.core.Feature;
+import jakarta.ws.rs.core.FeatureContext;
 
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.JaxRsComponent;

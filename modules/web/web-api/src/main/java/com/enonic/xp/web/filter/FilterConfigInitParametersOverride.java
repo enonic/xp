@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-
 import com.google.common.collect.ImmutableMap;
+
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 
 public final class FilterConfigInitParametersOverride
     implements FilterConfig

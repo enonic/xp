@@ -6,8 +6,6 @@ import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
@@ -62,18 +60,30 @@ public final class AdminLibHelper
 
     public String getLocale()
     {
-        final HttpServletRequest req = requestSupplier.get().getRawRequest();
-        final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
+        final PortalRequest portalRequest = requestSupplier.get();
+
+        final Locale locale;
+        if ( portalRequest != null )
+        {
+            final List<Locale> locales = portalRequest.getLocales();
+            locale = locales.isEmpty() ? Locale.getDefault() : locales.getFirst();
+        }
+        else
+        {
+            locale = Locale.getDefault();
+        }
+
         return locale.getLanguage().toLowerCase();
     }
 
     public List<String> getLocales()
     {
-        final HttpServletRequest req = requestSupplier.get().getRawRequest();
+        final PortalRequest portalRequest = requestSupplier.get();
+
         final List<Locale> locales;
-        if ( req != null )
+        if ( portalRequest != null )
         {
-            locales = Collections.list( req.getLocales() );
+            locales = portalRequest.getLocales();
         }
         else
         {

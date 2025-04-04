@@ -3,6 +3,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Script - Api',
-         'Export-Package': 'com.enonic.xp.script.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Script - Api',
+             'Export-Package': 'com.enonic.xp.script.*' )
+    }
 }

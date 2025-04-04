@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.hazelcast.status.objects;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,18 +13,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.net.MediaType;
+import com.hazelcast.cluster.Member;
+import com.hazelcast.collection.IQueue;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
-import com.hazelcast.core.ITopic;
-import com.hazelcast.core.Member;
 import com.hazelcast.cp.CPSubsystem;
 import com.hazelcast.cp.lock.FencedLock;
+import com.hazelcast.map.IMap;
 import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 import com.hazelcast.scheduledexecutor.ScheduledTaskStatistics;
+import com.hazelcast.topic.ITopic;
 
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
@@ -74,7 +75,7 @@ class HazelcastObjectsReporterTest
         when( scheduledExecutorService.getName() ).thenReturn( "scheduledExecutorService" );
 
         final Member member = mock( Member.class );
-        when( member.getUuid() ).thenReturn( "member-uuid" );
+        when( member.getUuid() ).thenReturn( UUID.fromString( "2792e6b2-a8e4-45f7-ad89-eaaa40353c39" ) );
         final IScheduledFuture<Object> scheduledFuture = mock( IScheduledFuture.class );
         final ScheduledTaskHandler scheduledTaskHandler = mock( ScheduledTaskHandler.class );
         when( scheduledFuture.getHandler() ).thenReturn( scheduledTaskHandler );

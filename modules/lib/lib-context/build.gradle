@@ -5,6 +5,4 @@ dependencies {
 
     testImplementation project( ':tools:testing' )
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
-
-    testRuntimeOnly libs.junit.jupiter.vintage
 }

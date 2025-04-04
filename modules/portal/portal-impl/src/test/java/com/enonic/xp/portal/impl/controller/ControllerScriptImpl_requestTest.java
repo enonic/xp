@@ -8,7 +8,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,12 +75,9 @@ public class ControllerScriptImpl_requestTest
         assertEquals( "value2", this.portalResponse.getCookies().get( 1 ).getValue() );
         assertEquals( 2000, this.portalResponse.getCookies().get( 2 ).getMaxAge() );
         assertEquals( "/valid/path", this.portalResponse.getCookies().get( 2 ).getPath() );
-        assertThat( this.portalResponse.getCookies().get( 2 ).getComment() ).contains( "Some cookie comments" );
-        assertThat( this.portalResponse.getCookies().get( 2 ).getComment() ).contains( "__SAME_SITE_STRICT__" );
         assertTrue( this.portalResponse.getCookies().get( 3 ).getSecure() );
         assertTrue( this.portalResponse.getCookies().get( 3 ).isHttpOnly() );
         assertEquals( "enonic.com", this.portalResponse.getCookies().get( 3 ).getDomain() );
-        assertThat( this.portalResponse.getCookies().get( 3 ).getComment() ).doesNotContain( "__SAME_SITE_" );
     }
 
     @Test

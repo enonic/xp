@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;

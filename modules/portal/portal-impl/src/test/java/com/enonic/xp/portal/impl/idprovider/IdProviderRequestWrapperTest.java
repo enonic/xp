@@ -2,12 +2,12 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;

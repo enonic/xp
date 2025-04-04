@@ -2,7 +2,8 @@ package com.enonic.xp.web.jetty.impl.configurator;
 
 import java.io.File;
 
-import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.CustomRequestLog;
+import org.eclipse.jetty.server.RequestLogWriter;
 import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,9 +32,14 @@ public class RequestLogConfiguratorTest
         return new RequestLogConfigurator();
     }
 
-    private NCSARequestLog getRequestLog()
+    private RequestLogWriter getRequestLog()
     {
-        return (NCSARequestLog) this.server.getRequestLog();
+        final CustomRequestLog requestLog = (CustomRequestLog) this.server.getRequestLog();
+        if ( requestLog == null )
+        {
+            return null;
+        }
+        return (RequestLogWriter) requestLog.getWriter();
     }
 
     @Test
@@ -43,13 +49,12 @@ public class RequestLogConfiguratorTest
 
         configure();
 
-        final NCSARequestLog log = getRequestLog();
+        final RequestLogWriter log = getRequestLog();
         assertNotNull( log );
-        assertTrue( log.getFilename().endsWith( File.separator + "jetty-yyyy_mm_dd.request.log" ) );
-        assertEquals( "GMT", log.getLogTimeZone() );
+        assertTrue( log.getFileName().endsWith( File.separator + "jetty-yyyy_mm_dd.request.log" ) );
+        assertEquals( "GMT", log.getTimeZone() );
         assertEquals( 31, log.getRetainDays() );
-        assertEquals( true, log.isExtended() );
-        assertEquals( true, log.isAppend() );
+        assertTrue( log.isAppend() );
     }
 
     @Test
@@ -71,12 +76,11 @@ public class RequestLogConfiguratorTest
 
         configure();
 
-        final NCSARequestLog log = getRequestLog();
+        final RequestLogWriter log = getRequestLog();
         assertNotNull( log );
-        assertEquals( "somefile.log", log.getFilename() );
-        assertEquals( "GMT+1", log.getLogTimeZone() );
+        assertEquals( "somefile.log", log.getFileName() );
+        assertEquals( "GMT+1", log.getTimeZone() );
         assertEquals( 60, log.getRetainDays() );
-        assertEquals( false, log.isExtended() );
         assertEquals( false, log.isAppend() );
     }
 }

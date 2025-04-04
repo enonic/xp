@@ -3,14 +3,13 @@ dependencies {
     implementation project( ':core:core-internal' )
     implementation libs.hazelcast.hazelcast
     implementation libs.jetty.hazelcast
-    implementation libs.hazelcast.client
-    implementation libs.hazelcast.kubernetes
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Hazelcast',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Hazelcast',
          'Import-Package':
              'com.enonic.xp.app;resolution:=optional' + ',' +
              'com.enonic.xp.branch;resolution:=optional' + ',' +
@@ -27,4 +26,5 @@ jar {
              'com.enonic.xp.impl.task.distributed;resolution:=optional' + ',' +
              'com.google.common.collect;resolution:=optional,' +
              '*')
+    }
 }

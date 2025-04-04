@@ -1,12 +1,12 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import javax.servlet.MultipartConfigElement;
-
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.StandardSystemProperty;
+
+import jakarta.servlet.MultipartConfigElement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -60,5 +60,14 @@ public class MultipartConfiguratorTest
         assertEquals( 2000L, multipartConfig.getMaxFileSize() );
         assertEquals( 20000L, multipartConfig.getMaxRequestSize() );
         assertEquals( 2000, multipartConfig.getFileSizeThreshold() );
+    }
+
+    private static class MockServletHolder
+        extends ServletHolder
+    {
+        public MultipartConfigElement getMultipartConfig()
+        {
+            return getRegistration().getMultipartConfigElement();
+        }
     }
 }

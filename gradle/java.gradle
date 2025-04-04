@@ -32,10 +32,9 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = sourceCompatibility
 }
-
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = sourceCompatibility
 
 test {
     useJUnitPlatform {
@@ -50,17 +49,19 @@ test {
 
 jacocoTestReport {
     dependsOn test
-    executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
+    executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
 }
 
 jar {
     manifest {
         attributes( ['Implementation-Version': project.version] )
     }
-    bnd( 'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
-         '-nouses': 'true',
-         '-dsannotations': '*',
-         'Implementation-Version': project.version )
+    bundle {
+        bnd( 'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
+             '-nouses': 'true',
+             '-dsannotations': '*',
+             'Implementation-Version': project.version )
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

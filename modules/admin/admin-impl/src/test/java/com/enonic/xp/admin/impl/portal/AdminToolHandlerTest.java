@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.portal;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;

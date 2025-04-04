@@ -1,6 +1,6 @@
 package com.enonic.xp.mail;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 @Deprecated
 public interface MailMessage

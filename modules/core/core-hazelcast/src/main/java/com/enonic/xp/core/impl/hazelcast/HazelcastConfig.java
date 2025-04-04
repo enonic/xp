@@ -77,10 +77,6 @@ public @interface HazelcastConfig
 
     String network_interfaces();
 
-    boolean network_restApi_enabled() default false;
-
-    String network_restApi_restEndpointGroups() default "HEALTH_CHECK, CLUSTER_READ";
-
     boolean partition_group_enabled() default false;
 
     String partition_group_groupType() default "PER_MEMBER";

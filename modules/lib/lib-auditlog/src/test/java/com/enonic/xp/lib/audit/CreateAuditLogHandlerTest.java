@@ -9,7 +9,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CreateAuditLogHandlerTest
     extends BaseAuditLogHandlerTest

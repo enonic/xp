@@ -4,6 +4,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Portal - Api',
-         'Export-Package': 'com.enonic.xp.portal.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Portal - Api',
+             'Export-Package': 'com.enonic.xp.portal.*' )
+    }
 }

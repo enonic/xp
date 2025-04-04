@@ -1,24 +1,24 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 public class GZipConfiguratorTest
     extends JettyConfiguratorTest<ServletContextHandler>
 {
-    private ServletContextHandler context;
-
     @Override
     protected ServletContextHandler setupObject()
     {
-        this.context = new ServletContextHandler();
-        return this.context;
+        return mock( ServletContextHandler.class );
     }
 
     @Override
@@ -27,18 +27,17 @@ public class GZipConfiguratorTest
         return new GZipConfigurator();
     }
 
-    private GzipHandler getHandler()
-    {
-        return this.context.getGzipHandler();
-    }
-
     @Test
     public void testConfigure()
     {
-        Mockito.when( this.config.gzip_enabled() ).thenReturn( true );
+        when( this.config.gzip_enabled() ).thenReturn( true );
+
         configure();
 
-        final GzipHandler handler = getHandler();
+        ArgumentCaptor<GzipHandler> captor = ArgumentCaptor.forClass( GzipHandler.class );
+        verify( object ).insertHandler( captor.capture() );
+        final GzipHandler handler = captor.getValue();
+
         assertNotNull( handler );
         assertEquals( 23, handler.getMinGzipSize() );
     }
@@ -46,23 +45,25 @@ public class GZipConfiguratorTest
     @Test
     public void testConfigure_disabled()
     {
-        Mockito.when( this.config.gzip_enabled() ).thenReturn( false );
+        when( this.config.gzip_enabled() ).thenReturn( false );
 
         configure();
 
-        assertNull( getHandler() );
+        verifyNoInteractions( object );
     }
 
     @Test
     public void testConfigure_override()
     {
-        Mockito.when( this.config.gzip_enabled() ).thenReturn( true );
-        Mockito.when( this.config.gzip_minSize() ).thenReturn( 100 );
+        when( this.config.gzip_enabled() ).thenReturn( true );
+        when( this.config.gzip_minSize() ).thenReturn( 100 );
 
         configure();
 
-        final GzipHandler handler = getHandler();
-        assertNotNull( handler );
+        ArgumentCaptor<GzipHandler> captor = ArgumentCaptor.forClass( GzipHandler.class );
+        verify( object ).insertHandler( captor.capture() );
+        final GzipHandler handler = captor.getValue();
+
         assertEquals( 100, handler.getMinGzipSize() );
     }
 }

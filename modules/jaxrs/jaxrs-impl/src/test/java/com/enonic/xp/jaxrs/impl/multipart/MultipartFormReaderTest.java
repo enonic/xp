@@ -3,12 +3,12 @@ package com.enonic.xp.jaxrs.impl.multipart;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;

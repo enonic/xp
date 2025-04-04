@@ -1,19 +1,14 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
-    implementation libs.jackson.jaxrs.jsonprovider
-    implementation ( libs.resteasy ) {
-        exclude group: 'org.jboss.spec.javax.ws.rs'
-    }
+    implementation libs.jackson.jakarta.jsonprovider
+    implementation libs.resteasy
     implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
-    testFixturesImplementation ( libs.resteasy ) {
-        exclude group: 'org.jboss.spec.javax.ws.rs'
-    }
-    testFixturesImplementation libs.jetty.client
+    testFixturesImplementation libs.resteasy
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesImplementation libs.jackson.jaxrs.jsonprovider
+    testFixturesImplementation libs.jackson.jakarta.jsonprovider
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
     testFixturesImplementation project( ':core:core-internal' )
 
@@ -21,11 +16,13 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
-         'Export-Package': 'javax.ws.rs.*',
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
+         'Export-Package': 'jakarta.ws.rs.*',
          'Import-Package': '*;resolution:=optional',
          'Private-Package': 'org.jboss.resteasy.*;-split-package:=merge-first' + ',' +
              'org.reactivestreams.*' + ',' +
              'com.ibm.asyncutil.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' )
+    }
 }

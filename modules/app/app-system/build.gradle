@@ -7,6 +7,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'System',
-         'X-Bundle-Type': 'system' )
+    bundle {
+        bnd( 'Bundle-Name': 'System',
+             'X-Bundle-Type': 'system' )
+    }
 }

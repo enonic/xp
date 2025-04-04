@@ -1,7 +1,7 @@
 package com.enonic.xp.web.session.impl;
 
-import org.eclipse.jetty.server.session.SessionCacheFactory;
-import org.eclipse.jetty.server.session.SessionDataStoreFactory;
+import org.eclipse.jetty.session.SessionCacheFactory;
+import org.eclipse.jetty.session.SessionDataStoreFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

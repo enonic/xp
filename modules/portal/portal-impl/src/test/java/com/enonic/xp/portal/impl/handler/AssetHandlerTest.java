@@ -3,14 +3,14 @@ package com.enonic.xp.portal.impl.handler;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;

@@ -1,9 +1,9 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.http.HttpCookie;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -18,7 +18,7 @@ public class SessionConfiguratorTest
     @Override
     protected SessionHandler setupObject()
     {
-        final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        final ServletContextHandler context = new ServletContextHandler(  "/", ServletContextHandler.SESSIONS );
         return context.getSessionHandler();
     }
 
@@ -36,8 +36,8 @@ public class SessionConfiguratorTest
         assertEquals( 3600, this.object.getMaxInactiveInterval() );
         assertEquals( "JSESSIONID", this.object.getSessionCookieConfig().getName() );
         assertEquals( HttpCookie.SameSite.LAX, this.object.getSameSite() );
-        assertFalse( this.object.getSecureCookies() );
-        assertTrue( this.object.getHttpOnly() );
+        assertFalse( this.object.isSecureCookies() );
+        assertTrue( this.object.isHttpOnly() );
     }
 
     @Test
@@ -53,7 +53,7 @@ public class SessionConfiguratorTest
         assertEquals( 60, this.object.getMaxInactiveInterval() );
         assertEquals( "mycookie", this.object.getSessionCookieConfig().getName() );
         assertEquals( HttpCookie.SameSite.STRICT, this.object.getSameSite() );
-        assertTrue( this.object.getSecureCookies() );
+        assertTrue( this.object.isSecureCookies() );
     }
 
     @Test

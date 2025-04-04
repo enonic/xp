@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.jetty.hazelcast.session.SessionDataSerializer;
-import org.eclipse.jetty.server.session.SessionData;
+import org.eclipse.jetty.session.SessionData;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -18,14 +18,12 @@ import com.hazelcast.config.InterfacesConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
-import com.hazelcast.config.RestApiConfig;
-import com.hazelcast.config.RestEndpointGroup;
 import com.hazelcast.config.SerializationConfig;
 import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.kubernetes.HazelcastKubernetesDiscoveryStrategyFactory;
 import com.hazelcast.kubernetes.KubernetesProperties;
-import com.hazelcast.spi.properties.GroupProperty;
+import com.hazelcast.spi.properties.ClusterProperty;
 
 import com.enonic.xp.cluster.ClusterConfig;
 
@@ -57,38 +55,38 @@ public class HazelcastConfigServiceImpl
     {
         Config config = new Config();
 
-        config.setProperty( GroupProperty.LOGGING_TYPE.getName(), "slf4j" );
+        config.setProperty( ClusterProperty.LOGGING_TYPE.getName(), "slf4j" );
 
-        config.setProperty( GroupProperty.SHUTDOWNHOOK_ENABLED.getName(), String.valueOf( false ) );
+        config.setProperty( ClusterProperty.SHUTDOWNHOOK_ENABLED.getName(), String.valueOf( false ) );
 
-        config.setProperty( GroupProperty.INITIAL_MIN_CLUSTER_SIZE.getName(),
+        config.setProperty( ClusterProperty.INITIAL_MIN_CLUSTER_SIZE.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_initial_min_cluster_size() ) );
 
-        config.setProperty( GroupProperty.MAX_NO_HEARTBEAT_SECONDS.getName(),
+        config.setProperty( ClusterProperty.MAX_NO_HEARTBEAT_SECONDS.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_max_no_heartbeat_seconds() ) );
 
-        config.setProperty( GroupProperty.HEARTBEAT_INTERVAL_SECONDS.getName(),
+        config.setProperty( ClusterProperty.HEARTBEAT_INTERVAL_SECONDS.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_heartbeat_interval_seconds() ) );
 
-        config.setProperty( GroupProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(),
+        config.setProperty( ClusterProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_mastership_claim_timeout_seconds() ) );
 
-        config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(),
+        config.setProperty( ClusterProperty.PHONE_HOME_ENABLED.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
 
-        config.setProperty( GroupProperty.HEALTH_MONITORING_LEVEL.getName(),
+        config.setProperty( ClusterProperty.HEALTH_MONITORING_LEVEL.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_level() ) );
 
-        config.setProperty( GroupProperty.HEALTH_MONITORING_THRESHOLD_CPU_PERCENTAGE.getName(),
+        config.setProperty( ClusterProperty.HEALTH_MONITORING_THRESHOLD_CPU_PERCENTAGE.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_threshold_cpu_percentage() ) );
 
-        config.setProperty( GroupProperty.HEALTH_MONITORING_THRESHOLD_MEMORY_PERCENTAGE.getName(),
+        config.setProperty( ClusterProperty.HEALTH_MONITORING_THRESHOLD_MEMORY_PERCENTAGE.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_health_monitoring_threshold_memory_percentage() ) );
 
-        config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(),
+        config.setProperty( ClusterProperty.WAIT_SECONDS_BEFORE_JOIN.getName(),
                             String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
 
-        config.setProperty( GroupProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(),
+        config.setProperty( ClusterProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(),
                             String.valueOf( hazelcastConfig.hazelcast_max_wait_seconds_before_join() ) );
 
         config.setClassLoader( HazelcastConfigServiceImpl.class.getClassLoader() );
@@ -104,13 +102,13 @@ public class HazelcastConfigServiceImpl
 
     private void configureNetwork( Config config )
     {
-        config.setProperty( GroupProperty.TCP_JOIN_PORT_TRY_COUNT.getName(),
+        config.setProperty( ClusterProperty.TCP_JOIN_PORT_TRY_COUNT.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_tcp_join_port_try_count() ) );
 
-        config.setProperty( GroupProperty.PREFER_IPv4_STACK.getName(),
+        config.setProperty( ClusterProperty.PREFER_IPv4_STACK.getName(),
                             String.valueOf( hazelcastConfig.system_hazelcast_prefer_ipv4_stack() ) );
 
-        config.setProperty( GroupProperty.SOCKET_BIND_ANY.getName(), String.valueOf( hazelcastConfig.system_hazelcast_socket_bind_any() ) );
+        config.setProperty( ClusterProperty.SOCKET_BIND_ANY.getName(), String.valueOf( hazelcastConfig.system_hazelcast_socket_bind_any() ) );
 
         final NetworkConfig networkConfig = config.getNetworkConfig();
         networkConfig.setPort( hazelcastConfig.network_port() );
@@ -131,8 +129,6 @@ public class HazelcastConfigServiceImpl
         configureJoin( config );
 
         configurePartitionGroup( config );
-
-        configureRestApi( config );
     }
 
     private void configureJoin( Config config )
@@ -148,7 +144,7 @@ public class HazelcastConfigServiceImpl
     {
         if ( hazelcastConfig.network_join_kubernetes_enabled() )
         {
-            config.setProperty( GroupProperty.DISCOVERY_SPI_ENABLED.getName(), String.valueOf( true ) );
+            config.setProperty( ClusterProperty.DISCOVERY_SPI_ENABLED.getName(), String.valueOf( true ) );
 
             final DiscoveryStrategyConfig discoveryStrategyConfig =
                 new DiscoveryStrategyConfig( new HazelcastKubernetesDiscoveryStrategyFactory() );
@@ -208,25 +204,6 @@ public class HazelcastConfigServiceImpl
             partitionGroupConfig.setEnabled( true );
             partitionGroupConfig.setGroupType(
                 PartitionGroupConfig.MemberGroupType.valueOf( hazelcastConfig.partition_group_groupType() ) );
-        }
-    }
-
-    private void configureRestApi( Config config )
-    {
-        if ( hazelcastConfig.network_restApi_enabled() )
-        {
-            final RestApiConfig restApiConfig = new RestApiConfig();
-            restApiConfig.setEnabled( true );
-            final String endpointGroupsConfig = requireNonNullElse( hazelcastConfig.network_restApi_restEndpointGroups(), "" );
-
-            final List<RestEndpointGroup> restEndpointGroups = Arrays.stream( endpointGroupsConfig.split( "," ) )
-                .filter( Predicate.not( String::isBlank ) )
-                .map( String::trim )
-                .map( RestEndpointGroup::valueOf )
-                .collect( Collectors.toList() );
-
-            restApiConfig.setEnabledGroups( restEndpointGroups );
-            config.getNetworkConfig().setRestApiConfig( restApiConfig );
         }
     }
 

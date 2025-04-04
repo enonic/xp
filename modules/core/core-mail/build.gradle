@@ -3,11 +3,12 @@ dependencies {
     implementation project( ':core:core-internal' )
 
     testImplementation ( libs.mockjavamail ) {
-        exclude group: 'javax.mail'
-        exclude group: 'junit'
+        exclude group: 'jakarta.mail'
     }
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Mail' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Mail' )
+    }
 }

@@ -3,5 +3,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Blobstore - File' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Blobstore - File' )
+    }
 }

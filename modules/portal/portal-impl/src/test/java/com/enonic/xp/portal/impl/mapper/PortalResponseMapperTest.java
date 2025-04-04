@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
@@ -21,7 +21,6 @@ class PortalResponseMapperTest
         complexCookie.setMaxAge( 100 );
         complexCookie.setPath( "/admin" );
         complexCookie.setDomain( "enonic.com" );
-        complexCookie.setComment( "some comment" );
         complexCookie.setSecure( true );
         complexCookie.setHttpOnly( true );
 

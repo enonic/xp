@@ -3,16 +3,16 @@ package com.enonic.xp.impl.server.rest;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.sse.OutboundSseEvent;
-import javax.ws.rs.sse.Sse;
-import javax.ws.rs.sse.SseBroadcaster;
-import javax.ws.rs.sse.SseEventSink;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.osgi.framework.Version;
+
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.sse.OutboundSseEvent;
+import jakarta.ws.rs.sse.Sse;
+import jakarta.ws.rs.sse.SseBroadcaster;
+import jakarta.ws.rs.sse.SseEventSink;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Hashtable;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -220,6 +221,7 @@ public class IdProviderControllerServiceImplTest
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         when( httpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( httpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
         when( httpServletRequest.getScheme() ).thenReturn( "http" );
         when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
         when( httpServletRequest.getLocalPort() ).thenReturn( 80 );

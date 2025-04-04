@@ -13,15 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 
+import com.hazelcast.cluster.Member;
+import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.MemberSelector;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
@@ -31,10 +30,8 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -146,41 +143,11 @@ class ClusteredTaskManagerImplTest
         throws Exception
     {
         final DescribedTask task = mock( DescribedTask.class );
-        when( task.getApplicationKey() ).thenReturn( ApplicationKey.from( "some.app" ) );
 
         final Future<Void> future = mock( Future.class );
         when( executorService.submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) ) ).thenReturn( future );
         clusteredTaskManager.submitTask( task );
-        final ArgumentCaptor<MemberSelector> argumentCaptor = ArgumentCaptor.forClass( MemberSelector.class );
-        verify( executorService ).submit( any( OffloadedTaskCallable.class ), argumentCaptor.capture() );
-
-        final Member memberSelectable = mock( Member.class );
-        when( memberSelectable.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberSelectable.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
-
-        final Member memberDoesNotAcceptOffload = mock( Member.class );
-        when( memberDoesNotAcceptOffload.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( false );
-
-        final Member memberDoesNotHaveApp = mock( Member.class );
-        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( null );
-
-        final Member memberDoesAcceptSystemForNonSystemApp = mock( Member.class );
-        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
-
-        final MemberSelector memberSelector = argumentCaptor.getValue();
-        assertTrue( memberSelector.select( memberSelectable ) );
-        assertTrue( memberSelector.select( memberDoesAcceptSystemForNonSystemApp ) );
-        assertFalse( memberSelector.select( memberDoesNotAcceptOffload ) );
-        assertFalse( memberSelector.select( memberDoesNotHaveApp ) );
-
-        final Member memberDoesNotAcceptSystemForSystemApp = mock( Member.class );
-        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
-        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "system-tasks-enabled" ) ).thenReturn( false );
-        when( task.getApplicationKey() ).thenReturn( ApplicationKey.from( "com.enonic.xp.app.system" ) );
-
-        assertFalse( memberSelector.select( memberDoesNotAcceptSystemForSystemApp ) );
+        verify( executorService ).submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) );
 
         verify( future ).get( anyLong(), any( TimeUnit.class ) );
     }

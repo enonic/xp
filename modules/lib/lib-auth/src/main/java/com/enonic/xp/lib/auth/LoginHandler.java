@@ -2,7 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import java.util.function.Supplier;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.LocalScope;

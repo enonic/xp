@@ -2,17 +2,17 @@ package com.enonic.xp.web.impl.dos;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-
-import org.eclipse.jetty.servlets.DoSFilter;
+import org.eclipse.jetty.ee10.servlets.DoSFilter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
 
 import com.enonic.xp.annotation.Order;
 
