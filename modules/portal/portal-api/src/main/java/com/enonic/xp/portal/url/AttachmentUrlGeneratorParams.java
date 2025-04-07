@@ -38,7 +38,7 @@ public final class AttachmentUrlGeneratorParams
     {
         this.baseUrl = builder.baseUrl;
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.contentSupplier = Objects.requireNonNull( builder.mediaSupplier );
+        this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
         this.projectName = Objects.requireNonNull( builder.projectNameSupplier );
         this.branch = Objects.requireNonNull( builder.branchSupplier );
         this.download = builder.download;
@@ -103,7 +103,7 @@ public final class AttachmentUrlGeneratorParams
 
         private String urlType;
 
-        private Supplier<Content> mediaSupplier;
+        private Supplier<Content> contentSupplier;
 
         private Supplier<ProjectName> projectNameSupplier;
 
@@ -129,9 +129,9 @@ public final class AttachmentUrlGeneratorParams
             return this;
         }
 
-        public Builder setContent( final Supplier<Content> mediaSupplier )
+        public Builder setContent( final Supplier<Content> contentSupplier )
         {
-            this.mediaSupplier = mediaSupplier;
+            this.contentSupplier = contentSupplier;
             return this;
         }
 
