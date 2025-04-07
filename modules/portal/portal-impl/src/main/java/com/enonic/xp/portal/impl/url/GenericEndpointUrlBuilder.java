@@ -1,8 +1,12 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
+import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AbstractUrlParams;
@@ -25,9 +29,9 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         super.buildUrl( url, params );
-        appendPart( url, this.portalRequest.getContentPath().toString() );
-        appendPart( url, "_" );
-        appendPart( url, this.endpointType );
+        UrlBuilderHelper.appendAndEncodePathParts( url, this.portalRequest.getContentPath().toString() );
+        UrlBuilderHelper.appendPart( url, "_" );
+        UrlBuilderHelper.appendPart( url, this.endpointType );
     }
 
     @Override
@@ -82,5 +86,17 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
 
         final String[] preEndpointPathWithoutContentPath = Arrays.copyOfRange( splitPreEndpointPath, 0, preEndpointPathIndex + 1 );
         return String.join( ELEMENT_DIVIDER, preEndpointPathWithoutContentPath );
+    }
+
+    private String normalizePath( final String value )
+    {
+        return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false )
+            .map( this::urlEncodePathSegment )
+            .collect( Collectors.joining( "/" ) );
+    }
+
+    private String urlEncodePathSegment( final String value )
+    {
+        return UrlEscapers.urlPathSegmentEscaper().escape( value );
     }
 }

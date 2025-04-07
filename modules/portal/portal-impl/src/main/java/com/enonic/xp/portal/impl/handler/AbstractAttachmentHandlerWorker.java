@@ -8,31 +8,32 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class AbstractAttachmentHandlerWorker<T extends Content>
-    extends PortalHandlerWorker<PortalRequest>
 {
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     private static final MediaType AVIF_MEDIA_TYPE = MediaType.create( "image", "avif" );
 
     protected ContentService contentService;
+
+    protected WebRequest request;
 
     public ContentId id;
 
@@ -50,13 +51,16 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
     public String contentSecurityPolicySvg;
 
-    public AbstractAttachmentHandlerWorker( final PortalRequest request, final ContentService contentService )
+    public boolean legacyMode;
+
+    public Branch branch;
+
+    public AbstractAttachmentHandlerWorker( final WebRequest request, final ContentService contentService )
     {
-        super( request );
         this.contentService = contentService;
+        this.request = request;
     }
 
-    @Override
     public PortalResponse execute()
         throws Exception
     {
@@ -65,15 +69,14 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final BinaryReference binaryReference = attachment.getBinaryReference();
         final ByteSource binary = getBinary( this.id, binaryReference );
 
-        final PortalResponse.Builder portalResponse = PortalResponse.create();
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
         final MediaType attachmentMimeType = isSvgz ? SVG_MEDIA_TYPE : MediaType.parse( attachment.getMimeType() );
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is(
-            AVIF_MEDIA_TYPE ) || attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( AVIF_MEDIA_TYPE ) ||
+            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
             contentType = attachmentMimeType;
             body = binary;
@@ -84,6 +87,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
             body = transform( content, binaryReference, binary, contentType );
         }
 
+        final PortalResponse.Builder portalResponse = PortalResponse.create();
 
         if ( contentType.is( SVG_MEDIA_TYPE ) )
         {
@@ -96,21 +100,19 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
                 portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicySvg );
             }
         }
-        else
+        else if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
         {
-            if ( !nullToEmpty( contentSecurityPolicy ).isBlank() )
-            {
-                portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
-            }
+            portalResponse.header( HttpHeaders.CONTENT_SECURITY_POLICY, contentSecurityPolicy );
         }
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
             final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+                ContentConstants.BRANCH_MASTER.equals( branch );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
-            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() && this.fingerprint.equals( resolveHash( content, binaryReference ) ) )
+            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
+                this.fingerprint.equals( resolveHash( content, attachment, binaryReference ) ) )
             {
                 portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
             }
@@ -135,10 +137,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         return binary;
     }
 
-    protected String resolveHash( final T content, final BinaryReference binaryReference )
-    {
-        return this.contentService.getBinaryKey( content.getId(), binaryReference );
-    }
+    protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );
 
     protected Attachment resolveAttachment( final Content content, final String name )
     {

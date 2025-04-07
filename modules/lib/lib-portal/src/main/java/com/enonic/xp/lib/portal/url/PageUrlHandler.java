@@ -1,26 +1,78 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Set;
-
-import com.google.common.collect.Multimap;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public final class PageUrlHandler
-    extends AbstractUrlHandler
+    implements ScriptBean
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "id", "path", "type", "params" );
+    private Supplier<PortalUrlService> urlServiceSupplier;
 
-    @Override
-    protected String buildUrl( final Multimap<String, String> map )
+    private String id;
+
+    private String path;
+
+    private String type;
+
+    private String projectName;
+
+    private String branch;
+
+    private Map<String, Collection<String>> queryParams;
+
+    public void setId( final String id )
     {
-        final PageUrlParams params = new PageUrlParams().portalRequest( this.request ).setAsMap( map );
-        return this.urlService.pageUrl( params );
+        this.id = id;
+    }
+
+    public void setPath( final String path )
+    {
+        this.path = path;
+    }
+
+    public void setUrlType( final String type )
+    {
+        this.type = type;
+    }
+
+    public void setProjectName( final String projectName )
+    {
+        this.projectName = projectName;
+    }
+
+    public void setBranch( final String branch )
+    {
+        this.branch = branch;
+    }
+
+    public void setQueryParams( final ScriptValue params )
+    {
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
+    }
+
+    public String createUrl()
+    {
+        final PageUrlParams params =
+            new PageUrlParams().id( this.id ).path( this.path ).type( this.type ).projectName( this.projectName ).branch( this.branch );
+
+        if ( this.queryParams != null )
+        {
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
+        }
+
+        return urlServiceSupplier.get().pageUrl( params );
     }
 
     @Override
-    protected boolean isValidParam( final String param )
+    public void initialize( final BeanContext context )
     {
-        return VALID_URL_PROPERTY_KEYS.contains( param );
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 }

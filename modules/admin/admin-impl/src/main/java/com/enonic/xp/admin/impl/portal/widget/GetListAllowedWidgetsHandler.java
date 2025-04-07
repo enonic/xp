@@ -27,8 +27,6 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.ApiUrlParams;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -42,19 +40,16 @@ public class GetListAllowedWidgetsHandler
 
     private final WidgetDescriptorService widgetDescriptorService;
 
-    private final PortalUrlService portalUrlService;
-
     private final LocaleService localeService;
 
     private final WidgetIconResolver widgetIconResolver;
 
     @Activate
     public GetListAllowedWidgetsHandler( @Reference final WidgetDescriptorService widgetDescriptorService,
-                                         @Reference final PortalUrlService portalUrlService, @Reference final LocaleService localeService,
+                                         @Reference final LocaleService localeService,
                                          @Reference final WidgetIconResolver widgetIconResolver )
     {
         this.widgetDescriptorService = widgetDescriptorService;
-        this.portalUrlService = portalUrlService;
         this.localeService = localeService;
         this.widgetIconResolver = widgetIconResolver;
     }
@@ -71,27 +66,23 @@ public class GetListAllowedWidgetsHandler
         if ( widgetDescriptors.isNotEmpty() )
         {
             final PortalRequest portalRequest = (PortalRequest) webRequest;
-            final String widgetApiBaseUrl = portalUrlService.apiUrl(
-                new ApiUrlParams().portalRequest( portalRequest ).application( "admin" ).api( "widget" ) );
             final List<Locale> preferredLocales = Collections.list( portalRequest.getRawRequest().getLocales() );
-            widgetDescriptors.forEach(
-                widgetDescriptor -> result.add( convertToJson( widgetDescriptor, widgetApiBaseUrl, preferredLocales ) ) );
+            widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, preferredLocales ) ) );
         }
 
         return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( result ).build();
     }
 
-    private ObjectNode convertToJson( final WidgetDescriptor widgetDescriptor, final String widgetApiBaseUrl,
-                                      final List<Locale> preferredLocales )
+    private ObjectNode convertToJson( final WidgetDescriptor widgetDescriptor, final List<Locale> preferredLocales )
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
         json.put( "key", widgetDescriptor.getKeyString() );
         json.put( "displayName", widgetDescriptor.getDisplayName() );
         json.put( "description", widgetDescriptor.getDescription() );
-        json.put( "iconUrl", resolveIconUrl( widgetDescriptor, widgetApiBaseUrl ) );
+        json.put( "iconUrl", resolveIconUrl( widgetDescriptor ) );
 
-        json.put( "url", widgetApiBaseUrl + "/" + widgetDescriptor.getApplicationKey().toString() + "/" + widgetDescriptor.getName() );
+        json.put( "url", widgetDescriptor.getApplicationKey().toString() + "/" + widgetDescriptor.getName() );
 
         if ( !isNullOrEmpty( widgetDescriptor.getDisplayNameI18nKey() ) || !isNullOrEmpty( widgetDescriptor.getDescriptionI18nKey() ) )
         {
@@ -147,9 +138,9 @@ public class GetListAllowedWidgetsHandler
         }
     }
 
-    private String resolveIconUrl( final WidgetDescriptor widgetDescriptor, final String widgetBaseUrl )
+    private String resolveIconUrl( final WidgetDescriptor widgetDescriptor )
     {
-        final StringBuilder iconUrl = new StringBuilder( widgetBaseUrl );
+        final StringBuilder iconUrl = new StringBuilder();
 
         iconUrl.append( "?" );
         appendParam( iconUrl, "icon", null );

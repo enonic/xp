@@ -40,8 +40,7 @@ public class TextRendererTest
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
-        service =
-            new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock() );
+        service = new PortalUrlServiceImpl( null, null, new MockMacroService(), new MockStyleDescriptorService(), mock(), mock() );
         portalRequest.setMode( RenderMode.LIVE );
     }
 
@@ -131,7 +130,7 @@ public class TextRendererTest
         portalResponse = renderer.render( textComponent, portalRequest );
 
         // verify
-        assertFalse( ((String) portalResponse.getBody()).contains( "figcaption" ) );
+        assertFalse( ( (String) portalResponse.getBody() ).contains( "figcaption" ) );
     }
 
     @Test

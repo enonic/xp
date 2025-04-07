@@ -18,7 +18,7 @@ public enum ImageOrientation
     RightBottom( 7 ), // 0th row at right, 0th column at bottom
     LeftBottom( 8 ); // 0th row at left, 0th column at bottom
 
-    private static final ImageOrientation DEFAULT = ImageOrientation.TopLeft; // no rotation needed
+    public static final ImageOrientation DEFAULT = ImageOrientation.TopLeft; // no rotation needed
 
     private static final Map<Integer, ImageOrientation> LOOKUP_TABLE =
         Arrays.stream( values() ).collect( Collectors.toMap( e -> e.value, Function.identity() ) );

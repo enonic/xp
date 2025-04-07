@@ -25,7 +25,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
-@Deprecated(since = "8.0", forRemoval = true)
 @Component(service = ImageHandler.class, configurationPid = "com.enonic.xp.portal")
 public class ImageHandler
 {
@@ -99,7 +98,7 @@ public class ImageHandler
         }
 
         final ImageHandlerWorker worker =
-            new ImageHandlerWorker( (PortalRequest) webRequest, this.contentService, this.imageService, this.mediaInfoService );
+            new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.mediaInfoService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );
@@ -112,6 +111,8 @@ public class ImageHandler
         worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
         worker.contentSecurityPolicy = this.contentSecurityPolicy;
         worker.contentSecurityPolicySvg = this.contentSecurityPolicySvg;
+        worker.legacyMode = true;
+        worker.branch = ( (PortalRequest) webRequest ).getBranch();
 
         return worker.execute();
     }

@@ -20,7 +20,13 @@ public final class AttachmentUrlParams
 
     private String label;
 
-    private boolean download = false;
+    private boolean download;
+
+    private String projectName;
+
+    private String branch;
+
+    private String baseUrl;
 
     public String getId()
     {
@@ -45,6 +51,21 @@ public final class AttachmentUrlParams
     public boolean isDownload()
     {
         return this.download;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
     }
 
     public AttachmentUrlParams id( final String value )
@@ -82,6 +103,24 @@ public final class AttachmentUrlParams
         return this;
     }
 
+    public AttachmentUrlParams projectName( final String projectName )
+    {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public AttachmentUrlParams branch( final String branch )
+    {
+        this.branch = branch;
+        return this;
+    }
+
+    public AttachmentUrlParams baseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
+        return this;
+    }
+
     @Override
     public AttachmentUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -101,6 +140,9 @@ public final class AttachmentUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
+        helper.add( "baseUrl", this.baseUrl );
         helper.add( "name", this.name );
         helper.add( "label", this.label );
         helper.add( "download", this.download );

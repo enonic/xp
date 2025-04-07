@@ -1,35 +1,86 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Multimap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import com.enonic.xp.portal.url.ApiUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public final class ApiUrlHandler
-    extends AbstractUrlHandler
+    implements ScriptBean
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "application", "api", "type", "params" );
+    private Supplier<PortalUrlService> urlServiceSupplier;
+
+    private String application;
+
+    private String api;
+
+    private String type;
+
+    private String baseUrl;
 
     private String path;
 
     private List<String> pathSegments;
 
+    private Map<String, Collection<String>> queryParams;
+
     @Override
-    protected String buildUrl( final Multimap<String, String> map )
+    public void initialize( final BeanContext context )
     {
-        final ApiUrlParams params =
-            new ApiUrlParams().portalRequest( this.request ).setAsMap( map ).path( this.path ).pathSegments( this.pathSegments );
-        return this.urlService.apiUrl( params );
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
+    }
+
+    public String createUrl()
+    {
+        final ApiUrlParams.Builder builder = ApiUrlParams.create()
+            .setApplication( this.application )
+            .setApi( this.api )
+            .setType( this.type )
+            .setBaseUrl( this.baseUrl )
+            .setPath( this.path )
+            .setPathSegments( this.pathSegments );
+
+        if ( queryParams != null )
+        {
+            builder.addQueryParams( this.queryParams );
+        }
+
+        final ApiUrlParams params = builder.build();
+
+        return this.urlServiceSupplier.get().apiUrl( params );
+    }
+
+    public void setApplication( final String value )
+    {
+        this.application = value;
+    }
+
+    public void setApi( final String value )
+    {
+        this.api = value;
+    }
+
+    public void setUrlType( final String value )
+    {
+        this.type = value;
+    }
+
+    public void setBaseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
     }
 
     public void setPath( final Object value )
     {
-        if ( value instanceof ScriptValue && ( (ScriptValue) value ).isArray() )
+        if ( value instanceof ScriptValue scriptValue && scriptValue.isArray() )
         {
-            this.pathSegments = ( (ScriptValue) value ).getArray( String.class );
+            this.pathSegments = scriptValue.getArray( String.class );
         }
         else if ( value instanceof String )
         {
@@ -41,9 +92,8 @@ public final class ApiUrlHandler
         }
     }
 
-    @Override
-    protected boolean isValidParam( final String param )
+    public void addQueryParams( final ScriptValue params )
     {
-        return VALID_URL_PROPERTY_KEYS.contains( param );
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }
 }

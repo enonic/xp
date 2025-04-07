@@ -27,6 +27,12 @@ public final class ImageUrlParams
 
     private String scale;
 
+    private String projectName;
+
+    private String branch;
+
+    private String baseUrl;
+
     public String getId()
     {
         return this.id;
@@ -60,6 +66,21 @@ public final class ImageUrlParams
     public String getScale()
     {
         return this.scale;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
     }
 
     public ImageUrlParams id( final String value )
@@ -109,6 +130,24 @@ public final class ImageUrlParams
         return this;
     }
 
+    public ImageUrlParams projectName( final String projectName )
+    {
+        this.projectName = projectName;
+        return this;
+    }
+
+    public ImageUrlParams branch( final String branch )
+    {
+        this.branch = branch;
+        return this;
+    }
+
+    public ImageUrlParams baseUrl( final String baseUrl )
+    {
+        this.baseUrl = baseUrl;
+        return this;
+    }
+
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -130,6 +169,9 @@ public final class ImageUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
+        helper.add( "baseUrl", this.baseUrl );
         helper.add( "format", this.format );
         helper.add( "quality", this.quality );
         helper.add( "filter", this.filter );
@@ -139,9 +181,8 @@ public final class ImageUrlParams
 
     public ImageUrlParams validate()
     {
-        Preconditions.checkState(
-            getPortalRequest().getContent() != null || id != null || path != null,
-            "id, path or content must be set" );
+        Preconditions.checkState( ( getPortalRequest() != null && getPortalRequest().getContent() != null ) || id != null || path != null,
+                                  "id, path or content must be set" );
         return this;
     }
 }

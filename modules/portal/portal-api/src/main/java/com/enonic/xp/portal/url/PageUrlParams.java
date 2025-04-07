@@ -14,6 +14,10 @@ public final class PageUrlParams
 
     private String path;
 
+    private String projectName;
+
+    private String branch;
+
     public String getId()
     {
         return this.id;
@@ -22,6 +26,16 @@ public final class PageUrlParams
     public String getPath()
     {
         return this.path;
+    }
+
+    public String getProjectName()
+    {
+        return projectName;
+    }
+
+    public String getBranch()
+    {
+        return branch;
     }
 
     public PageUrlParams id( final String value )
@@ -33,6 +47,18 @@ public final class PageUrlParams
     public PageUrlParams path( final String value )
     {
         this.path = Strings.emptyToNull( value );
+        return this;
+    }
+
+    public PageUrlParams projectName( final String value )
+    {
+        this.projectName = Strings.emptyToNull( value );
+        return this;
+    }
+
+    public PageUrlParams branch( final String value )
+    {
+        this.branch = Strings.emptyToNull( value );
         return this;
     }
 
@@ -52,5 +78,7 @@ public final class PageUrlParams
         super.buildToString( helper );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
+        helper.add( "project", this.projectName );
+        helper.add( "branch", this.branch );
     }
 }

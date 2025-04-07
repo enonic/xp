@@ -9,6 +9,8 @@ public interface PortalUrlService
 
     String serviceUrl( ServiceUrlParams params );
 
+    String baseUrl( BaseUrlParams params );
+
     String pageUrl( PageUrlParams params );
 
     String componentUrl( ComponentUrlParams params );
@@ -24,4 +26,12 @@ public interface PortalUrlService
     String processHtml( ProcessHtmlParams params );
 
     String apiUrl( ApiUrlParams params );
+
+    String imageUrl( ImageUrlGeneratorParams params );
+
+    String attachmentUrl( AttachmentUrlGeneratorParams params );
+
+    String apiUrl( ApiUrlGeneratorParams params );
+
+    String generateUrl( UrlGeneratorParams params );
 }

@@ -13,14 +13,7 @@ declare global {
     }
 }
 
-import type {
-    ByteSource,
-    Component,
-    Content,
-    NestedRecord,
-    Region,
-    ScriptValue,
-} from '@enonic-types/core';
+import type {ByteSource, Component, Content, Region, ScriptValue,} from '@enonic-types/core';
 
 export type {
     Attachment,
@@ -31,7 +24,7 @@ export type {
 } from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === null) {
+    if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
     }
 }
@@ -49,7 +42,7 @@ export interface SiteConfig<Config> {
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
-export type IdXorPath = XOR<{id: string}, {path: string}>;
+export type IdXorPath = XOR<{ id: string }, { path: string }>;
 
 export interface AssetUrlParams {
     path: string;
@@ -98,10 +91,37 @@ export type ImageUrlParams = IdXorPath & {
         | `wide(${number},${number})`
         | `width(${number})`
         | 'full';
+    project?: string;
+    branch?: string;
+    baseUrl?: string;
 };
 
 interface ImageUrlHandler {
-    createUrl(value: object): string;
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    addQueryParams(value?: ScriptValue | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setBaseUrl(value?: string | null): void;
+
+    setBackground(value?: string | null): void;
+
+    setQuality(value?: number | null): void;
+
+    setFilter(value?: string | null): void;
+
+    setFormat(value?: string | null): void;
+
+    setScale(value: string): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -118,13 +138,32 @@ interface ImageUrlHandler {
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.project] Name of the project.
+ * @param {string} [params.branch] Name of the branch.
+ * @param {string|object} [params.baseUrl] Custom baseUrl.If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
  */
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+
+    checkRequired(params, 'scale');
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setUrlType(__.nullOrValue(params.type));
+    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setBackground(__.nullOrValue(params.background));
+    bean.setQuality(__.nullOrValue(params.quality));
+    bean.setFilter(__.nullOrValue(params.filter));
+    bean.setFormat(__.nullOrValue(params.format));
+    bean.setScale(params.scale);
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setBaseUrl(__.nullOrValue(params.baseUrl));
+
+    return bean.createUrl();
 }
 
 export interface ComponentUrlParams {
@@ -166,10 +205,33 @@ export interface AttachmentUrlParams {
     download?: boolean;
     type?: 'server' | 'absolute';
     params?: object;
+    project?: string;
+    branch?: string;
+    baseUrl?: string
 }
 
 interface AttachmentUrlHandler {
-    createUrl(value: object): string;
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    addQueryParams(value?: ScriptValue | null): void;
+
+    setName(value?: string | null): void;
+
+    setLabel(value?: string | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setBaseUrl(value?: string | null): void;
+
+    setDownload(value: boolean): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -184,22 +246,51 @@ interface AttachmentUrlHandler {
  * @param {string} [params.label=source] Label of the attachment.
  * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.project] Name of the project.
+ * @param {string} [params.branch] Name of the branch.
+ * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
  */
 export function attachmentUrl(params: AttachmentUrlParams): string {
     const bean: AttachmentUrlHandler = __.newBean<AttachmentUrlHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setUrlType(__.nullOrValue(params.type));
+    bean.setName(__.nullOrValue(params.name));
+    bean.setLabel(__.nullOrValue(params.label));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setDownload(params.download || false);
+    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setBaseUrl(__.nullOrValue(params.baseUrl));
+
+    return bean.createUrl();
 }
 
 export type PageUrlParams = IdXorPath & {
-    type?: 'server' | 'absolute';
+    type?: 'server' | 'absolute' | 'websocket';
     params?: object;
+    project?: string;
+    branch?: string;
 };
 
 interface PageUrlHandler {
-    createUrl(value: object): string;
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setQueryParams(value?: ScriptValue | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -211,13 +302,24 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.project] Project of the context.
+ * @param {string} [params.branch] Branch of the project for context.
+ * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
  */
 export function pageUrl(params: PageUrlParams): string {
     const bean: PageUrlHandler = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');
-    return bean.createUrl(__.toScriptValue(params));
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setUrlType(params.type || 'server');
+    bean.setQueryParams(__.toScriptValue(params.params));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+
+    return bean.createUrl();
 }
 
 export interface ServiceUrlParams {
@@ -445,7 +547,8 @@ interface GetCurrentSiteConfigHandler {
  * @returns {object|null} The site configuration for current application as JSON.
  */
 export function getSiteConfig<Config = Record<string, unknown>>(): Config | null {
-    const bean: GetCurrentSiteConfigHandler = __.newBean<GetCurrentSiteConfigHandler>('com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
+    const bean: GetCurrentSiteConfigHandler = __.newBean<GetCurrentSiteConfigHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentSiteConfigHandler');
     return __.toNativeObject(bean.execute<Config>());
 }
 
@@ -462,7 +565,8 @@ interface GetCurrentContentHandler {
  * @returns {object|null} The current content as JSON.
  */
 export function getContent<Hit extends Content<unknown> = Content>(): Hit | null {
-    const bean: GetCurrentContentHandler = __.newBean<GetCurrentContentHandler>('com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
+    const bean: GetCurrentContentHandler = __.newBean<GetCurrentContentHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentContentHandler');
     return __.toNativeObject(bean.execute<Hit>());
 }
 
@@ -481,7 +585,8 @@ interface GetCurrentComponentHandler<_Component extends Component = Component> {
 export function getComponent<
     _Component extends Component = Component
 >(): _Component | null {
-    const bean: GetCurrentComponentHandler<_Component> = __.newBean<GetCurrentComponentHandler<_Component>>('com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
+    const bean: GetCurrentComponentHandler<_Component> = __.newBean<GetCurrentComponentHandler<_Component>>(
+        'com.enonic.xp.lib.portal.current.GetCurrentComponentHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -497,7 +602,8 @@ interface GetCurrentIdProviderKeyHandler {
  * @returns {string|null} The current id provider as JSON.
  */
 export function getIdProviderKey(): string | null {
-    const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>('com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
+    const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>(
+        'com.enonic.xp.lib.portal.current.GetCurrentIdProviderKeyHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -616,12 +722,23 @@ export interface ApiUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     path?: string | string[];
+    baseUrl?: string;
 }
 
 interface ApiUrlHandler {
-    setPath(value: string | ScriptValue): void;
+    setApplication(value?: string | null): void;
 
-    createUrl(value: object): string;
+    setApi(value?: string | null): void;
+
+    setUrlType(value?: string | null): void;
+
+    setPath(value?: string | ScriptValue): void;
+
+    setBaseUrl(value?: string | null): void;
+
+    addQueryParams(value?: ScriptValue | null): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -630,26 +747,35 @@ interface ApiUrlHandler {
  * @example-ref examples/portal/apiUrl.js
  *
  * @param {object} urlParams Input parameters as JSON.
- * @param {string} urlParams.application Application to reference to the API.
- * @param {string} [urlParams.api] Name of the API
+ * @param {string} [urlParams.application] Application to reference to the API. For offline mode, this parameter is required,
+ * otherwise if value is not set, the application from PortalRequest is used.
+ * @param {string} urlParams.api Name of the API
  * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [urlParams.params] Custom parameters to append to the URL.
+ * @param {string|object} [urlParams.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  *
  * @returns {string} The generated URL.
  */
 export function apiUrl(urlParams: ApiUrlParams): string {
-    checkRequired(urlParams, 'application');
+    checkRequired(urlParams, 'api');
 
     const {
         application,
         api,
-        type = 'server',
+        type,
         path,
         params,
+        baseUrl
     } = urlParams ?? {};
 
     const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
+
+    bean.setUrlType(__.nullOrValue(type));
+    bean.setApplication(__.nullOrValue(application));
+    bean.setApi(api);
+    bean.addQueryParams(__.toScriptValue(params));
+
     if (path) {
         if (Array.isArray(path)) {
             bean.setPath(__.toScriptValue(path));
@@ -658,10 +784,52 @@ export function apiUrl(urlParams: ApiUrlParams): string {
         }
     }
 
-    return bean.createUrl(__.toScriptValue({
-        application,
-        api,
-        type,
-        params,
-    }));
+    return bean.createUrl();
+}
+
+export interface BaseUrlParams {
+    type?: 'server' | 'absolute' | 'websocket';
+    id?: string;
+    path?: string;
+    project?: string;
+    branch?: string;
+}
+interface BaseUrlHandler {
+    setUrlType(value?: string | null): void;
+
+    setProjectName(value?: string | null): void;
+
+    setBranch(value?: string | null): void;
+
+    setId(value?: string | null): void;
+
+    setPath(value?: string | null): void;
+
+    createUrl(): string;
+}
+
+/**
+ * This function generates a baseURL.
+ *
+ * @example-ref examples/portal/baseUrl.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {string} [params.id] ID of the content.
+ * @param {string} [params.path] Path to the content.
+ * @param {string} [params.project] Name of the project to use for resolving the URL.
+ * @param {string} [params.branch] Name of the branch to use for resolving the URL.
+ *
+ * @returns {string} The generated URL.
+ */
+export function baseUrl(params: BaseUrlParams): string {
+    const bean: BaseUrlHandler = __.newBean<BaseUrlHandler>('com.enonic.xp.lib.portal.url.BaseUrlHandler');
+
+    bean.setUrlType(__.nullOrValue(params.type));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+
+    return bean.createUrl();
 }

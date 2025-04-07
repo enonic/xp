@@ -202,4 +202,10 @@ public class UrlServiceScriptTest
     {
         runScript( "/lib/xp/examples/portal/apiUrl.js" );
     }
+
+    @Test
+    public void testExample_baseUrl()
+    {
+        runScript( "/lib/xp/examples/portal/baseUrl.js" );
+    }
 }
