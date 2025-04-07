@@ -7,6 +7,7 @@ dependencies {
     implementation libs.jetty.jmx
     implementation libs.jetty.websocket.server
     implementation libs.jakarta.annotation
+    implementation libs.micrometer.jetty12
 
     testFixturesApi( project(":web:web-api") )
     testFixturesImplementation libs.junit.jupiter.api

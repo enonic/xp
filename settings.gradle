@@ -66,6 +66,7 @@ include 'server:server-status'
 include 'server:server-udc'
 include 'server:server-rest'
 include 'server:server-trace'
+include 'server:server-metrics'
 
 include 'script:script-api'
 include 'script:script-impl'

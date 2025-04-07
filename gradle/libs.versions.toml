@@ -116,6 +116,7 @@ jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version.ref = 
 micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+micrometer-jetty12 = { module = "io.micrometer:micrometer-jetty12", version.ref = "micrometer" }
 
 prometheus-metrics-config = { module = "io.prometheus:prometheus-metrics-config", version.ref = "promethius" }
 prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "promethius" }

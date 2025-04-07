@@ -1,0 +1,28 @@
+dependencies {
+    implementation( project( ':core:core-api' ) )
+    implementation libs.micrometer.core
+    implementation libs.micrometer.registry.prometheus
+
+    implementation libs.prometheus.metrics.config
+    implementation (libs.prometheus.metrics.core) {
+        exclude group: 'io.prometheus', module: 'prometheus-metrics-tracer-initializer'
+    }
+    implementation libs.prometheus.metrics.exposition.formats
+    implementation libs.prometheus.metrics.exposition.textformats
+    implementation libs.prometheus.metrics.model
+    implementation libs.prometheus.metrics.tracer.common
+}
+
+jar {
+    bundle {
+        bnd( 'Bundle-Name': 'Prometheus Library',
+         'Export-Package':
+             '!io.prometheus.metrics.shaded.*,' +
+             '!io.prometheus.metrics.expositionformats.generated.*,' +
+             '!io.prometheus.metrics.expositionformats.internal.*,' +
+             'io.prometheus.metrics.*,',
+         'Import-Package': 'io.prometheus.metrics.tracer.initializer.*;resolution:=optional,*',
+         'Private-Package': 'io.prometheus.metrics.shaded.*,io.prometheus.metrics.expositionformats.internal.*,io.prometheus.metrics.expositionformats.generated.*'
+    )
+    }
+}
