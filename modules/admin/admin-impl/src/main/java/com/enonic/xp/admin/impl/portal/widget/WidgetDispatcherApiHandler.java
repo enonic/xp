@@ -20,7 +20,7 @@ import com.enonic.xp.web.WebResponse;
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {
-    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/(_|api)/admin:widget/?$" );
+    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/_/admin:widget/?$" );
 
     private final GetListAllowedWidgetsHandler listWidgetsHandler;
 
