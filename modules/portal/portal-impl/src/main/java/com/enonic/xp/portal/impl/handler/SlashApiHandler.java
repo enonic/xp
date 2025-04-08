@@ -315,10 +315,9 @@ public class SlashApiHandler
 
     private WebResponse handleAPIRequest( final PortalRequest portalRequest, final Supplier<WebResponse> supplier )
     {
+        PortalRequestAccessor.set( portalRequest );
         try
         {
-            PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
-
             final WebResponse returnedWebResponse = supplier.get();
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
@@ -326,6 +325,10 @@ public class SlashApiHandler
         catch ( Exception e )
         {
             return handleError( portalRequest, e );
+        }
+        finally
+        {
+            PortalRequestAccessor.remove();
         }
     }
 

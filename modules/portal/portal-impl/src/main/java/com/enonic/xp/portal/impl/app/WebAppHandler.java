@@ -82,8 +82,6 @@ public final class WebAppHandler
     {
         try
         {
-            PortalRequestAccessor.set( req.getRawRequest(), req );
-
             final WebResponse returnedWebResponse = executeController( req );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
