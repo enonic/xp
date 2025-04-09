@@ -6,6 +6,8 @@ slf4j = "2.0.17"
 jetty = "12.0.16"
 hazelcast = "5.5.0"
 tika = "3.1.0"
+micrometer = "1.14.5"
+prometheus = "1.3.6"
 
 [libraries]
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
@@ -110,5 +112,17 @@ jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets", versio
 jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version.ref = "jetty" }
 jetty-websocket-server = { module = "org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jakarta-server", version.ref = "jetty" }
 jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version.ref = "jetty" }
+
+micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+micrometer-jetty12 = { module = "io.micrometer:micrometer-jetty12", version.ref = "micrometer" }
+
+prometheus-metrics-config = { module = "io.prometheus:prometheus-metrics-config", version.ref = "prometheus" }
+prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
+prometheus-metrics-exposition-formats = { module = "io.prometheus:prometheus-metrics-exposition-formats", version.ref = "prometheus" }
+prometheus-metrics-exposition-textformats = { module = "io.prometheus:prometheus-metrics-exposition-textformats", version.ref = "prometheus" }
+prometheus-metrics-model = { module = "io.prometheus:prometheus-metrics-model", version.ref = "prometheus" }
+prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-tracer-common", version.ref = "prometheus" }
 
 [plugins]

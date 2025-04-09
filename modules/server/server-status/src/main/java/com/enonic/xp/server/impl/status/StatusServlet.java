@@ -65,12 +65,6 @@ public final class StatusServlet
     private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, String name )
         throws IOException
     {
-        //TODO Backward compatibility fix. Remove in 7.0
-        if ( "cluster".equals( name ) )
-        {
-            name = "cluster.elasticsearch";
-        }
-
         final StatusReporter reporter = this.reporters.get( name );
         if ( reporter == null )
         {

@@ -5,6 +5,7 @@ import org.osgi.framework.Bundle;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.status.BaseReporterTest;
 import com.enonic.xp.status.StatusReporter;
 
 public abstract class BaseOsgiReporterTest<T extends StatusReporter>

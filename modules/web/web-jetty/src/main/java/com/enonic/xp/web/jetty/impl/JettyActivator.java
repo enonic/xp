@@ -18,6 +18,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jetty.JettyConnectionMetrics;
+
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
@@ -61,8 +64,6 @@ public final class JettyActivator
     public void activate()
         throws Exception
     {
-        //OldMetrics.removeAll( InstrumentedQueuedThreadPool.class );
-        //final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( OldMetrics.registry(), maxThreads, minThreads, idleTimeout );
         final QueuedThreadPool threadPool =
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
         final Server server = new Server( threadPool );
@@ -85,6 +86,8 @@ public final class JettyActivator
         }
 
         server.setHandler( contexts );
+
+        JettyConnectionMetrics.addToAllConnectors( server, Metrics.globalRegistry );
 
         if ( xpServletContextHandler != null )
         {
