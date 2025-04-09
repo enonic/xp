@@ -4,6 +4,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Metrics
 {
     private Metrics()
