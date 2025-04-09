@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.status.BaseReporterTest;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JvmGCReporterTest

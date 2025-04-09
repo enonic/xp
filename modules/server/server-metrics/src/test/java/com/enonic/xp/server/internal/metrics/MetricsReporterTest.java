@@ -1,9 +1,11 @@
-package com.enonic.xp.server.impl.status;
+package com.enonic.xp.server.internal.metrics;
 
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
+
+import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

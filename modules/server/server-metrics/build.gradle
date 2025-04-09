@@ -11,6 +11,8 @@ dependencies {
     implementation libs.prometheus.metrics.exposition.textformats
     implementation libs.prometheus.metrics.model
     implementation libs.prometheus.metrics.tracer.common
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

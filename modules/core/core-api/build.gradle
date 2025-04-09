@@ -17,7 +17,7 @@ dependencies {
 
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesImplementation project( ':core:core-internal' )
+    testFixturesApi project( ':core:core-internal' )
 
     testImplementation project( ':core:core-internal' )
 }
