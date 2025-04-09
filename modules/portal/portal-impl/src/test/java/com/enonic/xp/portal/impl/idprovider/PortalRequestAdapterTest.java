@@ -167,6 +167,7 @@ public class PortalRequestAdapterTest
     void adaptSlashApiTest()
     {
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton(Locale.US) ) );
 
         // use case 1
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api?k=v" );
