@@ -85,6 +85,10 @@ public final class PortalResponseMapper
             {
                 gen.value( "httpOnly", cookie.isHttpOnly() );
             }
+            if ( cookie.getAttribute("SameSite") != null )
+            {
+                gen.value( "sameSite", cookie.getAttribute("SameSite") );
+            }
             gen.end();
         }
         gen.end();

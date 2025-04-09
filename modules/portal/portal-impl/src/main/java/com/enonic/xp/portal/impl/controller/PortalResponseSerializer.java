@@ -189,7 +189,6 @@ public final class PortalResponseSerializer
         if ( value.isObject() )
         {
             final Cookie cookie = new Cookie( key, "" );
-            final StringBuilder comment = new StringBuilder();
             for ( final String subKey : value.getKeys() )
             {
                 if ( "value".equals( subKey ) )

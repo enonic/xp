@@ -75,6 +75,7 @@ public class ControllerScriptImpl_requestTest
         assertEquals( "value2", this.portalResponse.getCookies().get( 1 ).getValue() );
         assertEquals( 2000, this.portalResponse.getCookies().get( 2 ).getMaxAge() );
         assertEquals( "/valid/path", this.portalResponse.getCookies().get( 2 ).getPath() );
+        assertEquals( "Strict", this.portalResponse.getCookies().get( 2 ).getAttribute( "SameSite" ) );
         assertTrue( this.portalResponse.getCookies().get( 3 ).getSecure() );
         assertTrue( this.portalResponse.getCookies().get( 3 ).isHttpOnly() );
         assertEquals( "enonic.com", this.portalResponse.getCookies().get( 3 ).getDomain() );
