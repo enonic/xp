@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.Constants;
 
 import com.google.common.io.ByteSource;
@@ -64,9 +64,9 @@ public class ApplicationNameResolverTest
     private TinyBundle createBundleWithHeader( final String name, final String version )
     {
         return TinyBundles.bundle()
-            .set( Constants.BUNDLE_SYMBOLICNAME, name )
-            .set( Constants.BUNDLE_VERSION, version )
-            .set( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
+            .setHeader( Constants.BUNDLE_SYMBOLICNAME, name )
+            .setHeader( Constants.BUNDLE_VERSION, version )
+            .setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
     }
 
     private ByteSource wrapBundle( final TinyBundle bundle )

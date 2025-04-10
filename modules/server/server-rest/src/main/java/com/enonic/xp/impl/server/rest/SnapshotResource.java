@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import org.osgi.service.component.annotations.Component;
@@ -50,7 +50,7 @@ public final class SnapshotResource
 
     private static DateTimeFormatter getDateTimeFormatter()
     {
-        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneId.of( "UTC" ) );
+        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneOffset.UTC );
     }
 
     @POST

@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.app.resolver;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.core.impl.app.BundleBasedTest;
@@ -24,7 +24,7 @@ public class BundleApplicationUrlResolverTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
-        builder.add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
+        builder.addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );
@@ -39,7 +39,7 @@ public class BundleApplicationUrlResolverTest
     public void testFindUrl()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
-        builder.add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
+        builder.addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );

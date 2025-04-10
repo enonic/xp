@@ -3,7 +3,7 @@ jackson = "2.18.2"
 junit5 = "5.11.4"
 mockito = "5.15.2"
 slf4j = "2.0.17"
-jetty = "12.0.16"
+jetty = "12.0.19"
 hazelcast = "5.5.0"
 tika = "3.1.0"
 micrometer = "1.14.5"
@@ -17,11 +17,11 @@ junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", vers
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.19.1" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.19.3" }
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 
-tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0.0" }
+tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "4.0.1" }
 
 mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "2.2" }
 
@@ -63,14 +63,16 @@ elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" 
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
-guava-guava = { module = "com.google.guava:guava", version = "33.4.0-jre" }
-guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.2" }
+findbugs-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.18.3" }
+guava-guava = { module = "com.google.guava:guava", version = "33.4.7-jre" }
+guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
+
+jsoup = { module = "org.jsoup:jsoup", version = "1.19.1" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.17.1" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.17.5" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 
@@ -104,7 +106,7 @@ hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version.ref = "hazel
 
 jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
-resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "6.2.11.Final" }
+resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "6.2.12.Final" }
 
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
 jetty-servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet", version.ref = "jetty" }

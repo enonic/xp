@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +21,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
-            add( getClass() );
+            addClass( getClass() );
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
@@ -45,7 +45,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
-            add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
+            addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );
@@ -62,7 +62,7 @@ public class BundleClassLoaderTest
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
-            add( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
+            addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
 
         final Bundle bundle = deploy( "bundle", builder );
         final BundleClassLoader loader = new BundleClassLoader( bundle );

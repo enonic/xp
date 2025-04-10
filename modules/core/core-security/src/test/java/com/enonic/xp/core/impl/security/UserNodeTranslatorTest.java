@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserNodeTranslatorTest
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     @Test
     public void toCreateNode()
         throws Exception
@@ -34,7 +28,7 @@ public class UserNodeTranslatorTest
             login( "login" ).
             authenticationHash( "password" ).
             key( PrincipalKey.ofUser( IdProviderKey.system(), "rmy" ) ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );

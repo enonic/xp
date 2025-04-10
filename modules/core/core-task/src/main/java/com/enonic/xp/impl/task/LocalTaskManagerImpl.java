@@ -47,7 +47,7 @@ public final class LocalTaskManagerImpl
 
     private final Executor executor;
 
-    private Clock clock;
+    static Clock clock = Clock.systemUTC();
 
     private RecurringJob cleaner;
 
@@ -58,7 +58,6 @@ public final class LocalTaskManagerImpl
                                  @Reference TaskManagerCleanupScheduler cleanupScheduler, @Reference final EventPublisher eventPublisher )
     {
         this.executor = executor;
-        this.clock = Clock.systemUTC();
         this.cleanupScheduler = cleanupScheduler;
         this.eventPublisher = eventPublisher;
     }
@@ -206,11 +205,6 @@ public final class LocalTaskManagerImpl
                 eventPublisher.publish( TaskEvents.removed( taskInfo ) );
             }
         }
-    }
-
-    void setClock( final Clock clock )
-    {
-        this.clock = clock;
     }
 
     private class ProgressReporterAdapter

@@ -37,5 +37,4 @@ public final class NodeConstants
         build();
 
     static final Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
-
 }

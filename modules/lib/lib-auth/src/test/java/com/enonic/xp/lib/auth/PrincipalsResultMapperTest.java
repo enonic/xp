@@ -1,8 +1,6 @@
 package com.enonic.xp.lib.auth;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,10 +15,6 @@ import com.enonic.xp.testing.helper.JsonAssert;
 
 public class PrincipalsResultMapperTest
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     @Test
     public void testUsersSerialized()
         throws Exception
@@ -37,14 +31,14 @@ public class PrincipalsResultMapperTest
         final Principal group1 = Group.create().
             key( PrincipalKey.ofGroup( IdProviderKey.system(), "group1" ) ).
             displayName( "Group1" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description1" ).
             build();
 
         final Principal group2 = Group.create().
             key( PrincipalKey.ofGroup( IdProviderKey.system(), "group2" ) ).
             displayName( "Group2" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description2" ).
             build();
 
@@ -60,14 +54,14 @@ public class PrincipalsResultMapperTest
         final Principal role1 = Role.create().
             key( PrincipalKey.ofRole( "Role 1" ) ).
             displayName( "Role 1 Display Name" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description1" ).
             build();
 
         final Principal role2 = Role.create().
             key( PrincipalKey.ofRole( "Role 2" ) ).
             displayName( "Role 2 Display Name" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description2" ).
             build();
 
@@ -80,7 +74,7 @@ public class PrincipalsResultMapperTest
         final Principal user1 = User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             build();
@@ -88,7 +82,7 @@ public class PrincipalsResultMapperTest
         final Principal user2 = User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) ).
             displayName( "User 2" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();

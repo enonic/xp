@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +29,7 @@ final class XmlDateTimeConverter
 
     public static String format( final Instant value )
     {
-        return value.atZone( ZoneId.of( "UTC" ) ).format( DATE_TIME_FORMAT );
+        return value.atZone( ZoneOffset.UTC ).format( DATE_TIME_FORMAT );
     }
 
     public static LocalDateTime parseLocalDateTime( final String value )
@@ -40,7 +39,7 @@ final class XmlDateTimeConverter
 
     public static String format( final LocalDateTime value )
     {
-        return value.atZone( ZoneId.of( "UTC" ) ).format( DATE_TIME_FORMAT );
+        return value.atZone( ZoneOffset.UTC ).format( DATE_TIME_FORMAT );
     }
 
     public static LocalDate parseLocalDate( final String value )
@@ -50,7 +49,7 @@ final class XmlDateTimeConverter
 
     public static String format( final LocalDate value )
     {
-        return ZonedDateTime.of( value, LocalTime.now(), ZoneId.of( "UTC" ) ).format( DATE_FORMAT.withZone( ZoneId.of( "UTC" ) ) );
+        return ZonedDateTime.of( value, LocalTime.now(), ZoneOffset.UTC ).format( DATE_FORMAT.withZone( ZoneOffset.UTC ) );
     }
 
     public static LocalTime parseLocalTime( final String value )
@@ -60,7 +59,7 @@ final class XmlDateTimeConverter
 
     public static String format( final LocalTime value )
     {
-        return ZonedDateTime.of( LocalDate.now(), value, ZoneId.of( "UTC" ) ).format( TIME_FORMAT.withZone( ZoneId.of( "UTC" ) ) );
+        return ZonedDateTime.of( LocalDate.now(), value, ZoneOffset.UTC ).format( TIME_FORMAT.withZone( ZoneOffset.UTC ) );
     }
 
     private static Instant toInstant( final XMLGregorianCalendar calendar )
@@ -77,7 +76,7 @@ final class XmlDateTimeConverter
 
         final Instant instant = calendar.toGregorianCalendar().toInstant();
 
-        return LocalDateTime.ofInstant( instant, ZoneId.of( "UTC" ) );
+        return LocalDateTime.ofInstant( instant, ZoneOffset.UTC );
     }
 
     private static LocalTime toLocalTime( final XMLGregorianCalendar calendar )

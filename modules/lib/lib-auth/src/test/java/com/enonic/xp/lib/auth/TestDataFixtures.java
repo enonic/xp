@@ -1,9 +1,7 @@
 package com.enonic.xp.lib.auth;
 
-import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
@@ -24,16 +22,12 @@ import com.enonic.xp.util.Reference;
 
 public class TestDataFixtures
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     public static User getTestUser()
     {
         return User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             profile( getProfile() ).
@@ -59,7 +53,7 @@ public class TestDataFixtures
         return User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) ).
             displayName( "User 2" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             email( "user2@enonic.com" ).
             login( "user2" ).
             build();
@@ -86,7 +80,7 @@ public class TestDataFixtures
         return User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             email( "user1@enonic.com" ).
             login( "user1" ).
             profile( profile ).
@@ -98,7 +92,7 @@ public class TestDataFixtures
         return User.create().
             key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
             displayName( "User 1" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             login( "user1" ).
             build();
     }
@@ -108,7 +102,7 @@ public class TestDataFixtures
         return Role.create().
             key( PrincipalKey.ofRole( "aRole" ) ).
             displayName( "Role Display Name" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description" ).
             build();
     }
@@ -118,7 +112,7 @@ public class TestDataFixtures
         return Group.create().
             key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
             displayName( "Group A" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description" ).
             build();
     }

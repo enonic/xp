@@ -1,7 +1,9 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.TimeZone;
@@ -91,6 +93,8 @@ public class RescheduleTaskTest
     public void setUp()
         throws Exception
     {
+        RescheduleTask.clock = Clock.fixed( Instant.now(), ZoneOffset.UTC );
+
         final Bundle bundle = OsgiSupportMock.mockBundle();
 
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
@@ -131,7 +135,7 @@ public class RescheduleTaskTest
     @Test
     public void submitInOrder()
     {
-        final Instant now = Instant.now();
+        final Instant now = RescheduleTask.clock.instant();
 
         final ScheduledJob job1 = mockOneTimeJob( "job-1", now.minus( 2, ChronoUnit.SECONDS ) );
         final ScheduledJob job2 = mockOneTimeJob( "job-2", now );
@@ -158,7 +162,8 @@ public class RescheduleTaskTest
     @Test
     public void jobSubmitFailedButRetried()
     {
-        final Instant now = Instant.now();
+        final Instant now = RescheduleTask.clock.instant();
+
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
         ScheduledJob job2 = mockOneTimeJob( "job2", now );
 
@@ -197,7 +202,7 @@ public class RescheduleTaskTest
     @Test
     public void jobSubmitFailedWithError()
     {
-        final Instant now = Instant.now();
+        final Instant now = RescheduleTask.clock.instant();
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
 
         when( schedulerService.list() ).thenReturn( List.of( job1 ) );
@@ -283,7 +288,6 @@ public class RescheduleTaskTest
 
     @Test
     public void jobWasRemoved()
-        throws InterruptedException
     {
         final Instant plus = null;
 
@@ -294,7 +298,7 @@ public class RescheduleTaskTest
 
         createAndRunTask();
 
-        Thread.sleep( 61000 );
+        RescheduleTask.clock = Clock.offset( RescheduleTask.clock, Duration.of( 61, ChronoUnit.SECONDS ) );
 
         when( schedulerService.list() ).thenReturn( List.of( job2 ) );
 
@@ -321,7 +325,7 @@ public class RescheduleTaskTest
 
         createAndRunTask();
 
-        Thread.sleep( 61000 );
+        RescheduleTask.clock = Clock.offset( RescheduleTask.clock, Duration.of( 61, ChronoUnit.SECONDS ) );
 
         createAndRunTask();
 

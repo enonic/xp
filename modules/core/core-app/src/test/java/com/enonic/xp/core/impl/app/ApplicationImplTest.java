@@ -56,12 +56,12 @@ public class ApplicationImplTest
     private Bundle deployBundle()
         throws Exception
     {
-        final InputStream in = newBundle( "myapplication", true ).set( Constants.BUNDLE_NAME, "myapplication" )
-            .set( ApplicationManifestConstants.X_APPLICATION_URL, "http://enonic.com/path/to/application" )
-            .set( ApplicationManifestConstants.X_SYSTEM_VERSION, "[1.2,2)" )
-            .set( ApplicationManifestConstants.X_VENDOR_NAME, "Enonic AS" )
-            .set( ApplicationManifestConstants.X_VENDOR_URL, "http://enonic.com" )
-            .set( ApplicationManifestConstants.X_SOURCE_PATHS, "/a/b,/c/d" )
+        final InputStream in = newBundle( "myapplication", true ).setHeader( Constants.BUNDLE_NAME, "myapplication" )
+            .setHeader( ApplicationManifestConstants.X_APPLICATION_URL, "http://enonic.com/path/to/application" )
+            .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[1.2,2)" )
+            .setHeader( ApplicationManifestConstants.X_VENDOR_NAME, "Enonic AS" )
+            .setHeader( ApplicationManifestConstants.X_VENDOR_URL, "http://enonic.com" )
+            .setHeader( ApplicationManifestConstants.X_SOURCE_PATHS, "/a/b,/c/d" )
             .build();
 
         return deploy( "bundle", in );

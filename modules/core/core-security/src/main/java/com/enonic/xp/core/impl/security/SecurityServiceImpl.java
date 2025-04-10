@@ -108,7 +108,7 @@ public final class SecurityServiceImpl
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
-    private final Clock clock;
+    static Clock clock = Clock.systemUTC();
 
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -128,7 +128,6 @@ public final class SecurityServiceImpl
     {
         this.nodeService = nodeService;
         this.securityAuditLogSupport = securityAuditLogSupport;
-        this.clock = Clock.systemUTC();
         initializeSuPassword();
     }
 

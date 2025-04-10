@@ -1,9 +1,10 @@
 package com.enonic.xp.impl.task;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -51,6 +52,8 @@ public class LocalTaskManagerImplTest
     @BeforeEach
     public void setup()
     {
+        LocalTaskManagerImpl.clock = Clock.fixed( Instant.ofEpochSecond( 0 ), ZoneOffset.UTC );
+
         cleanupScheduler = new TaskManagerCleanupSchedulerMock();
 
         taskMan = new LocalTaskManagerImpl( Runnable::run, cleanupScheduler, event -> this.eventsPublished.add( event ) );
@@ -132,8 +135,7 @@ public class LocalTaskManagerImplTest
     public void testRemoveExpiredTasks()
         throws InterruptedException
     {
-        Instant initTime = Instant.now();
-        taskMan.setClock( Clock.fixed( initTime, ZoneId.systemDefault() ) );
+        LocalTaskManagerImpl.clock = Clock.fixed( Instant.ofEpochSecond( 0 ), ZoneId.systemDefault() );
 
         CountDownLatch latch = new CountDownLatch( 1 );
         RunnableTask runnableTask = ( id, progressReporter ) -> {
@@ -151,8 +153,7 @@ public class LocalTaskManagerImplTest
 
         latch.await();
 
-        Instant laterTime = initTime.plus( LocalTaskManagerImpl.KEEP_COMPLETED_MAX_TIME_SEC + 1, ChronoUnit.SECONDS );
-        taskMan.setClock( Clock.fixed( laterTime, ZoneId.systemDefault() ) );
+        LocalTaskManagerImpl.clock = Clock.offset( LocalTaskManagerImpl.clock, Duration.ofSeconds( LocalTaskManagerImpl.KEEP_COMPLETED_MAX_TIME_SEC + 1 ) );
         cleanupScheduler.rerun();
 
         assertNull( taskMan.getTaskInfo( describedTask.getTaskId() ) );
