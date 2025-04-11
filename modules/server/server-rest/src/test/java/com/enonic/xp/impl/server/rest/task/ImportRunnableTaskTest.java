@@ -70,8 +70,7 @@ class ImportRunnableTaskTest
         final PropertyTree repoData = new PropertyTree();
         repoData.addString( "key", "value" );
 
-        final ImportRunnableTask task =
-            createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, true, "", null ) );
+        final ImportRunnableTask task = createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, "", null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
         task.run( TaskId.from( "taskId" ), progressReporter );
