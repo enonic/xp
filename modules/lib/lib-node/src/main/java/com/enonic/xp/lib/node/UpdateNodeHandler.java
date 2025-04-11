@@ -12,14 +12,14 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.script.ScriptValue;
 
-public class ModifyNodeHandler
+public class UpdateNodeHandler
     extends AbstractNodeHandler
 {
     private NodeKey key;
 
     private ScriptValue editor;
 
-    private ModifyNodeHandler( final Builder builder )
+    private UpdateNodeHandler( final Builder builder )
     {
         super( builder );
         key = builder.key;
@@ -74,7 +74,7 @@ public class ModifyNodeHandler
         final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator( false ).create( scriptValue );
         final PropertyTree nodeAsPropertyTree = scriptValueTranslatorResult.getPropertyTree();
 
-        ModifyNodeExecutor.create().
+        UpdateNodeExecutor.create().
             editableNode( target ).
             propertyTree( nodeAsPropertyTree ).
             build().
@@ -87,7 +87,7 @@ public class ModifyNodeHandler
 
         if ( node == null )
         {
-            throw new NodeNotFoundException( "Cannot modify node with key: [" + this.key.getValue() + "]" );
+            throw new NodeNotFoundException( "Cannot update node with key: [" + this.key.getValue() + "]" );
         }
 
         return node;
@@ -128,9 +128,9 @@ public class ModifyNodeHandler
             return this;
         }
 
-        public ModifyNodeHandler build()
+        public UpdateNodeHandler build()
         {
-            return new ModifyNodeHandler( this );
+            return new UpdateNodeHandler( this );
         }
     }
 }

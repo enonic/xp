@@ -177,8 +177,8 @@ function globalEditor(c) {
     return c;
 }
 
-exports.modify_notFound = function () {
-    var result = content.modify({
+exports.update_notFound = function () {
+    var result = content.update({
         key: '123456',
         editor: globalEditor
     });
@@ -186,8 +186,8 @@ exports.modify_notFound = function () {
     assert.assertNull(result);
 };
 
-exports.modifyById = function () {
-    var result = content.modify({
+exports.updateById = function () {
+    var result = content.update({
         key: '123456',
         editor: globalEditor
     });
@@ -195,8 +195,8 @@ exports.modifyById = function () {
     assert.assertJsonEquals(expectedJson, result);
 };
 
-exports.modifyByPath = function () {
-    var result = content.modify({
+exports.updateByPath = function () {
+    var result = content.update({
         key: '/a/b/mycontent',
         editor: globalEditor
     });
@@ -204,9 +204,9 @@ exports.modifyByPath = function () {
     assert.assertJsonEquals(expectedJson, result);
 };
 
-exports.modifySiteConfig = function () {
+exports.updateSiteConfig = function () {
 
-    var result = content.modify({
+    var result = content.update({
         key: '/a/b/mycontent',
         editor(c) {
             c.data.siteConfig = [];
@@ -243,9 +243,9 @@ exports.modifySiteConfig = function () {
     assert.assertJsonEquals(expect, result.data.siteConfig);
 };
 
-exports.modifySiteSingleDescriptor = function () {
+exports.updateSiteSingleDescriptor = function () {
 
-    var result = content.modify({
+    var result = content.update({
         key: '/a/b/mycontent',
         editor(c) {
             c.data.siteConfig = {};
@@ -271,10 +271,10 @@ exports.modifySiteSingleDescriptor = function () {
     assert.assertJsonEquals(expect, result.data.siteConfig);
 };
 
-exports.modifySiteConfig_strict = function () {
+exports.updateSiteConfig_strict = function () {
 
     try {
-        content.modify({
+        content.update({
             key: '/a/b/mycontent',
             editor(c) {
                 c.data.siteConfig = [];
@@ -292,10 +292,10 @@ exports.modifySiteConfig_strict = function () {
     }
 };
 
-exports.modifyNotMappedXDataFieldName_stricted = function () {
+exports.updateNotMappedXDataFieldName_stricted = function () {
 
     try {
-        var result = content.modify({
+        var result = content.update({
             key: '/a/b/mycontent',
             editor(c) {
                 globalEditor(c);
@@ -316,9 +316,9 @@ exports.modifyNotMappedXDataFieldName_stricted = function () {
 
 };
 
-exports.modifyNotMappedXDataFieldName_notStricted = function () {
+exports.updateNotMappedXDataFieldName_notStricted = function () {
 
-    var result = content.modify({
+    var result = content.update({
         key: '/a/b/mycontent',
         requireValid: false,
         editor(c) {
